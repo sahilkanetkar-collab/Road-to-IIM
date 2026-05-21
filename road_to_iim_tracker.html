@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Road to IIM — Performance Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,700;1,9..144,300&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{--bg:#0f0e0c;--bg2:#181714;--bg3:#211f1b;--border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.14);--gold:#c9a84c;--gold2:#e8c97a;--gold-dim:rgba(201,168,76,0.15);--text:#f0ece3;--text2:#a09880;--text3:#5a5545;--green:#4caf82;--green-dim:rgba(76,175,130,0.12);--red:#e05c5c;--red-dim:rgba(224,92,92,0.1);--purple:#9b7fe8;--purple-dim:rgba(155,127,232,0.12);--radius:10px;--radius-lg:16px;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh}
+.header{border-bottom:0.5px solid var(--border);padding:1.25rem 2rem;display:flex;align-items:center;justify-content:space-between}
+.brand-main{font-family:'Fraunces',serif;font-size:20px;font-weight:500;color:var(--gold2);letter-spacing:-0.3px}
+.brand-sub{font-size:12px;color:var(--text3);font-family:'DM Mono',monospace;letter-spacing:.05em}
+.header-right{font-size:12px;color:var(--text3);font-family:'DM Mono',monospace}
+.screen{display:none}.screen.active{display:block}
+/* LOGIN */
+.login-wrap{min-height:calc(100vh - 61px);display:flex;align-items:center;justify-content:center;padding:2rem}
+.login-card{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:2.5rem;width:100%;max-width:420px}
+.login-title{font-family:'Fraunces',serif;font-size:26px;font-weight:300;color:var(--text);margin-bottom:6px}
+.login-sub{font-size:13px;color:var(--text2);margin-bottom:2rem}
+.field{margin-bottom:1.25rem}
+.field label{display:block;font-size:12px;color:var(--text2);margin-bottom:6px;font-family:'DM Mono',monospace;letter-spacing:.05em;text-transform:uppercase}
+.field select,.field input[type=text]{width:100%;background:var(--bg3);border:0.5px solid var(--border2);border-radius:var(--radius);padding:10px 14px;color:var(--text);font-size:14px;font-family:'DM Sans',sans-serif;outline:none;transition:border-color .2s}
+.field select:focus,.field input[type=text]:focus{border-color:var(--gold)}
+.field select option{background:var(--bg3)}
+.login-btn{width:100%;padding:12px;background:var(--gold);border:none;border-radius:var(--radius);color:#0f0e0c;font-size:14px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .2s;margin-top:.5rem;display:flex;align-items:center;justify-content:center;gap:8px}
+.login-btn:hover{background:var(--gold2)}.login-btn:disabled{opacity:.5;cursor:not-allowed}
+.login-err{font-size:13px;color:var(--red);margin-top:10px;display:none}
+.login-info{font-size:13px;color:var(--gold);margin-top:10px;display:none}
+/* DASHBOARD */
+.dash{padding:2rem;max-width:900px;margin:0 auto}
+.dash-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:2rem;flex-wrap:wrap;gap:1rem}
+.dash-name{font-family:'Fraunces',serif;font-size:28px;font-weight:300;color:var(--text)}
+.dash-batch{font-size:12px;color:var(--text3);font-family:'DM Mono',monospace;margin-top:4px}
+.btn-log{background:var(--gold-dim);border:0.5px solid var(--gold);color:var(--gold2);padding:9px 18px;border-radius:var(--radius);font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .2s}
+.btn-log:hover{background:rgba(201,168,76,.25)}
+.btn-ghost{background:transparent;border:0.5px solid var(--border2);color:var(--text2);padding:9px 18px;border-radius:var(--radius);font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;margin-left:8px}
+.btn-ghost:hover{background:var(--bg3)}
+.stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:1.5rem}
+.stat{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius);padding:14px 16px}
+.stat-label{font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;letter-spacing:.05em;text-transform:uppercase;margin-bottom:6px}
+.stat-val{font-size:26px;font-weight:300;font-family:'Fraunces',serif;color:var(--text)}
+.stat-val span{font-size:13px;color:var(--text3);font-family:'DM Sans',sans-serif}
+.stat.highlight{border-color:var(--gold);background:var(--gold-dim)}.stat.highlight .stat-val{color:var(--gold2)}
+.trend{font-size:12px;margin-top:2px}.trend.up{color:var(--green)}.trend.down{color:var(--red)}.trend.flat{color:var(--text3)}
+.chart-card{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:1.5rem}
+.card-title{font-size:12px;color:var(--text3);font-family:'DM Mono',monospace;letter-spacing:.05em;text-transform:uppercase;margin-bottom:1.25rem}
+.chart-wrap{position:relative;height:220px}
+.error-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px}
+.err-bar{background:var(--bg3);border:0.5px solid var(--border);border-radius:var(--radius);padding:12px 14px;cursor:pointer;transition:border-color .2s}
+.err-bar:hover{border-color:var(--border2)}
+.err-bar.flagged{border-color:var(--red);background:var(--red-dim)}
+.err-bar.improving{border-color:var(--green);background:var(--green-dim)}
+.err-name{font-size:11px;color:var(--text2);margin-bottom:8px;line-height:1.3}
+.err-track{height:4px;background:var(--bg);border-radius:2px;margin-bottom:6px}
+.err-fill{height:4px;border-radius:2px;background:var(--gold);transition:width .4s}
+.err-bar.flagged .err-fill{background:var(--red)}
+.err-bar.improving .err-fill{background:var(--green)}
+.err-num{font-size:18px;font-weight:300;font-family:'Fraunces',serif;color:var(--text)}
+.err-trend{font-size:10px;margin-top:4px;font-family:'DM Mono',monospace}
+.err-trend.flag{color:var(--red)}.err-trend.good{color:var(--green)}
+.sync-badge{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-family:'DM Mono',monospace;padding:4px 10px;border-radius:20px;margin-top:8px}
+.sync-badge.ok{background:var(--green-dim);color:var(--green)}.sync-badge.err{background:rgba(224,92,92,.12);color:var(--red)}
+.empty{text-align:center;padding:3rem 1rem;color:var(--text3);font-size:14px}
+.empty strong{display:block;font-family:'Fraunces',serif;font-size:22px;font-weight:300;color:var(--text2);margin-bottom:8px}
+/* FOCUS AREA */
+.focus-card{background:var(--purple-dim);border:0.5px solid var(--purple);border-radius:var(--radius-lg);padding:1.25rem;margin-bottom:1.5rem;display:none}
+.focus-label{font-size:11px;color:var(--purple);font-family:'DM Mono',monospace;letter-spacing:.05em;text-transform:uppercase;margin-bottom:6px}
+.focus-text{font-size:14px;color:var(--text);line-height:1.6;margin-bottom:1rem}
+.focus-action{background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius);padding:1rem}
+.focus-action-title{font-size:11px;color:var(--gold);font-family:'DM Mono',monospace;letter-spacing:.05em;text-transform:uppercase;margin-bottom:10px}
+/* DRILL */
+.drill-item{background:var(--bg3);border-radius:8px;padding:10px 12px;margin-bottom:8px;cursor:pointer}
+.drill-item:last-child{margin-bottom:0}
+.drill-word{font-size:15px;font-weight:500;color:var(--gold2);margin-bottom:4px}
+.drill-reveal{font-size:13px;color:var(--text2);line-height:1.5;display:none}
+.drill-reveal.show{display:block}
+.drill-hint{font-size:11px;color:var(--text3);font-family:'DM Mono',monospace}
+.analogy-cat{background:var(--bg3);border-radius:8px;padding:10px 12px;margin-bottom:6px}
+.analogy-cat-name{font-size:12px;font-weight:500;color:var(--gold2);margin-bottom:4px}
+.analogy-cat-eg{font-size:12px;color:var(--text2);font-family:'DM Mono',monospace}
+.rule-card{background:var(--bg3);border-radius:8px;padding:10px 12px;margin-bottom:6px}
+.rule-name{font-size:12px;font-weight:500;color:var(--gold2);margin-bottom:4px}
+.rule-tip{font-size:12px;color:var(--text2);line-height:1.5}
+/* WRONG QS */
+.wq-card{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:1.5rem}
+.wq-grid{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.wq-chip{font-size:12px;font-family:'DM Mono',monospace;padding:4px 10px;border-radius:20px;background:var(--bg3);color:var(--text2);border:0.5px solid var(--border)}
+/* MODAL */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:100;display:none;align-items:center;justify-content:center;padding:1rem}
+.overlay.open{display:flex}
+.modal{background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius-lg);padding:2rem;width:100%;max-width:500px;max-height:90vh;overflow-y:auto}
+.modal-title{font-family:'Fraunces',serif;font-size:22px;font-weight:300;margin-bottom:4px}
+.modal-sub{font-size:13px;color:var(--text2);margin-bottom:1.5rem}
+.modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.25rem}
+.modal-grid .field{margin-bottom:0}
+.err-inputs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1.25rem}
+.err-input-item label{display:block;font-size:11px;color:var(--text2);margin-bottom:4px;font-family:'DM Mono',monospace;letter-spacing:.04em}
+.err-input-item input{width:100%;background:var(--bg3);border:0.5px solid var(--border2);border-radius:8px;padding:8px 10px;color:var(--text);font-size:14px;font-family:'DM Mono',monospace;outline:none}
+.err-input-item input:focus{border-color:var(--gold)}
+.section-note{font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;margin-bottom:1rem;padding:8px 10px;background:var(--bg3);border-radius:6px}
+.helper-note{font-size:12px;color:var(--text3);margin-bottom:1rem;padding:8px 12px;background:var(--bg3);border-radius:6px;border-left:2px solid var(--gold)}
+.modal-actions{display:flex;gap:8px}
+.btn-save{flex:1;padding:11px;background:var(--gold);border:none;border-radius:var(--radius);color:#0f0e0c;font-size:14px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif}
+.btn-save:hover{background:var(--gold2)}.btn-save:disabled{opacity:.5;cursor:not-allowed}
+.btn-cancel{padding:11px 18px;background:transparent;border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text2);font-size:14px;cursor:pointer;font-family:'DM Sans',sans-serif}
+.save-status{font-size:12px;margin-top:10px;text-align:center;min-height:18px;font-family:'DM Mono',monospace}
+.save-ok{color:var(--green)}.save-err{color:var(--red)}.save-info{color:var(--gold)}
+</style>
+</head>
+<body>
+<div class="header">
+  <div><div class="brand-main">Road to IIM</div><div class="brand-sub">Performance Tracker · Sahil Sir</div></div>
+  <div class="header-right" id="headerInfo"></div>
+</div>
+
+<!-- LOGIN -->
+<div class="screen active" id="loginScreen">
+  <div class="login-wrap">
+    <div class="login-card">
+      <div class="login-title">Track your progress</div>
+      <div class="login-sub">Select your batch and enter your name to load your data.</div>
+      <div class="field"><label>Batch group</label>
+        <select id="batchGroup">
+          <option value="">Select group...</option>
+          <option value="classroom">Classroom</option>
+          <option value="school">School</option>
+          <option value="online">Online</option>
+        </select>
+      </div>
+      <div class="field"><label>Batch</label><select id="batchId"><option value="">Select batch group first...</option></select></div>
+      <div class="field"><label>Your name</label><input type="text" id="studentName" placeholder="e.g. Aditya Sharma" autocomplete="off"></div>
+      <button class="login-btn" id="loginBtn" onclick="doLogin()"><span id="loginBtnText">Open my tracker</span></button>
+      <div class="login-err" id="loginErr">Please fill in all fields.</div>
+      <div class="login-info" id="loginInfo">Loading your data...</div>
+    </div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="screen" id="dashScreen">
+  <div class="dash">
+    <div class="dash-top">
+      <div>
+        <div class="dash-name" id="dashName"></div>
+        <div class="dash-batch" id="dashBatch"></div>
+        <div id="syncBadge"></div>
+      </div>
+      <div>
+        <button class="btn-log" onclick="openModal()">+ Log test</button>
+        <button class="btn-ghost" onclick="doLogout()">Switch student</button>
+      </div>
+    </div>
+    <div id="emptyState" class="empty"><strong>No tests logged yet</strong>Complete a test to start tracking your performance.</div>
+    <div id="dataView" style="display:none">
+      <div class="stat-row" id="statRow"></div>
+      <div class="focus-card" id="focusCard">
+        <div class="focus-label">Focus area</div>
+        <div class="focus-text" id="focusText"></div>
+        <div class="focus-action" id="focusAction">
+          <div class="focus-action-title" id="focusActionTitle">What to do</div>
+          <div id="focusActionContent"></div>
+        </div>
+      </div>
+      <div class="chart-card"><div class="card-title">Score trend</div><div class="chart-wrap"><canvas id="scoreChart"></canvas></div></div>
+      <div class="chart-card"><div class="card-title">Errors by section</div><div class="error-grid" id="errorGrid"></div></div>
+      <div class="wq-card" id="wqCard" style="display:none">
+        <div class="card-title">Wrong questions — latest test</div>
+        <div style="font-size:13px;color:var(--text2);margin-bottom:6px">Review these specific questions in the answer key.</div>
+        <div class="wq-grid" id="wqGrid"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LOG MODAL -->
+<div class="overlay" id="logOverlay">
+  <div class="modal">
+    <div class="modal-title">Log a test</div>
+    <div class="modal-sub">Enter your score and errors per section.</div>
+    <div class="helper-note">Enter the number of questions you got <strong>wrong</strong> in each section.</div>
+    <div class="modal-grid">
+      <div class="field"><label>Test number</label><select id="logTestNum"><option value="">Select...</option></select></div>
+      <div class="field"><label>Score (max 180)</label><input type="text" id="logScore" placeholder="e.g. 124" style="font-family:'DM Mono',monospace"></div>
+    </div>
+    <div class="section-note" id="sectionNote">Select a test number to see sections</div>
+    <div class="err-inputs" id="errInputs"></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-save" id="saveBtn" onclick="saveEntry()">Save</button>
+    </div>
+    <div class="save-status" id="saveStatus"></div>
+  </div>
+</div>
+
+<script>
+var SHEET_URL = 'https://script.google.com/macros/s/AKfycbxxBRvrIaAkgjV5O7rypF3-Sy1HAv3p4k2YwyCW4hNO26OdZo5Bre0Rg3L8V5lehs8fgw/exec';
+var MAX_SCORE = 180;
+var RC_FROM   = 16;
+var IDIOMS_FROM = 13;
+
+var SECTIONS_EARLY = ['FITB / Collocation','Analogy Pairs','Odd One Out','OWS / Cloze','Word in Context'];
+var SECTIONS_MID   = ['FITB / Collocation','Analogy Pairs','Odd One Out','OWS / Cloze','Word in Context','Idioms'];
+var SECTIONS_LATE  = ['FITB / Collocation','Analogy Pairs','Odd One Out','OWS / Cloze','Word in Context','Idioms','RC','CR','Grammar'];
+
+var BATCHES = {
+  classroom:['A2701','A2702','A2703','A2704','A2705','A2706','A2707','A2708','A2709','A2710','A2711','A2712','A2713','A2714','A2715'],
+  school:['Zebar'],
+  online:['27E101','27E102','27E103','27E104','27E105']
+};
+
+// ── WORD BANKS ──
+var WORD_BANKS = {
+  11:[
+    {word:"Lachrymose",meaning:"Tearful; marked by weeping or sorrow",example:"Her lachrymose farewell left the entire room in tears."},
+    {word:"Sanguine",meaning:"Unrealistically optimistic, especially about the future",example:"The sanguine forecast proved embarrassing when growth halved."},
+    {word:"Pusillanimous",meaning:"Cowardly; lacking moral courage or resolve",example:"His pusillanimous non-denial satisfied no one."},
+    {word:"Tendentious",meaning:"Deliberately biased toward a particular cause or viewpoint",example:"The tendentious documentary was praised by activists and condemned by industry."},
+    {word:"Nugatory",meaning:"Of no value or importance; trifling",example:"The nugatory amendment was dismissed without debate."},
+    {word:"Equanimity",meaning:"Mental calmness and composure, especially under difficulty",example:"She received both the prize and the scandal with equal equanimity."},
+    {word:"Recondite",meaning:"Obscure; known only to specialists",example:"The recondite manuscript required specialist authentication."},
+    {word:"Verbose",meaning:"Using more words than necessary",example:"The verbose briefing document ran to forty pages for a one-page decision."},
+    {word:"Trenchant",meaning:"Vigorous, effective, and sharply expressed",example:"Her trenchant analysis cut through years of bureaucratic obfuscation."},
+    {word:"Phlegmatic",meaning:"Having a calm, unemotional temperament",example:"The phlegmatic general never raised his voice under fire."}
+  ],
+  12:[
+    {word:"Lapidary",meaning:"Elegantly concise and polished, as if carved in stone",example:"His lapidary prose left no word that could be removed."},
+    {word:"Tergiversation",meaning:"Making conflicting statements; changing one's position evasively",example:"The politician's tergiversation was noted by every journalist in the room."},
+    {word:"Gnomic",meaning:"Mysterious and difficult to interpret; aphoristic",example:"The ambassador's gnomic remarks prompted five countries to seek clarification."},
+    {word:"Anodyne",meaning:"Deliberately inoffensive; unlikely to cause controversy",example:"The committee's anodyne report named no one and blamed nothing."},
+    {word:"Hectoring",meaning:"Bullying or intimidating through aggressive tone",example:"Her hectoring style alienated even sympathetic viewers."},
+    {word:"Pellucid",meaning:"Translucently clear; easily understood",example:"The novelist's pellucid style made philosophy accessible to any reader."},
+    {word:"Prolix",meaning:"Tediously long and wordy",example:"The prolix expert witness tried the jury's patience until the judge intervened."},
+    {word:"Mordant",meaning:"Sharp, biting, and critical in a clever way",example:"His mordant wit made him a favourite at dinner tables and an enemy in boardrooms."},
+    {word:"Perfidious",meaning:"Deceitfully treacherous and disloyal",example:"The perfidious ally switched sides at the moment of greatest vulnerability."},
+    {word:"Impecunious",meaning:"Having very little money; chronically poor",example:"The impecunious artist refused every commission that compromised his vision."}
+  ]
+};
+
+// ── ACTION CONTENT ──
+var ANALOGY_CATS = [
+  {name:"Degree",eg:"Annoyance : Fury (lesser to greater intensity)"},
+  {name:"Cause and Effect",eg:"Negligence : Accident (cause leads to effect)"},
+  {name:"Part to Whole",eg:"Chapter : Novel (component of a larger thing)"},
+  {name:"Tool and Function",eg:"Scalpel : Surgery (instrument used for purpose)"},
+  {name:"Antonym pair",eg:"Verbose : Laconic (opposites)"},
+  {name:"Type of",eg:"Elegy : Poem (specific type within a category)"},
+  {name:"Characteristic of",eg:"Demagogue : Rhetoric (defining trait of a person/thing)"},
+  {name:"Action and Object",eg:"Impugn : Credibility (verb acts on its target)"}
+];
+
+var GRAMMAR_RULES = [
+  {name:"Subject-Verb Agreement",tip:"The verb must agree with the subject, not with a nearby noun. 'The quality of the apples was poor' — verb agrees with 'quality', not 'apples'."},
+  {name:"Parallelism",tip:"Items in a list or comparison must match in form. 'She likes reading, writing, and to swim' is wrong. 'She likes reading, writing, and swimming' is correct."},
+  {name:"Modifiers",tip:"A modifier must be placed next to what it modifies. 'Running down the street, the bus passed me' — the bus was not running. Rewrite: 'Running down the street, I watched the bus pass.'"},
+  {name:"Tense consistency",tip:"Do not shift tense mid-sentence without reason. 'He walked in, sits down, and ordered coffee' mixes past and present. Stick to one tense."}
+];
+
+var FOCUS_MSGS = {
+  'FITB / Collocation':'Your biggest gap is vocabulary and collocations. The fix is not more tests — it is active word learning. Every unknown word from your error log needs to be root-mapped and reviewed.',
+  'Analogy Pairs':'Analogy pairs are costing you marks. The problem is usually not vocabulary — it is failing to identify the relationship type before looking at options. Identify the relationship first, then match.',
+  'Odd One Out':'Odd one out errors suggest surface-level grouping. You are going with the most obvious connection rather than asking what the defining criterion is.',
+  'OWS / Cloze':'OWS and cloze errors point to tone-sensitivity gaps. You are matching meaning instead of register. Read the full passage for tone before filling any blank.',
+  'Word in Context':'Word-in-context errors mean you are applying dictionary definitions instead of reading contextual cues. The capitalised word takes its meaning from the sentence, not the dictionary.',
+  'Idioms':'Idiom errors are high. Idioms cannot be guessed — they must be learned. Add every unknown idiom to a running list with the exact sentence it appeared in.',
+  'RC':'RC errors are accumulating. You are treating all sentences as equal weight. Identify the skeleton — the main argument — before attempting any question.',
+  'CR':'Critical reasoning gaps. Identify the conclusion first, then the premise. Only then check what the question is testing before evaluating options.',
+  'Grammar':'Grammar errors need pattern-drilling, not re-reading rules. Identify which rule each wrong answer tests, then drill that rule with targeted examples.'
+};
+
+function getFocusActionHTML(section, latestTest) {
+  if (section === 'FITB / Collocation') {
+    var bank = WORD_BANKS[latestTest] || WORD_BANKS[11];
+    var items = bank.slice(0,5);
+    return '<div style="font-size:12px;color:var(--text3);margin-bottom:8px;font-family:\'DM Mono\',monospace">Tap a word to reveal its meaning and example.</div>' +
+      items.map(function(w){
+        return '<div class="drill-item" onclick="this.querySelector(\'.drill-reveal\').classList.toggle(\'show\')">' +
+          '<div class="drill-word">' + w.word + '</div>' +
+          '<div class="drill-hint">Tap to reveal</div>' +
+          '<div class="drill-reveal"><strong>Meaning:</strong> ' + w.meaning + '<br><em>' + w.example + '</em></div>' +
+          '</div>';
+      }).join('');
+  }
+  if (section === 'Analogy Pairs') {
+    return '<div style="font-size:12px;color:var(--text3);margin-bottom:8px;font-family:\'DM Mono\',monospace">Identify the relationship type before looking at options.</div>' +
+      ANALOGY_CATS.map(function(c){
+        return '<div class="analogy-cat"><div class="analogy-cat-name">' + c.name + '</div><div class="analogy-cat-eg">' + c.eg + '</div></div>';
+      }).join('');
+  }
+  if (section === 'Odd One Out') {
+    return '<div style="font-size:12px;color:var(--text3);margin-bottom:8px;font-family:\'DM Mono\',monospace">Ask: what is the defining criterion that groups three of these? The odd one fails that criterion.</div>' +
+      ['<div class="drill-item" onclick="this.querySelector(\'.drill-reveal\').classList.toggle(\'show\')"><div class="drill-word">Mordant / Caustic / Acerbic / Benign</div><div class="drill-hint">Tap to reveal criterion</div><div class="drill-reveal">Criterion: sharp, biting quality. Benign is the odd one — it means gentle and harmless.</div></div>',
+       '<div class="drill-item" onclick="this.querySelector(\'.drill-reveal\').classList.toggle(\'show\')"><div class="drill-word">Prolix / Verbose / Laconic / Garrulous</div><div class="drill-hint">Tap to reveal criterion</div><div class="drill-reveal">Criterion: using too many words. Laconic is the odd one — it means brief and concise.</div></div>',
+       '<div class="drill-item" onclick="this.querySelector(\'.drill-reveal\').classList.toggle(\'show\')"><div class="drill-word">Pellucid / Lucid / Perspicuous / Abstruse</div><div class="drill-hint">Tap to reveal criterion</div><div class="drill-reveal">Criterion: clarity and transparency. Abstruse is the odd one — it means obscure and difficult to understand.</div></div>'
+      ].join('');
+  }
+  if (section === 'OWS / Cloze') {
+    return '<div style="font-size:12px;color:var(--text3);margin-bottom:8px;font-family:\'DM Mono\',monospace">Read for register and tone, not just meaning. Tap to reveal the answer.</div>' +
+      ['<div class="drill-item" onclick="this.querySelector(\'.drill-reveal\').classList.toggle(\'show\')"><div class="drill-word">The professor\'s response was _______ — technically correct but so stripped of warmth that it felt like a rebuke.</div><div class="drill-hint">Tap to reveal</div><div class="drill-reveal"><strong>Anodyne</strong> — deliberately inoffensive and bland. The tone clue is "stripped of warmth."</div></div>',
+       '<div class="drill-item" onclick="this.querySelector(\'.drill-reveal\').classList.toggle(\'show\')"><div class="drill-word">The CEO\'s memo was _______ with corporate jargon; three readings left employees none the wiser.</div><div class="drill-hint">Tap to reveal</div><div class="drill-reveal"><strong>Riddled</strong> — full of (in a negative sense). The tone clue is "none the wiser."</div></div>',
+       '<div class="drill-item" onclick="this.querySelector(\'.drill-reveal\').classList.toggle(\'show\')"><div class="drill-word">Her argument was _______ — not a single premise could be challenged without the whole structure collapsing.</div><div class="drill-hint">Tap to reveal</div><div class="drill-reveal"><strong>Cogent</strong> — clear, logical, and compelling. The tone clue is "not a single premise could be challenged."</div></div>'
+      ].join('');
+  }
+  if (section === 'Word in Context') {
+    return '<div style="font-size:12px;color:var(--text3);margin-bottom:8px;font-family:\'DM Mono\',monospace">The capitalised word takes its meaning from the sentence. Tap to reveal.</div>' +
+      ['<div class="drill-item" onclick="this.querySelector(\'.drill-reveal\').classList.toggle(\'show\')"><div class="drill-word">The LACHRYMOSE widow sat motionless through the entire service.</div><div class="drill-hint">Tap to reveal</div><div class="drill-reveal"><strong>Tearful and full of sorrow.</strong> Context clue: motionless through a service — grief, not anger or joy.</div></div>',
+       '<div class="drill-item" onclick="this.querySelector(\'.drill-reveal\').classList.toggle(\'show\')"><div class="drill-word">His MORDANT commentary on the election made even his targets laugh.</div><div class="drill-hint">Tap to reveal</div><div class="drill-reveal"><strong>Sharply critical in a clever, biting way.</strong> Context clue: targets laughed — the criticism was witty, not merely harsh.</div></div>',
+       '<div class="drill-item" onclick="this.querySelector(\'.drill-reveal\').classList.toggle(\'show\')"><div class="drill-word">The PELLUCID explanation left no room for ambiguity.</div><div class="drill-hint">Tap to reveal</div><div class="drill-reveal"><strong>Admirably clear and easy to understand.</strong> Context clue: "no room for ambiguity" confirms transparency.</div></div>'
+      ].join('');
+  }
+  if (section === 'Idioms') {
+    return '<div style="font-size:12px;color:var(--text3);margin-bottom:8px;font-family:\'DM Mono\',monospace">Tap each idiom to reveal its meaning.</div>' +
+      [
+        {idiom:"Burn your bridges",meaning:"To permanently damage a relationship or eliminate future options by acting rashly."},
+        {idiom:"Bite the bullet",meaning:"To endure a painful or difficult situation with courage."},
+        {idiom:"A red herring",meaning:"Something that misleads or distracts from the real issue."},
+        {idiom:"On thin ice",meaning:"In a risky or precarious situation."},
+        {idiom:"Cut to the chase",meaning:"To get to the point without wasting time on preamble."}
+      ].map(function(i){
+        return '<div class="drill-item" onclick="this.querySelector(\'.drill-reveal\').classList.toggle(\'show\')"><div class="drill-word">' + i.idiom + '</div><div class="drill-hint">Tap to reveal</div><div class="drill-reveal">' + i.meaning + '</div></div>';
+      }).join('');
+  }
+  if (section === 'Grammar') {
+    return '<div style="font-size:12px;color:var(--text3);margin-bottom:8px;font-family:\'DM Mono\',monospace">The four most tested rules. Know the trigger for each.</div>' +
+      GRAMMAR_RULES.map(function(r){
+        return '<div class="rule-card"><div class="rule-name">' + r.name + '</div><div class="rule-tip">' + r.tip + '</div></div>';
+      }).join('');
+  }
+  if (section === 'RC') {
+    return '<div class="rule-card"><div class="rule-name">The Skeleton Question</div><div class="rule-tip">Before attempting any question, ask: what is the ONE thing this passage is arguing? Every other sentence exists to support, qualify, or illustrate that one thing. Answer the skeleton question first — it anchors every other answer.</div></div>' +
+           '<div class="rule-card"><div class="rule-name">Three Alert System</div><div class="rule-tip">Red = unknown word (mark and move). Yellow = re-read sentence (confusing syntax). Orange = paragraph disconnect (note the shift in argument). Mark and move — never stall on a single sentence.</div></div>';
+  }
+  if (section === 'CR') {
+    return '<div class="rule-card"><div class="rule-name">Conclusion first</div><div class="rule-tip">Before reading the options, identify: (1) the conclusion, (2) the premise, (3) what the question is asking. Only then evaluate options. Students who read options first get pulled into traps.</div></div>' +
+           '<div class="rule-card"><div class="rule-name">Common CR traps</div><div class="rule-tip">Out of scope — addresses something the argument never claimed. Too strong — uses "always/never/all" when the argument was moderate. Reversal — strengthens when you need to weaken, or vice versa.</div></div>';
+  }
+  return '';
+}
+
+var student = null;
+var entries  = [];
+var chartInst = null;
+
+document.getElementById('batchGroup').addEventListener('change', updateBatchList);
+
+function updateBatchList() {
+  var g = document.getElementById('batchGroup').value;
+  var sel = document.getElementById('batchId');
+  sel.innerHTML = '';
+  if (!g) { sel.innerHTML = '<option value="">Select batch group first...</option>'; return; }
+  sel.innerHTML = '<option value="">Select batch...</option>';
+  BATCHES[g].forEach(function(b){ var o=document.createElement('option'); o.value=b; o.textContent=b; sel.appendChild(o); });
+}
+
+function doLogin() {
+  var group = document.getElementById('batchGroup').value;
+  var batch = document.getElementById('batchId').value;
+  var name  = document.getElementById('studentName').value.trim();
+  if (!group || !batch || !name) { document.getElementById('loginErr').style.display='block'; return; }
+  document.getElementById('loginErr').style.display='none';
+  document.getElementById('loginBtn').disabled=true;
+  document.getElementById('loginBtnText').textContent='Loading...';
+  document.getElementById('loginInfo').style.display='block';
+  student = { name:name, batch:batch, group:group };
+  // JSONP fetch to bypass CORS on Apps Script GET
+  var cbName = 'riim_cb_' + Date.now();
+  var timeout = setTimeout(function(){
+    delete window[cbName];
+    var s = document.getElementById(cbName);
+    if(s) s.parentNode.removeChild(s);
+    console.warn('Sheet fetch timed out, using local data');
+    loadFromStorage(); finishLogin(false);
+  }, 8000);
+  window[cbName] = function(json){
+    clearTimeout(timeout);
+    delete window[cbName];
+    var s = document.getElementById(cbName);
+    if(s) s.parentNode.removeChild(s);
+    if(json.ok && json.entries){ entries=json.entries; saveToStorage(); finishLogin(true); }
+    else { loadFromStorage(); finishLogin(false); }
+  };
+  var script = document.createElement('script');
+  script.id = cbName;
+  script.src = SHEET_URL + '?callback=' + cbName + '&name=' + encodeURIComponent(name) + '&batch=' + encodeURIComponent(batch);
+  script.onerror = function(){
+    clearTimeout(timeout);
+    delete window[cbName];
+    loadFromStorage(); finishLogin(false);
+  };
+  document.body.appendChild(script);
+}
+
+function finishLogin(fromSheet) {
+  document.getElementById('loginBtn').disabled=false;
+  document.getElementById('loginBtnText').textContent='Open my tracker';
+  document.getElementById('loginInfo').style.display='none';
+  showDash(fromSheet);
+}
+
+function doLogout() {
+  student=null; entries=[];
+  if(chartInst){chartInst.destroy();chartInst=null;}
+  show('loginScreen');
+  document.getElementById('headerInfo').textContent='';
+}
+
+function storageKey(){ return 'riim_'+student.batch+'_'+student.name.replace(/\s+/g,'_').toLowerCase(); }
+function loadFromStorage(){ var r=localStorage.getItem(storageKey()); entries=r?JSON.parse(r):[]; }
+function saveToStorage(){ localStorage.setItem(storageKey(),JSON.stringify(entries)); }
+
+function showDash(fromSheet) {
+  show('dashScreen');
+  document.getElementById('dashName').textContent=student.name;
+  document.getElementById('dashBatch').textContent=student.batch+' · '+student.group;
+  document.getElementById('headerInfo').textContent=student.name+' / '+student.batch;
+  var badge=document.getElementById('syncBadge');
+  badge.innerHTML=fromSheet?'<span class="sync-badge ok">Synced from sheet</span>':'<span class="sync-badge err">Showing local data</span>';
+  renderDash();
+}
+
+function getSections(t){
+  if(t>=RC_FROM) return SECTIONS_LATE;
+  if(t>=IDIOMS_FROM) return SECTIONS_MID;
+  return SECTIONS_EARLY;
+}
+
+function renderDash() {
+  if(entries.length===0){
+    document.getElementById('emptyState').style.display='block';
+    document.getElementById('dataView').style.display='none';
+    return;
+  }
+  document.getElementById('emptyState').style.display='none';
+  document.getElementById('dataView').style.display='block';
+  renderStats(); renderChart(); renderErrors(); renderFocus(); renderWrongQuestions();
+}
+
+function renderStats() {
+  var sorted=entries.slice().sort(function(a,b){return a.test-b.test;});
+  var latest=sorted[sorted.length-1];
+  var best=Math.max.apply(null,entries.map(function(e){return e.score;}));
+  var avg=Math.round(entries.reduce(function(s,e){return s+e.score;},0)/entries.length);
+  var pct=Math.round((latest.score/MAX_SCORE)*100);
+  var trend='';
+  if(sorted.length>=2){
+    var diff=sorted[sorted.length-1].score-sorted[sorted.length-2].score;
+    if(diff>0) trend='<div class="trend up">Up '+diff+' from last test</div>';
+    else if(diff<0) trend='<div class="trend down">Down '+Math.abs(diff)+' from last test</div>';
+    else trend='<div class="trend flat">Same as last test</div>';
+  }
+  document.getElementById('statRow').innerHTML=
+    '<div class="stat highlight"><div class="stat-label">Latest — Test '+latest.test+'</div><div class="stat-val">'+latest.score+' <span>/ '+MAX_SCORE+'</span></div>'+trend+'</div>'+
+    '<div class="stat"><div class="stat-label">Best score</div><div class="stat-val">'+best+' <span>/ '+MAX_SCORE+'</span></div></div>'+
+    '<div class="stat"><div class="stat-label">Average</div><div class="stat-val">'+avg+' <span>/ '+MAX_SCORE+'</span></div></div>'+
+    '<div class="stat"><div class="stat-label">Tests logged</div><div class="stat-val">'+entries.length+'</div></div>'+
+    '<div class="stat"><div class="stat-label">Latest %</div><div class="stat-val">'+pct+'<span>%</span></div></div>';
+}
+
+function renderChart() {
+  var sorted=entries.slice().sort(function(a,b){return a.test-b.test;});
+  if(chartInst){chartInst.destroy();}
+  chartInst=new Chart(document.getElementById('scoreChart').getContext('2d'),{
+    type:'line',
+    data:{
+      labels:sorted.map(function(e){return 'T'+e.test;}),
+      datasets:[{data:sorted.map(function(e){return e.score;}),borderColor:'#c9a84c',backgroundColor:'rgba(201,168,76,0.08)',borderWidth:2,pointBackgroundColor:'#c9a84c',pointRadius:5,fill:true,tension:0.3}]
+    },
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:'#211f1b',borderColor:'rgba(255,255,255,0.1)',borderWidth:1,titleColor:'#c9a84c',bodyColor:'#f0ece3'}},scales:{x:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#5a5545',font:{family:'DM Mono',size:11}}},y:{min:0,max:MAX_SCORE,grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#5a5545',font:{family:'DM Mono',size:11},stepSize:36}}}}
+  });
+}
+
+// ── FIX 2: improvement flag ──
+function getImprovementStatus(section) {
+  if(entries.length<4) return 'neutral';
+  var sorted=entries.slice().sort(function(a,b){return a.test-b.test;});
+  var recent=sorted.slice(-3).map(function(e){return (e.errors&&e.errors[section])||0;});
+  var older =sorted.slice(-6,-3).map(function(e){return (e.errors&&e.errors[section])||0;});
+  if(older.length<2) return 'neutral';
+  var recentAvg=recent.reduce(function(a,b){return a+b;},0)/recent.length;
+  var olderAvg =older.reduce(function(a,b){return a+b;},0)/older.length;
+  if(olderAvg===0) return 'neutral';
+  if(recentAvg<olderAvg*0.75) return 'improving';
+  if(recentAvg>=olderAvg*0.95) return 'flagged';
+  return 'neutral';
+}
+
+function renderErrors() {
+  var totals={};
+  entries.forEach(function(e){ Object.keys(e.errors||{}).forEach(function(k){totals[k]=(totals[k]||0)+e.errors[k];}); });
+  var allSecs=[];
+  entries.forEach(function(e){ Object.keys(e.errors||{}).forEach(function(k){if(allSecs.indexOf(k)===-1)allSecs.push(k);}); });
+  if(!allSecs.length){ document.getElementById('errorGrid').innerHTML='<div style="color:var(--text3);font-size:13px">No error data yet.</div>'; return; }
+  var maxErr=Math.max.apply(null,Object.values(totals).concat([1]));
+  document.getElementById('errorGrid').innerHTML=allSecs.map(function(s){
+    var status=getImprovementStatus(s);
+    var trendHTML='';
+    if(status==='flagged') trendHTML='<div class="err-trend flag">No improvement in 3+ tests</div>';
+    else if(status==='improving') trendHTML='<div class="err-trend good">Improving</div>';
+    return '<div class="err-bar '+status+'" title="'+s+'">'+
+      '<div class="err-name">'+s+'</div>'+
+      '<div class="err-track"><div class="err-fill" style="width:'+Math.round(((totals[s]||0)/maxErr)*100)+'%"></div></div>'+
+      '<div class="err-num">'+(totals[s]||0)+'</div>'+trendHTML+
+      '</div>';
+  }).join('');
+}
+
+function renderFocus() {
+  var totals={};
+  entries.forEach(function(e){ Object.keys(e.errors||{}).forEach(function(k){totals[k]=(totals[k]||0)+e.errors[k];}); });
+  var keys=Object.keys(totals);
+  if(!keys.length){ document.getElementById('focusCard').style.display='none'; return; }
+
+  // Prioritise flagged sections over just highest count
+  var flagged=keys.filter(function(k){return getImprovementStatus(k)==='flagged';});
+  var top = flagged.length>0
+    ? flagged.sort(function(a,b){return totals[b]-totals[a];})[0]
+    : keys.sort(function(a,b){return totals[b]-totals[a];})[0];
+
+  var sorted=entries.slice().sort(function(a,b){return a.test-b.test;});
+  var latestTest=sorted[sorted.length-1].test;
+
+  document.getElementById('focusText').textContent=FOCUS_MSGS[top]||('Focus on '+top+' — most cumulative errors.');
+  document.getElementById('focusActionContent').innerHTML=getFocusActionHTML(top,latestTest);
+  document.getElementById('focusCard').style.display='block';
+}
+
+// ── FIX 1: wrong question display ──
+function renderWrongQuestions() {
+  var sorted=entries.slice().sort(function(a,b){return a.test-b.test;});
+  var latest=sorted[sorted.length-1];
+  var wq=latest.wrongQuestions||[];
+  var card=document.getElementById('wqCard');
+  if(!wq.length){ card.style.display='none'; return; }
+  card.style.display='block';
+  document.getElementById('wqGrid').innerHTML=wq.map(function(n){
+    return '<div class="wq-chip">Q'+n+'</div>';
+  }).join('');
+}
+
+function openModal() {
+  var logged={};
+  entries.forEach(function(e){logged[e.test]=true;});
+  var sel=document.getElementById('logTestNum');
+  sel.innerHTML='<option value="">Select...</option>';
+  for(var i=1;i<=60;i++){ if(!logged[i]){var o=document.createElement('option');o.value=i;o.textContent='Test '+i;sel.appendChild(o);} }
+  document.getElementById('logScore').value='';
+  document.getElementById('errInputs').innerHTML='';
+  document.getElementById('sectionNote').textContent='Select a test number to see sections';
+  document.getElementById('saveStatus').textContent='';
+  document.getElementById('saveBtn').disabled=false;
+  document.getElementById('logOverlay').classList.add('open');
+}
+
+document.getElementById('logTestNum').addEventListener('change',updateErrInputs);
+
+function updateErrInputs() {
+  var t=parseInt(document.getElementById('logTestNum').value);
+  if(!t){document.getElementById('errInputs').innerHTML='';return;}
+  var secs=getSections(t);
+  var label=t>=RC_FROM?'Test '+t+': all 9 sections active':t>=IDIOMS_FROM?'Test '+t+': 6 sections active':'Test '+t+': 5 sections active';
+  document.getElementById('sectionNote').textContent=label;
+  document.getElementById('errInputs').innerHTML=secs.map(function(s){
+    return '<div class="err-input-item"><label>'+s+'</label><input type="number" min="0" max="45" placeholder="0" id="err_'+s.replace(/\W+/g,'_')+'"></div>';
+  }).join('');
+}
+
+function closeModal(){ document.getElementById('logOverlay').classList.remove('open'); }
+
+function saveEntry() {
+  var testNum=parseInt(document.getElementById('logTestNum').value);
+  var scoreRaw=document.getElementById('logScore').value.trim();
+  var status=document.getElementById('saveStatus');
+  var btn=document.getElementById('saveBtn');
+  if(!testNum){status.innerHTML='<span class="save-err">Select a test number.</span>';return;}
+  var score=parseInt(scoreRaw);
+  if(isNaN(score)||score<-45||score>MAX_SCORE){status.innerHTML='<span class="save-err">Enter a valid score.</span>';return;}
+  var secs=getSections(testNum);
+  var errors={};
+  secs.forEach(function(s){var el=document.getElementById('err_'+s.replace(/\W+/g,'_'));if(el)errors[s]=parseInt(el.value)||0;});
+  var entry={test:testNum,score:score,errors:errors,wrongQuestions:[],ts:Date.now()};
+  entries=entries.filter(function(e){return e.test!==testNum;});
+  entries.push(entry);
+  saveToStorage();
+  btn.disabled=true;
+  status.innerHTML='<span class="save-info">Saving...</span>';
+  var payload={student:student.name,batch:student.batch,test:entry.test,score:entry.score,errors:entry.errors,wrongQuestions:[],ts:entry.ts};
+  fetch(SHEET_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
+    .then(function(){status.innerHTML='<span class="save-ok">Saved and synced</span>';})
+    .catch(function(){status.innerHTML='<span class="save-ok">Saved locally</span>';})
+    .finally(function(){setTimeout(function(){closeModal();renderDash();},900);});
+}
+
+function show(id){
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
+  document.getElementById(id).classList.add('active');
+}
+</script>
+</body>
+</html>
