@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Road to IIM — Sahil Sir</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,700;1,9..144,400&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0f0e0c;--bg2:#181714;--bg3:#211f1b;
+  --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.14);
+  --gold:#c9a84c;--gold2:#e8c97a;--gold-dim:rgba(201,168,76,0.12);
+  --text:#f0ece3;--text2:#a09880;--text3:#5a5545;
+  --green:#4caf82;--green-dim:rgba(76,175,130,0.1);
+  --radius:10px;--radius-lg:16px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh}
+
+/* HEADER */
+.header{border-bottom:0.5px solid var(--border);padding:1.25rem 2rem;display:flex;align-items:center;justify-content:space-between}
+.brand-main{font-family:'Fraunces',serif;font-size:20px;font-weight:500;color:var(--gold2);letter-spacing:-0.3px}
+.brand-sub{font-size:12px;color:var(--text3);font-family:'DM Mono',monospace;letter-spacing:.05em;margin-top:2px}
+
+/* HERO */
+.hero{max-width:860px;margin:0 auto;padding:3.5rem 2rem 2rem}
+.hero-tag{font-size:11px;font-family:'DM Mono',monospace;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;margin-bottom:1rem}
+.hero-title{font-family:'Fraunces',serif;font-size:clamp(32px,5vw,52px);font-weight:300;line-height:1.15;color:var(--text);margin-bottom:1rem}
+.hero-title em{font-style:italic;color:var(--gold2)}
+.hero-desc{font-size:15px;color:var(--text2);line-height:1.7;max-width:520px;margin-bottom:2rem}
+.hero-cta{display:inline-flex;align-items:center;gap:10px;background:var(--gold);color:#0f0e0c;padding:13px 24px;border-radius:var(--radius);font-size:14px;font-weight:500;text-decoration:none;transition:background .2s}
+.hero-cta:hover{background:var(--gold2)}
+.hero-cta-ghost{display:inline-flex;align-items:center;gap:10px;background:transparent;border:0.5px solid var(--border2);color:var(--text2);padding:13px 24px;border-radius:var(--radius);font-size:14px;text-decoration:none;transition:background .2s;margin-left:10px}
+.hero-cta-ghost:hover{background:var(--bg3)}
+
+/* DIVIDER */
+.divider{max-width:860px;margin:0 auto;padding:0 2rem}
+.divider hr{border:none;border-top:0.5px solid var(--border)}
+
+/* SECTION */
+.section{max-width:860px;margin:0 auto;padding:2rem}
+.section-label{font-size:11px;font-family:'DM Mono',monospace;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:1.25rem}
+
+/* TEST CARDS */
+.test-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px}
+.test-card{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem 1.5rem;text-decoration:none;display:block;transition:border-color .2s,background .2s;position:relative;overflow:hidden}
+.test-card:hover{border-color:var(--border2);background:var(--bg3)}
+.test-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--gold);opacity:0;transition:opacity .2s}
+.test-card:hover::before{opacity:1}
+.test-num{font-size:11px;font-family:'DM Mono',monospace;color:var(--text3);margin-bottom:8px}
+.test-title{font-family:'Fraunces',serif;font-size:20px;font-weight:300;color:var(--text);margin-bottom:4px}
+.test-meta{font-size:12px;color:var(--text3);margin-bottom:14px}
+.test-tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag{font-size:11px;font-family:'DM Mono',monospace;padding:3px 8px;border-radius:4px;background:var(--bg3);color:var(--text3);border:0.5px solid var(--border)}
+.tag.live{background:var(--green-dim);color:var(--green);border-color:rgba(76,175,130,0.2)}
+.test-arrow{position:absolute;bottom:1.25rem;right:1.25rem;font-size:18px;color:var(--text3);transition:color .2s,transform .2s}
+.test-card:hover .test-arrow{color:var(--gold);transform:translate(2px,-2px)}
+
+/* COMING SOON */
+.coming-card{background:var(--bg2);border:0.5px dashed var(--border);border-radius:var(--radius-lg);padding:1.25rem 1.5rem;opacity:.4}
+.coming-num{font-size:11px;font-family:'DM Mono',monospace;color:var(--text3);margin-bottom:8px}
+.coming-title{font-family:'Fraunces',serif;font-size:20px;font-weight:300;color:var(--text3)}
+
+/* TRACKER BANNER */
+.tracker-banner{background:var(--gold-dim);border:0.5px solid var(--gold);border-radius:var(--radius-lg);padding:1.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-bottom:2rem}
+.tracker-info{}
+.tracker-title{font-family:'Fraunces',serif;font-size:18px;font-weight:400;color:var(--gold2);margin-bottom:4px}
+.tracker-desc{font-size:13px;color:var(--text2);line-height:1.5}
+.tracker-btn{background:var(--gold);color:#0f0e0c;padding:10px 20px;border-radius:var(--radius);font-size:13px;font-weight:500;text-decoration:none;white-space:nowrap;transition:background .2s;flex-shrink:0}
+.tracker-btn:hover{background:var(--gold2)}
+
+/* FOOTER */
+.footer{border-top:0.5px solid var(--border);padding:1.5rem 2rem;text-align:center;font-size:12px;color:var(--text3);font-family:'DM Mono',monospace;margin-top:2rem}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="brand-main">Road to IIM</div>
+    <div class="brand-sub">Verbal Ability Test Series · Sahil Sir</div>
+  </div>
+</div>
+
+<div class="hero">
+  <div class="hero-tag">IMS Ahmedabad · IPMAT Prep</div>
+  <h1 class="hero-title">Your road to<br><em>IIM starts here.</em></h1>
+  <p class="hero-desc">Weekly verbal ability tests covering vocabulary, analogies, reading comprehension, critical reasoning, and more. Track your progress. Find your gaps. Fix them.</p>
+  <a href="road_to_iim_tracker.html" class="hero-cta">Track my progress →</a>
+  <a href="#tests" class="hero-cta-ghost">View all tests</a>
+</div>
+
+<div class="divider"><hr></div>
+
+<div class="section" id="tests">
+  <div class="section-label">Performance tracker</div>
+  <div class="tracker-banner">
+    <div class="tracker-info">
+      <div class="tracker-title">See your error patterns across all tests</div>
+      <div class="tracker-desc">Log your score and wrong answers after each test. The tracker shows your trend, your weakest section, and exactly what to work on next.</div>
+    </div>
+    <a href="road_to_iim_tracker.html" class="tracker-btn">Open tracker →</a>
+  </div>
+
+  <div class="section-label">Live tests</div>
+  <div class="test-grid">
+
+    <a href="RoadToIIM_Test9_OnlineTest.html" class="test-card">
+      <div class="test-num">TEST 09</div>
+      <div class="test-title">Verbal Ability</div>
+      <div class="test-meta">45 Qs · 40 min · +4 / −1</div>
+      <div class="test-tags">
+        <span class="tag live">Live</span>
+        <span class="tag">FITB</span>
+        <span class="tag">Analogy</span>
+        <span class="tag">OWS</span>
+      </div>
+      <div class="test-arrow">↗</div>
+    </a>
+
+    <a href="RoadToIIM_Test11_OnlineTest.html" class="test-card">
+      <div class="test-num">TEST 11</div>
+      <div class="test-title">Verbal Ability</div>
+      <div class="test-meta">45 Qs · 40 min · +4 / −1</div>
+      <div class="test-tags">
+        <span class="tag live">Live</span>
+        <span class="tag">FITB</span>
+        <span class="tag">Analogy</span>
+        <span class="tag">OWS</span>
+      </div>
+      <div class="test-arrow">↗</div>
+    </a>
+
+    <div class="coming-card">
+      <div class="coming-num">TEST 12</div>
+      <div class="coming-title">Coming soon</div>
+    </div>
+
+  </div>
+</div>
+
+<div class="footer">Road to IIM · Sahil Sir · IMS Ahmedabad</div>
+
+</body>
+</html>
