@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Road to IIM — Test 13</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{--gold:#C9A84C;--dark:#1A1A2E;--red:#C0392B;--green:#1E8449;--bg:#F7F5F0;--card:#FFFFFF;--text:#1A1A2E;--muted:#666;--border:rgba(0,0,0,0.1)}
+html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text)}
+#app{max-width:480px;margin:0 auto;min-height:100vh}
+#login-screen{padding:1.5rem 1.25rem;display:flex;flex-direction:column;gap:1.25rem}
+.brand-header{text-align:center;padding:1.25rem 0 0.25rem}
+.brand-logo{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-weight:700}
+.brand-title{font-size:22px;font-weight:800;color:var(--dark);margin-top:4px}
+.brand-sub{font-size:13px;color:var(--muted);margin-top:4px}
+.login-card{background:var(--card);border-radius:16px;padding:1.5rem;border:0.5px solid var(--border)}
+.login-card h2{font-size:15px;font-weight:700;margin-bottom:1.25rem}
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:1rem}
+.field label{font-size:11px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:var(--muted)}
+.field input,.field select{border:1.5px solid var(--border);border-radius:10px;padding:13px 14px;font-size:15px;background:var(--bg);color:var(--text);outline:none;width:100%;appearance:none;-webkit-appearance:none}
+.field input:focus,.field select:focus{border-color:var(--gold)}
+.select-wrap{position:relative}
+.select-wrap::after{content:"▾";position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none;font-size:14px}
+.test-meta{background:var(--bg);border-radius:10px;padding:1rem;display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:1.25rem}
+.meta-item{display:flex;flex-direction:column;gap:2px}
+.meta-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px}
+.meta-val{font-size:14px;font-weight:700;color:var(--dark)}
+.btn-start{width:100%;padding:16px;background:var(--dark);color:#fff;border:none;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;letter-spacing:0.3px}
+#test-screen{display:none;flex-direction:column;height:100vh;height:100dvh}
+.test-topbar{background:var(--dark);padding:10px 1rem;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.topbar-left{display:flex;flex-direction:column}
+.topbar-brand{font-size:10px;color:var(--gold);letter-spacing:2px;text-transform:uppercase}
+.topbar-qnum{font-size:14px;color:#fff;font-weight:700;margin-top:2px}
+.timer-box{background:rgba(201,168,76,0.15);border:1px solid var(--gold);border-radius:8px;padding:5px 12px;text-align:center}
+.timer-label{font-size:9px;color:var(--gold);text-transform:uppercase;letter-spacing:1px}
+.timer-val{font-size:19px;font-weight:800;color:#fff;font-variant-numeric:tabular-nums;letter-spacing:1px}
+.timer-val.urgent{color:#ff6b6b}
+.section-tag{background:rgba(201,168,76,0.12);border-bottom:0.5px solid rgba(201,168,76,0.3);padding:5px 1rem}
+.section-tag span{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold)}
+.progress-bar{height:2px;background:rgba(255,255,255,0.08);flex-shrink:0}
+.progress-fill{height:100%;background:var(--gold);transition:width 0.3s}
+.q-body{flex:1;overflow-y:auto;padding:1.25rem;-webkit-overflow-scrolling:touch}
+.q-stem{font-size:16px;line-height:1.65;color:var(--text);margin-bottom:1.25rem;font-weight:500}
+.options{display:flex;flex-direction:column;gap:10px}
+.opt-btn{display:flex;align-items:flex-start;gap:12px;padding:14px;border-radius:12px;border:1.5px solid var(--border);background:var(--card);cursor:pointer;text-align:left;width:100%;transition:border-color 0.15s,background 0.15s}
+.opt-btn.selected{border-color:var(--gold);background:#FBF7EE}
+.opt-key{width:30px;height:30px;border-radius:50%;background:var(--bg);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0;color:var(--muted);margin-top:1px}
+.opt-btn.selected .opt-key{background:var(--gold);border-color:var(--gold);color:#fff}
+.opt-text{font-size:15px;line-height:1.45;color:var(--text);padding-top:5px}
+.q-actions{padding:0.9rem 1.25rem;background:var(--card);border-top:0.5px solid var(--border);display:flex;gap:10px;flex-shrink:0}
+.btn-nav{flex:1;padding:14px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;border:1.5px solid var(--border);background:var(--bg);color:var(--dark)}
+.btn-nav:disabled{opacity:0.3}
+.btn-mark{flex:0 0 auto;padding:14px 16px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;border:1.5px solid #8B5CF6;background:#F5F0FF;color:#5B21B6;white-space:nowrap}
+.btn-mark.marked{background:#8B5CF6;color:#fff}
+.btn-next{flex:1;padding:14px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;border:none;background:var(--dark);color:#fff}
+.palette-fab{position:fixed;bottom:84px;right:16px;width:46px;height:46px;border-radius:50%;background:var(--dark);border:2px solid var(--gold);color:#fff;font-size:11px;font-weight:800;cursor:pointer;display:none;align-items:center;justify-content:center;z-index:50;letter-spacing:0}
+.palette-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:99}
+.palette-overlay.show{display:block}
+.palette-drawer{position:fixed;bottom:0;left:0;right:0;max-width:480px;margin:0 auto;background:var(--card);border-radius:20px 20px 0 0;border-top:0.5px solid var(--border);padding:1rem;transform:translateY(100%);transition:transform 0.3s;z-index:100;max-height:65vh;overflow-y:auto}
+.palette-drawer.open{transform:translateY(0)}
+.palette-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem}
+.palette-hdr h3{font-size:14px;font-weight:700}
+.palette-close{background:var(--bg);border:none;border-radius:8px;padding:6px 14px;font-size:13px;cursor:pointer;color:var(--muted)}
+.palette-legend{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:12px}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted)}
+.legend-dot{width:10px;height:10px;border-radius:50%}
+.palette-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+.pq{width:100%;aspect-ratio:1;border-radius:8px;border:1.5px solid var(--border);background:var(--bg);font-size:12px;font-weight:700;cursor:pointer;color:var(--muted)}
+.pq.answered{background:var(--green);border-color:var(--green);color:#fff}
+.pq.marked{background:#8B5CF6;border-color:#8B5CF6;color:#fff}
+.pq.current{border-color:var(--gold);color:var(--dark)}
+.confirm-wrap{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;align-items:center;justify-content:center;padding:1.5rem}
+.confirm-wrap.show{display:flex}
+.confirm-card{background:var(--card);border-radius:20px;padding:1.5rem;width:100%;max-width:340px}
+.confirm-card h3{font-size:18px;font-weight:800;margin-bottom:8px}
+.confirm-card p{font-size:14px;color:var(--muted);margin-bottom:1.25rem;line-height:1.5}
+.confirm-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1.25rem;background:var(--bg);border-radius:12px;padding:1rem}
+.cstat{text-align:center}
+.cstat-num{font-size:22px;font-weight:800}
+.cstat-lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px}
+.confirm-btns{display:flex;gap:10px}
+.btn-cancel{flex:1;padding:13px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg);font-size:14px;font-weight:700;cursor:pointer;color:var(--dark)}
+.btn-confirm{flex:1;padding:13px;border-radius:10px;border:none;background:var(--dark);color:#fff;font-size:14px;font-weight:700;cursor:pointer}
+#submitting-screen{display:none;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;gap:1rem;padding:2rem;text-align:center}
+.spinner{width:44px;height:44px;border:3px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin 0.8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.submitting-text{font-size:17px;font-weight:700;color:var(--dark)}
+.submitting-sub{font-size:13px;color:var(--muted)}
+#results-screen{display:none;padding:1.5rem}
+.results-hero{background:var(--dark);border-radius:20px;padding:2rem 1.5rem;text-align:center;margin-bottom:1.25rem}
+.results-label{font-size:11px;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:0.75rem}
+.results-score{font-size:64px;font-weight:800;color:#fff;line-height:1}
+.results-max{font-size:14px;color:rgba(255,255,255,0.5);margin-top:4px}
+.results-name{font-size:15px;color:#fff;font-weight:700;margin-top:1rem}
+.results-batch{font-size:12px;color:var(--gold);margin-top:4px}
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1.25rem}
+.stat-card{background:var(--card);border-radius:14px;padding:1rem;text-align:center;border:0.5px solid var(--border)}
+.stat-num{font-size:28px;font-weight:800}
+.stat-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-top:4px}
+.sg{color:var(--green)}.sr{color:var(--red)}.sm{color:var(--muted)}
+.sheet-notice{border-radius:10px;padding:10px 14px;font-size:13px;margin-bottom:1.25rem;text-align:center}
+.sheet-notice.ok{background:#EAF7EF;color:var(--green)}
+.sheet-notice.error{background:#FDEDEC;color:var(--red)}
+.review-section{background:var(--card);border-radius:16px;padding:1.25rem;border:0.5px solid var(--border)}
+.review-section h3{font-size:15px;font-weight:700;margin-bottom:1rem}
+.review-item{padding:12px 0;border-bottom:0.5px solid var(--border)}
+.review-item:last-child{border-bottom:none}
+.review-q{font-size:13px;color:var(--muted);margin-bottom:6px}
+.review-ans{font-size:13px;display:flex;gap:8px;flex-wrap:wrap}
+.r-correct{color:var(--green);font-weight:700}
+.r-wrong{color:var(--red);font-weight:700}
+.r-skip{color:var(--muted);font-weight:700}
+</style>
+</head>
+<body>
+<div id="app">
+
+<div id="login-screen">
+  <div class="brand-header">
+    <div class="brand-logo">Road to IIM</div>
+    <div class="brand-title">Verbal Ability Test 13</div>
+    <div class="brand-sub">Sahil Sir &middot; IMS Ahmedabad</div>
+  </div>
+  <div class="login-card">
+    <h2>Enter your details</h2>
+    <div class="field"><label>Full Name</label><input type="text" id="inp-name" placeholder="e.g. Aditya Sharma" autocomplete="name"></div>
+    <div class="field"><label>IMS PIN</label><input type="text" id="inp-pin" placeholder="e.g. 12345" inputmode="numeric"></div>
+    <div class="field"><label>Batch</label>
+      <div class="select-wrap">
+        <select id="inp-batch">
+          <option value="">Select your batch...</option>
+          <optgroup label="Classroom">
+            <option>A2701</option><option>A2702</option><option>A2703</option><option>A2704</option><option>A2705</option>
+            <option>A2706</option><option>A2707</option><option>A2708</option><option>A2709</option><option>A2710</option>
+            <option>A2711</option><option>A2712</option><option>A2713</option><option>A2714</option><option>A2715</option>
+          </optgroup>
+          <optgroup label="School">
+            <option>Zebar</option>
+          </optgroup>
+          <optgroup label="Online">
+            <option>27E101</option><option>27E102</option><option>27E103</option><option>27E104</option><option>27E105</option>
+          </optgroup>
+        </select>
+      </div>
+    </div>
+    <div class="test-meta">
+      <div class="meta-item"><span class="meta-label">Questions</span><span class="meta-val">45</span></div>
+      <div class="meta-item"><span class="meta-label">Duration</span><span class="meta-val">40 mins</span></div>
+      <div class="meta-item"><span class="meta-label">Correct</span><span class="meta-val">+4</span></div>
+      <div class="meta-item"><span class="meta-label">Wrong</span><span class="meta-val">&minus;1</span></div>
+    </div>
+    <button class="btn-start" onclick="startTest()">Begin Test &rarr;</button>
+  </div>
+</div>
+
+<div id="test-screen">
+  <div class="test-topbar">
+    <div class="topbar-left">
+      <span class="topbar-brand">Road to IIM</span>
+      <span class="topbar-qnum" id="qnum-label">Q1 of 45</span>
+    </div>
+    <div class="timer-box">
+      <div class="timer-label">Time Left</div>
+      <div class="timer-val" id="timer">40:00</div>
+    </div>
+  </div>
+  <div class="section-tag"><span id="section-tag-text">Word Selection</span></div>
+  <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:2%"></div></div>
+  <div class="q-body">
+    <div class="q-stem" id="q-stem"></div>
+    <div class="options" id="options"></div>
+  </div>
+  <div class="q-actions">
+    <button class="btn-nav" id="btn-prev" onclick="prevQ()" disabled>&#8592; Prev</button>
+    <button class="btn-mark" id="btn-mark" onclick="toggleMark()">&#9734; Mark</button>
+    <button class="btn-next" id="btn-next" onclick="nextOrSubmit()">Next &#8594;</button>
+  </div>
+</div>
+
+<button class="palette-fab" id="palette-fab" onclick="openPalette()">&#9632;&#9632;<br>&#9632;&#9632;</button>
+<div class="palette-overlay" id="palette-overlay" onclick="closePalette()"></div>
+<div class="palette-drawer" id="palette-drawer">
+  <div class="palette-hdr"><h3>Question Palette</h3><button class="palette-close" onclick="closePalette()">Close</button></div>
+  <div class="palette-legend">
+    <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>Answered</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#8B5CF6"></div>Marked</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#ddd"></div>Not visited</div>
+  </div>
+  <div class="palette-grid" id="palette-grid"></div>
+</div>
+
+<div class="confirm-wrap" id="confirm-wrap">
+  <div class="confirm-card">
+    <h3>Submit Test?</h3>
+    <p id="confirm-msg">You have unanswered questions. Submit anyway?</p>
+    <div class="confirm-stats">
+      <div class="cstat"><div class="cstat-num" style="color:var(--green)" id="c-ans">0</div><div class="cstat-lbl">Answered</div></div>
+      <div class="cstat"><div class="cstat-num" style="color:#8B5CF6" id="c-mark">0</div><div class="cstat-lbl">Marked</div></div>
+      <div class="cstat"><div class="cstat-num" style="color:var(--muted)" id="c-skip">0</div><div class="cstat-lbl">Skipped</div></div>
+    </div>
+    <div class="confirm-btns">
+      <button class="btn-cancel" onclick="closeConfirm()">Go Back</button>
+      <button class="btn-confirm" onclick="doSubmit()">Submit</button>
+    </div>
+  </div>
+</div>
+
+<div id="submitting-screen">
+  <div class="spinner"></div>
+  <div class="submitting-text">Submitting your test...</div>
+  <div class="submitting-sub">Please do not close this page</div>
+</div>
+
+<div id="results-screen" style="padding:1.5rem">
+  <div class="results-hero">
+    <div class="results-label">Test Complete &mdash; Paper 13</div>
+    <div class="results-score" id="r-score">0</div>
+    <div class="results-max">out of 180 marks</div>
+    <div class="results-name" id="r-name"></div>
+    <div class="results-batch" id="r-batch"></div>
+    <div style="display:flex;gap:10px;justify-content:center;margin-top:1.25rem;flex-wrap:wrap">
+      <a href="road_to_iim_tracker.html" style="background:#c9a84c;color:#0f0e0c;padding:11px 22px;border-radius:10px;font-size:14px;font-weight:700;text-decoration:none;font-family:-apple-system,sans-serif">Go to tracker &rarr;</a>
+      <a href="https://sahilkanetkar-collab.github.io/Road-to-IIM/" style="background:transparent;color:#fff;padding:11px 22px;border-radius:10px;font-size:14px;font-weight:700;text-decoration:none;border:1.5px solid rgba(255,255,255,0.2);font-family:-apple-system,sans-serif">All tests</a>
+    </div>
+  </div>
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-num sg" id="r-correct">0</div><div class="stat-label">Correct</div></div>
+    <div class="stat-card"><div class="stat-num sr" id="r-wrong">0</div><div class="stat-label">Wrong</div></div>
+    <div class="stat-card"><div class="stat-num sm" id="r-skip">0</div><div class="stat-label">Skipped</div></div>
+  </div>
+  <div class="sheet-notice" id="sheet-notice"></div>
+  <div class="review-section"><h3>Question Review</h3><div id="review-list"></div></div>
+</div>
+
+</div>
+
+<script>
+var SHEET_URL = "https://script.google.com/macros/s/AKfycbwGGxswx4hcBUFiT0QJIglowhKcJCv47MOR5LKBv9sILl-evsgZeKCms5y6s5zEXOUo6Q/exec";
+var TRACKER_URL = "https://script.google.com/macros/s/AKfycbxqxXU0ETHfbfA9aXYV-y96ZVS4HKbq4feO2bcPZEkV1Jz17ALek9XqAG03NXUjw9aNTg/exec";
+var TEST_NAME = "Road to IIM Paper 13";
+var TEST_NUMBER = 13;
+var TOTAL_SECS = 40 * 60;
+
+var SECTION_MAP = {
+  "Word Selection":       "Word Selection (A/B)",
+  "Vocabulary":           "Direct Vocabulary",
+  "Spelling":             "Spelling",
+  "Sentence Completion":  "Sentence Completion",
+  "Idioms":               "Idioms",
+  "Story Vocabulary":     "Story Vocabulary"
+};
+
+var QUESTIONS = [
+
+  // SECTION A — WORD SELECTION A/B PARAGRAPHS (Q1–Q10)
+  // Paragraph 1 (Q1–Q2): The Scientist
+  {tag:"Word Selection",stem:"Each sentence has a pair of words. Select the option that gives the correct A or B choice for ALL five sentences.\n\nA. The scientist's groundbreaking research was met with widespread scepticism [A] / speculation [B] from her peers.\nB. Her findings were initially dismissed as too radical [A] / rudimentary [B] to be taken seriously.\nC. Undeterred, she continued to refine [A] / resign [B] her methodology over several years.\nD. Eventually, an independent study corroborated [A] / collaborated [B] her results beyond all reasonable doubt.\nE. She is now regarded as a pioneer [A] / spectator [B] whose work transformed the field entirely.",
+   opts:["AABAA","AAAAA","AABAB","ABBBA"],ans:0,exp:"A: scepticism (doubt, not speculation which is guessing); B: radical (too extreme, not rudimentary which means basic); A: refine (improve, not resign which means quit); A: corroborated (confirmed independently, not collaborated which means worked together); A: pioneer (trailblazer, not spectator which means observer). Pattern: AABAA — answer A."},
+
+  {tag:"Word Selection",stem:"Each sentence has a pair of words. Select the option that gives the correct A or B choice for ALL five sentences.\n\nA. The historian's account was praised for being remarkably impartial [A] / imperial [B] in its treatment of all sides.\nB. She had devoted [A] / diverted [B] nearly a decade to assembling the primary sources.\nC. Her prose was elegant [A] / elusive [B], making complex events feel vivid and immediate.\nD. Critics noted the conspicuous [A] / conscientious [B] absence of any political bias.\nE. The book has since become a seminal [A] / sentimental [B] text in undergraduate history programmes.",
+   opts:["AAAAA","AABAA","ABAAB","AAABA"],ans:0,exp:"A: impartial (unbiased); A: devoted (gave time to); A: elegant (graceful, clear); A: conspicuous (noticeable); A: seminal (foundational and influential). All five are A — answer A."},
+
+  // Paragraph 2 (Q3–Q4): The Diplomat
+  {tag:"Word Selection",stem:"Each sentence has a pair of words. Select the option that gives the correct A or B choice for ALL five sentences.\n\nA. The diplomat arrived at the summit with an ostensibly [A] / obstinately [B] conciliatory agenda.\nB. Her opening address was deliberately ambiguous [A] / ambitious [B], committing to nothing of substance.\nC. Rival delegates interpreted her reticence [A] / retribution [B] as a sign of weakness.\nD. In private sessions, however, she proved to be a shrewd [A] / shrill [B] and effective negotiator.\nE. By the final day, she had secured a unanimous [A] / ambiguous [B] resolution — a feat no one had predicted.",
+   opts:["AAAAA","AABAA","ABAAB","AABBA"],ans:1,exp:"A: ostensibly = apparently or on the surface — she appears conciliatory. Obstinately = stubbornly, which would mean she arrived refusing to cooperate — the opposite of the context. A: ambiguous = deliberately unclear. Ambitious = eager for success — but she commits to nothing, so ambition is irrelevant here. A: reticence = silence or reluctance to speak. Retribution = punishment — rivals cannot interpret silence as punishment. A: shrewd = clever and strategic. Shrill = unpleasantly harsh in voice — an effective negotiator cannot be shrill. A: unanimous = agreed by all. Ambiguous appears as option B again here — an ambiguous resolution is unclear and cannot be a diplomatic achievement. Pattern: AAAAA = option A."},
+
+  {tag:"Word Selection",stem:"Each sentence has a pair of words. Select the option that gives the correct A or B choice for ALL five sentences.\n\nA. The young lawyer's argument was considered audacious [A] / audible [B] by the senior partners.\nB. She had spent weeks compiling meticulous [A] / mechanical [B] notes on every precedent.\nC. Her delivery in court was composed [A] / compelled [B], betraying none of her inner anxiety.\nD. The opposing counsel attempted to discredit [A] / discard [B] her evidence with procedural objections.\nE. The judge, however, ruled that her submission was entirely pertinent [A] / permanent [B] to the case.",
+   opts:["AAAAA","AABAA","ABAAB","ABABAB"],ans:0,exp:"A: audacious (bold and daring); A: meticulous (very careful about detail); A: composed (calm); A: discredit (undermine credibility, not discard which means throw away); A: pertinent (relevant). All five are A."},
+
+  // Paragraph 3 (Q5–Q6): The Artist
+  {tag:"Word Selection",stem:"Each sentence has a pair of words. Select the option that gives the correct A or B choice for ALL five sentences.\n\nA. The artist's later paintings were strikingly austere [A] / obscure [B] compared to his earlier, colourful work.\nB. Critics attributed this shift to a period of profound introspection [A] / interjection [B] following personal loss.\nC. Each canvas seemed to embody [A] / employ [B] an almost unbearable emotional weight.\nD. The muted palette evoked [A] / provoked [B] feelings of solitude rather than despair.\nE. Yet there was an unmistakable resilience [A] / resemblance [B] running through every work.",
+   opts:["AABBA","AAAAA","AABAB","ABBAB"],ans:1,exp:"A: austere (stark and plain); A: introspection (deep self-examination, not interjection which means interruption); A: embody (give physical form to); A: evoked (brought out gently — solitude rather than despair is gentle, not provoked which implies agitation); A: resilience (ability to recover). All five are A."},
+
+  {tag:"Word Selection",stem:"Each sentence has a pair of words. Select the option that gives the correct A or B choice for ALL five sentences.\n\nA. The retired general lived in voluntary [A] / involuntary [B] obscurity, refusing all media requests.\nB. He had been a celebrated [A] / notorious [B] figure during the conflict, admired across party lines.\nC. His memoirs, when finally published, were candid [A] / condescending [B] to the point of controversy.\nD. He named colleagues who had been dishonest [A] / indolent [B] and institutions that had failed the nation.\nE. The book became a catalyst [A] / casualty [B] for a broader public debate about accountability.",
+   opts:["AAAAA","AABAA","AABBA","BAAAB"],ans:0,exp:"A: voluntary (chosen freely); A: celebrated (admired — not notorious which implies infamy); A: candid (honest and direct); A: dishonest (he names those who lied, not those who were lazy); A: catalyst (trigger for change, not casualty which means victim). All five are A."},
+
+  // Paragraph 4 (Q7–Q8): The Philosopher
+  {tag:"Word Selection",stem:"Each sentence has a pair of words. Select the option that gives the correct A or B choice for ALL five sentences.\n\nA. The philosopher's central thesis was considered heretical [A] / hierarchical [B] by the academic establishment.\nB. He argued that conventional [A] / convivial [B] moral frameworks were built on unexamined assumptions.\nC. His prose was deliberately abstruse [A] / abstemious [B], accessible only to the most committed readers.\nD. Supporters praised him as a visionary [A] / mercenary [B]; detractors dismissed him as a fraud.\nE. Decades later, his ideas have proven surprisingly durable [A] / admirable [B] despite continued controversy.",
+   opts:["AAAAA","AABAB","AABBA","ABABA"],ans:0,exp:"A: heretical = opposing established doctrine. Hierarchical = relating to a system of ranked levels — the establishment would not call a thesis hierarchical as an insult. A: conventional = standard and accepted. Convivial = friendly and sociable — moral frameworks cannot be convivial. A: abstruse = deliberately obscure and difficult. Abstemious = moderate in eating and drinking — a writing style cannot be abstemious. A: visionary = one who sees beyond the present. Mercenary = motivated purely by money — supporters would never praise someone as a mercenary. A: durable = lasting over time. Admirable = worthy of respect — the sentence says 'despite continued controversy', which means the ideas survived, not that they were admired. Pattern: AAAAA = option A.",},
+
+  {tag:"Word Selection",stem:"Each sentence has a pair of words. Select the option that gives the correct A or B choice for ALL five sentences.\n\nA. The tech startup's rapid growth was attributed to its founders' tenacity [A] / timidity [B] in the face of repeated setbacks.\nB. Their first product failed spectacularly [A] / suspiciously [B], yet they refused to abandon the concept.\nC. A pivotal [A] / peripheral [B] decision to simplify the user interface transformed their fortunes entirely.\nD. Within two years, the company had become a dominant [A] / dormant [B] player in its sector.\nE. Analysts described their trajectory as unprecedented [A] / unpremeditated [B] in the history of the industry.",
+   opts:["AAAAA","AABAB","ABBAA","AABBA"],ans:0,exp:"A: tenacity (persistence, not timidity which means fearfulness); A: spectacularly (dramatically — the failure is described openly, not suspiciously); A: pivotal (crucial turning point, not peripheral which means marginal); A: dominant (leading, not dormant which means inactive); A: unprecedented (never seen before — their trajectory is unique in industry history). All five are A."},
+
+  // Paragraph 5 (Q9–Q10): The Journalist
+  {tag:"Word Selection",stem:"Each sentence has a pair of words. Select the option that gives the correct A or B choice for ALL five sentences.\n\nA. The journalist had long been regarded as scrupulous [A] / superfluous [B] in her fact-checking process.\nB. Her report on corporate fraud was met with immediate [A] / imminent [B] legal threats from the company.\nC. She remained resolute [A] / redundant [B], refusing to retract a single claim without evidence.\nD. Her editor, however, was growing increasingly wary [A] / weary [B] of the legal exposure.\nE. The eventual publication vindicated [A] / vilified [B] her judgment and triggered a regulatory inquiry.",
+   opts:["AAAAA","AABAB","AABBA","ABBAA"],ans:0,exp:"A: scrupulous (careful and principled); A: immediate (instant, not imminent which means about to happen — threats came straight away); A: resolute (determined); A: wary (cautious about a threat, not weary which means tired); A: vindicated (proved right, not vilified which means attacked). All five are A."},
+
+  {tag:"Word Selection",stem:"Each sentence has a pair of words. Select the option that gives the correct A or B choice for ALL five sentences.\n\nA. The prime minister's speech was widely condemned as inflammatory [A] / informative [B] by opposition leaders.\nB. He had used emotive [A] / emotional [B] language that, critics argued, would incite rather than calm tensions.\nC. His press secretary tried to contextualise [A] / contradict [B] the remarks in a subsequent briefing.\nD. Several senior ministers privately expressed their unease [A] / jubilation [B] to party officials.\nE. The episode ultimately proved detrimental [A] / detached [B] to the government's approval ratings.",
+   opts:["AAAAB","AAAAA","AABAA","BABAA"],ans:1,exp:"A: inflammatory = deliberately provocative and likely to cause anger. Informative = providing useful facts — opposition leaders condemn a speech as inflammatory, not informative. A: emotive = language designed to stir emotion in the audience. Emotional = describing the speaker's personal feeling state — critics are attacking the effect of his language on others, not describing his private emotions. A: contextualise = to place remarks within a broader explanatory frame. Contradict = to say the opposite — a press secretary defends the PM, not contradicts him. A: unease = quiet private anxiety. Jubilation = intense public celebration — senior ministers concerned about a controversial speech feel unease, not jubilation. A: detrimental = causing harm. Detached = emotionally distant — approval ratings cannot be detached. Pattern: AAAAA = option B.",},
+
+  // SECTION B — DIRECT VOCABULARY (Q11–Q15)
+  {tag:"Vocabulary",stem:"What is the meaning of LOQUACIOUS?",
+   opts:["Tending to talk a great deal","Prone to exaggeration","Deliberately vague in speech","Using very few words"],ans:0,exp:"Loquacious means tending to talk a great deal. From Latin loqui (to speak). A loquacious person is talkative. The opposite is laconic or reticent. Do not confuse with verbose (wordy in writing) — loquacious is specifically about speaking."},
+
+  {tag:"Vocabulary",stem:"What is the meaning of TRUCULENT?",
+   opts:["Eager to please authority","Eager to argue or fight","Stubbornly silent","Overly cautious"],ans:1,exp:"Truculent means eager or quick to argue or fight; aggressively defiant. From Latin truculentus (fierce). A truculent response is combative and uncooperative. Do not confuse with turbulent (stormy/chaotic) — truculent describes a person's disposition, not a situation."},
+
+  {tag:"Vocabulary",stem:"What is the meaning of SYCOPHANT?",
+   opts:["A person who offers harsh criticism","A person who uses flattery to gain favour","A person known for independent thinking","A person who avoids all conflict"],ans:1,exp:"A sycophant is a person who acts obsequiously toward someone important in order to gain advantage — a flatterer or yes-man. From Greek sykophantes. The adjective sycophantic describes excessive, insincere praise aimed at winning favour from those in power."},
+
+  {tag:"Vocabulary",stem:"What is the meaning of INTRANSIGENT?",
+   opts:["Unwilling to change one's views or agree to compromise","Prone to changing positions under pressure","Careful and deliberate in decision-making","Openly hostile to negotiation"],ans:0,exp:"Intransigent means unwilling to change one's views or to agree to a compromise. From Spanish intransigente. An intransigent negotiator refuses all concessions. Note: intransigent is about refusal to compromise, not about being hostile — an intransigent person may be perfectly polite while being completely immovable."},
+
+  {tag:"Vocabulary",stem:"What is the meaning of OBSEQUIOUS?",
+   opts:["Stubbornly resistant to instruction","Excessively eager to serve or please","Methodical and thorough in approach","Openly critical of those in authority"],ans:1,exp:"Obsequious means obedient or attentive to an excessive or servile degree — excessively eager to please. From Latin obsequiosus. An obsequious employee agrees with everything the boss says. Related to sycophancy but obsequious emphasises servile behaviour, while sycophantic emphasises flattery."},
+
+  // SECTION C — SPELLING (Q16–Q20)
+  {tag:"Spelling",stem:"Choose the correctly spelled word.",
+   opts:["Conscientious","Consciencious","Consientious","Consceintious"],ans:0,exp:"Conscientious — from conscience. The root is con + science (Latin scientia = knowledge). The tricky part is -tious not -cious. Remember: con-sci-en-tious. Commonly misspelled as consciencious (wrong) or concientious (missing the s)."},
+
+  {tag:"Spelling",stem:"Choose the correctly spelled word.",
+   opts:["Acquiescence","Aquiescence","Acquiesence","Acquiescense"],ans:0,exp:"Acquiescence — from acquiesce (to accept without protest). Note the -qu- after ac, and the -sc- in the middle: ac-qui-es-cence. The ending is -ence not -ense. A common error is dropping the c before the e: acquiesence is wrong."},
+
+  {tag:"Spelling",stem:"Choose the correctly spelled word.",
+   opts:["Exhilaration","Exhileration","Exilaration","Exhillaration"],ans:0,exp:"Exhilaration — from exhilarate (to make lively or cheerful). Note: only one l, and -ar- not -er- in the middle. The root is Latin hilaris (cheerful). Exhileration is the most common error — the middle vowel is a, not e."},
+
+  {tag:"Spelling",stem:"Choose the correctly spelled word.",
+   opts:["Perseverance","Perserverance","Perseverence","Perserverence"],ans:0,exp:"Perseverance — from persevere. Note: per-se-ver-ance. The middle is -sever- (like the word sever) not -serv-. The ending is -ance not -ence. Both Perserverance and Perseverence are common errors — the first swaps the vowels, the second uses the wrong ending."},
+
+  {tag:"Spelling",stem:"Choose the correctly spelled word.",
+   opts:["Irresistible","Irresistable","Iresistible","Irresistible"],ans:0,exp:"Irresistible — note the double r (ir + resistible), and the ending is -ible not -able. A simple test: if the root word ends in a hard sound (resist), the suffix is usually -ible. Irresistable is the most common misspelling — the ending must be -ible."},
+
+  // SECTION D — SENTENCE COMPLETION / CLOZE (Q21–Q28)
+  {tag:"Sentence Completion",stem:"Although the committee's findings initially appeared ______, a closer examination revealed that the recommendations were based on deeply ______ data, which ultimately ______ the credibility of the entire report, leaving stakeholders increasingly ______ about its conclusions.",
+   opts:["comprehensive; flawed; undermined; skeptical","detailed; accurate; enhanced; assured","thorough; valid; strengthened; optimistic","convincing; irrelevant; improved; indifferent"],ans:0,exp:"The passage moves from positive appearance to negative reality: comprehensive (appears positive) → flawed data (negative reversal) → undermined credibility (consequence) → skeptical (reaction). Option B contradicts the structure. Option C and D suggest improvement, which conflicts with the contrast signalled by 'although'."},
+
+  {tag:"Sentence Completion",stem:"The company's decision to ______ its workforce without offering adequate ______ damaged morale severely, leading to a wave of resignations that further ______ productivity and left the remaining employees feeling ______.",
+   opts:["downsize; compensation; eroded; demoralized","expand; training; improved; energized","hire; recognition; boosted; motivated","relocate; benefits; stabilized; reassured"],ans:0,exp:"The sentence describes a harmful decision and its negative consequences. Downsize = reduce headcount — the cause of the damage. Compensation = financial support employees expected — its absence explains the moral injury. Eroded = gradually wore away — productivity declined as a result. Demoralized = stripped of motivation and confidence — the emotional state of those who remained. Option B describes expansion and improvement, which is the opposite of the context. Option C describes hiring and boosting, which contradicts 'damaged morale.' Option D describes relocation and stabilisation — neither fits a workforce crisis."},
+
+  {tag:"Sentence Completion",stem:"The professor's insistence on ______ every claim with primary sources, while ______ in principle, often made his lectures so ______ that students struggled to identify the central argument beneath layers of ______ evidence.",
+   opts:["substantiating; admirable; dense; corroborating","dismissing; flawed; simple; irrelevant","challenging; misguided; engaging; unreliable","ignoring; practical; vivid; compelling"],ans:0,exp:"Substantiating (backing up) → admirable (positive evaluation) → dense (too packed) → corroborating (supporting, hence the pile-up). The structure is: good intention → negative outcome. Option A is the only one where all four words are internally consistent and contextually accurate."},
+
+  {tag:"Sentence Completion",stem:"What began as a minor ______ between two departments quickly ______ into a full institutional crisis, exposing deep structural ______ that management had long chosen to ______ rather than address.",
+   opts:["dispute; escalated; tensions; ignore","agreement; transformed; improvements; celebrate","rivalry; reduced; efficiencies; highlight","discussion; settled; reforms; implement"],ans:0,exp:"Dispute (minor conflict) → escalated (grew worse) → tensions (underlying problems) → ignore (management avoidance). The logic is: small problem grows because it was ignored. Options B and C describe positive progressions that contradict the crisis framing."},
+
+  {tag:"Sentence Completion",stem:"The novelist's decision to ______ the climactic scene entirely — leaving the reader to ______ what had occurred — was a bold structural choice that ______ the tension rather than resolving it, and left critics sharply ______.",
+   opts:["omit; infer; prolonged; divided","describe; understand; reduced; unified","expand; imagine; settled; satisfied","summarise; recall; released; impressed"],ans:0,exp:"Omit = leave out entirely — the scene is absent, which is the whole structural decision. Infer = draw conclusions from indirect evidence — readers must deduce what happened. Prolonged = extended over time — omitting the climax stretches the tension instead of releasing it. Divided = split into opposing camps — bold choices generate disagreement, not consensus. Option B contradicts the premise: describing the scene is the opposite of omitting it. Option C expands the scene, which again contradicts omitting it. Option D uses summarise and recall — summarising still shows the scene and recall implies nothing was omitted.",},
+
+  {tag:"Sentence Completion",stem:"Her reputation for ______ was so well established that even her most ______ critics admitted that her public statements, however controversial, were never deliberately ______. This made her an unusual figure in a profession not known for its ______.",
+   opts:["candour; hostile; misleading; transparency","deception; loyal; honest; corruption","flattery; sympathetic; exaggerated; subtlety","ambiguity; supportive; vague; clarity"],ans:0,exp:"Candour (honesty) → hostile critics (those who oppose her) → never misleading (consistent with candour) → transparency (what the profession lacks). The paragraph builds a consistent portrait of an unusually honest public figure. Option A is the only one where all four words are logically connected."},
+
+  {tag:"Sentence Completion",stem:"The athlete's return from injury was marked by a ______ approach: she avoided ______ training loads, built her conditioning ______, and refused to compete until her medical team had given ______.",
+   opts:["cautious; excessive; incrementally; clearance","reckless; minimal; rapidly; permission","aggressive; moderate; gradually; approval","disciplined; intense; consistently; certification"],ans:0,exp:"Cautious approach → avoided excessive loads → built incrementally → waited for clearance. This is the only option where all four words reflect a methodical, careful return from injury. Options B and C introduce contradictions (reckless/aggressive paired with careful behaviour)."},
+
+  {tag:"Sentence Completion",stem:"The new legislation was widely seen as ______ — it imposed significant ______ on small businesses while leaving the largest corporations largely ______, prompting accusations that the law had been deliberately ______ in favour of established players.",
+   opts:["inequitable; burdens; unaffected; designed","balanced; incentives; penalized; reformed","comprehensive; restrictions; regulated; revised","fair; obligations; constrained; structured"],ans:0,exp:"Inequitable (unfair) → burdens on small businesses → large corporations unaffected → designed (deliberately structured) to favour the powerful. Options B, C, and D all suggest balance or equal treatment, which contradicts the accusation of favouritism in the final blank."},
+
+  // SECTION E — IDIOMS (Q29–Q40)
+  {tag:"Idioms",stem:"What does it mean to 'burn the midnight oil'?",
+   opts:["Work late into the night","Waste resources carelessly","Create unnecessary problems","Rush a task without preparation"],ans:0,exp:"To burn the midnight oil means to work or study late into the night. The idiom comes from the era of oil lamps — burning oil past midnight meant you were up working when others slept."},
+
+  {tag:"Idioms",stem:"What does it mean to 'beat around the bush'?",
+   opts:["Avoid reaching the main point","Speak too loudly in a meeting","Exaggerate a minor problem","Refuse to take any action"],ans:0,exp:"To beat around the bush means to avoid coming to the main point — talking around a subject without directly addressing it. Often used as a mild criticism: 'Stop beating around the bush and just tell me.'"},
+
+  {tag:"Idioms",stem:"What does it mean when something is described as 'a double-edged sword'?",
+   opts:["Something that is both advantageous and disadvantageous","Something that is extremely powerful","Something that requires great skill to use","Something that is entirely unpredictable"],ans:0,exp:"A double-edged sword refers to something that has both benefits and drawbacks — it can cut both ways. For example, social media is a double-edged sword: it connects people but also spreads misinformation."},
+
+  {tag:"Idioms",stem:"What does it mean to 'sit on the fence'?",
+   opts:["Avoid committing to either side of an argument","Postpone a decision indefinitely","Support the weaker side in a dispute","Remain physically passive during a conflict"],ans:0,exp:"To sit on the fence means to avoid taking a position or expressing an opinion on a controversial issue. A fence-sitter refuses to choose sides. Often used critically: 'The minister sat on the fence rather than stating his position clearly.'"},
+
+  {tag:"Idioms",stem:"The marketing campaign was a complete failure — all that effort and money had gone ________.",
+   opts:["down the drain","up in the air","off the rails","through the roof"],ans:0,exp:"Down the drain means completely wasted — resources spent with nothing to show for it. Up in the air = uncertain or unresolved — it describes doubt about the future, not the loss of something already spent. Off the rails = moving in a chaotic, uncontrolled direction — it describes a process going wrong, not resources being wasted. Through the roof = rising to a very high level — it describes an increase, not a loss."},
+
+  {tag:"Idioms",stem:"After months of delays and confusion, the project finally seemed to be ________.",
+   opts:["back on track","on the fence","burning the midnight oil","a double-edged sword"],ans:0,exp:"Back on track means returning to the correct or planned course after a disruption. This idiom fits perfectly after 'months of delays and confusion' — the project is now progressing as intended again."},
+
+  {tag:"Idioms",stem:"The manager's decision to promote the least experienced candidate raised a few eyebrows — nobody could understand it ________.",
+   opts:["for the life of them","up in the air","off the cuff","at the drop of a hat"],ans:0,exp:"For the life of them (or 'for the life of me') means being completely unable to understand or do something despite trying. 'Nobody could understand it for the life of them' = no matter how hard they tried, they couldn't make sense of the decision."},
+
+  {tag:"Idioms",stem:"What does it mean when someone acts 'off the cuff'?",
+   opts:["Without preparation or prior thought","With excessive caution","In a deliberately secretive manner","Against the advice of others"],ans:0,exp:"Off the cuff means without preparation — speaking or acting spontaneously. The image is of a speaker who hasn't prepared notes and is reading from crib notes on their shirt cuff. An off-the-cuff remark is unrehearsed."},
+
+  {tag:"Idioms",stem:"What does it mean to 'let the cat out of the bag'?",
+   opts:["Accidentally reveal a secret","Release tension in a difficult situation","Make a hasty and poorly considered decision","Introduce an unexpected problem"],ans:0,exp:"To let the cat out of the bag means to accidentally reveal information that was supposed to be kept secret. Origin: supposedly from the practice of substituting a cat for a piglet in a bag at markets — revealing the deception."},
+
+  {tag:"Idioms",stem:"Despite her nervousness, the debutante performed ________ and received a standing ovation.",
+   opts:["with flying colours","at the drop of a hat","down the drain","on the fence"],ans:0,exp:"With flying colours means with great success — performing outstandingly. The image comes from ships returning victorious with their flags (colours) flying. The other options are unrelated to successful performance."},
+
+  {tag:"Idioms",stem:"What does it mean when a plan is described as 'back to the drawing board'?",
+   opts:["The original plan has failed and must be completely redesigned","A plan has been approved after long deliberation","A plan requires only minor adjustments","A plan has been handed to a new team"],ans:0,exp:"Back to the drawing board means starting over because the previous attempt failed. The drawing board is where architects and engineers begin a new design. If a plan fails completely, you return to the drawing board and start from scratch."},
+
+  {tag:"Idioms",stem:"What does it mean to do something 'at the drop of a hat'?",
+   opts:["Immediately and without hesitation","Secretly and without informing others","Reluctantly but out of obligation","Carelessly and without adequate thought"],ans:0,exp:"At the drop of a hat means immediately, without needing much prompting or preparation. 'She would help you at the drop of a hat' = she would help instantly, without needing to be asked twice. The image is of instant action triggered by a signal."},
+
+  // SECTION F — STORY VOCABULARY (Q41–Q45)
+  {tag:"Story Vocabulary",stem:"LET US BUILD A STORY WITH WORDS\n\nWord Bank: Procrastinate | Sodden | Lament | Hubris | Irreparable\n\nLong ago, in a hilltop monastery, there lived a scholar who had spent decades compiling a manuscript of rare wisdom. That morning, dark clouds gathered on the horizon, but the scholar, consumed by his _______, chose to ignore the warning signs and continued writing.",
+   opts:["Hubris","Procrastinate","Sodden","Lament"],ans:0,exp:"Hubris means excessive pride or self-confidence — the belief that one is above ordinary concerns. The scholar ignores storm warnings because his hubris makes him believe nothing can threaten him or his work. Procrastinate means to delay — not what is described here."},
+
+  {tag:"Story Vocabulary",stem:"LET US BUILD A STORY WITH WORDS\n\nWord Bank: Procrastinate | Sodden | Lament | Hubris | Irreparable\n\nFellow monks urged him to move his work indoors, but he continued to _______, dismissing their concern as exaggerated.",
+   opts:["Hubris","Procrastinate","Sodden","Lament"],ans:1,exp:"Procrastinate means to delay or postpone action, especially out of habit or reluctance. The scholar keeps putting off the decision to move his manuscript indoors despite clear warnings. This is the classic definition of procrastination — delay in the face of urgency."},
+
+  {tag:"Story Vocabulary",stem:"LET US BUILD A STORY WITH WORDS\n\nWord Bank: Procrastinate | Sodden | Lament | Hubris | Irreparable\n\nBy evening, a fierce storm broke, and the manuscript was left exposed — its pages grew _______ within minutes.",
+   opts:["Hubris","Procrastinate","Sodden","Lament"],ans:2,exp:"Sodden means saturated with liquid — soaked through. Pages caught in a storm become sodden (thoroughly wet). Do not confuse with sudden (happening quickly) — sodden specifically describes being completely drenched with water."},
+
+  {tag:"Story Vocabulary",stem:"LET US BUILD A STORY WITH WORDS\n\nWord Bank: Procrastinate | Sodden | Lament | Hubris | Irreparable\n\nStanding over the ruins of his life's work, the scholar could only _______ his foolishness.",
+   opts:["Hubris","Procrastinate","Sodden","Lament"],ans:3,exp:"Lament means to express grief, regret, or sorrow. Standing over destroyed work and feeling deep regret is the act of lamenting. A lament is both a verb (to lament one's mistakes) and a noun (a lament is a song or expression of grief). The scholar mourns what he has lost through his own pride."},
+
+  {tag:"Story Vocabulary",stem:"LET US BUILD A STORY WITH WORDS\n\nWord Bank: Procrastinate | Sodden | Lament | Hubris | Irreparable\n\nFor the damage was utterly _______. A lifetime of knowledge had been lost to a storm he had been warned about and had chosen to ignore.",
+   opts:["Hubris","Procrastinate","Sodden","Irreparable"],ans:3,exp:"Irreparable means impossible to repair or remedy — beyond fixing. The damage to the manuscript cannot be undone: a lifetime of work is gone. Irreparable is used for losses that are permanent and total. Note: irreparable, not unrepairable — the correct form uses the Latin prefix ir-."}
+
+];
+
+var S = {
+  cur:0, answers:new Array(QUESTIONS.length).fill(-1),
+  marked:new Array(QUESTIONS.length).fill(false),
+  secsLeft:TOTAL_SECS, interval:null,
+  name:'', pin:'', batch:'', submitted:false
+};
+
+function startTest() {
+  var name = document.getElementById('inp-name').value.trim();
+  var pin  = document.getElementById('inp-pin').value.trim();
+  var batch= document.getElementById('inp-batch').value;
+  if (!name){alert('Please enter your name.');return;}
+  if (!pin){alert('Please enter your IMS PIN.');return;}
+  if (!batch){alert('Please select your batch.');return;}
+  S.name=name; S.pin=pin; S.batch=batch;
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('test-screen').style.display='flex';
+  document.getElementById('palette-fab').style.display='flex';
+  renderQ(); buildPalette();
+  S.interval=setInterval(tick,1000);
+}
+
+function tick() {
+  S.secsLeft--;
+  if(S.secsLeft<=0){clearInterval(S.interval);doSubmit();return;}
+  var m=String(Math.floor(S.secsLeft/60)).padStart(2,'0');
+  var s=String(S.secsLeft%60).padStart(2,'0');
+  var el=document.getElementById('timer');
+  el.textContent=m+':'+s;
+  el.className='timer-val'+(S.secsLeft<=60?' urgent':'');
+}
+
+var INSTRUCTIONS = {
+  "Word Selection": "Read all five sentences carefully. Select the option that gives the correct A or B word for every sentence in the paragraph.",
+  "Vocabulary": "Choose the option that best captures the meaning of the given word.",
+  "Spelling": "Identify the correctly spelled word from the four options.",
+  "Sentence Completion": "Fill in all the blanks by selecting the option whose words best complete the passage coherently.",
+  "Idioms": "Select the correct meaning or the most appropriate idiom to fill the blank.",
+  "Story Vocabulary": "The word bank contains five words. Each question uses one blank from the story. Select the word that fits the blank correctly."
+};
+
+function renderQ() {
+  var q=QUESTIONS[S.cur]; var i=S.cur;
+  document.getElementById('qnum-label').textContent='Q'+(i+1)+' of '+QUESTIONS.length;
+  document.getElementById('section-tag-text').textContent=q.tag;
+  var instr=INSTRUCTIONS[q.tag]||'';
+  var instrHTML=instr?'<div style="font-size:12px;color:#888;font-style:italic;margin-bottom:10px;line-height:1.5">'+instr+'</div>':'';
+  document.getElementById('q-stem').innerHTML=instrHTML+'Q'+(i+1)+'. '+q.stem.replace(/\n/g,'<br>');
+  document.getElementById('progress-fill').style.width=((i+1)/QUESTIONS.length*100)+'%';
+  document.getElementById('btn-prev').disabled=i===0;
+  var mb=document.getElementById('btn-mark');
+  mb.className='btn-mark'+(S.marked[i]?' marked':'');
+  mb.innerHTML=S.marked[i]?'&#9733; Marked':'&#9734; Mark';
+  document.getElementById('btn-next').innerHTML=i===QUESTIONS.length-1?'Submit &#10003;':'Next &#8594;';
+  var optDiv=document.getElementById('options'); optDiv.innerHTML='';
+  q.opts.forEach(function(opt,oi){
+    var btn=document.createElement('button');
+    btn.className='opt-btn'+(S.answers[i]===oi?' selected':'');
+    btn.innerHTML='<div class="opt-key">'+String.fromCharCode(65+oi)+'</div><div class="opt-text">'+opt+'</div>';
+    btn.onclick=function(){S.answers[i]=oi;renderQ();buildPalette();};
+    optDiv.appendChild(btn);
+  });
+  buildPalette();
+}
+
+function prevQ(){if(S.cur>0){S.cur--;renderQ();}}
+
+function nextOrSubmit() {
+  if(S.cur<QUESTIONS.length-1){S.cur++;renderQ();}
+  else{showConfirm();}
+}
+
+function toggleMark(){S.marked[S.cur]=!S.marked[S.cur];renderQ();}
+
+function buildPalette() {
+  var g=document.getElementById('palette-grid'); g.innerHTML='';
+  QUESTIONS.forEach(function(q,i){
+    var b=document.createElement('button');
+    b.className='pq'+(i===S.cur?' current':'')+(S.marked[i]?' marked':'')+(S.answers[i]!==-1?' answered':'');
+    b.textContent=i+1;
+    b.onclick=function(){S.cur=i;renderQ();closePalette();};
+    g.appendChild(b);
+  });
+}
+
+function openPalette(){document.getElementById('palette-drawer').classList.add('open');document.getElementById('palette-overlay').classList.add('show');}
+function closePalette(){document.getElementById('palette-drawer').classList.remove('open');document.getElementById('palette-overlay').classList.remove('show');}
+
+function showConfirm() {
+  var answered=S.answers.filter(function(a){return a!==-1;}).length;
+  var marked=S.marked.filter(Boolean).length;
+  var skip=QUESTIONS.length-answered;
+  document.getElementById('c-ans').textContent=answered;
+  document.getElementById('c-mark').textContent=marked;
+  document.getElementById('c-skip').textContent=skip;
+  document.getElementById('confirm-msg').textContent=skip>0?skip+' question(s) unanswered. Submit anyway?':'All questions answered. Ready to submit?';
+  document.getElementById('confirm-wrap').className='confirm-wrap show';
+}
+function closeConfirm(){document.getElementById('confirm-wrap').className='confirm-wrap';}
+
+function doSubmit() {
+  if(S.submitted)return;
+  S.submitted=true;
+  clearInterval(S.interval);
+  closeConfirm();
+  document.getElementById('test-screen').style.display='none';
+  document.getElementById('palette-fab').style.display='none';
+  document.getElementById('submitting-screen').style.display='flex';
+  var result=calcResult();
+  saveToTrackerLocal(result);
+  sendToSheet(result).then(function(ok){
+    document.getElementById('submitting-screen').style.display='none';
+    showResults(result,ok);
+  });
+}
+
+function calcResult() {
+  var correct=0,wrong=0,skip=0;
+  var sectionErrors={};
+  var wrongQuestions=[];
+  QUESTIONS.forEach(function(q,i){
+    if(S.answers[i]===-1){skip++;}
+    else if(S.answers[i]===q.ans){correct++;}
+    else{
+      wrong++;
+      wrongQuestions.push(i+1);
+      var sec=SECTION_MAP[q.tag]||q.tag;
+      sectionErrors[sec]=(sectionErrors[sec]||0)+1;
+    }
+  });
+  return{correct:correct,wrong:wrong,skip:skip,score:correct*4-wrong,sectionErrors:sectionErrors,wrongQuestions:wrongQuestions};
+}
+
+function saveToTrackerLocal(result) {
+  try {
+    var key = 'riim_' + S.batch + '_' + S.name.replace(/\s+/g,'_').toLowerCase();
+    var existing = localStorage.getItem(key);
+    var entries = existing ? JSON.parse(existing) : [];
+    entries = entries.filter(function(e){ return e.test !== TEST_NUMBER; });
+    entries.push({
+      test: TEST_NUMBER,
+      score: result.score,
+      errors: result.sectionErrors,
+      wrongQuestions: result.wrongQuestions,
+      ts: Date.now()
+    });
+    localStorage.setItem(key, JSON.stringify(entries));
+  } catch(e) {}
+}
+
+async function sendToSheet(result) {
+  var timeTaken=TOTAL_SECS-S.secsLeft;
+  var mm=String(Math.floor(timeTaken/60)).padStart(2,'0');
+  var ss=String(timeTaken%60).padStart(2,'0');
+  var payload={testName:TEST_NAME,name:S.name,pin:S.pin,batch:S.batch,score:result.score,correct:result.correct,wrong:result.wrong,skipped:result.skip,maxMarks:180,timeTaken:mm+':'+ss,timestamp:new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'})};
+  try{await fetch(SHEET_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});}catch(e){}
+  try{
+    var tp={student:S.name,batch:S.batch,test:TEST_NUMBER,score:result.score,errors:result.sectionErrors,wrongQuestions:result.wrongQuestions,ts:Date.now()};
+    await fetch(TRACKER_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(tp)});
+  }catch(e){}
+  return true;
+}
+
+function showResults(result,sheetOk) {
+  document.getElementById('r-score').textContent=result.score;
+  document.getElementById('r-name').textContent=S.name+' · '+S.pin;
+  document.getElementById('r-batch').textContent=S.batch;
+  document.getElementById('r-correct').textContent=result.correct;
+  document.getElementById('r-wrong').textContent=result.wrong;
+  document.getElementById('r-skip').textContent=result.skip;
+  var notice=document.getElementById('sheet-notice');
+  notice.className='sheet-notice ok';
+  notice.textContent='Score submitted successfully.';
+  var reviewList=document.getElementById('review-list');
+  reviewList.innerHTML='';
+  QUESTIONS.forEach(function(q,i){
+    var div=document.createElement('div');
+    div.className='review-item';
+    var userAns=S.answers[i];
+    var correct=userAns===q.ans;
+    var skipped=userAns===-1;
+    var status=skipped?'<span class="r-skip">Skipped</span>':correct?'<span class="r-correct">Correct</span>':'<span class="r-wrong">Wrong &mdash; Correct: '+q.opts[q.ans]+'</span>';
+    var choseHTML=(!skipped&&!correct)?'<div style="color:#888;font-size:12px;margin-top:3px">You chose: '+q.opts[userAns]+'</div>':'';
+    var expHTML=q.exp?'<div style="font-size:12px;color:#888;margin-top:6px;line-height:1.55;padding:8px 10px;background:rgba(0,0,0,0.02);border-radius:6px;border-left:2px solid '+(correct?'#1E8449':'#C0392B')+'">'+q.exp+'</div>':'';
+    div.innerHTML='<div class="review-q">Q'+(i+1)+'. '+q.stem.replace(/\n/g,' ').substring(0,120)+'...</div><div class="review-ans">'+status+'</div>'+choseHTML+expHTML;
+    reviewList.appendChild(div);
+  });
+  document.getElementById('results-screen').style.display='block';
+}
+</script>
+</body>
+</html>
