@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Road to IIM — Verbal Ability Test 15</title>
+<style>
+  * {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+  :root {
+    --gold: #c9a84c;
+    --gold-light: #e8c97a;
+    --dark: #0f0f1a;
+    --dark2: #16172a;
+    --dark3: #1e2038;
+    --dark4: #252845;
+    --text: #e8e8f0;
+    --text2: #a0a0c0;
+    --green: #3dba7a;
+    --red: #e05555;
+    --blue: #4a90d9;
+    --purple: #9b59b6;
+    --border: rgba(201,168,76,0.25);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--dark); color: var(--text); font-family: 'Segoe UI', Arial, sans-serif; min-height: 100vh; }
+
+  /* ── LOGIN SCREEN ── */
+  #loginScreen {
+    display: flex; align-items: center; justify-content: center;
+    min-height: 100vh; background: radial-gradient(ellipse at center, #1a1b30 0%, #0f0f1a 70%);
+  }
+  .login-box {
+    background: var(--dark2); border: 1px solid var(--border);
+    border-radius: 16px; padding: 44px 40px; width: 420px; max-width: 95vw;
+    box-shadow: 0 8px 48px rgba(0,0,0,0.6);
+  }
+  .login-logo { text-align: center; margin-bottom: 28px; }
+  .login-logo .brand { font-size: 13px; letter-spacing: 3px; color: var(--gold); text-transform: uppercase; margin-bottom: 6px; }
+  .login-logo h1 { font-size: 26px; font-weight: 700; color: var(--text); }
+  .login-logo .sub { font-size: 13px; color: var(--text2); margin-top: 4px; }
+  .test-meta { background: var(--dark3); border-radius: 10px; padding: 14px 18px; margin-bottom: 24px; display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
+  .meta-item { text-align: center; }
+  .meta-val { font-size: 20px; font-weight: 700; color: var(--gold); }
+  .meta-label { font-size: 11px; color: var(--text2); text-transform: uppercase; letter-spacing: 1px; }
+  .form-group { margin-bottom: 16px; }
+  .form-group label { display: block; font-size: 12px; color: var(--text2); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+  .form-group input { width: 100%; background: var(--dark3); border: 1px solid var(--border); border-radius: 8px; padding: 11px 14px; color: var(--text); font-size: 15px; outline: none; transition: border-color 0.2s; }
+  .form-group input:focus { border-color: var(--gold); }
+  .btn-start { width: 100%; padding: 14px; background: linear-gradient(135deg, #b8922a, var(--gold)); border: none; border-radius: 10px; font-size: 16px; font-weight: 700; color: #0f0f1a; cursor: pointer; letter-spacing: 1px; transition: opacity 0.2s; margin-top: 8px; }
+  .btn-start:hover { opacity: 0.88; }
+  .marking { text-align: center; font-size: 12px; color: var(--text2); margin-top: 14px; }
+  .marking span { color: var(--green); font-weight: 600; }
+  .marking span.neg { color: var(--red); }
+
+  /* ── TEST SCREEN ── */
+  #testScreen { display: none; }
+  .test-header {
+    background: var(--dark2); border-bottom: 1px solid var(--border);
+    padding: 10px 20px; display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .header-brand { font-size: 14px; font-weight: 700; color: var(--gold); letter-spacing: 1px; }
+  .header-student { font-size: 13px; color: var(--text2); }
+  .header-student span { color: var(--text); font-weight: 600; }
+  .timer-box {
+    background: var(--dark3); border: 2px solid var(--gold);
+    border-radius: 10px; padding: 6px 18px; text-align: center;
+  }
+  .timer-label { font-size: 10px; color: var(--text2); text-transform: uppercase; letter-spacing: 1px; }
+  .timer-val { font-size: 22px; font-weight: 700; color: var(--gold); font-variant-numeric: tabular-nums; }
+  .timer-box.urgent { border-color: var(--red); }
+  .timer-box.urgent .timer-val { color: var(--red); }
+
+  .test-body { display: flex; height: calc(100vh - 57px); }
+
+  /* Question Panel */
+  .question-panel { flex: 1; overflow-y: auto; padding: 24px 28px; }
+  .q-nav-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+  .q-counter { font-size: 13px; color: var(--text2); }
+  .q-counter span { color: var(--gold); font-weight: 700; }
+  .section-label {
+    display: inline-block; background: var(--dark3); border: 1px solid var(--border);
+    border-radius: 20px; padding: 4px 14px; font-size: 11px; color: var(--gold);
+    text-transform: uppercase; letter-spacing: 1px; margin-bottom: 14px;
+  }
+  .q-card { background: var(--dark2); border: 1px solid var(--border); border-radius: 14px; padding: 24px; margin-bottom: 6px; }
+  .q-number { font-size: 11px; color: var(--text2); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; }
+  .q-instr { font-size: 13px; color: var(--text2); font-style: italic; margin-bottom: 14px; line-height: 1.6; }
+  .q-stem { font-size: 16px; line-height: 1.7; color: var(--text); margin-bottom: 8px; }
+  .q-stem .blank { color: var(--gold); font-weight: 700; }
+  .story-block { background: var(--dark3); border-left: 3px solid var(--gold); border-radius: 0 10px 10px 0; padding: 16px 20px; margin-bottom: 16px; font-size: 15px; line-height: 1.8; color: var(--text); }
+  .story-blank { color: var(--gold); font-weight: 700; }
+  .para-block { margin-bottom: 10px; }
+  .para-line { font-size: 15px; line-height: 1.8; color: var(--text); margin-bottom: 4px; }
+  .para-line strong { color: var(--gold-light); }
+
+  .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
+  .opt-btn {
+    background: var(--dark3); border: 1.5px solid rgba(255,255,255,0.1);
+    border-radius: 10px; padding: 12px 16px; cursor: pointer; text-align: left;
+    font-size: 14px; color: var(--text); transition: all 0.15s; line-height: 1.5;
+    display: flex; gap: 10px; align-items: flex-start;
+  }
+  .opt-btn:hover { border-color: var(--gold); background: rgba(201,168,76,0.08); }
+  .opt-btn.selected { border-color: var(--blue); background: rgba(74,144,217,0.15); color: #fff; }
+  .opt-btn.selected .opt-label { color: var(--blue); }
+  .opt-label { font-weight: 700; color: var(--text2); min-width: 18px; }
+
+  .q-actions { display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
+  .btn { padding: 10px 20px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: opacity 0.15s; }
+  .btn:hover { opacity: 0.85; }
+  .btn-prev { background: var(--dark4); color: var(--text2); border: 1px solid var(--border); }
+  .btn-next { background: linear-gradient(135deg, #b8922a, var(--gold)); color: #0f0f1a; }
+  .btn-clear { background: var(--dark4); color: var(--red); border: 1px solid rgba(224,85,85,0.3); }
+  .btn-submit { background: var(--green); color: #fff; margin-left: auto; }
+
+  /* Sidebar Palette */
+  .palette-panel {
+    width: 240px; background: var(--dark2); border-left: 1px solid var(--border);
+    overflow-y: auto; padding: 16px;
+    display: flex; flex-direction: column; gap: 14px;
+  }
+  .palette-title { font-size: 12px; color: var(--text2); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+  .palette-legend { display: flex; flex-direction: column; gap: 6px; }
+  .leg { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text2); }
+  .leg-dot { width: 14px; height: 14px; border-radius: 3px; flex-shrink: 0; }
+  .ld-unattempted { background: var(--dark4); border: 1px solid rgba(255,255,255,0.15); }
+  .ld-answered { background: var(--green); }
+  .ld-current { background: var(--gold); }
+  .palette-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+  .pal-btn {
+    aspect-ratio: 1; border-radius: 6px; border: none; cursor: pointer;
+    font-size: 12px; font-weight: 700; color: var(--text);
+    background: var(--dark4); border: 1px solid rgba(255,255,255,0.1);
+    transition: all 0.1s;
+  }
+  .pal-btn.answered { background: var(--green); color: #fff; border-color: var(--green); }
+  .pal-btn.current { background: var(--gold); color: #0f0f1a; border-color: var(--gold); }
+  .progress-bar-wrap { background: var(--dark4); border-radius: 6px; height: 8px; overflow: hidden; }
+  .progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--gold), var(--green)); border-radius: 6px; transition: width 0.3s; }
+  .progress-text { font-size: 12px; color: var(--text2); margin-top: 6px; }
+
+  /* ── RESULTS SCREEN ── */
+  #resultsScreen { display: none; min-height: 100vh; background: var(--dark); padding: 40px 20px; }
+  .results-container { max-width: 760px; margin: 0 auto; }
+  .results-header { text-align: center; margin-bottom: 36px; }
+  .results-header .brand { font-size: 12px; letter-spacing: 3px; color: var(--gold); text-transform: uppercase; margin-bottom: 8px; }
+  .results-header h2 { font-size: 32px; font-weight: 700; }
+  .score-card {
+    background: var(--dark2); border: 1px solid var(--border); border-radius: 16px;
+    padding: 32px; text-align: center; margin-bottom: 24px;
+  }
+  .score-big { font-size: 72px; font-weight: 800; color: var(--gold); line-height: 1; }
+  .score-max { font-size: 20px; color: var(--text2); margin-top: 4px; }
+  .score-breakdown { display: flex; gap: 20px; justify-content: center; margin-top: 20px; flex-wrap: wrap; }
+  .sb-item { background: var(--dark3); border-radius: 10px; padding: 14px 22px; min-width: 100px; }
+  .sb-val { font-size: 24px; font-weight: 700; }
+  .sb-label { font-size: 11px; color: var(--text2); text-transform: uppercase; letter-spacing: 1px; margin-top: 2px; }
+  .sb-correct .sb-val { color: var(--green); }
+  .sb-wrong .sb-val { color: var(--red); }
+  .sb-skipped .sb-val { color: var(--text2); }
+  .sb-accuracy .sb-val { color: var(--blue); }
+
+  .review-table { width: 100%; border-collapse: collapse; font-size: 14px; margin-top: 16px; }
+  .review-table th { background: var(--dark3); color: var(--text2); padding: 10px 12px; text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
+  .review-table td { padding: 10px 12px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .review-table tr.correct td { background: rgba(61,186,122,0.06); }
+  .review-table tr.wrong td { background: rgba(224,85,85,0.06); }
+  .status-badge { display: inline-block; padding: 2px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+  .badge-correct { background: rgba(61,186,122,0.2); color: var(--green); }
+  .badge-wrong { background: rgba(224,85,85,0.2); color: var(--red); }
+  .badge-skipped { background: rgba(160,160,192,0.15); color: var(--text2); }
+
+  .student-row { background: var(--dark3); border-radius: 10px; padding: 14px 18px; margin-bottom: 24px; display: flex; gap: 24px; flex-wrap: wrap; font-size: 14px; }
+  .student-row span { color: var(--text2); }
+  .student-row strong { color: var(--text); }
+
+  @media (max-width: 700px) {
+    .test-body { flex-direction: column; height: auto; }
+    .palette-panel { width: 100%; border-left: none; border-top: 1px solid var(--border); }
+    .options-grid { grid-template-columns: 1fr; }
+    .question-panel { padding: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════
+     LOGIN SCREEN
+══════════════════════════════════════════════════════ -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="brand" style="font-size:16px;font-weight:800;color:var(--gold);letter-spacing:3px;">Road to IIM</div>
+      <h1>Verbal Ability Test 15</h1>
+    </div>
+    <div class="test-meta">
+      <div class="meta-item"><div class="meta-val">45</div><div class="meta-label">Questions</div></div>
+      <div class="meta-item"><div class="meta-val">40</div><div class="meta-label">Minutes</div></div>
+      <div class="meta-item"><div class="meta-val">180</div><div class="meta-label">Max Marks</div></div>
+    </div>
+    <div class="form-group">
+      <label>Full Name</label>
+      <input type="text" id="inputName" placeholder="Enter your full name" />
+    </div>
+    <div class="form-group">
+      <label>IMS PIN</label>
+      <input type="text" id="inputPin" placeholder="Enter your IMS PIN" />
+    </div>
+    <div class="form-group">
+      <label>Batch Number</label>
+      <select id="inputBatch">
+        <option value="">— Select your batch —</option>
+        <optgroup label="Classroom">
+          <option>A2701</option><option>A2702</option><option>A2703</option><option>A2704</option><option>A2705</option>
+          <option>A2706</option><option>A2707</option><option>A2708</option><option>A2709</option><option>A2710</option>
+          <option>A2711</option><option>A2712</option>
+        </optgroup>
+        <optgroup label="School">
+          <option>Zebar</option>
+        </optgroup>
+        <optgroup label="Online">
+          <option>27E101</option><option>27E102</option><option>27E103</option><option>27E104</option><option>27E105</option>
+        </optgroup>
+      </select>
+    </div>
+    <button class="btn-start" onclick="startTest()">Start Test →</button>
+    <div class="marking">Marking: <span>+4</span> correct &nbsp;|&nbsp; <span class="neg">−1</span> wrong &nbsp;|&nbsp; 0 skipped</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     TEST SCREEN
+══════════════════════════════════════════════════════ -->
+<div id="testScreen">
+  <div class="test-header">
+    <div class="header-brand">ROAD TO IIM · TEST 15</div>
+    <div class="header-student">Student: <span id="dispName">—</span> &nbsp;|&nbsp; PIN: <span id="dispPin">—</span> &nbsp;|&nbsp; Batch: <span id="dispBatch">—</span></div>
+    <div class="timer-box" id="timerBox">
+      <div class="timer-label">Time Left</div>
+      <div class="timer-val" id="timerVal">40:00</div>
+    </div>
+  </div>
+  <div class="test-body">
+    <div class="question-panel" id="questionPanel">
+      <!-- rendered by JS -->
+    </div>
+    <div class="palette-panel">
+      <div class="palette-title">Question Palette</div>
+      <div class="palette-legend">
+        <div class="leg"><div class="leg-dot ld-answered"></div>Answered</div>
+        <div class="leg"><div class="leg-dot ld-current"></div>Current</div>
+        <div class="leg"><div class="leg-dot ld-unattempted"></div>Not Visited</div>
+      </div>
+      <div class="palette-grid" id="paletteGrid"></div>
+      <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progressFill" style="width:0%"></div></div>
+      <div class="progress-text" id="progressText">0 / 45 answered</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     RESULTS SCREEN
+══════════════════════════════════════════════════════ -->
+<div id="resultsScreen" style="display:none;padding:1.5rem;">
+  <div style="max-width:680px;margin:0 auto;">
+    <div style="text-align:center;background:linear-gradient(135deg,#1a1a2e,#16213e);border-radius:20px;padding:2rem 1.5rem 1.5rem;margin-bottom:1.25rem;">
+      <div style="font-size:11px;letter-spacing:3px;color:var(--gold);text-transform:uppercase;margin-bottom:6px;">Road to IIM</div>
+      <div style="font-size:11px;color:var(--text2);margin-bottom:16px;">Test Complete — Paper 15</div>
+      <div id="r-score" style="font-size:64px;font-weight:800;color:var(--gold);line-height:1;">0</div>
+      <div style="font-size:13px;color:var(--text2);margin-bottom:12px;">out of 180 marks</div>
+      <div id="r-name" style="font-size:14px;font-weight:600;margin-bottom:4px;"></div>
+      <div id="r-batch" style="font-size:13px;color:var(--text2);margin-bottom:1.25rem;"></div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+        <a href="road_to_iim_tracker_v2.html" style="background:#c9a84c;color:#0f0e0c;padding:11px 22px;border-radius:10px;font-size:14px;font-weight:700;text-decoration:none;">Go to tracker &rarr;</a>
+        <a href="https://sahilkanetkar-collab.github.io/Road-to-IIM/" style="background:transparent;color:#fff;padding:11px 22px;border-radius:10px;font-size:14px;font-weight:700;text-decoration:none;border:1.5px solid rgba(255,255,255,0.2);">All tests</a>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1.25rem;">
+      <div style="background:var(--dark3);border-radius:12px;padding:1rem;text-align:center;">
+        <div id="r-correct" style="font-size:28px;font-weight:700;color:#3dba7a;">0</div>
+        <div style="font-size:12px;color:var(--text2);">Correct</div>
+      </div>
+      <div style="background:var(--dark3);border-radius:12px;padding:1rem;text-align:center;">
+        <div id="r-wrong" style="font-size:28px;font-weight:700;color:#e05555;">0</div>
+        <div style="font-size:12px;color:var(--text2);">Wrong</div>
+      </div>
+      <div style="background:var(--dark3);border-radius:12px;padding:1rem;text-align:center;">
+        <div id="r-skip" style="font-size:28px;font-weight:700;color:var(--text2);">0</div>
+        <div style="font-size:12px;color:var(--text2);">Skipped</div>
+      </div>
+    </div>
+    <div id="sheet-notice" style="border-radius:10px;padding:10px 14px;font-size:13px;margin-bottom:1.25rem;text-align:center;display:none;"></div>
+    <div style="background:var(--dark3);border-radius:16px;padding:1.25rem;border:0.5px solid var(--border);">
+      <h3 style="font-size:15px;font-weight:700;margin-bottom:1rem;">Question Review</h3>
+      <div id="review-list"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════════════
+// QUESTION DATA
+// ════════════════════════════════════════════════════════
+const QUESTIONS = [
+
+  // ── WORD SELECTION ──────────────────────────────────────────────
+
+  // Q1 — Word Selection — Climate scientist under pressure — Answer: A (AAABA)
+  {
+    id:1, section:"Word Selection", type:"word_select",
+    instr:"Each sentence below contains a pair of words in bold. Select the most appropriate word (A or B) from each pair to form a coherent, well-reasoned paragraph.",
+    lines:[
+      {letter:"A",text:"For years, the climate scientist's projections had been met with <strong>scepticism [A]</strong> / <strong>scrutiny [B]</strong> by politicians who found her conclusions commercially inconvenient."},
+      {letter:"B",text:"Undeterred, she continued to publish findings that were <strong>unassailable [A]</strong> / <strong>unassuming [B]</strong> in their methodology and impossible to dismiss on technical grounds."},
+      {letter:"C",text:"Her detractors resorted instead to <strong>impugning [A]</strong> / <strong>imploring [B]</strong> her motives, suggesting she was driven by ideology rather than evidence."},
+      {letter:"D",text:"Colleagues who had witnessed her decades of <strong>meticulous [A]</strong> / <strong>monotonous [B]</strong> fieldwork found such attacks not merely unfair but absurd."},
+      {letter:"E",text:"History, she believed, would prove <strong>vindicating [A]</strong> / <strong>vacillating [B]</strong> — and she had long since made peace with waiting."}
+    ],
+    options:["AAABA","AABBA","AABAB","BAAAB"],
+    answer:"A",
+    exp:"Scepticism = doubt (scrutiny = examination). Unassailable = beyond attack. Impugning = attacking the integrity of. Meticulous = showing careful attention to detail. Vindicating = clearing of blame or proving correct. All five A-choices build a coherent portrait of a principled scientist facing bad-faith opposition. Correct pattern: AAABA."
+  },
+
+  // Q2 — Vocabulary: SPUDDLE — Answer: A
+  {
+    id:2, section:"Vocabulary", type:"mcq",
+    stem:"What is the meaning of SPUDDLE?",
+    options:[
+      "To work energetically on a task without making any real progress",
+      "To speak rapidly and incoherently under pressure",
+      "To move about in a restless, aimless manner",
+      "To waste time on trivial tasks while neglecting important ones"
+    ],
+    answer:"A",
+    exp:"Spuddle = to work feebly or ineffectually, making a fuss without accomplishing much — busy activity that produces nothing. C describes restless movement, not ineffectual work. D describes procrastination through trivial tasks — close but misses the key sense of appearing busy. B describes incoherent speech — unrelated."
+  },
+
+  // Q3 — Idiom meaning: kick the can down the road — Answer: B
+  {
+    id:3, section:"Idiom", type:"mcq",
+    stem:"What does it mean when a government is said to be \"kicking the can down the road\"?",
+    options:[
+      "Introducing incremental reforms rather than sweeping changes",
+      "Deferring a difficult problem to be dealt with at a later time",
+      "Shifting responsibility for a decision to a lower authority",
+      "Adopting a wait-and-see approach in the face of uncertainty"
+    ],
+    answer:"B",
+    exp:"'Kick the can down the road' = to postpone dealing with a problem, pushing it into the future. B is correct. A describes gradualism — distinct from postponement. C describes delegation, not deferral. D describes patience about an unknown — the idiom implies avoidance of a known problem."
+  },
+
+  // Q4 — Sentence Completion: central bank inflation — Answer: C
+  {
+    id:4, section:"Sentence Completion", type:"mcq",
+    stem:"As inflation continued to ______ expectations, the central bank found itself ______ between the need to raise rates and the risk of ______ growth, a tension that left markets visibly ______.",
+    options:[
+      "exceed; torn; strangling; unnerved",
+      "meet; divided; boosting; reassured",
+      "defy; caught; dampening; unsettled",
+      "beat; split; curbing; confident"
+    ],
+    answer:"C",
+    exp:"Inflation 'defying' expectations sets up a dilemma. 'Caught' between two pressures is more precise than 'torn' or 'split'. 'Dampening' growth is the standard economic term for what rate hikes risk. 'Unsettled' markets = the natural consequence of unresolved tension. Only C sustains a precise, natural cascade throughout all four blanks."
+  },
+
+  // Q5 — Spelling — Answer: D (swapped from A — correct answer is now D)
+  {
+    id:5, section:"Spelling", type:"mcq",
+    stem:"Choose the correctly spelled word.",
+    options:["Acquiesence","Acquiescense","Acquiesscence","Acquiescence"],
+    answer:"D",
+    exp:"Acquiescence: a-c-q-u-i-e-s-c-e-n-c-e. Option A drops the 'c' before 'ence'. B replaces 'c' with 's' midword. C doubles the 's' incorrectly. D is the only correctly spelled form. The word means passive acceptance or compliance without protest."
+  },
+
+  // Q6 — Vocabulary: SONDER — Answer: B
+  {
+    id:6, section:"Vocabulary", type:"mcq",
+    stem:"What is the meaning of SONDER?",
+    options:[
+      "A sense of awe at the vastness and indifference of the universe",
+      "The realisation that each passerby has a life as vivid and complex as one's own",
+      "A feeling of melancholy triggered by the passage of time",
+      "The awareness that one's own perspective is inevitably limited and partial"
+    ],
+    answer:"B",
+    exp:"Sonder = the sudden realisation that every random stranger is living a life as deeply complex and fully felt as your own — coined in The Dictionary of Obscure Sorrows. A describes existential awe. C describes nostalgia or saudade. D describes epistemic humility — sonder is specifically about other people's inner fullness."
+  },
+
+  // Q7 — Idiom fill-in: gild the lily — Answer: A
+  {
+    id:7, section:"Idiom", type:"mcq",
+    stem:"The director's decision to add a sweeping orchestral score to what was already an emotionally overwhelming scene was widely criticised as ________ — the moment needed no embellishment.",
+    options:[
+      "gilding the lily",
+      "throwing down the gauntlet",
+      "nailing his colours to the mast",
+      "turning a blind eye"
+    ],
+    answer:"A",
+    exp:"'Gild the lily' = to add unnecessary ornamentation to something already beautiful or perfect — from a misquotation of Shakespeare's King John. The sentence describes adding embellishment where none was needed. 'Throwing down the gauntlet' (B) = issuing a challenge. 'Nailing colours to the mast' (C) = declaring one's position publicly. 'Turning a blind eye' (D) = deliberately ignoring something wrong."
+  },
+
+  // Q8 — Word Selection — Legal defence lawyer — Answer: B (AAABA)
+  {
+    id:8, section:"Word Selection", type:"word_select",
+    instr:"Each sentence below contains a pair of words in bold. Select the most appropriate word (A or B) from each pair to form a coherent, well-reasoned paragraph.",
+    lines:[
+      {letter:"A",text:"The defence counsel's cross-examination was so <strong>incisive [A]</strong> / <strong>invasive [B]</strong> that each question dismantled a prosecution witness in fewer than three exchanges."},
+      {letter:"B",text:"Her technique relied less on <strong>rhetoric [A]</strong> / <strong>rebuke [B]</strong> than on the patient accumulation of contradiction — letting witnesses trap themselves."},
+      {letter:"C",text:"Jurors, initially <strong>impassive [A]</strong> / <strong>impervious [B]</strong>, began to lean forward as the inconsistencies in the prosecution's timeline became impossible to ignore."},
+      {letter:"D",text:"By the afternoon session, the lead prosecutor appeared visibly <strong>rattled [A]</strong> / <strong>resigned [B]</strong>, interrupting proceedings with objections the judge repeatedly overruled."},
+      {letter:"E",text:"Legal observers described her performance as a <strong>masterclass [A]</strong> / <strong>manifesto [B]</strong> in the art of controlled, methodical dismantling."}
+    ],
+    options:["AABBA","AAABA","AABAB","BAAAB"],
+    answer:"B",
+    exp:"Incisive = intelligently analytical. Rhetoric = persuasive language (rebuke = sharp criticism). Impassive = showing no emotion. Rattled = unnerved (resigned = accepting defeat — rattled fits the objections and overrulings). Masterclass = an exemplary performance. Correct pattern: AAABA."
+  },
+
+  // Q9 — Sentence Completion: tech layoffs — Answer: D (options reordered)
+  {
+    id:9, section:"Sentence Completion", type:"mcq",
+    stem:"The wave of tech layoffs, though framed by executives as ______ measures, was perceived by many employees as evidence of ______ planning, and the backlash that followed served only to ______ confidence in the sector's leadership, making future hiring ______.",
+    options:[
+      "corrective; flawed; reinforce; straightforward",
+      "cost-cutting; shortsighted; deplete; precarious",
+      "necessary; inadequate; deepen; harder",
+      "restructuring; poor; erode; uncertain"
+    ],
+    answer:"D",
+    exp:"'Restructuring' is the exact corporate framing used in tech layoffs — more precise than 'cost-cutting' or 'corrective'. 'Poor' planning is direct and damning. 'Erode' confidence is the standard precise term. 'Uncertain' hiring = natural consequence of damaged confidence. A reverses the logic at blank 3. B's 'deplete' is too strong. C's 'harder' is too colloquial."
+  },
+
+  // Q10 — Vocabulary: DRACONIAN — Answer: B (options reordered)
+  {
+    id:10, section:"Vocabulary", type:"mcq",
+    stem:"What is the meaning of DRACONIAN?",
+    options:[
+      "Rigidly bureaucratic and resistant to change",
+      "Excessively harsh or severe, especially in relation to laws or punishments",
+      "Effective only through the use of fear and coercion",
+      "Deliberately ambiguous and difficult to interpret"
+    ],
+    answer:"B",
+    exp:"Draconian = excessively harsh — from Draco, the ancient Athenian lawmaker whose code prescribed death for almost every offence. A describes bureaucratic inflexibility. C describes authoritarian method, not severity of rules. D describes deliberate obscurity. The word specifically refers to disproportionate harshness."
+  },
+
+  // Q11 — Idiom meaning: Hobson's choice — Answer: C
+  {
+    id:11, section:"Idiom", type:"mcq",
+    stem:"What does it mean when someone describes a situation as \"Hobson's choice\"?",
+    options:[
+      "A decision made under extreme time pressure with incomplete information",
+      "A choice between two options that are equally undesirable",
+      "A situation where there is apparently a choice but in reality only one option exists",
+      "A dilemma in which any decision taken will result in some loss"
+    ],
+    answer:"C",
+    exp:"'Hobson's choice' = a free choice in which only one option is actually offered — named after Thomas Hobson, a Cambridge stable keeper who offered customers the horse nearest the door or none at all. C is correct. B describes a dilemma between two bad options — that is 'between the devil and the deep blue sea'. A describes time-pressured decision-making. D describes a lose-lose scenario — different from the illusion of choice that Hobson's choice implies."
+  },
+
+  // Q12 — Spelling: insistance — Answer: D (options reordered)
+  {
+    id:12, section:"Spelling", type:"mcq",
+    stem:"Identify the misspelled word: \"The defendant's insistance on his innocence was noted, but the evidence against him was overwhelming.\"",
+    options:["innocence","overwhelming","defendant's","insistance"],
+    answer:"D",
+    exp:"The correct spelling is 'insistence' — not 'insistance'. The suffix is -ence, not -ance. This is one of the most commonly confused -ence/-ance pairs. Innocence, overwhelming, and defendant's are all correctly spelled."
+  },
+
+  // Q13 — Sentence Completion: EU AI regulation — Answer: B (options reordered)
+  {
+    id:13, section:"Sentence Completion", type:"mcq",
+    stem:"Critics argued that the proposed AI regulations, while well-intentioned, were so ______ in their scope that they risked ______ the very innovation they sought to protect, ______ smaller firms that lacked the resources to comply and ultimately ______ Europe's competitive position.",
+    options:[
+      "sweeping; hampering; crushing; undermining",
+      "ambitious; restricting; penalising; eroding",
+      "broad; stifling; disadvantaging; weakening",
+      "vague; limiting; burdening; damaging"
+    ],
+    answer:"B",
+    exp:"'Ambitious' in scope = the framing of well-intentioned-but-overreaching. 'Restricting' innovation = natural verb pairing. 'Penalising' smaller firms = precise, carries legal weight appropriate to a regulation context. 'Eroding' Europe's competitive position = gradual, systemic weakening. A's 'crushing' is too extreme. C's 'disadvantaging' is weak. D's 'vague' contradicts 'well-intentioned'."
+  },
+
+  // Q14 — Vocabulary: FECUND — Answer: A
+  {
+    id:14, section:"Vocabulary", type:"mcq",
+    stem:"What is the meaning of FECUND?",
+    options:[
+      "Highly productive or capable of producing abundant results",
+      "Rich in sensory experience and deeply evocative",
+      "Having a powerful and transformative effect on others",
+      "Demonstrating exceptional variety and diversity of thought"
+    ],
+    answer:"A",
+    exp:"Fecund = producing or capable of producing an abundance of offspring, results, or ideas — highly fertile or productive. B describes sensory richness. C describes influence or impact. D describes intellectual variety. Fecund is specifically about abundance of output or generative power."
+  },
+
+  // Q15 — Idiom fill-in: throw down the gauntlet — Answer: A
+  {
+    id:15, section:"Idiom", type:"mcq",
+    stem:"By announcing a rival streaming platform with a lower subscription price and an exclusive library, the tech giant effectively ________ to every established player in the market.",
+    options:[
+      "threw down the gauntlet",
+      "bit off more than it could chew",
+      "jumped on the bandwagon",
+      "pulled the rug out from under itself"
+    ],
+    answer:"A",
+    exp:"'Throw down the gauntlet' = to issue a direct challenge — from the medieval practice of throwing a glove as a formal challenge to combat. A is correct. 'Bite off more than you can chew' (B) = to attempt more than you can manage. 'Jump on the bandwagon' (C) = to join something popular. 'Pull the rug out from under' (D) = to remove support unexpectedly."
+  },
+
+  // Q16 — Word Selection — Failing newspaper — Answer: C (options reordered, correct is AAABA → option C)
+  {
+    id:16, section:"Word Selection", type:"word_select",
+    instr:"Each sentence below contains a pair of words in bold. Select the most appropriate word (A or B) from each pair to form a coherent, well-reasoned paragraph.",
+    lines:[
+      {letter:"A",text:"The newspaper's circulation had been in <strong>precipitous [A]</strong> / <strong>progressive [B]</strong> decline for over a decade, and no editorial relaunch had succeeded in reversing the trend."},
+      {letter:"B",text:"Advertising revenues, once the publication's most <strong>lucrative [A]</strong> / <strong>laudable [B]</strong> income stream, had migrated almost entirely to digital platforms."},
+      {letter:"C",text:"Attempts to build a subscriber base online had proved <strong>fitful [A]</strong> / <strong>fruitful [B]</strong> — occasional spikes in sign-ups never translated into lasting loyalty."},
+      {letter:"D",text:"Management's response — a series of redundancies and a <strong>truncated [A]</strong> / <strong>turbulent [B]</strong> print edition — only deepened the sense of institutional retreat."},
+      {letter:"E",text:"Former editors described the paper's trajectory as a <strong>parable [A]</strong> / <strong>paradox [B]</strong> for an entire industry that had mistaken loyalty for permanence."}
+    ],
+    options:["AABBA","AABAB","AAABA","BAABA"],
+    answer:"C",
+    exp:"Precipitous = sudden and steep. Lucrative = producing a great deal of profit. Fitful = occurring in irregular bursts (fruitful = productive — the attempts were unsuccessful and irregular). Truncated = shortened or cut short. Parable = a story used to illustrate a lesson. All five A-choices build a coherent account of institutional decline. Correct pattern: AAABA."
+  },
+
+  // Q17 — Sentence Completion: ICC cricket workload — Answer: A (options reordered)
+  {
+    id:17, section:"Sentence Completion", type:"mcq",
+    stem:"With the international cricket calendar growing ever more ______, top players have begun ______ major tournaments, a trend that has ______ administrators and forced governing bodies to ______ how they balance player welfare against commercial obligations.",
+    options:[
+      "congested; withdrawing from; concerned; rethink",
+      "crowded; skipping; alarmed; reconsider",
+      "packed; avoiding; upset; revisit",
+      "demanding; opting out of; worried; question"
+    ],
+    answer:"A",
+    exp:"'Congested' calendar is the precise term used in cricket administration debates. 'Withdrawing from' is more formal and precise than 'skipping' or 'avoiding'. 'Concerned' administrators = the issue has raised concern, not alarm. 'Rethink' how they balance = active strategic reconsideration. B's 'alarmed' is too strong. C's 'upset' is too casual."
+  },
+
+  // Q18 — Vocabulary: PARAGON — Answer: C (options reordered)
+  {
+    id:18, section:"Vocabulary", type:"mcq",
+    stem:"What is the meaning of PARAGON?",
+    options:[
+      "An exception to an otherwise consistent pattern",
+      "A standard against which others are measured",
+      "A person or thing regarded as a perfect example of a quality",
+      "An ideal that is widely admired but rarely achieved"
+    ],
+    answer:"C",
+    exp:"Paragon = a person or thing regarded as a model of excellence — the perfect embodiment of a quality. B describes a benchmark — a paragon is an actual instance, not an abstract measure. D describes an unreachable ideal — a paragon is an actual exemplar. A describes an anomaly, which is unrelated."
+  },
+
+  // Q19 — Idiom meaning: go out on a limb — Answer: D (options reordered)
+  {
+    id:19, section:"Idiom", type:"mcq",
+    stem:"What does it mean when a journalist is said to have \"gone out on a limb\" with a prediction?",
+    options:[
+      "Made a forecast based on incomplete or unreliable data",
+      "Committed publicly to a position that contradicts their previous reporting",
+      "Pursued an unconventional line of inquiry that others had abandoned",
+      "Taken a risk by stating a position that others are unlikely to agree with"
+    ],
+    answer:"D",
+    exp:"'Go out on a limb' = to put yourself in a vulnerable position by taking a risk or expressing an opinion that others may not support — from the image of climbing too far along a branch. D is correct. A describes poor methodology. C describes unconventional investigation — the idiom is specifically about exposure and risk. B describes contradiction — different."
+  },
+
+  // Q20 — Spelling: Conscientious — Answer: C (options reordered)
+  {
+    id:20, section:"Spelling", type:"mcq",
+    stem:"Among the following, which word is correctly spelled?",
+    options:["Conciencious","Consciencious","Conscientious","Conscientous"],
+    answer:"C",
+    exp:"Conscientious: c-o-n-s-c-i-e-n-t-i-o-u-s. A omits the first 's'. B inserts an extra 'c' after 'ien'. D drops the 'i' before 'ous'. Memory tip: the word contains 'science' — conscientious. Meaning: wishing to do what is right and taking great care."
+  },
+
+  // Q21 — Word Selection — Protest movement co-opted — Answer: D (options reordered, correct AAABA → option D)
+  {
+    id:21, section:"Word Selection", type:"word_select",
+    instr:"Each sentence below contains a pair of words in bold. Select the most appropriate word (A or B) from each pair to form a coherent, well-reasoned paragraph.",
+    lines:[
+      {letter:"A",text:"What had begun as a <strong>grassroots [A]</strong> / <strong>grievous [B]</strong> movement demanding affordable housing was, within eighteen months, unrecognisable."},
+      {letter:"B",text:"Corporate sponsors, initially <strong>peripheral [A]</strong> / <strong>perennial [B]</strong> to the cause, had inserted themselves into its communications, imagery, and leadership."},
+      {letter:"C",text:"The founding organisers found their original demands steadily <strong>diluted [A]</strong> / <strong>distorted [B]</strong> by a network of interests with no investment in genuine reform."},
+      {letter:"D",text:"Public messaging, once <strong>unequivocal [A]</strong> / <strong>unflinching [B]</strong> in its demands, now hedged with qualifications designed to offend no potential donor."},
+      {letter:"E",text:"Veterans of the movement described its evolution as a <strong>cautionary [A]</strong> / <strong>contentious [B]</strong> tale about the price of institutional legitimacy."}
+    ],
+    options:["AABBA","AABAB","BABAA","AAABA"],
+    answer:"D",
+    exp:"Grassroots = originating among ordinary people. Peripheral = marginal. Diluted = weakened by additions (distorted = twisted — diluted is more precise for demands being watered down). Unequivocal = leaving no doubt. Cautionary = serving as a warning. Correct pattern: AAABA."
+  },
+
+  // Q22 — Sentence Completion: India G20 — Answer: B
+  {
+    id:22, section:"Sentence Completion", type:"mcq",
+    stem:"India's G20 presidency was widely seen as an opportunity to ______ its standing as a global power, yet the summit's communiqué, stripped of any direct ______ to the Ukraine war, drew criticism that New Delhi had ______ clear positions in favour of a consensus so ______ it satisfied no one.",
+    options:[
+      "assert; reference; avoided; hollow",
+      "cement; mention; sacrificed; vague",
+      "project; condemnation; abandoned; diluted",
+      "establish; allusion; traded; watered-down"
+    ],
+    answer:"B",
+    exp:"'Cement' its standing = making permanent what already exists. 'Mention' of the Ukraine war = the communiqué avoided naming it directly. 'Sacrificed' clear positions = gave them up for consensus. 'Vague' consensus = the precise criticism. A's 'avoided' is weaker than 'sacrificed'. C's 'abandoned' and 'diluted' are too strong. D is too colloquial."
+  },
+
+  // Q23 — Vocabulary: ELAN — Answer: D (options reordered)
+  {
+    id:23, section:"Vocabulary", type:"mcq",
+    stem:"What is the meaning of ELAN?",
+    options:[
+      "The quiet confidence of someone who has mastered their craft",
+      "A natural aptitude that makes a task appear effortless",
+      "A composed and unhurried approach to demanding situations",
+      "Energy, style, and enthusiasm in the way something is done"
+    ],
+    answer:"D",
+    exp:"Elan = energy and flair in the way something is done — implying both vigour and style. A describes mastery and quiet confidence. B describes natural talent or aptitude. C describes composure or equanimity. Elan specifically combines energy with style — it is visibly vibrant, not merely skilled or calm."
+  },
+
+  // Q24 — Idiom fill-in: pass the buck — Answer: C
+  {
+    id:24, section:"Idiom", type:"mcq",
+    stem:"When the data breach became public, the CEO blamed the IT department, the IT head cited a third-party vendor, and the vendor pointed to an outdated security protocol — a textbook example of everyone ________.",
+    options:[
+      "nailing their colours to the mast",
+      "turning a blind eye",
+      "passing the buck",
+      "cutting their losses"
+    ],
+    answer:"C",
+    exp:"'Pass the buck' = to shift responsibility for a problem to someone else rather than dealing with it yourself — from the use of a marker in poker to indicate whose turn it was to deal, which could be passed on. C is correct. 'Nailing colours to the mast' (A) = declaring one's position publicly — the opposite of avoidance. 'Turning a blind eye' (B) = deliberately ignoring — different from deflecting blame. 'Cutting losses' (D) = withdrawing from a bad situation to minimise damage."
+  },
+
+  // Q25 — Spelling: Renaissance — Answer: A
+  {
+    id:25, section:"Spelling", type:"mcq",
+    stem:"Choose the correctly spelled word.",
+    options:["Renaissance","Renaisance","Rennaissance","Rennaissanse"],
+    answer:"A",
+    exp:"Renaissance: R-e-n-a-i-s-s-a-n-c-e. Double 's' in the middle, single 'n' at the start. B drops one 's'. C doubles the 'n'. D doubles both 'n' and alters the ending. The word means a revival or renewed interest — originally the 14th–17th century European cultural rebirth."
+  },
+
+  // Q26 — Word Selection — Pharmaceutical whistleblower — Answer: D (options reordered, correct AAABA → option D)
+  {
+    id:26, section:"Word Selection", type:"word_select",
+    instr:"Each sentence below contains a pair of words in bold. Select the most appropriate word (A or B) from each pair to form a coherent, well-reasoned paragraph.",
+    lines:[
+      {letter:"A",text:"The internal researcher had spent three years compiling <strong>irrefutable [A]</strong> / <strong>inferential [B]</strong> evidence that clinical trial data had been selectively suppressed."},
+      {letter:"B",text:"Her decision to approach a regulatory body was not <strong>impulsive [A]</strong> / <strong>imprudent [B]</strong> — it followed months of failed attempts to raise concerns through official channels."},
+      {letter:"C",text:"The company's legal team responded with a <strong>volley [A]</strong> / <strong>veneer [B]</strong> of procedural objections designed to delay rather than refute her findings."},
+      {letter:"D",text:"Colleagues who had previously expressed sympathy became suddenly <strong>reticent [A]</strong> / <strong>resentful [B]</strong>, unwilling to be associated with anything that might attract corporate attention."},
+      {letter:"E",text:"She had expected <strong>adversity [A]</strong> / <strong>animosity [B]</strong>, but the sheer isolation of her position still took her by surprise."}
+    ],
+    options:["AABBA","AABAB","BAABA","AAABA"],
+    answer:"D",
+    exp:"Irrefutable = impossible to deny. Impulsive = acting without thinking (the sentence says it was NOT impulsive, i.e. deliberate). Volley = a barrage (veneer = surface covering — legal objections are a volley). Reticent = reluctant to speak. Adversity = difficulties (animosity = hostility — she expected difficulty, not hatred). Correct pattern: AAABA."
+  },
+
+  // Q27 — Vocabulary: SHENANIGANS — Answer: A (options reordered)
+  {
+    id:27, section:"Vocabulary", type:"mcq",
+    stem:"What is the meaning of SHENANIGANS?",
+    options:[
+      "Secret or dishonest activity; also noisy, mischievous play",
+      "Reckless behaviour driven by overconfidence",
+      "Disruptive conduct motivated by professional rivalry",
+      "Deliberate attempts to mislead through false information"
+    ],
+    answer:"A",
+    exp:"Shenanigans = secret or dishonest activity (often used in a slightly lighter tone), or boisterous, mischievous fun. The word is dual in register — mild mischief or questionable manoeuvring. B describes overconfident recklessness. D describes deliberate misinformation — more specific. C attributes motivation which the word does not carry."
+  },
+
+  // Q28 — Idiom meaning: a red herring — Answer: C
+  {
+    id:28, section:"Idiom", type:"mcq",
+    stem:"What does it mean when an argument is described as \"a red herring\"?",
+    options:[
+      "A claim that appears credible but collapses under scrutiny",
+      "A deliberate attempt to provoke an emotional rather than rational response",
+      "Something introduced to divert attention away from the real issue",
+      "A piece of evidence that points equally to two opposite conclusions"
+    ],
+    answer:"C",
+    exp:"'A red herring' = something that misleads or distracts from the relevant issue — from the practice of dragging a strong-smelling fish across a trail to throw hunting dogs off the scent. C is correct. A describes a weak argument. B describes an appeal to emotion. D describes ambiguous evidence. A red herring is specifically about diversion."
+  },
+
+  // Q29 — Sentence Completion: Gaza ceasefire — Answer: D
+  {
+    id:29, section:"Sentence Completion", type:"mcq",
+    stem:"Despite repeated rounds of ______ mediation, the ceasefire talks remained ______, with each side insisting on conditions the other found ______, leaving humanitarian organisations ______ at the mounting civilian toll.",
+    options:[
+      "shuttle; deadlocked; unacceptable; horrified",
+      "sustained; stalled; unreasonable; alarmed",
+      "intensive; fragile; demanding; distressed",
+      "prolonged; inconclusive; untenable; aghast"
+    ],
+    answer:"D",
+    exp:"'Prolonged' mediation = reflects the drawn-out nature of the talks. 'Inconclusive' = the most precise diplomatic term. 'Untenable' conditions = too extreme to accept — the standard diplomatic word. 'Aghast' = the strongest and most appropriate emotional register given 'mounting civilian toll'. A's 'horrified' is strong but 'shuttle' and 'unacceptable' are weaker. B's 'alarmed' understates. C is too mild."
+  },
+
+  // Q30 — Word Selection — Startup pitch — Answer: A (AAABA)
+  {
+    id:30, section:"Word Selection", type:"word_select",
+    instr:"Each sentence below contains a pair of words in bold. Select the most appropriate word (A or B) from each pair to form a coherent, well-reasoned paragraph.",
+    lines:[
+      {letter:"A",text:"The founder had rehearsed her pitch until every pause, pivot, and punchline felt entirely <strong>spontaneous [A]</strong> / <strong>sporadic [B]</strong> — a performance that disguised its own preparation."},
+      {letter:"B",text:"She opened not with data, but with a <strong>visceral [A]</strong> / <strong>virtual [B]</strong> anecdote about a patient who had been failed by the existing system."},
+      {letter:"C",text:"The investors, who had seen hundreds of pitches, found themselves genuinely <strong>disarmed [A]</strong> / <strong>dismayed [B]</strong> by the simplicity and honesty of her opening."},
+      {letter:"D",text:"By the time the financials appeared, the room had already made a largely <strong>intuitive [A]</strong> / <strong>impulsive [B]</strong> decision in her favour."},
+      {letter:"E",text:"One partner later described the pitch as possessing an <strong>élan [A]</strong> / <strong>elite [B]</strong> that no amount of coaching could manufacture."}
+    ],
+    options:["AAABA","AABBA","BAAAB","AABAB"],
+    answer:"A",
+    exp:"Spontaneous = natural and unforced (sporadic = irregular). Visceral = deep emotional impact. Disarmed = having defences lowered (dismayed = alarmed). Intuitive = based on instinct (impulsive = hasty). Elan = energy and flair. Correct pattern: AAABA."
+  },
+
+  // Q31 — Vocabulary: PERFIDY — Answer: B
+  {
+    id:31, section:"Vocabulary", type:"mcq",
+    stem:"What is the meaning of PERFIDY?",
+    options:[
+      "A calculated refusal to honour an agreement or promise",
+      "The act of betraying a trust; deceitfulness and treachery",
+      "Systematic deception carried out over a long period of time",
+      "A pattern of behaviour driven by selfish and dishonest motives"
+    ],
+    answer:"B",
+    exp:"Perfidy = the quality of being deceitful and untrustworthy; betrayal of trust. A describes breach of contract — more specific. C describes sustained deception — perfidy implies a fundamental quality of untrustworthiness, not necessarily a scheme. D describes a behavioural pattern rooted in selfishness — perfidy is about betrayal and treachery."
+  },
+
+  // Q32 — Idiom fill-in: cut the Gordian knot — Answer: C
+  {
+    id:32, section:"Idiom", type:"mcq",
+    stem:"After months of inconclusive negotiations over the treaty's terms, the prime minister decided to bypass the diplomatic process entirely and impose a unilateral framework — choosing to ________ rather than untangle it thread by thread.",
+    options:[
+      "nail his colours to the mast",
+      "kick the can down the road",
+      "cut the Gordian knot",
+      "go out on a limb"
+    ],
+    answer:"C",
+    exp:"'Cut the Gordian knot' = to solve a complex problem by taking a bold, decisive action that bypasses the conventional approach — from the legend of Alexander the Great, who solved the puzzle of the Gordian knot by slicing through it with his sword rather than attempting to untie it. C is correct. 'Nail colours to the mast' (A) = declare one's position — different. 'Kick the can down the road' (B) = defer a problem — the opposite of decisive action. 'Go out on a limb' (D) = take a personal risk — different."
+  },
+
+  // Q33 — Sentence Completion: semiconductor shortage — Answer: B (options reordered)
+  {
+    id:33, section:"Sentence Completion", type:"mcq",
+    stem:"The semiconductor shortage ______ the extent to which modern economies had ______ supply chains concentrated in a handful of facilities, and governments that had long ______ domestic manufacturing now found themselves ______ to reverse years of strategic neglect.",
+    options:[
+      "highlighted; depended on; dismissed; struggling",
+      "revealed; underestimated; overlooked; scrambling",
+      "underscored; underestimated; ignored; racing",
+      "exposed; over-relied on; neglected; rushing"
+    ],
+    answer:"B",
+    exp:"'Revealed' = made visible what was hidden. 'Underestimated' the reliance = governments didn't appreciate how dependent they were. 'Overlooked' domestic manufacturing. 'Scrambling' = the most vivid and precise word for reactive, disorganised effort. A's 'struggling' is too vague. C creates awkward repetition with 'under-'. D's 'over-relied on' is redundant with 'concentrated in a handful of facilities'."
+  },
+
+  // Q34 — Spelling: perseverance — Answer: A (options reordered)
+  {
+    id:34, section:"Spelling", type:"mcq",
+    stem:"Identify the misspelled word: \"Her perseverence in the face of repeated setbacks was an inspiration to the entire department.\"",
+    options:["perseverence","repeated","setbacks","inspiration"],
+    answer:"A",
+    exp:"The correct spelling is 'perseverance' — not 'perseverence'. The suffix is -ance, not -ence. A frequent error because 'persevere' ends in 'e', leading students to write -erence. Repeated, setbacks, and inspiration are all correctly spelled."
+  },
+
+  // Q35 — Vocabulary: LUGUBRIOUS — Answer: B (options reordered)
+  {
+    id:35, section:"Vocabulary", type:"mcq",
+    stem:"What is the meaning of LUGUBRIOUS?",
+    options:[
+      "Slow and deliberate in speech or manner",
+      "Mournful and gloomy, especially to an exaggerated degree",
+      "Deeply offended by a perceived slight or injustice",
+      "Weighed down by guilt or the memory of past wrongs"
+    ],
+    answer:"B",
+    exp:"Lugubrious = looking or sounding sad and dismal — often with a hint of exaggeration or dark comedy. A describes deliberate pacing. C describes wounded pride or indignation. D describes guilt or regret — lugubrious describes appearance and manner, not inner moral feeling. The word often implies theatrically overdone gloominess."
+  },
+
+  // Q36 — Idiom meaning: turn a blind eye — Answer: C
+  {
+    id:36, section:"Idiom", type:"mcq",
+    stem:"What does it mean when a regulator is said to have \"turned a blind eye\" to certain practices?",
+    options:[
+      "Failed to detect a violation due to inadequate monitoring systems",
+      "Issued a formal warning but chose not to pursue further action",
+      "Deliberately chosen to ignore something known to be wrong or illegal",
+      "Concluded that available evidence was insufficient to warrant intervention"
+    ],
+    answer:"C",
+    exp:"'Turn a blind eye' = to deliberately ignore something you know to be wrong — from Admiral Horatio Nelson, who held his telescope to his blind eye at the Battle of Copenhagen to avoid seeing the signal to withdraw. C is correct. A describes failure due to incompetence, not deliberate choice. B describes a partial response — turning a blind eye implies no response at all. D describes a reasoned conclusion based on evidence — the idiom implies wilful ignorance, not genuine uncertainty."
+  },
+
+  // Q37 — Word Selection — Central bank currency crisis — Answer: D (options reordered, correct AAABA → option D)
+  {
+    id:37, section:"Word Selection", type:"word_select",
+    instr:"Each sentence below contains a pair of words in bold. Select the most appropriate word (A or B) from each pair to form a coherent, well-reasoned paragraph.",
+    lines:[
+      {letter:"A",text:"When the currency began to <strong>depreciate [A]</strong> / <strong>deteriorate [B]</strong> sharply, the governor resisted immediate intervention, calculating that the market would self-correct."},
+      {letter:"B",text:"Her silence in the face of mounting pressure was interpreted by some analysts as <strong>composure [A]</strong> / <strong>complaisance [B]</strong>, and by others as dangerous inertia."},
+      {letter:"C",text:"When she finally acted, the rate hike was <strong>decisive [A]</strong> / <strong>divisive [B]</strong> in its scale — larger than any the market had anticipated."},
+      {letter:"D",text:"Critics who had called for earlier action found their arguments <strong>pre-empted [A]</strong> / <strong>pre-occupied [B]</strong> by the very boldness of the move."},
+      {letter:"E",text:"In hindsight, her <strong>sangfroid [A]</strong> / <strong>savoir-faire [B]</strong> under pressure was widely credited with preventing a disorderly collapse."}
+    ],
+    options:["AABBA","AABAB","BAAAB","AAABA"],
+    answer:"D",
+    exp:"Depreciate = fall in value. Composure = calm self-control. Decisive = resolute and clear (divisive = causing disagreement — a large rate hike is decisive here). Pre-empted = forestalled or made irrelevant. Sangfroid = composure in a crisis (savoir-faire = social ease — sangfroid is specifically calm under pressure). Correct pattern: AAABA."
+  },
+
+  // Q38 — Sentence Completion: EV adoption — Answer: C (options reordered)
+  {
+    id:38, section:"Sentence Completion", type:"mcq",
+    stem:"Despite growing consumer interest, EV adoption in emerging markets has remained ______, hampered by charging infrastructure that is ______ at best and the high upfront cost of vehicles that most households cannot ______ — factors that no amount of government ______ has yet managed to resolve.",
+    options:[
+      "slow; patchy; justify; subsidy",
+      "sluggish; sparse; absorb; incentivisation",
+      "limited; inadequate; afford; rhetoric",
+      "modest; unreliable; sustain; policy"
+    ],
+    answer:"C",
+    exp:"'Limited' adoption = precise and neutral. 'Inadequate' charging infrastructure = strongest and most accurate descriptor. 'Afford' = households cannot afford high upfront costs — the natural collocation. 'Rhetoric' = government promises without delivery. A's 'justify' is wrong — households can't afford, not justify. B's 'absorb' and 'incentivisation' are awkward. D's 'sustain' doesn't fit cost."
+  },
+
+  // Q39 — Vocabulary: SANGFROID — Answer: A (options reordered)
+  {
+    id:39, section:"Vocabulary", type:"mcq",
+    stem:"What is the meaning of SANGFROID?",
+    options:[
+      "Composure and calmness in difficult or dangerous situations",
+      "The confidence of someone who has succeeded under pressure before",
+      "A deliberate suppression of emotion in order to appear stronger",
+      "A studied indifference to the opinions of others"
+    ],
+    answer:"A",
+    exp:"Sangfroid = composure and calmness under pressure — from French, literally 'cold blood'. A is correct. B describes earned confidence — sangfroid is about temperament in the moment, not prior experience. C describes suppression of emotion — sangfroid is not a suppression but a genuine equanimity. D describes deliberate indifference."
+  },
+
+  // Q40 — Idiom fill-in: nail one's colours to the mast — Answer: D
+  {
+    id:40, section:"Idiom", type:"mcq",
+    stem:"Unlike her predecessor, who had carefully avoided taking sides on the independence question, the new party leader used her first press conference to ________ — leaving no doubt about where she and her party stood.",
+    options:[
+      "turn a blind eye",
+      "cut the Gordian knot",
+      "pass the buck",
+      "nail her colours to the mast"
+    ],
+    answer:"D",
+    exp:"'Nail one's colours to the mast' = to publicly and firmly declare one's position or allegiance, especially when doing so involves courage or risk — from the naval practice of nailing a flag to the mast so it could not be lowered in surrender. D is correct. 'Turn a blind eye' (A) = deliberately ignore something — the opposite of declaring a position. 'Cut the Gordian knot' (B) = solve a problem through bold decisive action — different. 'Pass the buck' (C) = shift responsibility — unrelated."
+  },
+
+  // ── STORY VOCABULARY Q41–Q45 — COURTROOM / LEGAL DRAMA ────────────
+  // Word bank: ADMONISH, CHICANERY, INNUENDO, ALACRITY, INCHOATE
+
+  {
+    id:41, section:"Story Vocabulary", type:"story",
+    storyText:"The trial of Arvind Kapoor had entered its third week, and the atmosphere in Court No. 4 had grown charged with the particular tension that comes from watching a case built on <span class='story-blank'>( 1 )</span> — whispered suggestion and implication, never quite a direct accusation. The defence counsel had raised objections with surprising <span class='story-blank'>( 2 )</span>, springing to his feet the moment the prosecution veered into speculation. The judge was twice forced to <span class='story-blank'>( 3 )</span> the lead prosecutor for remarks that came dangerously close to prejudicing the jury. By the end of the day, it was clear to everyone in the room that the prosecution's case remained largely <span class='story-blank'>( 4 )</span> — a constellation of suspicion that had not yet hardened into proof. What troubled the defence most, however, was the unmistakable smell of <span class='story-blank'>( 5 )</span> — the quiet, procedural kind that leaves no single fingerprint but tilts the whole case sideways.",
+    stem:"Blank (1) — <em>a case built on ______ — whispered suggestion and implication, never quite a direct accusation</em>",
+    options:["ALACRITY","CHICANERY","INNUENDO","ADMONISH"],
+    answer:"C",
+    exp:"Innuendo = an indirect or subtle reference, typically disparaging — suggestion and implication without direct accusation. Alacrity = eagerness. Chicanery = trickery. Admonish = to reprimand. Only innuendo fits 'whispered suggestion and implication, never quite a direct accusation'."
+  },
+  {
+    id:42, section:"Story Vocabulary", type:"story_cont",
+    storyRef:true,
+    stem:"Blank (2) — <em>raised objections with surprising ______</em>",
+    options:["INCHOATE","INNUENDO","CHICANERY","ALACRITY"],
+    answer:"D",
+    exp:"Alacrity = brisk and cheerful readiness — raising objections with alacrity means doing so promptly and eagerly. Inchoate = undeveloped. Innuendo = indirect suggestion. Chicanery = trickery. Only alacrity fits 'raised objections with surprising ______'."
+  },
+  {
+    id:43, section:"Story Vocabulary", type:"story_cont",
+    storyRef:true,
+    stem:"Blank (3) — <em>the judge was twice forced to ______ the lead prosecutor</em>",
+    options:["CHICANERY","INCHOATE","ADMONISH","ALACRITY"],
+    answer:"C",
+    exp:"Admonish = to warn or reprimand firmly — judges admonish lawyers who overstep. Chicanery = trickery. Inchoate = undeveloped. Alacrity = eagerness. 'Was forced to ______ the lead prosecutor' requires a verb meaning to formally warn or rebuke."
+  },
+  {
+    id:44, section:"Story Vocabulary", type:"story_cont",
+    storyRef:true,
+    stem:"Blank (4) — <em>the prosecution's case remained largely ______ — a constellation of suspicion that had not yet hardened into proof</em>",
+    options:["ADMONISH","INNUENDO","CHICANERY","INCHOATE"],
+    answer:"D",
+    exp:"Inchoate = just begun and not fully formed — a case that is 'a constellation of suspicion not yet hardened into proof' is exactly inchoate. Admonish is a verb. Innuendo = suggestion. Chicanery = trickery. Only inchoate describes something undeveloped and formless."
+  },
+  {
+    id:45, section:"Story Vocabulary", type:"story_cont",
+    storyRef:true,
+    stem:"Blank (5) — <em>the unmistakable smell of ______ — the quiet, procedural kind that leaves no single fingerprint</em>",
+    options:["INCHOATE","INNUENDO","ALACRITY","CHICANERY"],
+    answer:"D",
+    exp:"Chicanery = the use of trickery to achieve one's purpose — specifically procedural manipulation and deception. 'The quiet, procedural kind that leaves no single fingerprint but tilts the whole case sideways' is exactly chicanery in a legal context. Innuendo = suggestion. Inchoate = undeveloped. Alacrity = eagerness."
+  }
+
+];
+
+
+
+// ════════════════════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════════════════════
+let studentName = "", studentPin = "", studentBatch = "";
+let currentQ = 0;
+let userAnswers = new Array(QUESTIONS.length).fill(null);
+let timerInterval = null;
+let secondsLeft = 40 * 60;
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwGGxswx4hcBUFiT0QJIglowhKcJCv47MOR5LKBv9sILl-evsgZeKCms5y6s5zEXOUo6Q/exec";
+
+// ════════════════════════════════════════════════════════
+// LOGIN
+// ════════════════════════════════════════════════════════
+function startTest() {
+  const name = document.getElementById("inputName").value.trim();
+  const pin = document.getElementById("inputPin").value.trim().toUpperCase();
+  const batch = document.getElementById("inputBatch").value.trim();
+  if (!name) { alert("Please enter your full name."); return; }
+  if (!batch) { alert("Please select your batch."); return; }
+  if (!pin) { alert("IMS PIN is required. Please enter your PIN (e.g. STU0001184727)."); return; }
+  if (!/^(STU|IMS)\d{10}$/.test(pin)) { alert("Invalid PIN format. PIN must start with STU or IMS followed by 10 digits."); return; }
+  studentName = name;
+  studentPin = pin;
+  studentBatch = batch;
+  document.getElementById("dispName").textContent = name;
+  document.getElementById("dispPin").textContent = pin;
+  document.getElementById("dispBatch").textContent = batch;
+  document.getElementById("loginScreen").style.display = "none";
+  document.getElementById("testScreen").style.display = "block";
+  buildPalette();
+  renderQuestion(0);
+  startTimer();
+}
+
+// ════════════════════════════════════════════════════════
+// TIMER
+// ════════════════════════════════════════════════════════
+function startTimer() {
+  timerInterval = setInterval(() => {
+    secondsLeft--;
+    const m = Math.floor(secondsLeft / 60);
+    const s = secondsLeft % 60;
+    document.getElementById("timerVal").textContent = `${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+    if (secondsLeft <= 300) document.getElementById("timerBox").classList.add("urgent");
+    if (secondsLeft <= 0) { clearInterval(timerInterval); submitTest(); }
+  }, 1000);
+}
+
+// ════════════════════════════════════════════════════════
+// RENDER QUESTION
+// ════════════════════════════════════════════════════════
+function renderQuestion(idx) {
+  currentQ = idx;
+  const q = QUESTIONS[idx];
+  const panel = document.getElementById("questionPanel");
+  const letters = ["A", "B", "C", "D"];
+  let html = "";
+
+  html += `<div class="section-label">${q.section}</div>`;
+  html += `<div class="q-card">`;
+  html += `<div class="q-number">Question ${idx + 1} of ${QUESTIONS.length}</div>`;
+
+  if (q.type === "word_select") {
+    if (q.instr) html += `<div class="q-instr">${q.instr}</div>`;
+    html += `<div class="para-block">`;
+    q.lines.forEach(l => {
+      html += `<div class="para-line"><strong>${l.letter}.</strong> ${l.text}</div>`;
+    });
+    html += `</div>`;
+  } else if (q.type === "story") {
+    html += `<div class="story-block">${q.storyText}</div>`;
+    html += `<div class="q-stem">${q.stem}</div>`;
+  } else if (q.type === "story_cont") {
+    // Show story reference
+    const storyQ = QUESTIONS.find(x => x.type === "story");
+    html += `<div class="story-block" style="font-size:13px;opacity:0.85;">${storyQ.storyText}</div>`;
+    html += `<div class="q-stem">${q.stem}</div>`;
+  } else {
+    if (q.instr) html += `<div class="q-instr">${q.instr}</div>`;
+    if (q.stem) html += `<div class="q-stem">${q.stem}</div>`;
+  }
+
+  html += `<div class="options-grid">`;
+  q.options.forEach((opt, i) => {
+    const selected = userAnswers[idx] === letters[i] ? " selected" : "";
+    html += `<div class="opt-btn${selected}" onclick="selectOption('${letters[i]}', ${idx})">
+      <span class="opt-label">${letters[i]}.</span><span>${opt}</span>
+    </div>`;
+  });
+  html += `</div>`;
+
+  html += `<div class="q-actions">`;
+  if (idx > 0) html += `<button class="btn btn-prev" onclick="renderQuestion(${idx - 1})">← Previous</button>`;
+  html += `<button class="btn btn-clear" onclick="clearAnswer(${idx})">Clear</button>`;
+  if (idx < QUESTIONS.length - 1) html += `<button class="btn btn-next" onclick="renderQuestion(${idx + 1})">Next →</button>`;
+  if (idx === QUESTIONS.length - 1) html += `<button class="btn btn-submit" onclick="confirmSubmit()">Submit Test ✓</button>`;
+  html += `</div>`;
+  html += `</div>`;
+
+  panel.innerHTML = html;
+  panel.scrollTop = 0;
+  updatePalette();
+}
+
+// ════════════════════════════════════════════════════════
+// SELECT OPTION
+// ════════════════════════════════════════════════════════
+function selectOption(letter, idx) {
+  userAnswers[idx] = letter;
+  renderQuestion(idx);
+}
+
+function clearAnswer(idx) {
+  userAnswers[idx] = null;
+  renderQuestion(idx);
+}
+
+// ════════════════════════════════════════════════════════
+// PALETTE
+// ════════════════════════════════════════════════════════
+function buildPalette() {
+  const grid = document.getElementById("paletteGrid");
+  grid.innerHTML = "";
+  QUESTIONS.forEach((_, i) => {
+    const btn = document.createElement("button");
+    btn.className = "pal-btn";
+    btn.textContent = i + 1;
+    btn.onclick = () => renderQuestion(i);
+    grid.appendChild(btn);
+  });
+}
+
+function updatePalette() {
+  const btns = document.querySelectorAll(".pal-btn");
+  btns.forEach((btn, i) => {
+    btn.className = "pal-btn";
+    if (userAnswers[i] !== null) btn.classList.add("answered");
+    if (i === currentQ) btn.classList.add("current");
+  });
+  const answered = userAnswers.filter(x => x !== null).length;
+  document.getElementById("progressFill").style.width = `${(answered / QUESTIONS.length) * 100}%`;
+  document.getElementById("progressText").textContent = `${answered} / ${QUESTIONS.length} answered`;
+}
+
+// ════════════════════════════════════════════════════════
+// SUBMIT
+// ════════════════════════════════════════════════════════
+function confirmSubmit() {
+  const answered = userAnswers.filter(x => x !== null).length;
+  const unanswered = QUESTIONS.length - answered;
+  if (unanswered > 0) {
+    if (!confirm(`You have ${unanswered} unanswered question(s). Submit anyway?`)) return;
+  }
+  submitTest();
+}
+
+function submitTest() {
+  clearInterval(timerInterval);
+  let correct = 0, wrong = 0, skipped = 0, score = 0;
+  QUESTIONS.forEach((q, i) => {
+    if (userAnswers[i] === null) { skipped++; }
+    else if (userAnswers[i] === q.answer) { correct++; score += 4; }
+    else { wrong++; score -= 1; }
+  });
+  const accuracy = answered => answered > 0 ? Math.round((correct / (correct + wrong)) * 100) : 0;
+  const attempted = correct + wrong;
+  showResults(score, correct, wrong, skipped);
+  saveToTracker(score, correct, wrong, skipped);
+  logToSheet(score, correct, wrong, skipped);
+}
+
+function showResults(score, correct, wrong, skipped) {
+  document.getElementById("testScreen").style.display = "none";
+  document.getElementById("resultsScreen").style.display = "block";
+  document.getElementById("r-score").textContent = score;
+  document.getElementById("r-name").textContent = studentName + " · " + studentPin;
+  document.getElementById("r-batch").textContent = studentBatch;
+  document.getElementById("r-correct").textContent = correct;
+  document.getElementById("r-wrong").textContent = wrong;
+  document.getElementById("r-skip").textContent = skipped;
+  const reviewList = document.getElementById("review-list");
+  reviewList.innerHTML = "";
+  QUESTIONS.forEach((q, i) => {
+    const div = document.createElement("div");
+    div.style.cssText = "background:rgba(255,255,255,0.03);border-radius:10px;padding:14px 16px;margin-bottom:10px;border:0.5px solid rgba(255,255,255,0.07);";
+    const ua = userAnswers[i];
+    const correctAns = q.answer;
+    const isSkip = ua === null;
+    const isCorrect = !isSkip && ua === correctAns;
+    const badge = isSkip
+      ? "<span style=\"background:#444;color:#aaa;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;\">Skipped</span>"
+      : isCorrect
+        ? "<span style=\"background:#1e4d2b;color:#3dba7a;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;\">Correct +4</span>"
+        : "<span style=\"background:#4d1e1e;color:#e05555;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;\">Wrong −1</span>";
+    const borderColor = isCorrect ? "#3dba7a" : isSkip ? "#555" : "#e05555";
+    div.style.borderLeft = "3px solid " + borderColor;
+    let ansLine = "";
+    if (isSkip) {
+      ansLine = "<div style=\"color:#888;font-size:12px;margin-top:6px;\">Not attempted</div>";
+    } else if (isCorrect) {
+      ansLine = "<div style=\"color:#3dba7a;font-size:12px;margin-top:6px;\">Your answer: " + ua + " ✓</div>";
+    } else {
+      ansLine = "<div style=\"color:#e05555;font-size:12px;margin-top:6px;\">Your answer: " + ua + " ✗ &nbsp;|&nbsp; Correct: " + correctAns + "</div>";
+    }
+    const stem = q.stem || (q.lines ? q.lines.map(l => l.letter + ") " + l.text.replace(/<[^>]+>/g,"")).join(" | ") : "");
+    const expHTML = q.exp
+      ? "<div style=\"font-size:12px;color:#999;margin-top:8px;line-height:1.6;padding:8px 10px;background:rgba(255,255,255,0.03);border-radius:6px;border-left:2px solid " + borderColor + ";\">💡 " + q.exp + "</div>"
+      : "";
+    div.innerHTML = "<div style=\"display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;\">"
+      + "<span style=\"font-size:11px;color:var(--text2);\">Q" + (i+1) + " · " + (q.section || q.tag) + "</span>" + badge + "</div>"
+      + "<div style=\"font-size:13px;line-height:1.55;\">" + stem + "</div>"
+      + ansLine + expHTML;
+    reviewList.appendChild(div);
+  });
+  window.scrollTo(0,0);
+}
+
+
+function saveToTracker(score, correct, wrong, skipped) {
+  try {
+    const sectionErrors = {};
+    const wrongQuestions = [];
+    QUESTIONS.forEach(function(q, i) {
+      if (userAnswers[i] !== null && userAnswers[i] !== q.answer) {
+        wrongQuestions.push(i + 1);
+        const sec = q.section || 'Other';
+        sectionErrors[sec] = (sectionErrors[sec] || 0) + 1;
+      }
+    });
+    const key = 'riim_' + studentBatch + '_' + studentName.replace(/\s+/g, '_').toLowerCase();
+    const existing = localStorage.getItem(key);
+    let entries = existing ? JSON.parse(existing) : [];
+    entries = entries.filter(function(e) { return e.test !== 15; });
+    entries.push({ test: 15, score: score, errors: sectionErrors, wrongQuestions: wrongQuestions, ts: Date.now() });
+    localStorage.setItem(key, JSON.stringify(entries));
+  } catch(e) {}
+}
+
+function logToSheet(score, correct, wrong, skipped) {
+  const sectionErrors = {};
+  const wrongQuestions = [];
+  QUESTIONS.forEach(function(q, i) {
+    if (userAnswers[i] !== null && userAnswers[i] !== q.answer) {
+      wrongQuestions.push(i + 1);
+      const sec = q.section || 'Other';
+      sectionErrors[sec] = (sectionErrors[sec] || 0) + 1;
+    }
+  });
+
+  const timeTakenSecs = (40 * 60) - secondsLeft;
+  const mm = String(Math.floor(timeTakenSecs / 60)).padStart(2, "0");
+  const ss = String(timeTakenSecs % 60).padStart(2, "0");
+
+  const payload = {
+    testName:       "Road to IIM Paper 15",
+    name:           studentName,
+    pin:            studentPin,
+    batch:          studentBatch,
+    score:          score,
+    correct:        correct,
+    wrong:          wrong,
+    skipped:        skipped,
+    maxMarks:       180,
+    timeTaken:      mm + ":" + ss,
+    timestamp:      new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }),
+    sectionErrors:  sectionErrors,
+    wrongQuestions: wrongQuestions
+  };
+  const notice = document.getElementById("sheet-notice");
+  notice.style.display = "block";
+  notice.style.background = "rgba(240,192,64,0.1)";
+  notice.style.color = "#f0c040";
+  notice.textContent = "⏳ Submitting your score...";
+  fetch(APPS_SCRIPT_URL, {
+    method: "POST",
+    mode: "no-cors",
+    headers: { "Content-Type": "text/plain" },
+    body: JSON.stringify(payload)
+  })
+  .then(() => {
+    notice.style.background = "rgba(61,186,122,0.1)";
+    notice.style.color = "#3dba7a";
+    notice.textContent = "✅ Score submitted successfully and recorded on the tracker.";
+  })
+  .catch(() => {
+    notice.style.background = "rgba(224,85,85,0.1)";
+    notice.style.color = "#e05555";
+    notice.textContent = "❌ Submission failed. Please screenshot this page and share with your teacher.";
+  });
+}
+
+// ── Anti-copy protection ──
+document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
+document.addEventListener('keydown', function(e) {
+  if ((e.ctrlKey || e.metaKey) && ['c','a','u','s','p'].includes(e.key.toLowerCase())) {
+    e.preventDefault();
+  }
+});
+</script>
+</body>
+</html>
