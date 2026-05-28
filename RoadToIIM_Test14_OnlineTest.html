@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Road to IIM — Verbal Ability Test 14</title>
+<style>
+  * {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+  :root {
+    --gold: #c9a84c;
+    --gold-light: #e8c97a;
+    --dark: #0f0f1a;
+    --dark2: #16172a;
+    --dark3: #1e2038;
+    --dark4: #252845;
+    --text: #e8e8f0;
+    --text2: #a0a0c0;
+    --green: #3dba7a;
+    --red: #e05555;
+    --blue: #4a90d9;
+    --purple: #9b59b6;
+    --border: rgba(201,168,76,0.25);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--dark); color: var(--text); font-family: 'Segoe UI', Arial, sans-serif; min-height: 100vh; }
+
+  /* ── LOGIN SCREEN ── */
+  #loginScreen {
+    display: flex; align-items: center; justify-content: center;
+    min-height: 100vh; background: radial-gradient(ellipse at center, #1a1b30 0%, #0f0f1a 70%);
+  }
+  .login-box {
+    background: var(--dark2); border: 1px solid var(--border);
+    border-radius: 16px; padding: 44px 40px; width: 420px; max-width: 95vw;
+    box-shadow: 0 8px 48px rgba(0,0,0,0.6);
+  }
+  .login-logo { text-align: center; margin-bottom: 28px; }
+  .login-logo .brand { font-size: 13px; letter-spacing: 3px; color: var(--gold); text-transform: uppercase; margin-bottom: 6px; }
+  .login-logo h1 { font-size: 26px; font-weight: 700; color: var(--text); }
+  .login-logo .sub { font-size: 13px; color: var(--text2); margin-top: 4px; }
+  .test-meta { background: var(--dark3); border-radius: 10px; padding: 14px 18px; margin-bottom: 24px; display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
+  .meta-item { text-align: center; }
+  .meta-val { font-size: 20px; font-weight: 700; color: var(--gold); }
+  .meta-label { font-size: 11px; color: var(--text2); text-transform: uppercase; letter-spacing: 1px; }
+  .form-group { margin-bottom: 16px; }
+  .form-group label { display: block; font-size: 12px; color: var(--text2); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+  .form-group input { width: 100%; background: var(--dark3); border: 1px solid var(--border); border-radius: 8px; padding: 11px 14px; color: var(--text); font-size: 15px; outline: none; transition: border-color 0.2s; }
+  .form-group input:focus { border-color: var(--gold); }
+  .btn-start { width: 100%; padding: 14px; background: linear-gradient(135deg, #b8922a, var(--gold)); border: none; border-radius: 10px; font-size: 16px; font-weight: 700; color: #0f0f1a; cursor: pointer; letter-spacing: 1px; transition: opacity 0.2s; margin-top: 8px; }
+  .btn-start:hover { opacity: 0.88; }
+  .marking { text-align: center; font-size: 12px; color: var(--text2); margin-top: 14px; }
+  .marking span { color: var(--green); font-weight: 600; }
+  .marking span.neg { color: var(--red); }
+
+  /* ── TEST SCREEN ── */
+  #testScreen { display: none; }
+  .test-header {
+    background: var(--dark2); border-bottom: 1px solid var(--border);
+    padding: 10px 20px; display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .header-brand { font-size: 14px; font-weight: 700; color: var(--gold); letter-spacing: 1px; }
+  .header-student { font-size: 13px; color: var(--text2); }
+  .header-student span { color: var(--text); font-weight: 600; }
+  .timer-box {
+    background: var(--dark3); border: 2px solid var(--gold);
+    border-radius: 10px; padding: 6px 18px; text-align: center;
+  }
+  .timer-label { font-size: 10px; color: var(--text2); text-transform: uppercase; letter-spacing: 1px; }
+  .timer-val { font-size: 22px; font-weight: 700; color: var(--gold); font-variant-numeric: tabular-nums; }
+  .timer-box.urgent { border-color: var(--red); }
+  .timer-box.urgent .timer-val { color: var(--red); }
+
+  .test-body { display: flex; height: calc(100vh - 57px); }
+
+  /* Question Panel */
+  .question-panel { flex: 1; overflow-y: auto; padding: 24px 28px; }
+  .q-nav-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+  .q-counter { font-size: 13px; color: var(--text2); }
+  .q-counter span { color: var(--gold); font-weight: 700; }
+  .section-label {
+    display: inline-block; background: var(--dark3); border: 1px solid var(--border);
+    border-radius: 20px; padding: 4px 14px; font-size: 11px; color: var(--gold);
+    text-transform: uppercase; letter-spacing: 1px; margin-bottom: 14px;
+  }
+  .q-card { background: var(--dark2); border: 1px solid var(--border); border-radius: 14px; padding: 24px; margin-bottom: 6px; }
+  .q-number { font-size: 11px; color: var(--text2); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; }
+  .q-instr { font-size: 13px; color: var(--text2); font-style: italic; margin-bottom: 14px; line-height: 1.6; }
+  .q-stem { font-size: 16px; line-height: 1.7; color: var(--text); margin-bottom: 8px; }
+  .q-stem .blank { color: var(--gold); font-weight: 700; }
+  .story-block { background: var(--dark3); border-left: 3px solid var(--gold); border-radius: 0 10px 10px 0; padding: 16px 20px; margin-bottom: 16px; font-size: 15px; line-height: 1.8; color: var(--text); }
+  .story-blank { color: var(--gold); font-weight: 700; }
+  .para-block { margin-bottom: 10px; }
+  .para-line { font-size: 15px; line-height: 1.8; color: var(--text); margin-bottom: 4px; }
+  .para-line strong { color: var(--gold-light); }
+
+  .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
+  .opt-btn {
+    background: var(--dark3); border: 1.5px solid rgba(255,255,255,0.1);
+    border-radius: 10px; padding: 12px 16px; cursor: pointer; text-align: left;
+    font-size: 14px; color: var(--text); transition: all 0.15s; line-height: 1.5;
+    display: flex; gap: 10px; align-items: flex-start;
+  }
+  .opt-btn:hover { border-color: var(--gold); background: rgba(201,168,76,0.08); }
+  .opt-btn.selected { border-color: var(--blue); background: rgba(74,144,217,0.15); color: #fff; }
+  .opt-btn.selected .opt-label { color: var(--blue); }
+  .opt-label { font-weight: 700; color: var(--text2); min-width: 18px; }
+
+  .q-actions { display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
+  .btn { padding: 10px 20px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: opacity 0.15s; }
+  .btn:hover { opacity: 0.85; }
+  .btn-prev { background: var(--dark4); color: var(--text2); border: 1px solid var(--border); }
+  .btn-next { background: linear-gradient(135deg, #b8922a, var(--gold)); color: #0f0f1a; }
+  .btn-clear { background: var(--dark4); color: var(--red); border: 1px solid rgba(224,85,85,0.3); }
+  .btn-submit { background: var(--green); color: #fff; margin-left: auto; }
+
+  /* Sidebar Palette */
+  .palette-panel {
+    width: 240px; background: var(--dark2); border-left: 1px solid var(--border);
+    overflow-y: auto; padding: 16px;
+    display: flex; flex-direction: column; gap: 14px;
+  }
+  .palette-title { font-size: 12px; color: var(--text2); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+  .palette-legend { display: flex; flex-direction: column; gap: 6px; }
+  .leg { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text2); }
+  .leg-dot { width: 14px; height: 14px; border-radius: 3px; flex-shrink: 0; }
+  .ld-unattempted { background: var(--dark4); border: 1px solid rgba(255,255,255,0.15); }
+  .ld-answered { background: var(--green); }
+  .ld-current { background: var(--gold); }
+  .palette-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+  .pal-btn {
+    aspect-ratio: 1; border-radius: 6px; border: none; cursor: pointer;
+    font-size: 12px; font-weight: 700; color: var(--text);
+    background: var(--dark4); border: 1px solid rgba(255,255,255,0.1);
+    transition: all 0.1s;
+  }
+  .pal-btn.answered { background: var(--green); color: #fff; border-color: var(--green); }
+  .pal-btn.current { background: var(--gold); color: #0f0f1a; border-color: var(--gold); }
+  .progress-bar-wrap { background: var(--dark4); border-radius: 6px; height: 8px; overflow: hidden; }
+  .progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--gold), var(--green)); border-radius: 6px; transition: width 0.3s; }
+  .progress-text { font-size: 12px; color: var(--text2); margin-top: 6px; }
+
+  /* ── RESULTS SCREEN ── */
+  #resultsScreen { display: none; min-height: 100vh; background: var(--dark); padding: 40px 20px; }
+  .results-container { max-width: 760px; margin: 0 auto; }
+  .results-header { text-align: center; margin-bottom: 36px; }
+  .results-header .brand { font-size: 12px; letter-spacing: 3px; color: var(--gold); text-transform: uppercase; margin-bottom: 8px; }
+  .results-header h2 { font-size: 32px; font-weight: 700; }
+  .score-card {
+    background: var(--dark2); border: 1px solid var(--border); border-radius: 16px;
+    padding: 32px; text-align: center; margin-bottom: 24px;
+  }
+  .score-big { font-size: 72px; font-weight: 800; color: var(--gold); line-height: 1; }
+  .score-max { font-size: 20px; color: var(--text2); margin-top: 4px; }
+  .score-breakdown { display: flex; gap: 20px; justify-content: center; margin-top: 20px; flex-wrap: wrap; }
+  .sb-item { background: var(--dark3); border-radius: 10px; padding: 14px 22px; min-width: 100px; }
+  .sb-val { font-size: 24px; font-weight: 700; }
+  .sb-label { font-size: 11px; color: var(--text2); text-transform: uppercase; letter-spacing: 1px; margin-top: 2px; }
+  .sb-correct .sb-val { color: var(--green); }
+  .sb-wrong .sb-val { color: var(--red); }
+  .sb-skipped .sb-val { color: var(--text2); }
+  .sb-accuracy .sb-val { color: var(--blue); }
+
+  .review-table { width: 100%; border-collapse: collapse; font-size: 14px; margin-top: 16px; }
+  .review-table th { background: var(--dark3); color: var(--text2); padding: 10px 12px; text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
+  .review-table td { padding: 10px 12px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .review-table tr.correct td { background: rgba(61,186,122,0.06); }
+  .review-table tr.wrong td { background: rgba(224,85,85,0.06); }
+  .status-badge { display: inline-block; padding: 2px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+  .badge-correct { background: rgba(61,186,122,0.2); color: var(--green); }
+  .badge-wrong { background: rgba(224,85,85,0.2); color: var(--red); }
+  .badge-skipped { background: rgba(160,160,192,0.15); color: var(--text2); }
+
+  .student-row { background: var(--dark3); border-radius: 10px; padding: 14px 18px; margin-bottom: 24px; display: flex; gap: 24px; flex-wrap: wrap; font-size: 14px; }
+  .student-row span { color: var(--text2); }
+  .student-row strong { color: var(--text); }
+
+  @media (max-width: 700px) {
+    .test-body { flex-direction: column; height: auto; }
+    .palette-panel { width: 100%; border-left: none; border-top: 1px solid var(--border); }
+    .options-grid { grid-template-columns: 1fr; }
+    .question-panel { padding: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════
+     LOGIN SCREEN
+══════════════════════════════════════════════════════ -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="brand" style="font-size:16px;font-weight:800;color:var(--gold);letter-spacing:3px;">Road to IIM</div>
+      <h1>Verbal Ability Test 14</h1>
+    </div>
+    <div class="test-meta">
+      <div class="meta-item"><div class="meta-val">45</div><div class="meta-label">Questions</div></div>
+      <div class="meta-item"><div class="meta-val">40</div><div class="meta-label">Minutes</div></div>
+      <div class="meta-item"><div class="meta-val">180</div><div class="meta-label">Max Marks</div></div>
+    </div>
+    <div class="form-group">
+      <label>Full Name</label>
+      <input type="text" id="inputName" placeholder="Enter your full name" />
+    </div>
+    <div class="form-group">
+      <label>IMS PIN</label>
+      <input type="text" id="inputPin" placeholder="Enter your IMS PIN" />
+    </div>
+    <div class="form-group">
+      <label>Batch Number</label>
+      <select id="inputBatch">
+        <option value="">— Select your batch —</option>
+        <optgroup label="Classroom">
+          <option>A2701</option><option>A2702</option><option>A2703</option><option>A2704</option><option>A2705</option>
+          <option>A2706</option><option>A2707</option><option>A2708</option><option>A2709</option><option>A2710</option>
+          <option>A2711</option><option>A2712</option><option>A2713</option><option>A2714</option><option>A2715</option>
+        </optgroup>
+        <optgroup label="School">
+          <option>Zebar</option>
+        </optgroup>
+        <optgroup label="Online">
+          <option>27E101</option><option>27E102</option><option>27E103</option><option>27E104</option><option>27E105</option>
+        </optgroup>
+      </select>
+    </div>
+    <button class="btn-start" onclick="startTest()">Start Test →</button>
+    <div class="marking">Marking: <span>+4</span> correct &nbsp;|&nbsp; <span class="neg">−1</span> wrong &nbsp;|&nbsp; 0 skipped</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     TEST SCREEN
+══════════════════════════════════════════════════════ -->
+<div id="testScreen">
+  <div class="test-header">
+    <div class="header-brand">ROAD TO IIM · TEST 13</div>
+    <div class="header-student">Student: <span id="dispName">—</span> &nbsp;|&nbsp; PIN: <span id="dispPin">—</span> &nbsp;|&nbsp; Batch: <span id="dispBatch">—</span></div>
+    <div class="timer-box" id="timerBox">
+      <div class="timer-label">Time Left</div>
+      <div class="timer-val" id="timerVal">40:00</div>
+    </div>
+  </div>
+  <div class="test-body">
+    <div class="question-panel" id="questionPanel">
+      <!-- rendered by JS -->
+    </div>
+    <div class="palette-panel">
+      <div class="palette-title">Question Palette</div>
+      <div class="palette-legend">
+        <div class="leg"><div class="leg-dot ld-answered"></div>Answered</div>
+        <div class="leg"><div class="leg-dot ld-current"></div>Current</div>
+        <div class="leg"><div class="leg-dot ld-unattempted"></div>Not Visited</div>
+      </div>
+      <div class="palette-grid" id="paletteGrid"></div>
+      <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progressFill" style="width:0%"></div></div>
+      <div class="progress-text" id="progressText">0 / 45 answered</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     RESULTS SCREEN
+══════════════════════════════════════════════════════ -->
+<div id="resultsScreen" style="display:none;padding:1.5rem;">
+  <div style="max-width:680px;margin:0 auto;">
+    <div style="text-align:center;background:linear-gradient(135deg,#1a1a2e,#16213e);border-radius:20px;padding:2rem 1.5rem 1.5rem;margin-bottom:1.25rem;">
+      <div style="font-size:11px;letter-spacing:3px;color:var(--gold);text-transform:uppercase;margin-bottom:6px;">Road to IIM</div>
+      <div style="font-size:11px;color:var(--text2);margin-bottom:16px;">Test Complete — Paper 13</div>
+      <div id="r-score" style="font-size:64px;font-weight:800;color:var(--gold);line-height:1;">0</div>
+      <div style="font-size:13px;color:var(--text2);margin-bottom:12px;">out of 180 marks</div>
+      <div id="r-name" style="font-size:14px;font-weight:600;margin-bottom:4px;"></div>
+      <div id="r-batch" style="font-size:13px;color:var(--text2);margin-bottom:1.25rem;"></div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+        <a href="road_to_iim_tracker_v2.html" style="background:#c9a84c;color:#0f0e0c;padding:11px 22px;border-radius:10px;font-size:14px;font-weight:700;text-decoration:none;">Go to tracker &rarr;</a>
+        <a href="https://sahilkanetkar-collab.github.io/Road-to-IIM/" style="background:transparent;color:#fff;padding:11px 22px;border-radius:10px;font-size:14px;font-weight:700;text-decoration:none;border:1.5px solid rgba(255,255,255,0.2);">All tests</a>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1.25rem;">
+      <div style="background:var(--dark3);border-radius:12px;padding:1rem;text-align:center;">
+        <div id="r-correct" style="font-size:28px;font-weight:700;color:#3dba7a;">0</div>
+        <div style="font-size:12px;color:var(--text2);">Correct</div>
+      </div>
+      <div style="background:var(--dark3);border-radius:12px;padding:1rem;text-align:center;">
+        <div id="r-wrong" style="font-size:28px;font-weight:700;color:#e05555;">0</div>
+        <div style="font-size:12px;color:var(--text2);">Wrong</div>
+      </div>
+      <div style="background:var(--dark3);border-radius:12px;padding:1rem;text-align:center;">
+        <div id="r-skip" style="font-size:28px;font-weight:700;color:var(--text2);">0</div>
+        <div style="font-size:12px;color:var(--text2);">Skipped</div>
+      </div>
+    </div>
+    <div id="sheet-notice" style="border-radius:10px;padding:10px 14px;font-size:13px;margin-bottom:1.25rem;text-align:center;display:none;"></div>
+    <div style="background:var(--dark3);border-radius:16px;padding:1.25rem;border:0.5px solid var(--border);">
+      <h3 style="font-size:15px;font-weight:700;margin-bottom:1rem;">Question Review</h3>
+      <div id="review-list"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════════════
+// QUESTION DATA
+// ════════════════════════════════════════════════════════
+const QUESTIONS = [
+
+  // Q1 — Word Selection
+  {
+    id: 1, section: "Word Selection",
+    type: "word_select",
+    instr: "Each sentence has a pair of words — select the most appropriate word (A or B) to form a coherent and grammatically correct paragraph.",
+    lines: [
+      { letter: "A", text: "The surgeon's post-operative notes were strikingly <strong>terse [A]</strong> / <strong>turbid [B]</strong> — each entry conveyed exactly what was needed and nothing more." },
+      { letter: "B", text: "Colleagues admired her <strong>fastidious [A]</strong> / <strong>fatuous [B]</strong> attention to documentation, which had prevented several near-misses over the years." },
+      { letter: "C", text: "Her approach to difficult cases was equally <strong>circumspect [A]</strong> / <strong>circumscribed [B]</strong>, weighing every option before committing to a course of action." },
+      { letter: "D", text: "Junior doctors found her ward rounds <strong>daunting [A]</strong> / <strong>dauntless [B]</strong> but ultimately invaluable for their development." },
+      { letter: "E", text: "She had little patience for the <strong>garrulous [A]</strong> / <strong>gregarious [B]</strong> self-promotion she observed in some of her peers." }
+    ],
+    options: ["AABAA", "AAABA", "AABBA", "BAAAB"],
+    exp: "Terse = brief and to the point. Fastidious = very attentive to accuracy and detail. Circumspect = careful and considering all circumstances. Daunting = seeming difficult; intimidating. Garrulous = excessively talkative. All five A-choices build a coherent portrait of a precise, disciplined surgeon. Correct pattern: AAABA.",
+    answer: "B"
+  },
+
+  // Q2 — Vocabulary: froward
+  {
+    id: 2, section: "Vocabulary",
+    type: "mcq",
+    stem: "What is the meaning of FROWARD?",
+    options: [
+      "Boldly presumptuous and forward in manner",
+      "Stubbornly contrary and difficult to deal with",
+      "Prone to sudden and unprovoked outbursts",
+      "Excessively eager to please those in authority"
+    ],
+    exp: "Froward (archaic) = stubbornly contrary and perversely disobedient. The trap is A — 'froward' resembles 'forward' but means the opposite. C describes irascibility; D describes obsequiousness — both unrelated.",
+    answer: "B"
+  },
+
+  // Q3 — Idiom meaning
+  {
+    id: 3, section: "Idiom",
+    type: "mcq",
+    stem: "What does it mean when someone says, \"to burn one's boats\"?",
+    options: [
+      "To commit irrevocably to a course of action by making retreat impossible",
+      "To take a carefully calculated risk after weighing all options",
+      "To abandon a plan midway due to unforeseen obstacles",
+      "To destroy evidence in order to avoid consequences"
+    ],
+    exp: "'To burn one's boats' = to commit irrevocably to a course of action by eliminating any means of retreat — from the military tactic of burning ships so soldiers could not flee. A is correct. B implies deliberation without irreversibility. C and D are misreadings.",
+    answer: "A"
+  },
+
+  // Q4 — Sentence Completion
+  {
+    id: 4, section: "Sentence Completion",
+    type: "mcq",
+    stem: "The board's decision to ______ the merger without consulting shareholders initially appeared ______, but it soon began to ______ trust in the leadership, ultimately ______ the company's reputation.",
+    options: [
+      "approve; pragmatic; consolidate; enhancing",
+      "approve; pragmatic; erode; damaging",
+      "endorse; prudent; undermine; tarnishing",
+      "sanction; calculated; diminish; weakening"
+    ],
+    exp: "All four options begin with a word meaning 'to authorise' — making blank 1 a trap. Blank 2 must frame the decision as superficially sound. At blank 3, only 'erode' (B) is both natural and negative. A fails: 'consolidate trust' is positive, contradicting the 'but' pivot. C's 'tarnishing' requires a direct object, making it grammatically awkward here. D's 'diminish; weakening' is redundant.",
+    answer: "B"
+  },
+
+  // Q5 — Spelling
+  {
+    id: 5, section: "Spelling",
+    type: "mcq",
+    stem: "Choose the correctly spelled word.",
+    options: ["Supercede", "Superceed", "Supersede", "Superseed"],
+    exp: "Supersede is the only common English word ending in -sede (not -cede or -ceed). From Latin 'supersedere'. Option A (Supercede) is the most common error — confused with precede, concede.",
+    answer: "C"
+  },
+
+  // Q6 — Vocabulary: humdrum
+  {
+    id: 6, section: "Vocabulary",
+    type: "mcq",
+    stem: "What is the meaning of HUMDRUM?",
+    options: [
+      "Loud and disorderly in character",
+      "Lacking variety; dull and monotonous",
+      "Overly cautious and risk-averse",
+      "Cheerful and pleasant in an unremarkable way"
+    ],
+    exp: "Humdrum = lacking excitement or variety; tediously ordinary. A describes something raucous — the opposite. C describes timidity. D describes something mildly pleasant — humdrum implies a draining dullness, not passive pleasantness.",
+    answer: "B"
+  },
+
+  // Q7 — Idiom fill-in
+  {
+    id: 7, section: "Idiom",
+    type: "mcq",
+    stem: "The minister's sweeping promises, made just days before the election, were widely dismissed as mere ________ with no policy substance behind them.",
+    options: [
+      "red herrings",
+      "pie in the sky",
+      "smoke and mirrors",
+      "hot air"
+    ],
+    exp: "'Hot air' = empty, boastful talk with no substance. 'Smoke and mirrors' (C) implies deliberate deception through illusion — trickery rather than empty bluster. 'Pie in the sky' (B) = unrealistic promises — but the sentence emphasises substance-free talk, not mere unrealism. 'Red herrings' (A) = misleading distraction, not empty promises.",
+    answer: "D"
+  },
+
+  // Q8 — Word Selection
+  {
+    id: 8, section: "Word Selection",
+    type: "word_select",
+    instr: "Each sentence has a pair of words — select the most appropriate word (A or B) to form a coherent and grammatically correct paragraph.",
+    lines: [
+      { letter: "A", text: "The expedition's failure was attributed to the team leader's <strong>impetuous [A]</strong> / <strong>imperious [B]</strong> decision to press ahead despite deteriorating weather conditions." },
+      { letter: "B", text: "Several members had raised <strong>prescient [A]</strong> / <strong>presumptuous [B]</strong> warnings days earlier, only to be overruled without discussion." },
+      { letter: "C", text: "The subsequent inquiry found the planning process to have been <strong>perfunctory [A]</strong> / <strong>pervasive [B]</strong> — checklists signed without genuine review." },
+      { letter: "D", text: "Investigators described the risk assessment as <strong>specious [A]</strong> / <strong>spurious [B]</strong> — it appeared thorough but rested on deeply flawed assumptions." },
+      { letter: "E", text: "The findings sent a <strong>salutary [A]</strong> / <strong>salubrious [B]</strong> message to the wider industry about the dangers of prioritising ambition over safety." }
+    ],
+    options: ["AABAA", "BAAAB", "AAAAB", "AAABA"],
+    exp: "Impetuous = acting quickly without thought. Prescient = having foresight. Perfunctory = carried out with minimal effort. Specious = seemingly correct but actually flawed. Salutary = producing a good effect through a warning. All five A-choices build a coherent account of a reckless expedition and its consequences. Correct pattern: AAABA.",
+    answer: "D"
+  },
+
+  // Q9 — Sentence Completion
+  {
+    id: 9, section: "Sentence Completion",
+    type: "mcq",
+    stem: "Although the proposal initially appeared ______, a closer review revealed several ______ assumptions that ultimately ______ its credibility, leaving stakeholders increasingly ______ about its feasibility.",
+    options: [
+      "promising; flawed; damaged; uncertain",
+      "compelling; questionable; bolstered; confident",
+      "promising; questionable; undermined; sceptical",
+      "credible; unverified; eroded; cautious"
+    ],
+    exp: "The 'although' signals a reversal — positive appearance, then negative finding. Blank 2 is the key trap: 'flawed' (A) is too stark — a closer review 'revealing' problems implies they were not obvious, so 'questionable' (C) is more precise. B fails at blank 3: 'bolstered' reverses the negative direction entirely. D's 'cautious' is weaker than 'sceptical' — the stakeholders are actively doubtful, not merely careful. Only C sustains a coherent, precise reversal arc.",
+    answer: "C"
+  },
+
+  // Q10 — Vocabulary: surreptitious
+  {
+    id: 10, section: "Vocabulary",
+    type: "mcq",
+    stem: "What is the meaning of SURREPTITIOUS?",
+    options: [
+      "Sudden and entirely unexpected in nature",
+      "Morally questionable in purpose or outcome",
+      "Done secretly so as to avoid detection or disapproval",
+      "Excessively cautious and reluctant to act"
+    ],
+    exp: "Surreptitious = kept secret, especially because it would not be approved of. A confuses it with 'surprising'. B is morally adjacent but wrong — surreptitious describes the method of action, not its morality. D describes timidity, which is unrelated.",
+    answer: "C"
+  },
+
+  // Q11 — Idiom meaning
+  {
+    id: 11, section: "Idiom",
+    type: "mcq",
+    stem: "What does it mean when someone says a plan is \"a double-edged sword\"?",
+    options: [
+      "It is so powerful it will certainly succeed",
+      "It requires careful handling by all parties involved",
+      "It can only be used once before losing its effectiveness",
+      "It carries both potential benefits and potential drawbacks"
+    ],
+    exp: "'A double-edged sword' = something that has both advantages and disadvantages — like a sword that cuts in both directions. D is correct. A implies only benefit. B is a literal misreading about handling. C confuses it with a one-time-use idea. The trap is A: 'sword' suggests power, tempting students to pick it.",
+    answer: "D"
+  },
+
+  // Q12 — Spelling
+  {
+    id: 12, section: "Spelling",
+    type: "mcq",
+    stem: "Identify the misspelled word: \"The commitee's decision to liaise with external consultants was both judicious and timely.\"",
+    options: ["liaise", "judicious", "commitee", "timely"],
+    exp: "Committee requires double 'm', double 't', and double 'e'. 'Commitee' has only one 't'. Liaise is correctly spelled — a common trap. Judicious and timely are both correct.",
+    answer: "C"
+  },
+
+  // Q13 — Sentence Completion
+  {
+    id: 13, section: "Sentence Completion",
+    type: "mcq",
+    stem: "The researcher's refusal to ______ her findings despite pressure was seen as ______, earning her wide respect and ultimately ______ the credibility of her work while ______ the committee's authority.",
+    options: [
+      "retract; principled; cementing; undermining",
+      "publish; reckless; destroying; reinforcing",
+      "defend; cowardly; weakening; restoring",
+      "revise; naive; damaging; supporting"
+    ],
+    exp: "She refuses to retract findings — a principled stance. This cements her credibility while undermining those who pressured her. The cascade: refuse to retract → principled → cementing credibility → undermining committee. Only A sustains this logic.",
+    answer: "A"
+  },
+
+  // Q14 — Vocabulary: ineffable
+  {
+    id: 14, section: "Vocabulary",
+    type: "mcq",
+    stem: "What is the meaning of INEFFABLE?",
+    options: [
+      "Too great or extreme to be expressed in words",
+      "Extremely difficult to simplify or explain",
+      "Deeply unpleasant and impossible to tolerate",
+      "Impossible to measure or assign a value to"
+    ],
+    exp: "Ineffable = beyond the power of words to describe — used for overwhelming emotion, beauty, or spiritual experience. B describes complexity, not inexpressibility. C is the trap: ineffable is confused with insufferable. D describes something immeasurable, not inexpressible.",
+    answer: "A"
+  },
+
+  // Q15 — Idiom fill-in
+  {
+    id: 15, section: "Idiom",
+    type: "mcq",
+    stem: "The consultant's report, though exhaustive in its analysis of minor inefficiencies, entirely ignored the fundamental structural problem — it was clearly a case of ________.",
+    options: [
+      "burning one's boats",
+      "throwing the baby out with the bathwater",
+      "not seeing the wood for the trees",
+      "making a mountain out of a molehill"
+    ],
+    exp: "'Not seeing the wood for the trees' = being so preoccupied with details that one loses sight of the overall picture. The sentence describes someone who analysed minor issues while missing the central problem. 'Making a mountain out of a molehill' (D) = exaggerating a minor problem — different. 'Throwing the baby out with the bathwater' (B) = discarding something valuable — unrelated. A is unrelated.",
+    answer: "C"
+  },
+
+  // Q16 — Word Selection
+  {
+    id: 16, section: "Word Selection",
+    type: "word_select",
+    instr: "Each sentence has a pair of words — select the most appropriate word (A or B) to form a coherent and grammatically correct paragraph.",
+    lines: [
+      { letter: "A", text: "The audit revealed <strong>egregious [A]</strong> / <strong>ambiguous [B]</strong> lapses in financial oversight across three consecutive quarters." },
+      { letter: "B", text: "Funds had been systematically <strong>siphoned [A]</strong> / <strong>scattered [B]</strong> from subsidiary accounts without board authorisation." },
+      { letter: "C", text: "The CFO's subsequent explanation was, at best, <strong>disingenuous [A]</strong> / <strong>inadequate [B]</strong> — it raised more questions than it answered." },
+      { letter: "D", text: "The board, faced with growing pressure, chose instead to <strong>conceal [A]</strong> / <strong>scrutinise [B]</strong> the full extent of the losses." },
+      { letter: "E", text: "Industry observers described the episode as a <strong>cautionary [A]</strong> / <strong>perfunctory [B]</strong> tale of inadequate governance." }
+    ],
+    options: ["AABBA", "AAABB", "ABABA", "AABAB"],
+    exp: "Egregious = outstandingly bad. Siphoned = illicitly diverted. Disingenuous = deliberately evasive. For D — scrutinise (B) = examine closely; conceal (A) = hide deliberately — a board that 'chose to conceal' is not accepting resignation quietly, it is actively hiding something. Cautionary = serving as a warning. Correct pattern: AAABB.",
+    answer: "B"
+  },
+
+  // Q17 — Sentence Completion
+  {
+    id: 17, section: "Sentence Completion",
+    type: "mcq",
+    stem: "The new director's effort to ______ a culture of accountability was initially ______ by long-serving staff, whose resistance began to ______ morale among newer recruits, eventually ______ the reform effort itself.",
+    options: [
+      "destroy; welcomed; boost; accelerating",
+      "maintain; rejected; improve; strengthening",
+      "ignore; supported; damage; undermining",
+      "instil; resisted; erode; jeopardising"
+    ],
+    exp: "The director tries to instil accountability — resisted by long-serving staff. This erodes morale among newer recruits, jeopardising the reform. The cascade: instil → resisted → erode → jeopardising. Only D sustains coherent logic throughout.",
+    answer: "D"
+  },
+
+  // Q18 — Vocabulary: journeyman
+  {
+    id: 18, section: "Vocabulary",
+    type: "mcq",
+    stem: "What is the meaning of JOURNEYMAN?",
+    options: [
+      "A traveller who works in exchange for accommodation",
+      "A worker who is highly skilled and considered a master of their craft",
+      "A competent but undistinguished worker who has completed basic training",
+      "An apprentice in the early stages of learning a trade"
+    ],
+    exp: "Journeyman = a worker who has completed an apprenticeship and is competent, but has not yet attained the status of master. The key nuance: competent but not exceptional. B describes a master craftsman — the next level up. D describes an apprentice — the level below. A is a literal misreading.",
+    answer: "C"
+  },
+
+  // Q19 — Idiom meaning
+  {
+    id: 19, section: "Idiom",
+    type: "mcq",
+    stem: "What does it mean when someone says they are \"caught between the devil and the deep blue sea\"?",
+    options: [
+      "Facing a situation involving both great danger and great opportunity",
+      "Forced to choose between two equally undesirable options",
+      "Experiencing intense pressure from two opposing sides",
+      "Trapped in a situation with no clear path forward"
+    ],
+    exp: "'Caught between the devil and the deep blue sea' = forced to choose between two equally bad alternatives — a forced binary with no good option. B is correct. A implies opportunity, which the idiom does not. C describes external pressure, not a forced choice between two bad options. D implies paralysis rather than a forced binary decision.",
+    answer: "B"
+  },
+
+  // Q20 — Spelling
+  {
+    id: 20, section: "Spelling",
+    type: "mcq",
+    stem: "Choose the correctly spelled word.",
+    options: ["Parrallel", "Paralel", "Parallell", "Parallel"],
+    exp: "Parallel: one 'r', double 'l' in the middle, single 'l' at the end. A doubles the 'r'. B has single 'l' in the middle. C adds an extra 'l' at the end. Pattern: p-a-r-a-l-l-e-l.",
+    answer: "D"
+  },
+
+  // Q21 — Word Selection
+  {
+    id: 21, section: "Word Selection",
+    type: "word_select",
+    instr: "Each sentence has a pair of words — select the most appropriate word (A or B) to form a coherent and grammatically correct paragraph.",
+    lines: [
+      { letter: "A", text: "The ageing monarch became increasingly <strong>paranoid [A]</strong> / <strong>paradisal [B]</strong> as rumours of rebellion spread through the capital." },
+      { letter: "B", text: "Trusted advisers were abruptly <strong>dismissed [A]</strong> / <strong>dispersed [B]</strong> from the royal court without explanation." },
+      { letter: "C", text: "The atmosphere inside the palace grew <strong>oppressive [A]</strong> / <strong>claustrophobic [B]</strong> as surveillance tightened and trust between courtiers eroded." },
+      { letter: "D", text: "Dissidents continued to organise meetings in <strong>secluded [A]</strong> / <strong>secular [B]</strong> locations beyond the city walls." },
+      { letter: "E", text: "Historians later described the period as a descent into political <strong>tyranny [A]</strong> / <strong>theocracy [B]</strong>." }
+    ],
+    options: ["AABBA", "BAAAA", "AABAA", "AAABB"],
+    exp: "Paranoid = irrationally suspicious. Dismissed = removed from position (dispersed = scattered widely — wrong for a court purge). For C — claustrophobic (B) = oppressively enclosed, suffocating — more precise for an atmosphere of tightening surveillance than the broader 'oppressive' (A). Secluded = private and hidden. Tyranny = cruel rule. Correct pattern: AABBA.",
+    answer: "A"
+  },
+
+  // Q22 — Sentence Completion
+  {
+    id: 22, section: "Sentence Completion",
+    type: "mcq",
+    stem: "The speaker's attempt to ______ the tense atmosphere with humour was poorly judged, as it seemed to ______ the seriousness of the issue, thereby ______ the audience and making any resolution more ______.",
+    options: [
+      "diffuse; trivialise; alienating; difficult",
+      "defuse; minimise; unsettling; elusive",
+      "lighten; undermine; disengaging; improbable",
+      "ease; trivialise; alienating; difficult"
+    ],
+    exp: "All four options reduce tension at blank 1 and diminish seriousness at blank 2 — the trap is at blanks 3 and 4. 'Alienating' (A, D) is more precise than 'unsettling' (B) or 'disengaging' (C) — humour trivialising a serious issue actively puts off those who care about it. 'Difficult' (A, D) is more precise than 'elusive' or 'improbable'. Between A and D: 'diffuse' is the more idiomatic word for reducing social tension; 'ease' is generic. A is the most precise.",
+    answer: "A"
+  },
+
+  // Q23 — Vocabulary: yeoman
+  {
+    id: 23, section: "Vocabulary",
+    type: "mcq",
+    stem: "What is the meaning of YEOMAN (as in 'yeoman service')?",
+    options: [
+      "Expert and technically skilled work",
+      "Exceptionally brilliant and inspired effort",
+      "Loyal, hardworking, and dependably useful service",
+      "Modest and self-effacing contribution"
+    ],
+    exp: "'Yeoman service' means staunch and dependably useful work — loyal and hardworking, especially in difficult circumstances. A describes expertise, which yeoman service does not imply. B implies brilliance — yeoman service implies solid reliability, not brilliance. D describes modesty.",
+    answer: "C"
+  },
+
+  // Q24 — Idiom fill-in
+  {
+    id: 24, section: "Idiom",
+    type: "mcq",
+    stem: "After years of bitter rivalry, the two companies finally decided to ________ and explore a joint venture.",
+    options: [
+      "bury the hatchet",
+      "let the cat out of the bag",
+      "add fuel to the fire",
+      "bite the bullet"
+    ],
+    exp: "'Bury the hatchet' = to end a conflict and make peace — from the Native American practice of literally burying weapons to signal the end of hostilities. A is correct. 'Bite the bullet' (D) = to endure a painful situation — it implies individual endurance, not mutual reconciliation. 'Let the cat out of the bag' (B) = to reveal a secret. 'Add fuel to the fire' (C) = to worsen a conflict — the opposite of reconciliation.",
+    answer: "A"
+  },
+
+  // Q25 — Spelling
+  {
+    id: 25, section: "Spelling",
+    type: "mcq",
+    stem: "Among the following, which word is correctly spelled?",
+    options: ["Effloriscence", "Efflorescence", "Eflorescence", "Effloressence"],
+    exp: "Efflorescence: double 'f', -or-, double 'esc', -ence. A uses 'isc' instead of 'esc'. C has a single 'f'. D doubles the 's'. The word means flowering, blooming, or a peak of development.",
+    answer: "B"
+  },
+
+  // Q26 — Word Selection
+  {
+    id: 26, section: "Word Selection",
+    type: "word_select",
+    instr: "Each sentence has a pair of words — select the most appropriate word (A or B) to form a coherent and grammatically correct paragraph.",
+    lines: [
+      { letter: "A", text: "The economist's final monograph was so <strong>recondite [A]</strong> / <strong>redundant [B]</strong> that even seasoned academics requested a simplified summary." },
+      { letter: "B", text: "Her central argument hinged on a highly <strong>nuanced [A]</strong> / <strong>noxious [B]</strong> distinction between short-term growth and long-term structural stability." },
+      { letter: "C", text: "Several reviewers attempted to <strong>reconcile [A]</strong> / <strong>recant [B]</strong> her conclusions with the prevailing orthodoxy in development economics." },
+      { letter: "D", text: "Others dismissed the framework as intellectually <strong>tenuous [A]</strong> / <strong>tedious [B]</strong> — elegant in presentation but unsupported by empirical data." },
+      { letter: "E", text: "The resulting debate proved <strong>protracted [A]</strong> / <strong>perfunctory [B]</strong>, continuing across journals and conferences for nearly a decade." }
+    ],
+    options: ["AAABA", "AABBA", "ABBBA", "BAAAB"],
+    exp: "Recondite = not known by many; obscure and specialised. Nuanced = subtly distinguished. Reconcile = bring into harmony. Tenuous = weak and insubstantial. Protracted = prolonged over time. All five A-choices build a coherent portrait of a dense, contested work of scholarship. Correct pattern: AAABA.",
+    answer: "A"
+  },
+
+  // Q27 — Vocabulary: limerence
+  {
+    id: 27, section: "Vocabulary",
+    type: "mcq",
+    stem: "What is the meaning of LIMERENCE?",
+    options: [
+      "A deep and enduring romantic attachment built over time",
+      "An involuntary state of obsessive infatuation with another person",
+      "Nostalgia for a past relationship that has ended",
+      "Jealousy directed at a rival for someone's affection"
+    ],
+    exp: "Limerence = an involuntary, obsessive state of intense mental and emotional preoccupation with another person — a psychological term coined by Dorothy Tennov. A describes mature love, which is distinct. C describes nostalgia. D describes jealousy. Limerence is specifically the unbidden, overwhelming fixation.",
+    answer: "B"
+  },
+
+  // Q28 — Idiom meaning
+  {
+    id: 28, section: "Idiom",
+    type: "mcq",
+    stem: "What does it mean when someone says a colleague is \"sailing close to the wind\"?",
+    options: [
+      "Acting with unusual speed and efficiency under pressure",
+      "Taking a significant personal risk without adequate preparation",
+      "Behaving in a way that is dangerously close to breaking the rules",
+      "Making steady progress despite facing strong opposition"
+    ],
+    exp: "'Sailing close to the wind' = acting in a way that is just within the limits of what is acceptable or legal — perilously near to crossing a line. C is correct. B is the most common trap — risk is implied, but the idiom specifically denotes proximity to a boundary, not risk in general. A and D are unrelated.",
+    answer: "C"
+  },
+
+  // Q29 — Sentence Completion
+  {
+    id: 29, section: "Sentence Completion",
+    type: "mcq",
+    stem: "While feedback is intended to ______ performance, when delivered insensitively it can ______ confidence, thereby ______ motivation and leaving the recipient feeling unfairly ______.",
+    options: [
+      "improve; erode; diminishing; targeted",
+      "enhance; undermine; sapping; criticised",
+      "enhance; erode; diminishing; criticised",
+      "elevate; erode; diminishing; scrutinised"
+    ],
+    exp: "All four options share the same logical arc — the differentiation is precision. Blank 1: 'enhance' and 'elevate' are more precise than 'improve' for the intended effect of feedback. Blank 2: 'erode' (C, D) is more gradual and precise than 'undermine' (B). Blank 3: 'sapping' (B) is slightly less standard than 'diminishing'. Blank 4 is decisive: 'criticised' (C) = the specific emotional experience of feeling judged unfairly. 'Targeted' (A) implies hostility. 'Scrutinised' (D) implies examination without the emotional dimension. C is the only option where all four words form the most natural and precise cascade.",
+    answer: "C"
+  },
+
+  // Q30 — Word Selection
+  {
+    id: 30, section: "Word Selection",
+    type: "word_select",
+    instr: "Each sentence has a pair of words — select the most appropriate word (A or B) to form a coherent and grammatically correct paragraph.",
+    lines: [
+      { letter: "A", text: "The ambassador's remarks were deliberately <strong>equivocal [A]</strong> / <strong>equitable [B]</strong>, revealing neither approval nor condemnation of the proposed treaty." },
+      { letter: "B", text: "Several delegates interpreted his silence as a <strong>tacit [A]</strong> / <strong>placid [B]</strong> endorsement of the mediating nation's position." },
+      { letter: "C", text: "The opposition bloc, however, remained deeply <strong>spectral [A]</strong> / <strong>sceptical [B]</strong> about the government's stated intentions." },
+      { letter: "D", text: "By midnight, negotiations had reached an apparent <strong>impasse [A]</strong> / <strong>imposture [B]</strong>, with neither side willing to concede." },
+      { letter: "E", text: "The sudden intervention of a neutral mediator ultimately <strong>averted [A]</strong> / <strong>diverted [B]</strong> what might have become a full diplomatic crisis." }
+    ],
+    options: ["BAAAA", "AABBA", "AABAB", "AABAA"],
+    exp: "Equivocal = deliberately ambiguous. Tacit = understood without being stated. Sceptical = having doubts (spectral = ghostly — wrong). Impasse = a deadlock. Averted = prevented something bad. Correct pattern: AABAA.",
+    answer: "D"
+  },
+
+  // Q31 — Vocabulary: meretricious
+  {
+    id: 31, section: "Vocabulary",
+    type: "mcq",
+    stem: "What is the meaning of MERETRICIOUS?",
+    options: [
+      "Apparently attractive but having no real value or integrity",
+      "Excessively complimentary or flattering",
+      "Deliberately insincere in order to gain personal favour",
+      "Disproportionately extravagant in style or presentation"
+    ],
+    exp: "Meretricious = falsely attractive; showy but worthless — from Latin 'meretrix'. B describes excessive praise. C describes sycophancy — close, but meretricious implies false glitter rather than merely insincere intent. D describes extravagance, not falseness.",
+    answer: "A"
+  },
+
+  // Q32 — Idiom fill-in
+  {
+    id: 32, section: "Idiom",
+    type: "mcq",
+    stem: "The committee's reform efforts were repeatedly frustrated — every time a solution seemed within reach, new bureaucratic criteria would emerge and ________.",
+    options: [
+      "throw the cat among the pigeons",
+      "move the goalposts",
+      "rock the boat",
+      "upset the apple cart"
+    ],
+    exp: "'Move the goalposts' = to change the criteria or rules after a process has begun, making success harder. The sentence describes success seeming near before criteria keep shifting. 'Upset the apple cart' (D) = to disrupt something working smoothly — different. 'Throw the cat among the pigeons' (A) = to introduce a controversial element and cause trouble. 'Rock the boat' (C) = to disturb a stable situation.",
+    answer: "B"
+  },
+
+  // Q33 — Sentence Completion
+  {
+    id: 33, section: "Sentence Completion",
+    type: "mcq",
+    stem: "The documentary was criticised as ______, with every statistic cherry-picked to ______ a predetermined conclusion, thereby ______ viewers expecting balanced analysis and ______ the director's credibility.",
+    options: [
+      "tendentious; support; alienating; damaging",
+      "objective; challenge; engaging; strengthening",
+      "impartial; undermine; reassuring; boosting",
+      "innovative; question; attracting; establishing"
+    ],
+    exp: "The documentary is tendentious (biased). Evidence is cherry-picked to support a conclusion. This alienates viewers expecting balance and damages credibility. The cascade: tendentious → support predetermined view → alienate → damage. Only A is coherent throughout.",
+    answer: "A"
+  },
+
+  // Q34 — Spelling
+  {
+    id: 34, section: "Spelling",
+    type: "mcq",
+    stem: "Choose the correctly spelled word.",
+    options: ["Accomodation", "Acommodation", "Acomodation", "Accommodation"],
+    exp: "Accommodation requires double 'c' AND double 'm'. A has double 'c' but single 'm' — the most common error. B has single 'c' and double 'm'. C has both single. Memory tip: two cots, two mattresses — double c, double m.",
+    answer: "D"
+  },
+
+  // Q35 — Vocabulary: perspicacious
+  {
+    id: 35, section: "Vocabulary",
+    type: "mcq",
+    stem: "What is the meaning of PERSPICACIOUS?",
+    options: [
+      "Clearly expressed and easily understood",
+      "Easily influenced by the views of others",
+      "Having a ready insight into things; shrewdly perceptive",
+      "Stubbornly attached to one's initial assessment"
+    ],
+    exp: "Perspicacious = having sharp insight and perceptive understanding. A describes perspicuous — this confusion pair is one of the highest-frequency IPMAT traps. B describes susceptibility to influence. D describes obstinacy. Perspicacious is about insight; perspicuous is about clarity of expression.",
+    answer: "C"
+  },
+
+  // Q36 — Idiom meaning
+  {
+    id: 36, section: "Idiom",
+    type: "mcq",
+    stem: "What does it mean when someone says a situation is \"a Pyrrhic victory\"?",
+    options: [
+      "A victory achieved through exceptional strategic brilliance",
+      "A victory so costly it is effectively equivalent to defeat",
+      "A narrow victory that could easily have gone the other way",
+      "A victory that has no lasting significance or impact"
+    ],
+    exp: "'A Pyrrhic victory' = a victory that inflicts such a devastating toll on the victor that it is tantamount to defeat — named after King Pyrrhus of Epirus, who routed the Romans but at catastrophic cost. B is correct. A is the opposite. C describes a close contest, not a costly one. D describes a hollow victory, which differs from a ruinously costly one.",
+    answer: "B"
+  },
+
+  // Q37 — Word Selection
+  {
+    id: 37, section: "Word Selection",
+    type: "word_select",
+    instr: "Each sentence has a pair of words — select the most appropriate word (A or B) to form a coherent and grammatically correct paragraph.",
+    lines: [
+      { letter: "A", text: "The historian rejected the rival's claim as historically <strong>anachronistic [A]</strong> / <strong>anonymous [B]</strong> — it placed a modern institution in an era that predated it by centuries." },
+      { letter: "B", text: "According to newly discovered manuscripts, the emperor's policies had been grossly <strong>misrepresented [A]</strong> / <strong>misappropriated [B]</strong> by earlier chroniclers." },
+      { letter: "C", text: "Those chroniclers had relied on sources of highly <strong>dubitative [A]</strong> / <strong>dubious [B]</strong> authenticity, several of which were later proved to be forgeries." },
+      { letter: "D", text: "The revised interpretation therefore challenged several long-standing academic <strong>orthodoxies [A]</strong> / <strong>orthographies [B]</strong> that had gone unquestioned for decades." },
+      { letter: "E", text: "Unsurprisingly, the publication triggered an intensely <strong>polarised [A]</strong> / <strong>patronised [B]</strong> debate among historians on both sides of the Atlantic." }
+    ],
+    options: ["AAABA", "AABAA", "AAABB", "ABABA"],
+    exp: "Anachronistic = belonging to the wrong time period. Misrepresented = described inaccurately. Dubious = questionable (dubitative is not standard modern English). Orthodoxies = established beliefs. Polarised = divided into opposing camps. Correct pattern: AABAA.",
+    answer: "B"
+  },
+
+  // Q38 — Sentence Completion
+  {
+    id: 38, section: "Sentence Completion",
+    type: "mcq",
+    stem: "The campaign coordinator, despite having no formal training, performed ______ service throughout the election — her contributions were ______, her commitment ______, and her ability to ______ a divided team widely acknowledged.",
+    options: [
+      "yeoman; invaluable; unwavering; unite",
+      "exceptional; recognised; admirable; inspire",
+      "perfunctory; minimal; wavering; fracture",
+      "commendable; noticed; impressive; direct"
+    ],
+    exp: "'Yeoman service' is a fixed idiomatic expression meaning loyal and dependably useful work in difficult conditions. Her service is invaluable (not merely recognised), commitment unwavering, and she unites a divided team. Only A is coherent and idiomatic throughout.",
+    answer: "A"
+  },
+
+  // Q39 — Vocabulary: tendentious
+  {
+    id: 39, section: "Vocabulary",
+    type: "mcq",
+    stem: "What is the meaning of TENDENTIOUS?",
+    options: [
+      "Lacking in evidence or logical rigour",
+      "Excessively long and poorly organised",
+      "Relying on emotional rather than rational appeal",
+      "Promoting a particular point of view in a biased way"
+    ],
+    exp: "Tendentious = expressing a point of view with the aim of promoting it — inherently biased. A describes a weak argument. B describes poor organisation. C describes pathos-based reasoning. Tendentious is specifically about partisan intent, not about quality, length, or method.",
+    answer: "D"
+  },
+
+  // Q40 — Idiom fill-in
+  {
+    id: 40, section: "Idiom",
+    type: "mcq",
+    stem: "The ruling party was accused of ________ — making bold commitments on climate policy whenever public pressure mounted, but never introducing any actual legislation.",
+    options: [
+      "burning their boats",
+      "moving the goalposts",
+      "paying lip service",
+      "sailing close to the wind"
+    ],
+    exp: "'Paying lip service' = expressing support for something without taking any real action — saying the right things while doing nothing. C is correct. 'Moving the goalposts' (B) = changing criteria — the sentence is about inaction, not shifting rules. 'Burning their boats' (A) = making an irreversible commitment — the opposite of the described behaviour. 'Sailing close to the wind' (D) = acting near the limits of acceptability.",
+    answer: "C"
+  },
+
+  // Q41–Q45: Story Vocabulary
+  // Word bank: LIMERENCE, MORBID, RISIBLE, MORTIFICATION, SOLVENT
+  {
+    id: 41, section: "Story Vocabulary",
+    type: "story",
+    storyText: "Arjun had never believed in the idea of obsession until it happened to him. What began as simple admiration for his colleague Priya became something altogether more consuming — a state of <span class='story-blank'>( 1 )</span> that neither he nor his friends had a ready word for. He rehearsed conversations with a diligence that bordered on the <span class='story-blank'>( 2 )</span>. His friends found the situation rather <span class='story-blank'>( 3 )</span> — a grown professional undone by a glance across a conference table. Arjun, aware of how he must appear, felt a gnawing <span class='story-blank'>( 4 )</span> that did nothing to diminish the feeling. If anything, the shame acted as a <span class='story-blank'>( 5 )</span> to his resolve rather than a cure.",
+    stem: "Blank (1) — <em>a state of ______ that neither he nor his friends had a ready word for</em>",
+    options: ["MORBID", "RISIBLE", "MORTIFICATION", "LIMERENCE"],
+    exp: "Limerence = an involuntary, obsessive fixation on another person — a state that is hard to name and harder to explain, which is precisely what the sentence describes. The other options are adjectives or do not denote a nameable psychological state.",
+    answer: "D"
+  },
+  {
+    id: 42, section: "Story Vocabulary",
+    type: "story_cont",
+    storyRef: true,
+    stem: "Blank (2) — <em>rehearsed conversations with a diligence that bordered on the ______</em>",
+    options: ["LIMERENCE", "MORBID", "SOLVENT", "RISIBLE"],
+    exp: "Morbid = characterised by an unhealthy preoccupation — as an adjective it fits 'bordered on the ______', describing the excessive, unwell quality of obsessively rehearsing conversations. Limerence is the state itself. Risible = laughable. Solvent = a dissolving agent.",
+    answer: "B"
+  },
+  {
+    id: 43, section: "Story Vocabulary",
+    type: "story_cont",
+    storyRef: true,
+    stem: "Blank (3) — <em>his friends found the situation rather ______</em>",
+    options: ["MORTIFICATION", "SOLVENT", "MORBID", "RISIBLE"],
+    exp: "Risible = such as to provoke laughter; laughable or absurd. His friends found the situation amusing — a grown professional undone by a glance. Mortification = shame. Morbid = unhealthy preoccupation. Solvent = a dissolving agent. Only risible fits 'found the situation rather ______'.",
+    answer: "D"
+  },
+  {
+    id: 44, section: "Story Vocabulary",
+    type: "story_cont",
+    storyRef: true,
+    stem: "Blank (4) — <em>felt a gnawing ______ that did nothing to diminish the feeling</em>",
+    options: ["RISIBLE", "MORTIFICATION", "SOLVENT", "LIMERENCE"],
+    exp: "Mortification = a feeling of deep embarrassment or shame. 'Gnawing' emphasises its persistent, erosive quality — something that keeps eating away. Risible is an adjective. Limerence is the obsessive state itself. Solvent = a dissolving substance. Only mortification is a noun fitting 'a gnawing ______'.",
+    answer: "B"
+  },
+  {
+    id: 45, section: "Story Vocabulary",
+    type: "story_cont",
+    storyRef: true,
+    stem: "Blank (5) — <em>the shame acted as a ______ to his resolve rather than a cure</em>",
+    options: ["MORTIFICATION", "MORBID", "LIMERENCE", "SOLVENT"],
+    exp: "Solvent (figurative) = something that dissolves or breaks down. The sentence contrasts solvent with cure — shame dissolved his resolve rather than curing the limerence, making the obsession worse. Mortification was blank 4. Morbid is an adjective. Limerence is the state.",
+    answer: "D"
+  }
+
+];
+
+
+
+// ════════════════════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════════════════════
+let studentName = "", studentPin = "", studentBatch = "";
+let currentQ = 0;
+let userAnswers = new Array(QUESTIONS.length).fill(null);
+let timerInterval = null;
+let secondsLeft = 40 * 60;
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwGGxswx4hcBUFiT0QJIglowhKcJCv47MOR5LKBv9sILl-evsgZeKCms5y6s5zEXOUo6Q/exec";
+
+// ════════════════════════════════════════════════════════
+// LOGIN
+// ════════════════════════════════════════════════════════
+function startTest() {
+  const name = document.getElementById("inputName").value.trim();
+  const pin = document.getElementById("inputPin").value.trim();
+  const batch = document.getElementById("inputBatch").value.trim();
+  if (!name || !pin || !batch) { alert("Please enter your name, IMS PIN, and batch number."); return; }
+  studentName = name;
+  studentPin = pin;
+  studentBatch = batch;
+  document.getElementById("dispName").textContent = name;
+  document.getElementById("dispPin").textContent = pin;
+  document.getElementById("dispBatch").textContent = batch;
+  document.getElementById("loginScreen").style.display = "none";
+  document.getElementById("testScreen").style.display = "block";
+  buildPalette();
+  renderQuestion(0);
+  startTimer();
+}
+
+// ════════════════════════════════════════════════════════
+// TIMER
+// ════════════════════════════════════════════════════════
+function startTimer() {
+  timerInterval = setInterval(() => {
+    secondsLeft--;
+    const m = Math.floor(secondsLeft / 60);
+    const s = secondsLeft % 60;
+    document.getElementById("timerVal").textContent = `${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+    if (secondsLeft <= 300) document.getElementById("timerBox").classList.add("urgent");
+    if (secondsLeft <= 0) { clearInterval(timerInterval); submitTest(); }
+  }, 1000);
+}
+
+// ════════════════════════════════════════════════════════
+// RENDER QUESTION
+// ════════════════════════════════════════════════════════
+function renderQuestion(idx) {
+  currentQ = idx;
+  const q = QUESTIONS[idx];
+  const panel = document.getElementById("questionPanel");
+  const letters = ["A", "B", "C", "D"];
+  let html = "";
+
+  html += `<div class="section-label">${q.section}</div>`;
+  html += `<div class="q-card">`;
+  html += `<div class="q-number">Question ${idx + 1} of ${QUESTIONS.length}</div>`;
+
+  if (q.type === "word_select") {
+    if (q.instr) html += `<div class="q-instr">${q.instr}</div>`;
+    html += `<div class="para-block">`;
+    q.lines.forEach(l => {
+      html += `<div class="para-line"><strong>${l.letter}.</strong> ${l.text}</div>`;
+    });
+    html += `</div>`;
+  } else if (q.type === "story") {
+    html += `<div class="story-block">${q.storyText}</div>`;
+    html += `<div class="q-stem">${q.stem}</div>`;
+  } else if (q.type === "story_cont") {
+    // Show story reference
+    const storyQ = QUESTIONS.find(x => x.type === "story");
+    html += `<div class="story-block" style="font-size:13px;opacity:0.85;">${storyQ.storyText}</div>`;
+    html += `<div class="q-stem">${q.stem}</div>`;
+  } else {
+    if (q.instr) html += `<div class="q-instr">${q.instr}</div>`;
+    if (q.stem) html += `<div class="q-stem">${q.stem}</div>`;
+  }
+
+  html += `<div class="options-grid">`;
+  q.options.forEach((opt, i) => {
+    const selected = userAnswers[idx] === letters[i] ? " selected" : "";
+    html += `<div class="opt-btn${selected}" onclick="selectOption('${letters[i]}', ${idx})">
+      <span class="opt-label">${letters[i]}.</span><span>${opt}</span>
+    </div>`;
+  });
+  html += `</div>`;
+
+  html += `<div class="q-actions">`;
+  if (idx > 0) html += `<button class="btn btn-prev" onclick="renderQuestion(${idx - 1})">← Previous</button>`;
+  html += `<button class="btn btn-clear" onclick="clearAnswer(${idx})">Clear</button>`;
+  if (idx < QUESTIONS.length - 1) html += `<button class="btn btn-next" onclick="renderQuestion(${idx + 1})">Next →</button>`;
+  if (idx === QUESTIONS.length - 1) html += `<button class="btn btn-submit" onclick="confirmSubmit()">Submit Test ✓</button>`;
+  html += `</div>`;
+  html += `</div>`;
+
+  panel.innerHTML = html;
+  panel.scrollTop = 0;
+  updatePalette();
+}
+
+// ════════════════════════════════════════════════════════
+// SELECT OPTION
+// ════════════════════════════════════════════════════════
+function selectOption(letter, idx) {
+  userAnswers[idx] = letter;
+  renderQuestion(idx);
+}
+
+function clearAnswer(idx) {
+  userAnswers[idx] = null;
+  renderQuestion(idx);
+}
+
+// ════════════════════════════════════════════════════════
+// PALETTE
+// ════════════════════════════════════════════════════════
+function buildPalette() {
+  const grid = document.getElementById("paletteGrid");
+  grid.innerHTML = "";
+  QUESTIONS.forEach((_, i) => {
+    const btn = document.createElement("button");
+    btn.className = "pal-btn";
+    btn.textContent = i + 1;
+    btn.onclick = () => renderQuestion(i);
+    grid.appendChild(btn);
+  });
+}
+
+function updatePalette() {
+  const btns = document.querySelectorAll(".pal-btn");
+  btns.forEach((btn, i) => {
+    btn.className = "pal-btn";
+    if (userAnswers[i] !== null) btn.classList.add("answered");
+    if (i === currentQ) btn.classList.add("current");
+  });
+  const answered = userAnswers.filter(x => x !== null).length;
+  document.getElementById("progressFill").style.width = `${(answered / QUESTIONS.length) * 100}%`;
+  document.getElementById("progressText").textContent = `${answered} / ${QUESTIONS.length} answered`;
+}
+
+// ════════════════════════════════════════════════════════
+// SUBMIT
+// ════════════════════════════════════════════════════════
+function confirmSubmit() {
+  const answered = userAnswers.filter(x => x !== null).length;
+  const unanswered = QUESTIONS.length - answered;
+  if (unanswered > 0) {
+    if (!confirm(`You have ${unanswered} unanswered question(s). Submit anyway?`)) return;
+  }
+  submitTest();
+}
+
+function submitTest() {
+  clearInterval(timerInterval);
+  let correct = 0, wrong = 0, skipped = 0, score = 0;
+  QUESTIONS.forEach((q, i) => {
+    if (userAnswers[i] === null) { skipped++; }
+    else if (userAnswers[i] === q.answer) { correct++; score += 4; }
+    else { wrong++; score -= 1; }
+  });
+  const accuracy = answered => answered > 0 ? Math.round((correct / (correct + wrong)) * 100) : 0;
+  const attempted = correct + wrong;
+  showResults(score, correct, wrong, skipped);
+  saveToTracker(score, correct, wrong, skipped);
+  logToSheet(score, correct, wrong, skipped);
+}
+
+function showResults(score, correct, wrong, skipped) {
+  document.getElementById("testScreen").style.display = "none";
+  document.getElementById("resultsScreen").style.display = "block";
+  document.getElementById("r-score").textContent = score;
+  document.getElementById("r-name").textContent = studentName + " · " + studentPin;
+  document.getElementById("r-batch").textContent = studentBatch;
+  document.getElementById("r-correct").textContent = correct;
+  document.getElementById("r-wrong").textContent = wrong;
+  document.getElementById("r-skip").textContent = skipped;
+  const reviewList = document.getElementById("review-list");
+  reviewList.innerHTML = "";
+  QUESTIONS.forEach((q, i) => {
+    const div = document.createElement("div");
+    div.style.cssText = "background:rgba(255,255,255,0.03);border-radius:10px;padding:14px 16px;margin-bottom:10px;border:0.5px solid rgba(255,255,255,0.07);";
+    const ua = userAnswers[i];
+    const correctAns = q.answer;
+    const isSkip = ua === null;
+    const isCorrect = !isSkip && ua === correctAns;
+    const badge = isSkip
+      ? "<span style=\"background:#444;color:#aaa;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;\">Skipped</span>"
+      : isCorrect
+        ? "<span style=\"background:#1e4d2b;color:#3dba7a;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;\">Correct +4</span>"
+        : "<span style=\"background:#4d1e1e;color:#e05555;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;\">Wrong −1</span>";
+    const borderColor = isCorrect ? "#3dba7a" : isSkip ? "#555" : "#e05555";
+    div.style.borderLeft = "3px solid " + borderColor;
+    let ansLine = "";
+    if (isSkip) {
+      ansLine = "<div style=\"color:#888;font-size:12px;margin-top:6px;\">Not attempted</div>";
+    } else if (isCorrect) {
+      ansLine = "<div style=\"color:#3dba7a;font-size:12px;margin-top:6px;\">Your answer: " + ua + " ✓</div>";
+    } else {
+      ansLine = "<div style=\"color:#e05555;font-size:12px;margin-top:6px;\">Your answer: " + ua + " ✗ &nbsp;|&nbsp; Correct: " + correctAns + "</div>";
+    }
+    const stem = q.stem || (q.lines ? q.lines.map(l => l.letter + ") " + l.text.replace(/<[^>]+>/g,"")).join(" | ") : "");
+    const expHTML = q.exp
+      ? "<div style=\"font-size:12px;color:#999;margin-top:8px;line-height:1.6;padding:8px 10px;background:rgba(255,255,255,0.03);border-radius:6px;border-left:2px solid " + borderColor + ";\">💡 " + q.exp + "</div>"
+      : "";
+    div.innerHTML = "<div style=\"display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;\">"
+      + "<span style=\"font-size:11px;color:var(--text2);\">Q" + (i+1) + " · " + (q.section || q.tag) + "</span>" + badge + "</div>"
+      + "<div style=\"font-size:13px;line-height:1.55;\">" + stem + "</div>"
+      + ansLine + expHTML;
+    reviewList.appendChild(div);
+  });
+  window.scrollTo(0,0);
+}
+
+
+function saveToTracker(score, correct, wrong, skipped) {
+  try {
+    const sectionErrors = {};
+    const wrongQuestions = [];
+    QUESTIONS.forEach(function(q, i) {
+      if (userAnswers[i] !== null && userAnswers[i] !== q.answer) {
+        wrongQuestions.push(i + 1);
+        const sec = q.section || 'Other';
+        sectionErrors[sec] = (sectionErrors[sec] || 0) + 1;
+      }
+    });
+    const key = 'riim_' + studentBatch + '_' + studentName.replace(/\s+/g, '_').toLowerCase();
+    const existing = localStorage.getItem(key);
+    let entries = existing ? JSON.parse(existing) : [];
+    entries = entries.filter(function(e) { return e.test !== 14; });
+    entries.push({ test: 14, score: score, errors: sectionErrors, wrongQuestions: wrongQuestions, ts: Date.now() });
+    localStorage.setItem(key, JSON.stringify(entries));
+  } catch(e) {}
+}
+
+function logToSheet(score, correct, wrong, skipped) {
+  const sectionErrors = {};
+  const wrongQuestions = [];
+  QUESTIONS.forEach(function(q, i) {
+    if (userAnswers[i] !== null && userAnswers[i] !== q.answer) {
+      wrongQuestions.push(i + 1);
+      const sec = q.section || 'Other';
+      sectionErrors[sec] = (sectionErrors[sec] || 0) + 1;
+    }
+  });
+
+  const timeTakenSecs = (40 * 60) - secondsLeft;
+  const mm = String(Math.floor(timeTakenSecs / 60)).padStart(2, "0");
+  const ss = String(timeTakenSecs % 60).padStart(2, "0");
+
+  const payload = {
+    testName:       "Road to IIM Paper 14",
+    name:           studentName,
+    pin:            studentPin,
+    batch:          studentBatch,
+    score:          score,
+    correct:        correct,
+    wrong:          wrong,
+    skipped:        skipped,
+    maxMarks:       180,
+    timeTaken:      mm + ":" + ss,
+    timestamp:      new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }),
+    sectionErrors:  sectionErrors,
+    wrongQuestions: wrongQuestions
+  };
+  const notice = document.getElementById("sheet-notice");
+  notice.style.display = "block";
+  notice.style.background = "rgba(240,192,64,0.1)";
+  notice.style.color = "#f0c040";
+  notice.textContent = "⏳ Submitting your score...";
+  fetch(APPS_SCRIPT_URL, {
+    method: "POST",
+    mode: "no-cors",
+    headers: { "Content-Type": "text/plain" },
+    body: JSON.stringify(payload)
+  })
+  .then(() => {
+    notice.style.background = "rgba(61,186,122,0.1)";
+    notice.style.color = "#3dba7a";
+    notice.textContent = "✅ Score submitted successfully and recorded on the tracker.";
+  })
+  .catch(() => {
+    notice.style.background = "rgba(224,85,85,0.1)";
+    notice.style.color = "#e05555";
+    notice.textContent = "❌ Submission failed. Please screenshot this page and share with your teacher.";
+  });
+}
+
+// ── Anti-copy protection ──
+document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
+document.addEventListener('keydown', function(e) {
+  if ((e.ctrlKey || e.metaKey) && ['c','a','u','s','p'].includes(e.key.toLowerCase())) {
+    e.preventDefault();
+  }
+});
+</script>
+</body>
+</html>
