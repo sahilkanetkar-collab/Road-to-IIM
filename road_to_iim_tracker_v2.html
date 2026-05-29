@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Road to IIM — Score Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@300;400;500&family=DM+Sans:wght@400;500&family=DM+Mono&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root {
+  --bg:#0f0e0c; --bg2:#181714; --bg3:#211f1b; --bg4:#2a271f;
+  --border:rgba(255,255,255,0.08); --border2:rgba(255,255,255,0.14);
+  --gold:#c9a84c; --gold2:#e8c97a; --gold-dim:rgba(201,168,76,0.15); --gold-dim2:rgba(201,168,76,0.08);
+  --text:#f0ece3; --text2:#a09880; --text3:#5a5545;
+  --green:#4caf82; --green-dim:rgba(76,175,130,0.12); --green-dim2:rgba(76,175,130,0.06);
+  --red:#e05c5c; --red-dim:rgba(224,92,92,0.1); --red-dim2:rgba(224,92,92,0.06);
+  --blue:#4a90d9; --blue-dim:rgba(74,144,217,0.12);
+  --orange:#d4845a; --orange-dim:rgba(212,132,90,0.12);
+  --purple:#9b7fe8; --purple-dim:rgba(155,127,232,0.12);
+  --radius:10px; --radius-lg:16px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh}
+
+/* ── HEADER ── */
+.header{border-bottom:0.5px solid var(--border);padding:1.25rem 2rem;display:flex;align-items:center;justify-content:space-between}
+.brand-main{font-family:'Fraunces',serif;font-size:20px;font-weight:500;color:var(--gold2);letter-spacing:-0.3px}
+.brand-sub{font-size:12px;color:var(--text3);font-family:'DM Mono',monospace;letter-spacing:.05em}
+.header-right{font-size:12px;color:var(--text3);font-family:'DM Mono',monospace}
+
+/* ── SCREENS ── */
+.screen{display:none}.screen.active{display:block}
+
+/* ── LOGIN ── */
+.login-wrap{min-height:calc(100vh - 61px);display:flex;align-items:center;justify-content:center;padding:2rem}
+.login-card{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:2.5rem;width:100%;max-width:420px}
+.login-title{font-family:'Fraunces',serif;font-size:26px;font-weight:300;color:var(--text);margin-bottom:6px}
+.login-sub{font-size:13px;color:var(--text2);margin-bottom:2rem}
+.field{margin-bottom:1.25rem}
+.field label{display:block;font-size:12px;color:var(--text2);margin-bottom:6px;font-family:'DM Mono',monospace;letter-spacing:.05em;text-transform:uppercase}
+.field input,.field select{width:100%;background:var(--bg3);border:0.5px solid var(--border2);border-radius:var(--radius);padding:10px 14px;color:var(--text);font-size:14px;font-family:'DM Sans',sans-serif;outline:none;transition:border-color .2s}
+.field input:focus,.field select:focus{border-color:var(--gold)}
+.field select option{background:var(--bg3)}
+.login-btn{width:100%;padding:12px;background:var(--gold);border:none;border-radius:var(--radius);color:#0f0e0c;font-size:14px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .2s;margin-top:.5rem}
+.login-btn:hover{background:var(--gold2)}
+.login-err{font-size:13px;color:var(--red);margin-top:10px;display:none}
+.login-loading{font-size:13px;color:var(--text3);margin-top:10px;display:none;font-family:'DM Mono',monospace}
+
+/* ── SHARED DASHBOARD CHROME ── */
+.dash{padding:2rem;max-width:1000px;margin:0 auto}
+.dash-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:2rem;flex-wrap:wrap;gap:1rem}
+.dash-name{font-family:'Fraunces',serif;font-size:28px;font-weight:300;color:var(--text)}
+.dash-batch{font-size:12px;color:var(--text3);font-family:'DM Mono',monospace;margin-top:4px}
+.btn-logout{background:transparent;border:0.5px solid var(--border2);color:var(--text2);padding:9px 18px;border-radius:var(--radius);font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif}
+.btn-logout:hover{background:var(--bg3)}
+.loading-dash{text-align:center;padding:3rem;color:var(--text3);font-family:'DM Mono',monospace;font-size:13px}
+.empty{text-align:center;padding:3rem 1rem;color:var(--text3);font-size:14px}
+.empty strong{display:block;font-family:'Fraunces',serif;font-size:22px;font-weight:300;color:var(--text2);margin-bottom:8px}
+
+/* ── STUDENT DASHBOARD ── */
+.hero-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:1.5rem}
+.stat{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius);padding:14px 16px;position:relative;overflow:hidden}
+.stat-label{font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;letter-spacing:.05em;text-transform:uppercase;margin-bottom:6px}
+.stat-val{font-size:26px;font-weight:300;font-family:'Fraunces',serif;color:var(--text)}
+.stat-val span{font-size:13px;color:var(--text3);font-family:'DM Sans',sans-serif}
+.stat.highlight{border-color:var(--gold);background:var(--gold-dim)}
+.stat.highlight .stat-val{color:var(--gold2)}
+.pb-crown{position:absolute;top:10px;right:12px;font-size:16px;opacity:.7}
+.trend{font-size:12px;margin-top:4px;font-family:'DM Mono',monospace}
+.trend.up{color:var(--green)}.trend.down{color:var(--red)}.trend.flat{color:var(--text3)}
+
+.analysis-panel{background:var(--bg2);border:0.5px solid var(--gold);border-left:3px solid var(--gold);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:1.5rem}
+.analysis-header{display:flex;align-items:center;gap:8px;margin-bottom:1rem}
+.analysis-icon{font-size:18px}
+.analysis-title{font-size:12px;color:var(--text3);font-family:'DM Mono',monospace;letter-spacing:.05em;text-transform:uppercase}
+.insight-list{display:flex;flex-direction:column;gap:8px}
+.insight{font-size:14px;color:var(--text2);line-height:1.6;padding-left:16px;position:relative}
+.insight::before{content:'';position:absolute;left:0;top:8px;width:6px;height:6px;border-radius:50%;background:var(--gold-dim)}
+.insight.warn::before{background:var(--red)}
+.insight.good::before{background:var(--green)}
+.insight.info::before{background:var(--blue)}
+.insight strong{color:var(--text);font-weight:500}
+
+.dual-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.5rem}
+@media(max-width:600px){.dual-grid{grid-template-columns:1fr}}
+.metric-card{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem}
+.metric-label{font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;letter-spacing:.05em;text-transform:uppercase;margin-bottom:10px}
+.metric-big{font-size:32px;font-weight:300;font-family:'Fraunces',serif;color:var(--text);margin-bottom:4px}
+.metric-sub{font-size:12px;color:var(--text3);margin-bottom:10px}
+.behaviour-flag{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:20px;font-size:12px;font-family:'DM Mono',monospace;margin-top:4px}
+.behaviour-flag.rush{background:var(--orange-dim);color:var(--orange);border:0.5px solid var(--orange)}
+.behaviour-flag.hesitate{background:var(--blue-dim);color:var(--blue);border:0.5px solid var(--blue)}
+.behaviour-flag.optimal{background:var(--green-dim);color:var(--green);border:0.5px solid var(--green)}
+.behaviour-flag.rework{background:var(--red-dim);color:var(--red);border:0.5px solid var(--red)}
+.eff-row{display:flex;align-items:flex-end;gap:3px;height:36px;margin-top:8px}
+.eff-bar{flex:1;background:var(--gold-dim);border-radius:2px 2px 0 0;min-height:3px}
+.eff-bar.latest{background:var(--gold)}
+
+.chart-card{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:1.5rem}
+.card-title{font-size:12px;color:var(--text3);font-family:'DM Mono',monospace;letter-spacing:.05em;text-transform:uppercase;margin-bottom:1.25rem}
+.chart-wrap{position:relative;height:220px}
+
+.error-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px}
+.err-bar{background:var(--bg3);border:0.5px solid var(--border);border-radius:var(--radius);padding:12px 14px}
+.err-bar.flagged{border-color:var(--red);background:var(--red-dim)}
+.err-bar.improving{border-color:var(--green);background:var(--green-dim)}
+.err-name{font-size:11px;color:var(--text2);margin-bottom:8px;line-height:1.3}
+.err-track{height:4px;background:var(--bg);border-radius:2px;margin-bottom:6px}
+.err-fill{height:4px;border-radius:2px;background:var(--gold)}
+.err-bar.flagged .err-fill{background:var(--red)}
+.err-bar.improving .err-fill{background:var(--green)}
+.err-num{font-size:18px;font-weight:300;font-family:'Fraunces',serif;color:var(--text)}
+.err-trend{font-size:10px;margin-top:4px;font-family:'DM Mono',monospace}
+.err-trend.flag{color:var(--red)}.err-trend.good{color:var(--green)}
+.err-spark{display:flex;align-items:flex-end;gap:2px;height:20px;margin-top:6px}
+.err-spark-bar{flex:1;border-radius:1px 1px 0 0;min-height:2px;background:var(--border2)}
+.err-spark-bar.latest{background:var(--gold)}
+.err-bar.flagged .err-spark-bar{background:var(--red-dim)}.err-bar.flagged .err-spark-bar.latest{background:var(--red)}
+.err-bar.improving .err-spark-bar{background:var(--green-dim)}.err-bar.improving .err-spark-bar.latest{background:var(--green)}
+
+.wq-card{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:1.5rem}
+.wq-grid{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.wq-chip{font-size:12px;font-family:'DM Mono',monospace;padding:4px 10px;border-radius:20px;background:var(--bg3);color:var(--text2);border:0.5px solid var(--border)}
+
+.test-table{width:100%;border-collapse:collapse;font-size:13px;margin-top:10px}
+.test-table th{text-align:left;padding:8px 12px;font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;letter-spacing:.05em;text-transform:uppercase;border-bottom:0.5px solid var(--border)}
+.test-table td{padding:10px 12px;border-bottom:0.5px solid var(--border);color:var(--text2)}
+.test-table tr:last-child td{border-bottom:none}
+.test-table td:first-child{color:var(--text);font-weight:500}
+.score-cell{font-family:'Fraunces',serif;font-size:16px;font-weight:300}
+.score-cell.high{color:var(--green)}.score-cell.mid{color:var(--gold2)}.score-cell.low{color:var(--red)}
+.delta-badge{font-size:10px;font-family:'DM Mono',monospace;padding:2px 6px;border-radius:10px;margin-left:4px}
+.delta-badge.up{background:var(--green-dim);color:var(--green)}
+.delta-badge.down{background:var(--red-dim);color:var(--red)}
+.pb-badge{font-size:10px;font-family:'DM Mono',monospace;padding:2px 6px;border-radius:10px;margin-left:4px;background:var(--gold-dim);color:var(--gold2)}
+
+/* ── ADMIN DASHBOARD ── */
+.admin-badge{display:inline-flex;align-items:center;gap:6px;background:var(--purple-dim);border:0.5px solid var(--purple);color:var(--purple);font-size:11px;font-family:'DM Mono',monospace;padding:4px 10px;border-radius:20px;margin-top:6px}
+.admin-stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:1.5rem}
+.admin-stat{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius);padding:14px 16px}
+.admin-stat .stat-label{font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;letter-spacing:.05em;text-transform:uppercase;margin-bottom:6px}
+.admin-stat .stat-val{font-size:26px;font-weight:300;font-family:'Fraunces',serif;color:var(--text)}
+.admin-stat .stat-val span{font-size:13px;color:var(--text3)}
+.admin-stat.purple{border-color:var(--purple);background:var(--purple-dim)}
+.admin-stat.purple .stat-val{color:var(--purple)}
+
+.filter-bar{display:flex;align-items:center;gap:10px;margin-bottom:1.5rem;flex-wrap:wrap}
+.filter-bar label{font-size:12px;color:var(--text3);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.05em}
+.filter-bar select{background:var(--bg3);border:0.5px solid var(--border2);border-radius:var(--radius);padding:8px 12px;color:var(--text);font-size:13px;font-family:'DM Sans',sans-serif;outline:none}
+.filter-bar select:focus{border-color:var(--gold)}
+.filter-bar select option{background:var(--bg3)}
+
+.section-weakness{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-top:10px}
+.sw-bar{background:var(--bg3);border:0.5px solid var(--border);border-radius:var(--radius);padding:12px 14px}
+.sw-name{font-size:11px;color:var(--text2);margin-bottom:6px}
+.sw-track{height:4px;background:var(--bg);border-radius:2px;margin-bottom:6px}
+.sw-fill{height:4px;border-radius:2px;background:var(--red)}
+.sw-num{font-size:18px;font-weight:300;font-family:'Fraunces',serif;color:var(--text)}
+.sw-sub{font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;margin-top:2px}
+
+.leaderboard-table{width:100%;border-collapse:collapse;font-size:13px;margin-top:10px}
+.leaderboard-table th{text-align:left;padding:8px 12px;font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;letter-spacing:.05em;text-transform:uppercase;border-bottom:0.5px solid var(--border)}
+.leaderboard-table td{padding:10px 12px;border-bottom:0.5px solid var(--border);color:var(--text2);cursor:pointer}
+.leaderboard-table tr:last-child td{border-bottom:none}
+.leaderboard-table tr:hover td{background:var(--bg3)}
+.leaderboard-table td:first-child{color:var(--text3);font-family:'DM Mono',monospace;font-size:11px;width:36px}
+.rank-1 td:first-child{color:var(--gold2) !important}
+.rank-2 td:first-child{color:var(--text2) !important}
+.rank-3 td:first-child{color:var(--orange) !important}
+
+.participation-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.part-chip{background:var(--bg3);border:0.5px solid var(--border);border-radius:var(--radius);padding:8px 12px;text-align:center;min-width:70px}
+.part-test{font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;margin-bottom:4px}
+.part-count{font-size:18px;font-weight:300;font-family:'Fraunces',serif;color:var(--text)}
+
+/* drill-down modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);display:none;align-items:center;justify-content:center;z-index:100;padding:1rem}
+.modal-overlay.open{display:flex}
+.modal{background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius-lg);padding:1.5rem;width:100%;max-width:560px;max-height:80vh;overflow-y:auto}
+.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem}
+.modal-title{font-family:'Fraunces',serif;font-size:20px;font-weight:300;color:var(--text)}
+.modal-close{background:transparent;border:none;color:var(--text3);font-size:20px;cursor:pointer;padding:4px 8px;line-height:1}
+.modal-close:hover{color:var(--text)}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="brand-main">Road to IIM</div>
+    <div class="brand-sub">SCORE TRACKER</div>
+  </div>
+  <div class="header-right" id="headerInfo"></div>
+</div>
+
+<!-- ══ LOGIN ══════════════════════════════════════════════════════ -->
+<div class="screen active" id="loginScreen">
+  <div class="login-wrap">
+    <div class="login-card">
+      <div class="login-title">Your Progress</div>
+      <div class="login-sub">Enter your details to view your scores. IMS PIN is required.</div>
+      <div class="field">
+        <label>Full Name</label>
+        <input type="text" id="studentName" placeholder="Enter your full name" />
+      </div>
+      <div class="field">
+        <label>IMS PIN</label>
+        <input type="text" id="studentPin" placeholder="STU0001184727 or IMS0001183790" />
+      </div>
+      <div class="field">
+        <label>Batch</label>
+        <select id="batchSelect">
+          <option value="">— Select Batch —</option>
+          <optgroup label="Classroom">
+            <option>A2701</option><option>A2702</option><option>A2703</option>
+            <option>A2704</option><option>A2705</option><option>A2706</option>
+            <option>A2707</option><option>A2708</option><option>A2709</option>
+            <option>A2710</option><option>A2711</option><option>A2712</option>
+            <option>A2713</option><option>A2714</option><option>A2715</option>
+          </optgroup>
+          <optgroup label="School">
+            <option>Zebar</option>
+          </optgroup>
+          <optgroup label="Online">
+            <option>27E101</option><option>27E102</option><option>27E103</option>
+            <option>27E104</option><option>27E105</option>
+          </optgroup>
+          <optgroup label="Admin">
+            <option>Admin</option>
+          </optgroup>
+        </select>
+      </div>
+      <button class="login-btn" onclick="doLogin()">View My Scores</button>
+      <div class="login-err" id="loginErr"></div>
+      <div class="login-loading" id="loginLoading">Fetching your results...</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ STUDENT DASHBOARD ══════════════════════════════════════════ -->
+<div class="screen" id="dashScreen">
+  <div class="dash">
+    <div class="dash-top">
+      <div>
+        <div class="dash-name" id="dashName"></div>
+        <div class="dash-batch" id="dashBatch"></div>
+      </div>
+      <button class="btn-logout" onclick="doLogout()">Log out</button>
+    </div>
+    <div class="loading-dash" id="loadingDash" style="display:none">Loading your results...</div>
+    <div class="empty" id="emptyState" style="display:none">
+      <strong>No tests found</strong>
+      No submissions found for this name and batch.
+    </div>
+    <div id="dataView" style="display:none">
+      <div class="hero-row" id="statRow"></div>
+      <div class="analysis-panel" id="analysisPanel">
+        <div class="analysis-header"><span class="analysis-icon">◈</span><span class="analysis-title">Your Analysis</span></div>
+        <div class="insight-list" id="insightList"></div>
+      </div>
+      <div class="dual-grid" id="timeAccGrid"></div>
+      <div class="chart-card">
+        <div class="card-title">Score Trend</div>
+        <div class="chart-wrap"><canvas id="scoreChart"></canvas></div>
+      </div>
+      <div class="chart-card" id="errorCard">
+        <div class="card-title">Section-wise Errors (cumulative)</div>
+        <div class="error-grid" id="errorGrid"></div>
+      </div>
+      <div class="chart-card">
+        <div class="card-title">All Tests</div>
+        <table class="test-table">
+          <thead><tr>
+            <th>Test</th><th>Score</th><th>Correct</th><th>Wrong</th>
+            <th>Skipped</th><th>Accuracy</th><th>Time</th><th>Date</th>
+          </tr></thead>
+          <tbody id="testTableBody"></tbody>
+        </table>
+      </div>
+      <div class="wq-card" id="wqCard">
+        <div class="card-title" id="wqTitle"></div>
+        <div class="wq-grid" id="wqGrid"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ADMIN DASHBOARD ════════════════════════════════════════════ -->
+<div class="screen" id="adminScreen">
+  <div class="dash">
+    <div class="dash-top">
+      <div>
+        <div class="dash-name">Admin Dashboard</div>
+        <div class="dash-batch">Road to IIM · All Batches</div>
+        <div class="admin-badge">⬡ ADMIN VIEW</div>
+      </div>
+      <button class="btn-logout" onclick="doLogout()">Log out</button>
+    </div>
+
+    <!-- Overview stats -->
+    <div class="admin-stat-row" id="adminStatRow"></div>
+
+    <!-- Filter bar -->
+    <div class="filter-bar">
+      <label>Filter by Batch</label>
+      <select id="adminBatchFilter" onchange="applyAdminFilter()">
+        <option value="">All Batches</option>
+      </select>
+      <label style="margin-left:10px">Filter by Test</label>
+      <select id="adminTestFilter" onchange="applyAdminFilter()">
+        <option value="">All Tests</option>
+      </select>
+    </div>
+
+    <!-- Participation per test -->
+    <div class="chart-card">
+      <div class="card-title">Participation per Test</div>
+      <div class="participation-row" id="participationRow"></div>
+    </div>
+
+    <!-- Section weakness cohort -->
+    <div class="chart-card">
+      <div class="card-title">Cohort Weak Sections (cumulative errors across all students)</div>
+      <div class="section-weakness" id="sectionWeakness"></div>
+    </div>
+
+    <!-- Score distribution chart -->
+    <div class="chart-card">
+      <div class="card-title">Score Distribution</div>
+      <div class="chart-wrap"><canvas id="adminChart"></canvas></div>
+    </div>
+
+    <!-- Leaderboard -->
+    <div class="chart-card">
+      <div class="card-title">Student Leaderboard <span style="color:var(--text3);font-size:11px;margin-left:8px">click any row for full history</span></div>
+      <table class="leaderboard-table">
+        <thead><tr>
+          <th>#</th><th>Name</th><th>Batch</th>
+          <th>Latest Test</th><th>Latest Score</th><th>Average</th><th>Tests Taken</th>
+        </tr></thead>
+        <tbody id="leaderboardBody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ══ DRILL-DOWN MODAL ═══════════════════════════════════════════ -->
+<div class="modal-overlay" id="drillModal" onclick="closeDrill(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="drillName"></div>
+      <button class="modal-close" onclick="closeDrillBtn()">✕</button>
+    </div>
+    <div id="drillContent"></div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════════════════
+// CONFIG
+// ══════════════════════════════════════════════════════════════════
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwGGxswx4hcBUFiT0QJIglowhKcJCv47MOR5LKBv9sILl-evsgZeKCms5y6s5zEXOUo6Q/exec";
+const MAX_SCORE = 180;
+const ADMIN_PINS = ['IMS1111111111','IMS2222222222','IMS3333333333','IMS4444444444','IMS5555555555'];
+
+const THRESH_FAST_MINS = 30;
+const THRESH_SLOW_MINS = 37;
+const THRESH_ACC_HIGH  = 0.80;
+const THRESH_ACC_LOW   = 0.65;
+
+// ── STATE ──────────────────────────────────────────────────────────
+var student    = null;
+var entries    = [];
+var allEntries = [];   // admin only — full dataset
+var chartInst  = null;
+var adminChartInst = null;
+
+// ══════════════════════════════════════════════════════════════════
+// LOGIN
+// ══════════════════════════════════════════════════════════════════
+function doLogin() {
+  var pin   = document.getElementById('studentPin').value.trim().toUpperCase();
+  var name  = document.getElementById('studentName').value.trim();
+  var batch = document.getElementById('batchSelect').value;
+
+  if (!name || !batch) { showErr('Please enter your name and select your batch.'); return; }
+  if (!pin)             { showErr('IMS PIN is required (e.g. STU0001184727).'); return; }
+  if (!/^(STU|IMS)\d{10}$/.test(pin)) { showErr('Invalid PIN format. Must be STU or IMS followed by 10 digits.'); return; }
+
+  // Admin PIN must select Admin batch
+  var isAdminPin = ADMIN_PINS.indexOf(pin) !== -1;
+  if (isAdminPin && batch !== 'Admin') { showErr('Admin PINs must select the Admin batch.'); return; }
+  if (!isAdminPin && batch === 'Admin') { showErr('This PIN is not authorised for the Admin batch.'); return; }
+
+  document.getElementById('loginErr').style.display     = 'none';
+  document.getElementById('loginLoading').style.display = 'block';
+  document.querySelector('.login-btn').disabled = true;
+
+  student = { pin: pin, batch: batch, name: name, isAdmin: isAdminPin };
+
+  var url = APPS_SCRIPT_URL
+    + '?pin='   + encodeURIComponent(pin)
+    + '&name='  + encodeURIComponent(name.toLowerCase())
+    + '&batch=' + encodeURIComponent(batch);
+
+  fetch(url)
+    .then(function(r){ return r.json(); })
+    .then(function(json){
+      document.getElementById('loginLoading').style.display = 'none';
+      document.querySelector('.login-btn').disabled = false;
+      if (json.status === 'success') {
+        if (json.isAdmin) {
+          allEntries = json.data || [];
+          showAdmin();
+        } else {
+          entries = json.data || [];
+          showDash();
+        }
+      } else {
+        showErr('Error: ' + (json.message || 'Could not fetch results.'));
+      }
+    })
+    .catch(function(){
+      document.getElementById('loginLoading').style.display = 'none';
+      document.querySelector('.login-btn').disabled = false;
+      showErr('Could not connect. Please check your internet connection.');
+    });
+}
+
+function showErr(msg) {
+  var el = document.getElementById('loginErr');
+  el.textContent = msg; el.style.display = 'block';
+}
+
+document.addEventListener('keydown', function(e){
+  if (e.key === 'Enter' && document.getElementById('loginScreen').classList.contains('active')) doLogin();
+});
+
+// ══════════════════════════════════════════════════════════════════
+// LOGOUT
+// ══════════════════════════════════════════════════════════════════
+function doLogout() {
+  student = null; entries = []; allEntries = [];
+  if (chartInst)      { chartInst.destroy();      chartInst      = null; }
+  if (adminChartInst) { adminChartInst.destroy();  adminChartInst = null; }
+  document.getElementById('headerInfo').textContent = '';
+  ['studentPin','studentName'].forEach(function(id){ document.getElementById(id).value = ''; });
+  document.getElementById('batchSelect').value = '';
+  show('loginScreen');
+}
+
+// ══════════════════════════════════════════════════════════════════
+// STUDENT DASHBOARD
+// ══════════════════════════════════════════════════════════════════
+function showDash() {
+  show('dashScreen');
+  var displayName = (entries.length > 0 && entries[0].name) ? entries[0].name : student.name;
+  document.getElementById('dashName').textContent  = displayName;
+  document.getElementById('dashBatch').textContent = student.batch + ' · PIN: ' + student.pin;
+  document.getElementById('headerInfo').textContent = displayName + ' / ' + student.batch;
+  renderDash();
+}
+
+function deduplicateEntries(arr) {
+  var seen = {};
+  arr.forEach(function(e){ if (!seen[e.test] || e.score > seen[e.test].score) seen[e.test] = e; });
+  return Object.values(seen).sort(function(a,b){ return a.test - b.test; });
+}
+
+function renderDash() {
+  if (entries.length === 0) {
+    document.getElementById('emptyState').style.display = 'block';
+    document.getElementById('dataView').style.display   = 'none';
+    return;
+  }
+  document.getElementById('emptyState').style.display = 'none';
+  document.getElementById('dataView').style.display   = 'block';
+  var de = deduplicateEntries(entries);
+  renderStats(de); renderAnalysis(de); renderTimeAccuracy(de);
+  renderChart(de); renderErrors(de); renderTable(de); renderWrongQuestions(de);
+}
+
+// ── Utility ───────────────────────────────────────────────────────
+function parseMinutes(t) {
+  if (!t) return null;
+  if (/^\d{1,2}:\d{2}$/.test(t)) { var p=t.split(':'); return parseInt(p[0])+parseInt(p[1])/60; }
+  if (t.indexOf('mins')>-1) return parseFloat(t);
+  return null;
+}
+function accuracyRate(e) {
+  var att = (e.correct||0)+(e.wrong||0);
+  return att===0 ? null : (e.correct||0)/att;
+}
+function efficiency(e) {
+  var m = parseMinutes(e.timeTaken);
+  return (!m||m<=0) ? null : e.score/m;
+}
+
+// ── Stats ──────────────────────────────────────────────────────────
+function renderStats(de) {
+  var sorted = de.slice(), latest = sorted[sorted.length-1];
+  var best = Math.max.apply(null,de.map(function(e){return e.score;}));
+  var avg  = Math.round(de.reduce(function(s,e){return s+e.score;},0)/de.length);
+  var pct  = Math.round((latest.score/MAX_SCORE)*100);
+  var isPB = (latest.score===best);
+  var deltaHtml = '';
+  if (sorted.length>=2) {
+    var diff = sorted[sorted.length-1].score - sorted[sorted.length-2].score;
+    if (diff>0)      deltaHtml = '<div class="trend up">▲ +'+diff+' from last test</div>';
+    else if (diff<0) deltaHtml = '<div class="trend down">▼ '+diff+' from last test</div>';
+    else             deltaHtml = '<div class="trend flat">Same as last test</div>';
+  }
+  document.getElementById('statRow').innerHTML =
+    '<div class="stat highlight'+(isPB?' best-flag':'')+'">'+(isPB?'<div class="pb-crown">🏆</div>':'')+
+    '<div class="stat-label">Latest — Test '+latest.test+'</div>'+
+    '<div class="stat-val">'+latest.score+' <span>/ '+MAX_SCORE+'</span></div>'+deltaHtml+'</div>'+
+    '<div class="stat"><div class="stat-label">Personal Best</div><div class="stat-val">'+best+' <span>/ '+MAX_SCORE+'</span></div></div>'+
+    '<div class="stat"><div class="stat-label">Average</div><div class="stat-val">'+avg+' <span>/ '+MAX_SCORE+'</span></div></div>'+
+    '<div class="stat"><div class="stat-label">Tests Taken</div><div class="stat-val">'+de.length+'</div></div>'+
+    '<div class="stat"><div class="stat-label">Latest %</div><div class="stat-val">'+pct+'<span>%</span></div></div>';
+}
+
+// ── Analysis Panel ─────────────────────────────────────────────────
+function renderAnalysis(de) {
+  if (de.length<2){ document.getElementById('analysisPanel').style.display='none'; return; }
+  document.getElementById('analysisPanel').style.display='block';
+  var sorted=de.slice(), latest=sorted[sorted.length-1], prev=sorted[sorted.length-2], n=sorted.length;
+  var insights=[];
+  var scoreDiff = latest.score-prev.score;
+  if (scoreDiff>=15)    insights.push({type:'good',text:'<strong>Strong improvement</strong> — up '+scoreDiff+' marks from your last test.'});
+  else if (scoreDiff>0) insights.push({type:'good',text:'<strong>Improving</strong> — '+scoreDiff+' marks gained. Keep the momentum.'});
+  else if (scoreDiff<-10) insights.push({type:'warn',text:'<strong>Significant drop</strong> — '+Math.abs(scoreDiff)+' marks below last test. Review your wrong questions.'});
+  else if (scoreDiff<0) insights.push({type:'warn',text:'<strong>Slight dip</strong> — '+Math.abs(scoreDiff)+' marks below last test. Check the section breakdown.'});
+  else insights.push({type:'info',text:'<strong>Holding steady</strong> — same score as last test. Look for one section to push.'});
+
+  var totals={}, lastE=latest.sectionErrors||{}, prevE=prev.sectionErrors||{};
+  sorted.forEach(function(e){ var err=e.sectionErrors||{}; Object.keys(err).forEach(function(s){ totals[s]=(totals[s]||0)+(err[s]||0); }); });
+  var secs=Object.keys(totals);
+  if (secs.length>0) {
+    var weakest=secs.reduce(function(a,b){ return totals[a]>=totals[b]?a:b; });
+    insights.push({type:'warn',text:'<strong>'+weakest+'</strong> is your weakest section — '+totals[weakest]+' total error'+(totals[weakest]!==1?'s':'')+' across all tests.'});
+    var mostImp=null,bestDrop=0,worst=null,worstRise=0;
+    secs.forEach(function(s){
+      var drop=(prevE[s]||0)-(lastE[s]||0); if(drop>bestDrop){bestDrop=drop;mostImp=s;}
+      var rise=(lastE[s]||0)-(prevE[s]||0); if(rise>worstRise){worstRise=rise;worst=s;}
+    });
+    if (mostImp&&bestDrop>=1) insights.push({type:'good',text:'<strong>'+mostImp+'</strong> improved — '+bestDrop+' fewer error'+(bestDrop!==1?'s':'')+' than last test.'});
+    if (worst&&worstRise>=2)  insights.push({type:'warn',text:'<strong>'+worst+'</strong> slipped — '+worstRise+' more error'+(worstRise!==1?'s':'')+' than last time.'});
+  }
+  var lm=parseMinutes(latest.timeTaken), la=accuracyRate(latest);
+  if (lm!==null&&la!==null) {
+    var fast=lm<THRESH_FAST_MINS,slow=lm>THRESH_SLOW_MINS,hi=la>=THRESH_ACC_HIGH,lo=la<THRESH_ACC_LOW;
+    if (fast&&lo) insights.push({type:'warn',text:'<strong>You\'re rushing.</strong> Finished in '+Math.round(lm)+' min with '+Math.round(la*100)+'% accuracy. Slow down on Vocabulary and Idiom.'});
+    else if (slow&&hi) insights.push({type:'info',text:'<strong>Accurate but slow.</strong> '+Math.round(la*100)+'% accuracy is great but '+Math.round(lm)+' min is tight. Work on first-instinct decisions.'});
+    else if (fast&&hi) insights.push({type:'good',text:'<strong>Efficient test-taking</strong> — fast and accurate. Maintain this rhythm.'});
+    else if (slow&&lo) insights.push({type:'warn',text:'<strong>Struggling with content</strong> — slow ('+Math.round(lm)+' min) and '+Math.round(la*100)+'% accuracy. Focus on root meanings.'});
+  }
+  if (n>=4) {
+    var sc=sorted.map(function(e){return e.score;}), mean=sc.reduce(function(a,b){return a+b;},0)/sc.length;
+    var sd=Math.sqrt(sc.reduce(function(s,x){return s+Math.pow(x-mean,2);},0)/sc.length);
+    if (sd<10) insights.push({type:'good',text:'<strong>Very consistent</strong> across '+n+' tests. Now push the floor up.'});
+    else if (sd>25) insights.push({type:'info',text:'<strong>Variable performance</strong> — high variance across tests. Focus on what\'s different on low-scoring days.'});
+  }
+  document.getElementById('insightList').innerHTML = insights.map(function(i){
+    return '<div class="insight '+i.type+'">'+i.text+'</div>';
+  }).join('') || '<div class="insight info">Take more tests to unlock detailed insights.</div>';
+}
+
+// ── Time + Accuracy ────────────────────────────────────────────────
+function renderTimeAccuracy(de) {
+  var container=document.getElementById('timeAccGrid'), sorted=de.slice();
+  var effVals=sorted.map(efficiency).filter(function(v){return v!==null;});
+  var accVals=sorted.map(accuracyRate).filter(function(v){return v!==null;});
+  if (effVals.length===0&&accVals.length===0){ container.style.display='none'; return; }
+  container.style.display='grid';
+  var latest=sorted[sorted.length-1], lm=parseMinutes(latest.timeTaken), la=accuracyRate(latest), le=efficiency(latest);
+  function flag(m,a) {
+    if (m===null||a===null) return null;
+    if (m<THRESH_FAST_MINS&&a<THRESH_ACC_LOW)  return {cls:'rush',     label:'RUSHING',            icon:'⚡'};
+    if (m>THRESH_SLOW_MINS&&a>=THRESH_ACC_HIGH) return {cls:'hesitate',label:'OVER-THINKING',      icon:'🔍'};
+    if (m<THRESH_FAST_MINS&&a>=THRESH_ACC_HIGH) return {cls:'optimal', label:'EFFICIENT',           icon:'✓'};
+    if (m>THRESH_SLOW_MINS&&a<THRESH_ACC_LOW)   return {cls:'rework',  label:'NEEDS CONTENT WORK', icon:'📚'};
+    return {cls:'optimal',label:'ON TRACK',icon:'✓'};
+  }
+  var f=flag(lm,la);
+  var maxEff=Math.max.apply(null,sorted.map(efficiency).filter(function(v){return v!==null;}).concat([0.01]));
+  var sparkBars=sorted.map(function(v,i){
+    var ev=efficiency(sorted[i]), ht=ev!==null?Math.round((ev/maxEff)*100):0, last=i===sorted.length-1;
+    return '<div class="eff-bar'+(last?' latest':'')+'" style="height:'+ht+'%"></div>';
+  }).join('');
+  var accBar=sorted.map(function(e,i){
+    var av=accuracyRate(e), ht=av!==null?Math.round(av*100):0, last=i===sorted.length-1;
+    return '<div class="eff-bar'+(last?' latest':'')+'" style="height:'+ht+'%"></div>';
+  }).join('');
+  var accTrend='';
+  if (accVals.length>=2){ var d=accVals[accVals.length-1]-accVals[accVals.length-2];
+    if (d>0.03) accTrend='<div class="trend up" style="font-size:11px;margin-top:6px">▲ Accuracy improving</div>';
+    else if (d<-0.03) accTrend='<div class="trend down" style="font-size:11px;margin-top:6px">▼ Accuracy dropped</div>';
+  }
+  var avgAcc=accVals.length>0?Math.round(accVals.reduce(function(a,b){return a+b;},0)/accVals.length*100):null;
+  container.innerHTML=
+    '<div class="metric-card"><div class="metric-label">Efficiency (Latest)</div>'+
+    '<div class="metric-big">'+(le!==null?le.toFixed(1):'—')+'</div>'+
+    '<div class="metric-sub">marks per minute'+(lm!==null?' · '+Math.round(lm)+' min':'')+' taken</div>'+
+    (f?'<div class="behaviour-flag '+f.cls+'">'+f.icon+' '+f.label+'</div>':'')+
+    '<div class="eff-row">'+sparkBars+'</div></div>'+
+    '<div class="metric-card"><div class="metric-label">Attempt Accuracy</div>'+
+    '<div class="metric-big">'+(la!==null?Math.round(la*100)+'%':'—')+'</div>'+
+    '<div class="metric-sub">correct out of attempted'+(avgAcc!==null?' · avg '+avgAcc+'%':'')+' </div>'+
+    accTrend+'<div class="eff-row">'+accBar+'</div></div>';
+}
+
+// ── Score chart ────────────────────────────────────────────────────
+function renderChart(de) {
+  if (chartInst) chartInst.destroy();
+  chartInst = new Chart(document.getElementById('scoreChart').getContext('2d'), {
+    type:'line',
+    data:{ labels:de.map(function(e){return 'T'+e.test;}),
+      datasets:[{ data:de.map(function(e){return e.score;}),
+        borderColor:'#c9a84c', backgroundColor:'rgba(201,168,76,0.08)',
+        borderWidth:2, pointBackgroundColor:de.map(function(e,i){return i===de.length-1?'#e8c97a':'#c9a84c';}),
+        pointRadius:de.map(function(e,i){return i===de.length-1?6:4;}), tension:0.3, fill:true }]},
+    options:{ responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{display:false}},
+      scales:{ y:{min:0,max:MAX_SCORE,grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#5a5545',font:{family:'DM Mono',size:11}}},
+               x:{grid:{display:false},ticks:{color:'#5a5545',font:{family:'DM Mono',size:11}}} }}
+  });
+}
+
+// ── Section errors with spark lines ───────────────────────────────
+function renderErrors(de) {
+  var sorted=de.slice(), totals={}, lastTest={}, prevTest={}, history={};
+  sorted.forEach(function(e,idx){
+    var errs=e.sectionErrors||{};
+    Object.keys(errs).forEach(function(s){
+      totals[s]=(totals[s]||0)+(errs[s]||0);
+      history[s]=history[s]||[]; history[s][idx]=errs[s]||0;
+    });
+    if (idx===sorted.length-1) lastTest=errs;
+    if (idx===sorted.length-2) prevTest=errs;
+  });
+  var secs=Object.keys(totals);
+  if (secs.length===0){ document.getElementById('errorCard').style.display='none'; return; }
+  document.getElementById('errorCard').style.display='block';
+  var maxT=Math.max.apply(null,Object.values(totals));
+  document.getElementById('errorGrid').innerHTML=secs.sort(function(a,b){return totals[b]-totals[a];}).map(function(sec){
+    var tot=totals[sec]||0, last=lastTest[sec]||0, prev=prevTest[sec]||0;
+    var pct=maxT>0?Math.round((tot/maxT)*100):0;
+    var cls=last>=3?'flagged':de.length>=2&&last<prev&&prev>0?'improving':'';
+    var trend=de.length>=2?(last<prev&&prev>0?'<div class="err-trend good">▼ Improving</div>':last>prev?'<div class="err-trend flag">▲ Getting worse</div>':'<div class="err-trend">— Stable</div>'):'';
+    var hist=history[sec]||[]; for(var i=0;i<sorted.length;i++) if(hist[i]===undefined) hist[i]=0;
+    var sl=hist.slice(-5), mx=Math.max.apply(null,sl.concat([1]));
+    var spark=sl.map(function(v,i){ var ht=Math.round((v/mx)*100),last=i===sl.length-1; return '<div class="err-spark-bar'+(last?' latest':'')+'" style="height:'+Math.max(ht,8)+'%"></div>'; }).join('');
+    return '<div class="err-bar '+cls+'"><div class="err-name">'+sec+'</div>'+
+      '<div class="err-track"><div class="err-fill" style="width:'+pct+'%"></div></div>'+
+      '<div class="err-num">'+tot+' <span style="font-size:11px;color:var(--text3);font-family:\'DM Sans\'">errors</span></div>'+
+      trend+'<div class="err-spark">'+spark+'</div></div>';
+  }).join('');
+}
+
+// ── Per-test table ─────────────────────────────────────────────────
+function renderTable(de) {
+  var best=Math.max.apply(null,de.map(function(e){return e.score;}));
+  document.getElementById('testTableBody').innerHTML=de.map(function(e,idx){
+    var sc=e.score>=140?'high':e.score>=100?'mid':'low';
+    var date=''; try{date=e.timestamp.split(',')[0];}catch(x){}
+    if(date&&date.includes('T')){try{date=new Date(date).toLocaleDateString('en-IN');}catch(x){}}
+    var delta=''; if(idx>0){var d=e.score-de[idx-1].score; if(d>0)delta='<span class="delta-badge up">+'+d+'</span>'; else if(d<0)delta='<span class="delta-badge down">'+d+'</span>';}
+    var pb=(e.score===best&&de.filter(function(x){return x.score===best;}).indexOf(e)===0)?'<span class="pb-badge">PB</span>':'';
+    var acc=accuracyRate(e), accStr=acc!==null?Math.round(acc*100)+'%':'—';
+    var time=e.timeTaken&&/^\d{1,2}:\d{2}$/.test(e.timeTaken)?e.timeTaken:e.timeTaken&&e.timeTaken.indexOf('mins')>-1?e.timeTaken:'—';
+    return '<tr><td>Test '+e.test+'</td>'+
+      '<td><span class="score-cell '+sc+'">'+e.score+'</span><span style="color:var(--text3);font-size:11px"> / '+(e.maxMarks||180)+'</span>'+delta+pb+'</td>'+
+      '<td style="color:var(--green)">'+e.correct+'</td><td style="color:var(--red)">'+e.wrong+'</td>'+
+      '<td style="color:var(--text3)">'+e.skipped+'</td>'+
+      '<td style="font-family:\'DM Mono\';font-size:12px">'+accStr+'</td>'+
+      '<td style="font-family:\'DM Mono\';font-size:12px">'+time+'</td>'+
+      '<td style="font-size:12px">'+date+'</td></tr>';
+  }).join('');
+}
+
+// ── Wrong questions ────────────────────────────────────────────────
+function renderWrongQuestions(de) {
+  var latest=de[de.length-1], wq=latest.wrongQuestions||[];
+  if(wq.length===0){document.getElementById('wqCard').style.display='none';return;}
+  document.getElementById('wqCard').style.display='block';
+  document.getElementById('wqTitle').textContent='Wrong Questions — Test '+latest.test;
+  document.getElementById('wqGrid').innerHTML=wq.sort(function(a,b){return a-b;}).map(function(q){return '<div class="wq-chip">Q'+q+'</div>';}).join('');
+}
+
+// ══════════════════════════════════════════════════════════════════
+// ADMIN DASHBOARD
+// ══════════════════════════════════════════════════════════════════
+var filteredEntries = [];
+
+function showAdmin() {
+  show('adminScreen');
+  document.getElementById('headerInfo').textContent = 'Admin / All Batches';
+  buildAdminFilters();
+  applyAdminFilter();
+}
+
+function buildAdminFilters() {
+  // Batch filter
+  var batches = [...new Set(allEntries.map(function(e){ return e.batch; }))].sort();
+  var batchSel = document.getElementById('adminBatchFilter');
+  batchSel.innerHTML = '<option value="">All Batches</option>';
+  batches.forEach(function(b){ if(b&&b!=='Admin'){ var o=document.createElement('option'); o.value=o.textContent=b; batchSel.appendChild(o); }});
+
+  // Test filter
+  var tests = [...new Set(allEntries.map(function(e){ return e.test; }))].sort(function(a,b){return a-b;});
+  var testSel = document.getElementById('adminTestFilter');
+  testSel.innerHTML = '<option value="">All Tests</option>';
+  tests.forEach(function(t){ var o=document.createElement('option'); o.value=t; o.textContent='Test '+t; testSel.appendChild(o); });
+}
+
+function applyAdminFilter() {
+  var batchF = document.getElementById('adminBatchFilter').value;
+  var testF  = document.getElementById('adminTestFilter').value;
+  filteredEntries = allEntries.filter(function(e){
+    if (e.batch==='Admin') return false; // exclude admin submissions
+    if (batchF && e.batch!==batchF) return false;
+    if (testF  && e.test!=testF)    return false;
+    return true;
+  });
+  renderAdminDash(filteredEntries);
+}
+
+function renderAdminDash(data) {
+  renderAdminStats(data);
+  renderParticipation(data);
+  renderSectionWeakness(data);
+  renderAdminChart(data);
+  renderLeaderboard(data);
+}
+
+function renderAdminStats(data) {
+  if (data.length===0){ document.getElementById('adminStatRow').innerHTML='<div class="admin-stat"><div class="stat-label">No Data</div><div class="stat-val">—</div></div>'; return; }
+  // Deduplicate per student per test — keep highest score
+  var studentMap = {};
+  data.forEach(function(e){
+    var key = (e.pin||e.name)+'_'+e.test;
+    if (!studentMap[key]||e.score>studentMap[key].score) studentMap[key]=e;
+  });
+  var deduped = Object.values(studentMap);
+  var uniqueStudents = new Set(deduped.map(function(e){ return e.pin||e.name; })).size;
+  var scores = deduped.map(function(e){ return e.score; });
+  var avg    = Math.round(scores.reduce(function(a,b){return a+b;},0)/scores.length);
+  var best   = Math.max.apply(null,scores);
+  var worst  = Math.min.apply(null,scores);
+  var above100 = scores.filter(function(s){return s>=100;}).length;
+  var pctAbove = Math.round(above100/scores.length*100);
+  document.getElementById('adminStatRow').innerHTML=
+    '<div class="admin-stat purple"><div class="stat-label">Total Submissions</div><div class="stat-val">'+deduped.length+'</div></div>'+
+    '<div class="admin-stat"><div class="stat-label">Unique Students</div><div class="stat-val">'+uniqueStudents+'</div></div>'+
+    '<div class="admin-stat"><div class="stat-label">Average Score</div><div class="stat-val">'+avg+' <span>/ 180</span></div></div>'+
+    '<div class="admin-stat"><div class="stat-label">Highest Score</div><div class="stat-val" style="color:var(--green)">'+best+'</div></div>'+
+    '<div class="admin-stat"><div class="stat-label">Lowest Score</div><div class="stat-val" style="color:var(--red)">'+worst+'</div></div>'+
+    '<div class="admin-stat"><div class="stat-label">Scored 100+</div><div class="stat-val">'+pctAbove+'<span>%</span></div></div>';
+}
+
+function renderParticipation(data) {
+  var testCounts = {};
+  data.forEach(function(e){ testCounts[e.test]=(testCounts[e.test]||0)+1; });
+  var tests = Object.keys(testCounts).sort(function(a,b){return a-b;});
+  if (tests.length===0){ document.getElementById('participationRow').innerHTML='<div style="color:var(--text3);font-size:13px">No data</div>'; return; }
+  document.getElementById('participationRow').innerHTML = tests.map(function(t){
+    return '<div class="part-chip"><div class="part-test">Test '+t+'</div><div class="part-count">'+testCounts[t]+'</div></div>';
+  }).join('');
+}
+
+function renderSectionWeakness(data) {
+  var totals={}, counts={};
+  data.forEach(function(e){
+    var errs=e.sectionErrors||{};
+    Object.keys(errs).forEach(function(s){ totals[s]=(totals[s]||0)+(errs[s]||0); counts[s]=(counts[s]||0)+1; });
+  });
+  var secs=Object.keys(totals);
+  if (secs.length===0){ document.getElementById('sectionWeakness').innerHTML='<div style="color:var(--text3);font-size:13px">No section data yet (available from Test 14+)</div>'; return; }
+  var maxT=Math.max.apply(null,Object.values(totals));
+  document.getElementById('sectionWeakness').innerHTML=secs.sort(function(a,b){return totals[b]-totals[a];}).map(function(s){
+    var pct=maxT>0?Math.round((totals[s]/maxT)*100):0;
+    var avg=counts[s]>0?(totals[s]/counts[s]).toFixed(1):0;
+    return '<div class="sw-bar"><div class="sw-name">'+s+'</div>'+
+      '<div class="sw-track"><div class="sw-fill" style="width:'+pct+'%"></div></div>'+
+      '<div class="sw-num">'+totals[s]+'</div>'+
+      '<div class="sw-sub">'+avg+' avg per student</div></div>';
+  }).join('');
+}
+
+function renderAdminChart(data) {
+  if (adminChartInst) adminChartInst.destroy();
+  // Score distribution — bucket into ranges
+  var buckets = {'0–44':0,'45–89':0,'90–119':0,'120–149':0,'150–180':0};
+  data.forEach(function(e){
+    var s=e.score;
+    if (s<45)       buckets['0–44']++;
+    else if (s<90)  buckets['45–89']++;
+    else if (s<120) buckets['90–119']++;
+    else if (s<150) buckets['120–149']++;
+    else            buckets['150–180']++;
+  });
+  adminChartInst = new Chart(document.getElementById('adminChart').getContext('2d'),{
+    type:'bar',
+    data:{ labels:Object.keys(buckets), datasets:[{ data:Object.values(buckets),
+      backgroundColor:['rgba(224,92,92,0.6)','rgba(212,132,90,0.6)','rgba(201,168,76,0.6)','rgba(76,175,130,0.6)','rgba(74,144,217,0.6)'],
+      borderColor:['#e05c5c','#d4845a','#c9a84c','#4caf82','#4a90d9'], borderWidth:1 }]},
+    options:{ responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{display:false}},
+      scales:{ y:{beginAtZero:true, grid:{color:'rgba(255,255,255,0.05)'}, ticks:{color:'#5a5545',font:{family:'DM Mono',size:11}}},
+               x:{grid:{display:false}, ticks:{color:'#5a5545',font:{family:'DM Mono',size:11}}} }}
+  });
+}
+
+function renderLeaderboard(data) {
+  // Build per-student summary
+  var students = {};
+  data.forEach(function(e){
+    var key = e.pin||e.name;
+    if (!students[key]) students[key]={ name:e.name, batch:e.batch, pin:e.pin, tests:[], entries:[] };
+    // deduplicate per test
+    var existing = students[key].tests.indexOf(e.test);
+    if (existing===-1) { students[key].tests.push(e.test); students[key].entries.push(e); }
+    else { var ex=students[key].entries[existing]; if(e.score>ex.score){ students[key].entries[existing]=e; } }
+  });
+  var rows = Object.values(students).map(function(s){
+    var scores = s.entries.map(function(e){return e.score;});
+    var latest = s.entries.sort(function(a,b){return a.test-b.test;})[s.entries.length-1];
+    return { name:s.name, batch:s.batch, pin:s.pin, entries:s.entries,
+      latestTest:latest.test, latestScore:latest.score,
+      avg:Math.round(scores.reduce(function(a,b){return a+b;},0)/scores.length),
+      taken:scores.length };
+  });
+  rows.sort(function(a,b){ return b.latestScore-a.latestScore; });
+  document.getElementById('leaderboardBody').innerHTML = rows.map(function(r,i){
+    var rankCls=i===0?'rank-1':i===1?'rank-2':i===2?'rank-3':'';
+    var sc=r.latestScore>=140?'high':r.latestScore>=100?'mid':'low';
+    return '<tr class="'+rankCls+'" onclick="openDrill(\''+encodeURIComponent(JSON.stringify(r))+'\')">'+
+      '<td>'+(i+1)+'</td>'+
+      '<td style="color:var(--text);font-weight:500">'+r.name+'</td>'+
+      '<td><span style="font-size:11px;font-family:\'DM Mono\'">'+r.batch+'</span></td>'+
+      '<td style="font-family:\'DM Mono\';font-size:12px">Test '+r.latestTest+'</td>'+
+      '<td><span class="score-cell '+sc+'">'+r.latestScore+'</span></td>'+
+      '<td style="color:var(--text2)">'+r.avg+'</td>'+
+      '<td style="color:var(--text3);font-family:\'DM Mono\';font-size:12px">'+r.taken+'</td></tr>';
+  }).join('');
+}
+
+// ── Drill-down modal ───────────────────────────────────────────────
+function openDrill(encoded) {
+  var r = JSON.parse(decodeURIComponent(encoded));
+  document.getElementById('drillName').textContent = r.name + ' · ' + r.batch;
+  var sorted = r.entries.slice().sort(function(a,b){return a.test-b.test;});
+  var best = Math.max.apply(null,sorted.map(function(e){return e.score;}));
+  document.getElementById('drillContent').innerHTML =
+    '<table class="test-table" style="margin-top:0"><thead><tr>'+
+    '<th>Test</th><th>Score</th><th>Correct</th><th>Wrong</th><th>Time</th></tr></thead><tbody>'+
+    sorted.map(function(e){
+      var sc=e.score>=140?'high':e.score>=100?'mid':'low';
+      var pb=e.score===best?'<span class="pb-badge">PB</span>':'';
+      var time=e.timeTaken&&/^\d{1,2}:\d{2}$/.test(e.timeTaken)?e.timeTaken:'—';
+      return '<tr><td>Test '+e.test+'</td>'+
+        '<td><span class="score-cell '+sc+'">'+e.score+'</span><span style="color:var(--text3);font-size:11px"> / 180</span>'+pb+'</td>'+
+        '<td style="color:var(--green)">'+e.correct+'</td><td style="color:var(--red)">'+e.wrong+'</td>'+
+        '<td style="font-family:\'DM Mono\';font-size:12px">'+time+'</td></tr>';
+    }).join('')+'</tbody></table>';
+  document.getElementById('drillModal').classList.add('open');
+}
+function closeDrill(e){ if(e.target===document.getElementById('drillModal')) document.getElementById('drillModal').classList.remove('open'); }
+function closeDrillBtn(){ document.getElementById('drillModal').classList.remove('open'); }
+
+// ── Utility ────────────────────────────────────────────────────────
+function show(id) {
+  document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
+  document.getElementById(id).classList.add('active');
+}
+</script>
+</body>
+</html>
