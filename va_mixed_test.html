@@ -1,0 +1,1383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VA Mixed Test | Sahil Sir</title>
+<style>
+  :root {
+    --bg: #0f0f13;
+    --surface: #1a1a22;
+    --surface2: #22222e;
+    --border: #2e2e3e;
+    --gold: #f0c040;
+    --gold2: #c8992a;
+    --red: #e05555;
+    --green: #4caf7d;
+    --blue: #5b9bd5;
+    --purple: #9b6dff;
+    --text: #e8e8f0;
+    --muted: #888899;
+    --accent: #f0c040;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ─── SCREENS ─── */
+  .screen { display: none; }
+  .screen.active { display: flex; flex-direction: column; min-height: 100vh; }
+
+  /* ─── LOGIN ─── */
+  #loginScreen {
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    background: radial-gradient(ellipse at 50% 0%, #1e1a2e 0%, #0f0f13 70%);
+  }
+
+  .login-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--gold);
+    border-radius: 12px;
+    padding: 2.5rem;
+    width: 100%;
+    max-width: 440px;
+  }
+
+  .login-brand {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .login-brand .test-name {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 0.5px;
+  }
+
+  .login-brand .test-meta {
+    font-size: 0.82rem;
+    color: var(--muted);
+    margin-top: 0.4rem;
+  }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem 1.5rem;
+    background: var(--surface2);
+    border-radius: 8px;
+    padding: 0.9rem 1.1rem;
+    margin-bottom: 1.8rem;
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+
+  .info-grid span { color: var(--text); font-weight: 500; }
+
+  .field { margin-bottom: 1rem; }
+  .field label { display: block; font-size: 0.78rem; color: var(--muted); margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.5px; }
+  .field input {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.65rem 0.9rem;
+    color: var(--text);
+    font-size: 0.95rem;
+    transition: border-color 0.2s;
+  }
+  .field input:focus { outline: none; border-color: var(--gold); }
+
+  .btn-start {
+    width: 100%;
+    background: var(--gold);
+    color: #111;
+    border: none;
+    border-radius: 6px;
+    padding: 0.8rem;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    margin-top: 0.5rem;
+  }
+  .btn-start:hover { background: var(--gold2); }
+  .btn-start:active { transform: scale(0.98); }
+
+  .err { color: var(--red); font-size: 0.82rem; margin-top: 0.5rem; display: none; }
+
+  /* ─── TEST SCREEN ─── */
+  #testScreen { flex-direction: row; }
+
+  /* Sidebar */
+  .sidebar {
+    width: 220px;
+    min-width: 220px;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .sidebar-header { text-align: center; margin-bottom: 1rem; }
+  .sidebar-header .sname { font-size: 0.85rem; color: var(--gold); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .sidebar-header .sbatch { font-size: 0.72rem; color: var(--muted); }
+
+  .timer-box {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    text-align: center;
+    padding: 0.7rem;
+    margin-bottom: 1rem;
+  }
+  .timer-label { font-size: 0.68rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+  #timerDisplay { font-size: 1.6rem; font-weight: 700; color: var(--gold); font-variant-numeric: tabular-nums; }
+  #timerDisplay.warn { color: var(--red); animation: pulse 1s infinite; }
+
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+
+  .stats-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0.4rem;
+    margin-bottom: 1rem;
+  }
+  .stat {
+    background: var(--surface2);
+    border-radius: 6px;
+    padding: 0.4rem 0.3rem;
+    text-align: center;
+    font-size: 0.68rem;
+    color: var(--muted);
+  }
+  .stat .sv { font-size: 1rem; font-weight: 700; display: block; }
+  .stat.att .sv { color: var(--blue); }
+  .stat.cor .sv { color: var(--green); }
+  .stat.ski .sv { color: var(--muted); }
+
+  .palette-label { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; }
+
+  .palette {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 4px;
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  .pq {
+    aspect-ratio: 1;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--muted);
+    font-size: 0.7rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .pq:hover { border-color: var(--gold); color: var(--gold); }
+  .pq.answered { background: var(--blue); border-color: var(--blue); color: #fff; }
+  .pq.current { border-color: var(--gold); box-shadow: 0 0 0 2px rgba(240,192,64,0.3); }
+
+  .btn-submit {
+    margin-top: 1rem;
+    width: 100%;
+    background: var(--red);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 0.7rem;
+    font-size: 0.88rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .btn-submit:hover { background: #c44; }
+
+  /* Main content */
+  .main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .topbar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0.7rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  .topbar-left { font-size: 0.82rem; color: var(--muted); }
+  .topbar-left strong { color: var(--text); }
+  .qtype-badge {
+    font-size: 0.72rem;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 0.2rem 0.7rem;
+    color: var(--purple);
+    font-weight: 600;
+  }
+
+  .nav-arrows { display: flex; gap: 0.5rem; }
+  .nav-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 6px;
+    padding: 0.4rem 0.9rem;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.15s;
+  }
+  .nav-btn:hover { border-color: var(--gold); color: var(--gold); }
+  .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  .question-area {
+    padding: 2rem 2.5rem;
+    max-width: 820px;
+    width: 100%;
+    margin: 0 auto;
+    flex: 1;
+  }
+
+  .q-number { font-size: 0.78rem; color: var(--muted); margin-bottom: 0.6rem; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  .q-directive {
+    font-size: 0.82rem;
+    color: var(--muted);
+    margin-bottom: 0.8rem;
+    font-style: italic;
+    border-left: 2px solid var(--border);
+    padding-left: 0.7rem;
+  }
+
+  .q-stem {
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: var(--text);
+    margin-bottom: 1.8rem;
+    font-weight: 400;
+  }
+
+  .q-stem em { font-style: normal; color: var(--gold); font-weight: 600; }
+
+  .analogy-stem {
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    color: var(--gold);
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--gold);
+    border-radius: 0 8px 8px 0;
+    padding: 1rem 1.4rem;
+    margin-bottom: 1.8rem;
+    font-family: 'Courier New', monospace;
+  }
+
+  .cloze-passage {
+    background: var(--surface2);
+    border-left: 3px solid var(--gold);
+    border-radius: 0 8px 8px 0;
+    padding: 1.1rem 1.4rem;
+    font-size: 0.95rem;
+    line-height: 1.8;
+    color: var(--text);
+    margin-bottom: 1.5rem;
+  }
+
+  .blank { color: var(--gold); font-weight: 700; }
+
+  .options { display: flex; flex-direction: column; gap: 0.7rem; }
+
+  .opt {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.9rem;
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 0.85rem 1.1rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+  .opt:hover { border-color: var(--blue); background: rgba(91,155,213,0.07); }
+  .opt.selected { border-color: var(--blue); background: rgba(91,155,213,0.12); }
+
+  .opt-key {
+    min-width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 1.5px solid var(--muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--muted);
+    transition: all 0.15s;
+    margin-top: 1px;
+  }
+  .opt.selected .opt-key { background: var(--blue); border-color: var(--blue); color: #fff; }
+
+  /* ─── RESULT SCREEN ─── */
+  #resultScreen {
+    align-items: center;
+    padding: 2rem;
+    background: var(--bg);
+  }
+
+  .result-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    max-width: 700px;
+    width: 100%;
+  }
+
+  .result-title { font-size: 1.6rem; font-weight: 700; color: var(--gold); margin-bottom: 0.3rem; }
+  .result-sub { font-size: 0.85rem; color: var(--muted); }
+
+  .score-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--gold);
+    border-radius: 12px;
+    padding: 1.5rem 2rem;
+    max-width: 700px;
+    width: 100%;
+    margin-bottom: 2rem;
+  }
+
+  .score-big {
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+  .score-big .sc { font-size: 3rem; font-weight: 800; color: var(--gold); }
+  .score-big .sm { font-size: 1rem; color: var(--muted); }
+
+  .score-breakdown {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+  }
+
+  .sb {
+    background: var(--surface2);
+    border-radius: 8px;
+    padding: 0.8rem;
+    text-align: center;
+  }
+  .sb .sv { font-size: 1.4rem; font-weight: 700; display: block; margin-bottom: 0.2rem; }
+  .sb .sl { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.4px; }
+  .sb.c .sv { color: var(--green); }
+  .sb.w .sv { color: var(--red); }
+  .sb.s .sv { color: var(--muted); }
+  .sb.t .sv { color: var(--blue); }
+
+  .review-section { max-width: 700px; width: 100%; }
+  .review-title { font-size: 1rem; font-weight: 700; color: var(--text); margin-bottom: 1rem; }
+
+  .review-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 0.8rem;
+    overflow: hidden;
+  }
+
+  .review-item-header {
+    padding: 0.9rem 1.1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    cursor: pointer;
+  }
+
+  .review-q-num { font-size: 0.72rem; color: var(--muted); white-space: nowrap; margin-top: 2px; }
+  .review-q-text { font-size: 0.9rem; line-height: 1.5; flex: 1; }
+
+  .review-verdict {
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 0.2rem 0.6rem;
+    border-radius: 20px;
+    white-space: nowrap;
+  }
+  .review-verdict.correct { background: rgba(76,175,125,0.15); color: var(--green); }
+  .review-verdict.wrong { background: rgba(224,85,85,0.15); color: var(--red); }
+  .review-verdict.skipped { background: rgba(136,136,153,0.15); color: var(--muted); }
+
+  .review-item-body { display: none; padding: 0.9rem 1.1rem; border-top: 1px solid var(--border); font-size: 0.85rem; line-height: 1.6; }
+  .review-item-body.open { display: block; }
+
+  .review-ans { margin-bottom: 0.4rem; }
+  .review-ans .lbl { color: var(--muted); font-size: 0.78rem; }
+  .review-ans .ca { color: var(--green); font-weight: 600; }
+  .review-ans .wa { color: var(--red); font-weight: 600; }
+  .review-explanation { color: var(--muted); margin-top: 0.6rem; font-size: 0.82rem; border-top: 1px solid var(--border); padding-top: 0.6rem; }
+
+  .footer-brand {
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--muted);
+    padding: 1rem;
+    border-top: 1px solid var(--border);
+    width: 100%;
+    max-width: 700px;
+    margin-top: 1rem;
+  }
+
+  /* Confirm Modal */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--red);
+    border-radius: 12px;
+    padding: 2rem;
+    max-width: 360px;
+    width: 90%;
+    text-align: center;
+  }
+  .modal h3 { margin-bottom: 0.5rem; }
+  .modal p { color: var(--muted); font-size: 0.88rem; margin-bottom: 1.5rem; }
+  .modal-btns { display: flex; gap: 1rem; }
+  .modal-btns button {
+    flex: 1;
+    padding: 0.7rem;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+  .btn-cancel { background: var(--surface2); color: var(--text); border: 1px solid var(--border) !important; }
+  .btn-confirm { background: var(--red); color: #fff; }
+
+  @media (max-width: 700px) {
+    .sidebar { display: none; }
+    .question-area { padding: 1.2rem; }
+    .score-breakdown { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ LOGIN ═══════════════ -->
+<div id="loginScreen" class="screen active">
+  <div class="login-box">
+    <div class="login-brand">
+      <div class="test-name">VA Mixed Test</div>
+      <div class="test-meta">Vocabulary · 60 Questions · 70 Minutes</div>
+    </div>
+    <div class="info-grid">
+      <div>Questions</div><span>60</span>
+      <div>Duration</div><span>70 min</span>
+      <div>Correct</div><span>+4</span>
+      <div>Wrong</div><span>−1</span>
+      <div>Max Marks</div><span>240</span>
+      <div>Difficulty</div><span>Medium</span>
+    </div>
+    <div class="field">
+      <label>Full Name</label>
+      <input type="text" id="nameInput" placeholder="Enter your name" autocomplete="off">
+    </div>
+    <div class="field">
+      <label>IMS PIN</label>
+      <input type="text" id="pinInput" placeholder="Enter your PIN" autocomplete="off">
+    </div>
+    <div class="field">
+      <label>Batch</label>
+      <input type="text" id="batchInput" placeholder="e.g. IPMAT 2026 Morning" autocomplete="off">
+    </div>
+    <div class="err" id="loginErr">Please fill in all fields.</div>
+    <button class="btn-start" id="startBtn">Start Test →</button>
+  </div>
+</div>
+
+<!-- ═══════════════ TEST ═══════════════ -->
+<div id="testScreen" class="screen">
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <div class="sname" id="sidebarName">—</div>
+      <div class="sbatch" id="sidebarBatch">—</div>
+    </div>
+    <div class="timer-box">
+      <div class="timer-label">Time Left</div>
+      <div id="timerDisplay">70:00</div>
+    </div>
+    <div class="stats-row">
+      <div class="stat att"><span class="sv" id="statAtt">0</span>Att.</div>
+      <div class="stat cor"><span class="sv" id="statCor">0</span>Ans.</div>
+      <div class="stat ski"><span class="sv" id="statSki">60</span>Left</div>
+    </div>
+    <div class="palette-label">Question Palette</div>
+    <div class="palette" id="palette"></div>
+    <button class="btn-submit" id="submitBtn">Submit Test</button>
+  </div>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-left">
+        Question <strong id="qNumTop">1</strong> of <strong>60</strong>
+        &nbsp;·&nbsp; <span id="qTypeTop" class="qtype-badge">—</span>
+      </div>
+      <div class="nav-arrows">
+        <button class="nav-btn" id="prevBtn">← Prev</button>
+        <button class="nav-btn" id="nextBtn">Next →</button>
+      </div>
+    </div>
+    <div class="question-area" id="questionArea"></div>
+  </div>
+</div>
+
+<!-- ═══════════════ RESULT ═══════════════ -->
+<div id="resultScreen" class="screen">
+  <div class="result-header">
+    <div class="result-title">Test Submitted</div>
+    <div class="result-sub" id="resultSub">VA Mixed Test</div>
+  </div>
+  <div class="score-card">
+    <div class="score-big">
+      <div class="sc" id="finalScore">—</div>
+      <div class="sm">out of 240</div>
+    </div>
+    <div class="score-breakdown">
+      <div class="sb c"><span class="sv" id="resCorr">—</span><div class="sl">Correct</div></div>
+      <div class="sb w"><span class="sv" id="resWrong">—</span><div class="sl">Wrong</div></div>
+      <div class="sb s"><span class="sv" id="resSkip">—</span><div class="sl">Skipped</div></div>
+      <div class="sb t"><span class="sv" id="resTime">—</span><div class="sl">Time Taken</div></div>
+    </div>
+  </div>
+  <div class="review-section">
+    <div class="review-title">Answer Review (click any question to expand)</div>
+    <div id="reviewList"></div>
+  </div>
+  <div class="footer-brand">VA Mixed Test &nbsp;·&nbsp; Road to IIM &nbsp;·&nbsp; Sahil Sir</div>
+</div>
+
+<!-- Confirm Modal -->
+<div class="modal-overlay" id="confirmModal">
+  <div class="modal">
+    <h3>Submit Test?</h3>
+    <p id="confirmMsg">You have unanswered questions. Are you sure you want to submit?</p>
+    <div class="modal-btns">
+      <button class="btn-cancel" id="cancelBtn">Go Back</button>
+      <button class="btn-confirm" id="confirmBtn">Submit</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+//  QUESTION BANK  (60 questions)
+// ═══════════════════════════════════════════════════════════
+const QUESTIONS = [
+
+  // ── SECTION A: SENTENCE COMPLETION / FITB (Q1–12) ──
+
+  {
+    type: "Sentence Completion",
+    stem: "The professor's lecture was so __________ that students found themselves nodding off within minutes, despite having slept well the previous night.",
+    options: ["erudite","soporific","contentious","laudatory"],
+    answer: 1,
+    explanation: "Soporific means tending to induce sleep. The clue is students 'nodding off' despite being rested."
+  },
+  {
+    type: "Sentence Completion",
+    stem: "Rather than accepting the committee's findings, the minister chose to __________ them, arguing that the methodology was fundamentally flawed.",
+    options: ["ratify","endorse","circumvent","impugn"],
+    answer: 3,
+    explanation: "Impugn means to call into question or challenge the validity of something. The minister is attacking the findings, not working around them."
+  },
+  {
+    type: "Sentence Completion",
+    stem: "The documentary was praised by supporters but condemned by opponents for its __________ portrayal of events — framed to advance a particular political agenda rather than inform viewers objectively.",
+    options: ["pellucid","tendentious","laconic","ambiguous"],
+    answer: 1,
+    explanation: "Tendentious means promoting a particular cause or point of view in a biased way. The key phrase is 'framed to advance a particular political agenda' — this is the definition of tendentious. Ambiguous means unclear, which doesn't fit a deliberate agenda-driven framing."
+  },
+  {
+    type: "Sentence Completion",
+    stem: "She had a remarkable ability to __________ complex legal jargon into plain language that her clients could easily understand.",
+    options: ["distil","extrapolate","obfuscate","interpolate"],
+    answer: 0,
+    explanation: "Distil means to extract the essential meaning and present it in a concentrated, clear form. Obfuscate is the opposite."
+  },
+  {
+    type: "Sentence Completion",
+    stem: "The archaeologist's discovery was initially met with __________, but subsequent excavations confirmed her findings beyond doubt.",
+    options: ["credulity","approbation","derision","scepticism"],
+    answer: 3,
+    explanation: "Scepticism means doubt or disbelief, which aligns with 'initially met with...' before subsequent confirmation. Derision implies mockery, which is too strong."
+  },
+  {
+    type: "Sentence Completion",
+    stem: "His argument, though superficially convincing, was __________ at its core — resting on a fundamental misrepresentation of the data.",
+    options: ["specious","cogent","perspicacious","germane"],
+    answer: 0,
+    explanation: "Specious means superficially plausible but actually wrong. The phrase 'superficially convincing' is a direct hint."
+  },
+  {
+    type: "Sentence Completion",
+    stem: "The young diplomat had a __________ understanding of the region's history, allowing her to navigate sensitive negotiations with surprising finesse.",
+    options: ["nuanced","cursory","rudimentary","perfunctory"],
+    answer: 0,
+    explanation: "A nuanced understanding means a subtle, detailed grasp — consistent with navigating sensitive negotiations successfully. The other options imply superficiality."
+  },
+  {
+    type: "Sentence Completion",
+    stem: "The chairman's __________ remarks about the merger surprised shareholders, who had expected a definitive announcement.",
+    options: ["candid","sanguine","forthright","equivocal"],
+    answer: 3,
+    explanation: "Equivocal means ambiguous or open to more than one interpretation. Shareholders expected a clear statement, so the chairman's remarks were the opposite."
+  },
+  {
+    type: "Sentence Completion",
+    stem: "The poet's later work is more __________ than her earlier verse — dense with allusions that reward careful, repeated reading.",
+    options: ["accessible","prosaic","effusive","abstruse"],
+    answer: 3,
+    explanation: "Abstruse means difficult to understand, which matches 'dense with allusions.' Prosaic means unimaginatively dull, not the same as complex."
+  },
+  {
+    type: "Sentence Completion",
+    stem: "Despite the overwhelming evidence, the defendant remained __________, refusing to acknowledge any involvement in the fraud.",
+    options: ["contrite","diffident","obdurate","magnanimous"],
+    answer: 2,
+    explanation: "Obdurate means stubbornly refusing to change one's position. Contrite means remorseful, which is the opposite of what the sentence describes."
+  },
+  {
+    type: "Sentence Completion",
+    stem: "The finance minister's optimistic projections were quickly seen as __________ once the quarterly figures revealed a sharp economic slowdown.",
+    options: ["prophetic","sagacious","chimerical","astute"],
+    answer: 2,
+    explanation: "Chimerical means wildly unrealistic or imaginary. The projections looked unrealistic once real data contradicted them."
+  },
+  {
+    type: "Sentence Completion",
+    stem: "From childhood, she had shown a deep __________ for classical music over all other art forms — a preference so ingrained that it shaped every career decision she made.",
+    options: ["predilection","indifference","penchant","propensity"],
+    answer: 0,
+    explanation: "Predilection means a deep-seated preference or partiality for something above alternatives — it implies a settled, almost innate choice. Penchant means a strong liking but lacks the sense of preferring one thing over others. Propensity = tendency to behave a certain way. Indifference = opposite."
+  },
+
+  // ── SECTION B: ANALOGIES (Q13–24) ──
+
+  {
+    type: "Analogy",
+    stem: "EULOGY : FUNERAL :: __________ : CORONATION",
+    options: ["Elegy : Lament","Panegyric : Triumph","Diatribe : Condemnation","Encomium : Celebration"],
+    answer: 3,
+    explanation: "A eulogy is a speech of praise delivered at a funeral; an encomium is a speech of high praise delivered at a celebration like a coronation. The relationship is: formal speech of praise : its ceremonial occasion."
+  },
+  {
+    type: "Analogy",
+    stem: "LACONIC : VERBOSE :: PARSIMONIOUS : __________",
+    options: ["Profligate","Frugal","Miserly","Austere"],
+    answer: 0,
+    explanation: "Laconic (brief) is the opposite of verbose (wordy). Parsimonious (extremely thrifty) is the opposite of profligate (recklessly extravagant). Frugal and austere are similar to parsimonious, not opposite."
+  },
+  {
+    type: "Analogy",
+    stem: "BIBLIOPHILE : BOOKS :: NUMISMATIST : __________",
+    options: ["Numbers","Antiques","Stamps","Coins"],
+    answer: 3,
+    explanation: "A bibliophile loves books. A numismatist collects and studies coins. Philatelist is for stamps."
+  },
+  {
+    type: "Analogy",
+    stem: "SYCOPHANT : FLATTER :: ICONOCLAST : __________",
+    options: ["Idolise","Challenge","Conform","Revere"],
+    answer: 1,
+    explanation: "A sycophant characteristically flatters; an iconoclast characteristically challenges established beliefs or institutions."
+  },
+  {
+    type: "Analogy",
+    stem: "AMELIORATE : WORSEN :: EXACERBATE : __________",
+    options: ["Intensify","Alleviate","Aggravate","Inflame"],
+    answer: 1,
+    explanation: "Ameliorate (improve) is the opposite of worsen. Exacerbate (make worse) is the opposite of alleviate (make less severe). Intensify and aggravate are synonyms of exacerbate."
+  },
+  {
+    type: "Analogy",
+    stem: "APIARY : BEES :: AVIARY : __________",
+    options: ["Birds","Aviators","Fish","Reptiles"],
+    answer: 0,
+    explanation: "An apiary is a place where bees are kept. An aviary is a place where birds are kept."
+  },
+  {
+    type: "Analogy",
+    stem: "EPHEMERAL : DURATION :: INFINITESIMAL : __________",
+    options: ["Time","Weight","Importance","Size"],
+    answer: 3,
+    explanation: "Ephemeral describes something of very brief duration. Infinitesimal describes something of extremely small size. Both are degree words — the relationship is 'the word describes an extreme degree of the quality named.'"
+  },
+  {
+    type: "Analogy",
+    stem: "MENDACIOUS : TRUTHFULNESS :: PUSILLANIMOUS : __________",
+    options: ["Generosity","Intelligence","Courage","Humility"],
+    answer: 2,
+    explanation: "Mendacious means lacking truthfulness. Pusillanimous means lacking courage (cowardly). Both words describe the absence of the virtue named."
+  },
+  {
+    type: "Analogy",
+    stem: "CARTOGRAPHER : MAPS :: LEXICOGRAPHER : __________",
+    options: ["Words","Dictionaries","Grammar","Encyclopaedias"],
+    answer: 1,
+    explanation: "A cartographer produces maps — that is the definitive output of their work. A lexicographer produces dictionaries. The relationship is: specialist : the specific work/product they create. Words are the raw material, not the output; grammar is a separate discipline."
+  },
+  {
+    type: "Analogy",
+    stem: "PAUCITY : ABUNDANCE :: TORPOR : __________",
+    options: ["Lethargy","Sluggishness","Apathy","Vigour"],
+    answer: 3,
+    explanation: "Paucity (scarcity) is the opposite of abundance. Torpor (sluggish inactivity) is the opposite of vigour (energy and vitality)."
+  },
+  {
+    type: "Analogy",
+    stem: "CANON : LITERATURE :: PANTHEON : __________",
+    options: ["Architecture","History","Religion","Philosophy"],
+    answer: 2,
+    explanation: "A canon is the accepted body of great works in literature; the pantheon refers to the accepted collection of gods in a religion. Both represent an authoritative, established set within their domain."
+  },
+  {
+    type: "Analogy",
+    stem: "PALLIATIVE : PAIN :: SOPORIFIC : __________",
+    options: ["Anxiety","Wakefulness","Hunger","Illness"],
+    answer: 1,
+    explanation: "A palliative reduces pain without curing. A soporific induces sleep — it counters wakefulness. The relationship is 'substance that acts against the named condition.'"
+  },
+
+  // ── SECTION C: CLOZE PASSAGES (Q25–36) ──
+
+  {
+    type: "Cloze",
+    passage: "The city's transformation over the past decade has been nothing short of (25)__________. What was once a (26)__________ neighbourhood, dotted with derelict buildings and empty lots, has been remade into a thriving cultural district. Critics, however, warn that the very success of this revival may prove (27)__________ for the communities that originally inhabited it, as rising rents force long-term residents out. This process — often called gentrification — is rarely as (28)__________ as its proponents suggest.",
+    blanks: [
+      { label: "(25)", options: ["incremental","remarkable","gradual","imperceptible"], answer: 1, explanation: "'Nothing short of' signals a strong intensifier — remarkable fits. Incremental or gradual would not follow 'nothing short of.'" },
+      { label: "(26)", options: ["affluent","prosperous","blighted","serene"], answer: 2, explanation: "The neighbourhood had 'derelict buildings and empty lots,' indicating decay — blighted is correct. Affluent and prosperous contradict this." },
+      { label: "(27)", options: ["beneficial","irrelevant","paradoxical","advantageous"], answer: 2, explanation: "Success causing displacement is a paradox. Paradoxical is the precise word for a situation where a good thing leads to a bad outcome." },
+      { label: "(28)", options: ["benign","contentious","complex","straightforward"], answer: 0, explanation: "Critics warn of displacement — so gentrification isn't as benign (harmless/gentle) as proponents claim. Straightforward could work contextually but benign is more precise given the word 'proponents suggest.'" }
+    ]
+  },
+  {
+    type: "Cloze",
+    passage: "Scientific progress is rarely (29)__________ — it tends to move in fits and starts, punctuated by moments of (30)__________ insight that overturn long-held assumptions. The philosopher of science Thomas Kuhn called these moments 'paradigm shifts.' Before such a shift, anomalous evidence is often (31)__________ by the scientific community, dismissed as experimental error or irrelevant noise. It is only when the anomalies become too (32)__________ to ignore that a new framework is embraced.",
+    blanks: [
+      { label: "(29)", options: ["linear","erratic","circular","haphazard"], answer: 0, explanation: "The sentence says progress 'tends to move in fits and starts' — this contradicts linear (straight-line) progress. Erratic and haphazard imply random movement, not steady progression." },
+      { label: "(30)", options: ["incremental","revolutionary","mundane","predictable"], answer: 1, explanation: "The insights 'overturn long-held assumptions' — they are revolutionary. Incremental is the opposite of paradigm-shifting." },
+      { label: "(31)", options: ["embraced","amplified","discounted","investigated"], answer: 2, explanation: "It is 'dismissed as error' — discounted (treated as unimportant) matches this. Embraced is the opposite." },
+      { label: "(32)", options: ["frequent","negligible","pervasive","glaring"], answer: 3, explanation: "Glaring anomalies are ones that cannot be overlooked — the most natural pairing with 'too __ to ignore.'" }
+    ]
+  },
+  {
+    type: "Cloze",
+    passage: "The diplomat's career had been built on a talent for (33)__________: the ability to say very little while appearing to say a great deal. In delicate negotiations, this (34)__________ use of language was an asset. At press conferences, however, his (35)__________ responses frustrated journalists who were seeking (36)__________ answers about the country's foreign policy.",
+    blanks: [
+      { label: "(33)", options: ["obfuscation","candour","equivocation","eloquence"], answer: 2, explanation: "Equivocation means the use of ambiguous language to avoid commitment — exactly what 'saying little while appearing to say much' describes." },
+      { label: "(34)", options: ["deliberate","careless","blunt","effusive"], answer: 0, explanation: "Deliberate means intentional and careful — the diplomat uses language with calculated precision. Blunt and effusive are both inappropriate." },
+      { label: "(35)", options: ["verbose","candid","evasive","precise"], answer: 2, explanation: "The diplomat frustrates journalists by not giving straight answers — evasive is correct. Candid and precise would satisfy journalists, not frustrate them." },
+      { label: "(36)", options: ["ambiguous","categorical","vague","rhetorical"], answer: 1, explanation: "Journalists want categorical (definitive, clear-cut) answers — the opposite of equivocal responses." }
+    ]
+  },
+
+  // ── SECTION D: ODD ONE OUT (Q37–45) ──
+
+  {
+    type: "Odd One Out",
+    stem: "Three of the following words are broadly synonymous. Identify the word that does NOT belong to this group.",
+    options: ["Garrulous","Loquacious","Verbose","Taciturn"],
+    answer: 3,
+    explanation: "Garrulous, loquacious, and verbose all mean excessively talkative or wordy. Taciturn means habitually silent — the opposite."
+  },
+  {
+    type: "Odd One Out",
+    stem: "Three of the following words relate to dishonesty or deception. Which word does NOT fit this group?",
+    options: ["Veracious","Mendacious","Duplicitous","Dissembling"],
+    answer: 0,
+    explanation: "Mendacious (lying), duplicitous (deceitful), and dissembling (concealing true motives) all relate to deception. Veracious means truthful — it is the odd one out."
+  },
+  {
+    type: "Odd One Out",
+    stem: "Three of these words describe a scarcity or lack of something. Identify the word that does NOT belong.",
+    options: ["Paucity","Dearth","Scarcity","Surfeit"],
+    answer: 3,
+    explanation: "Paucity, dearth, and scarcity all mean insufficiency or shortage. Surfeit means an excessive amount — the opposite."
+  },
+  {
+    type: "Odd One Out",
+    stem: "Three of these words are associated with criticism or disapproval. Identify the ODD one out.",
+    options: ["Approbation","Censure","Castigation","Reprobation"],
+    answer: 0,
+    explanation: "Censure (official rebuke), castigation (severe criticism), and reprobation (condemnation) all involve disapproval. Approbation means approval or praise."
+  },
+  {
+    type: "Odd One Out",
+    stem: "Three of the following describe a state of confusion or disorder. Which word does NOT belong?",
+    options: ["Pandemonium","Bedlam","Equanimity","Turmoil"],
+    answer: 2,
+    explanation: "Pandemonium, bedlam, and turmoil all mean chaos and disorder. Equanimity means mental calmness and composure."
+  },
+  {
+    type: "Odd One Out",
+    stem: "Three of these words describe excessive eagerness or enthusiasm. Identify the word that does NOT fit.",
+    options: ["Phlegmatic","Zealous","Fervent","Ardent"],
+    answer: 0,
+    explanation: "Zealous, fervent, and ardent all mean showing great enthusiasm or passion. Phlegmatic describes a calm, unemotional temperament."
+  },
+  {
+    type: "Odd One Out",
+    stem: "Three of these words are associated with stubbornness or inflexibility. Identify the ODD one out.",
+    options: ["Intransigent","Implacable","Recalcitrant","Tractable"],
+    answer: 3,
+    explanation: "Intransigent, implacable, and recalcitrant all mean stubbornly resistant to change or persuasion. Tractable means easy to deal with or manage — the opposite quality."
+  },
+  {
+    type: "Odd One Out",
+    stem: "Three of the following words mean to make something worse. Which word does NOT belong to this group?",
+    options: ["Aggravate","Exacerbate","Mitigate","Inflame"],
+    answer: 2,
+    explanation: "Aggravate, exacerbate, and inflame all mean to intensify or worsen. Mitigate means to lessen the severity of something."
+  },
+  {
+    type: "Odd One Out",
+    stem: "Three of these words relate to extreme economy or thrift. Which word is the ODD one out?",
+    options: ["Parsimonious","Penurious","Miserly","Munificent"],
+    answer: 3,
+    explanation: "Parsimonious, penurious, and miserly all relate to extreme frugality or stinginess. Munificent means very generous."
+  },
+
+  // ── SECTION E: WORD IN CONTEXT (Q46–54) ──
+
+  {
+    type: "Word in Context",
+    stem: "The word <em>SANGUINE</em> is used in which of the following sentences in its correct and precise sense?",
+    options: [
+      "The patient's sanguine complexion alarmed the nurse.",
+      "Despite the setbacks, she remained sanguine about the project's eventual success.",
+      "His sanguine temperament made him quick to anger.",
+      "The sanguine river flowed slowly through the valley."
+    ],
+    answer: 1,
+    explanation: "Sanguine means optimistic, especially in a difficult situation. Option A uses it loosely to mean reddish/flushed (archaic sense). Option B uses it correctly in the contemporary sense."
+  },
+  {
+    type: "Word in Context",
+    stem: "In which sentence is <em>ENERVATE</em> used correctly?",
+    options: [
+      "The strong coffee enervated him, keeping him alert through the night.",
+      "The summer heat enervated the workers, leaving them listless by noon.",
+      "Her spirited speech enervated the crowd.",
+      "The energy drink enervated him before the match, keeping him sharp and focused."
+    ],
+    answer: 1,
+    explanation: "Enervate means to drain of energy or vitality — weaken. The summer heat sapping energy is correct. Options A and C describe the opposite effect (energising). Option D incorrectly uses enervate to mean energise."
+  },
+  {
+    type: "Word in Context",
+    stem: "Choose the sentence in which <em>DISABUSE</em> is used correctly.",
+    options: [
+      "The manager attempted to disabuse the new equipment before use.",
+      "He was disabused of the notion that hard work always guarantees success.",
+      "The medication disabused her of her chronic pain.",
+      "She disabused the children for misbehaving in class."
+    ],
+    answer: 1,
+    explanation: "Disabuse means to free someone from a mistaken belief. 'Disabused of the notion' is the correct construction. The other options use the word as though it means 'remove' or 'punish.'"
+  },
+  {
+    type: "Word in Context",
+    stem: "Which sentence uses <em>UNCTUOUS</em> correctly?",
+    options: [
+      "The unctuous bread was soft and freshly baked.",
+      "His unctuous praise made everyone uncomfortable, sensing it was insincere.",
+      "She had an unctuous personality that made her popular with colleagues.",
+      "The unctuous mountain air refreshed the hikers."
+    ],
+    answer: 1,
+    explanation: "Unctuous means excessively ingratiating or flattering in an insincere way. The discomfort in option B signals insincerity — the defining feature of unctuous behaviour."
+  },
+  {
+    type: "Word in Context",
+    stem: "In which sentence is <em>TENDENTIOUS</em> used most accurately?",
+    options: [
+      "Her tendentious essay presented multiple perspectives fairly.",
+      "The journalist was praised for his tendentious coverage of the conflict.",
+      "The documentary was criticised for its tendentious framing of events.",
+      "Tendentious arguments are valued in academic debate."
+    ],
+    answer: 2,
+    explanation: "Tendentious means biased, promoting a particular point of view. A documentary criticised for tendentious framing is biased in its presentation. Options A and D incorrectly imply a positive or neutral usage."
+  },
+  {
+    type: "Word in Context",
+    stem: "Which sentence best captures the meaning of <em>INIMICAL</em>?",
+    options: [
+      "The inimical relationship between the two partners made collaboration easy.",
+      "Prolonged stress is inimical to good health.",
+      "Her inimical attitude towards strangers made her immediately likable.",
+      "The inimical weather was perfect for a picnic."
+    ],
+    answer: 1,
+    explanation: "Inimical means harmful or adverse to something. 'Inimical to good health' correctly expresses that stress is harmful to health."
+  },
+  {
+    type: "Word in Context",
+    stem: "Choose the sentence where <em>SARDONIC</em> is used correctly.",
+    options: [
+      "She offered a sardonic compliment, her tone making clear she thought the opposite.",
+      "The sardonic professor praised each student warmly.",
+      "His sardonic nature made him universally beloved.",
+      "The sardonic landscape was breathtaking in the morning light."
+    ],
+    answer: 0,
+    explanation: "Sardonic means grimly mocking or cynically humorous. A compliment that actually communicates the opposite — via tone — is sardonic. Options B and C contradict the word's meaning."
+  },
+  {
+    type: "Word in Context",
+    stem: "Identify the sentence in which <em>MERETRICIOUS</em> is used correctly.",
+    options: [
+      "The meretricious craftsman produced beautifully made furniture.",
+      "His argument was meretricious — flashy on the surface but logically hollow.",
+      "She had a meretricious commitment to honesty and accuracy.",
+      "The meretricious student earned top marks through hard work."
+    ],
+    answer: 1,
+    explanation: "Meretricious means apparently attractive but having in reality no value or integrity. An argument that is showy but hollow is meretricious."
+  },
+  {
+    type: "Word in Context",
+    stem: "Which sentence uses <em>PROPITIOUS</em> correctly?",
+    options: [
+      "The propitious economic forecast discouraged investors.",
+      "A propitious alignment of circumstances allowed the negotiation to succeed.",
+      "His propitious mood made everyone nervous.",
+      "The propitious disease spread rapidly through the city."
+    ],
+    answer: 1,
+    explanation: "Propitious means giving or indicating a good chance of success; favourable. A favourable alignment of circumstances enabling success is correct usage."
+  },
+
+  // ── SECTION F: NEAR-SYNONYM DISCRIMINATION (Q55–60) ──
+
+  {
+    type: "Near-Synonym",
+    stem: "Which word best completes the sentence? The prime minister was careful to __________ any suggestion that she had prior knowledge of the scandal, issuing a detailed statement to that effect.\n\n[Distinguish between: rebut, refute, deny, repudiate]",
+    options: ["Rebut","Refute","Deny","Repudiate"],
+    answer: 3,
+    explanation: "Repudiate means to refuse to accept or to publicly reject — used for rejecting a claim with force and formality. Rebut and refute specifically mean to counter with evidence or argument. Deny is correct but general. Repudiate captures the formal, public act of distancing oneself from a claim."
+  },
+  {
+    type: "Near-Synonym",
+    stem: "Which word best fits? Her __________ for languages meant she could hold a conversation in Mandarin after just three months of study.\n\n[Choose the most precise option]",
+    options: ["Aptitude","Proclivity","Propensity","Flair"],
+    answer: 0,
+    explanation: "Aptitude means a natural ability or talent for something — most precise for a skill that enables rapid, measurable performance. Flair is informal. Proclivity and propensity mean inclination or tendency, not necessarily ability."
+  },
+  {
+    type: "Near-Synonym",
+    stem: "The auditors found several __________ in the company's financial records — small discrepancies that, taken together, pointed to systematic misreporting.\n\n[Choose the most precise option]",
+    options: ["Anomalies","Irregularities","Discrepancies","Aberrations"],
+    answer: 2,
+    explanation: "Discrepancies specifically refers to differences between things that should match — exactly what financial records with mismatched figures would show. Irregularities is broader. Anomalies and aberrations imply deviation from a norm but not necessarily a numerical mismatch."
+  },
+  {
+    type: "Near-Synonym",
+    stem: "The new policy was an __________ attempt to address inequality — well-intentioned but so limited in scope that it made almost no practical difference.\n\n[Choose the most precise option]",
+    options: ["Perfunctory","Inadequate","Ineffectual","Nugatory"],
+    answer: 0,
+    explanation: "Perfunctory means carried out with minimal effort, as a routine duty. The policy was done as a gesture — mechanically, without real commitment. Ineffectual means not producing the desired effect, but doesn't capture the half-hearted intention. Nugatory means of no value, which is close but more absolute."
+  },
+  {
+    type: "Near-Synonym",
+    stem: "The senator's speech was full of __________ — sweeping claims about national greatness that said nothing concrete about policy.\n\n[Choose the most precise option]",
+    options: ["Bombast","Rhetoric","Hyperbole","Platitude"],
+    answer: 0,
+    explanation: "Bombast means high-sounding language with little meaning — perfectly describes inflated claims that lack substance. Rhetoric is neutral (the art of persuasion). Hyperbole is deliberate exaggeration. Platitudes are overused statements — not the same as empty grandeur."
+  },
+  {
+    type: "Near-Synonym",
+    stem: "His proposal was met with __________ from the board — not outright rejection, but a reluctance to proceed without further consultation.\n\n[Choose the most precise option]",
+    options: ["Resistance","Demurral","Reticence","Ambivalence"],
+    answer: 1,
+    explanation: "Demurral means the raising of objections or the expression of reluctance — precisely the posture of 'not rejecting but hesitating.' Resistance is too active. Reticence means unwillingness to speak, not reluctance to act. Ambivalence means mixed feelings but doesn't imply a formal response."
+  }
+
+];
+
+// Expand cloze questions into individual questions
+const FLAT_QUESTIONS = [];
+QUESTIONS.forEach(q => {
+  if (q.blanks) {
+    q.blanks.forEach(b => {
+      FLAT_QUESTIONS.push({
+        type: q.type,
+        passage: q.passage,
+        stem: b.label,
+        options: b.options,
+        answer: b.answer,
+        explanation: b.explanation
+      });
+    });
+  } else {
+    FLAT_QUESTIONS.push(q);
+  }
+});
+
+// ═══════════════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════════════
+const TOTAL = FLAT_QUESTIONS.length; // should be 60
+const TOTAL_SECONDS = 70 * 60;
+
+let studentName = '';
+let studentPin = '';
+let studentBatch = '';
+let responses = new Array(TOTAL).fill(-1);
+let currentQ = 0;
+let secondsLeft = TOTAL_SECONDS;
+let timerInterval = null;
+let testSubmitted = false;
+
+// ═══════════════════════════════════════════════════════════
+//  LOGIN
+// ═══════════════════════════════════════════════════════════
+function startTest() {
+  studentName = document.getElementById('nameInput').value.trim();
+  studentPin = document.getElementById('pinInput').value.trim();
+  studentBatch = document.getElementById('batchInput').value.trim();
+  const err = document.getElementById('loginErr');
+  if (!studentName || !studentPin || !studentBatch) {
+    err.style.display = 'block';
+    return;
+  }
+  err.style.display = 'none';
+  document.getElementById('sidebarName').textContent = studentName;
+  document.getElementById('sidebarBatch').textContent = studentBatch;
+  showScreen('testScreen');
+  buildPalette();
+  renderQuestion(0);
+  startTimer();
+}
+
+// ═══════════════════════════════════════════════════════════
+//  TIMER
+// ═══════════════════════════════════════════════════════════
+function startTimer() {
+  timerInterval = setInterval(() => {
+    secondsLeft--;
+    updateTimerDisplay();
+    if (secondsLeft <= 0) {
+      clearInterval(timerInterval);
+      submitTest();
+    }
+  }, 1000);
+}
+
+function updateTimerDisplay() {
+  const m = Math.floor(secondsLeft / 60).toString().padStart(2, '0');
+  const s = (secondsLeft % 60).toString().padStart(2, '0');
+  const el = document.getElementById('timerDisplay');
+  el.textContent = `${m}:${s}`;
+  el.className = secondsLeft <= 300 ? 'warn' : '';
+}
+
+// ═══════════════════════════════════════════════════════════
+//  PALETTE
+// ═══════════════════════════════════════════════════════════
+function buildPalette() {
+  const p = document.getElementById('palette');
+  p.innerHTML = '';
+  for (let i = 0; i < TOTAL; i++) {
+    const d = document.createElement('div');
+    d.className = 'pq';
+    d.textContent = i + 1;
+    d.onclick = () => renderQuestion(i);
+    p.appendChild(d);
+  }
+}
+
+function updatePalette() {
+  const items = document.querySelectorAll('.pq');
+  items.forEach((el, i) => {
+    el.className = 'pq' + (responses[i] !== -1 ? ' answered' : '') + (i === currentQ ? ' current' : '');
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+//  RENDER QUESTION
+// ═══════════════════════════════════════════════════════════
+function renderQuestion(index) {
+  currentQ = index;
+  const q = FLAT_QUESTIONS[index];
+  const area = document.getElementById('questionArea');
+
+  document.getElementById('qNumTop').textContent = index + 1;
+  document.getElementById('qTypeTop').textContent = q.type;
+  document.getElementById('prevBtn').disabled = index === 0;
+  document.getElementById('nextBtn').disabled = index === TOTAL - 1;
+
+  const DIRECTIVES = {
+    "Sentence Completion": "Select the word that best fills the blank to complete the sentence logically and precisely.",
+    "Analogy": "Select the pair that best completes the analogy. Identify the relationship between the first pair, then apply it.",
+    "Cloze": "Read the passage and select the most appropriate word for the given blank.",
+    "Odd One Out": "Three words share a common quality. Identify the word that does NOT belong.",
+    "Word in Context": "Select the sentence in which the given word is used correctly and precisely.",
+    "Near-Synonym": "The options are closely related in meaning. Select the word that fits the context most precisely."
+  };
+
+  let html = `<div class="q-number">Question ${index + 1} of ${TOTAL}</div>`;
+
+  const directive = DIRECTIVES[q.type] || '';
+  if (directive) {
+    html += `<div class="q-directive">${directive}</div>`;
+  }
+
+  if (q.passage) {
+    html += `<div class="cloze-passage">${formatPassage(q.passage)}</div>`;
+    html += `<div class="q-stem">For blank <strong>${q.stem}</strong>, choose the most appropriate word:</div>`;
+  } else if (q.type === 'Analogy') {
+    html += `<div class="analogy-stem">${q.stem}</div>`;
+  } else {
+    html += `<div class="q-stem">${q.stem}</div>`;
+  }
+
+  html += `<div class="options">`;
+  const keys = ['A','B','C','D'];
+  q.options.forEach((opt, i) => {
+    const sel = responses[index] === i ? ' selected' : '';
+    html += `<div class="opt${sel}" onclick="selectOption(${index}, ${i})">
+      <div class="opt-key">${keys[i]}</div>
+      <div>${opt}</div>
+    </div>`;
+  });
+  html += `</div>`;
+
+  area.innerHTML = html;
+  updatePalette();
+  updateStats();
+}
+
+function formatPassage(text) {
+  return text.replace(/\(\d+\)__________/g, m => `<span class="blank">${m}</span>`);
+}
+
+// ═══════════════════════════════════════════════════════════
+//  INTERACTION
+// ═══════════════════════════════════════════════════════════
+function selectOption(qIndex, optIndex) {
+  responses[qIndex] = optIndex;
+  renderQuestion(qIndex);
+}
+
+function navigate(dir) {
+  const next = currentQ + dir;
+  if (next >= 0 && next < TOTAL) renderQuestion(next);
+}
+
+function updateStats() {
+  const att = responses.filter(r => r !== -1).length;
+  document.getElementById('statAtt').textContent = att;
+  document.getElementById('statCor').textContent = att;
+  document.getElementById('statSki').textContent = TOTAL - att;
+}
+
+// ═══════════════════════════════════════════════════════════
+//  SUBMIT
+// ═══════════════════════════════════════════════════════════
+function showConfirm() {
+  const unanswered = responses.filter(r => r === -1).length;
+  document.getElementById('confirmMsg').textContent =
+    unanswered > 0
+      ? `You have ${unanswered} unanswered question(s). Are you sure you want to submit?`
+      : 'You have answered all questions. Ready to submit?';
+  document.getElementById('confirmModal').classList.add('open');
+}
+
+function hideConfirm() {
+  document.getElementById('confirmModal').classList.remove('open');
+}
+
+function submitTest() {
+  if (testSubmitted) return;
+  testSubmitted = true;
+  clearInterval(timerInterval);
+  hideConfirm();
+
+  const timeTaken = TOTAL_SECONDS - secondsLeft;
+  let correct = 0, wrong = 0, skipped = 0;
+  responses.forEach((r, i) => {
+    if (r === -1) skipped++;
+    else if (r === FLAT_QUESTIONS[i].answer) correct++;
+    else wrong++;
+  });
+  const score = correct * 4 - wrong * 1;
+
+  const mm = Math.floor(timeTaken / 60).toString().padStart(2, '0');
+  const ss = (timeTaken % 60).toString().padStart(2, '0');
+  const timeStr = `${mm}:${ss}`;
+
+  logToSheet({ correct, wrong, skipped, score, timeTaken, timeStr });
+  showResults({ correct, wrong, skipped, score, timeStr });
+}
+
+// ═══════════════════════════════════════════════════════════
+//  RESULTS
+// ═══════════════════════════════════════════════════════════
+function showResults({ correct, wrong, skipped, score, timeStr }) {
+  document.getElementById('resultSub').textContent = `${studentName} · ${studentBatch}`;
+  document.getElementById('finalScore').textContent = score;
+  document.getElementById('resCorr').textContent = correct;
+  document.getElementById('resWrong').textContent = wrong;
+  document.getElementById('resSkip').textContent = skipped;
+  document.getElementById('resTime').textContent = timeStr;
+
+  const list = document.getElementById('reviewList');
+  list.innerHTML = '';
+  const keys = ['A','B','C','D'];
+
+  FLAT_QUESTIONS.forEach((q, i) => {
+    const r = responses[i];
+    const isCorrect = r === q.answer;
+    const isSkipped = r === -1;
+    const verdict = isSkipped ? 'skipped' : isCorrect ? 'correct' : 'wrong';
+    const vLabel = isSkipped ? 'Skipped' : isCorrect ? '✓ Correct' : '✗ Wrong';
+
+    const item = document.createElement('div');
+    item.className = 'review-item';
+
+    const stemPreview = q.passage
+      ? `[Cloze] Blank ${q.stem}`
+      : q.stem.replace(/<[^>]+>/g, '').substring(0, 80) + (q.stem.length > 80 ? '...' : '');
+
+    item.innerHTML = `
+      <div class="review-item-header" onclick="toggleReview(this)">
+        <div class="review-q-num">Q${i + 1}</div>
+        <div class="review-q-text">${stemPreview}</div>
+        <div class="review-verdict ${verdict}">${vLabel}</div>
+      </div>
+      <div class="review-item-body">
+        ${q.passage ? `<div class="cloze-passage" style="margin-bottom:0.8rem;font-size:0.82rem;">${formatPassage(q.passage)}</div>` : ''}
+        <div class="review-ans">
+          <span class="lbl">Your Answer: </span>
+          <span class="${isSkipped ? '' : isCorrect ? 'ca' : 'wa'}">
+            ${isSkipped ? '—' : keys[r] + '. ' + q.options[r]}
+          </span>
+        </div>
+        <div class="review-ans">
+          <span class="lbl">Correct Answer: </span>
+          <span class="ca">${keys[q.answer]}. ${q.options[q.answer]}</span>
+        </div>
+        <div class="review-explanation">${q.explanation}</div>
+      </div>`;
+    list.appendChild(item);
+  });
+
+  showScreen('resultScreen');
+}
+
+function toggleReview(header) {
+  const body = header.nextElementSibling;
+  body.classList.toggle('open');
+}
+
+// ═══════════════════════════════════════════════════════════
+//  LOG TO SHEET
+// ═══════════════════════════════════════════════════════════
+function logToSheet({ correct, wrong, skipped, score, timeTaken }) {
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxxBRvrIaAkgjV5O7rypF3-Sy1HAv3p4k2YwyCW4hNO26OdZo5Bre0Rg3L8V5lehs8fgw/exec';
+  const payload = {
+    testName: "VA Mixed Test",
+    name: studentName,
+    pin: studentPin,
+    batch: studentBatch,
+    score: score,
+    correct: correct,
+    wrong: wrong,
+    skipped: skipped,
+    maxMarks: 240,
+    timeTaken: timeTaken,
+    timestamp: new Date().toISOString()
+  };
+  fetch(APPS_SCRIPT_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  }).catch(() => {});
+}
+
+// ═══════════════════════════════════════════════════════════
+//  UTILITY
+// ═══════════════════════════════════════════════════════════
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+// ═══════════════════════════════════════════════════════════
+//  EVENT LISTENERS (iOS-safe — no inline onclick)
+// ═══════════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('startBtn').addEventListener('click', startTest);
+  document.getElementById('submitBtn').addEventListener('click', showConfirm);
+  document.getElementById('prevBtn').addEventListener('click', function() { navigate(-1); });
+  document.getElementById('nextBtn').addEventListener('click', function() { navigate(1); });
+  document.getElementById('cancelBtn').addEventListener('click', hideConfirm);
+  document.getElementById('confirmBtn').addEventListener('click', submitTest);
+});
+
+// Keyboard navigation
+document.addEventListener('keydown', e => {
+  if (document.getElementById('testScreen').classList.contains('active')) {
+    if (e.key === 'ArrowRight') navigate(1);
+    if (e.key === 'ArrowLeft') navigate(-1);
+    if (['1','2','3','4'].includes(e.key)) selectOption(currentQ, parseInt(e.key) - 1);
+  }
+});
+</script>
+</body>
+</html>
