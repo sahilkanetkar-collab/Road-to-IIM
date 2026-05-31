@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Road to IIM — Score Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@300;400;500&family=DM+Sans:wght@400;500&family=DM+Mono&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root {
+  --bg:#0f0e0c; --bg2:#181714; --bg3:#211f1b; --bg4:#2a271f;
+  --border:rgba(255,255,255,0.08); --border2:rgba(255,255,255,0.14);
+  --gold:#c9a84c; --gold2:#e8c97a; --gold-dim:rgba(201,168,76,0.15); --gold-dim2:rgba(201,168,76,0.08);
+  --text:#f0ece3; --text2:#a09880; --text3:#5a5545;
+  --green:#4caf82; --green-dim:rgba(76,175,130,0.12); --green-dim2:rgba(76,175,130,0.06);
+  --red:#e05c5c; --red-dim:rgba(224,92,92,0.1); --red-dim2:rgba(224,92,92,0.06);
+  --blue:#4a90d9; --blue-dim:rgba(74,144,217,0.12);
+  --orange:#d4845a; --orange-dim:rgba(212,132,90,0.12);
+  --radius:10px; --radius-lg:16px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh}
+
+/* ── HEADER ── */
+.header{border-bottom:0.5px solid var(--border);padding:1.25rem 2rem;display:flex;align-items:center;justify-content:space-between}
+.brand-main{font-family:'Fraunces',serif;font-size:20px;font-weight:500;color:var(--gold2);letter-spacing:-0.3px}
+.brand-sub{font-size:12px;color:var(--text3);font-family:'DM Mono',monospace;letter-spacing:.05em}
+.header-right{font-size:12px;color:var(--text3);font-family:'DM Mono',monospace}
+
+/* ── SCREENS ── */
+.screen{display:none}.screen.active{display:block}
+
+/* ── LOGIN ── */
+.login-wrap{min-height:calc(100vh - 61px);display:flex;align-items:center;justify-content:center;padding:2rem}
+.login-card{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:2.5rem;width:100%;max-width:420px}
+.login-title{font-family:'Fraunces',serif;font-size:26px;font-weight:300;color:var(--text);margin-bottom:6px}
+.login-sub{font-size:13px;color:var(--text2);margin-bottom:2rem}
+.field{margin-bottom:1.25rem}
+.field label{display:block;font-size:12px;color:var(--text2);margin-bottom:6px;font-family:'DM Mono',monospace;letter-spacing:.05em;text-transform:uppercase}
+.field input,.field select{width:100%;background:var(--bg3);border:0.5px solid var(--border2);border-radius:var(--radius);padding:10px 14px;color:var(--text);font-size:14px;font-family:'DM Sans',sans-serif;outline:none;transition:border-color .2s}
+.field input:focus,.field select:focus{border-color:var(--gold)}
+.field select option{background:var(--bg3)}
+.login-btn{width:100%;padding:12px;background:var(--gold);border:none;border-radius:var(--radius);color:#0f0e0c;font-size:14px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .2s;margin-top:.5rem}
+.login-btn:hover{background:var(--gold2)}
+.login-err{font-size:13px;color:var(--red);margin-top:10px;display:none}
+.login-loading{font-size:13px;color:var(--text3);margin-top:10px;display:none;font-family:'DM Mono',monospace}
+
+/* ── DASHBOARD ── */
+.dash{padding:2rem;max-width:960px;margin:0 auto}
+.dash-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:2rem;flex-wrap:wrap;gap:1rem}
+.dash-name{font-family:'Fraunces',serif;font-size:28px;font-weight:300;color:var(--text)}
+.dash-batch{font-size:12px;color:var(--text3);font-family:'DM Mono',monospace;margin-top:4px}
+.btn-logout{background:transparent;border:0.5px solid var(--border2);color:var(--text2);padding:9px 18px;border-radius:var(--radius);font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif}
+.btn-logout:hover{background:var(--bg3)}
+
+/* ── HERO STAT ROW ── */
+.hero-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:1.5rem}
+.stat{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius);padding:14px 16px;position:relative;overflow:hidden}
+.stat-label{font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;letter-spacing:.05em;text-transform:uppercase;margin-bottom:6px}
+.stat-val{font-size:26px;font-weight:300;font-family:'Fraunces',serif;color:var(--text)}
+.stat-val span{font-size:13px;color:var(--text3);font-family:'DM Sans',sans-serif}
+.stat.highlight{border-color:var(--gold);background:var(--gold-dim)}
+.stat.highlight .stat-val{color:var(--gold2)}
+.stat.best-flag{border-color:var(--green);background:var(--green-dim2)}
+.stat.best-flag .stat-val{color:var(--green)}
+.trend{font-size:12px;margin-top:4px;font-family:'DM Mono',monospace}
+.trend.up{color:var(--green)}.trend.down{color:var(--red)}.trend.flat{color:var(--text3)}
+.pb-crown{position:absolute;top:10px;right:12px;font-size:16px;opacity:.7}
+
+/* ── ANALYSIS PANEL ── */
+.analysis-panel{background:var(--bg2);border:0.5px solid var(--gold);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:1.5rem;border-left:3px solid var(--gold)}
+.analysis-header{display:flex;align-items:center;gap:8px;margin-bottom:1rem}
+.analysis-icon{font-size:18px}
+.analysis-title{font-size:12px;color:var(--text3);font-family:'DM Mono',monospace;letter-spacing:.05em;text-transform:uppercase}
+.insight-list{display:flex;flex-direction:column;gap:8px}
+.insight{font-size:14px;color:var(--text2);line-height:1.6;padding-left:16px;position:relative}
+.insight::before{content:'';position:absolute;left:0;top:8px;width:6px;height:6px;border-radius:50%;background:var(--gold-dim)}
+.insight.warn::before{background:var(--red)}
+.insight.good::before{background:var(--green)}
+.insight.info::before{background:var(--blue)}
+.insight strong{color:var(--text);font-weight:500}
+
+/* ── TIME + ACCURACY PANEL ── */
+.dual-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.5rem}
+@media(max-width:600px){.dual-grid{grid-template-columns:1fr}}
+.metric-card{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem}
+.metric-label{font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;letter-spacing:.05em;text-transform:uppercase;margin-bottom:10px}
+.metric-big{font-size:32px;font-weight:300;font-family:'Fraunces',serif;color:var(--text);margin-bottom:4px}
+.metric-sub{font-size:12px;color:var(--text3);margin-bottom:10px}
+.behaviour-flag{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:20px;font-size:12px;font-family:'DM Mono',monospace;margin-top:4px}
+.behaviour-flag.rush{background:var(--orange-dim);color:var(--orange);border:0.5px solid var(--orange)}
+.behaviour-flag.hesitate{background:var(--blue-dim);color:var(--blue);border:0.5px solid var(--blue)}
+.behaviour-flag.optimal{background:var(--green-dim);color:var(--green);border:0.5px solid var(--green)}
+.behaviour-flag.rework{background:var(--red-dim);color:var(--red);border:0.5px solid var(--red)}
+
+/* ── EFFICIENCY SPARKLINE ROW ── */
+.eff-row{display:flex;align-items:flex-end;gap:3px;height:36px;margin-top:8px}
+.eff-bar{flex:1;background:var(--gold-dim);border-radius:2px 2px 0 0;min-height:3px;transition:background .2s}
+.eff-bar.latest{background:var(--gold)}
+
+/* ── CARDS ── */
+.chart-card{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:1.5rem}
+.card-title{font-size:12px;color:var(--text3);font-family:'DM Mono',monospace;letter-spacing:.05em;text-transform:uppercase;margin-bottom:1.25rem}
+.chart-wrap{position:relative;height:220px}
+
+/* ── SECTION ERRORS ── */
+.error-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px}
+.err-bar{background:var(--bg3);border:0.5px solid var(--border);border-radius:var(--radius);padding:12px 14px}
+.err-bar.flagged{border-color:var(--red);background:var(--red-dim)}
+.err-bar.improving{border-color:var(--green);background:var(--green-dim)}
+.err-name{font-size:11px;color:var(--text2);margin-bottom:8px;line-height:1.3}
+.err-track{height:4px;background:var(--bg);border-radius:2px;margin-bottom:6px}
+.err-fill{height:4px;border-radius:2px;background:var(--gold);transition:width .4s}
+.err-bar.flagged .err-fill{background:var(--red)}
+.err-bar.improving .err-fill{background:var(--green)}
+.err-num{font-size:18px;font-weight:300;font-family:'Fraunces',serif;color:var(--text)}
+.err-trend{font-size:10px;margin-top:4px;font-family:'DM Mono',monospace}
+.err-trend.flag{color:var(--red)}.err-trend.good{color:var(--green)}
+.err-spark{display:flex;align-items:flex-end;gap:2px;height:20px;margin-top:6px}
+.err-spark-bar{flex:1;border-radius:1px 1px 0 0;min-height:2px;background:var(--border2)}
+.err-spark-bar.latest{background:var(--gold)}
+.err-bar.flagged .err-spark-bar{background:var(--red-dim);}.err-bar.flagged .err-spark-bar.latest{background:var(--red)}
+.err-bar.improving .err-spark-bar{background:var(--green-dim);}.err-bar.improving .err-spark-bar.latest{background:var(--green)}
+
+/* ── WRONG QUESTIONS ── */
+.wq-card{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:1.5rem}
+.wq-grid{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.wq-chip{font-size:12px;font-family:'DM Mono',monospace;padding:4px 10px;border-radius:20px;background:var(--bg3);color:var(--text2);border:0.5px solid var(--border)}
+
+/* ── REVIEW MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:1000;display:flex;align-items:flex-start;justify-content:center;padding:2rem 1rem;overflow-y:auto}
+.modal-box{background:var(--bg2);border:0.5px solid var(--border2);border-radius:var(--radius-lg);width:100%;max-width:720px;padding:0;overflow:hidden;margin:auto}
+.modal-header{padding:1.25rem 1.5rem;border-bottom:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--bg2);z-index:10}
+.modal-title{font-family:'Fraunces',serif;font-size:20px;font-weight:300;color:var(--text)}
+.modal-sub{font-size:12px;color:var(--text3);font-family:'DM Mono',monospace;margin-top:3px}
+.modal-close{background:transparent;border:0.5px solid var(--border2);color:var(--text2);width:32px;height:32px;border-radius:var(--radius);cursor:pointer;font-size:18px;line-height:1;display:flex;align-items:center;justify-content:center}
+.modal-close:hover{background:var(--bg3)}
+.modal-body{padding:1.25rem 1.5rem;max-height:70vh;overflow-y:auto}
+.review-q{border-radius:var(--radius);padding:14px 16px;margin-bottom:10px;border:0.5px solid var(--border);background:rgba(255,255,255,0.02)}
+.review-q.correct{border-left:3px solid var(--green);background:var(--green-dim2)}
+.review-q.wrong{border-left:3px solid var(--red);background:var(--red-dim2)}
+.review-q.skipped{border-left:3px solid var(--text3)}
+.review-q-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.review-q-label{font-size:11px;color:var(--text3);font-family:'DM Mono',monospace}
+.review-badge{font-size:11px;font-weight:600;padding:2px 10px;border-radius:20px}
+.badge-correct{background:rgba(76,175,130,0.2);color:var(--green)}
+.badge-wrong{background:rgba(224,92,92,0.2);color:var(--red)}
+.badge-skipped{background:rgba(90,85,69,0.3);color:var(--text3)}
+.review-stem{font-size:13px;line-height:1.6;color:var(--text);margin-bottom:6px}
+.review-stem u{color:var(--gold2);text-decoration-color:var(--gold)}
+.review-ans{font-size:12px;margin-top:4px;font-family:'DM Mono',monospace}
+.review-exp{font-size:12px;color:var(--text3);margin-top:8px;line-height:1.6;padding:8px 10px;background:rgba(255,255,255,0.03);border-radius:6px}
+.btn-review{font-size:11px;font-family:'DM Mono',monospace;padding:3px 10px;border-radius:8px;background:var(--bg3);color:var(--gold);border:0.5px solid var(--border2);cursor:pointer;white-space:nowrap}
+.btn-review:hover{background:var(--bg4)}
+
+/* ── PER TEST TABLE ── */
+.test-table{width:100%;border-collapse:collapse;font-size:13px;margin-top:10px}
+.test-table th{text-align:left;padding:8px 12px;font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;letter-spacing:.05em;text-transform:uppercase;border-bottom:0.5px solid var(--border)}
+.test-table td{padding:10px 12px;border-bottom:0.5px solid var(--border);color:var(--text2)}
+.test-table tr:last-child td{border-bottom:none}
+.test-table td:first-child{color:var(--text);font-weight:500}
+.score-cell{font-family:'Fraunces',serif;font-size:16px;font-weight:300}
+.score-cell.high{color:var(--green)}
+.score-cell.mid{color:var(--gold2)}
+.score-cell.low{color:var(--red)}
+.delta-badge{font-size:10px;font-family:'DM Mono',monospace;padding:2px 6px;border-radius:10px;margin-left:4px}
+.delta-badge.up{background:var(--green-dim);color:var(--green)}
+.delta-badge.down{background:var(--red-dim);color:var(--red)}
+.pb-badge{font-size:10px;font-family:'DM Mono',monospace;padding:2px 6px;border-radius:10px;margin-left:4px;background:var(--gold-dim);color:var(--gold2)}
+
+/* ── EMPTY / LOADING ── */
+.empty{text-align:center;padding:3rem 1rem;color:var(--text3);font-size:14px}
+.empty strong{display:block;font-family:'Fraunces',serif;font-size:22px;font-weight:300;color:var(--text2);margin-bottom:8px}
+.loading-dash{text-align:center;padding:3rem;color:var(--text3);font-family:'DM Mono',monospace;font-size:13px}
+</style>
+</head>
+<body>
+
+<!-- ══ HEADER ══════════════════════════════════════════════════════ -->
+<div class="header">
+  <div>
+    <div class="brand-main">Road to IIM</div>
+    <div class="brand-sub">SCORE TRACKER</div>
+  </div>
+  <div class="header-right" id="headerInfo"></div>
+</div>
+
+<!-- ══ LOGIN SCREEN ════════════════════════════════════════════════ -->
+<div class="screen active" id="loginScreen">
+  <div class="login-wrap">
+    <div class="login-card">
+      <div class="login-title">Your Progress</div>
+      <div class="login-sub">Enter your details to view your scores across all tests. Your IMS PIN is required.</div>
+      <div class="field">
+        <label>Full Name</label>
+        <input type="text" id="studentName" placeholder="Enter your full name" />
+      </div>
+      <div class="field">
+        <label>IMS PIN</label>
+        <input type="text" id="studentPin" placeholder="STU0001184727 or IMS0001183790" />
+      </div>
+      <div class="field">
+        <label>Batch</label>
+        <select id="batchSelect">
+          <option value="">— Select Batch —</option>
+          <optgroup label="Classroom">
+            <option value="A2701">A2701</option>
+            <option value="A2702">A2702</option>
+            <option value="A2703">A2703</option>
+            <option value="A2704">A2704</option>
+            <option value="A2705">A2705</option>
+            <option value="A2706">A2706</option>
+            <option value="A2707">A2707</option>
+            <option value="A2708">A2708</option>
+            <option value="A2709">A2709</option>
+            <option value="A2710">A2710</option>
+            <option value="A2711">A2711</option>
+            <option value="A2712">A2712</option>
+            <option value="A2713">A2713</option>
+            <option value="A2714">A2714</option>
+            <option value="A2715">A2715</option>
+          </optgroup>
+          <optgroup label="School">
+            <option value="Zebar">Zebar</option>
+          </optgroup>
+          <optgroup label="Online">
+            <option value="27E101">27E101</option>
+            <option value="27E102">27E102</option>
+            <option value="27E103">27E103</option>
+            <option value="27E104">27E104</option>
+            <option value="27E105">27E105</option>
+          </optgroup>
+        </select>
+      </div>
+      <button class="login-btn" onclick="doLogin()">View My Scores</button>
+      <div class="login-err" id="loginErr">Please enter your name and select your batch.</div>
+      <div class="login-loading" id="loginLoading">Fetching your results...</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ DASHBOARD SCREEN ════════════════════════════════════════════ -->
+<div class="screen" id="dashScreen">
+  <div class="dash">
+    <div class="dash-top">
+      <div>
+        <div class="dash-name" id="dashName"></div>
+        <div class="dash-batch" id="dashBatch"></div>
+      </div>
+      <button class="btn-logout" onclick="doLogout()">Log out</button>
+    </div>
+
+    <div class="loading-dash" id="loadingDash" style="display:none">Loading your results...</div>
+    <div class="empty" id="emptyState" style="display:none">
+      <strong>No tests found</strong>
+      No test submissions found for this name and batch. Make sure your name matches exactly what you entered in the test.
+    </div>
+
+    <div id="dataView" style="display:none">
+
+      <!-- Hero stats -->
+      <div class="hero-row" id="statRow"></div>
+
+      <!-- Analysis panel -->
+      <div class="analysis-panel" id="analysisPanel">
+        <div class="analysis-header">
+          <span class="analysis-icon">◈</span>
+          <span class="analysis-title">Your Analysis</span>
+        </div>
+        <div class="insight-list" id="insightList"></div>
+      </div>
+
+      <!-- Time + Accuracy -->
+      <div class="dual-grid" id="timeAccGrid"></div>
+
+      <!-- Score trend chart -->
+      <div class="chart-card">
+        <div class="card-title">Score Trend</div>
+        <div class="chart-wrap"><canvas id="scoreChart"></canvas></div>
+      </div>
+
+      <!-- Section errors -->
+      <div class="chart-card" id="errorCard">
+        <div class="card-title">Section-wise Errors (cumulative)</div>
+        <div class="error-grid" id="errorGrid"></div>
+      </div>
+
+      <!-- Per-test breakdown table -->
+      <div class="chart-card">
+        <div class="card-title">All Tests</div>
+        <table class="test-table" id="testTable">
+          <thead>
+            <tr>
+              <th>Test</th>
+              <th>Score</th>
+              <th>Correct</th>
+              <th>Wrong</th>
+              <th>Skipped</th>
+              <th>Accuracy</th>
+              <th>Time</th>
+              <th>Date</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="testTableBody"></tbody>
+        </table>
+      </div>
+
+      <!-- Wrong questions - latest test -->
+      <div class="wq-card" id="wqCard">
+        <div class="card-title" id="wqTitle"></div>
+        <div class="wq-grid" id="wqGrid"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══ REVIEW MODAL ════════════════════════════════════════════════ -->
+<div id="reviewModal" style="display:none;" class="modal-overlay" onclick="closeReviewModal(event)">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="modalTitle">Test Review</div>
+        <div class="modal-sub" id="modalSub"></div>
+      </div>
+      <button class="modal-close" onclick="closeReviewModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════════════════
+// CONFIGURATION
+// ══════════════════════════════════════════════════════════════════
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwGGxswx4hcBUFiT0QJIglowhKcJCv47MOR5LKBv9sILl-evsgZeKCms5y6s5zEXOUo6Q/exec";
+const MAX_SCORE = 180;
+
+// Behavioural thresholds
+const THRESH_FAST_MINS   = 30;   // under 30 min = fast
+const THRESH_SLOW_MINS   = 37;   // over 37 min = slow
+const THRESH_ACC_HIGH    = 0.80; // 80%+ accuracy on attempted = high
+const THRESH_ACC_LOW     = 0.65; // under 65% accuracy on attempted = low
+
+// ══════════════════════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════════════════════
+var student   = null;
+var entries   = [];
+var chartInst = null;
+
+// ══════════════════════════════════════════════════════════════════
+// LOGIN
+// ══════════════════════════════════════════════════════════════════
+function doLogin() {
+  var pin   = document.getElementById('studentPin').value.trim().toUpperCase();
+  var name  = document.getElementById('studentName').value.trim();
+  var batch = document.getElementById('batchSelect').value;
+
+  if (!name || !batch) {
+    showErr('Please enter your name and select your batch.');
+    return;
+  }
+  if (!pin) {
+    showErr('IMS PIN is required. Please enter your PIN (e.g. STU0001184727).');
+    return;
+  }
+  if (!/^(STU|IMS)\d{10}$/.test(pin)) {
+    showErr('Invalid PIN format. PIN must start with STU or IMS followed by 10 digits (e.g. STU0001184727).');
+    return;
+  }
+  document.getElementById('loginErr').style.display     = 'none';
+  document.getElementById('loginLoading').style.display = 'block';
+  document.querySelector('.login-btn').disabled = true;
+
+  student = { pin: pin, batch: batch, name: name };
+
+  var url = APPS_SCRIPT_URL
+    + "?pin="   + encodeURIComponent(pin)
+    + "&name="  + encodeURIComponent(name.toLowerCase())
+    + "&batch=" + encodeURIComponent(batch);
+
+  fetch(url)
+    .then(function(r){ return r.json(); })
+    .then(function(json){
+      document.getElementById('loginLoading').style.display = 'none';
+      document.querySelector('.login-btn').disabled = false;
+      if (json.status === 'success') {
+        entries = json.data || [];
+        showDash();
+      } else {
+        showErr('Error: ' + (json.message || 'Could not fetch results.'));
+      }
+    })
+    .catch(function(){
+      document.getElementById('loginLoading').style.display = 'none';
+      document.querySelector('.login-btn').disabled = false;
+      showErr('Could not connect. Please check your internet connection.');
+    });
+}
+
+function showErr(msg) {
+  var el = document.getElementById('loginErr');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+document.addEventListener('keydown', function(e){
+  if (e.key === 'Enter' && document.getElementById('loginScreen').classList.contains('active')) doLogin();
+});
+
+// ══════════════════════════════════════════════════════════════════
+// LOGOUT
+// ══════════════════════════════════════════════════════════════════
+function doLogout() {
+  student = null; entries = [];
+  if (chartInst) { chartInst.destroy(); chartInst = null; }
+  document.getElementById('headerInfo').textContent = '';
+  document.getElementById('studentPin').value  = '';
+  document.getElementById('studentName').value = '';
+  document.getElementById('batchSelect').value = '';
+  show('loginScreen');
+}
+
+// ══════════════════════════════════════════════════════════════════
+// DASHBOARD
+// ══════════════════════════════════════════════════════════════════
+function showDash() {
+  show('dashScreen');
+  var displayName = (entries.length > 0 && entries[0].name) ? entries[0].name : student.name;
+  document.getElementById('dashName').textContent  = displayName;
+  document.getElementById('dashBatch').textContent = student.batch + (student.pin ? ' · PIN: ' + student.pin : '');
+  document.getElementById('headerInfo').textContent = displayName + ' / ' + student.batch;
+  renderDash();
+}
+
+function deduplicateEntries(arr) {
+  var seen = {};
+  arr.forEach(function(e){
+    if (!seen[e.test] || e.score > seen[e.test].score) seen[e.test] = e;
+  });
+  return Object.values(seen).sort(function(a,b){ return a.test - b.test; });
+}
+
+function renderDash() {
+  if (entries.length === 0) {
+    document.getElementById('emptyState').style.display = 'block';
+    document.getElementById('dataView').style.display   = 'none';
+    return;
+  }
+  document.getElementById('emptyState').style.display = 'none';
+  document.getElementById('dataView').style.display   = 'block';
+  var de = deduplicateEntries(entries);
+  renderStats(de);
+  renderAnalysis(de);
+  renderTimeAccuracy(de);
+  renderChart(de);
+  renderErrors(de);
+  renderTable(de);
+  renderWrongQuestions(de);
+}
+
+// ── UTILITY: parse timeTaken mm:ss → decimal minutes ──────────────
+function parseMinutes(t) {
+  if (!t) return null;
+  if (/^\d{1,2}:\d{2}$/.test(t)) {
+    var parts = t.split(':');
+    return parseInt(parts[0]) + parseInt(parts[1]) / 60;
+  }
+  if (t.indexOf('mins') > -1) {
+    return parseFloat(t);
+  }
+  return null;
+}
+
+// ── UTILITY: compute accuracy rate for an entry ───────────────────
+function accuracyRate(e) {
+  var attempted = (e.correct || 0) + (e.wrong || 0);
+  if (attempted === 0) return null;
+  return (e.correct || 0) / attempted;
+}
+
+// ── UTILITY: compute efficiency (marks per minute) ────────────────
+function efficiency(e) {
+  var mins = parseMinutes(e.timeTaken);
+  if (!mins || mins <= 0) return null;
+  return e.score / mins;
+}
+
+// ══════════════════════════════════════════════════════════════════
+// HERO STATS
+// ══════════════════════════════════════════════════════════════════
+function renderStats(de) {
+  var sorted = de.slice();
+  var latest = sorted[sorted.length - 1];
+  var best   = Math.max.apply(null, de.map(function(e){ return e.score; }));
+  var avg    = Math.round(de.reduce(function(s,e){ return s + e.score; }, 0) / de.length);
+  var pct    = Math.round((latest.score / MAX_SCORE) * 100);
+  var isPersonalBest = (latest.score === best);
+
+  // Delta from previous test
+  var deltaHtml = '';
+  if (sorted.length >= 2) {
+    var diff = sorted[sorted.length-1].score - sorted[sorted.length-2].score;
+    if      (diff > 0) deltaHtml = '<div class="trend up">▲ +' + diff  + ' from last test</div>';
+    else if (diff < 0) deltaHtml = '<div class="trend down">▼ ' + diff + ' from last test</div>';
+    else               deltaHtml = '<div class="trend flat">Same as last test</div>';
+  }
+
+  var latestCard =
+    '<div class="stat highlight' + (isPersonalBest ? ' best-flag' : '') + '">' +
+    (isPersonalBest ? '<div class="pb-crown">🏆</div>' : '') +
+    '<div class="stat-label">Latest — Test ' + latest.test + '</div>' +
+    '<div class="stat-val">' + latest.score + ' <span>/ ' + MAX_SCORE + '</span></div>' +
+    deltaHtml +
+    '</div>';
+
+  var bestCard =
+    '<div class="stat">' +
+    '<div class="stat-label">Personal Best</div>' +
+    '<div class="stat-val">' + best + ' <span>/ ' + MAX_SCORE + '</span></div>' +
+    '</div>';
+
+  var avgCard =
+    '<div class="stat">' +
+    '<div class="stat-label">Average</div>' +
+    '<div class="stat-val">' + avg + ' <span>/ ' + MAX_SCORE + '</span></div>' +
+    '</div>';
+
+  var testsCard =
+    '<div class="stat">' +
+    '<div class="stat-label">Tests Taken</div>' +
+    '<div class="stat-val">' + de.length + '</div>' +
+    '</div>';
+
+  var pctCard =
+    '<div class="stat">' +
+    '<div class="stat-label">Latest %</div>' +
+    '<div class="stat-val">' + pct + '<span>%</span></div>' +
+    '</div>';
+
+  document.getElementById('statRow').innerHTML = latestCard + bestCard + avgCard + testsCard + pctCard;
+}
+
+// ══════════════════════════════════════════════════════════════════
+// ANALYSIS PANEL — rule-based insight engine
+// ══════════════════════════════════════════════════════════════════
+function renderAnalysis(de) {
+  var insights = [];
+  if (de.length < 2) {
+    document.getElementById('analysisPanel').style.display = 'none';
+    return;
+  }
+  document.getElementById('analysisPanel').style.display = 'block';
+
+  var sorted = de.slice();
+  var latest = sorted[sorted.length - 1];
+  var prev   = sorted[sorted.length - 2];
+  var n      = sorted.length;
+
+  // 1. Score trajectory
+  var scoreDiff = latest.score - prev.score;
+  if (scoreDiff >= 15) {
+    insights.push({ type:'good', text: '<strong>Strong improvement</strong> — up ' + scoreDiff + ' marks from your last test. The preparation is showing.' });
+  } else if (scoreDiff > 0) {
+    insights.push({ type:'good', text: '<strong>Improving</strong> — ' + scoreDiff + ' marks gained from last test. Keep the momentum going.' });
+  } else if (scoreDiff < -10) {
+    insights.push({ type:'warn', text: '<strong>Significant drop</strong> — ' + Math.abs(scoreDiff) + ' marks below your last test. Review your wrong questions before the next test.' });
+  } else if (scoreDiff < 0) {
+    insights.push({ type:'warn', text: '<strong>Slight dip</strong> — ' + Math.abs(scoreDiff) + ' marks below last test. Likely one or two weak sections. See the section breakdown below.' });
+  } else {
+    insights.push({ type:'info', text: '<strong>Holding steady</strong> — same score as last test. Consistency is good, but look for one section to push.' });
+  }
+
+  // 2. Weakest section (by cumulative errors)
+  var totals = {};
+  sorted.forEach(function(e){
+    var errs = e.sectionErrors || {};
+    Object.keys(errs).forEach(function(sec){
+      totals[sec] = (totals[sec] || 0) + (errs[sec] || 0);
+    });
+  });
+  var sections = Object.keys(totals);
+  if (sections.length > 0) {
+    var weakest = sections.reduce(function(a,b){ return totals[a] >= totals[b] ? a : b; });
+    var wCount  = totals[weakest];
+    // Most improved
+    var lastErrs = latest.sectionErrors || {};
+    var prevErrs = prev.sectionErrors   || {};
+    var mostImproved = null, bestDrop = 0;
+    sections.forEach(function(sec){
+      var drop = (prevErrs[sec] || 0) - (lastErrs[sec] || 0);
+      if (drop > bestDrop) { bestDrop = drop; mostImproved = sec; }
+    });
+    // Worsening
+    var worsening = null, worstRise = 0;
+    sections.forEach(function(sec){
+      var rise = (lastErrs[sec] || 0) - (prevErrs[sec] || 0);
+      if (rise > worstRise) { worstRise = rise; worsening = sec; }
+    });
+
+    insights.push({ type:'warn', text: '<strong>' + weakest + '</strong> is your weakest section — ' + wCount + ' total error' + (wCount !== 1 ? 's' : '') + ' across all tests.' });
+
+    if (mostImproved && bestDrop >= 1) {
+      insights.push({ type:'good', text: '<strong>' + mostImproved + '</strong> is improving — ' + bestDrop + ' fewer error' + (bestDrop !== 1 ? 's' : '') + ' than your previous test.' });
+    }
+    if (worsening && worstRise >= 2) {
+      insights.push({ type:'warn', text: '<strong>' + worsening + '</strong> slipped this test — ' + worstRise + ' more error' + (worstRise !== 1 ? 's' : '') + ' than last time. Prioritise this before Test ' + (latest.test + 1) + '.' });
+    }
+  }
+
+  // 3. Behavioural flag (time + accuracy)
+  var latestMins = parseMinutes(latest.timeTaken);
+  var latestAcc  = accuracyRate(latest);
+  if (latestMins !== null && latestAcc !== null) {
+    var isFast = latestMins < THRESH_FAST_MINS;
+    var isSlow = latestMins > THRESH_SLOW_MINS;
+    var isHighAcc = latestAcc >= THRESH_ACC_HIGH;
+    var isLowAcc  = latestAcc < THRESH_ACC_LOW;
+    if (isFast && isLowAcc) {
+      insights.push({ type:'warn', text: '<strong>You\'re rushing.</strong> Finished in ' + Math.round(latestMins) + ' min with ' + Math.round(latestAcc*100) + '% accuracy on attempted. Slow down — especially on Vocabulary and Idiom.' });
+    } else if (isSlow && isHighAcc) {
+      insights.push({ type:'info', text: '<strong>Accurate but slow.</strong> ' + Math.round(latestAcc*100) + '% accuracy is excellent, but ' + Math.round(latestMins) + ' min is tight for IPMAT. Work on first-instinct decisions.' });
+    } else if (isFast && isHighAcc) {
+      insights.push({ type:'good', text: '<strong>Efficient test-taking</strong> — fast and accurate. Maintain this rhythm.' });
+    } else if (isSlow && isLowAcc) {
+      insights.push({ type:'warn', text: '<strong>Struggling with content</strong> — slow (' + Math.round(latestMins) + ' min) and ' + Math.round(latestAcc*100) + '% accuracy. Focus on the root meanings, not surface recognition.' });
+    }
+  }
+
+  // 4. Consistency note (if enough tests)
+  if (n >= 4) {
+    var scores = sorted.map(function(e){ return e.score; });
+    var mean   = scores.reduce(function(a,b){ return a+b; },0) / scores.length;
+    var variance = scores.reduce(function(s,x){ return s + Math.pow(x-mean,2); },0) / scores.length;
+    var sd = Math.sqrt(variance);
+    if (sd < 10) {
+      insights.push({ type:'good', text: '<strong>Very consistent</strong> across ' + n + ' tests — your scores stay within a tight range. Now push the floor up.' });
+    } else if (sd > 25) {
+      insights.push({ type:'info', text: '<strong>Variable performance</strong> — high standard deviation across your tests. Focus on what\'s different on your low-scoring days.' });
+    }
+  }
+
+  // Render
+  var html = insights.map(function(ins){
+    return '<div class="insight ' + ins.type + '">' + ins.text + '</div>';
+  }).join('');
+  document.getElementById('insightList').innerHTML = html || '<div class="insight info">Take more tests to unlock detailed insights.</div>';
+}
+
+// ══════════════════════════════════════════════════════════════════
+// TIME + ACCURACY PANEL
+// ══════════════════════════════════════════════════════════════════
+function renderTimeAccuracy(de) {
+  var container = document.getElementById('timeAccGrid');
+  var sorted = de.slice();
+
+  // Compute per-test metrics
+  var effValues = sorted.map(efficiency).filter(function(v){ return v !== null; });
+  var accValues = sorted.map(accuracyRate).filter(function(v){ return v !== null; });
+
+  if (effValues.length === 0 && accValues.length === 0) {
+    container.style.display = 'none';
+    return;
+  }
+  container.style.display = 'grid';
+
+  var latest = sorted[sorted.length - 1];
+  var latestMins = parseMinutes(latest.timeTaken);
+  var latestAcc  = accuracyRate(latest);
+  var latestEff  = efficiency(latest);
+
+  // Behaviour classification
+  function getBehaviourFlag(mins, acc) {
+    if (mins === null || acc === null) return null;
+    var isFast = mins < THRESH_FAST_MINS;
+    var isSlow = mins > THRESH_SLOW_MINS;
+    var isHigh = acc >= THRESH_ACC_HIGH;
+    var isLow  = acc < THRESH_ACC_LOW;
+    if (isFast && isLow)  return { cls:'rush',     label:'RUSHING',           icon:'⚡' };
+    if (isSlow && isHigh) return { cls:'hesitate', label:'OVER-THINKING',     icon:'🔍' };
+    if (isFast && isHigh) return { cls:'optimal',  label:'EFFICIENT',         icon:'✓' };
+    if (isSlow && isLow)  return { cls:'rework',   label:'NEEDS CONTENT WORK',icon:'📚' };
+    return { cls:'optimal', label:'ON TRACK', icon:'✓' };
+  }
+
+  var flag = getBehaviourFlag(latestMins, latestAcc);
+
+  // Efficiency sparkline data
+  var effSpark = sorted.map(efficiency);
+  var maxEff = Math.max.apply(null, effSpark.filter(function(v){ return v !== null; }).concat([0.01]));
+
+  var sparkBars = effSpark.map(function(v, i){
+    var ht = v !== null ? Math.round((v / maxEff) * 100) : 0;
+    var isLast = (i === sorted.length - 1);
+    return '<div class="eff-bar' + (isLast ? ' latest' : '') + '" style="height:' + ht + '%" title="T' + sorted[i].test + ': ' + (v !== null ? v.toFixed(1) : '—') + ' marks/min"></div>';
+  }).join('');
+
+  // Card 1: Efficiency
+  var effCard = '<div class="metric-card">' +
+    '<div class="metric-label">Efficiency (Latest)</div>' +
+    '<div class="metric-big">' + (latestEff !== null ? latestEff.toFixed(1) : '—') + '</div>' +
+    '<div class="metric-sub">marks per minute' + (latestMins !== null ? ' · ' + Math.round(latestMins) + ' min taken' : '') + '</div>' +
+    (flag ? '<div class="behaviour-flag ' + flag.cls + '">' + flag.icon + ' ' + flag.label + '</div>' : '') +
+    '<div class="eff-row">' + sparkBars + '</div>' +
+    '</div>';
+
+  // Card 2: Accuracy
+  var accBar = accValues.map(function(v, i){
+    var all = sorted.filter(function(e){ return accuracyRate(e) !== null; });
+    var ht = Math.round(v * 100);
+    var isLast = (i === all.length - 1);
+    return '<div class="eff-bar' + (isLast ? ' latest' : '') + '" style="height:' + ht + '%" title="' + Math.round(v*100) + '%"></div>';
+  }).join('');
+
+  // Accuracy trend
+  var accTrend = '';
+  if (accValues.length >= 2) {
+    var diff = accValues[accValues.length-1] - accValues[accValues.length-2];
+    if (diff > 0.03) accTrend = '<div class="trend up" style="font-size:11px;margin-top:6px">▲ Accuracy improving</div>';
+    else if (diff < -0.03) accTrend = '<div class="trend down" style="font-size:11px;margin-top:6px">▼ Accuracy dropped</div>';
+  }
+
+  var avgAcc = accValues.length > 0 ? Math.round(accValues.reduce(function(a,b){return a+b;},0)/accValues.length*100) : null;
+
+  var accCard = '<div class="metric-card">' +
+    '<div class="metric-label">Attempt Accuracy</div>' +
+    '<div class="metric-big">' + (latestAcc !== null ? Math.round(latestAcc*100) + '%' : '—') + '</div>' +
+    '<div class="metric-sub">correct out of attempted' + (avgAcc !== null ? ' · avg ' + avgAcc + '%' : '') + '</div>' +
+    accTrend +
+    '<div class="eff-row">' + accBar + '</div>' +
+    '</div>';
+
+  container.innerHTML = effCard + accCard;
+}
+
+// ══════════════════════════════════════════════════════════════════
+// SCORE TREND CHART
+// ══════════════════════════════════════════════════════════════════
+function renderChart(de) {
+  var sorted = de.slice();
+  if (chartInst) { chartInst.destroy(); }
+  chartInst = new Chart(document.getElementById('scoreChart').getContext('2d'), {
+    type: 'line',
+    data: {
+      labels: sorted.map(function(e){ return 'T' + e.test; }),
+      datasets: [{
+        data: sorted.map(function(e){ return e.score; }),
+        borderColor: '#c9a84c',
+        backgroundColor: 'rgba(201,168,76,0.08)',
+        borderWidth: 2,
+        pointBackgroundColor: sorted.map(function(e,i){
+          return i === sorted.length-1 ? '#e8c97a' : '#c9a84c';
+        }),
+        pointRadius: sorted.map(function(e,i){ return i === sorted.length-1 ? 6 : 4; }),
+        tension: 0.3,
+        fill: true
+      }]
+    },
+    options: {
+      responsive:true,
+      maintainAspectRatio:false,
+      plugins:{legend:{display:false}},
+      scales:{
+        y:{
+          min:0,max:MAX_SCORE,
+          grid:{color:'rgba(255,255,255,0.05)'},
+          ticks:{color:'#5a5545',font:{family:'DM Mono',size:11}}
+        },
+        x:{
+          grid:{display:false},
+          ticks:{color:'#5a5545',font:{family:'DM Mono',size:11}}
+        }
+      }
+    }
+  });
+}
+
+// ══════════════════════════════════════════════════════════════════
+// SECTION ERRORS — with spark lines per section
+// ══════════════════════════════════════════════════════════════════
+function renderErrors(de) {
+  var sorted = de.slice();
+  var totals   = {};
+  var lastTest = {};
+  var prevTest = {};
+  // Per-section per-test history for sparklines
+  var history  = {};  // section → [count per test in order]
+
+  sorted.forEach(function(e, idx){
+    var errs = e.sectionErrors || {};
+    Object.keys(errs).forEach(function(sec){
+      totals[sec]   = (totals[sec]   || 0) + (errs[sec] || 0);
+      history[sec]  = history[sec]   || [];
+      history[sec][idx] = errs[sec] || 0;
+    });
+    if (idx === sorted.length - 1) lastTest = errs;
+    if (idx === sorted.length - 2) prevTest = errs;
+  });
+
+  var sections = Object.keys(totals);
+  if (sections.length === 0) {
+    document.getElementById('errorCard').style.display = 'none';
+    return;
+  }
+  document.getElementById('errorCard').style.display = 'block';
+
+  var maxTotal = Math.max.apply(null, Object.values(totals));
+
+  var html = sections
+    .sort(function(a,b){ return totals[b] - totals[a]; })
+    .map(function(sec){
+      var total   = totals[sec] || 0;
+      var last    = lastTest[sec] || 0;
+      var prev    = prevTest[sec] || 0;
+      var pct     = maxTotal > 0 ? Math.round((total/maxTotal)*100) : 0;
+      var isFlagged   = last >= 3;
+      var isImproving = de.length >= 2 && last < prev && prev > 0;
+      var cls = isFlagged ? 'flagged' : isImproving ? 'improving' : '';
+
+      // Trend arrow
+      var trendTxt = de.length >= 2
+        ? (last < prev && prev > 0 ? '<div class="err-trend good">▼ Improving</div>'
+          : last > prev             ? '<div class="err-trend flag">▲ Getting worse</div>'
+          : '<div class="err-trend">— Stable</div>')
+        : '';
+
+      // Spark line — last 5 tests
+      var hist = history[sec] || [];
+      // Fill gaps with 0
+      for (var i = 0; i < sorted.length; i++) {
+        if (hist[i] === undefined) hist[i] = 0;
+      }
+      var sparkSlice = hist.slice(-5);
+      var maxSpark   = Math.max.apply(null, sparkSlice.concat([1]));
+      var sparkHtml  = sparkSlice.map(function(v, i){
+        var ht = Math.round((v / maxSpark) * 100);
+        var isLast = (i === sparkSlice.length - 1);
+        return '<div class="err-spark-bar' + (isLast ? ' latest' : '') + '" style="height:' + Math.max(ht,8) + '%"></div>';
+      }).join('');
+
+      return '<div class="err-bar ' + cls + '">' +
+        '<div class="err-name">' + sec + '</div>' +
+        '<div class="err-track"><div class="err-fill" style="width:' + pct + '%"></div></div>' +
+        '<div class="err-num">' + total + ' <span style="font-size:11px;color:var(--text3);font-family:\'DM Sans\'">errors</span></div>' +
+        trendTxt +
+        '<div class="err-spark">' + sparkHtml + '</div>' +
+      '</div>';
+    }).join('');
+
+  document.getElementById('errorGrid').innerHTML = html;
+}
+
+// ══════════════════════════════════════════════════════════════════
+// PER-TEST TABLE — with delta badges and accuracy column
+// ══════════════════════════════════════════════════════════════════
+function renderTable(de) {
+  var sorted = de.slice();
+  var best   = Math.max.apply(null, sorted.map(function(e){ return e.score; }));
+
+  var html = sorted.map(function(e, idx){
+    var scoreClass = e.score >= 140 ? 'high' : e.score >= 100 ? 'mid' : 'low';
+    var date = '';
+    try { date = e.timestamp.split(',')[0]; } catch(x){}
+    if (date && date.includes('T')) {
+      try { var d = new Date(date); date = d.toLocaleDateString('en-IN'); } catch(x){}
+    }
+
+    // Delta badge
+    var deltaBadge = '';
+    if (idx > 0) {
+      var diff = e.score - sorted[idx-1].score;
+      if (diff > 0) deltaBadge = '<span class="delta-badge up">+' + diff + '</span>';
+      else if (diff < 0) deltaBadge = '<span class="delta-badge down">' + diff + '</span>';
+    }
+    // PB badge
+    var pbBadge = (e.score === best && sorted.filter(function(x){ return x.score===best; }).indexOf(e) === 0)
+      ? '<span class="pb-badge">PB</span>' : '';
+
+    // Accuracy
+    var acc = accuracyRate(e);
+    var accStr = acc !== null ? Math.round(acc*100) + '%' : '—';
+
+    // Time
+    var timeStr = '—';
+    if (e.timeTaken && /^\d{1,2}:\d{2}$/.test(e.timeTaken)) timeStr = e.timeTaken;
+    else if (e.timeTaken && e.timeTaken.indexOf('mins') > -1) timeStr = e.timeTaken;
+
+    var reviewBtn = '<button class="btn-review" onclick="openReviewModal(' + idx + ')">Review</button>';
+
+    return '<tr>' +
+      '<td>Test ' + e.test + '</td>' +
+      '<td><span class="score-cell ' + scoreClass + '">' + e.score + '</span><span style="color:var(--text3);font-size:11px"> / ' + (e.maxMarks||180) + '</span>' + deltaBadge + pbBadge + '</td>' +
+      '<td style="color:var(--green)">' + e.correct  + '</td>' +
+      '<td style="color:var(--red)">'   + e.wrong    + '</td>' +
+      '<td style="color:var(--text3)">' + e.skipped  + '</td>' +
+      '<td style="font-family:\'DM Mono\';font-size:12px">' + accStr + '</td>' +
+      '<td style="font-family:\'DM Mono\';font-size:12px">' + timeStr + '</td>' +
+      '<td style="font-size:12px">' + date + '</td>' +
+      '<td>' + reviewBtn + '</td>' +
+    '</tr>';
+  }).join('');
+
+  document.getElementById('testTableBody').innerHTML = html;
+}
+
+// ══════════════════════════════════════════════════════════════════
+// WRONG QUESTIONS
+// ══════════════════════════════════════════════════════════════════
+function renderWrongQuestions(de) {
+  var sorted = de.slice();
+  var latest = sorted[sorted.length - 1];
+  var wq = latest.wrongQuestions || [];
+  if (wq.length === 0) {
+    document.getElementById('wqCard').style.display = 'none';
+    return;
+  }
+  document.getElementById('wqCard').style.display = 'block';
+  document.getElementById('wqTitle').textContent   = 'Wrong Questions — Test ' + latest.test;
+  document.getElementById('wqGrid').innerHTML = wq
+    .sort(function(a,b){ return a - b; })
+    .map(function(q){ return '<div class="wq-chip">Q' + q + '</div>'; })
+    .join('');
+}
+
+// ── Utility ───────────────────────────────────────────────────────
+function show(id) {
+  document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
+  document.getElementById(id).classList.add('active');
+}
+
+// ══════════════════════════════════════════════════════════════════
+// REVIEW MODAL
+// ══════════════════════════════════════════════════════════════════
+
+// Question data for tests that support full review (Test 16+)
+// Each entry: { testNum: N, questions: [...] }
+// questions array matches QUESTIONS format from the test HTML:
+// { id, section, stem, options, answer, exp }
+var QUESTION_BANKS = {};
+
+// Test 16 question bank — injected here so the tracker can render full review
+QUESTION_BANKS[16] = [
+{id:1,section:"SVA",stem:"The teacher and her students <u>was excited about the upcoming field trip to the science museum</u>.",options:["were excited and going to the upcoming field trip at the science museum","was excitedly going on the upcoming field trip to the science museum","were excited about the upcoming field trip to the science museum","was excited over the upcoming field trip at the science museum"],answer:"C",exp:"A compound subject joined by 'and' takes a plural verb. 'The teacher and her students' = plural subject → 'were'. 'Was' is singular and incorrect. A and B change other words unnecessarily. D retains 'was' and changes the preposition. Only C corrects the verb to 'were' without altering anything else."},
+{id:2,section:"SVA",stem:"Everyone in the three departments <u>have submitted their reports on time this quarter</u>.",options:["have submitted his or her report on time this quarter","has submitted their reports on time this quarter","have submitted their report on time this quarter","has submitted his report on time this quarter"],answer:"B",exp:"'Everyone' is an indefinite pronoun and always takes a singular verb — 'has', not 'have'. The plural pronoun 'their' is accepted in formal usage as a gender-neutral singular referent. B corrects the verb while retaining 'their reports' unchanged."},
+{id:3,section:"SVA",stem:"The director, <u>along with her two assistants, are responsible</u> for approving the final edit.",options:["along with her two assistants, is responsible","with her two assistants, are responsible","together with her two assistants, are responsible","along with her two assistants, were responsible"],answer:"A",exp:"'Along with' is a parenthetical phrase — it does not change the subject. The subject is 'the director' (singular) → 'is responsible'. B and C retain the plural 'are'. D shifts to past tense. Only A corrects the verb to singular."},
+{id:4,section:"SVA",stem:"The number of students enrolling in online courses <u>have increased dramatically since last year</u>.",options:["have been increasing dramatically since last year","are increasing dramatically since last year","had been dramatically increasing since last year","has increased dramatically since last year"],answer:"D",exp:"'The number of' takes a singular verb — 'the number' is the subject, not 'students'. Contrast: 'A number of students have enrolled' (plural). Only D gives the correct singular 'has increased'."},
+{id:5,section:"SVA",stem:"Scattered across the valley <u>was numerous small villages</u> that had survived centuries of conflict.",options:["was a number of small villages","were numerous small villages","is numerous small villages","had been numerous small villages"],answer:"B",exp:"In this inverted construction, the actual subject is 'numerous small villages' (plural) — the verb must be plural: 'were'. 'Was' (singular) is incorrect. Only B corrects the verb to 'were' without any other change."},
+{id:6,section:"SVA",stem:"Each of the managers and team leaders <u>are required to attend the mandatory training session</u>.",options:["were required to attend the mandatory training session","have been required to attend the mandatory training session","is required to attend the mandatory training session","are required to be attending the mandatory training session"],answer:"C",exp:"'Each of' always takes a singular verb regardless of what follows. 'Are' is plural and incorrect. Only C gives the correct singular present tense 'is required'."},
+{id:7,section:"SVA",stem:"Neither the principal nor the teachers <u>was informed about the sudden change in the timetable</u>.",options:["has been informed about the sudden change in the timetable","is informed about the sudden change in the timetable","had been informed about the sudden change in the timetable","were informed about the sudden change in the timetable"],answer:"D",exp:"With 'neither...nor', the verb agrees with the subject closest to it — 'the teachers' (plural) → plural verb 'were'. Only D uses the correct past tense plural 'were'."},
+{id:8,section:"SVA",stem:"She is one of those athletes <u>who trains relentlessly despite suffering multiple injuries each season</u>.",options:["who train relentlessly despite suffering multiple injuries each season","who trained relentlessly despite suffering multiple injuries each season","who has trained relentlessly despite suffering multiple injuries each season","who is training relentlessly despite suffering multiple injuries each season"],answer:"A",exp:"In 'one of those who', the relative clause refers to 'those athletes' (plural), not to 'one'. The verb must be plural: 'train', not 'trains'. Only A uses the correct plural simple present 'train'."},
+{id:9,section:"SVA",stem:"The list of items needed for the annual science fair and the cultural programme <u>have been finalised</u>.",options:["were finalised","has been finalised","are finalised","had been finalised"],answer:"B",exp:"The subject is 'the list' (singular), not 'items' or 'programme'. The long intervening phrase obscures the subject but does not change it. Only B gives the correct singular present perfect."},
+{id:10,section:"SVA",stem:"The CEO, as well as the board members, <u>have announced their decision to restructure the company</u>.",options:["have announced its decision to restructure the company","announced their decision to restructure the company","has announced their decision to restructure the company","have announced the decision to restructure the company"],answer:"C",exp:"'As well as' is a parenthetical connective — it does not change the subject. The subject is 'the CEO' (singular) → 'has'. Only C uses 'has' while keeping 'their decision' intact."},
+{id:11,section:"SVA",stem:"The economics of the proposed merger <u>have not been thoroughly examined by the regulatory body</u>.",options:["were not thoroughly examined by the regulatory body","are not thoroughly examined by the regulatory body","had not been thoroughly examined by the regulatory body","has not been thoroughly examined by the regulatory body"],answer:"D",exp:"'Economics' when used to refer to the financial logic of a situation takes a singular verb. Only D gives the correct singular present perfect 'has not been examined'."},
+{id:12,section:"SVA",stem:"More than half of the report <u>were dedicated to analysing the long-term environmental impact</u>.",options:["was dedicated to analysing the long-term environmental impact","are dedicated to analysing the long-term environmental impact","have been dedicated to analysing the long-term environmental impact","had been dedicated to analysing the long-term environmental impact"],answer:"A",exp:"With fractional expressions, the verb agrees with the noun after 'of'. Here it is 'the report' (singular, uncountable) → singular verb 'was'. Only A gives the correct singular past tense 'was'."},
+{id:13,section:"SVA",stem:"There <u>is a pen, two notebooks, and a calculator</u> on the examination desk.",options:["is a pen, a calculator, and two notebooks","are a pen, two notebooks, and a calculator","was a pen, two notebooks, and a calculator","is a pen and two notebooks and a calculator"],answer:"B",exp:"In existential 'there' constructions, the verb agrees with the subject that follows. The subject is 'a pen, two notebooks, and a calculator' — a compound subject → plural → 'are'. Only B uses the correct plural 'are'."},
+{id:14,section:"SVA",stem:"Either the students or the teacher <u>are responsible for locking the laboratory after each session</u>.",options:["were responsible for locking the laboratory after each session","have been responsible for locking the laboratory after each session","is responsible for locking the laboratory after each session","are being responsible for locking the laboratory after each session"],answer:"C",exp:"With 'either...or', the verb agrees with the subject closest to it — 'the teacher' (singular) → singular verb 'is'. Only C gives the correct singular present tense 'is responsible'."},
+{id:15,section:"SVA",stem:"It is the quality of these photographs, not the quantity, <u>that make them truly remarkable</u>.",options:["which make them truly remarkable","that made them truly remarkable","that makes it truly remarkable","that makes them truly remarkable"],answer:"D",exp:"The relative pronoun 'that' refers to 'the quality' (singular). The verb must agree with 'quality' → singular → 'makes'. Only D corrects the verb to 'makes' while keeping 'them' correctly referring to 'photographs'."},
+{id:16,section:"Pronouns",stem:"The person who called yesterday <u>was definitely not him</u> — the voice was far too high-pitched.",options:["was not definitely him","was definitely not he","was definitely not himself","was definitely not his"],answer:"B",exp:"After a linking verb ('was'), a subject pronoun is required — the predicate nominative construction. 'Him' is an object pronoun and incorrect here. The correct form is 'he'. Only B gives the correct subject pronoun 'he'."},
+{id:17,section:"Pronouns",stem:"Every student <u>must carry their identity card when they appear</u> for the entrance examination.",options:["must carry his or her identity card when he or she appears","must carry its identity card when it appears","must carry their identity cards when they appear","must carry their identity card when they appear"],answer:"D",exp:"'Their' and 'they' as singular gender-neutral pronouns referring to 'every student' is standard in modern formal usage. The original underlined portion is already correct — D repeats it unchanged."},
+{id:18,section:"Pronouns",stem:"The committee must decide <u>who they will appoint as the new chairperson</u> before Friday's deadline.",options:["whom they will appoint as the new chairperson","who will they appoint as the new chairperson","whoever they will appoint as the new chairperson","whomever they appoint as the new chairperson"],answer:"A",exp:"Test with 'he/him': the committee will appoint him → object pronoun → 'whom'. A corrects 'who' to 'whom' with no other change — the minimal correct fix."},
+{id:19,section:"Pronouns",stem:"My younger sister scored <u>higher in the mock test than me</u>, which surprised our parents greatly.",options:["highest in the mock test than me","higher in the mock test than myself","higher in the mock test than I","higher in the mock test than I did"],answer:"C",exp:"After 'than' in a comparison, the pronoun should be in subject form. The full form is 'than I [scored]'. 'Me' is an object pronoun and is incorrect in formal English. C is the minimal correction: 'than I'."},
+{id:20,section:"Pronouns",stem:"The entire delegation, including the minister himself, <u>were surprised by the sudden announcement</u>.",options:["had been surprised by the sudden announcement","was surprised by the sudden announcement","including himself, the minister were surprised by the sudden announcement","including the minister, were surprised by the sudden announcement"],answer:"B",exp:"The subject is 'the entire delegation' — a collective noun treated as singular. 'Were' is incorrect; 'was' is required. Only B corrects the verb to 'was' while keeping all other words intact."},
+{id:21,section:"Pronouns",stem:"After the manager spoke with the client, <u>he realised the proposal needed significant revision</u>.",options:["he had realised the proposal needs significant revision","it was realised that the proposal needed significant revision","he realised the proposal needs significant revision","the manager realised the proposal needed significant revision"],answer:"D",exp:"'He' is ambiguous — it could refer to either the manager or the client. D replaces 'he' with 'the manager', removing ambiguity while keeping tense and meaning intact."},
+{id:22,section:"Pronouns",stem:"The prize will be awarded <u>to whomever submits the most innovative solution</u> before the deadline.",options:["to whoever submits the most innovative solution","to whomever who submits the most innovative solution","to whoever that submits the most innovative solution","to whomever that submits the most innovative solution"],answer:"A",exp:"In 'whoever submits', the pronoun is the subject of 'submits' → subject form → 'whoever'. The entire clause functions as the object of 'to'. Only A is correct."},
+{id:23,section:"Pronouns",stem:"The coach objected <u>to him being selected for the national team</u> without undergoing a proper trial.",options:["to he being selected for the national team","to him to be selected for the national team","to his being selected for the national team","to him having been selected for the national team"],answer:"C",exp:"When a pronoun precedes a gerund, it must take the possessive form. The gerund is 'being selected' → possessive → 'his'. Only C uses the correct possessive 'his'."},
+{id:24,section:"Pronouns",stem:"<u>Between you and I</u>, the new policy seems designed to benefit the senior management alone.",options:["Between yourself and I","Between you and me","Among you and me","Between you and myself"],answer:"B",exp:"'Between' is a preposition and requires object pronouns. 'I' is a subject pronoun and is incorrect after a preposition. The correct form is 'me'. Only B correctly uses the object pronoun 'me'."},
+{id:25,section:"Pronouns",stem:"If one wants to succeed in a competitive examination, <u>you must be disciplined and consistent</u>.",options:["one must be disciplined and consistent","they must be disciplined and consistent","he or she must be disciplined and consistent","we must be disciplined and consistent"],answer:"A",exp:"When 'one' is used as an indefinite pronoun, it must be maintained consistently. Switching to 'you' mid-sentence is a shift in person. Only A maintains the required consistency with 'one'."},
+{id:26,section:"Pronouns",stem:"The jury has delivered its verdict, and <u>they have recommended the maximum sentence</u> for the accused.",options:["they recommended the maximum sentence","it recommended the maximum sentence","they have been recommending the maximum sentence","it has recommended the maximum sentence"],answer:"D",exp:"'The jury' has been treated as singular ('has delivered its verdict'). Pronoun consistency requires singular throughout. Only D uses 'it has recommended', maintaining singular consistency."},
+{id:27,section:"Pronouns",stem:"She is the candidate <u>who the selection panel was most impressed by</u> during the final interview.",options:["who the selection panel had been most impressed by","whom the selection panel was most impressed by","by whom the selection panel was most impressed","whom the selection panel was most impressed with"],answer:"B",exp:"The pronoun is the object of the preposition 'by' → object form → 'whom'. B corrects 'who' to 'whom' with no other change — the minimal correct fix."},
+{id:28,section:"Pronouns",stem:"<u>None of the researchers were able</u> to replicate the results despite following the same methodology.",options:["Not one of the researchers were able","None of the researchers have been able","None of the researchers was able","None of the researchers are able"],answer:"C",exp:"'None' meaning 'not one' takes a singular verb in formal written English. 'Were' is plural and incorrect. Only C uses the correct singular past tense 'was'."},
+{id:29,section:"Pronouns",stem:"Anybody <u>who forgets to bring their admit card</u> will not be permitted to enter the examination hall.",options:["who forgets to bring their admit card","who forget to bring their admit card","who forgets to bring his or her admit card","who forgets to bring its admit card"],answer:"A",exp:"'Anybody' takes a singular verb — 'forgets' is correct. 'Their' as a gender-neutral singular pronoun is now standard. The underlined portion is already correct — A repeats it unchanged."},
+{id:30,section:"Pronouns",stem:"The professor praised the intern <u>whom he believed had the greatest potential</u> in the entire cohort.",options:["whom he believed to have the greatest potential","who he believed to have the greatest potential","whom he believed has the greatest potential","who he believed had the greatest potential"],answer:"D",exp:"The pronoun is the subject of 'had the greatest potential', not the object of 'believed'. Since the pronoun functions as a subject → 'who'. Only D gives the correct subject pronoun 'who' without other changes."},
+{id:31,section:"Nouns",stem:"There were <u>less students in the advanced batch this year</u> than in the previous two academic years.",options:["less number of students in the advanced batch this year","a lesser number of students in the advanced batch this year","fewer students in the advanced batch this year","fewer amount of students in the advanced batch this year"],answer:"C",exp:"'Less' is for uncountable nouns; 'fewer' is for countable nouns. 'Students' is countable → 'fewer'. Only C correctly uses 'fewer' directly with 'students'."},
+{id:32,section:"Nouns",stem:"<u>The amount of complaints received</u> during the festival week was unprecedented for the organisation.",options:["The number of complaints received","The amount of complaint received","The number of complaint received","The amounts of complaints received"],answer:"A",exp:"'Amount' is for uncountable nouns; 'number' is for countable nouns. 'Complaints' is countable → 'number of complaints'. Only A correctly pairs 'number' with the countable plural 'complaints'."},
+{id:33,section:"Nouns",stem:"<u>The childrens' drawings</u> were displayed prominently in the school's main corridor last week.",options:["The childrens's drawings","The children's drawings","The children drawings","The children's' drawings"],answer:"B",exp:"'Children' is an irregular plural — it does not end in 's'. The possessive is formed by adding apostrophe + s: 'children's'. Only B is correctly formed."},
+{id:34,section:"Nouns",stem:"<u>A large number of applications has been rejected</u> due to incomplete documentation this cycle.",options:["A large number of application has been rejected","The large number of applications has been rejected","A large number of applications was rejected","A large number of applications have been rejected"],answer:"D",exp:"'A number of' functions as a quantifier meaning 'many' and takes a plural verb. Here 'a number of applications' = many applications → plural → 'have been rejected'. Only D correctly uses the plural 'have been'."},
+{id:35,section:"Nouns",stem:"The committee <u>has submitted their report</u> to the board well ahead of the scheduled deadline.",options:["has submitted its report","have submitted their report","has submitted its reports","had submitted their report"],answer:"A",exp:"'The committee' is treated as singular (confirmed by 'has'). When a collective noun takes a singular verb, the pronoun must also be singular: 'its', not 'their'. Only A maintains singular verb and corrects the pronoun to 'its'."},
+{id:36,section:"Nouns",stem:"<u>The researches conducted by the institute</u> have significantly advanced our understanding of climate change.",options:["The research works conducted by the institute","The pieces of research conducted by the institute","The research conducted by the institute","The researchings conducted by the institute"],answer:"C",exp:"'Research' is an uncountable noun in standard English — 'researches' is non-standard and incorrect. Only C correctly uses the uncountable 'research'."},
+{id:37,section:"Nouns",stem:"If the organisation <u>continues to loose talented employees</u>, it will struggle to remain competitive.",options:["continues to loss talented employees","continues to lose talented employees","continues loosing talented employees","continues to lost talented employees"],answer:"B",exp:"'Loose' is confused with 'lose' (verb meaning 'to fail to retain'). The sentence requires 'lose'. Only B uses the correct verb 'lose'."},
+{id:38,section:"Nouns",stem:"The new taxation policy <u>will likely effect consumer spending patterns</u> across all income groups.",options:["will likely have an effect on consumer spending patterns","will likely effect on consumer spending patterns","will likely affect on consumer spending patterns","will likely affect consumer spending patterns"],answer:"D",exp:"The sentence describes influence on spending, so 'affect' (to have an influence on) is required, not 'effect'. Only D is the minimal correct fix."},
+{id:39,section:"Nouns",stem:"The new model <u>consumes less than ten units</u> of electricity per hour during standard operation.",options:["consumes less than ten units","consumes fewer than ten units","consumes no more than ten units","consumes lesser than ten units"],answer:"A",exp:"'Less than' with numbers and measurements is standard and accepted in formal English. The original is correct — A indicates no change is needed. B is a hypercorrection."},
+{id:40,section:"Nouns",stem:"The doctor <u>adviced her patient to rest</u> for at least two weeks after the surgical procedure.",options:["gave advise to her patient to rest","advice her patient to rest","advised her patient to rest","adviced to her patient to rest"],answer:"C",exp:"'Adviced' is not a word. The correct past tense of 'advise' is 'advised'. Only C correctly uses the past tense verb 'advised'."},
+{id:41,section:"Nouns",stem:"<u>The witness's testimony</u> was corroborated by the forensic evidence presented in court that day.",options:["The witnesses testimony","The witnesses' testimony","The witness' testimony","The witness's testimony"],answer:"D",exp:"For singular nouns ending in 's', 'witness's' (apostrophe + s) is the standard possessive form in Indian English and IPMAT contexts. The original is already correct — D repeats it unchanged."},
+{id:42,section:"Nouns",stem:"<u>My brother-in-laws car</u> was damaged in the hailstorm that swept through the city last evening.",options:["My brother's-in-law car","My brother-in-law's car","My brother-in-laws' car","My brothers-in-law's car"],answer:"B",exp:"For hyphenated compound nouns, the possessive apostrophe is added to the last word: 'brother-in-law's'. Only B is correct."},
+{id:43,section:"Nouns",stem:"<u>The data collected over three decades suggest</u> that global temperatures are rising at an accelerating rate.",options:["The datas collected over three decades suggest","The data collected over three decades suggests","The data collected over three decades suggest","The datum collected over three decades suggest"],answer:"C",exp:"'Data' is technically the Latin plural of 'datum' and in academic and formal written English takes a plural verb: 'data suggest'. The original is already correct — C indicates no change is needed."},
+{id:44,section:"Nouns",stem:"The news about the earthquake and the subsequent relief efforts <u>are extremely disturbing</u> to all.",options:["is extremely disturbing","were extremely disturbing","are extremely disturbed","have been extremely disturbing"],answer:"A",exp:"'News' is an uncountable noun and always takes a singular verb despite ending in 's'. Only A corrects the verb to the singular 'is'."},
+{id:45,section:"Nouns",stem:"She borrowed <u>a novel of her friend</u> to read during the long train journey to the mountains.",options:["a novel of her friends","her friend's a novel","a novel belonging to her friend's","a novel of her friend's"],answer:"D",exp:"The 'double possessive' or 'of-possessive' construction requires both 'of' and the possessive form: 'a novel of her friend's'. Only D uses the correct double possessive."}
+];
+
+function openReviewModal(tableIdx) {
+  var de = deduplicateEntries(entries);
+  var entry = de[tableIdx];
+  if (!entry) return;
+
+  var testNum = entry.test;
+  var studentAnswers = entry.studentAnswers || [];
+  var questions = QUESTION_BANKS[testNum];
+
+  document.getElementById('modalTitle').textContent = 'Test ' + testNum + ' — Full Review';
+  document.getElementById('reviewModal').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+
+  var correct  = entry.correct  || 0;
+  var wrong    = entry.wrong    || 0;
+  var skipped  = entry.skipped  || 0;
+  document.getElementById('modalSub').textContent =
+    'Score: ' + entry.score + ' / ' + (entry.maxMarks || 180) +
+    '  ·  Correct: ' + correct + '  ·  Wrong: ' + wrong + '  ·  Skipped: ' + skipped;
+
+  // No question data available (Tests 1–15)
+  if (!questions || questions.length === 0) {
+    var wq = entry.wrongQuestions || [];
+    var html = '<div style="text-align:center;padding:2rem 1rem;">' +
+      '<div style="font-size:32px;margin-bottom:12px;">📋</div>' +
+      '<div style="font-family:\'Fraunces\',serif;font-size:18px;font-weight:300;color:var(--text2);margin-bottom:8px;">No answer data for this test</div>' +
+      '<div style="font-size:13px;color:var(--text3);line-height:1.6;">Full review is available from Test 16 onwards.<br>For earlier tests, retake to unlock review.</div>';
+    if (wq.length > 0) {
+      html += '<div style="margin-top:1.5rem;text-align:left;">' +
+        '<div style="font-size:11px;color:var(--text3);font-family:\'DM Mono\',monospace;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">Wrong question numbers</div>' +
+        '<div style="display:flex;flex-wrap:wrap;gap:6px;">' +
+        wq.sort(function(a,b){return a-b;}).map(function(n){
+          return '<div style="font-size:12px;font-family:\'DM Mono\',monospace;padding:4px 10px;border-radius:20px;background:var(--bg3);color:var(--text2);border:0.5px solid var(--border);">Q'+n+'</div>';
+        }).join('') + '</div></div>';
+    }
+    html += '</div>';
+    document.getElementById('modalBody').innerHTML = html;
+    return;
+  }
+
+  // No student answers stored (e.g. retaken test 16 before v4 was live)
+  var hasAnswerData = studentAnswers.length > 0;
+
+  var letters = ['A','B','C','D'];
+  var html = questions.map(function(q, i) {
+    var ua = hasAnswerData ? studentAnswers[i] : undefined;
+    var isSkip    = ua === null || ua === undefined;
+    var isCorrect = !isSkip && ua === q.answer;
+    var isWrong   = !isSkip && ua !== q.answer;
+
+    var cls   = isCorrect ? 'correct' : isWrong ? 'wrong' : 'skipped';
+    var badge = isSkip
+      ? '<span class="review-badge badge-skipped">Skipped</span>'
+      : isCorrect
+        ? '<span class="review-badge badge-correct">Correct +4</span>'
+        : '<span class="review-badge badge-wrong">Wrong −1</span>';
+
+    var ansLine = '';
+    if (!hasAnswerData) {
+      ansLine = '<div class="review-ans" style="color:var(--text3);">Answer: ' + q.answer + '. ' + q.options[letters.indexOf(q.answer)] + '</div>';
+    } else if (isSkip) {
+      ansLine = '<div class="review-ans" style="color:var(--text3);">Not attempted · Correct: ' + q.answer + '. ' + q.options[letters.indexOf(q.answer)] + '</div>';
+    } else if (isCorrect) {
+      ansLine = '<div class="review-ans" style="color:var(--green);">Your answer: ' + ua + '. ' + q.options[letters.indexOf(ua)] + ' ✓</div>';
+    } else {
+      ansLine = '<div class="review-ans" style="color:var(--red);">Your answer: ' + ua + '. ' + q.options[letters.indexOf(ua)] + ' ✗</div>' +
+        '<div class="review-ans" style="color:var(--text2);margin-top:2px;">Correct: ' + q.answer + '. ' + q.options[letters.indexOf(q.answer)] + '</div>';
+    }
+
+    return '<div class="review-q ' + cls + '">' +
+      '<div class="review-q-top">' +
+        '<span class="review-q-label">Q' + (i+1) + ' · ' + q.section + '</span>' +
+        badge +
+      '</div>' +
+      '<div class="review-stem">' + q.stem + '</div>' +
+      ansLine +
+      (q.exp ? '<div class="review-exp">💡 ' + q.exp + '</div>' : '') +
+    '</div>';
+  }).join('');
+
+  document.getElementById('modalBody').innerHTML = html;
+}
+
+function closeReviewModal(e) {
+  if (e && e.target !== document.getElementById('reviewModal')) return;
+  document.getElementById('reviewModal').style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeReviewModal();
+});
+</script>
+</body>
+</html>
