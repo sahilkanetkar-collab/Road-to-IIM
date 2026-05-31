@@ -98,10 +98,25 @@ function parseTestNum(filename) {
   return m ? parseInt(m[1]) : null;
 }
 
+// Per-test tags: update this whenever a new test is added
+var TEST_TAGS = {
+  9:  ['FITB', 'Analogy', 'OWS'],
+  10: ['FITB', 'Analogy', 'OWS'],
+  11: ['Word Selection', 'Vocabulary', 'Idiom'],
+  12: ['Word Selection', 'Vocabulary', 'Idiom'],
+  13: ['Word Selection', 'Vocabulary', 'Sentence Completion'],
+  14: ['Vocabulary', 'Idiom', 'Spelling'],
+  15: ['Vocabulary', 'Idiom', 'Sentence Completion'],
+  16: ['SVA', 'Pronouns', 'Nouns'],
+};
+
 function buildCard(file) {
   var num = parseTestNum(file.name);
   if (!num) return null;
   var label = num < 10 ? '0' + num : '' + num;
+  var tags = TEST_TAGS[num] || ['Verbal Ability'];
+  var tagHtml = '<span class="tag live">Live</span>' +
+    tags.map(function(t){ return '<span class="tag">' + t + '</span>'; }).join('');
   var a = document.createElement('a');
   a.href = file.name;
   a.className = 'test-card';
@@ -109,12 +124,7 @@ function buildCard(file) {
     '<div class="test-num">TEST ' + label + '</div>' +
     '<div class="test-title">Verbal Ability</div>' +
     '<div class="test-meta">45 Qs &middot; 40 min &middot; +4 / &minus;1</div>' +
-    '<div class="test-tags">' +
-      '<span class="tag live">Live</span>' +
-      '<span class="tag">FITB</span>' +
-      '<span class="tag">Analogy</span>' +
-      '<span class="tag">OWS</span>' +
-    '</div>' +
+    '<div class="test-tags">' + tagHtml + '</div>' +
     '<div class="test-arrow">&#8599;</div>';
   return {num: num, el: a};
 }
@@ -143,8 +153,8 @@ fetch(API)
     var grid = document.getElementById('testGrid');
     grid.innerHTML =
       '<a href="RoadToIIM_Test9_OnlineTest.html" class="test-card"><div class="test-num">TEST 09</div><div class="test-title">Verbal Ability</div><div class="test-meta">45 Qs &middot; 40 min &middot; +4 / &minus;1</div><div class="test-tags"><span class="tag live">Live</span><span class="tag">FITB</span><span class="tag">Analogy</span><span class="tag">OWS</span></div><div class="test-arrow">&#8599;</div></a>' +
-      '<a href="RoadToIIM_Test11_OnlineTest.html" class="test-card"><div class="test-num">TEST 11</div><div class="test-title">Verbal Ability</div><div class="test-meta">45 Qs &middot; 40 min &middot; +4 / &minus;1</div><div class="test-tags"><span class="tag live">Live</span><span class="tag">FITB</span><span class="tag">Analogy</span><span class="tag">OWS</span></div><div class="test-arrow">&#8599;</div></a>' +
-      '<a href="RoadToIIM_Test12_OnlineTest.html" class="test-card"><div class="test-num">TEST 12</div><div class="test-title">Verbal Ability</div><div class="test-meta">45 Qs &middot; 40 min &middot; +4 / &minus;1</div><div class="test-tags"><span class="tag live">Live</span><span class="tag">FITB</span><span class="tag">Analogy</span><span class="tag">OWS</span></div><div class="test-arrow">&#8599;</div></a>';
+      '<a href="RoadToIIM_Test11_OnlineTest.html" class="test-card"><div class="test-num">TEST 11</div><div class="test-title">Verbal Ability</div><div class="test-meta">45 Qs &middot; 40 min &middot; +4 / &minus;1</div><div class="test-tags"><span class="tag live">Live</span><span class="tag">Word Selection</span><span class="tag">Vocabulary</span><span class="tag">Idiom</span></div><div class="test-arrow">&#8599;</div></a>' +
+      '<a href="RoadToIIM_Test12_OnlineTest.html" class="test-card"><div class="test-num">TEST 12</div><div class="test-title">Verbal Ability</div><div class="test-meta">45 Qs &middot; 40 min &middot; +4 / &minus;1</div><div class="test-tags"><span class="tag live">Live</span><span class="tag">Word Selection</span><span class="tag">Vocabulary</span><span class="tag">Idiom</span></div><div class="test-arrow">&#8599;</div></a>';
   });
 </script>
 </body>
