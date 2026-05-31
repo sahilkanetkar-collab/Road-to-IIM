@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Road to IIM — Verbal Ability Test 16</title>
+<style>
+  * {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+  :root {
+    --gold: #c9a84c;
+    --gold-light: #e8c97a;
+    --dark: #0f0f1a;
+    --dark2: #16172a;
+    --dark3: #1e2038;
+    --dark4: #252845;
+    --text: #e8e8f0;
+    --text2: #a0a0c0;
+    --green: #3dba7a;
+    --red: #e05555;
+    --blue: #4a90d9;
+    --purple: #9b59b6;
+    --border: rgba(201,168,76,0.25);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--dark); color: var(--text); font-family: 'Segoe UI', Arial, sans-serif; min-height: 100vh; }
+
+  /* LOGIN */
+  #loginScreen {
+    display: flex; align-items: center; justify-content: center;
+    min-height: 100vh; background: radial-gradient(ellipse at center, #1a1b30 0%, #0f0f1a 70%);
+  }
+  .login-box {
+    background: var(--dark2); border: 1px solid var(--border);
+    border-radius: 16px; padding: 44px 40px; width: 420px; max-width: 95vw;
+    box-shadow: 0 8px 48px rgba(0,0,0,0.6);
+  }
+  .login-logo { text-align: center; margin-bottom: 28px; }
+  .login-logo .brand { font-size: 16px; font-weight: 800; color: var(--gold); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 6px; }
+  .login-logo h1 { font-size: 26px; font-weight: 700; color: var(--text); }
+  .login-logo .sub { font-size: 13px; color: var(--text2); margin-top: 4px; }
+  .test-meta { background: var(--dark3); border-radius: 10px; padding: 14px 18px; margin-bottom: 24px; display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
+  .meta-item { text-align: center; }
+  .meta-val { font-size: 20px; font-weight: 700; color: var(--gold); }
+  .meta-label { font-size: 11px; color: var(--text2); text-transform: uppercase; letter-spacing: 1px; }
+  .form-group { margin-bottom: 16px; }
+  .form-group label { display: block; font-size: 12px; color: var(--text2); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+  .form-group input, .form-group select { width: 100%; background: var(--dark3); border: 1px solid var(--border); border-radius: 8px; padding: 11px 14px; color: var(--text); font-size: 15px; outline: none; transition: border-color 0.2s; }
+  .form-group input:focus, .form-group select:focus { border-color: var(--gold); }
+  .form-group select option { background: var(--dark3); }
+  .btn-start { width: 100%; padding: 14px; background: linear-gradient(135deg, #b8922a, var(--gold)); border: none; border-radius: 10px; font-size: 16px; font-weight: 700; color: #0f0f1a; cursor: pointer; letter-spacing: 1px; transition: opacity 0.2s; margin-top: 8px; }
+  .btn-start:hover { opacity: 0.88; }
+  .marking { text-align: center; font-size: 12px; color: var(--text2); margin-top: 14px; }
+  .marking span { color: var(--green); font-weight: 600; }
+  .marking span.neg { color: var(--red); }
+
+  /* TEST SCREEN */
+  #testScreen { display: none; }
+  .test-header {
+    background: var(--dark2); border-bottom: 1px solid var(--border);
+    padding: 10px 20px; display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .header-brand { font-size: 14px; font-weight: 700; color: var(--gold); letter-spacing: 1px; }
+  .header-student { font-size: 13px; color: var(--text2); }
+  .header-student span { color: var(--text); font-weight: 600; }
+  .timer-box {
+    background: var(--dark3); border: 2px solid var(--gold);
+    border-radius: 10px; padding: 6px 18px; text-align: center;
+  }
+  .timer-label { font-size: 10px; color: var(--text2); text-transform: uppercase; letter-spacing: 1px; }
+  .timer-val { font-size: 22px; font-weight: 700; color: var(--gold); font-variant-numeric: tabular-nums; }
+  .timer-box.urgent { border-color: var(--red); }
+  .timer-box.urgent .timer-val { color: var(--red); }
+  .test-body { display: flex; height: calc(100vh - 57px); }
+  .question-panel { flex: 1; overflow-y: auto; padding: 24px 28px; }
+  .section-label {
+    display: inline-block; background: var(--dark3); border: 1px solid var(--border);
+    border-radius: 20px; padding: 4px 14px; font-size: 11px; color: var(--gold);
+    text-transform: uppercase; letter-spacing: 1px; margin-bottom: 14px;
+  }
+  .q-card { background: var(--dark2); border: 1px solid var(--border); border-radius: 14px; padding: 24px; margin-bottom: 6px; }
+  .q-number { font-size: 11px; color: var(--text2); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; }
+  .q-instr { font-size: 13px; color: var(--text2); font-style: italic; margin-bottom: 14px; line-height: 1.6; }
+  .q-stem { font-size: 16px; line-height: 1.8; color: var(--text); margin-bottom: 8px; }
+  .q-stem u { color: var(--gold-light); text-decoration-color: var(--gold); }
+  .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
+  .opt-btn {
+    background: var(--dark3); border: 1.5px solid rgba(255,255,255,0.1);
+    border-radius: 10px; padding: 12px 16px; cursor: pointer; text-align: left;
+    font-size: 14px; color: var(--text); transition: all 0.15s; line-height: 1.5;
+    display: flex; gap: 10px; align-items: flex-start;
+  }
+  .opt-btn:hover { border-color: var(--gold); background: rgba(201,168,76,0.08); }
+  .opt-btn.selected { border-color: var(--blue); background: rgba(74,144,217,0.15); color: #fff; }
+  .opt-btn.selected .opt-label { color: var(--blue); }
+  .opt-label { font-weight: 700; color: var(--text2); min-width: 18px; }
+  .q-actions { display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
+  .btn { padding: 10px 20px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: opacity 0.15s; }
+  .btn:hover { opacity: 0.85; }
+  .btn-prev { background: var(--dark4); color: var(--text2); border: 1px solid var(--border); }
+  .btn-next { background: linear-gradient(135deg, #b8922a, var(--gold)); color: #0f0f1a; }
+  .btn-clear { background: var(--dark4); color: var(--red); border: 1px solid rgba(224,85,85,0.3); }
+  .btn-submit { background: var(--green); color: #fff; margin-left: auto; }
+  .palette-panel {
+    width: 240px; background: var(--dark2); border-left: 1px solid var(--border);
+    overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 14px;
+  }
+  .palette-title { font-size: 12px; color: var(--text2); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+  .palette-legend { display: flex; flex-direction: column; gap: 6px; }
+  .leg { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text2); }
+  .leg-dot { width: 14px; height: 14px; border-radius: 3px; flex-shrink: 0; }
+  .ld-unattempted { background: var(--dark4); border: 1px solid rgba(255,255,255,0.15); }
+  .ld-answered { background: var(--green); }
+  .ld-current { background: var(--gold); }
+  .palette-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+  .pal-btn {
+    aspect-ratio: 1; border-radius: 6px; border: none; cursor: pointer;
+    font-size: 12px; font-weight: 700; color: var(--text);
+    background: var(--dark4); border: 1px solid rgba(255,255,255,0.1); transition: all 0.1s;
+  }
+  .pal-btn.answered { background: var(--green); color: #fff; border-color: var(--green); }
+  .pal-btn.current { background: var(--gold); color: #0f0f1a; border-color: var(--gold); }
+  .progress-bar-wrap { background: var(--dark4); border-radius: 6px; height: 8px; overflow: hidden; }
+  .progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--gold), var(--green)); border-radius: 6px; transition: width 0.3s; }
+  .progress-text { font-size: 12px; color: var(--text2); margin-top: 6px; }
+
+  /* RESULTS */
+  #resultsScreen { display: none; min-height: 100vh; background: var(--dark); padding: 40px 20px; }
+  #retryScreen { display: none; min-height: 100vh; background: var(--dark); padding: 40px 20px; }
+  .retry-result-box { background: var(--dark2); border: 1px solid var(--border); border-radius: 16px; padding: 24px; text-align: center; margin-bottom: 24px; max-width: 680px; margin-left: auto; margin-right: auto; }
+  .retry-score-label { font-size: 13px; color: var(--text2); margin-bottom: 8px; }
+  .retry-stats { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 16px; }
+  .retry-stat { background: var(--dark3); border-radius: 10px; padding: 10px 18px; text-align: center; }
+  .retry-stat-val { font-size: 22px; font-weight: 700; }
+  .retry-stat-label { font-size: 11px; color: var(--text2); text-transform: uppercase; letter-spacing: 1px; margin-top: 2px; }
+
+  @media (max-width: 700px) {
+    .test-body { flex-direction: column; height: auto; }
+    .palette-panel { width: 100%; border-left: none; border-top: 1px solid var(--border); }
+    .options-grid { grid-template-columns: 1fr; }
+    .question-panel { padding: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="brand">Road to IIM</div>
+      <h1>Verbal Ability Test 16</h1>
+      <div class="sub">Grammar — SVA · Pronouns · Nouns</div>
+    </div>
+    <div class="test-meta">
+      <div class="meta-item"><div class="meta-val">45</div><div class="meta-label">Questions</div></div>
+      <div class="meta-item"><div class="meta-val">30</div><div class="meta-label">Minutes</div></div>
+      <div class="meta-item"><div class="meta-val">180</div><div class="meta-label">Max Marks</div></div>
+    </div>
+    <div class="form-group">
+      <label>Full Name</label>
+      <input type="text" id="inputName" placeholder="Enter your full name" />
+    </div>
+    <div class="form-group">
+      <label>IMS PIN</label>
+      <input type="text" id="inputPin" placeholder="Enter your IMS PIN" />
+    </div>
+    <div class="form-group">
+      <label>Batch Number</label>
+      <select id="inputBatch">
+        <option value="">— Select your batch —</option>
+        <optgroup label="Classroom">
+          <option>A2701</option><option>A2702</option><option>A2703</option><option>A2704</option><option>A2705</option>
+          <option>A2706</option><option>A2707</option><option>A2708</option><option>A2709</option><option>A2710</option>
+          <option>A2711</option><option>A2712</option>
+        </optgroup>
+        <optgroup label="School">
+          <option>Zebar</option>
+        </optgroup>
+        <optgroup label="Online">
+          <option>27E101</option><option>27E102</option><option>27E103</option><option>27E104</option><option>27E105</option>
+        </optgroup>
+        <optgroup label="Admin">
+          <option>Admin</option>
+        </optgroup>
+      </select>
+    </div>
+    <button class="btn-start" onclick="startTest()">Start Test &rarr;</button>
+    <div class="marking">Marking: <span>+4</span> correct &nbsp;|&nbsp; <span class="neg">&minus;1</span> wrong &nbsp;|&nbsp; 0 skipped</div>
+  </div>
+</div>
+
+<!-- TEST SCREEN -->
+<div id="testScreen">
+  <div class="test-header">
+    <div class="header-brand">ROAD TO IIM &middot; TEST 16</div>
+    <div class="header-student">Student: <span id="dispName">&mdash;</span> &nbsp;|&nbsp; PIN: <span id="dispPin">&mdash;</span> &nbsp;|&nbsp; Batch: <span id="dispBatch">&mdash;</span></div>
+    <div class="timer-box" id="timerBox">
+      <div class="timer-label">Time Left</div>
+      <div class="timer-val" id="timerVal">30:00</div>
+    </div>
+  </div>
+  <div class="test-body">
+    <div class="question-panel" id="questionPanel"></div>
+    <div class="palette-panel">
+      <div class="palette-title">Question Palette</div>
+      <div class="palette-legend">
+        <div class="leg"><div class="leg-dot ld-answered"></div>Answered</div>
+        <div class="leg"><div class="leg-dot ld-current"></div>Current</div>
+        <div class="leg"><div class="leg-dot ld-unattempted"></div>Not Visited</div>
+      </div>
+      <div class="palette-grid" id="paletteGrid"></div>
+      <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progressFill" style="width:0%"></div></div>
+      <div class="progress-text" id="progressText">0 / 45 answered</div>
+    </div>
+  </div>
+</div>
+
+<!-- RESULTS SCREEN -->
+<div id="resultsScreen" style="display:none;padding:1.5rem;">
+  <div style="max-width:680px;margin:0 auto;">
+    <div style="text-align:center;background:linear-gradient(135deg,#1a1a2e,#16213e);border-radius:20px;padding:2rem 1.5rem 1.5rem;margin-bottom:1.25rem;">
+      <div style="font-size:11px;letter-spacing:3px;color:var(--gold);text-transform:uppercase;margin-bottom:6px;">Road to IIM</div>
+      <div style="font-size:11px;color:var(--text2);margin-bottom:16px;">Test Complete &mdash; Paper 16 &middot; Grammar</div>
+      <div id="r-score" style="font-size:64px;font-weight:800;color:var(--gold);line-height:1;">0</div>
+      <div style="font-size:13px;color:var(--text2);margin-bottom:12px;">out of 180 marks</div>
+      <div id="r-name" style="font-size:14px;font-weight:600;margin-bottom:4px;"></div>
+      <div id="r-batch" style="font-size:13px;color:var(--text2);margin-bottom:1.25rem;"></div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+        <a href="road_to_iim_tracker_v2.html" style="background:#c9a84c;color:#0f0e0c;padding:11px 22px;border-radius:10px;font-size:14px;font-weight:700;text-decoration:none;">Go to tracker &rarr;</a>
+        <a href="https://sahilkanetkar-collab.github.io/Road-to-IIM/" style="background:transparent;color:#fff;padding:11px 22px;border-radius:10px;font-size:14px;font-weight:700;text-decoration:none;border:1.5px solid rgba(255,255,255,0.2);">All tests</a>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1.25rem;">
+      <div style="background:var(--dark3);border-radius:12px;padding:1rem;text-align:center;">
+        <div id="r-correct" style="font-size:28px;font-weight:700;color:#3dba7a;">0</div>
+        <div style="font-size:12px;color:var(--text2);">Correct</div>
+      </div>
+      <div style="background:var(--dark3);border-radius:12px;padding:1rem;text-align:center;">
+        <div id="r-wrong" style="font-size:28px;font-weight:700;color:#e05555;">0</div>
+        <div style="font-size:12px;color:var(--text2);">Wrong</div>
+      </div>
+      <div style="background:var(--dark3);border-radius:12px;padding:1rem;text-align:center;">
+        <div id="r-skip" style="font-size:28px;font-weight:700;color:var(--text2);">0</div>
+        <div style="font-size:12px;color:var(--text2);">Skipped</div>
+      </div>
+    </div>
+    <div id="sheet-notice" style="border-radius:10px;padding:10px 14px;font-size:13px;margin-bottom:1.25rem;text-align:center;display:none;"></div>
+    <div id="retry-section" style="display:none;background:var(--dark2);border-radius:16px;padding:1.25rem;border:0.5px solid var(--border);margin-bottom:1.25rem;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem;">
+        <div>
+          <div style="font-size:15px;font-weight:700;">Retry Wrong Questions</div>
+          <div id="retry-count-label" style="font-size:12px;color:var(--text2);margin-top:3px;"></div>
+        </div>
+        <button onclick="startRetry()" style="background:linear-gradient(135deg,#b8922a,var(--gold));color:#0f0f1a;border:none;border-radius:8px;padding:9px 18px;font-size:13px;font-weight:700;cursor:pointer;">Start Retry &rarr;</button>
+      </div>
+    </div>
+    <div id="vocab-section" style="display:none;background:var(--dark2);border-radius:16px;padding:1.25rem;border:0.5px solid var(--border);margin-bottom:1.25rem;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem;">
+        <div style="font-size:15px;font-weight:700;">Grammar Misses &mdash; Copy &amp; Review</div>
+        <button onclick="copyVocabList()" id="copy-btn" style="background:var(--dark4);color:var(--gold);border:1px solid var(--border);border-radius:8px;padding:7px 14px;font-size:13px;font-weight:600;cursor:pointer;">Copy</button>
+      </div>
+      <div style="font-size:12px;color:var(--text2);margin-bottom:10px;">Questions you got wrong &mdash; paste into notes or WhatsApp for later review.</div>
+      <textarea id="vocab-text" readonly style="width:100%;background:var(--dark3);border:1px solid var(--border);border-radius:8px;padding:12px;color:var(--text);font-size:12px;line-height:1.7;font-family:monospace;resize:vertical;min-height:140px;outline:none;"></textarea>
+    </div>
+    <div style="background:var(--dark3);border-radius:16px;padding:1.25rem;border:0.5px solid var(--border);">
+      <h3 style="font-size:15px;font-weight:700;margin-bottom:1rem;">Question Review</h3>
+      <div id="review-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- RETRY SCREEN -->
+<div id="retryScreen">
+  <div style="background:var(--dark2);border-bottom:1px solid var(--border);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;">
+    <div style="font-size:14px;font-weight:700;color:var(--gold);letter-spacing:1px;">ROAD TO IIM &middot; TEST 16 &mdash; RETRY</div>
+    <div id="retry-progress-label" style="font-size:13px;color:var(--text2);"></div>
+    <button onclick="exitRetry()" style="background:var(--dark4);color:var(--text2);border:1px solid var(--border);border-radius:8px;padding:6px 14px;font-size:13px;cursor:pointer;">Exit Retry</button>
+  </div>
+  <div style="max-width:680px;margin:0 auto;padding:24px 20px;">
+    <div id="retry-question-area"></div>
+    <div id="retry-result-area" style="display:none;">
+      <div class="retry-result-box">
+        <div class="retry-score-label">Retry Complete</div>
+        <div style="font-size:13px;color:var(--text2);margin-bottom:12px;">Right / Wrong feedback only &mdash; not added to your score.</div>
+        <div class="retry-stats">
+          <div class="retry-stat"><div class="retry-stat-val" id="retry-right" style="color:var(--green);">0</div><div class="retry-stat-label">Correct</div></div>
+          <div class="retry-stat"><div class="retry-stat-val" id="retry-wrong-count" style="color:var(--red);">0</div><div class="retry-stat-label">Wrong</div></div>
+          <div class="retry-stat"><div class="retry-stat-val" id="retry-skip-count" style="color:var(--text2);">0</div><div class="retry-stat-label">Skipped</div></div>
+        </div>
+        <button onclick="exitRetry()" style="margin-top:20px;background:linear-gradient(135deg,#b8922a,var(--gold));color:#0f0f1a;border:none;border-radius:8px;padding:10px 24px;font-size:14px;font-weight:700;cursor:pointer;">Back to Results</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const QUESTIONS = [
+
+// ══════════════════════════════════════════
+// SVA — Q1 to Q15
+// ══════════════════════════════════════════
+
+{id:1,section:"SVA",type:"error-id",
+instr:"The underlined part of the sentence contains an error. Choose the option that best corrects it.",
+stem:"The committee, together with its advisors, <u>have decided to postpone the annual general meeting</u> indefinitely.",
+options:["have decided to postpone the annual general meeting until further notice","have decided to indefinitely postpone the annual general meeting","has decided to postpone the annual general meeting indefinitely","has been deciding to postpone the annual general meeting indefinitely"],
+answer:"C",
+exp:"'Together with' is a parenthetical phrase — it does not alter the grammatical subject. The subject is 'the committee' (singular) → singular verb 'has decided'. A and B retain the incorrect plural 'have'. D uses the progressive form 'has been deciding', which is unnatural with a formal resolution. Only C corrects the verb to singular without any other change."},
+
+{id:2,section:"SVA",type:"error-id",
+instr:"The underlined part of the sentence contains an error. Choose the option that best corrects it.",
+stem:"Neither the principal nor the vice-principal <u>were present</u> when the inspection team arrived unannounced.",
+options:["was present when the inspection teams arrived unannounced","was present when the inspection team arrived unannounced","were present as the inspection team arrived unannounced","were to be present when the inspection team arrived unannounced"],
+answer:"B",
+exp:"With 'neither...nor', the verb agrees with the subject closest to it — the proximity rule. The nearer subject is 'the vice-principal' (singular) → singular verb 'was'. A uses the correct verb but incorrectly pluralises 'teams'. C and D retain the incorrect plural 'were'. Only B corrects the verb to 'was' with no other change."},
+
+{id:3,section:"SVA",type:"error-id",
+instr:"The underlined part of the sentence contains an error. Choose the option that best corrects it.",
+stem:"The quality of the arguments put forward by both candidates <u>were found wanting</u> by the panel of judges.",
+options:["was found wanting by the panel of judges","were found to be wanting by the panel of judges","have been found wanting by the panel of judges","was found to be wanting by a panel of judges"],
+answer:"A",
+exp:"The subject of the sentence is 'the quality' (singular) — the intervening phrase 'of the arguments put forward by both candidates' does not alter it. 'Were' (plural) is therefore incorrect; the verb must be singular. B and C retain the plural. D uses the correct singular 'was' but introduces 'a panel', changing meaning. Only A gives the minimal correction: 'was found wanting'."},
+
+{id:4,section:"SVA",type:"rule-reversal",
+instr:"Choose the option that best replaces the underlined portion. Select option A if no correction is needed.",
+stem:"The data collected from all three sites <u>suggest that the contamination occurred well before the monsoon</u>.",
+options:["suggest that the contamination occurred well before the monsoon","suggests that the contamination occurred well before the monsoon","suggested that the contamination occurs well before the monsoon","has suggested that the contamination occurred well before the monsoon"],
+answer:"A",
+exp:"'Data' is the Latin plural of 'datum'. In formal academic English, 'data' takes a plural verb: 'data suggest'. This is the standard expected in examination contexts. The underlined portion is already correct — A indicates no correction is needed. B singularises the verb, which is incorrect in formal usage. C changes tense inconsistently. D uses a singular present perfect, which is wrong. Only A is correct."},
+
+{id:5,section:"SVA",type:"sentence-completion",
+instr:"Choose the option that correctly fills the blank in the sentence below.",
+stem:"Each of the thirty applicants who submitted a portfolio before the deadline ________ notified of the panel's decision within a week.",
+options:["were","was","have been","are"],
+answer:"B",
+exp:"'Each' is an indefinite pronoun that always takes a singular verb in formal academic English, regardless of the noun that follows 'of'. 'Each of the applicants' → singular → 'was notified'. A uses plural 'were'. C uses present perfect plural. D uses present tense plural. Only B is correct."},
+
+{id:6,section:"SVA",type:"error-id",
+instr:"The underlined part of the sentence contains an error. Choose the option that best corrects it.",
+stem:"More than one candidate <u>have been shortlisted</u> for the final round of the scholarship examination.",
+options:["have been shortlisted for the final rounds of the scholarship examination","have been shortlisted in the final round of the scholarship examination","has been shortlisted for the final round of the scholarship examination","has been shortlisting for the final round of the scholarship examination"],
+answer:"C",
+exp:"'More than one' is a fixed expression that takes a singular verb in formal English, despite the implied plurality. 'More than one candidate has been shortlisted' — the singular 'has' is required. A and B retain the incorrect plural 'have'. D uses the active form 'has been shortlisting', which changes meaning. Only C correctly uses the singular passive 'has been shortlisted'."},
+
+{id:7,section:"SVA",type:"rule-reversal",
+instr:"Choose the option that best replaces the underlined portion. Select option D if no correction is needed.",
+stem:"Ten kilometres <u>is a considerable distance</u> to cover on foot without adequate preparation and rest stops.",
+options:["are a considerable distance to cover on foot without adequate preparation","are considerable distances to cover on foot without adequate preparation","is considerable distances to cover on foot without adequate preparation","is a considerable distance to cover on foot without adequate preparation"],
+answer:"D",
+exp:"When a distance, sum, or measurement is treated as a single unit or quantity, it takes a singular verb in formal English. 'Ten kilometres' here refers to one stretch of distance — a single unit — and therefore takes 'is'. This is correct as written. A and B use the incorrect plural 'are'. C uses 'is' correctly but incorrectly pluralises 'distance'. D repeats the original correctly, indicating no change is needed."},
+
+{id:8,section:"SVA",type:"impostor",
+instr:"Three of the following four sentences are grammatically correct. Identify the sentence that contains an error.",
+stem:"",
+options:["A number of complaints have been filed against the contractor this quarter.","The number of complaints filed this quarter has surprised the oversight board.","Neither of the two solutions proposed by the team are acceptable to the client.","Every member of the subcommittee was asked to submit a written report."],
+answer:"C",
+exp:"A is correct: 'a number of' is a quantifier meaning 'many' → plural verb 'have'. B is correct: 'the number of' refers to the count itself → singular verb 'has'. D is correct: 'every member' → singular → 'was'. C is the impostor: 'neither of' takes a singular verb in formal academic English — 'neither of the two solutions is acceptable'. 'Are' is plural and incorrect."},
+
+{id:9,section:"SVA",type:"two-blank",
+instr:"Choose the option that correctly fills both blanks in the sentence below.",
+stem:"The jury, which ________ been deliberating for three days, ________ yet to reach a unanimous verdict.",
+options:["has / is","have / are","has / are","have / is"],
+answer:"A",
+exp:"'The jury' is a collective noun treated as a singular unit throughout the sentence — confirmed by the use of 'which' (not 'who') and singular context. Both blanks must therefore use singular verbs: 'has been deliberating' and 'is yet to reach'. B uses both plural forms. C and D mix singular and plural inconsistently. Only A correctly uses singular 'has' and singular 'is' throughout."},
+
+{id:10,section:"SVA",type:"error-id",
+instr:"The underlined part of the sentence contains an error. Choose the option that best corrects it.",
+stem:"She is one of those researchers <u>who has consistently challenged</u> the conventional understanding of memory formation.",
+options:["who have consistently challenged the conventional understanding of memory formation","who trained consistently challenged the conventional understanding of memory formation","who have consistently been challenging the conventional understanding of memory","who had consistently challenged the conventional understanding of memory formation"],
+answer:"A",
+exp:"In the construction 'one of those who', the relative pronoun 'who' refers to 'those researchers' (plural) — not to 'one'. The verb in the relative clause must therefore be plural: 'who have consistently challenged'. 'Has' (singular) is incorrect here. B is grammatically malformed. C changes the verb form unnecessarily. D shifts to past perfect without justification. Only A provides the correct plural verb 'have'."},
+
+{id:11,section:"SVA",type:"sentence-completion",
+instr:"Choose the option that correctly fills the blank in the sentence below.",
+stem:"The findings of the three-year longitudinal study ________ been submitted to the ethics committee for review.",
+options:["has","was","have","is"],
+answer:"C",
+exp:"The subject is 'the findings' — a plural noun. 'The findings have been submitted' is the correct construction. A uses the singular 'has', which does not agree with the plural 'findings'. B uses the singular past tense 'was'. D uses the singular present 'is'. Only C gives the correct plural auxiliary 'have'."},
+
+{id:12,section:"SVA",type:"error-id",
+instr:"The underlined part of the sentence contains an error. Choose the option that best corrects it.",
+stem:"The list of items to be purchased for the school laboratory and the sports department <u>have been approved</u>.",
+options:["were approved","are approved","have been approved and sanctioned","has been approved"],
+answer:"D",
+exp:"The subject of this sentence is 'the list' — a singular noun. The long phrase 'of items to be purchased for the school laboratory and the sports department' is a modifier, not a second subject. 'List' → singular → 'has been approved'. A uses plural simple past. B uses plural present. C retains the plural 'have' and adds 'sanctioned' unnecessarily. Only D gives the correct singular 'has been approved'."},
+
+{id:13,section:"SVA",type:"no-error",
+instr:"Choose the option that best replaces the underlined portion. Select option C if no correction is needed.",
+stem:"The news of the two candidates' disqualification <u>has shocked the entire student council and the faculty board</u>.",
+options:["have shocked the entire student council and the faculty board","have shocked both the student council as well as the faculty board","has shocked the entire student council and the faculty board","has been shocking the entire student council and the faculty board"],
+answer:"C",
+exp:"'News' is an uncountable noun that always takes a singular verb in English, despite appearing to end in a plural 's'. 'News has shocked' is therefore correct as written. A and B incorrectly use the plural 'have'. D uses the progressive 'has been shocking', which is unnatural with a stative reaction. The original is correct — C indicates no change is needed."},
+
+{id:14,section:"SVA",type:"impostor",
+instr:"Three of the following four sentences are grammatically correct. Identify the sentence that contains an error.",
+stem:"",
+options:["A number of delegates have raised objections to the revised agenda circulated this morning.","The number of unresolved cases has prompted the board to convene an emergency session.","Not one of the submitted proposals was found to meet the minimum eligibility criteria.","The team of engineers have completed the structural assessment well ahead of schedule."],
+answer:"D",
+exp:"A is correct: 'a number of' → quantifier meaning 'many' → plural verb 'have raised'. B is correct: 'the number of' → singular subject → 'has prompted'. C is correct: 'not one of' → singular → 'was found'. D is the impostor: 'the team' is a collective noun used as a single unit → singular verb 'has completed', not 'have completed'. The plural 'have' is inconsistent with treating the team as a unified entity."},
+
+{id:15,section:"SVA",type:"rule-reversal",
+instr:"Choose the option that best replaces the underlined portion. Select option A if no correction is needed.",
+stem:"None of the evidence presented during the three-day hearing <u>was sufficient to support the prosecution's case</u>.",
+options:["was sufficient to support the prosecution's case","were sufficient to support the prosecution's case","have been sufficient to support the prosecution's case","are sufficient to support the prosecution's case"],
+answer:"A",
+exp:"'None' meaning 'not one' — when used with an uncountable or singular noun like 'evidence' — takes a singular verb in formal academic English. 'None of the evidence was sufficient' is correct. Students often assume 'none' must always take a plural verb; this is a common overcorrection. B, C, and D all use plural forms incorrectly. The original is correct — A indicates no change is needed."},
+
+// ══════════════════════════════════════════
+// PRONOUNS — Q16 to Q30
+// ══════════════════════════════════════════
+
+{id:16,section:"Pronouns",type:"error-id",
+instr:"The underlined part of the sentence contains an error. Choose the option that best corrects it.",
+stem:"<u>Between you and I</u>, the revised proposal stands a far stronger chance of approval than the original.",
+options:["Between yourself and me","Between you and me","Among you and me","Between you and myself"],
+answer:"B",
+exp:"'Between' is a preposition and must be followed by object pronouns. 'I' is a subject pronoun and is grammatically incorrect after a preposition. The correct form is 'me': 'between you and me'. A uses the reflexive 'yourself' without prior reference. C uses 'among', which applies to more than two people or things. D uses the reflexive 'myself' without a prior 'I' or 'me' to refer back to. Only B correctly supplies the object pronoun 'me'."},
+
+{id:17,section:"Pronouns",type:"no-error",
+instr:"Choose the option that best replaces the underlined portion. Select option D if no correction is needed.",
+stem:"The professor praised the intern <u>who she believed had demonstrated the greatest analytical ability</u> in the cohort.",
+options:["whom she believed had demonstrated the greatest analytical ability","who she believed to have demonstrated the greatest analytical ability","whom she believed to have demonstrated the greatest analytical ability","who she believed had demonstrated the greatest analytical ability"],
+answer:"D",
+exp:"The pronoun functions as the subject of the relative clause verb 'had demonstrated' — not as the object of 'believed'. The object of 'believed' is the entire embedded clause 'who had demonstrated the greatest analytical ability'. Since the pronoun is a subject within its own clause, the subject form 'who' is correct. A and C use 'whom', which is incorrect here. B changes the verb to the infinitive, altering meaning. The original is correct — D indicates no change is needed."},
+
+{id:18,section:"Pronouns",type:"sentence-completion",
+instr:"Choose the option that correctly fills the blank in the sentence below.",
+stem:"The prize will be awarded to ________ submits the most compelling case for institutional reform before the deadline.",
+options:["whoever","whomever","whosoever that","whomever who"],
+answer:"A",
+exp:"The form of 'whoever/whomever' is determined by the pronoun's function within its own clause — not by the preposition that precedes it. Here, the pronoun is the subject of 'submits' → subject form → 'whoever'. The entire clause 'whoever submits...' functions as the object of the preposition 'to'. B uses the object form 'whomever', which is incorrect since the pronoun is a subject. C and D add redundant elements. Only A is correct."},
+
+{id:19,section:"Pronouns",type:"error-id",
+instr:"The underlined part of the sentence contains an error. Choose the option that best corrects it.",
+stem:"My elder brother scored considerably higher in the entrance test <u>than me</u>, which came as a surprise to everyone.",
+options:["than myself","than mine","than I","than him"],
+answer:"C",
+exp:"After 'than' in an elliptical comparison, the pronoun must be in subject form when it is the subject of the implied verb. The full form is 'than I [scored]'. 'Me' is an object pronoun and is incorrect in formal written English. A uses the reflexive 'myself', which has no prior reference here and cannot stand as a comparison pronoun. B uses the possessive 'mine', which is grammatically incoherent in this construction. D introduces 'him', changing the meaning entirely. Only C correctly uses the subject pronoun 'I'."},
+
+{id:20,section:"Pronouns",type:"pronoun-chain",
+instr:"The sentence below contains an ambiguous pronoun reference. Choose the option that best resolves the ambiguity.",
+stem:"After the director conferred with the producer, he announced that the script required substantial revision before filming could commence.",
+options:["he had announced that the script had required substantial revision before filming could commence","it was announced by him that the script required substantial revision before filming could commence","he announced that the script would require substantial revision before filming can commence","the director announced that the script required substantial revision before filming could commence"],
+answer:"D",
+exp:"'He' is ambiguous — it could refer to either the director or the producer. The correct fix is to replace 'he' with the specific noun 'the director', eliminating the ambiguity entirely. A adds past perfect and retains the ambiguous 'he'. B uses passive voice, which obscures the agent and is not a minimal correction. C retains 'he' and introduces a tense inconsistency. Only D resolves the ambiguity cleanly by naming the subject explicitly."},
+
+{id:21,section:"Pronouns",type:"two-blank",
+instr:"Choose the option that correctly fills both blanks in the sentence below.",
+stem:"The selection panel asked ________ the candidate considered ________ most qualified for the position to step forward.",
+options:["who / themselves","whom / himself or herself","whom / themselves","who / himself or herself"],
+answer:"B",
+exp:"First blank: the pronoun is the object of 'asked' → object pronoun → 'whom'. Second blank: the pronoun refers back to 'the candidate' (singular) and is used reflexively → formal academic English requires 'himself or herself', not 'themselves'. A uses 'who' (subject form) for the first blank and the plural 'themselves' for the second. C correctly uses 'whom' but incorrectly uses plural 'themselves' for a singular antecedent. D uses the subject 'who' incorrectly. Only B is correct on both counts."},
+
+{id:22,section:"Pronouns",type:"impostor",
+instr:"Three of the following four sentences are grammatically correct. Identify the sentence that contains an error.",
+stem:"",
+options:["The coach objected to his being dropped from the squad without a formal review.","It was she who first identified the anomaly in the quarterly accounts.","Every student must submit his or her project report before the final assessment week.","The committee will consider whomever applies for the grant before the stipulated date."],
+answer:"D",
+exp:"A is correct: pronoun preceding a gerund takes possessive form → 'his being dropped'. B is correct: predicate nominative after linking verb → subject pronoun 'she'. C is correct: 'every student' is singular → 'his or her' is the correct academic form. D is the impostor: 'whoever/whomever' is determined by its function within its own clause. The pronoun is the subject of 'applies' → subject form → 'whoever applies'. 'Whomever' (object form) is incorrect here."},
+
+{id:23,section:"Pronouns",type:"error-id",
+instr:"The underlined part of the sentence contains an error. Choose the option that best corrects it.",
+stem:"Each of the delegates was asked to introduce <u>themselves</u> to the panel before the deliberations began.",
+options:["himself or herself to the panel before the deliberations began","themselves before the panel before the deliberations began","himself to the panel before the deliberations began","oneself to the panel before the deliberations began"],
+answer:"A",
+exp:"'Each' is a singular indefinite pronoun. The reflexive pronoun referring back to 'each' must therefore also be singular: 'himself or herself' in formal academic English. 'Themselves' is plural and is incorrect when 'each' is the antecedent. B retains 'themselves' and awkwardly repeats 'before'. C uses only 'himself', which is gender-exclusive and incomplete. D uses 'oneself', which is impersonal and does not match the personal pronoun context. Only A provides the correct singular reflexive."},
+
+{id:24,section:"Pronouns",type:"rule-reversal",
+instr:"Choose the option that best replaces the underlined portion. Select option C if no correction is needed.",
+stem:"It was <u>he</u> who submitted the winning entry for the national essay competition last month.",
+options:["It was him who submitted the winning entry","It was himself who submitted the winning entry","It was he who submitted the winning entry","It was his submission that won the national essay competition"],
+answer:"C",
+exp:"After a linking verb ('was'), the pronoun in the predicate position takes the subject form — this is the predicate nominative construction. 'It was he' is therefore correct in formal academic English. Students often incorrectly 'correct' this to 'him', which is the object pronoun and is acceptable only in informal speech. A uses the incorrect object pronoun 'him'. B uses the reflexive 'himself' without justification. D restructures the sentence, which is unnecessary. The original is correct — C indicates no change is needed."},
+
+{id:25,section:"Pronouns",type:"pronoun-chain",
+instr:"The sentence below contains an ambiguous pronoun reference. Choose the option that best resolves the ambiguity.",
+stem:"The managing director informed the head of operations that his quarterly targets had not been met and that his performance review would be conducted the following week.",
+options:["the managing director informed the head of operations that the head of operations' quarterly targets had not been met and that his performance review would be conducted the following week","the managing director informed the head of operations that his quarterly targets had not been met and that a performance review would be conducted the following week","the managing director told the head of operations about his failure to meet quarterly targets and that his performance review would be conducted the following week","the managing director informed the head of operations that the latter's quarterly targets had not been met and that the managing director's performance review would be conducted the following week"],
+answer:"A",
+exp:"'His' appears twice and is ambiguous both times — it could refer to either the managing director or the head of operations. The correct fix replaces the first 'his' with 'the head of operations'' to establish that the unmet targets belong to the head of operations, making the second 'his' unambiguously refer to the managing director. B removes the first ambiguity but leaves the second 'his' unresolved. C retains both ambiguous instances. D uses 'the latter's' for the first reference correctly but then incorrectly names 'the managing director's performance review', which changes the intended meaning. Only A resolves the primary ambiguity cleanly."},
+
+{id:26,section:"Pronouns",type:"no-error",
+instr:"Choose the option that best replaces the underlined portion. Select option D if no correction is needed.",
+stem:"Anyone who misrepresents <u>his or her qualifications</u> on the application form will be immediately disqualified.",
+options:["their qualifications","one's qualifications","its qualifications","his or her qualifications"],
+answer:"D",
+exp:"'Anyone' is a singular indefinite pronoun. In formal academic English, the singular gender-neutral pronoun referring back to 'anyone' is 'his or her' — not 'their'. A uses the plural 'their', which is incorrect in academic grammar when the antecedent is singular. B uses 'one's', which is impersonal and shifts the register. C uses 'its', which is inappropriate for a person. The original 'his or her' is the academically correct form — D indicates no change is needed."},
+
+{id:27,section:"Pronouns",type:"sentence-completion",
+instr:"Choose the option that correctly fills the blank in the sentence below.",
+stem:"If one wishes to excel in a competitive examination, ________ must be prepared to sacrifice short-term comfort for long-term gain.",
+options:["you","they","one","he or she"],
+answer:"C",
+exp:"When 'one' is used as an indefinite pronoun, formal academic English requires that it be maintained consistently throughout the sentence. Switching mid-sentence to 'you', 'they', or 'he or she' constitutes a shift in person or number and is grammatically incorrect in this register. A shifts to second person 'you'. B shifts to third person plural 'they'. D shifts to 'he or she', which is inconsistent with the impersonal 'one'. Only C maintains the required consistency."},
+
+{id:28,section:"Pronouns",type:"no-error",
+instr:"Choose the option that best replaces the underlined portion. Select option B if no correction is needed.",
+stem:"The scholarship will be granted to <u>whomever the selection board deems</u> most deserving of recognition this year.",
+options:["whoever the selection board deems","whomever the selection board deems","whoever the selection board has deemed","whomever the selection board has deemed"],
+answer:"B",
+exp:"The form of 'whoever/whomever' depends on the pronoun's function within its own clause — not on the preposition 'to'. Here, the pronoun is the object of 'deems' (the board deems him/her most deserving → 'whomever') → object form is correct. A uses 'whoever' (subject form), which is incorrect when the pronoun is the object of a verb within the clause. C and D change the tense unnecessarily. The original is correct — B indicates no change is needed."},
+
+{id:29,section:"Pronouns",type:"pronoun-chain",
+instr:"The sentence below contains an ambiguous pronoun reference. Choose the option that best resolves the ambiguity.",
+stem:"The examiner told the candidate that he had three minutes remaining to complete the written section of the test.",
+options:["The examiner told the candidate that he would have three minutes remaining to complete the written section","The examiner informed the candidate that he had only three minutes remaining to complete the written section","The examiner told the candidate that the latter had three minutes remaining to complete the written section of the test","It was told to the candidate by the examiner that he had three minutes remaining to complete the written section"],
+answer:"C",
+exp:"'He' is ambiguous — it could refer to either the examiner or the candidate. The most logical meaning is that the candidate had three minutes remaining. The correct fix replaces the ambiguous 'he' with 'the latter', which unambiguously refers to the more recently mentioned noun (the candidate). A and B retain the ambiguous 'he'. D uses passive voice, which is awkward and retains the ambiguous 'he'. Only C resolves the reference cleanly."},
+
+{id:30,section:"Pronouns",type:"impostor",
+instr:"Three of the following four sentences are grammatically correct. Identify the sentence that contains an error.",
+stem:"",
+options:["Neither of the two candidates was willing to withdraw his or her application voluntarily.","The board asked whoever had filed a late submission to appear before the disciplinary committee.","It was they who contested the outcome of the preliminary screening round.","The manager was not aware of them having already submitted the consolidated report."],
+answer:"D",
+exp:"A is correct: 'neither of' → singular → 'was'; 'his or her' for singular antecedent — academically correct. B is correct: 'whoever' is the subject of 'had filed' → subject form is correct. C is correct: 'they' is the predicate nominative after linking verb 'was' → subject pronoun is correct. D is the impostor: when a pronoun precedes a gerund ('having submitted'), it must take the possessive form. 'Them having submitted' is incorrect; the correct form is 'their having submitted'."},
+
+// ══════════════════════════════════════════
+// NOUNS — Q31 to Q45
+// ══════════════════════════════════════════
+
+{id:31,section:"Nouns",type:"error-id",
+instr:"The underlined part of the sentence contains an error. Choose the option that best corrects it.",
+stem:"<u>The amount of errors</u> found in the first draft of the report alarmed the editorial board considerably.",
+options:["The number of errors found in the first draft of the report","The amount of error found in the first draft of the report","The amounts of errors found in the first draft of the report","The number of error found in the first draft of the report"],
+answer:"A",
+exp:"'Amount' is used with uncountable nouns; 'number' is used with countable nouns. 'Errors' is a countable noun → 'number of errors'. B retains 'amount' and incorrectly singularises 'error'. C invents the non-standard plural 'amounts'. D uses 'number' correctly but incorrectly singularises 'error'. Only A correctly pairs 'number' with the countable plural 'errors'."},
+
+{id:32,section:"Nouns",type:"error-id",
+instr:"The underlined part of the sentence contains an error. Choose the option that best corrects it.",
+stem:"There were <u>less applicants</u> for the advanced research programme this year than in any of the previous five years.",
+options:["less number of applicants for the advanced research programme this year","a lesser number of applicants for the advanced research programme this year","fewer applicants for the advanced research programme this year","fewer amount of applicants for the advanced research programme this year"],
+answer:"C",
+exp:"'Less' is used with uncountable nouns and measurements; 'fewer' is used with countable nouns. 'Applicants' is a countable noun → 'fewer applicants'. A incorrectly uses 'less number'. B uses 'lesser', which compares abstract qualities rather than quantities and is inappropriate here. D combines 'fewer' with 'amount', which is reserved for uncountable nouns — a double error. Only C correctly uses 'fewer' directly before the countable noun 'applicants'."},
+
+{id:33,section:"Nouns",type:"impostor",
+instr:"Three of the following four sentences are grammatically correct. Identify the sentence that contains an error.",
+stem:"",
+options:["The children's artwork was displayed at the annual cultural exhibition held in the school hall.","My brother-in-law's application was rejected due to insufficient documentation.","The attorneys general's joint recommendation was accepted by the ministry without debate.","The passerby's account of the accident was corroborated by the footage from the security camera."],
+answer:"C",
+exp:"A is correct: 'children' is an irregular plural not ending in 's' → possessive is 'children's'. B is correct: possessive of the compound noun 'brother-in-law' → apostrophe added to the final word: 'brother-in-law's'. D is correct: possessive of 'passerby' → 'passerby's'. C is the impostor: the correct plural of 'attorney general' is 'attorneys general' (the noun 'attorney' is pluralised, not the adjective 'general'). The possessive of this plural is 'attorneys general's' — with no hyphen. 'Attorneys-general's' incorrectly introduces a hyphen that does not belong in standard formal English."},
+
+{id:34,section:"Nouns",type:"two-blank",
+instr:"Choose the option that correctly fills both blanks in the sentence below.",
+stem:"The ________ of registered voters in the constituency has increased, but the ________ who actually cast their ballots has declined sharply.",
+options:["number / number","amount / number","number / amount","amount / amount"],
+answer:"A",
+exp:"'Voters' is a countable noun → 'number of voters'. The second blank also refers to a countable group — those who cast ballots — and is paired with the singular verb 'has declined', indicating 'the number' (a singular noun phrase). Both blanks require 'number': 'the number of registered voters... the number who actually cast their ballots'. B and C incorrectly use 'amount' with the countable noun. D uses 'amount' in both blanks, which is wrong for countable nouns throughout. Only A is correct."},
+
+{id:35,section:"Nouns",type:"error-id",
+instr:"The underlined part of the sentence contains an error. Choose the option that best corrects it.",
+stem:"<u>The researches published by the institute</u> over the past decade have significantly altered the treatment protocols.",
+options:["The research works published by the institute","The research published by the institute","The pieces of research published by the institute","The researchings published by the institute"],
+answer:"B",
+exp:"'Research' is an uncountable noun in standard English — it has no plural form. 'Researches' is non-standard and incorrect. A uses 'research works', an informal and non-standard construction. C uses 'pieces of research', which is grammatically valid but far more verbose than a minimal correction requires. D invents the non-existent form 'researchings'. Only B correctly uses the uncountable singular 'research' with no other change."},
+
+{id:36,section:"Nouns",type:"rule-reversal",
+instr:"Choose the option that best replaces the underlined portion. Select option C if no correction is needed.",
+stem:"The phenomenon observed across all three experimental groups <u>remains unexplained</u> by current theoretical models.",
+options:["remain unexplained by current theoretical models","have remained unexplained by current theoretical models","remains unexplained by current theoretical models","are remaining unexplained by current theoretical models"],
+answer:"C",
+exp:"'Phenomenon' is the singular form; 'phenomena' is the plural. Since the sentence uses 'the phenomenon' (singular), the verb must be singular: 'remains'. Students who confuse 'phenomenon' and 'phenomena' often treat this as an error and attempt to change the verb to plural. A uses plural 'remain'. B uses plural 'have remained'. D uses the progressive 'are remaining', which is both plural and unnatural. The original is correct — C indicates no change is needed."},
+
+{id:37,section:"Nouns",type:"sentence-completion",
+instr:"Choose the option that correctly fills the blank in the sentence below.",
+stem:"The jury delivered ________ verdict after six hours of deliberation, acquitting the defendant on all counts.",
+options:["their","its","it's","his or her"],
+answer:"B",
+exp:"'The jury' is a collective noun used here as a single unified body — confirmed by the context of delivering a single unanimous verdict. When a collective noun is treated as a single unit, it takes a singular pronoun: 'its'. A uses the plural 'their', which is inappropriate when the collective noun is singular. C uses 'it's', a contraction meaning 'it is' — a different word entirely. D uses 'his or her', which is reserved for a person, not an institution. Only B correctly uses the singular possessive 'its'."},
+
+{id:38,section:"Nouns",type:"error-id",
+instr:"The underlined part of the sentence contains an error. Choose the option that best corrects it.",
+stem:"<u>The childrens' paintings</u> were selected for display at the district-level art competition held last month.",
+options:["The children's paintings","The childrens's paintings","The children paintings","The childrens paintings"],
+answer:"A",
+exp:"'Children' is an irregular plural — it does not end in 's'. For irregular plurals that do not end in 's', the possessive is formed by adding apostrophe + s directly: 'children's'. The form 'childrens'' incorrectly treats 'children' as a regular plural, as if it were 'childrens'. B doubles the possessive marker absurdly. C omits the apostrophe entirely, making it a bare noun adjunct without possessive meaning. D adds no apostrophe at all. Only A is the correctly formed irregular plural possessive."},
+
+{id:39,section:"Nouns",type:"pronoun-chain",
+instr:"The sentence below contains an ambiguous pronoun reference. Choose the option that best resolves the ambiguity.",
+stem:"The panel reviewed each submission carefully and noted that it lacked the originality and depth that it had explicitly requested in the guidelines issued three months prior.",
+options:["the panel reviewed each submission carefully and noted that it lacked the originality and depth which it had explicitly requested","the panel carefully reviewed each submission, noting that it lacked the originality and depth it had requested in the guidelines","reviewing each submission carefully, the panel noted that it lacked the originality and depth explicitly requested","the panel reviewed each submission carefully and noted that the submission lacked the originality and depth that the panel had explicitly requested in the guidelines issued three months prior"],
+answer:"D",
+exp:"The sentence uses 'it' twice with different referents: the first 'it' refers to 'each submission'; the second 'it' refers to 'the panel'. This inconsistent and ambiguous use must be corrected by replacing both pronouns with their explicit antecedents. A and B retain both ambiguous instances of 'it'. C uses a dangling participial phrase and removes key information. Only D resolves both ambiguities clearly: 'the submission lacked...' and '...that the panel had explicitly requested'."},
+
+{id:40,section:"Nouns",type:"no-error",
+instr:"Choose the option that best replaces the underlined portion. Select option B if no correction is needed.",
+stem:"A large number of applications <u>have been rejected</u> on account of incomplete documentation.",
+options:["has been rejected on account of incomplete documentation","have been rejected on account of incomplete documentation","has been rejected due to incomplete documentation","were rejected on account of incomplete documentation"],
+answer:"B",
+exp:"'A number of' functions as a quantifier meaning 'many' and takes a plural verb — 'a number of applications have been rejected'. This is distinct from 'the number of', which is a singular noun phrase. 'A number of' → plural → 'have been'. A uses the incorrect singular 'has been'. C also uses singular 'has been' and changes the preposition unnecessarily. D shifts to simple past. The original is correct — B indicates no change is needed."},
+
+{id:41,section:"Nouns",type:"no-error",
+instr:"Choose the option that best replaces the underlined portion. Select option A if no correction is needed.",
+stem:"The criteria used to evaluate the shortlisted candidates <u>were not disclosed</u> to the applicants before the interview.",
+options:["were not disclosed to the applicants before the interview","was not disclosed to the applicants before the interview","was not disclosed to the applicants prior to the interview","have not been disclosed to the applicants before the interview"],
+answer:"A",
+exp:"'Criteria' is the Latin plural of 'criterion'. Since 'criteria' is plural, it correctly takes the plural verb 'were'. Students who mistake 'criteria' for a singular noun attempt to change 'were' to 'was' — a common error. B and C incorrectly use singular 'was'. D uses present perfect, which changes the tense without justification. The original is grammatically correct — A indicates no change is needed."},
+
+{id:42,section:"Nouns",type:"impostor",
+instr:"Three of the following four sentences are grammatically correct. Identify the sentence that contains an error.",
+stem:"",
+options:["The phenomenon of mass urban migration has been extensively studied by sociologists worldwide.","The media have been criticised for their sensationalised coverage of the election proceedings.","The alumni of this institution have consistently secured positions in leading management organisations.","The agenda for tomorrow's board meeting have been circulated to all members in advance."],
+answer:"D",
+exp:"A is correct: 'phenomenon' is singular → singular verb 'has'. B is correct: 'media' is the plural of 'medium' → plural verb 'have been' and plural pronoun 'their'. C is correct: 'alumni' is the plural of 'alumnus' → plural verb 'have'. D is the impostor: 'agenda' in modern formal English is treated as a singular noun → singular verb 'has been circulated', not 'have been'. The plural 'have' is incorrect."},
+
+{id:43,section:"Nouns",type:"two-blank",
+instr:"Choose the option that correctly fills both blanks in the sentence below.",
+stem:"________ of the two proposals submitted was found to be viable; both ________ fundamental revisions before resubmission.",
+options:["Neither / requires","None / required","Neither / required","None / requires"],
+answer:"C",
+exp:"First blank: 'neither' is used specifically for exactly two items — 'neither of the two proposals'. 'None' is used for more than two. 'Neither' → singular → 'was found' (already in the sentence — correct). Second blank: 'both' is a plural subject → plural verb → 'required' (past tense, consistent with the past tense 'was found'). A uses the present singular 'requires' for the second blank, creating a tense inconsistency. B uses 'none', which is incorrect for exactly two items. D uses 'none' and present tense. Only C correctly uses 'neither' and the past tense plural 'required'."},
+
+{id:44,section:"Nouns",type:"sentence-completion",
+instr:"Choose the option that correctly fills the blank in the sentence below.",
+stem:"The committee has submitted ________ final recommendations to the board well ahead of the stipulated deadline.",
+options:["its","their","it's","the committee's own"],
+answer:"A",
+exp:"'The committee' is a collective noun treated here as a single unit — confirmed by the singular verb 'has submitted'. When a collective noun is singular, the possessive pronoun must also be singular: 'its'. A correctly uses the singular possessive 'its'. B uses the plural 'their', inconsistent with the singular verb. C uses 'it's', a contraction for 'it is', not a possessive pronoun. D is needlessly verbose and creates a redundancy. Only A is correct."},
+
+{id:45,section:"Nouns",type:"rule-reversal",
+instr:"Choose the option that best replaces the underlined portion. Select option D if no correction is needed.",
+stem:"The species discovered during the deep-sea expedition <u>has not yet been classified</u> under any known genus.",
+options:["have not yet been classified under any known genus","have not yet been classified within any known genus","has not yet been classified within any known genus","has not yet been classified under any known genus"],
+answer:"D",
+exp:"'Species' is one of a small class of English nouns whose singular and plural forms are identical. Here, the sentence refers to one species discovered — a singular subject — and therefore correctly takes the singular verb 'has'. Students who assume 'species' must be plural because it ends in 's' will incorrectly change 'has' to 'have'. A and B use the incorrect plural 'have'. C uses the correct 'has' but changes the preposition from 'under' to 'within', an unnecessary alteration. The original is correct — D indicates no change is needed."}
+
+];
+
+// ════════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════════
+let studentName = "", studentPin = "", studentBatch = "";
+let currentQ = 0;
+let userAnswers = new Array(QUESTIONS.length).fill(null);
+let timerInterval = null;
+let secondsLeft = 30 * 60;
+let retryQuestions = [];
+let retryAnswers = [];
+let currentRetryQ = 0;
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwGGxswx4hcBUFiT0QJIglowhKcJCv47MOR5LKBv9sILl-evsgZeKCms5y6s5zEXOUo6Q/exec";
+
+// ════════════════════════════════════════════
+// LOGIN
+// ════════════════════════════════════════════
+function startTest() {
+  const name = document.getElementById("inputName").value.trim();
+  const pin = document.getElementById("inputPin").value.trim().toUpperCase();
+  const batch = document.getElementById("inputBatch").value.trim();
+  if (!name) { alert("Please enter your full name."); return; }
+  if (!batch) { alert("Please select your batch."); return; }
+  if (!pin) { alert("IMS PIN is required. Please enter your PIN (e.g. STU0001184727)."); return; }
+  if (!/^(STU|IMS)\d{10}$/.test(pin)) { alert("Invalid PIN format. PIN must start with STU or IMS followed by 10 digits."); return; }
+  const isAdminPin = ["IMS1111111111","IMS2222222222","IMS3333333333","IMS4444444444","IMS5555555555"].includes(pin);
+  if (isAdminPin && batch !== "Admin") { alert("Admin PINs must select the Admin batch."); return; }
+  if (!isAdminPin && batch === "Admin") { alert("Admin batch is only for Admin PINs."); return; }
+  studentName = name; studentPin = pin; studentBatch = batch;
+  document.getElementById("dispName").textContent = name;
+  document.getElementById("dispPin").textContent = pin;
+  document.getElementById("dispBatch").textContent = batch;
+  document.getElementById("loginScreen").style.display = "none";
+  document.getElementById("testScreen").style.display = "block";
+  buildPalette();
+  renderQuestion(0);
+  startTimer();
+}
+
+// ════════════════════════════════════════════
+// TIMER
+// ════════════════════════════════════════════
+function startTimer() {
+  timerInterval = setInterval(() => {
+    secondsLeft--;
+    const m = Math.floor(secondsLeft / 60);
+    const s = secondsLeft % 60;
+    document.getElementById("timerVal").textContent = `${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+    if (secondsLeft <= 300) document.getElementById("timerBox").classList.add("urgent");
+    if (secondsLeft <= 0) { clearInterval(timerInterval); submitTest(); }
+  }, 1000);
+}
+
+// ════════════════════════════════════════════
+// RENDER QUESTION
+// ════════════════════════════════════════════
+function renderQuestion(idx) {
+  currentQ = idx;
+  const q = QUESTIONS[idx];
+  const panel = document.getElementById("questionPanel");
+  const letters = ["A","B","C","D"];
+  let html = "";
+  html += `<div class="section-label">${q.section}</div>`;
+  html += `<div class="q-card">`;
+  html += `<div class="q-number">Question ${idx+1} of ${QUESTIONS.length}</div>`;
+  if (q.instr) html += `<div class="q-instr">${q.instr}</div>`;
+  if (q.stem) html += `<div class="q-stem">${q.stem}</div>`;
+  html += `<div class="options-grid">`;
+  q.options.forEach((opt, i) => {
+    const sel = userAnswers[idx] === letters[i] ? " selected" : "";
+    html += `<div class="opt-btn${sel}" onclick="selectOption('${letters[i]}',${idx})">
+      <span class="opt-label">${letters[i]}.</span><span>${opt}</span>
+    </div>`;
+  });
+  html += `</div>`;
+  html += `<div class="q-actions">`;
+  if (idx > 0) html += `<button class="btn btn-prev" onclick="renderQuestion(${idx-1})">&#8592; Previous</button>`;
+  html += `<button class="btn btn-clear" onclick="clearAnswer(${idx})">Clear</button>`;
+  if (idx < QUESTIONS.length-1) html += `<button class="btn btn-next" onclick="renderQuestion(${idx+1})">Next &#8594;</button>`;
+  if (idx === QUESTIONS.length-1) html += `<button class="btn btn-submit" onclick="confirmSubmit()">Submit Test &#10003;</button>`;
+  html += `</div></div>`;
+  panel.innerHTML = html;
+  panel.scrollTop = 0;
+  updatePalette();
+}
+
+function selectOption(letter, idx) { userAnswers[idx] = letter; renderQuestion(idx); }
+function clearAnswer(idx) { userAnswers[idx] = null; renderQuestion(idx); }
+
+// ════════════════════════════════════════════
+// PALETTE
+// ════════════════════════════════════════════
+function buildPalette() {
+  const grid = document.getElementById("paletteGrid");
+  grid.innerHTML = "";
+  QUESTIONS.forEach((q, i) => {
+    const btn = document.createElement("button");
+    btn.className = "pal-btn"; btn.textContent = i+1;
+    btn.onclick = () => renderQuestion(i);
+    btn.id = `pal-${i}`;
+    grid.appendChild(btn);
+  });
+}
+
+function updatePalette() {
+  QUESTIONS.forEach((q, i) => {
+    const btn = document.getElementById(`pal-${i}`);
+    if (!btn) return;
+    btn.className = "pal-btn";
+    if (i === currentQ) btn.classList.add("current");
+    else if (userAnswers[i] !== null) btn.classList.add("answered");
+  });
+  const answered = userAnswers.filter(a => a !== null).length;
+  document.getElementById("progressFill").style.width = `${(answered/QUESTIONS.length)*100}%`;
+  document.getElementById("progressText").textContent = `${answered} / ${QUESTIONS.length} answered`;
+}
+
+// ════════════════════════════════════════════
+// SUBMIT
+// ════════════════════════════════════════════
+function confirmSubmit() {
+  const unanswered = userAnswers.filter(a => a === null).length;
+  if (unanswered > 0) {
+    if (!confirm(`You have ${unanswered} unanswered question(s). Submit anyway?`)) return;
+  }
+  submitTest();
+}
+
+function submitTest() {
+  clearInterval(timerInterval);
+  let correct = 0, wrong = 0, skipped = 0;
+  QUESTIONS.forEach((q, i) => {
+    if (userAnswers[i] === null) skipped++;
+    else if (userAnswers[i] === q.answer) correct++;
+    else wrong++;
+  });
+  const score = (correct * 4) - (wrong * 1);
+  saveToTracker(score, correct, wrong, skipped);
+  logToSheet(score, correct, wrong, skipped);
+  showResults(score, correct, wrong, skipped);
+}
+
+function showResults(score, correct, wrong, skipped) {
+  document.getElementById("testScreen").style.display = "none";
+  document.getElementById("resultsScreen").style.display = "block";
+  document.getElementById("r-score").textContent = score;
+  document.getElementById("r-name").textContent = studentName;
+  document.getElementById("r-batch").textContent = `Batch: ${studentBatch} | PIN: ${studentPin}`;
+  document.getElementById("r-correct").textContent = correct;
+  document.getElementById("r-wrong").textContent = wrong;
+  document.getElementById("r-skip").textContent = skipped;
+  const wrongQs = QUESTIONS.filter((q,i) => userAnswers[i] !== null && userAnswers[i] !== q.answer);
+  if (wrongQs.length > 0) {
+    document.getElementById("retry-section").style.display = "block";
+    document.getElementById("retry-count-label").textContent = `${wrongQs.length} question(s) answered incorrectly`;
+  }
+  // Grammar misses copy box
+  const missedQs = QUESTIONS.filter((q,i) => userAnswers[i] !== null && userAnswers[i] !== q.answer);
+  if (missedQs.length > 0) {
+    document.getElementById("vocab-section").style.display = "block";
+    let txt = "";
+    missedQs.forEach((q, idx) => {
+      const qNum = QUESTIONS.indexOf(q) + 1;
+      txt += `Q${qNum} [${q.section}]\n`;
+      const cleanStem = q.stem.replace(/<[^>]+>/g, "");
+      txt += `${cleanStem}\n`;
+      txt += `Your answer: ${userAnswers[QUESTIONS.indexOf(q)]} | Correct: ${q.answer}\n`;
+      txt += `\n`;
+    });
+    document.getElementById("vocab-text").value = txt.trim();
+  }
+  buildReview();
+  window.scrollTo(0,0);
+}
+
+function buildReview() {
+  const letters = ["A","B","C","D"];
+  let html = "";
+  QUESTIONS.forEach((q, i) => {
+    const ua = userAnswers[i];
+    const correct = ua === q.answer;
+    const skipped = ua === null;
+    const color = skipped ? "var(--text2)" : correct ? "var(--green)" : "var(--red)";
+    const status = skipped ? "Skipped" : correct ? "Correct" : "Wrong";
+    const cleanStem = q.stem.replace(/<u>/g,"").replace(/<\/u>/g,"");
+    html += `<div style="background:var(--dark2);border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:12px;">`;
+    html += `<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;gap:10px;">`;
+    html += `<div style="font-size:12px;color:var(--text2);">Q${i+1} &middot; ${q.section}</div>`;
+    html += `<div style="font-size:12px;font-weight:700;color:${color};">${status}</div>`;
+    html += `</div>`;
+    html += `<div style="font-size:14px;line-height:1.7;margin-bottom:12px;">${q.stem}</div>`;
+    html += `<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px;">`;
+    q.options.forEach((opt, oi) => {
+      const l = letters[oi];
+      let bg = "var(--dark3)"; let border = "rgba(255,255,255,0.08)"; let fw = "normal";
+      if (l === q.answer) { bg = "rgba(61,186,122,0.15)"; border = "var(--green)"; fw = "600"; }
+      if (l === ua && ua !== q.answer) { bg = "rgba(224,85,85,0.15)"; border = "var(--red)"; }
+      html += `<div style="background:${bg};border:1.5px solid ${border};border-radius:8px;padding:10px 12px;font-size:13px;line-height:1.5;font-weight:${fw};">`;
+      html += `<span style="font-weight:700;color:var(--text2);margin-right:6px;">${l}.</span>${opt}</div>`;
+    });
+    html += `</div>`;
+    html += `<div style="background:var(--dark3);border-radius:8px;padding:12px;font-size:13px;line-height:1.7;color:var(--text2);">`;
+    html += `<span style="color:var(--gold);font-weight:700;">Explanation: </span>${q.exp}</div>`;
+    html += `</div>`;
+  });
+  document.getElementById("review-list").innerHTML = html;
+}
+
+function copyVocabList() {
+  const ta = document.getElementById("vocab-text");
+  ta.select();
+  document.execCommand("copy");
+  const btn = document.getElementById("copy-btn");
+  btn.textContent = "Copied!";
+  setTimeout(() => { btn.textContent = "Copy"; }, 2000);
+}
+
+// ════════════════════════════════════════════
+// RETRY
+// ════════════════════════════════════════════
+function startRetry() {
+  retryQuestions = [];
+  QUESTIONS.forEach((q, i) => {
+    if (userAnswers[i] !== null && userAnswers[i] !== q.answer) retryQuestions.push(i);
+  });
+  retryAnswers = new Array(retryQuestions.length).fill(null);
+  currentRetryQ = 0;
+  document.getElementById("resultsScreen").style.display = "none";
+  document.getElementById("retryScreen").style.display = "block";
+  document.getElementById("retry-result-area").style.display = "none";
+  document.getElementById("retry-question-area").style.display = "block";
+  renderRetryQuestion(0);
+  window.scrollTo(0,0);
+}
+
+function renderRetryQuestion(idx) {
+  currentRetryQ = idx;
+  document.getElementById("retry-progress-label").textContent = `Question ${idx+1} of ${retryQuestions.length}`;
+  const q = QUESTIONS[retryQuestions[idx]];
+  const letters = ["A","B","C","D"];
+  let html = `<div style="background:var(--dark2);border:1px solid var(--border);border-radius:14px;padding:24px;margin-bottom:16px;">`;
+  html += `<div style="display:inline-block;background:var(--dark3);border:1px solid var(--border);border-radius:20px;padding:4px 14px;font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:1px;margin-bottom:14px;">${q.section}</div>`;
+  html += `<div style="font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:2px;margin-bottom:10px;">Retry &mdash; Question ${idx+1} of ${retryQuestions.length}</div>`;
+  if (q.instr) html += `<div style="font-size:13px;color:var(--text2);font-style:italic;margin-bottom:14px;line-height:1.6;">${q.instr}</div>`;
+  if (q.stem) html += `<div style="font-size:15px;line-height:1.8;color:var(--text);margin-bottom:8px;">${q.stem}</div>`;
+  html += `<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px;">`;
+  q.options.forEach((opt, i) => {
+    const sel = retryAnswers[idx] === letters[i] ? "border-color:var(--blue);background:rgba(74,144,217,0.15);" : "";
+    html += `<div onclick="selectRetryOption('${letters[i]}',${idx})" style="background:var(--dark3);border:1.5px solid rgba(255,255,255,0.1);border-radius:10px;padding:12px 16px;cursor:pointer;font-size:14px;color:var(--text);line-height:1.5;display:flex;gap:10px;align-items:flex-start;${sel}">
+      <span style="font-weight:700;color:var(--text2);min-width:18px;">${letters[i]}.</span><span>${opt}</span>
+    </div>`;
+  });
+  html += `</div>`;
+  html += `<div style="display:flex;gap:10px;margin-top:18px;flex-wrap:wrap;">`;
+  if (idx > 0) html += `<button class="btn btn-prev" onclick="renderRetryQuestion(${idx-1})">&#8592; Previous</button>`;
+  html += `<button class="btn btn-clear" onclick="clearRetryAnswer(${idx})">Clear</button>`;
+  if (idx < retryQuestions.length-1) {
+    html += `<button class="btn btn-next" onclick="renderRetryQuestion(${idx+1})">Next &#8594;</button>`;
+  } else {
+    html += `<button class="btn btn-submit" onclick="submitRetry()" style="margin-left:auto;">Submit Retry &#10003;</button>`;
+  }
+  html += `</div></div>`;
+  document.getElementById("retry-question-area").innerHTML = html;
+}
+
+function selectRetryOption(letter, idx) { retryAnswers[idx] = letter; renderRetryQuestion(idx); }
+function clearRetryAnswer(idx) { retryAnswers[idx] = null; renderRetryQuestion(idx); }
+
+function submitRetry() {
+  const unanswered = retryAnswers.filter(x => x === null).length;
+  if (unanswered > 0) {
+    if (!confirm(`You have ${unanswered} unanswered question(s). Submit retry anyway?`)) return;
+  }
+  let right = 0, wrongCount = 0, skipCount = 0;
+  retryQuestions.forEach((qIdx, i) => {
+    const q = QUESTIONS[qIdx];
+    if (retryAnswers[i] === null) skipCount++;
+    else if (retryAnswers[i] === q.answer) right++;
+    else wrongCount++;
+  });
+  document.getElementById("retry-right").textContent = right;
+  document.getElementById("retry-wrong-count").textContent = wrongCount;
+  document.getElementById("retry-skip-count").textContent = skipCount;
+  document.getElementById("retry-question-area").style.display = "none";
+  document.getElementById("retry-result-area").style.display = "block";
+}
+
+function exitRetry() {
+  document.getElementById("retryScreen").style.display = "none";
+  document.getElementById("resultsScreen").style.display = "block";
+  window.scrollTo(0,0);
+}
+
+// ════════════════════════════════════════════
+// SAVE TO TRACKER
+// ════════════════════════════════════════════
+function saveToTracker(score, correct, wrong, skipped) {
+  try {
+    const sectionErrors = {};
+    const wrongQuestions = [];
+    QUESTIONS.forEach(function(q, i) {
+      if (userAnswers[i] !== null && userAnswers[i] !== q.answer) {
+        wrongQuestions.push(i+1);
+        const sec = q.section || "Other";
+        sectionErrors[sec] = (sectionErrors[sec] || 0) + 1;
+      }
+    });
+    const key = "riim_" + studentBatch + "_" + studentName.replace(/\s+/g,"_").toLowerCase();
+    const existing = localStorage.getItem(key);
+    let entries = existing ? JSON.parse(existing) : [];
+    entries = entries.filter(function(e) { return e.test !== 16; });
+    entries.push({ test: 16, score: score, errors: sectionErrors, wrongQuestions: wrongQuestions, ts: Date.now() });
+    localStorage.setItem(key, JSON.stringify(entries));
+  } catch(e) {}
+}
+
+// ════════════════════════════════════════════
+// LOG TO SHEET
+// ════════════════════════════════════════════
+function logToSheet(score, correct, wrong, skipped) {
+  const sectionErrors = {};
+  const wrongQuestions = [];
+  QUESTIONS.forEach(function(q, i) {
+    if (userAnswers[i] !== null && userAnswers[i] !== q.answer) {
+      wrongQuestions.push(i+1);
+      const sec = q.section || "Other";
+      sectionErrors[sec] = (sectionErrors[sec] || 0) + 1;
+    }
+  });
+  const timeTakenSecs = (30 * 60) - secondsLeft;
+  const mm = String(Math.floor(timeTakenSecs / 60)).padStart(2,"0");
+  const ss = String(timeTakenSecs % 60).padStart(2,"0");
+  const payload = {
+    testName:       "Road to IIM Paper 16",
+    name:           studentName,
+    pin:            studentPin,
+    batch:          studentBatch,
+    score:          score,
+    correct:        correct,
+    wrong:          wrong,
+    skipped:        skipped,
+    maxMarks:       180,
+    timeTaken:      mm + ":" + ss,
+    timestamp:      new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }),
+    sectionErrors:  sectionErrors,
+    wrongQuestions: wrongQuestions,
+    studentAnswers: userAnswers.map(a => a === null ? null : a)
+  };
+  const notice = document.getElementById("sheet-notice");
+  notice.style.display = "block";
+  notice.style.background = "rgba(240,192,64,0.1)";
+  notice.style.color = "#f0c040";
+  notice.textContent = "Submitting your score...";
+  fetch(APPS_SCRIPT_URL, {
+    method: "POST",
+    mode: "no-cors",
+    headers: { "Content-Type": "text/plain" },
+    body: JSON.stringify(payload)
+  })
+  .then(() => {
+    notice.style.background = "rgba(61,186,122,0.1)";
+    notice.style.color = "#3dba7a";
+    notice.textContent = "Score submitted successfully and recorded on the tracker.";
+  })
+  .catch(() => {
+    notice.style.background = "rgba(224,85,85,0.1)";
+    notice.style.color = "#e05555";
+    notice.textContent = "Submission failed. Please screenshot this page and share with your teacher.";
+  });
+}
+
+// Anti-copy protection
+document.addEventListener("contextmenu", function(e) { e.preventDefault(); });
+document.addEventListener("keydown", function(e) {
+  if ((e.ctrlKey || e.metaKey) && ["c","a","u","s","p"].includes(e.key.toLowerCase())) {
+    e.preventDefault();
+  }
+});
+</script>
+</body>
+</html>
