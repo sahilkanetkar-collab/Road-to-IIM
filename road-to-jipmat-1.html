@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Road to JIPMAT 1 | IMS Road to IIM</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+* { -webkit-user-select:none; -moz-user-select:none; -ms-user-select:none; user-select:none; box-sizing:border-box; margin:0; padding:0; }
+:root {
+  --bg:#0d0d00; --surf:#111100; --surf2:#1a1a00; --border:#3a3a00;
+  --gold:#f5c800; --goldl:#ffe033; --blue:#4a9eff; --green:#3ddc84;
+  --red:#ff5c5c; --purple:#b06cff; --text:#ffffff; --dim:#cccc88;
+  --font:'IBM Plex Sans',sans-serif; --mono:'IBM Plex Mono',monospace;
+}
+body { background:var(--bg); color:var(--text); font-family:var(--font); min-height:100vh; }
+
+/* ── LOGIN ── */
+#loginScreen { min-height:100vh; display:flex; align-items:center; justify-content:center; padding:20px; background:#0d0d00; }
+.login-box { background:#111100; border:2px solid #f5c800; border-radius:16px; padding:44px 38px; width:100%; max-width:440px; }
+.login-badge { display:inline-block; background:rgba(212,168,67,.12); border:1px solid rgba(212,168,67,.3); color:var(--gold); font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; padding:4px 12px; border-radius:20px; margin-bottom:18px; }
+.login-title { font-size:26px; font-weight:700; margin-bottom:4px; }
+.login-sub { font-size:13px; color:var(--dim); margin-bottom:26px; }
+.login-chips { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:28px; }
+.chip { background:var(--surf2); border:1px solid var(--border); border-radius:8px; padding:7px 14px; font-size:12px; color:var(--dim); }
+.chip span { color:var(--gold); font-weight:700; }
+.fg { margin-bottom:14px; }
+.fg label { display:block; font-size:11px; font-weight:700; color:var(--dim); letter-spacing:1px; text-transform:uppercase; margin-bottom:7px; }
+.fg input, .fg select { width:100%; background:var(--surf2); border:1px solid var(--border); border-radius:9px; padding:11px 14px; color:var(--text); font-family:var(--font); font-size:14px; outline:none; transition:border-color .2s; }
+.fg input:focus, .fg select:focus { border-color:var(--gold); }
+.fg select option { background:var(--surf2); }
+.btn-start { width:100%; background:var(--gold); color:#0a0c10; border:none; border-radius:9px; padding:13px; font-family:var(--font); font-size:15px; font-weight:700; cursor:pointer; margin-top:6px; transition:background .2s; }
+.btn-start:hover { background:var(--goldl); }
+#loginErr { color:var(--red); font-size:12px; margin-top:10px; display:none; }
+
+/* ── TEST SCREEN ── */
+#testScreen { display:none; }
+.t-header { position:sticky; top:0; z-index:100; background:#0d0d00; backdrop-filter:blur(10px); border-bottom:2px solid #f5c800; padding:10px 20px; display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; }
+.t-brand { font-size:13px; font-weight:700; color:var(--gold); }
+.t-info { display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
+.t-tag { font-size:12px; color:var(--dim); }
+.t-tag span { color:var(--text); font-weight:600; }
+#timerDisp { background:var(--surf2); border:1px solid var(--border); border-radius:7px; padding:5px 13px; font-family:var(--mono); font-size:15px; font-weight:600; color:var(--green); min-width:76px; text-align:center; transition:color .3s; }
+#timerDisp.warn { color:var(--gold); }
+#timerDisp.danger { color:var(--red); animation:blink 1s infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.55} }
+
+.t-body { display:grid; grid-template-columns:1fr 220px; gap:0; max-width:1100px; margin:0 auto; padding:28px 20px 100px; }
+@media(max-width:720px){ .t-body{grid-template-columns:1fr; } .palette-wrap{order:-1;} }
+
+/* question area */
+.q-area { padding-right:24px; }
+@media(max-width:720px){ .q-area{padding-right:0;} }
+
+.q-card { background:#111100; border:2px solid #f5c800; border-radius:13px; padding:26px 28px; }
+.q-meta { display:flex; align-items:center; gap:9px; margin-bottom:14px; flex-wrap:wrap; }
+.q-num { font-family:var(--mono); font-size:11px; font-weight:600; color:var(--gold); letter-spacing:1px; }
+.q-tag { font-size:10px; font-weight:700; letter-spacing:.8px; text-transform:uppercase; padding:3px 8px; border-radius:5px; color:#0a0c10; }
+.tg-grammar { background:#4a9eff; }
+.tg-vocabulary { background:#d4a843; }
+.tg-rc { background:#3ddc84; }
+.tg-parajumbles { background:#b06cff; }
+.tg-spelling { background:#ff9a3c; }
+.q-diff { font-size:10px; color:var(--dim); }
+
+.passage-box { background:#1a1a00; border-left:4px solid var(--gold); border-radius:0 9px 9px 0; padding:16px 18px; margin-bottom:16px; font-size:14px; line-height:1.85; color:#ffffcc; }
+.match-tbl { width:100%; border-collapse:collapse; margin-bottom:16px; font-size:13.5px; }
+.match-tbl th { background:var(--surf2); color:var(--gold); font-size:10px; font-weight:700; letter-spacing:1px; text-transform:uppercase; padding:9px 13px; text-align:left; border:1px solid var(--border); }
+.match-tbl td { padding:9px 13px; border:1px solid var(--border); color:var(--text); vertical-align:top; }
+.match-tbl tr:nth-child(even) td { background:rgba(255,255,255,.02); }
+
+.q-stem { font-size:15px; font-weight:600; line-height:1.72; margin-bottom:18px; color:#ffffff; }
+.q-stem strong { color:var(--goldl); }
+
+.opts { display:flex; flex-direction:column; gap:10px; }
+.opt { display:flex; align-items:flex-start; gap:14px; background:#1a1a00; border:2px solid #f5c800; border-radius:10px; padding:14px 18px; cursor:pointer; text-align:left; transition:border-color .15s,background .15s; width:100%; }
+.opt:hover { background:#2a2a00; border-color:#ffe033; }
+.opt.sel { border-color:var(--blue); background:rgba(74,158,255,.15); }
+.opt.correct { border-color:var(--green); background:rgba(61,220,132,.15); pointer-events:none; }
+.opt.wrong { border-color:var(--red); background:rgba(255,92,92,.15); pointer-events:none; }
+.opt.show-correct { border-color:var(--green); background:rgba(61,220,132,.12); pointer-events:none; }
+.opt-lbl { display:flex; align-items:center; justify-content:center; min-width:28px; height:28px; border-radius:6px; background:#f5c800; font-family:var(--mono); font-size:12px; font-weight:800; color:#000; flex-shrink:0; transition:background .15s,color .15s; }
+.opt.sel .opt-lbl { background:var(--blue); color:#fff; }
+.opt.correct .opt-lbl { background:var(--green); color:#000; }
+.opt.wrong .opt-lbl { background:var(--red); color:#fff; }
+.opt.show-correct .opt-lbl { background:var(--green); color:#000; }
+.opt-txt { font-size:15px; font-weight:600; line-height:1.55; padding-top:3px; color:#ffffff; }
+
+.q-nav { display:flex; justify-content:space-between; align-items:center; margin-top:20px; }
+.btn-nav { background:#1a1a00; border:2px solid #f5c800; border-radius:8px; padding:9px 20px; color:#f5c800; font-family:var(--font); font-size:13px; font-weight:700; cursor:pointer; transition:background .2s; }
+.btn-nav:hover { background:#2a2a00; }
+.btn-nav:disabled { opacity:.3; cursor:not-allowed; }
+.btn-clear { background:none; border:1px solid #f5c800; border-radius:7px; padding:7px 14px; color:#f5c800; font-size:12px; cursor:pointer; font-family:var(--font); transition:border-color .2s,color .2s; }
+.btn-clear:hover { border-color:var(--red); color:var(--red); }
+
+/* palette */
+.palette-wrap { }
+.palette-inner { position:sticky; top:70px; background:#111100; border:2px solid #f5c800; border-radius:13px; padding:18px; }
+.pal-title { font-size:11px; font-weight:700; color:var(--dim); letter-spacing:1px; text-transform:uppercase; margin-bottom:14px; }
+.pal-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:6px; margin-bottom:16px; }
+.pal-btn { aspect-ratio:1; border-radius:6px; border:1px solid #f5c800; background:#1a1a00; font-family:var(--mono); font-size:11px; font-weight:700; color:#f5c800; cursor:pointer; transition:all .15s; display:flex; align-items:center; justify-content:center; }
+.pal-btn.answered { background:#f5c800; border-color:#f5c800; color:#000; font-weight:800; }
+.pal-btn.current { border-color:#fff; color:#fff; background:#2a2a00; outline:2px solid #f5c800; }
+.pal-legend { display:flex; flex-direction:column; gap:7px; margin-top:4px; }
+.leg-row { display:flex; align-items:center; gap:8px; font-size:11px; color:var(--dim); }
+.leg-dot { width:10px; height:10px; border-radius:3px; flex-shrink:0; }
+.leg-ans { background:rgba(74,158,255,.4); border:1px solid var(--blue); }
+.leg-skip { background:var(--surf2); border:1px solid var(--border); }
+.leg-cur { border:1px solid var(--gold); background:rgba(212,168,67,.15); }
+.pal-stats { margin-top:16px; padding-top:14px; border-top:1px solid var(--border); display:flex; flex-direction:column; gap:6px; }
+.pstat { font-size:12px; color:var(--dim); }
+.pstat span { font-family:var(--mono); font-weight:600; }
+.s-ans-c { color:var(--blue); }
+.s-skip-c { color:var(--gold); }
+
+/* footer */
+.t-footer { position:fixed; bottom:0; left:0; right:0; background:#0d0d00; backdrop-filter:blur(12px); border-top:2px solid #f5c800; padding:12px 20px; display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; }
+.btn-submit { background:var(--gold); color:#0a0c10; border:none; border-radius:9px; padding:10px 26px; font-family:var(--font); font-size:14px; font-weight:700; cursor:pointer; transition:background .2s; }
+.btn-submit:hover { background:var(--goldl); }
+
+/* ── RESULTS ── */
+#resultsScreen { display:none; background:#0d0d00; min-height:100vh; padding:36px 20px 60px; }
+.res-wrap { max-width:700px; margin:0 auto; }
+.res-badge { display:inline-block; background:rgba(212,168,67,.12); border:1px solid rgba(212,168,67,.3); color:var(--gold); font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; padding:4px 12px; border-radius:20px; margin-bottom:14px; }
+.res-title { font-size:30px; font-weight:700; margin-bottom:6px; }
+.res-name { font-size:14px; color:var(--dim); margin-bottom:30px; }
+
+.score-hero { text-align:center; margin-bottom:30px; }
+.score-big { font-size:72px; font-weight:700; font-family:var(--mono); color:var(--gold); line-height:1; }
+.score-denom { font-size:18px; color:var(--dim); margin-top:4px; }
+
+.stats-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:24px; }
+.stat-box { background:var(--surf); border:1px solid var(--border); border-radius:11px; padding:16px; text-align:center; }
+.stat-val { font-size:26px; font-weight:700; font-family:var(--mono); margin-bottom:3px; }
+.stat-lbl { font-size:11px; color:var(--dim); font-weight:600; letter-spacing:.8px; text-transform:uppercase; }
+.sv-correct { color:var(--green); }
+.sv-wrong { color:var(--red); }
+.sv-skip { color:var(--gold); }
+
+.res-meta { display:flex; gap:18px; flex-wrap:wrap; margin-bottom:24px; }
+.rm { font-size:13px; color:var(--dim); }
+.rm strong { color:var(--text); }
+
+.res-btns { display:flex; gap:12px; flex-wrap:wrap; margin-bottom:20px; }
+.btn-tracker { background:var(--gold); color:#0a0c10; border:none; border-radius:9px; padding:11px 24px; font-family:var(--font); font-size:14px; font-weight:700; cursor:pointer; text-decoration:none; display:inline-block; }
+.btn-tracker:hover { background:var(--goldl); }
+.btn-alltests { background:none; border:1px solid var(--border); border-radius:9px; padding:10px 22px; color:var(--text); font-family:var(--font); font-size:14px; font-weight:600; cursor:pointer; text-decoration:none; display:inline-block; transition:border-color .2s; }
+.btn-alltests:hover { border-color:var(--gold); }
+.btn-pdf { background:none; border:1px solid var(--blue); border-radius:9px; padding:10px 22px; color:var(--blue); font-family:var(--font); font-size:14px; font-weight:600; cursor:pointer; transition:background .2s; }
+.btn-pdf:hover { background:rgba(74,158,255,.1); }
+
+#sheet-notice { font-size:13px; color:var(--dim); margin-bottom:24px; padding:10px 14px; border-radius:8px; background:var(--surf); border:1px solid var(--border); }
+#sheet-notice.submitting { color:var(--gold); border-color:rgba(212,168,67,.3); }
+#sheet-notice.ok { color:var(--green); border-color:rgba(61,220,132,.3); }
+#sheet-notice.err { color:var(--red); border-color:rgba(255,92,92,.3); }
+
+/* retry section */
+.section-head { font-size:13px; font-weight:700; color:var(--dim); letter-spacing:1px; text-transform:uppercase; margin-bottom:16px; padding-bottom:10px; border-bottom:1px solid var(--border); }
+#retrySection { margin-bottom:32px; }
+.btn-retry { background:rgba(176,108,255,.15); border:1px solid var(--purple); border-radius:9px; padding:10px 22px; color:var(--purple); font-family:var(--font); font-size:14px; font-weight:600; cursor:pointer; transition:background .2s; margin-bottom:16px; }
+.btn-retry:hover { background:rgba(176,108,255,.25); }
+
+/* misses copy box */
+#missesSection { margin-bottom:32px; }
+.misses-box { background:var(--surf2); border:1px solid var(--border); border-radius:9px; padding:16px; }
+.misses-box textarea { width:100%; background:none; border:none; color:var(--dim); font-family:var(--mono); font-size:12px; line-height:1.7; resize:none; outline:none; min-height:120px; }
+.btn-copy { background:none; border:1px solid var(--border); border-radius:7px; padding:7px 16px; color:var(--text); font-size:12px; font-family:var(--font); cursor:pointer; margin-top:10px; transition:border-color .2s; }
+.btn-copy:hover { border-color:var(--gold); }
+
+/* review list */
+#review-list { margin-bottom:32px; }
+.rev-card { background:var(--surf); border-radius:11px; padding:18px 20px; margin-bottom:14px; border-left:4px solid var(--border); }
+.rev-card.rc { border-left-color:var(--green); }
+.rev-card.rw { border-left-color:var(--red); }
+.rev-card.rs { border-left-color:var(--border); }
+.rev-badge { display:inline-block; font-size:10px; font-weight:700; letter-spacing:.8px; text-transform:uppercase; padding:2px 8px; border-radius:4px; margin-bottom:10px; }
+.rb-correct { background:rgba(61,220,132,.2); color:var(--green); }
+.rb-wrong { background:rgba(255,92,92,.2); color:var(--red); }
+.rb-skipped { background:rgba(136,144,168,.15); color:var(--dim); }
+.rev-stem { font-size:13px; line-height:1.65; margin-bottom:10px; color:var(--text); }
+.rev-ans { font-size:12px; color:var(--dim); margin-bottom:8px; }
+.rev-ans strong { color:var(--text); }
+.rev-exp { font-size:12px; color:var(--dim); background:var(--surf2); border-radius:7px; padding:10px 13px; line-height:1.65; border-left:2px solid var(--gold); }
+
+/* retry modal */
+#retryModal { display:none; position:fixed; inset:0; background:rgba(0,0,0,.8); z-index:200; align-items:center; justify-content:center; padding:20px; }
+#retryModal.open { display:flex; }
+.retry-inner { background:var(--surf); border:1px solid var(--border); border-radius:14px; padding:28px; width:100%; max-width:580px; max-height:90vh; overflow-y:auto; }
+.retry-title { font-size:16px; font-weight:700; margin-bottom:20px; }
+.btn-close-retry { float:right; background:none; border:1px solid var(--border); border-radius:7px; padding:5px 12px; color:var(--dim); font-size:12px; cursor:pointer; font-family:var(--font); }
+.btn-close-retry:hover { border-color:var(--red); color:var(--red); }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="login-badge">Road to JIPMAT</div>
+    <div class="login-title">Road to JIPMAT 1</div>
+    <div class="login-sub">Verbal Ability · Full Mock</div>
+    <div class="login-chips">
+      <div class="chip"><span>34</span> Questions</div>
+      <div class="chip"><span>+4 / −1</span> Marking</div>
+      <div class="chip"><span>40</span> Minutes</div>
+    </div>
+    <div class="fg"><label>Full Name</label><input type="text" id="inputName" placeholder="Enter your full name" autocomplete="off"></div>
+    <div class="fg"><label>IMS PIN</label><input type="text" id="inputPin" placeholder="e.g. STU1234567890" autocomplete="off"></div>
+    <div class="fg">
+      <label>Batch</label>
+      <select id="inputBatch">
+        <option value="">— Select your batch —</option>
+        <optgroup label="Classroom">
+          <option value="A2701">A2701</option><option value="A2702">A2702</option>
+          <option value="A2703">A2703</option><option value="A2704">A2704</option>
+          <option value="A2705">A2705</option><option value="A2706">A2706</option>
+          <option value="A2707">A2707</option><option value="A2708">A2708</option>
+          <option value="A2709">A2709</option><option value="A2710">A2710</option>
+          <option value="A2711">A2711</option><option value="A2712">A2712</option>
+        </optgroup>
+        <optgroup label="School">
+          <option value="Zebar">Zebar</option>
+        </optgroup>
+        <optgroup label="Online">
+          <option value="27E101">27E101</option><option value="27E102">27E102</option>
+          <option value="27E103">27E103</option><option value="27E104">27E104</option>
+          <option value="27E105">27E105</option>
+        </optgroup>
+        <optgroup label="JIPMAT">
+          <option value="260X">260X</option>
+        </optgroup>
+        <optgroup label="Admin">
+          <option value="Admin">Admin</option>
+        </optgroup>
+      </select>
+    </div>
+    <button class="btn-start" onclick="startTest()">Begin Test →</button>
+    <div id="loginErr">Please fill all fields and enter a valid IMS PIN (STU/IMS + 10 digits). Admin PIN required for Admin batch.</div>
+  </div>
+</div>
+
+<!-- TEST SCREEN -->
+<div id="testScreen">
+  <div class="t-header">
+    <div class="t-brand">Road to JIPMAT 1</div>
+    <div class="t-info">
+      <div class="t-tag">Student: <span id="hdrName">—</span></div>
+      <div class="t-tag">Batch: <span id="hdrBatch">—</span></div>
+      <div id="timerDisp">40:00</div>
+    </div>
+  </div>
+  <div class="t-body">
+    <div class="q-area">
+      <div id="qContainer"></div>
+    </div>
+    <div class="palette-wrap">
+      <div class="palette-inner">
+        <div class="pal-title">Question Palette</div>
+        <div class="pal-grid" id="palette"></div>
+        <div class="pal-legend">
+          <div class="leg-row"><div class="leg-dot leg-cur"></div>Current</div>
+          <div class="leg-row"><div class="leg-dot leg-ans"></div>Answered</div>
+          <div class="leg-row"><div class="leg-dot leg-skip"></div>Not visited</div>
+        </div>
+        <div class="pal-stats">
+          <div class="pstat">Answered: <span class="s-ans-c" id="cntAns">0</span></div>
+          <div class="pstat">Skipped: <span class="s-skip-c" id="cntSkip">0</span></div>
+          <div class="pstat">Total: <span>34</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="t-footer">
+    <div></div>
+    <button class="btn-submit" onclick="confirmSubmit()">Submit Test</button>
+  </div>
+</div>
+
+<!-- RESULTS -->
+<div id="resultsScreen">
+  <div class="res-wrap" id="pdfTarget">
+    <div class="res-badge">Test Complete</div>
+    <div class="res-title">Road to JIPMAT 1</div>
+    <div class="res-name" id="resName">—</div>
+
+    <div class="score-hero">
+      <div class="score-big" id="resScore">0</div>
+      <div class="score-denom">out of 136</div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-box"><div class="stat-val sv-correct" id="resCorrect">0</div><div class="stat-lbl">Correct</div></div>
+      <div class="stat-box"><div class="stat-val sv-wrong" id="resWrong">0</div><div class="stat-lbl">Wrong</div></div>
+      <div class="stat-box"><div class="stat-val sv-skip" id="resSkipped">0</div><div class="stat-lbl">Skipped</div></div>
+    </div>
+
+    <div class="res-meta">
+      <div class="rm">Batch: <strong id="resBatch">—</strong></div>
+      <div class="rm">Time taken: <strong id="resTime">—</strong></div>
+      <div class="rm">PIN: <strong id="resPin">—</strong></div>
+    </div>
+
+    <div class="res-btns">
+      <a class="btn-tracker" href="road_to_iim_tracker_v2.html">Go to Tracker →</a>
+      <a class="btn-alltests" href="https://sahilkanetkar-collab.github.io/Road-to-IIM/" target="_blank">All Tests</a>
+      <button class="btn-pdf" onclick="generatePDF()">Download My Result PDF</button>
+    </div>
+
+    <div id="sheet-notice" class="submitting">⏳ Saving your result to the sheet…</div>
+
+    <!-- Retry wrong questions -->
+    <div id="retrySection">
+      <div class="section-head">Retry Wrong Questions</div>
+      <div id="retryContent"></div>
+    </div>
+
+    <!-- Misses copy box -->
+    <div id="missesSection">
+      <div class="section-head" id="missesLabel">Misses</div>
+      <div class="misses-box">
+        <textarea id="missesText" readonly></textarea>
+        <button class="btn-copy" onclick="copyMisses()">Copy</button>
+      </div>
+    </div>
+
+    <!-- Review list -->
+    <div id="review-list">
+      <div class="section-head">Full Review</div>
+      <div id="reviewCards"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Retry Modal -->
+<div id="retryModal">
+  <div class="retry-inner">
+    <button class="btn-close-retry" onclick="closeRetry()">✕ Close</button>
+    <div class="retry-title">Retry Wrong Questions</div>
+    <div id="retryQuestions"></div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════
+// QUESTIONS
+// ═══════════════════════════════════════
+const QUESTIONS = [
+  {
+    id:1, section:"Grammar", type:"mcq (Grammar)", difficulty:"Conceptual",
+    stem:`In the following question, a sentence has been given in <strong>Direct Speech</strong>. Select the option that best expresses it in <strong>Indirect Speech</strong>.<br><br>"The coach said to the players, 'You must practise every day if you want to succeed.'"`,
+    options:["The coach told the players that they must practise every day if they wanted to succeed.","The coach told the players that you must practise every day if you want to succeed.","The coach said to the players that they had to practise every day if they wanted to succeed.","The coach told the players that they have to practise every day if they want to succeed."],
+    answer:0,
+    exp:"In indirect speech, the reporting verb changes to 'told', the pronoun 'you' becomes 'they', and the modal 'must' shifts to 'had to' only in past reporting — but here the overall structure of option A correctly shifts tense and pronoun while retaining the sense of obligation. Option A is the standard transformation."
+  },
+  {
+    id:2, section:"Vocabulary", type:"mcq (Vocabulary)", difficulty:"Medium",
+    stem:`Pick the <strong>odd one out</strong> from the following phrasal verbs:`,
+    options:["give in","give up","give out","give against"],
+    answer:3,
+    exp:"'Give in', 'give up', and 'give out' are all standard English phrasal verbs. 'Give against' is not a real phrasal verb in English, making it the odd one out."
+  },
+  {
+    id:3, section:"Grammar", type:"mcq (Grammar)", difficulty:"Conceptual",
+    stem:`Below are given alternatives to the underlined part of the sentence. Choose the correct alternative.<br><br>"The committee was accused of <u>fail to consider</u> the objections raised by the minority members."`,
+    options:["failing to consider","to fail considering","fail for considering","failed in considering"],
+    answer:0,
+    exp:"After a preposition ('of'), a gerund (-ing form) is required. So 'fail to consider' must become 'failing to consider'. The preposition 'of' governs the gerund phrase."
+  },
+  {
+    id:4, section:"Grammar", type:"mcq (Grammar)", difficulty:"Easy",
+    stem:`Pick the most appropriate punctuation mark for the blank.<br><br>"How dare he insult the entire audience ____"`,
+    options:["(.) full stop","(,) comma","(?) question mark","(!) exclamation mark"],
+    answer:3,
+    exp:"The sentence expresses strong indignation, not a genuine question. Even though it begins with 'How', it is an exclamatory sentence and requires an exclamation mark (!)."
+  },
+  {
+    id:5, section:"Grammar", type:"mcq (Grammar)", difficulty:"Conceptual",
+    stem:`Choose the option that best replaces the underlined phrase.<br><br>"By the time the ambulance arrived, the patient <u>already died</u>."`,
+    options:["had already died","has already died","was already dying","already had died"],
+    answer:0,
+    exp:"'By the time' signals that one action (dying) was completed before another past action (ambulance arriving). This requires the Past Perfect tense: 'had already died'."
+  },
+  {
+    id:6, section:"Vocabulary", type:"mcq (Vocabulary)", difficulty:"Easy",
+    stem:`Pick the <strong>antonym</strong> of the word: <strong>BENEVOLENT</strong>`,
+    options:["Generous","Charitable","Malicious","Serene"],
+    answer:2,
+    exp:"Benevolent means well-meaning and kind. Its antonym is Malicious, which means having the intention to do harm. Generous and Charitable are synonyms of benevolent."
+  },
+  {
+    id:7, section:"Vocabulary", type:"mcq (Vocabulary)", difficulty:"Conceptual",
+    stem:`Choose the correct meaning of the underlined word.<br><br>"The professor was known for his <u>pedantic</u> approach to grammar."`,
+    options:["creative and imaginative","overly concerned with minor rules and details","relaxed and informal","quick to change one's views"],
+    answer:1,
+    exp:"Pedantic means excessively concerned with minor details or formal rules, especially in teaching or writing. A pedantic person often corrects trivial errors and insists on strict adherence to rules."
+  },
+  {
+    id:8, section:"Vocabulary", type:"mcq (Vocabulary)", difficulty:"Medium",
+    stem:`Pick the <strong>synonym</strong> of the word: <strong>LOQUACIOUS</strong>`,
+    options:["Silent","Deceptive","Talkative","Cunning"],
+    answer:2,
+    exp:"Loquacious means tending to talk a great deal. Its synonym is Talkative. Silent is its antonym. Deceptive and Cunning are unrelated."
+  },
+  {
+    id:9, section:"Vocabulary", type:"mcq (Idiom)", difficulty:"Conceptual",
+    stem:`Choose the correct meaning of the underlined idiom.<br><br>"After years of rivalry, the two firms finally decided to <u>bury the hatchet</u>."`,
+    options:["compete fiercely again","make peace and end a conflict","sign a formal legal agreement","divide their market equally"],
+    answer:1,
+    exp:"'Bury the hatchet' means to end a conflict and make peace. The idiom comes from the Native American practice of literally burying a hatchet as a symbol of peace between tribes."
+  },
+  {
+    id:10, section:"Vocabulary", type:"mcq (Vocabulary)", difficulty:"Easy",
+    stem:`Out of the four alternatives, choose the one that can be substituted for the given words/phrase.<br><br>"A person who is new to a subject, skill, or belief."`,
+    options:["Veteran","Prodigy","Maverick","Novice"],
+    answer:3,
+    exp:"A Novice is a person who is new to and inexperienced in a job or situation. A Veteran is someone with long experience. A Prodigy is exceptionally talented from a young age. A Maverick is an independent-minded person."
+  },
+  {
+    id:11, section:"Grammar", type:"mcq (Grammar)", difficulty:"Conceptual",
+    stem:`Identify the error in the sentence:<br><br><em>1. Neither the manager / 2. nor the employees / 3. were willing to / 4. accept the blame.</em>`,
+    options:["2","4","1","3"],
+    answer:3,
+    exp:"In 'Neither…nor' constructions, the verb agrees with the nearest subject. Here the nearer subject is 'the employees' (plural), which would normally take 'were'. However, under strict formal grammar, 'neither…nor' with a singular subject closer to the verb requires the singular 'was'. The error is in Part 3 — 'were' should be 'was'."
+  },
+  {
+    id:12, section:"Vocabulary", type:"mcq (Idiom)", difficulty:"Hard",
+    stem:`Choose the correct meaning of the idiom:<br><br><strong><u>To read between the lines</u></strong>`,
+    options:["to skim through a text quickly","to understand the hidden meaning behind something","to quote passages verbatim","to annotate a book thoroughly"],
+    answer:1,
+    exp:"'To read between the lines' means to find a hidden or implied meaning in something that is not explicitly stated. It suggests understanding what is left unsaid."
+  },
+  {
+    id:13, section:"Vocabulary", type:"mcq (Vocabulary)", difficulty:"Easy",
+    stem:`From the four alternatives, choose the one that can be substituted for the given words/sentence.<br><br>"A person who pretends to be what he is not."`,
+    options:["Narcissist","Introvert","Sceptic","Hypocrite"],
+    answer:3,
+    exp:"A Hypocrite is a person who pretends to have virtues, moral beliefs, or religious beliefs that they do not actually have. A Narcissist is excessively self-admiring. An Introvert is reserved and inward-focused. A Sceptic doubts accepted opinions."
+  },
+  {
+    id:14, section:"Vocabulary", type:"mcq (Vocabulary)", difficulty:"Hard",
+    stem:`Pick the <strong>antonym</strong> of the word: <strong>MAGNANIMOUS</strong>`,
+    options:["Courageous","Generous","Brave","Petty"],
+    answer:3,
+    exp:"Magnanimous means generous in forgiving and not bearing grudges. Its antonym is Petty, which means small-minded and ungenerous. Courageous, Generous, and Brave are all near-synonyms of magnanimous."
+  },
+  {
+    id:15, section:"Grammar", type:"mcq (Grammar)", difficulty:"Easy",
+    stem:`Identify the error in the sentence:<br><br><em>1. She insisted / 2. that she is / 3. innocent of the / 4. charges against her.</em>`,
+    options:["1","2","3","4"],
+    answer:1,
+    exp:"After a verb like 'insisted' (past tense), the clause that follows must use the backshifted tense: 'that she was innocent'. Using 'is' (present tense) after a past reporting verb violates the sequence of tenses rule. The error is in Part 2 — 'is' should be 'was'."
+  },
+  {
+    id:16, section:"Vocabulary", type:"mcq (Vocabulary)", difficulty:"Medium",
+    stem:`Pick the <strong>synonym</strong> of the word: <strong>ACRIMONY</strong>`,
+    options:["Warmth","Bitterness","Clarity","Indifference"],
+    answer:1,
+    exp:"Acrimony means bitterness or ill feeling, especially in speech or manner. Its synonym is Bitterness. Warmth is its antonym. Clarity and Indifference are unrelated."
+  },
+  {
+    id:17, section:"Grammar", type:"mcq (Grammar)", difficulty:"Conceptual",
+    stem:`A sentence has been given in Active Voice. Select the option that best expresses it in <strong>Passive Voice</strong>.<br><br>"The authorities will demolish the old building next month."`,
+    options:["The old building has been demolished by the authorities.","The old building would be demolished by the authorities next month.","The old building will be demolished by the authorities next month.","The old building is being demolished by the authorities next month."],
+    answer:2,
+    exp:"The active sentence is in Simple Future (will + V1). Its passive form is: Object + will be + V3 + by + Subject. So: 'The old building will be demolished by the authorities next month.' Options A and D change the tense incorrectly."
+  },
+  {
+    id:18, section:"Grammar", type:"mcq (Spelling)", difficulty:"Conceptual",
+    stem:`Pick the word with the <strong>correct spelling</strong>:`,
+    options:["Occasion","Ocassion","Occassion","Ocassoin"],
+    answer:0,
+    exp:"The correct spelling is 'Occasion' — single 'c', single 's'. It derives from Latin 'occasio'. The most common errors are doubling the 'c' ('Occassion') or doubling the 's' ('Ocassion')."
+  },
+  {
+    id:19, section:"Grammar", type:"mcq (Grammar)", difficulty:"Conceptual",
+    stem:`Find the part of the sentence that has an error:<br><br><em>"The number of students / who attend the workshop / are increasing / every semester."</em>`,
+    options:["The number of students","who attend the workshop","are increasing","every semester"],
+    answer:2,
+    exp:"The subject is 'The number of students' — 'The number of' always takes a singular verb. So 'are increasing' is wrong; it should be 'is increasing'. The error is in Part 3."
+  },
+  {
+    id:20, section:"Vocabulary", type:"mcq (Vocabulary)", difficulty:"Easy",
+    stem:`The sentence has two blanks. Choose the set of words that best fits the meaning of the sentence as a whole.<br><br>"The documentary ______ the harsh realities of urban poverty and ______ viewers to take action."`,
+    options:["ignored, pressured","exposed, urged","celebrated, prevented","questioned, hindered"],
+    answer:1,
+    exp:"A documentary that addresses urban poverty would 'expose' (reveal) the harsh realities and 'urge' (strongly encourage) viewers to act. 'Exposed' and 'urged' together produce a coherent and purposeful meaning."
+  },
+
+  // CLOZE PASSAGE Q21-25
+  {
+    id:21, section:"Grammar", type:"mcq (Grammar)", difficulty:"Easy",
+    passage:`Cities have always (i) ______ as the centres of civilisation. From ancient Mesopotamia to modern-day metropolises, they represent the highest expression of human cooperation. Unlike rural communities, which (ii) ______ largely on agriculture, cities allow for a division of labour that (iii) ______ the emergence of art, science, and commerce. Yet this concentration of people also (iv) ______ its own set of challenges — overcrowding, pollution, and inequality among them. The question for the twenty-first century is not whether cities will continue to grow, but how they can grow (v) ______.`,
+    stem:`Based on the passage above, pick the most appropriate word to fill blank <strong>(i)</strong>:`,
+    options:["serve","served","serving","to serve"],
+    answer:1,
+    exp:"'Have always' is a Present Perfect auxiliary. It requires the past participle: 'Cities have always served as centres of civilisation.' 'Serve' is the base form and cannot follow 'have always' correctly. 'Serving' and 'to serve' are non-finite forms that don't work here."
+  },
+  {
+    id:22, section:"Grammar", type:"mcq (Grammar)", difficulty:"Conceptual",
+    passage:`Cities have always (i) ______ as the centres of civilisation. From ancient Mesopotamia to modern-day metropolises, they represent the highest expression of human cooperation. Unlike rural communities, which (ii) ______ largely on agriculture, cities allow for a division of labour that (iii) ______ the emergence of art, science, and commerce. Yet this concentration of people also (iv) ______ its own set of challenges — overcrowding, pollution, and inequality among them. The question for the twenty-first century is not whether cities will continue to grow, but how they can grow (v) ______.`,
+    stem:`Pick the most appropriate word to fill blank <strong>(ii)</strong>:`,
+    options:["rely","relies","relied","relying"],
+    answer:0,
+    exp:"The relative clause modifies 'rural communities' (plural). In this general-truth statement, the correct form is the simple present plural: 'rely'. 'Relies' is singular (wrong for plural subject). 'Relied' is past tense (wrong tense for a general truth). 'Relying' is a participle, not a finite verb."
+  },
+  {
+    id:23, section:"Grammar", type:"mcq (Grammar)", difficulty:"Medium",
+    passage:`Cities have always (i) ______ as the centres of civilisation. From ancient Mesopotamia to modern-day metropolises, they represent the highest expression of human cooperation. Unlike rural communities, which (ii) ______ largely on agriculture, cities allow for a division of labour that (iii) ______ the emergence of art, science, and commerce. Yet this concentration of people also (iv) ______ its own set of challenges — overcrowding, pollution, and inequality among them. The question for the twenty-first century is not whether cities will continue to grow, but how they can grow (v) ______.`,
+    stem:`Pick the most appropriate word to fill blank <strong>(iii)</strong>:`,
+    options:["prevent","prevented","enables","enable"],
+    answer:2,
+    exp:"The subject of the relative clause is 'a division of labour' (singular). The verb must agree in number: 'enables' (singular, third person present). 'Enable' would be correct for a plural subject. 'Prevent' and 'prevented' change the meaning entirely."
+  },
+  {
+    id:24, section:"Grammar", type:"mcq (Grammar)", difficulty:"Conceptual",
+    passage:`Cities have always (i) ______ as the centres of civilisation. From ancient Mesopotamia to modern-day metropolises, they represent the highest expression of human cooperation. Unlike rural communities, which (ii) ______ largely on agriculture, cities allow for a division of labour that (iii) ______ the emergence of art, science, and commerce. Yet this concentration of people also (iv) ______ its own set of challenges — overcrowding, pollution, and inequality among them. The question for the twenty-first century is not whether cities will continue to grow, but how they can grow (v) ______.`,
+    stem:`Pick the most appropriate word to fill blank <strong>(iv)</strong>:`,
+    options:["bring","bringing","brought","brings"],
+    answer:3,
+    exp:"The subject 'this concentration of people' is singular. In this general-truth statement, the correct form is simple present third person singular: 'brings'. 'Bring' is plural. 'Bringing' is a non-finite participle. 'Brought' is past tense."
+  },
+  {
+    id:25, section:"Grammar", type:"mcq (Grammar)", difficulty:"Medium",
+    passage:`Cities have always (i) ______ as the centres of civilisation. From ancient Mesopotamia to modern-day metropolises, they represent the highest expression of human cooperation. Unlike rural communities, which (ii) ______ largely on agriculture, cities allow for a division of labour that (iii) ______ the emergence of art, science, and commerce. Yet this concentration of people also (iv) ______ its own set of challenges — overcrowding, pollution, and inequality among them. The question for the twenty-first century is not whether cities will continue to grow, but how they can grow (v) ______.`,
+    stem:`Pick the most appropriate word to fill blank <strong>(v)</strong>:`,
+    options:["sustain","sustained","sustainably","sustainable"],
+    answer:2,
+    exp:"Blank (v) follows the verb 'grow' and needs an adverb to modify it: 'grow sustainably'. 'Sustainable' is an adjective. 'Sustain' and 'sustained' are verb forms. Only 'sustainably' is the correct adverb form here."
+  },
+
+  // PARAJUMBLES Q26-28
+  {
+    id:26, section:"Grammar", type:"mcq (Grammar)", difficulty:"Conceptual",
+    stem:`Choose the order of the sentences A, B, C, D and E that forms a logical paragraph.<br><br>A. This shift has led to growing concerns about mental health, particularly among teenagers who spend several hours a day on social media.<br>B. Unlike earlier forms of media, social media platforms are engineered to maximise engagement, often at the cost of the user's well-being.<br>C. The relationship between technology and human behaviour has never been more complex than it is today.<br>D. Researchers have begun documenting a correlation between heavy social media use and feelings of anxiety and inadequacy.<br>E. Understanding this dynamic is crucial if societies are to design better digital environments for future generations.`,
+    options:["C, B, A, D, E","A, C, B, D, E","B, A, C, D, E","C, A, D, B, E"],
+    answer:0,
+    exp:"C introduces the broad topic (technology and behaviour). B narrows to social media and its design philosophy. A describes the resulting mental health shift. D introduces the research evidence. E concludes with the call to action. The order C→B→A→D→E is the most logically coherent."
+  },
+  {
+    id:27, section:"Grammar", type:"mcq (Grammar)", difficulty:"Conceptual",
+    stem:`Select the most logical order of the sentences to form a coherent paragraph.<br><br>A. Yet, its usage is now so widespread that it has entered everyday language across the world.<br>B. English originated as a regional dialect on a small island in the North Sea.<br>C. Today, it serves as the primary medium of international business, science, and diplomacy.<br>D. Centuries of colonial expansion and, later, American cultural influence accelerated its global spread.`,
+    options:["A, C, D, B","B, D, C, A","C, A, B, D","D, B, A, C"],
+    answer:1,
+    exp:"B introduces the humble origin of English (regional dialect). D explains the historical spread (colonialism, American influence). C describes its current global role (business, science, diplomacy). A adds the concluding observation — its usage is now 'everyday language across the world'. The correct order is B→D→C→A."
+  },
+  {
+    id:28, section:"Grammar", type:"mcq (Grammar)", difficulty:"Conceptual",
+    stem:`The following sentence is divided into four parts. Rearrange them to make a meaningful sentence.<br><br>A. that enable communities<br>B. microfinance institutions provide small loans<br>C. to start businesses and<br>D. reduce their dependence on informal moneylenders`,
+    options:["B, A, C, D","A, B, D, C","D, C, B, A","C, D, A, B"],
+    answer:0,
+    exp:"The sentence reads: 'Microfinance institutions provide small loans (B) that enable communities (A) to start businesses and (C) reduce their dependence on informal moneylenders (D).' B is the main clause; A introduces the relative clause; C and D complete the infinitive phrase."
+  },
+
+  // RC Q29-31
+  {
+    id:29, section:"Grammar", type:"mcq (Grammar)", difficulty:"Hard",
+    passage:`Language is not merely a tool for communication; it is the very medium through which reality is perceived and organised. When we name something, we do not simply attach a label to a pre-existing object; we bring that object into a particular kind of existence within our shared world. Different languages therefore do not offer identical windows onto the same landscape — they construct subtly different landscapes altogether.<br><br>This view, associated with linguists such as Sapir and Whorf, was once considered radical. Their hypothesis — that the language one speaks shapes the thoughts one is capable of thinking — was dismissed by many as an overreach. After all, people learn second languages and seem to access the same underlying truths. Yet decades of cognitive research have lent this idea renewed credibility. Studies have shown that speakers of languages which lack a word for a particular colour have measurably more difficulty distinguishing between adjacent shades. The grammar of a language, including how it handles time, space, and agency, quietly moulds the mental habits of its speakers.<br><br>None of this means that human beings are prisoners of their mother tongue. Metaphor, translation, and cross-cultural dialogue all testify to the remarkable plasticity of the mind. But it does suggest that when a language dies, humanity loses not merely a vocabulary but a way of engaging with the world — a form of attention that cannot be fully recovered in any other tongue.`,
+    stem:`Which of the following statements are <strong>true</strong> about the given passage?<br><br>A. The passage argues that all languages are merely different labels for the same underlying reality.<br>B. The passage presents evidence that language can influence cognitive processes such as colour perception.<br>C. The author believes that humans are entirely unable to transcend the limitations of their native language.<br>D. The passage suggests that the death of a language is a loss that goes beyond mere vocabulary.`,
+    options:["A and C Only","B and D Only","A, B and C Only","B, C and D Only"],
+    answer:1,
+    exp:"A is false — the passage argues the opposite (languages construct different realities). B is true — the colour perception study is cited as evidence. C is false — the passage explicitly says humans are NOT prisoners of their mother tongue. D is true — the final paragraph states the loss of a language is 'not merely a vocabulary but a way of engaging with the world'. Hence B and D are true."
+  },
+  {
+    id:30, section:"Grammar", type:"mcq (Grammar)", difficulty:"Medium",
+    passage:`Language is not merely a tool for communication; it is the very medium through which reality is perceived and organised. When we name something, we do not simply attach a label to a pre-existing object; we bring that object into a particular kind of existence within our shared world. Different languages therefore do not offer identical windows onto the same landscape — they construct subtly different landscapes altogether.<br><br>This view, associated with linguists such as Sapir and Whorf, was once considered radical. Their hypothesis — that the language one speaks shapes the thoughts one is capable of thinking — was dismissed by many as an overreach. After all, people learn second languages and seem to access the same underlying truths. Yet decades of cognitive research have lent this idea renewed credibility. Studies have shown that speakers of languages which lack a word for a particular colour have measurably more difficulty distinguishing between adjacent shades. The grammar of a language, including how it handles time, space, and agency, quietly moulds the mental habits of its speakers.<br><br>None of this means that human beings are prisoners of their mother tongue. Metaphor, translation, and cross-cultural dialogue all testify to the remarkable plasticity of the mind. But it does suggest that when a language dies, humanity loses not merely a vocabulary but a way of engaging with the world — a form of attention that cannot be fully recovered in any other tongue.`,
+    stem:`Which of the following terms best describe the central concern of the passage?<br><br>A. Bilingualism<br>B. Linguistic relativity<br>C. Cultural extinction<br>D. Translation studies`,
+    options:["A and D Only","A, B and D Only","A and C Only","B and C Only"],
+    answer:3,
+    exp:"The passage is centrally about how language shapes thought — this is linguistic relativity (the Sapir-Whorf hypothesis). It also argues that a dying language represents a loss of a unique way of engaging with the world, which is cultural extinction. Bilingualism is not the focus, and translation studies only appears as a minor reference. B and C are the best fit."
+  },
+  {
+    id:31, section:"Grammar", type:"mcq (Grammar)", difficulty:"Medium",
+    passage:`Language is not merely a tool for communication; it is the very medium through which reality is perceived and organised. When we name something, we do not simply attach a label to a pre-existing object; we bring that object into a particular kind of existence within our shared world. Different languages therefore do not offer identical windows onto the same landscape — they construct subtly different landscapes altogether.<br><br>This view, associated with linguists such as Sapir and Whorf, was once considered radical. Their hypothesis — that the language one speaks shapes the thoughts one is capable of thinking — was dismissed by many as an overreach. After all, people learn second languages and seem to access the same underlying truths. Yet decades of cognitive research have lent this idea renewed credibility. Studies have shown that speakers of languages which lack a word for a particular colour have measurably more difficulty distinguishing between adjacent shades. The grammar of a language, including how it handles time, space, and agency, quietly moulds the mental habits of its speakers.<br><br>None of this means that human beings are prisoners of their mother tongue. Metaphor, translation, and cross-cultural dialogue all testify to the remarkable plasticity of the mind. But it does suggest that when a language dies, humanity loses not merely a vocabulary but a way of engaging with the world — a form of attention that cannot be fully recovered in any other tongue.`,
+    stem:`Which of the following statements correctly reflect the author's views?<br><br>A. The Sapir-Whorf hypothesis was initially accepted with enthusiasm by the academic community.<br>B. The passage acknowledges that humans have the capacity to transcend the boundaries of their mother tongue to some extent.<br>C. The author believes that translation can fully replicate the meaning carried by a dying language.<br>D. The grammar of a language influences how its speakers mentally process concepts such as time and agency.`,
+    options:["A and B Only","B and D Only","A, B and D Only","B, C and D Only"],
+    answer:1,
+    exp:"A is false — the hypothesis was 'dismissed by many as an overreach', not enthusiastically accepted. B is true — the passage states humans are not prisoners of their mother tongue. C is false — the author says a lost language's form of attention 'cannot be fully recovered in any other tongue', meaning translation cannot fully replicate it. D is true — the grammar of a language 'quietly moulds the mental habits of its speakers'. Hence B and D only are correct."
+  },
+
+  // MATCH THE FOLLOWING Q32-34
+  {
+    id:32, section:"Vocabulary", type:"mcq (Idiom)", difficulty:"Easy",
+    matchTable:{
+      headers:["LIST-I (Idiom)","LIST-II (Meaning)"],
+      rows:[
+        ["A. Beat about the bush","I. To reveal a secret accidentally"],
+        ["B. Let the cat out of the bag","II. To avoid getting to the point"],
+        ["C. Bite the bullet","III. To endure a painful situation stoically"],
+        ["D. Sit on the fence","IV. To be neutral and non-committal"]
+      ]
+    },
+    stem:`Match <strong>LIST-I</strong> with <strong>LIST-II</strong>. Choose the correct answer:`,
+    options:["A-II, B-I, C-III, D-IV","A-I, B-II, C-IV, D-III","A-III, B-IV, C-I, D-II","A-IV, B-III, C-II, D-I"],
+    answer:0,
+    exp:"A-II: 'Beat about the bush' = avoid getting to the point. B-I: 'Let the cat out of the bag' = reveal a secret accidentally. C-III: 'Bite the bullet' = endure a painful situation stoically. D-IV: 'Sit on the fence' = be neutral and non-committal."
+  },
+  {
+    id:33, section:"Vocabulary", type:"mcq (Vocabulary)", difficulty:"Easy",
+    matchTable:{
+      headers:["LIST-I (Term)","LIST-II (Meaning)"],
+      rows:[
+        ["A. Bona fide","I. in good faith; genuine"],
+        ["B. Status quo","II. the existing state of affairs"],
+        ["C. Per capita","III. for each person"],
+        ["D. Vice versa","IV. with the main terms reversed"]
+      ]
+    },
+    stem:`Match <strong>LIST-I</strong> with <strong>LIST-II</strong>. Choose the correct answer:`,
+    options:["A-II, B-I, C-IV, D-III","A-I, B-II, C-III, D-IV","A-III, B-IV, C-I, D-II","A-IV, B-III, C-II, D-I"],
+    answer:1,
+    exp:"A-I: Bona fide = genuine, in good faith. B-II: Status quo = existing state of affairs. C-III: Per capita = for each person. D-IV: Vice versa = with main terms reversed. All four are common Latin/formal English terms."
+  },
+  {
+    id:34, section:"Grammar", type:"mcq (Grammar)", difficulty:"Conceptual",
+    matchTable:{
+      headers:["LIST-I (Sentence)","LIST-II (Tense)"],
+      rows:[
+        ["A. She has been reading for two hours.","I. Simple Future"],
+        ["B. They will leave tomorrow.","II. Present Perfect Continuous"],
+        ["C. He was cooking when I arrived.","III. Past Continuous"],
+        ["D. We had finished the project before the deadline.","IV. Past Perfect"]
+      ]
+    },
+    stem:`Match <strong>LIST-I</strong> with <strong>LIST-II</strong>. Choose the correct answer:`,
+    options:["A-I, B-II, C-III, D-IV","A-II, B-IV, C-III, D-I","A-II, B-I, C-III, D-IV","A-III, B-I, C-II, D-IV"],
+    answer:2,
+    exp:"A: 'has been reading' = Present Perfect Continuous (II). B: 'will leave' = Simple Future (I). C: 'was cooking' = Past Continuous (III). D: 'had finished' = Past Perfect (IV). So A-II, B-I, C-III, D-IV = Option C."
+  }
+];
+
+// ═══════════════════════════════════════
+// CONSTANTS
+// ═══════════════════════════════════════
+const TOTAL_Q = 34;
+const MAX_MARKS = 136;
+const TIMER_DURATION = 40;
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwGGxswx4hcBUFiT0QJIglowhKcJCv47MOR5LKBv9sILl-evsgZeKCms5y6s5zEXOUo6Q/exec";
+const ADMIN_PINS = ["IMS1111111111","IMS2222222222","IMS3333333333","IMS4444444444","IMS5555555555"];
+
+// ═══════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════
+let studentName="", studentPin="", studentBatch="";
+let userAnswers = new Array(TOTAL_Q).fill(null);
+let currentQ = 0;
+let secondsLeft = TIMER_DURATION * 60;
+let timerInterval = null;
+
+// ═══════════════════════════════════════
+// PIN VALIDATION
+// ═══════════════════════════════════════
+function isValidPin(p){ return /^(STU|IMS)\d{10}$/i.test(p.trim()); }
+function isAdminPin(p){ return ADMIN_PINS.includes(p.trim().toUpperCase()); }
+
+// ═══════════════════════════════════════
+// START TEST
+// ═══════════════════════════════════════
+function startTest(){
+  const name = document.getElementById("inputName").value.trim();
+  const pin  = document.getElementById("inputPin").value.trim().toUpperCase();
+  const batch= document.getElementById("inputBatch").value;
+  const err  = document.getElementById("loginErr");
+
+  if(!name||!batch||!isValidPin(pin)){ err.style.display="block"; return; }
+  if(isAdminPin(pin) && batch!=="Admin"){ err.style.display="block"; err.textContent="Admin PINs must select the Admin batch."; return; }
+  if(!isAdminPin(pin) && batch==="Admin"){ err.style.display="block"; err.textContent="Admin batch requires an Admin PIN."; return; }
+  err.style.display="none";
+
+  studentName=name; studentPin=pin; studentBatch=batch;
+  document.getElementById("hdrName").textContent=studentName;
+  document.getElementById("hdrBatch").textContent=studentBatch;
+  document.getElementById("loginScreen").style.display="none";
+  document.getElementById("testScreen").style.display="block";
+
+  buildPalette();
+  renderQuestion(0);
+  startTimer();
+}
+
+// ═══════════════════════════════════════
+// PALETTE
+// ═══════════════════════════════════════
+function buildPalette(){
+  const g = document.getElementById("palette");
+  g.innerHTML="";
+  for(let i=0;i<TOTAL_Q;i++){
+    const b=document.createElement("button");
+    b.className="pal-btn"; b.id=`pb${i}`; b.textContent=i+1;
+    b.onclick=()=>renderQuestion(i);
+    g.appendChild(b);
+  }
+  updatePalette();
+}
+
+function updatePalette(){
+  for(let i=0;i<TOTAL_Q;i++){
+    const b=document.getElementById(`pb${i}`);
+    if(!b)continue;
+    b.className="pal-btn";
+    if(i===currentQ) b.classList.add("current");
+    else if(userAnswers[i]!==null) b.classList.add("answered");
+  }
+  const ans=userAnswers.filter(a=>a!==null).length;
+  document.getElementById("cntAns").textContent=ans;
+  document.getElementById("cntSkip").textContent=TOTAL_Q-ans;
+}
+
+// ═══════════════════════════════════════
+// RENDER QUESTION
+// ═══════════════════════════════════════
+function renderQuestion(idx){
+  currentQ=idx;
+  const q=QUESTIONS[idx];
+  let html="";
+
+  // passage (show only for first Q in a passage block)
+  if(q.passage){
+    const prevQ=idx>0?QUESTIONS[idx-1]:null;
+    if(!prevQ||prevQ.passage!==q.passage){
+      html+=`<div class="passage-box">${q.passage}</div>`;
+    }
+  }
+
+  // match table
+  if(q.matchTable){
+    html+=`<table class="match-tbl"><tr><th>${q.matchTable.headers[0]}</th><th>${q.matchTable.headers[1]}</th></tr>`;
+    q.matchTable.rows.forEach(r=>{html+=`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`;});
+    html+=`</table>`;
+  }
+
+  // stem
+  html+=`<div class="q-stem">${q.stem}</div>`;
+
+  // options
+  html+=`<div class="opts">`;
+  const lbls=["A","B","C","D"];
+  q.options.forEach((opt,oi)=>{
+    const sel=userAnswers[idx]===oi?"sel":"";
+    html+=`<button class="opt ${sel}" id="opt${idx}_${oi}" onclick="selectAnswer(${idx},${oi})">
+      <span class="opt-lbl">${lbls[oi]}</span>
+      <span class="opt-txt">${opt}</span>
+    </button>`;
+  });
+  html+=`</div>`;
+
+  // nav buttons
+  html+=`<div class="q-nav">
+    <button class="btn-nav" onclick="renderQuestion(${idx-1})" ${idx===0?"disabled":""}>← Previous</button>
+    <button class="btn-clear" onclick="clearAnswer(${idx})">Clear</button>
+    <button class="btn-nav" onclick="renderQuestion(${idx+1})" ${idx===TOTAL_Q-1?"disabled":""}>Next →</button>
+  </div>`;
+
+  const container=document.getElementById("qContainer");
+  container.innerHTML=`
+    <div class="q-card">
+      <div class="q-meta">
+        <span class="q-num">Q${q.id} of ${TOTAL_Q}</span>
+        <span class="q-tag tg-${q.section.toLowerCase().replace(/ /g,'')}">${q.section}</span>
+        <span class="q-diff">${q.difficulty} · ${q.type}</span>
+      </div>
+      ${html}
+    </div>`;
+
+  updatePalette();
+}
+
+// ═══════════════════════════════════════
+// ANSWER SELECTION
+// ═══════════════════════════════════════
+function selectAnswer(qIdx,optIdx){
+  userAnswers[qIdx]=optIdx;
+  [0,1,2,3].forEach(i=>{
+    const b=document.getElementById(`opt${qIdx}_${i}`);
+    if(b){ b.className="opt"; if(i===optIdx) b.classList.add("sel"); }
+  });
+  updatePalette();
+}
+
+function clearAnswer(qIdx){
+  userAnswers[qIdx]=null;
+  [0,1,2,3].forEach(i=>{
+    const b=document.getElementById(`opt${qIdx}_${i}`);
+    if(b) b.className="opt";
+  });
+  updatePalette();
+}
+
+// ═══════════════════════════════════════
+// TIMER
+// ═══════════════════════════════════════
+function startTimer(){
+  timerInterval=setInterval(()=>{
+    secondsLeft--;
+    const m=Math.floor(secondsLeft/60), s=secondsLeft%60;
+    const el=document.getElementById("timerDisp");
+    el.textContent=String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");
+    el.classList.remove("warn","danger");
+    if(secondsLeft<=60) el.classList.add("danger");
+    else if(secondsLeft<=300) el.classList.add("warn");
+    if(secondsLeft<=0){ clearInterval(timerInterval); submitTest(); }
+  },1000);
+}
+
+// ═══════════════════════════════════════
+// SUBMIT
+// ═══════════════════════════════════════
+function confirmSubmit(){
+  const skipped=userAnswers.filter(a=>a===null).length;
+  if(skipped>0 && !confirm(`${skipped} question(s) unanswered. Submit anyway?`)) return;
+  submitTest();
+}
+
+function submitTest(){
+  if(timerInterval) clearInterval(timerInterval);
+  let correct=0,wrong=0,skipped=0;
+  QUESTIONS.forEach((q,i)=>{
+    if(userAnswers[i]===null) skipped++;
+    else if(userAnswers[i]===q.answer) correct++;
+    else wrong++;
+  });
+  const score=(correct*4)-(wrong*1);
+  const elapsed=TIMER_DURATION*60-secondsLeft;
+  const mm=String(Math.floor(elapsed/60)).padStart(2,"0");
+  const ss=String(elapsed%60).padStart(2,"0");
+  const timeTaken=mm+":"+ss;
+  const timestamp=new Date().toLocaleString("en-IN",{timeZone:"Asia/Kolkata"});
+
+  showResults(score,correct,wrong,skipped,timeTaken);
+  saveToTracker(score,correct,wrong,skipped,timeTaken);
+  logToSheet(score,correct,wrong,skipped,timeTaken,timestamp);
+}
+
+// ═══════════════════════════════════════
+// SAVE TO TRACKER (localStorage fallback)
+// ═══════════════════════════════════════
+function saveToTracker(score,correct,wrong,skipped,timeTaken){
+  try{
+    const key="riim_"+studentBatch+"_"+studentName.toLowerCase().replace(/\s+/g,"_");
+    const existing=JSON.parse(localStorage.getItem(key)||"[]");
+    existing.push({test:"Road to JIPMAT 1",score,correct,wrong,skipped,timeTaken,pin:studentPin,batch:studentBatch});
+    localStorage.setItem(key,JSON.stringify(existing));
+  }catch(e){}
+}
+
+// ═══════════════════════════════════════
+// LOG TO SHEET
+// ═══════════════════════════════════════
+function logToSheet(score,correct,wrong,skipped,timeTaken,timestamp){
+  const sectionErrors={};
+  const wrongQuestions=[];
+  QUESTIONS.forEach((q,i)=>{
+    if(userAnswers[i]!==null && userAnswers[i]!==q.answer){
+      wrongQuestions.push(q.id);
+      sectionErrors[q.section]=(sectionErrors[q.section]||0)+1;
+    }
+  });
+  const studentAnswers=userAnswers.map(a=>a===null?null:a);
+
+  const payload={
+    testName:"Road to JIPMAT 1",
+    name:studentName,
+    pin:studentPin,
+    batch:studentBatch,
+    score:score,
+    correct:correct,
+    wrong:wrong,
+    skipped:skipped,
+    maxMarks:136,
+    timeTaken:timeTaken,
+    timestamp:timestamp,
+    sectionErrors:sectionErrors,
+    wrongQuestions:wrongQuestions,
+    studentAnswers:studentAnswers
+  };
+
+  fetch(APPS_SCRIPT_URL,{
+    method:"POST",
+    mode:"no-cors",
+    headers:{"Content-Type":"text/plain"},
+    body:JSON.stringify(payload)
+  }).then(()=>{
+    const el=document.getElementById("sheet-notice");
+    if(el){el.textContent="✓ Result saved to sheet.";el.className="ok";}
+  }).catch(()=>{
+    const el=document.getElementById("sheet-notice");
+    if(el){el.textContent="⚠ Could not save result. Please inform your instructor.";el.className="err";}
+  });
+}
+
+// ═══════════════════════════════════════
+// SHOW RESULTS
+// ═══════════════════════════════════════
+function showResults(score,correct,wrong,skipped,timeTaken){
+  document.getElementById("testScreen").style.display="none";
+  document.getElementById("resultsScreen").style.display="block";
+
+  document.getElementById("resName").textContent=studentName+" · "+studentPin+" · "+studentBatch;
+  document.getElementById("resScore").textContent=score;
+  document.getElementById("resCorrect").textContent=correct;
+  document.getElementById("resWrong").textContent=wrong;
+  document.getElementById("resSkipped").textContent=skipped;
+  document.getElementById("resBatch").textContent=studentBatch;
+  document.getElementById("resTime").textContent=timeTaken;
+  document.getElementById("resPin").textContent=studentPin;
+
+  buildReviewList();
+  buildRetrySection();
+  buildMisses();
+}
+
+// ═══════════════════════════════════════
+// REVIEW LIST
+// ═══════════════════════════════════════
+function buildReviewList(){
+  const container=document.getElementById("reviewCards");
+  const lbls=["A","B","C","D"];
+  let html="";
+  QUESTIONS.forEach((q,i)=>{
+    const ua=userAnswers[i];
+    let status,cls,badge;
+    if(ua===null){status="skipped";cls="rs";badge='<span class="rev-badge rb-skipped">Skipped</span>';}
+    else if(ua===q.answer){status="correct";cls="rc";badge='<span class="rev-badge rb-correct">Correct</span>';}
+    else{status="wrong";cls="rw";badge='<span class="rev-badge rb-wrong">Wrong</span>';}
+
+    let ansLine="";
+    if(ua!==null&&ua!==q.answer){
+      ansLine+=`<div class="rev-ans">Your answer: <strong>${lbls[ua]}. ${q.options[ua]}</strong></div>`;
+    }
+    ansLine+=`<div class="rev-ans">Correct answer: <strong>${lbls[q.answer]}. ${q.options[q.answer]}</strong></div>`;
+
+    html+=`<div class="rev-card ${cls}">
+      ${badge}
+      <div class="rev-stem">Q${q.id}. ${q.stem.replace(/<[^>]+>/g,' ').substring(0,140)}…</div>
+      ${ansLine}
+      <div class="rev-exp">${q.exp}</div>
+    </div>`;
+  });
+  container.innerHTML=html;
+}
+
+// ═══════════════════════════════════════
+// RETRY WRONG QUESTIONS
+// ═══════════════════════════════════════
+function buildRetrySection(){
+  const wrongIdxs=QUESTIONS.map((_,i)=>i).filter(i=>userAnswers[i]!==null&&userAnswers[i]!==QUESTIONS[i].answer);
+  const sec=document.getElementById("retrySection");
+  if(wrongIdxs.length===0){
+    sec.innerHTML=`<div class="section-head">Retry Wrong Questions</div><p style="color:var(--dim);font-size:13px;">No wrong answers — great work!</p>`;
+    return;
+  }
+  sec.innerHTML=`<div class="section-head">Retry Wrong Questions</div>
+    <button class="btn-retry" onclick="openRetry()">Retry ${wrongIdxs.length} Wrong Question(s)</button>`;
+}
+
+let retryAnswers={};
+function openRetry(){
+  retryAnswers={};
+  const wrongIdxs=QUESTIONS.map((_,i)=>i).filter(i=>userAnswers[i]!==null&&userAnswers[i]!==QUESTIONS[i].answer);
+  const lbls=["A","B","C","D"];
+  let html="";
+  wrongIdxs.forEach(idx=>{
+    const q=QUESTIONS[idx];
+    html+=`<div style="margin-bottom:24px;padding-bottom:20px;border-bottom:1px solid var(--border)">
+      <div style="font-size:12px;color:var(--gold);font-family:var(--mono);margin-bottom:10px;">Q${q.id}</div>
+      <div style="font-size:14px;line-height:1.65;margin-bottom:14px;">${q.stem}</div>
+      <div class="opts" id="retryOpts${idx}">`;
+    q.options.forEach((opt,oi)=>{
+      html+=`<button class="opt" id="ro${idx}_${oi}" onclick="selectRetry(${idx},${oi})">
+        <span class="opt-lbl">${lbls[oi]}</span>
+        <span class="opt-txt">${opt}</span>
+      </button>`;
+    });
+    html+=`</div><div id="retryFeedback${idx}" style="margin-top:10px;font-size:12px;display:none;"></div></div>`;
+  });
+  document.getElementById("retryQuestions").innerHTML=html;
+  document.getElementById("retryModal").classList.add("open");
+}
+
+function selectRetry(qIdx,optIdx){
+  const q=QUESTIONS[qIdx];
+  const lbls=["A","B","C","D"];
+  [0,1,2,3].forEach(i=>{
+    const b=document.getElementById(`ro${qIdx}_${i}`);
+    if(!b)return;
+    b.className="opt";
+    if(i===optIdx) b.classList.add(optIdx===q.answer?"correct":"wrong");
+    else if(i===q.answer) b.classList.add("show-correct");
+    b.onclick=null;
+  });
+  const fb=document.getElementById(`retryFeedback${qIdx}`);
+  if(fb){
+    fb.style.display="block";
+    fb.innerHTML=`<div class="rev-exp">${q.exp}</div>`;
+  }
+}
+
+function closeRetry(){ document.getElementById("retryModal").classList.remove("open"); }
+
+// ═══════════════════════════════════════
+// MISSES COPY BOX
+// ═══════════════════════════════════════
+function buildMisses(){
+  const lbls=["A","B","C","D"];
+  const lines=[];
+  QUESTIONS.forEach((q,i)=>{
+    if(userAnswers[i]!==null&&userAnswers[i]!==q.answer){
+      lines.push(`Q${q.id} [${q.section}]\nStem: ${q.stem.replace(/<[^>]+>/g,'')}\nCorrect: ${lbls[q.answer]}. ${q.options[q.answer]}\nExplanation: ${q.exp}\n`);
+    }
+  });
+  document.getElementById("missesText").value=lines.length?lines.join("\n---\n"):"No wrong answers.";
+  document.getElementById("missesLabel").textContent="Misses";
+}
+
+function copyMisses(){
+  const ta=document.getElementById("missesText");
+  ta.select(); document.execCommand("copy");
+}
+
+// ═══════════════════════════════════════
+// PDF
+// ═══════════════════════════════════════
+function generatePDF(){
+  const el=document.getElementById("pdfTarget");
+  const opt={
+    margin:10,
+    filename:`RoadToJIPMAT1_${studentPin}.pdf`,
+    image:{type:'jpeg',quality:0.95},
+    html2canvas:{scale:2,backgroundColor:'#0a0c10'},
+    jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}
+  };
+  html2pdf().set(opt).from(el).save();
+}
+
+// ═══════════════════════════════════════
+// ANTI-COPY
+// ═══════════════════════════════════════
+document.addEventListener('contextmenu',function(e){e.preventDefault();});
+document.addEventListener('keydown',function(e){
+  if((e.ctrlKey||e.metaKey)&&['c','a','u','s','p'].includes(e.key.toLowerCase())){e.preventDefault();}
+});
+</script>
+</body>
+</html>
