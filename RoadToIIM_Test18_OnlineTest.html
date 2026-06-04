@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Road to IIM | Test 18</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<style>
+*{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;box-sizing:border-box;margin:0;padding:0}
+:root{--gold:#f0b429;--dark:#0d1117;--card:#161b22;--border:#30363d;--text:#e6edf3;--muted:#8b949e;--green:#3fb950;--red:#f85149;--blue:#58a6ff;--purple:#bc8cff}
+body{background:var(--dark);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh}
+/* ── SCREENS ── */
+.screen{display:none;padding:20px;max-width:800px;margin:0 auto}
+.screen.active{display:block}
+/* ── LOGIN ── */
+.brand{text-align:center;margin-bottom:32px}
+.brand h1{font-size:1.6rem;color:var(--gold);letter-spacing:1px}
+.brand p{color:var(--muted);font-size:.85rem;margin-top:4px}
+.login-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:28px}
+.login-card h2{font-size:1.1rem;margin-bottom:20px;color:var(--text)}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:.8rem;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+.field input,.field select{width:100%;background:#0d1117;border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);font-size:.95rem;outline:none;transition:border-color .2s}
+.field input:focus,.field select:focus{border-color:var(--gold)}
+.field select option{background:#0d1117}
+.btn-gold{width:100%;background:var(--gold);color:#0d1117;border:none;border-radius:8px;padding:12px;font-size:1rem;font-weight:700;cursor:pointer;transition:opacity .2s;margin-top:8px}
+.btn-gold:hover{opacity:.9}
+.info-bar{display:flex;gap:12px;margin-top:20px;flex-wrap:wrap}
+.info-chip{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px 14px;font-size:.8rem;color:var(--muted);flex:1;text-align:center}
+.info-chip span{display:block;color:var(--text);font-weight:600;font-size:1rem;margin-top:2px}
+/* ── TEST ── */
+#testScreen{padding-bottom:100px}
+.test-header{background:var(--card);border-bottom:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;max-width:800px;margin:0 auto}
+.test-header-inner{display:flex;align-items:center;gap:16px;width:100%}
+.q-counter{font-size:.85rem;color:var(--muted)}
+.q-counter span{color:var(--text);font-weight:600}
+#timerDisplay{font-size:1.1rem;font-weight:700;color:var(--gold);min-width:56px;text-align:right}
+#timerDisplay.warning{color:var(--red)}
+.progress-bar{height:3px;background:var(--border);position:relative;flex:1}
+.progress-fill{height:100%;background:var(--gold);transition:width .3s;border-radius:2px}
+.q-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px;margin:20px 0}
+.q-number{font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px}
+.q-stem{font-size:.97rem;line-height:1.7;color:var(--text);margin-bottom:20px}
+.q-stem b{color:var(--gold)}
+.q-stem i{color:var(--muted)}
+.q-stem u{text-decoration:underline;text-decoration-color:var(--red);color:var(--text)}
+.options{display:flex;flex-direction:column;gap:10px}
+.opt{display:flex;align-items:flex-start;gap:12px;background:#0d1117;border:1px solid var(--border);border-radius:8px;padding:12px 14px;cursor:pointer;transition:border-color .2s,background .2s;font-size:.92rem;line-height:1.5}
+.opt:hover{border-color:var(--gold);background:#161b22}
+.opt.selected{border-color:var(--gold);background:rgba(240,180,41,.08)}
+.opt-letter{min-width:22px;height:22px;border-radius:50%;background:var(--border);color:var(--muted);font-size:.75rem;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:2px}
+.opt.selected .opt-letter{background:var(--gold);color:#0d1117}
+.nav-bar{position:fixed;bottom:0;left:0;right:0;background:var(--dark);border-top:1px solid var(--border);padding:12px 20px;display:flex;gap:10px;justify-content:center;z-index:200}
+.btn-nav{background:var(--card);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:10px 20px;font-size:.9rem;cursor:pointer;transition:background .2s}
+.btn-nav:hover{background:#21262d}
+.btn-submit{background:var(--red);border:none;color:#fff;border-radius:8px;padding:10px 24px;font-size:.9rem;font-weight:700;cursor:pointer}
+.btn-mark{background:rgba(188,140,255,.15);border:1px solid var(--purple);color:var(--purple);border-radius:8px;padding:10px 16px;font-size:.9rem;cursor:pointer}
+/* ── PALETTE ── */
+.palette-btn{background:var(--card);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:10px 14px;font-size:.9rem;cursor:pointer}
+.palette-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:300;align-items:stretch;justify-content:flex-end}
+.palette-overlay.open{display:flex}
+.palette-panel{background:var(--card);border-left:1px solid var(--border);width:280px;height:100%;overflow-y:auto;padding:20px;border-radius:0}
+.palette-panel h3{font-size:.9rem;color:var(--muted);margin-bottom:14px;text-align:center}
+.palette-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.p-btn{aspect-ratio:1;border-radius:6px;border:1px solid var(--border);background:#0d1117;color:var(--muted);font-size:.75rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.p-btn.answered{background:rgba(63,185,80,.2);border-color:var(--green);color:var(--green)}
+.p-btn.marked{background:rgba(188,140,255,.2);border-color:var(--purple);color:var(--purple)}
+.p-btn.current{border-color:var(--gold);color:var(--gold)}
+.palette-legend{display:flex;gap:12px;margin-top:12px;flex-wrap:wrap;justify-content:center}
+.leg{display:flex;align-items:center;gap:6px;font-size:.75rem;color:var(--muted)}
+.leg-dot{width:10px;height:10px;border-radius:50%}
+/* ── OVERLAY ── */
+.confirm-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:400;align-items:center;justify-content:center;padding:20px}
+.confirm-overlay.open{display:flex}
+.confirm-box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:28px;max-width:400px;width:100%;text-align:center}
+.confirm-box h3{font-size:1.1rem;margin-bottom:8px}
+.confirm-box p{color:var(--muted);font-size:.9rem;margin-bottom:20px}
+.confirm-stats{display:flex;gap:12px;justify-content:center;margin-bottom:20px}
+.cs{background:#0d1117;border-radius:8px;padding:10px 16px;min-width:70px}
+.cs-val{font-size:1.2rem;font-weight:700}
+.cs-lbl{font-size:.7rem;color:var(--muted);margin-top:2px}
+.confirm-btns{display:flex;gap:10px}
+.btn-cancel{flex:1;background:var(--card);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:10px;cursor:pointer}
+.btn-confirm{flex:1;background:var(--red);border:none;color:#fff;border-radius:8px;padding:10px;font-weight:700;cursor:pointer}
+/* ── RESULTS ── */
+#resultsScreen{padding-bottom:60px}
+.score-hero{text-align:center;padding:32px 20px;background:var(--card);border-bottom:1px solid var(--border);margin-bottom:0}
+.score-big{font-size:4rem;font-weight:800;color:var(--gold);line-height:1}
+.score-denom{font-size:1.1rem;color:var(--muted);margin-top:4px}
+.score-name{color:var(--text);font-size:.9rem;margin-top:8px}
+.stats-grid{display:flex;gap:12px;padding:20px;flex-wrap:wrap}
+.stat-box{flex:1;min-width:80px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center}
+.stat-val{font-size:1.6rem;font-weight:700}
+.stat-lbl{font-size:.7rem;color:var(--muted);margin-top:4px;text-transform:uppercase}
+.green{color:var(--green)}.red{color:var(--red)}.grey{color:var(--muted)}
+#sheet-notice{margin:0 20px;padding:12px 16px;border-radius:8px;font-size:.85rem;display:none}
+#sheet-notice.submitting{display:block;background:rgba(240,180,41,.1);border:1px solid var(--gold);color:var(--gold)}
+#sheet-notice.success{display:block;background:rgba(63,185,80,.1);border:1px solid var(--green);color:var(--green)}
+#sheet-notice.failure{display:block;background:rgba(248,81,73,.1);border:1px solid var(--red);color:var(--red)}
+.result-btns{display:flex;gap:12px;padding:20px;flex-wrap:wrap}
+.btn-tracker{flex:1;background:var(--gold);color:#0d1117;border:none;border-radius:8px;padding:12px;font-weight:700;cursor:pointer;font-size:.9rem}
+.btn-all{flex:1;background:var(--card);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:12px;font-weight:700;cursor:pointer;font-size:.9rem}
+.btn-pdf{width:100%;background:#21262d;border:1px solid var(--border);color:var(--text);border-radius:8px;padding:12px;font-size:.9rem;cursor:pointer;margin:0 20px;width:calc(100% - 40px)}
+/* ── REVIEW ── */
+#review-list{padding:20px}
+#review-list h3{font-size:1rem;color:var(--muted);margin-bottom:16px;text-transform:uppercase;letter-spacing:1px}
+.review-card{border-left:4px solid var(--border);background:var(--card);border-radius:0 8px 8px 0;padding:16px;margin-bottom:12px}
+.review-card.correct{border-left-color:var(--green)}
+.review-card.wrong{border-left-color:var(--red)}
+.review-card.skipped{border-left-color:var(--muted)}
+.review-badge{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.review-card.correct .review-badge{color:var(--green)}
+.review-card.wrong .review-badge{color:var(--red)}
+.review-card.skipped .review-badge{color:var(--muted)}
+.review-stem{font-size:.88rem;line-height:1.6;color:var(--text);margin-bottom:10px}
+.review-stem b{color:var(--gold)}
+.review-stem u{text-decoration:underline;text-decoration-color:var(--red)}
+.review-opts{font-size:.82rem;color:var(--muted);margin-bottom:8px}
+.review-opts .pick{color:var(--red)}
+.review-opts .correct-opt{color:var(--green);font-weight:600}
+.review-exp{background:#0d1117;border:1px solid var(--border);border-left:3px solid var(--green);border-radius:0 6px 6px 0;padding:10px 12px;font-size:.82rem;color:var(--muted);line-height:1.6;margin-top:8px}
+/* ── MISSES BOX ── */
+.misses-section{padding:20px}
+.misses-section h3{font-size:.9rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px}
+.misses-box{background:#0d1117;border:1px solid var(--border);border-radius:8px;padding:14px;font-size:.8rem;font-family:monospace;color:var(--muted);white-space:pre-wrap;max-height:300px;overflow-y:auto;-webkit-user-select:text;user-select:text}
+.btn-copy{background:var(--card);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:8px 16px;font-size:.82rem;cursor:pointer;margin-top:8px}
+/* ── RETRY ── */
+.retry-section{padding:20px;border-top:1px solid var(--border)}
+.retry-section h3{font-size:.9rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px}
+.retry-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px;margin-bottom:12px}
+.retry-stem{font-size:.9rem;line-height:1.6;margin-bottom:14px}
+.retry-stem b{color:var(--gold)}
+.retry-stem u{text-decoration:underline;text-decoration-color:var(--red)}
+.retry-opts{display:flex;flex-direction:column;gap:8px}
+.retry-opt{background:#0d1117;border:1px solid var(--border);border-radius:6px;padding:10px 14px;cursor:pointer;font-size:.88rem;display:flex;gap:10px;align-items:flex-start}
+.retry-opt:hover{border-color:var(--gold)}
+.retry-opt.r-correct{border-color:var(--green);background:rgba(63,185,80,.1)}
+.retry-opt.r-wrong{border-color:var(--red);background:rgba(248,81,73,.1)}
+.retry-opt.r-plain{border-color:var(--border)}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen" class="screen active">
+  <div class="brand">
+    <h1>ROAD TO IIM</h1>
+    <p>Verbal Ability Test Series · Sahil Sir · IMS Ahmedabad</p>
+  </div>
+  <div class="login-card">
+    <h2>Test 18 — Grammar</h2>
+    <div class="field"><label>Full Name</label><input type="text" id="inputName" placeholder="Enter your full name"></div>
+    <div class="field"><label>IMS PIN</label><input type="text" id="inputPin" placeholder="e.g. STU1234567890" autocomplete="off"></div>
+    <div class="field">
+      <label>Batch</label>
+      <select id="inputBatch">
+        <option value="">— Select Batch —</option>
+        <optgroup label="Classroom">
+          <option>A2701</option><option>A2702</option><option>A2703</option><option>A2704</option>
+          <option>A2705</option><option>A2706</option><option>A2707</option><option>A2708</option>
+          <option>A2709</option><option>A2710</option><option>A2711</option><option>A2712</option>
+        </optgroup>
+        <optgroup label="School"><option>Zebar</option></optgroup>
+        <optgroup label="Online">
+          <option>27E101</option><option>27E102</option><option>27E103</option><option>27E104</option><option>27E105</option>
+        </optgroup>
+        <optgroup label="Admin"><option>Admin</option></optgroup>
+      </select>
+    </div>
+    <button class="btn-gold" onclick="startTest()">Begin Test</button>
+    <div class="info-bar">
+      <div class="info-chip">Questions<span>45</span></div>
+      <div class="info-chip">Marks<span>+4 / −1</span></div>
+      <div class="info-chip">Duration<span>30 min</span></div>
+      <div class="info-chip">Max Score<span>180</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- TEST -->
+<div id="testScreen" class="screen">
+  <div class="test-header">
+    <div class="test-header-inner">
+      <div class="q-counter">Q <span id="qNum">1</span> / 45</div>
+      <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+      <div id="timerDisplay">30:00</div>
+    </div>
+  </div>
+  <div id="qCardArea" style="padding:0 20px 20px"></div>
+  <div class="nav-bar">
+    <button class="btn-nav" onclick="navigate(-1)">← Prev</button>
+    <button class="palette-btn" onclick="openPalette()">☰ Questions</button>
+    <button class="btn-mark" onclick="markForReview()">⚑ Mark</button>
+    <button class="btn-nav" onclick="navigate(1)">Next →</button>
+    <button class="btn-submit" id="submitBtn" onclick="openConfirm()" style="display:none">Submit</button>
+  </div>
+</div>
+
+<!-- PALETTE OVERLAY -->
+<div class="palette-overlay" id="paletteOverlay" onclick="closePalette(event)">
+  <div class="palette-panel">
+    <h3>Question Palette</h3>
+    <div class="palette-grid" id="paletteGrid"></div>
+    <div class="palette-legend">
+      <div class="leg"><div class="leg-dot" style="background:var(--green)"></div>Answered</div>
+      <div class="leg"><div class="leg-dot" style="background:var(--purple)"></div>Marked</div>
+      <div class="leg"><div class="leg-dot" style="background:var(--border)"></div>Not Visited</div>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM OVERLAY -->
+<div class="confirm-overlay" id="confirmOverlay">
+  <div class="confirm-box">
+    <h3>Submit Test?</h3>
+    <p>Once submitted, you cannot change your answers.</p>
+    <div class="confirm-stats">
+      <div class="cs"><div class="cs-val green" id="cs-ans">0</div><div class="cs-lbl">Answered</div></div>
+      <div class="cs"><div class="cs-val grey" id="cs-skip">0</div><div class="cs-lbl">Skipped</div></div>
+      <div class="cs"><div class="cs-val purple" id="cs-mark">0</div><div class="cs-lbl">Marked</div></div>
+    </div>
+    <div class="confirm-btns">
+      <button class="btn-cancel" onclick="closeConfirm()">Go Back</button>
+      <button class="btn-confirm" onclick="submitTest()">Submit Now</button>
+    </div>
+  </div>
+</div>
+
+<!-- RESULTS -->
+<div id="resultsScreen" class="screen">
+  <div class="score-hero">
+    <div class="score-big" id="scoreBig">0</div>
+    <div class="score-denom">out of 180</div>
+    <div class="score-name" id="scoreNameLine"></div>
+  </div>
+  <div class="stats-grid">
+    <div class="stat-box"><div class="stat-val green" id="rCorrect">0</div><div class="stat-lbl">Correct</div></div>
+    <div class="stat-box"><div class="stat-val red" id="rWrong">0</div><div class="stat-lbl">Wrong</div></div>
+    <div class="stat-box"><div class="stat-val grey" id="rSkipped">0</div><div class="stat-lbl">Skipped</div></div>
+    <div class="stat-box"><div class="stat-val" id="rAccuracy" style="color:var(--blue)">0%</div><div class="stat-lbl">Accuracy</div></div>
+  </div>
+  <div id="sheet-notice"></div>
+  <div class="result-btns">
+    <button class="btn-tracker" onclick="location.href='road_to_iim_tracker_v2.html'">Go to Tracker</button>
+    <button class="btn-all" onclick="location.href='https://sahilkanetkar-collab.github.io/Road-to-IIM/'">All Tests</button>
+  </div>
+  <button class="btn-pdf" onclick="generatePDF()">⬇ Download My Result PDF</button>
+  <div id="review-list"></div>
+  <div class="misses-section" id="missesSection" style="display:none">
+    <h3>Grammar Misses</h3>
+    <div class="misses-box" id="missesBox"></div>
+    <button class="btn-copy" onclick="copyMisses(event)">Copy</button>
+  </div>
+  <div class="retry-section" id="retrySection" style="display:none">
+    <h3>Retry Wrong Questions</h3>
+    <div id="retryArea"></div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('contextmenu',e=>e.preventDefault());
+document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&['c','a','u','s','p'].includes(e.key.toLowerCase()))e.preventDefault();});
+
+const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbwGGxswx4hcBUFiT0QJIglowhKcJCv47MOR5LKBv9sILl-evsgZeKCms5y6s5zEXOUo6Q/exec';
+const timer_duration=30;
+
+// ═══════════════════════════════════════
+// QUESTIONS ARRAY
+// ═══════════════════════════════════════
+const QUESTIONS=[
+{id:1,section:"Grammar",type:"mcq (Grammar)",
+stem:`<b>Ripple Effect:</b> The sentence below contains one error. Four corrections are offered. Choose the option that fixes the error <i>without</i> introducing a new one.<br><br>"The committee neither reviewed the proposal <u>or</u> discussed its implications."`,
+options:["The committee neither reviewed the proposal nor discussed its implications.","The committee either reviewed the proposal or discussed its implications.","The committee neither reviewed the proposal nor had discussed its implications.","The committee neither reviewed nor the proposal discussed its implications."],
+answer:"A",
+exp:"The error is a broken correlative pair: 'neither...or' is incorrect — the correct pair is 'neither...nor'. Option A fixes this cleanly. Option B changes the meaning entirely (neither→either). Option C fixes 'or→nor' but introduces a tense inconsistency (reviewed vs had discussed). Option D breaks parallelism by disrupting the verb phrase structure."},
+
+{id:2,section:"Grammar",type:"mcq (Grammar)",
+stem:`<b>Ripple Effect:</b> The sentence below contains one error. Four corrections are offered. Choose the option that fixes the error <i>without</i> introducing a new one.<br><br>"She is interested in <u>to learn</u> classical music, painting landscapes, and reading poetry."`,
+options:["She is interested in to learn classical music, to paint landscapes, and to read poetry.","She is interested to learn classical music, painting landscapes, and reading poetry.","She is interested in learning classical music, to paint landscapes, and reading poetry.","She is interested in learning classical music, painting landscapes, and reading poetry."],
+answer:"D",
+exp:"'Interested in' must be followed by a gerund, not an infinitive — prepositions govern gerunds. The error is 'to learn' after 'in'. Option D fixes this and preserves the parallel gerund series (learning/painting/reading). Option A uses infinitives after a preposition — wrong. Option C creates a mixed series (gerund/infinitive/gerund) — breaks parallelism. Option B removes 'in' entirely — 'interested to' is a different construction that does not fix the parallel series."},
+
+{id:3,section:"Grammar",type:"mcq (Grammar)",
+stem:`<b>Ripple Effect:</b> The sentence below contains one error. Four corrections are offered. Choose the option that fixes the error <i>without</i> introducing a new one.<br><br>"The director, along with his producers, <u>were</u> present at the premiere."`,
+options:["The director and his producers were present at the premiere.","The director, along with his producers, are present at the premiere.","The director, along with his producers, was present at the premiere.","The director, with his producers, were present at the premiere."],
+answer:"C",
+exp:"'Along with' is a parenthetical phrase, not a conjunction. The grammatical subject remains 'the director' (singular) — requiring 'was'. Option C fixes this correctly. Option A is grammatically correct but changes the sentence structure by converting a parenthetical into a compound subject — a structural rewrite, not a correction. Option B substitutes 'are' for 'were' — still wrong number. Option D retains 'were' — error persists."},
+
+{id:4,section:"Grammar",type:"mcq (Grammar)",
+stem:`<b>Ripple Effect:</b> The sentence below contains one error. Four corrections are offered. Choose the option that fixes the error <i>without</i> introducing a new one.<br><br>"<u>Running</u> the experiment three times, the results were still inconclusive."`,
+options:["Running the experiment three times, the results were still found inconclusive.","After running the experiment three times, the results were still inconclusive.","The experiment was run three times, and the results were still inconclusive.","Having run the experiment three times, the researchers found the results still inconclusive."],
+answer:"D",
+exp:"The error is a dangling modifier. 'Running the experiment' must attach to a subject that can perform the action — 'results' cannot run experiments. Option D supplies 'the researchers' as the logical subject and fixes the dangler. Option A retains 'results' as subject — dangling modifier persists. Option B uses 'After running...' — 'results' still cannot run; dangler remains. Option C restructures into two independent clauses — grammatically valid but is a complete rewrite, not a correction of the original construction."},
+
+{id:5,section:"Grammar",type:"mcq (Grammar)",
+stem:`<b>Ripple Effect:</b> The sentence below contains one error. Four corrections are offered. Choose the option that fixes the error <i>without</i> introducing a new one.<br><br>"The data <u>suggests</u> that the phenomenon is more widespread than previously assumed."`,
+options:["The data is suggesting that the phenomenon is more widespread than previously assumed.","The data suggest that the phenomenon is more widespread than previously assumed.","The data suggested that the phenomenon is more widespread than previously assumed.","The data suggests that the phenomena are more widespread than previously assumed."],
+answer:"B",
+exp:"'Data' is the Latin plural of 'datum' and in formal academic English takes a plural verb: 'suggest'. Option B fixes this cleanly. Option A uses progressive tense with a reporting verb — unacceptable in formal written English. Option C changes to past tense ('suggested') but creates a tense inconsistency with 'is' in the subordinate clause. Option D retains 'suggests' (the original error) and unjustifiably changes 'phenomenon' to 'phenomena'."},
+
+{id:6,section:"Grammar",type:"mcq (Grammar)",
+stem:`<b>Ripple Effect:</b> The sentence below contains one error. Four corrections are offered. Choose the option that fixes the error <i>without</i> introducing a new one.<br><br>"Not only did she win <u>but</u> she broke the record."`,
+options:["Not only did she win but also she broke the record.","Not only she won but she also broke the record.","Not only did she win, but she also broke the record.","Not only did she win but she also had broken the record."],
+answer:"C",
+exp:"The correlative 'not only...but also' requires 'also' after 'but'. Additionally, a comma before 'but' is standard in formal written English when joining two clauses. Option C supplies both the comma and 'also' — correct. Option A adds 'also' but places it before 'she' rather than after 'but' — standard formal position is 'but...also + verb'. Option B loses the required inversion after 'not only'. Option D introduces 'had broken' — an unjustified tense shift."},
+
+{id:7,section:"Grammar",type:"mcq (Grammar)",
+stem:`<b>Odd Pair Out:</b> Three of the following pairs contain two grammatically correct sentences. One pair contains a grammatically incorrect sentence. Identify the pair with the error.<br><br><b>A.</b> (i) She looked at me as if she were upset. &nbsp;&nbsp; (ii) She looked at me as though she were upset.<br><b>B.</b> (i) He spoke to the press; she remained silent. &nbsp;&nbsp; (ii) He spoke to the press, and she remained silent.<br><b>C.</b> (i) The data are inconclusive. &nbsp;&nbsp; (ii) The criteria has not been met.<br><b>D.</b> (i) The team has won its third consecutive match. &nbsp;&nbsp; (ii) The team have won their third consecutive match.`,
+options:["Pair A","Pair B","Pair D","Pair C"],
+answer:"D",
+exp:"Pair A: Both correct — 'as if' and 'as though' are fully interchangeable in formal written English; both correctly use the subjunctive 'were' for a counterfactual/uncertain comparison. Pair B: Both correct — semicolon and comma+conjunction are both valid ways to join independent clauses. Pair C: 'The data are' is correct (data = Latin plural). 'The criteria has' is wrong — 'criteria' is plural; it requires 'have'. This is the error pair. Pair D: Both correct — 'the team has...its' treats the collective noun as a singular unit (standard in formal written English); 'the team have...their' treats it as a group of individuals (accepted in British formal English). Both are defensible."},
+
+{id:8,section:"Grammar",type:"mcq (Grammar)",
+stem:`<b>Odd Pair Out:</b> Three of the following pairs contain two grammatically correct sentences. One pair contains a grammatically incorrect sentence. Identify the pair with the error.<br><br><b>A.</b> (i) He is an MBA graduate. &nbsp;&nbsp; (ii) She holds a BA degree.<br><b>B.</b> (i) The committee reached its decision. &nbsp;&nbsp; (ii) The committee reached their decision.<br><b>C.</b> (i) Neither the manager nor the employees was informed. &nbsp;&nbsp; (ii) Neither the employees nor the manager was informed.<br><b>D.</b> (i) She runs faster than he does. &nbsp;&nbsp; (ii) She runs faster than he.`,
+options:["Pair A","Pair B","Pair C","Pair D"],
+answer:"C",
+exp:"Pair A: 'an MBA' — correct ('MBA' is pronounced 'em-bee-ay', vowel sound). 'a BA' — correct ('BA' is 'bee-ay', consonant sound). Pair B: Collective noun 'committee' — 'its' (singular unit) and 'their' (group of individuals) are both acceptable. Pair C: With 'neither...nor', verb agrees with the nearer subject (proximity rule). In (i), nearer subject is 'employees' (plural) → verb should be 'were', not 'was'. ERROR. In (ii), nearer subject is 'manager' (singular) → 'was' is correct. Pair D: Both correct — full clause ('than he does') and elliptical clause ('than he') are both formally acceptable."},
+
+{id:9,section:"Grammar",type:"mcq (Grammar)",
+stem:`<b>Odd Pair Out:</b> Three of the following pairs contain two grammatically correct sentences. One pair contains a grammatically incorrect sentence. Identify the pair with the error.<br><br><b>A.</b> (i) The boy whose bag was stolen reported it to the principal. &nbsp;&nbsp; (ii) The boy who's bag was stolen reported it to the principal.<br><b>B.</b> (i) He said he would return by noon. &nbsp;&nbsp; (ii) He said he will return by noon.<br><b>C.</b> (i) The phenomenon was poorly understood. &nbsp;&nbsp; (ii) The phenomena were poorly understood.<br><b>D.</b> (i) She neither called nor wrote. &nbsp;&nbsp; (ii) She neither wrote nor called.`,
+options:["Pair A","Pair B","Pair C","Pair D"],
+answer:"A",
+exp:"'Whose' is the possessive relative pronoun — correct in sentence (i) of Pair A. 'Who's' is a contraction of 'who is' — used here where possession ('whose') is structurally required in sentence (ii) of Pair A. This is a definitive structural error. Pair B: Both correct — 'would' (backshifted reported speech) and 'will' (retained tense when statement still holds) are both acceptable. Pair C: Both correct — singular 'phenomenon/was' and plural 'phenomena/were'. Pair D: Both correct — order within 'neither...nor' is flexible when meaning is unambiguous."},
+
+{id:10,section:"Grammar",type:"mcq (Grammar)",
+stem:`<b>Odd Pair Out:</b> Three of the following pairs contain two grammatically correct sentences. One pair contains a grammatically incorrect sentence. Identify the pair with the error.<br><br><b>A.</b> (i) I like coffee; she prefers tea. &nbsp;&nbsp; (ii) I like coffee, she prefers tea.<br><b>B.</b> (i) Each of the students has submitted his or her assignment. &nbsp;&nbsp; (ii) Every student has submitted his or her assignment.<br><b>C.</b> (i) He is one of those managers who micromanage their teams. &nbsp;&nbsp; (ii) He is a manager who always micromanages his team.<br><b>D.</b> (i) The results were better than expected. &nbsp;&nbsp; (ii) The results were better than what was expected.`,
+options:["Pair A","Pair B","Pair C","Pair D"],
+answer:"A",
+exp:"Pair A contains a definitive error: sentence (ii) is a classic comma splice where two independent clauses are joined strictly with a comma and no coordinating conjunction. Pair B is fully correct using singular distributors with proper matching pronouns. Pair C sentences are both completely correct (isolating Pair A as the only error). Pair D features standard full and elliptical comparison mechanisms acceptable in formal prose."},
+
+{id:11,section:"Grammar",type:"mcq (Grammar)",
+stem:`<b>Odd Pair Out:</b> Three of the following pairs contain two grammatically correct sentences. One pair contains a grammatically incorrect sentence. Identify the pair with the error.<br><br><b>A.</b> (i) He is a unique talent. &nbsp;&nbsp; (ii) She is a fairly unique designer.<br><b>B.</b> (i) The CEO, as well as the board members, was present. &nbsp;&nbsp; (ii) The CEO and the board members were present.<br><b>C.</b> (i) If I were you, I would reconsider. &nbsp;&nbsp; (ii) If she were here, she would understand.<br><b>D.</b> (i) The book that I borrowed was overdue. &nbsp;&nbsp; (ii) The book which I borrowed was overdue.`,
+options:["Pair B","Pair C","Pair D","Pair A"],
+answer:"D",
+exp:"'Unique' means one of a kind — it is an absolute adjective and cannot be qualified by degree adverbs. 'A unique talent' (i) is correct. 'A fairly unique designer' (ii) is wrong — 'fairly unique' is a contradiction; uniqueness admits no degrees. This is the error — Pair A, which is option D. Pair B: Both correct — 'as well as' is parenthetical → singular 'was'; 'and' creates compound subject → plural 'were'. Pair C: Both correct — subjunctive 'were' applies to all persons in hypothetical conditions. Pair D: Both correct — 'that' and 'which' are both used for restrictive clauses in formal written English."},
+
+{id:12,section:"Grammar",type:"mcq (Grammar)",
+stem:`<b>Minimal Pair Judgment:</b> Two sentences differ by one element only. Judge which is/are grammatically correct in formal written English.<br><br>(i) The alumni has donated generously to the fund.<br>(ii) The alumni have donated generously to the fund.<br><br><b>A.</b> Both correct &nbsp; <b>B.</b> Only (i) correct &nbsp; <b>C.</b> Only (ii) correct &nbsp; <b>D.</b> Both incorrect`,
+options:["Both correct","Only (i) correct","Only (ii) correct","Both incorrect"],
+answer:"C",
+exp:"'Alumni' is the Latin plural of 'alumnus'. In formal written English, 'alumni' is always plural and takes a plural verb ('have'). 'The alumni has' treats a plural noun as singular — incorrect. 'The alumni have' is the only correct form. For a single graduate, 'alumnus' (male) or 'alumna' (female) is used."},
+
+{id:13,section:"Grammar",type:"mcq (Grammar)",
+stem:`<b>Minimal Pair Judgment:</b> Two sentences differ by one element only. Judge which is/are grammatically correct in formal written English.<br><br>(i) She is the most capable of the two candidates.<br>(ii) She is the more capable of the two candidates.<br><br><b>A.</b> Both correct &nbsp; <b>B.</b> Only (i) correct &nbsp; <b>C.</b> Only (ii) correct &nbsp; <b>D.</b> Both incorrect`,
+options:["Both correct","Only (i) correct","Only (ii) correct","Both incorrect"],
+answer:"C",
+exp:"When comparing exactly two items, the comparative degree ('more') is required, not the superlative ('most'). Superlatives are reserved for comparisons of three or more. 'The most capable of the two' is a formal error. 'The more capable of the two' is correct. This rule is strictly enforced in academic written English."},
+
+{id:14,section:"Grammar",type:"mcq (Grammar)",
+stem:`<b>Minimal Pair Judgment:</b> Two sentences differ by one element only. Judge which is/are grammatically correct in formal written English.<br><br>(i) The professor insisted that the student resubmit the paper.<br>(ii) The professor insisted that the student resubmits the paper.<br><br><b>A.</b> Both correct &nbsp; <b>B.</b> Only (i) correct &nbsp; <b>C.</b> Only (ii) correct &nbsp; <b>D.</b> Both incorrect`,
+options:["Both correct","Only (i) correct","Only (ii) correct","Both incorrect"],
+answer:"B",
+exp:"'Insist that' triggers the mandative subjunctive. The subjunctive requires the base form of the verb regardless of person or number — 'resubmit' (not 'resubmits'). Option (ii) adds a third-person singular '-s', which is indicative mood — incorrect after mandative verbs. Other mandative triggers: recommend, demand, suggest, require, propose."},
+
+{id:15,section:"Grammar",type:"mcq (Grammar)",
+stem:`<b>Minimal Pair Judgment:</b> Two sentences differ by one element only. Judge which is/are grammatically correct in formal written English.<br><br>(i) He is a historian who specialises in medieval Europe.<br>(ii) He is an historian who specialises in medieval Europe.<br><br><b>A.</b> Both correct &nbsp; <b>B.</b> Only (i) correct &nbsp; <b>C.</b> Only (ii) correct &nbsp; <b>D.</b> Both incorrect`,
+options:["Both correct","Only (i) correct","Only (ii) correct","Both incorrect"],
+answer:"A",
+exp:"Both are formally acceptable. In standard modern English, 'historian' begins with a pronounced /h/ — making 'a historian' the default. However, 'an historian' reflects an older British tradition where the 'h' was less aspirated — this usage persists in formal British written English and is not an error. Students who mark only one correct are overconfident; the answer is 'Both correct'."},
+
+{id:16,section:"Grammar",type:"mcq (Grammar)",
+stem:`<b>Minimal Pair Judgment:</b> Two sentences differ by one element only. Judge which is/are grammatically correct in formal written English.<br><br>(i) The government announced new measures; however, many experts remained sceptical.<br>(ii) The government announced new measures, however, many experts remained sceptical.<br><br><b>A.</b> Both correct &nbsp; <b>B.</b> Only (i) correct &nbsp; <b>C.</b> Only (ii) correct &nbsp; <b>D.</b> Both incorrect`,
+options:["Both correct","Only (ii) correct","Both incorrect","Only (i) correct"],
+answer:"D",
+exp:"'However' as a conjunctive adverb joining two independent clauses requires a semicolon before it. A comma before 'however' creates a comma splice — a serious punctuation error in formal written English. Sentence (i) uses the semicolon correctly. Sentence (ii) uses a comma before 'however' — comma splice. The comma after 'however' in both sentences is correct."},
+
+{id:17,section:"Grammar",type:"mcq (Grammar)",
+stem:`<b>Minimal Pair Judgment:</b> Two sentences differ by one element only. Judge which is/are grammatically correct in formal written English.<br><br>(i) Neither the report nor the annexures were submitted on time.<br>(ii) Neither the annexures nor the report were submitted on time.<br><br><b>A.</b> Both correct &nbsp; <b>B.</b> Only (i) correct &nbsp; <b>C.</b> Only (ii) correct &nbsp; <b>D.</b> Both incorrect`,
+options:["Both correct","Only (i) correct","Only (ii) correct","Both incorrect"],
+answer:"B",
+exp:"With 'neither...nor', the verb agrees with the nearer subject (proximity rule). In (i), nearer subject is 'annexures' (plural) → 'were' is correct. In (ii), nearer subject is 'report' (singular) → verb should be 'was', not 'were'. Sentence (ii) violates proximity agreement. Only (i) is correct."},
+
+{id:18,section:"Grammar",type:"mcq (Grammar)",
+stem:`<b>Loaded Blank:</b> The blank sits at a grammatical junction. The word or phrase you choose determines the structure of the entire sentence. Choose the option that makes the sentence grammatically correct in formal written English.<br><br>"The findings were significant _______ they could not be replicated in subsequent trials."`,
+options:["; however,",", and","because","; therefore,"],
+answer:"A",
+exp:"The two clauses express contrast — significant findings that could not be replicated. Option A ('; however,') correctly signals contrast between two independent clauses — semicolon joins them, 'however' marks the adversative relationship, and the comma after 'however' is required. Option B (',and') signals addition, not contrast — semantically wrong. Option C ('because') makes the second clause a cause, inverting the logic entirely. Option D ('; therefore,') signals consequence — wrong direction."},
+
+{id:19,section:"Grammar",type:"mcq (Grammar)",
+stem:`<b>Loaded Blank:</b> Choose the option that correctly fills the blank and maintains grammatical accuracy throughout.<br><br>"She wanted three things from the negotiation _______ a higher salary, additional leave, and a flexible schedule."`,
+options:[", that is",":","; which were",", these being"],
+answer:"B",
+exp:"A colon is the standard punctuation for introducing a list after a complete independent clause. 'She wanted three things from the negotiation' is complete — the colon alone does all the introducing work; no further connector is needed. Option A (', that is') — 'that is' after a complete clause requires a semicolon or colon, not a comma; additionally, 'that is' typically clarifies a preceding term rather than introducing a list of items. Option C ('; which were') — semicolons precede independent clauses; 'which were...' is a relative clause, not an independent clause. Option D (', these being') creates a non-standard participial construction."},
+
+{id:20,section:"Grammar",type:"mcq (Grammar)",
+stem:`<b>Loaded Blank:</b> Choose the option that correctly fills the blank and maintains grammatical accuracy throughout.<br><br>"The proposal was rejected _______ it was poorly structured and lacked supporting evidence."`,
+options:["; since",", given that","because","for"],
+answer:"C",
+exp:"'Because' is the most precise causal subordinating conjunction and is correct here. Option A ('; since') — a semicolon before a subordinating conjunction is incorrect; subordinating conjunctions introduce dependent clauses and do not require a semicolon. Option B (',given that') — 'given that' as a mid-sentence causal connective after the main clause is stylistically awkward in formal writing and the comma placement is non-standard. Option D ('for') as a coordinating causal conjunction requires a comma before it ('rejected, for') — the option provides none."},
+
+{id:21,section:"Grammar",type:"mcq (Grammar)",
+stem:`<b>Loaded Blank:</b> Choose the option that correctly fills the blank and maintains grammatical accuracy throughout.<br><br>"The new policy affects all employees _______ those on probation."`,
+options:["; including",": including","— it includes",", including"],
+answer:"D",
+exp:"'Including' adds a specification to 'all employees' — it is not introducing an independent clause. A comma before 'including' is the standard punctuation for mid-sentence specification. Option A ('; including') — semicolons join independent clauses; 'including those on probation' is not one. Option B (': including') — colons are too heavy for a simple specification; they introduce formal lists or explanations after complete clauses. Option C ('— it includes') restructures the sentence into a second independent clause — a rewrite, not a completion."},
+
+{id:22,section:"Grammar",type:"mcq (Grammar)",
+stem:`<b>Loaded Blank:</b> Choose the option that correctly fills the blank and maintains grammatical accuracy throughout.<br><br>"The manager asked _______ the quarterly targets had been met."`,
+options:["that","whether","if whether","as to whether"],
+answer:"B",
+exp:"In formal written English, indirect yes/no questions use 'whether' when the embedded question is the object of a verb like 'asked'. 'Whether' is unambiguous; 'if' can be confused with a conditional. Option A ('that') — 'asked that' triggers the mandative subjunctive; 'asked that the targets had been met' is semantically incoherent. Option C ('if whether') — redundant; never use both. Option D ('as to whether') — grammatically possible but 'as to' is redundant; 'asked whether' is the cleaner formal form."},
+
+{id:23,section:"Grammar",type:"mcq (Grammar)",
+stem:`<b>Loaded Blank:</b> Choose the option that correctly fills the blank and maintains grammatical accuracy throughout.<br><br>"He is the kind of leader _______ inspires through action rather than words."`,
+options:["which","whom","who","whose"],
+answer:"C",
+exp:"The antecedent is 'leader' — a person. For persons, 'who' (subject) or 'whom' (object) is used, never 'which'. The relative pronoun is the subject of 'inspires' — subject position requires 'who'. Option A ('which') — non-human antecedents only. Option B ('whom') — object form; the pronoun here is the subject of 'inspires', so 'whom' is incorrect. Option D ('whose') — 'whose' is the possessive relative pronoun; the blank requires a subject pronoun (the pronoun is the subject of 'inspires'), not a possessive. 'Whose' would be correct only if the sentence read 'the kind of leader whose actions inspire', not here."},
+
+{id:24,section:"Grammar",type:"mcq (Grammar)",
+stem:`<b>Idiom Transplant:</b> The idiom <b>"burn one's bridges"</b> is used correctly below:<br><i>"By publicly criticising his former employer, he had burned his bridges and made a return to that company impossible."</i><br><br>Which of the following uses the same idiom correctly?`,
+options:["After resigning without notice and filing a complaint, she had burned her bridges with the firm beyond any hope of reconciliation.","The fire burned the bridges connecting the two villages, cutting off all communication.","He burned his bridges carefully so that he could still return if the new venture failed.","They burned bridges with investors by delivering late, but managed to recover their reputation over time."],
+answer:"A",
+exp:"'Burn one's bridges' means to permanently destroy a relationship or option, leaving no possibility of return. Option A uses it correctly — resigning badly and filing a complaint irreversibly ends the professional relationship. Option B is literal (actual fire, actual bridges) — not idiomatic. Option C contradicts the idiom — 'burned bridges carefully so one can return' is an oxymoron; the idiom implies irreversibility. Option D: 'burned bridges...but managed to recover' contradicts the irreversibility the idiom requires."},
+
+{id:25,section:"Grammar",type:"mcq (Grammar)",
+stem:`<b>Idiom Transplant:</b> The idiom <b>"pass muster"</b> is used correctly below:<br><i>"The revised report barely passed muster with the editorial board, who noted several remaining weaknesses."</i><br><br>Which of the following uses the same idiom correctly?`,
+options:["She passed the muster of examinations with distinction, earning the top rank in her cohort.","The new software passed muster quickly; within days, the team had moved on to the next module.","His presentation passed muster with the senior partners, who approved it for the client pitch.","The recruits were asked to pass muster at the parade ground before being assigned to units."],
+answer:"C",
+exp:"'Pass muster' means to meet a required standard or gain approval after scrutiny. Option C correctly uses it — a presentation meeting the approval threshold of senior partners. Option A distorts the idiom by adding 'the' and embedding it in an exam context — 'passed the muster of examinations' is not idiomatic. Option B: 'passed muster quickly' implies speed rather than the evaluation-against-a-standard the idiom requires. Option D confuses the idiomatic use with the military-literal origin ('muster at the parade ground' = gathering of troops, not meeting standards)."},
+
+{id:26,section:"Grammar",type:"mcq (Grammar)",
+stem:`<b>Idiom Transplant:</b> The idiom <b>"read between the lines"</b> is used correctly below:<br><i>"His resignation letter was polite, but reading between the lines, it was clear he had been pushed out."</i><br><br>Which of the following uses the same idiom correctly?`,
+options:["Reading between the lines of the novel, the student appreciated the author's poetic style.","She read between the lines of his contract and realised the bonus clause had been quietly removed.","He read between the lines carefully, making sure not to miss any of the printed terms.","They read between the lines of the agreement and found a clause that had been overlooked by everyone."],
+answer:"B",
+exp:"'Read between the lines' means to perceive an unstated or implicit meaning beyond what is explicitly written. Option B correctly uses it — she infers an unstated change (silent removal of a bonus clause) by reading critically beyond the surface. Option A misapplies it — 'appreciating poetic style' is a literary-analytical act, not inference of hidden meaning. Option C is literal — 'not missing printed terms' is the opposite of looking beyond the literal. Option D describes finding a clause that was literally there but unnoticed — the idiom implies inferring the unstated, not discovering an overlooked stated clause."},
+
+{id:27,section:"Grammar",type:"mcq (Grammar)",
+stem:`<b>Idiom Transplant:</b> The idiom <b>"steal a march"</b> is used correctly below:<br><i>"By filing the patent application a week early, the startup stole a march on its competitors."</i><br><br>Which of the following uses the same idiom correctly?`,
+options:["He tried to steal a march by walking faster than the others during the parade.","She stole a march from her colleague's presentation and used it in her own pitch without credit.","The army stole a march across enemy territory under cover of night.","The retailer stole a march on rivals by launching its loyalty programme three months before the festival season."],
+answer:"D",
+exp:"'Steal a march' means to gain an advantage over a competitor by acting before they do. Option D correctly uses it — launching earlier than rivals for a strategic advantage. Option A is literal ('walking faster in a march/parade') — not idiomatic. Option B confuses 'steal a march' with 'steal from' — the idiom does not mean plagiarism. Option C is the historical-literal origin of the expression — armies literally marched secretly ahead — but the modern idiomatic meaning (gaining strategic advantage) is what is being tested."},
+
+{id:28,section:"Grammar",type:"mcq (Grammar)",
+stem:`<b>Idiom Transplant:</b> The idiom <b>"on the fence"</b> is used correctly below:<br><i>"After weeks of deliberation, the board remained on the fence about whether to approve the merger."</i><br><br>Which of the following uses the same idiom correctly?`,
+options:["The senator was on the fence about the bill, reluctant to commit to either side before the vote.","The child sat on the fence watching the game, unable to join either team.","The two parties were on the fence about the terms — each had already committed to its position.","He got off the fence only when his manager pressured him into taking a side."],
+answer:"A",
+exp:"'On the fence' means unwilling to commit to a decision or take a side. Option A correctly uses it — a senator withholding commitment before a vote. Option B is literal (a child physically on a fence) — not idiomatic. Option C contradicts the idiom — 'each had already committed to its position' is the opposite of being undecided. Option D: 'got off the fence' is the negation of the idiom (deciding after being undecided) — the question tests 'on the fence' specifically."},
+
+{id:29,section:"Grammar",type:"mcq (Grammar)",
+stem:`<b>Idiom Transplant:</b> The idiom <b>"throw caution to the wind"</b> is used correctly below:<br><i>"Throwing caution to the wind, she quit her stable job to launch her own business."</i><br><br>Which of the following uses the same idiom correctly?`,
+options:["She threw caution to the wind, carefully weighing each risk before making her decision.","Throwing caution to the wind, the team followed all prescribed safety protocols without exception.","He threw caution to the wind and invested his entire savings in a single, untested venture.","He threw caution to the wind by conducting a thorough feasibility study before committing funds."],
+answer:"C",
+exp:"'Throw caution to the wind' means to act boldly, ignoring risks or prudence. Option C correctly uses it — investing all savings in an untested venture is a reckless, bold act consistent with the idiom. Option A contradicts it — 'carefully weighing each risk' is the opposite of throwing caution away. Option B contradicts it — 'following all prescribed safety protocols' is cautious behaviour. Option D contradicts it — 'conducting a thorough feasibility study' is a careful, measured act."},
+
+{id:30,section:"Grammar",type:"mcq (Grammar)",
+stem:`<b>Prestige Question:</b> This sentence appears correct on first read. Identify the error and choose the correct version.<br><br>"The committee comprises of five members, each with a distinct area of expertise."`,
+options:["The committee is comprised of five members, each with a distinct area of expertise.","The committee comprises five members, each with a distinct area of expertise.","The committee comprises of five members, all having distinct areas of expertise.","The committee is comprising five members, each with a distinct area of expertise."],
+answer:"B",
+exp:"'Comprise' means 'to consist of' — it is a transitive verb that takes a direct object without a preposition. 'Comprises of' is non-standard; the 'of' is redundant. Correct: 'the committee comprises five members'. Option A ('is comprised of') is widely used but in strict formal English reverses the logic — 'comprised of' implies the parts comprise the whole. For IPMAT formal standards, B is the only correct option. Options C and D retain the erroneous 'of'."},
+
+{id:31,section:"Grammar",type:"mcq (Grammar)",
+stem:`<b>Prestige Question:</b> This sentence appears correct on first read. Identify the error and choose the correct version.<br><br>"Between you and I, the decision was entirely politically motivated."`,
+options:["Between you and me, the decision was entirely politically motivated.","Between you and I, it was a decision entirely politically motivated.","Between you and myself, the decision was entirely politically motivated.","As between you and I, the decision was entirely politically motivated."],
+answer:"A",
+exp:"'Between' is a preposition and requires object pronouns. 'Between you and I' is a hypercorrection — prepositions govern the objective case: 'me', not 'I'. The correct form is 'between you and me'. Option C ('between you and myself') — reflexive pronouns cannot serve as objects of prepositions unless reflexive or emphatic; this is an informal avoidance construction. Options B and D retain the original error."},
+
+{id:32,section:"Grammar",type:"mcq (Grammar)",
+stem:`<b>Prestige Question:</b> This sentence appears correct on first read. Identify the error and choose the correct version.<br><br>"The number of applications have increased significantly this year."`,
+options:["A number of applications has increased significantly this year.","The numbers of applications have increased significantly this year.","The number of applications has increased significantly this year.","The number of applications are increasing significantly this year."],
+answer:"C",
+exp:"'The number of' is a fixed phrase where 'number' is the singular subject — it takes a singular verb ('has'). Students instinctively agree with the nearest noun 'applications' (plural) and choose 'have' — proximity error. Contrast: 'A number of applications have...' — 'a number of' means 'several/many' and the verb agrees with 'applications' (plural). Option A reverses this — 'a number of' with 'has' is wrong. Option B ('the numbers') changes the meaning. Option D uses present progressive — inappropriate for a completed trend."},
+
+{id:33,section:"Grammar",type:"mcq (Grammar)",
+stem:`<b>Prestige Question:</b> This sentence appears correct on first read. Identify the error and choose the correct version.<br><br>"He is one of the few executives who understands the technical side of the business."`,
+options:["He is one of the few executives that understands the technical side of the business.","He is one of the few executives who is understanding the technical side of the business.","He is one of the few executives, who understands the technical side of the business.","He is one of the few executives who understand the technical side of the business."],
+answer:"D",
+exp:"In 'one of the few executives who...', the antecedent of 'who' is 'executives' (plural), not 'one' (singular). The verb must be plural: 'understand'. 'Understands' agrees with 'one' — sounds natural but is formally wrong (Prestige Error). Option B ('is understanding') — progressive tense is unacceptable here; 'understand' is used as a stative verb and cannot take the progressive aspect. Option A retains 'understands' and substitutes 'that' for 'who' — both errors. Option C adds a comma making the clause non-restrictive — wrong."},
+
+{id:34,section:"Grammar",type:"mcq (Grammar)",
+stem:`<b>Prestige Question:</b> This sentence appears correct on first read. Identify the error and choose the correct version.<br><br>"Each of the board members have submitted their individual reports."`,
+options:["Each of the board members has submitted his or her individual report.","Each of the board members have submitted their individual reports.","Each of the board members has submitted their individual reports.","Each of the board members have submitted his or her individual report."],
+answer:"A",
+exp:"'Each' is a singular indefinite pronoun — it takes a singular verb ('has') and, in formal written English, singular pronouns ('his or her'). Two errors exist in the original: (1) 'have' instead of 'has'; (2) 'their' instead of 'his or her'. Option A corrects both. Option B retains both errors. Option C fixes the verb but retains 'their' — in formal academic English, 'their' with a singular antecedent is not acceptable. Option D fixes the pronoun but retains 'have' — still wrong."},
+
+{id:35,section:"Grammar",type:"mcq (Grammar)",
+stem:`<b>Prestige Question:</b> This sentence appears correct on first read. Identify the error and choose the correct version.<br><br>"The reason for his resignation is because he disagreed with the board's direction."`,
+options:["The reason for his resignation is that he disagreed with the board's direction.","The reason for his resignation is because of his disagreement with the board's direction.","His resignation is because he disagreed with the board's direction.","The reason for his resignation is due to his disagreement with the board's direction."],
+answer:"A",
+exp:"'The reason is because' is a redundancy error — 'because' means 'for the reason that', making the construction circular. The correct form is 'the reason is that' — a noun clause introduced by 'that'. Option A fixes this cleanly. Option B replaces 'because' with 'because of' — a preposition after a linking verb ('is because of') is non-standard. Option C removes 'the reason for' — restructures rather than corrects. Option D ('due to his disagreement') — 'due to' as a causal adjective after a linking verb is technically arguable but the sentence loses the explanatory 'that' clause."},
+
+{id:36,section:"Grammar",type:"mcq (Grammar)",
+stem:`<b>Error Identification:</b> One of the underlined portions contains a grammatical error. Identify it.<br><br>"Not only <u>(A)</u> did the new policy reduce costs <u>(B)</u> but increased <u>(C)</u> employee morale <u>(D)</u> across all departments."`,
+options:["(A) did the new policy","(B) but increased","(C) employee morale","(D) across all departments"],
+answer:"B",
+exp:"'Not only...but also' requires 'also' after 'but'. The error is in (B): 'but increased' should be 'but also increased'. The correlative pair is incomplete without 'also'. No error in A (correct inversion after 'not only'), C (noun phrase), or D (prepositional phrase)."},
+
+{id:37,section:"Grammar",type:"mcq (Grammar)",
+stem:`<b>Error Identification:</b> One of the underlined portions contains a grammatical error. Identify it.<br><br>"The phenomena <u>(A)</u> observed in the first trial <u>(B)</u> was replicated <u>(C)</u> in every subsequent <u>(D)</u> experiment."`,
+options:["(A) phenomena observed","(B) in the first trial","(C) was replicated","(D) subsequent experiment"],
+answer:"C",
+exp:"'Phenomena' is the plural of 'phenomenon' — it requires a plural verb: 'were replicated', not 'was replicated'. The error is in (C). Latin plural trap — students default to 'was' because 'phenomena' sounds abstract and singular. No error in A (correct plural noun), B (prepositional phrase), or D (adjective-noun pair)."},
+
+{id:38,section:"Grammar",type:"mcq (Grammar)",
+stem:`<b>Error Identification:</b> One of the underlined portions contains a grammatical error. Identify it.<br><br>"The panel recommended <u>(A)</u> that the candidate completes <u>(B)</u> an additional module <u>(C)</u> before the final assessment <u>(D)</u>."`,
+options:["(A) recommended that","(B) the candidate completes","(C) an additional module","(D) the final assessment"],
+answer:"B",
+exp:"'Recommend that' triggers the mandative subjunctive — the verb must be in the base form: 'complete', not 'completes'. 'Completes' is indicative mood (third-person singular) — incorrect after mandative verbs. The error is in (B). No error in A (correct mandative construction), C (article + adjective + noun), or D (article + noun)."},
+
+{id:39,section:"Grammar",type:"mcq (Grammar)",
+stem:`<b>Error Identification:</b> One of the underlined portions contains a grammatical error. Identify it.<br><br>"The manager distributed the incentives <u>(A)</u> between the three <u>(B)</u> departments equally <u>(C)</u>, ensuring no team <u>(D)</u> felt overlooked."`,
+options:["(A) distributed the incentives","(B) between the three","(C) departments equally","(D) no team felt overlooked"],
+answer:"B",
+exp:"'Between' is used for exactly two parties; 'among' is used for three or more. With three departments, 'among the three' is required. The error is in (B). No error in A, C, or D."},
+
+{id:40,section:"Grammar",type:"mcq (Grammar)",
+stem:`<b>Error Identification:</b> One of the underlined portions contains a grammatical error. Identify it.<br><br>"She prefers <u>(A)</u> to work independently <u>(B)</u> rather than <u>(C)</u> working in a team <u>(D)</u>."`,
+options:["(A) prefers to work","(B) independently","(C) rather than","(D) working in a team"],
+answer:"D",
+exp:"'Prefer to do X rather than do Y' requires parallel infinitive structure. 'Prefers to work...rather than working' breaks parallelism — first element uses a to-infinitive ('to work') while the second uses a gerund ('working'). The correct form is 'rather than work' (bare infinitive). The error is in (D)."},
+
+{id:41,section:"Grammar",type:"mcq (Grammar)",
+stem:`<b>Identify the Correct Sentence:</b> Three sentences contain errors. One is grammatically correct in formal written English. Identify it.`,
+options:["The jury has delivered its verdict after three days of deliberation.","The jury have delivered their verdict after three days of deliberation.","The jury has delivered their verdict after three days of deliberation.","The jury have delivered its verdict after three days of deliberation."],
+answer:"A",
+exp:"In formal written English (IPMAT standards), collective nouns like 'jury' are treated as singular units — 'the jury has...its'. Option A is internally consistent: singular verb ('has') + singular pronoun ('its'). Options C and D mix singular and plural — inconsistent. Option B is British English (both plural) — acceptable in British formal writing, but IPMAT formal written English treats collective nouns as singular."},
+
+{id:42,section:"Grammar",type:"mcq (Grammar)",
+stem:`<b>Identify the Correct Sentence:</b> Three sentences contain errors. One is grammatically correct in formal written English. Identify it.`,
+options:["He is the most talented of the two finalists.","He is the more talented of the two finalists.","He is the most talented among the two finalists.","He is more talented than either of the two finalists."],
+answer:"B",
+exp:"Comparative degree ('more') is required when comparing exactly two items. Option A uses superlative 'most' with two — wrong. Option B uses 'more' with two — correct. Option C uses 'among' (three or more) with two — wrong preposition. Option D ('more talented than either of the two finalists') — he IS one of the two finalists; comparing himself to both of them as a group is structurally incoherent."},
+
+{id:43,section:"Grammar",type:"mcq (Grammar)",
+stem:`<b>Identify the Correct Sentence:</b> Three sentences contain errors. One is grammatically correct in formal written English. Identify it.`,
+options:["Having completed the audit, the report was submitted to the board.","Completing the audit, the report was then submitted by us to the board.","Having completed the audit, we submitted the report to the board.","To complete the audit, the report was submitted to the board."],
+answer:"C",
+exp:"Option A: dangling modifier — 'Having completed the audit' must attach to the subject performing the action; 'the report' cannot complete an audit. Option C correctly supplies 'we' as the logical subject who completed the audit. Option B: 'Completing the audit' still dangles — 'the report' cannot complete an audit. Option D: 'To complete the audit, the report was submitted' implies the report was submitted in order to complete the audit — illogical."},
+
+{id:44,section:"Grammar",type:"mcq (Grammar)",
+stem:`<b>Identify the Correct Sentence:</b> Three sentences contain errors. One is grammatically correct in formal written English. Identify it.`,
+options:["The results of the experiment was published in three leading journals.","The results of the experiment were published in three leading journals.","The result of the experiments were published in three leading journals.","The results of the experiment have been publishing in three leading journals."],
+answer:"B",
+exp:"Option B: 'The results' (plural) — 'were published' (plural passive) — correct. Option A: plural subject 'results' with singular verb 'was' — SVA error. Option C: singular 'result' with plural verb 'were' — SVA error. Option D: 'have been publishing' is active progressive — results do not publish themselves; passive ('have been published') is required, and even then the tense is inappropriate for a completed action."},
+
+{id:45,section:"Grammar",type:"mcq (Grammar)",
+stem:`<b>Identify the Correct Sentence:</b> Three sentences contain errors. One is grammatically correct in formal written English. Identify it.`,
+options:["The board of directors have decided to postpone the annual general meeting.","The board of directors are deciding to postpone the annual general meeting.","The board of directors has decided to postpone the annual general meeting.","The board of directors were decided to postpone the annual general meeting."],
+answer:"C",
+exp:"'Board of directors' is a collective noun treated as singular in formal written English — takes a singular verb ('has decided'). Option A ('have') — plural, incorrect for formal collective noun treatment. Option B ('are deciding') — progressive tense for a formal institutional decision is inappropriate; also plural. Option D ('were decided') — passive construction that is semantically wrong; a board is not 'decided upon'."}
+];
+
+// ═══════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════
+let studentName='',studentPin='',studentBatch='';
+let currentQ=0;
+let userAnswers=new Array(45).fill(null);
+let marked=new Array(45).fill(false);
+let secondsLeft=timer_duration*60;
+let timerInterval=null;
+let submitted=false;
+
+// ═══════════════════════════════════════
+// LOGIN
+// ═══════════════════════════════════════
+function startTest(){
+  const name=document.getElementById('inputName').value.trim();
+  const pin=document.getElementById('inputPin').value.trim();
+  const batch=document.getElementById('inputBatch').value;
+  if(!name){alert('Please enter your full name.');return;}
+  const pinRegex=/^(STU|IMS)\d{10}$/i;
+  if(!pinRegex.test(pin)){alert('Invalid IMS PIN. Must start with STU or IMS followed by exactly 10 digits.');return;}
+  if(!batch){alert('Please select your batch.');return;}
+  const adminPins=['IMS1111111111','IMS2222222222','IMS3333333333','IMS4444444444','IMS5555555555'];
+  const isAdmin=adminPins.includes(pin.toUpperCase());
+  if(isAdmin && batch!=='Admin'){alert('Admin PIN must be used with the Admin batch.');return;}
+  if(!isAdmin && batch==='Admin'){alert('This batch is reserved for admin users.');return;}
+  studentName=name; studentPin=pin.toUpperCase(); studentBatch=batch;
+  showScreen('testScreen');
+  renderQuestion();
+  startTimer();
+}
+
+// ═══════════════════════════════════════
+// TIMER
+// ═══════════════════════════════════════
+function startTimer(){
+  timerInterval=setInterval(()=>{
+    secondsLeft--;
+    const m=Math.floor(secondsLeft/60);
+    const s=secondsLeft%60;
+    const el=document.getElementById('timerDisplay');
+    el.textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+    if(secondsLeft<=300) el.classList.add('warning');
+    if(secondsLeft<=0){clearInterval(timerInterval);submitTest();}
+  },1000);
+}
+
+// ═══════════════════════════════════════
+// RENDER QUESTION
+// ═══════════════════════════════════════
+function renderQuestion(){
+  const q=QUESTIONS[currentQ];
+  document.getElementById('qNum').textContent=currentQ+1;
+  document.getElementById('progressFill').style.width=((currentQ+1)/45*100)+'%';
+  const letters=['A','B','C','D'];
+  let html=`<div class="q-card">
+    <div class="q-number">Question ${currentQ+1} of 45 &nbsp;·&nbsp; ${q.section}</div>
+    <div class="q-stem">${q.stem}</div>
+    <div class="options">`;
+  q.options.forEach((opt,i)=>{
+    const sel=userAnswers[currentQ]===letters[i]?'selected':'';
+    html+=`<div class="opt ${sel}" onclick="selectAnswer('${letters[i]}')">
+      <div class="opt-letter">${letters[i]}</div>
+      <div>${opt}</div>
+    </div>`;
+  });
+  html+=`</div></div>`;
+  document.getElementById('qCardArea').innerHTML=html;
+  window.scrollTo(0,0);
+  document.getElementById('submitBtn').style.display=(currentQ===44)?'inline-block':'none';
+  updatePaletteGrid();
+}
+
+function selectAnswer(letter){
+  userAnswers[currentQ]=letter;
+  renderQuestion();
+}
+
+function navigate(dir){
+  const next=currentQ+dir;
+  if(next>=0 && next<45){currentQ=next;renderQuestion();}
+}
+
+function markForReview(){
+  marked[currentQ]=!marked[currentQ];
+  updatePaletteGrid();
+}
+
+// ═══════════════════════════════════════
+// PALETTE
+// ═══════════════════════════════════════
+function openPalette(){document.getElementById('paletteOverlay').classList.add('open');updatePaletteGrid();}
+function closePalette(e){if(e.target===document.getElementById('paletteOverlay'))document.getElementById('paletteOverlay').classList.remove('open');}
+function updatePaletteGrid(){
+  const grid=document.getElementById('paletteGrid');
+  if(!grid)return;
+  let html='';
+  for(let i=0;i<45;i++){
+    let cls='p-btn';
+    if(i===currentQ)cls+=' current';
+    else if(marked[i])cls+=' marked';
+    else if(userAnswers[i])cls+=' answered';
+    html+=`<div class="${cls}" onclick="goToQ(${i})">${i+1}</div>`;
+  }
+  grid.innerHTML=html;
+}
+function goToQ(i){currentQ=i;document.getElementById('paletteOverlay').classList.remove('open');renderQuestion();}
+
+// ═══════════════════════════════════════
+// CONFIRM & SUBMIT
+// ═══════════════════════════════════════
+function openConfirm(){
+  const ans=userAnswers.filter(a=>a!==null).length;
+  const skip=userAnswers.filter(a=>a===null).length;
+  const mrk=marked.filter(m=>m).length;
+  document.getElementById('cs-ans').textContent=ans;
+  document.getElementById('cs-skip').textContent=skip;
+  document.getElementById('cs-mark').textContent=mrk;
+  document.getElementById('confirmOverlay').classList.add('open');
+}
+function closeConfirm(){document.getElementById('confirmOverlay').classList.remove('open');}
+
+function submitTest(){
+  if(submitted)return;
+  submitted=true;
+  clearInterval(timerInterval);
+  closeConfirm();
+  let correct=0,wrong=0,skipped=0;
+  QUESTIONS.forEach((q,i)=>{
+    if(userAnswers[i]===null)skipped++;
+    else if(userAnswers[i]===q.answer)correct++;
+    else wrong++;
+  });
+  const score=correct*4-wrong;
+  showResults(score,correct,wrong,skipped);
+  saveToTracker(score,correct,wrong,skipped);
+  logToSheet(score,correct,wrong,skipped);
+}
+
+// ═══════════════════════════════════════
+// RESULTS
+// ═══════════════════════════════════════
+function showResults(score,correct,wrong,skipped){
+  showScreen('resultsScreen');
+  document.getElementById('scoreBig').textContent=score;
+  document.getElementById('scoreNameLine').textContent=studentName+' · '+studentPin+' · '+studentBatch;
+  document.getElementById('rCorrect').textContent=correct;
+  document.getElementById('rWrong').textContent=wrong;
+  document.getElementById('rSkipped').textContent=skipped;
+  const acc=correct+wrong>0?Math.round(correct/(correct+wrong)*100):0;
+  document.getElementById('rAccuracy').textContent=acc+'%';
+  buildReview();
+  buildMisses();
+  buildRetry();
+}
+
+function buildReview(){
+  const letters=['A','B','C','D'];
+  const container=document.getElementById('review-list');
+  let html='<h3>Review All Questions</h3>';
+  QUESTIONS.forEach((q,i)=>{
+    const ua=userAnswers[i];
+    let status='skipped',badge='Skipped';
+    if(ua!==null){
+      if(ua===q.answer){status='correct';badge='Correct';}
+      else{status='wrong';badge='Wrong';}
+    }
+    let optsHtml='';
+    q.options.forEach((opt,j)=>{
+      const l=letters[j];
+      let cls='';
+      if(l===q.answer)cls='correct-opt';
+      else if(l===ua && ua!==q.answer)cls='pick';
+      optsHtml+=`<div class="review-opts"><span class="${cls}"><b>${l}.</b> ${opt}</span></div>`;
+    });
+    html+=`<div class="review-card ${status}">
+      <div class="review-badge">${i+1}. ${badge}</div>
+      <div class="review-stem">${q.stem}</div>
+      ${optsHtml}
+      <div class="review-exp"><b>Explanation:</b> ${q.exp}</div>
+    </div>`;
+  });
+  container.innerHTML=html;
+}
+
+function buildMisses(){
+  const wrongs=QUESTIONS.filter((q,i)=>userAnswers[i]!==null && userAnswers[i]!==q.answer);
+  if(wrongs.length===0)return;
+  document.getElementById('missesSection').style.display='block';
+  let txt='';
+  wrongs.forEach((q,i)=>{
+    const qi=QUESTIONS.indexOf(q)+1;
+    txt+=`Q${qi} [${q.section}]\n${q.stem.replace(/<[^>]+>/g,'')}\nCorrect: ${q.answer}. ${q.options['ABCD'.indexOf(q.answer)]}\nExplanation: ${q.exp}\n\n`;
+  });
+  document.getElementById('missesBox').textContent=txt.trim();
+}
+
+function copyMisses(e){
+  const box=document.getElementById('missesBox');
+  box.style['-webkit-user-select']='text';
+  box.style['user-select']='text';
+  navigator.clipboard.writeText(box.textContent).then(()=>{
+    const btn=e.target;
+    btn.textContent='Copied!';
+    setTimeout(()=>btn.textContent='Copy',2000);
+  });
+}
+
+function buildRetry(){
+  const wrongQs=QUESTIONS.filter((q,i)=>userAnswers[i]!==null && userAnswers[i]!==q.answer);
+  if(wrongQs.length===0)return;
+  document.getElementById('retrySection').style.display='block';
+  const container=document.getElementById('retryArea');
+  const letters=['A','B','C','D'];
+  let html='';
+  wrongQs.forEach((q,ri)=>{
+    const qi=QUESTIONS.indexOf(q)+1;
+    let optsHtml='';
+    q.options.forEach((opt,j)=>{
+      optsHtml+=`<div class="retry-opt r-plain" id="retry-${ri}-${j}" onclick="checkRetry(${ri},${j},'${letters[j]}','${q.answer}')">
+        <span><b>${letters[j]}.</b> ${opt}</span>
+      </div>`;
+    });
+    html+=`<div class="retry-card">
+      <div style="font-size:.75rem;color:var(--muted);margin-bottom:8px">Q${qi}</div>
+      <div class="retry-stem">${q.stem}</div>
+      <div class="retry-opts">${optsHtml}</div>
+    </div>`;
+  });
+  container.innerHTML=html;
+}
+
+function checkRetry(ri,j,picked,correct){
+  const letters=['A','B','C','D'];
+  const ci=letters.indexOf(correct);
+  document.querySelectorAll(`[id^="retry-${ri}-"]`).forEach(el=>{
+    el.onclick=null;
+    const idx=parseInt(el.id.split('-')[2]);
+    if(idx===ci)el.classList.add('r-correct');
+    else if(idx===j && picked!==correct)el.classList.add('r-wrong');
+  });
+}
+
+// ═══════════════════════════════════════
+// PDF DOWNLOAD
+// ═══════════════════════════════════════
+function generatePDF(){
+  const letters=['A','B','C','D'];
+  let html=`<div style="font-family:Arial,sans-serif;padding:20px;color:#000">
+    <h2 style="text-align:center;color:#b8860b">Road to IIM — Test 18</h2>
+    <p style="text-align:center;margin-bottom:4px"><b>${studentName}</b> &nbsp;|&nbsp; PIN: ${studentPin} &nbsp;|&nbsp; Batch: ${studentBatch}</p>
+    <p style="text-align:center;margin-bottom:20px">Score: <b>${document.getElementById('scoreBig').textContent}/180</b> &nbsp;|&nbsp; Correct: ${document.getElementById('rCorrect').textContent} &nbsp;|&nbsp; Wrong: ${document.getElementById('rWrong').textContent} &nbsp;|&nbsp; Skipped: ${document.getElementById('rSkipped').textContent}</p>
+    <hr style="margin-bottom:20px">`;
+  QUESTIONS.forEach((q,i)=>{
+    const ua=userAnswers[i];
+    let status=ua===null?'Skipped':ua===q.answer?'✓ Correct':'✗ Wrong';
+    let color=ua===null?'#666':ua===q.answer?'#006400':'#8b0000';
+    html+=`<div style="margin-bottom:16px;page-break-inside:avoid">
+      <p style="font-weight:bold;margin-bottom:4px">${i+1}. <span style="color:${color}">[${status}]</span></p>
+      <p style="font-size:12px;margin-bottom:6px">${q.stem.replace(/<[^>]+>/g,'')}</p>`;
+    q.options.forEach((opt,j)=>{
+      const l=letters[j];
+      let fw=l===q.answer?'bold':'normal';
+      let col=l===q.answer?'#006400':(l===ua && ua!==q.answer)?'#8b0000':'#333';
+      html+=`<p style="font-size:11px;color:${col};font-weight:${fw};margin:2px 0">${l}. ${opt}</p>`;
+    });
+    html+=`<p style="font-size:11px;color:#444;background:#f5f5f5;padding:6px;margin-top:6px"><b>Explanation:</b> ${q.exp}</p></div>`;
+  });
+  html+='</div>';
+  const el=document.createElement('div');
+  el.innerHTML=html;
+  document.body.appendChild(el);
+  html2pdf().set({margin:10,filename:`Test18_${studentName.replace(/\s+/g,'_')}.pdf`,html2canvas:{scale:2},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}}).from(el).save().then(()=>document.body.removeChild(el));
+}
+
+// ═══════════════════════════════════════
+// TRACKER + SHEET
+// ═══════════════════════════════════════
+function saveToTracker(score,correct,wrong,skipped){
+  try{
+    const key='riim_'+studentBatch+'_'+studentName.toLowerCase().replace(/\s+/g,'_');
+    const existing=JSON.parse(localStorage.getItem(key)||'[]');
+    const sectionErrors={};
+    QUESTIONS.forEach((q,i)=>{if(userAnswers[i]!==null && userAnswers[i]!==q.answer){sectionErrors[q.section]=(sectionErrors[q.section]||0)+1;}});
+    const wrongQs=QUESTIONS.map((q,i)=>userAnswers[i]!==null && userAnswers[i]!==q.answer?i+1:null).filter(x=>x!==null);
+    existing.push({testNumber:18,testName:"Road to IIM Paper 18",score,correct,wrong,skipped,maxMarks:180,accuracy:correct+wrong>0?Math.round(correct/(correct+wrong)*100):0,sectionErrors,wrongQuestions:wrongQs,timestamp:new Date().toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})});
+    localStorage.setItem(key,JSON.stringify(existing));
+  }catch(e){console.log('localStorage error:',e);}
+}
+
+function logToSheet(score,correct,wrong,skipped){
+  const notice=document.getElementById('sheet-notice');
+  notice.className='submitting';
+  notice.textContent='Submitting your score...';
+  const sectionErrors={};
+  QUESTIONS.forEach((q,i)=>{if(userAnswers[i]!==null && userAnswers[i]!==q.answer){sectionErrors[q.section]=(sectionErrors[q.section]||0)+1;}});
+  const wrongQs=QUESTIONS.map((q,i)=>userAnswers[i]!==null && userAnswers[i]!==q.answer?i+1:null).filter(x=>x!==null);
+  const s=(timer_duration*60)-secondsLeft;
+  const mm=String(Math.floor(s/60)).padStart(2,'0');
+  const ss=String(s%60).padStart(2,'0');
+  const payload={
+    testName:"Road to IIM Paper 18",
+    name:studentName,
+    pin:studentPin,
+    batch:studentBatch,
+    score:score,
+    correct:correct,
+    wrong:wrong,
+    skipped:skipped,
+    maxMarks:180,
+    timeTaken:mm+':'+ss,
+    timestamp:new Date().toLocaleString("en-IN",{timeZone:"Asia/Kolkata"}),
+    sectionErrors:JSON.stringify(sectionErrors),
+    wrongQuestions:JSON.stringify(wrongQs),
+    studentAnswers:JSON.stringify(userAnswers.map(a=>a===null?null:a))
+  };
+  fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)})
+    .then(()=>{notice.className='success';notice.textContent='✓ Score submitted successfully.'})
+    .catch(()=>{notice.className='failure';notice.textContent='⚠ Could not submit score. Check your connection.'});
+}
+
+// ═══════════════════════════════════════
+// UTILITY
+// ═══════════════════════════════════════
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+</script>
+</body>
+</html>
