@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IWP Week 1 — Number Roots | Road to IIM</title>
+<style>
+  :root {
+    --gold: #C9A84C;
+    --dark: #0f1117;
+    --card: #1a1d27;
+    --border: #2a2d3a;
+    --text: #e8e6df;
+    --muted: #888580;
+    --accent: #4a9eff;
+    --green: #3ecf8e;
+    --red: #f87171;
+    --amber: #fbbf24;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--dark);
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    min-height: 100vh;
+    padding: 0 0 60px;
+  }
+
+  /* ── Header ── */
+  .header {
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .header-brand { font-size: 12px; color: var(--gold); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; }
+  .header-title { font-size: 14px; font-weight: 500; color: var(--text); }
+  .timer-badge {
+    background: #1e2130;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 5px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--amber);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.04em;
+  }
+
+  /* ── Login screen ── */
+  .screen { max-width: 520px; margin: 0 auto; padding: 40px 20px; }
+  .login-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 36px 32px;
+  }
+  .login-logo {
+    font-size: 11px;
+    color: var(--gold);
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .login-heading { font-size: 22px; font-weight: 600; margin-bottom: 6px; }
+  .login-sub { font-size: 14px; color: var(--muted); margin-bottom: 28px; line-height: 1.5; }
+  .field { margin-bottom: 16px; }
+  .field label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 6px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; }
+  .field input, .field select {
+    width: 100%;
+    background: #0f1117;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 11px 14px;
+    color: var(--text);
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .field input:focus, .field select:focus { border-color: var(--gold); }
+  .field select option { background: #1a1d27; }
+  .btn-primary {
+    width: 100%;
+    background: var(--gold);
+    color: #0f1117;
+    border: none;
+    border-radius: 8px;
+    padding: 13px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.15s;
+    margin-top: 8px;
+  }
+  .btn-primary:hover { opacity: 0.88; }
+  .error-msg { color: var(--red); font-size: 13px; margin-top: 8px; display: none; }
+
+  /* ── Session content ── */
+  .session-wrap { max-width: 680px; margin: 0 auto; padding: 32px 20px; }
+
+  /* Progress bar */
+  .progress-bar-wrap { margin-bottom: 28px; }
+  .progress-labels { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); margin-bottom: 8px; }
+  .progress-track { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--gold); border-radius: 2px; transition: width 0.4s ease; }
+
+  /* Section label */
+  .section-tag {
+    display: inline-block;
+    background: #1e2130;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--gold);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+
+  /* Hook box */
+  .hook-box {
+    background: linear-gradient(135deg, #1a1d27 0%, #1e2234 100%);
+    border: 1px solid #2e3248;
+    border-left: 3px solid var(--gold);
+    border-radius: 12px;
+    padding: 22px 24px;
+    margin-bottom: 28px;
+  }
+  .hook-box p { font-size: 15px; line-height: 1.7; color: var(--text); }
+  .hook-box p em { color: var(--gold); font-style: normal; font-weight: 600; }
+
+  /* Root card */
+  .root-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+  .root-card h2 { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
+  .root-card .root-meaning { font-size: 13px; color: var(--gold); font-weight: 600; margin-bottom: 16px; letter-spacing: 0.04em; }
+  .word-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px; }
+  .word-item {
+    background: #0f1117;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .word-item .word { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+  .word-item .word span { color: var(--gold); }
+  .word-item .pos { font-size: 11px; color: var(--accent); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+  .word-item .defn { font-size: 13px; color: var(--muted); line-height: 1.5; }
+  .word-item .example { font-size: 12px; color: #666; margin-top: 6px; font-style: italic; line-height: 1.4; }
+
+  /* Exercise block */
+  .exercise-block {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+  .exercise-block h3 { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
+  .exercise-block .ex-instr { font-size: 13px; color: var(--muted); margin-bottom: 18px; line-height: 1.5; }
+  .ex-item { margin-bottom: 16px; }
+  .ex-item .q { font-size: 14px; line-height: 1.7; color: var(--text); margin-bottom: 8px; }
+  .ex-item input[type="text"] {
+    background: #0f1117;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 9px 12px;
+    color: var(--text);
+    font-size: 14px;
+    width: 100%;
+    max-width: 320px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .ex-item input[type="text"]:focus { border-color: var(--gold); }
+  .ex-item input[type="text"].correct { border-color: var(--green); background: #0d1f16; }
+  .ex-item input[type="text"].wrong { border-color: var(--red); background: #1f0d0d; }
+  .ex-feedback { font-size: 12px; margin-top: 5px; display: none; }
+  .ex-feedback.correct { color: var(--green); display: block; }
+  .ex-feedback.wrong { color: var(--red); display: block; }
+  .check-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 18px;
+    color: var(--text);
+    font-size: 13px;
+    cursor: pointer;
+    margin-top: 14px;
+    transition: border-color 0.15s, color 0.15s;
+  }
+  .check-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+  /* Insight box */
+  .insight {
+    background: #111827;
+    border: 1px solid #1f2937;
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-top: 16px;
+    font-size: 13px;
+    color: #9ca3af;
+    line-height: 1.6;
+    display: none;
+  }
+  .insight.show { display: block; }
+  .insight strong { color: var(--amber); }
+
+  /* Exit slip */
+  .exit-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 28px 24px;
+    margin-bottom: 20px;
+  }
+  .exit-card h2 { font-size: 18px; font-weight: 600; margin-bottom: 6px; }
+  .exit-card .exit-sub { font-size: 13px; color: var(--muted); margin-bottom: 24px; line-height: 1.5; }
+  .exit-q { margin-bottom: 22px; }
+  .exit-q .q-text { font-size: 14px; color: var(--text); margin-bottom: 10px; line-height: 1.6; }
+  .exit-q .q-num { font-size: 11px; color: var(--gold); font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
+  .options-grid { display: flex; flex-direction: column; gap: 8px; }
+  .opt-btn {
+    background: #0f1117;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 11px 16px;
+    color: var(--text);
+    font-size: 14px;
+    cursor: pointer;
+    text-align: left;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .opt-btn:hover:not(:disabled) { border-color: var(--gold); background: #1a1d27; }
+  .opt-btn.selected { border-color: var(--accent); background: #0d1a2e; }
+  .opt-btn.correct-ans { border-color: var(--green) !important; background: #0d1f16 !important; color: var(--green); }
+  .opt-btn.wrong-ans { border-color: var(--red) !important; background: #1f0d0d !important; color: var(--red); }
+  .opt-btn:disabled { cursor: default; }
+
+  /* Score reveal */
+  .score-reveal {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 36px 28px;
+    text-align: center;
+    display: none;
+  }
+  .score-reveal.show { display: block; }
+  .score-big { font-size: 56px; font-weight: 700; color: var(--gold); line-height: 1; margin-bottom: 8px; }
+  .score-label { font-size: 14px; color: var(--muted); margin-bottom: 20px; }
+  .score-grade { font-size: 18px; font-weight: 600; margin-bottom: 6px; }
+  .score-msg { font-size: 14px; color: var(--muted); line-height: 1.6; margin-bottom: 28px; }
+  .submit-btn {
+    background: var(--gold);
+    color: #0f1117;
+    border: none;
+    border-radius: 10px;
+    padding: 14px 36px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  .submit-btn:hover { opacity: 0.88; }
+  .submit-btn:disabled { opacity: 0.4; cursor: default; }
+  .submit-status { font-size: 13px; color: var(--muted); margin-top: 12px; min-height: 20px; }
+  .submit-status.ok { color: var(--green); }
+  .submit-status.err { color: var(--red); }
+
+  /* Nav buttons */
+  .nav-row { display: flex; gap: 12px; margin-top: 24px; }
+  .nav-btn {
+    flex: 1;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 13px;
+    color: var(--text);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: border-color 0.15s;
+  }
+  .nav-btn:hover { border-color: var(--gold); }
+  .nav-btn.primary { background: var(--gold); color: #0f1117; border-color: var(--gold); font-weight: 700; }
+  .nav-btn.primary:hover { opacity: 0.88; }
+  .nav-btn:disabled { opacity: 0.3; cursor: default; }
+
+  /* Utility */
+  .hidden { display: none !important; }
+  .divider { height: 1px; background: var(--border); margin: 28px 0; }
+  @media (max-width: 480px) {
+    .header { flex-wrap: wrap; gap: 8px; }
+    .login-card { padding: 24px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════ HEADER ═══════════════════════════ -->
+<div class="header">
+  <div>
+    <div class="header-brand">Road to IIM · Self Study</div>
+    <div class="header-title" id="header-title">Instant Word Power</div>
+  </div>
+  <div class="timer-badge" id="timer-display">00:00</div>
+</div>
+
+<!-- ═══════════════════════════ LOGIN ═══════════════════════════ -->
+<div id="login-screen" class="screen">
+  <div class="login-card">
+    <div class="login-logo">Camp Verbal × Road to IIM</div>
+    <div class="login-heading">Week 1 — Number Roots</div>
+    <div class="login-sub">Sessions 1–4 from <em>Instant Word Power</em>. Complete all sections, then submit your exit slip to log your progress.</div>
+    <div class="field">
+      <label>Your Name</label>
+      <input type="text" id="inp-name" placeholder="Full name" autocomplete="off">
+    </div>
+    <div class="field">
+      <label>IMS PIN</label>
+      <input type="text" id="inp-pin" placeholder="STU / IMS + 10 digits" maxlength="13" autocomplete="off">
+    </div>
+    <div class="field">
+      <label>Batch</label>
+      <select id="inp-batch">
+        <option value="">— Select batch —</option>
+        <optgroup label="Classroom">
+          <option>A2701</option>
+          <option>A2702</option>
+          <option>A2703</option>
+          <option>A2704</option>
+          <option>A2705</option>
+          <option>A2706</option>
+          <option>A2707</option>
+          <option>A2708</option>
+          <option>A2709</option>
+          <option>A2710</option>
+          <option>A2711</option>
+          <option>A2712</option>
+        </optgroup>
+        <optgroup label="School">
+          <option>Zebar</option>
+        </optgroup>
+        <optgroup label="Online">
+          <option>27E101</option>
+          <option>27E102</option>
+          <option>27E103</option>
+          <option>27E104</option>
+          <option>27E105</option>
+        </optgroup>
+        <optgroup label="Admin">
+          <option>Admin</option>
+        </optgroup>
+      </select>
+    </div>
+    <div class="error-msg" id="login-err">Please fill in all fields.</div>
+    <button class="btn-primary" onclick="startSession()">Begin Session ›</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ SESSION ═══════════════════════════ -->
+<div id="session-screen" class="hidden">
+
+  <!-- SECTION 1: Hook + Root Intro -->
+  <div id="sec-intro" class="hidden">
+    <div class="session-wrap">
+      <div class="progress-bar-wrap">
+        <div class="progress-labels"><span>Start</span><span id="prog-label">Section 1 of 5</span><span>Exit Slip</span></div>
+        <div class="progress-track"><div class="progress-fill" id="prog-fill" style="width:10%"></div></div>
+      </div>
+
+      <div class="section-tag">The Hook</div>
+      <div class="hook-box">
+        <p>You already know the word <em>pedestrian</em>. But did you know that the word <em>expedient</em> — meaning a convenient solution — literally means "freeing the foot from a trap"? Or that an <em>impediment</em> is something that "puts a chain on your foot"?</p>
+        <br>
+        <p>One Latin root, <em>ped-</em>, unlocks dozens of English words. This week, you'll learn how to read words you've never seen before — by understanding the parts they're made from.</p>
+      </div>
+
+      <div class="section-tag" style="margin-top:28px">Root 1 — bi / bin</div>
+      <div class="root-card">
+        <h2>bi– / bin–</h2>
+        <div class="root-meaning">Latin · meaning: two</div>
+        <div class="word-grid">
+          <div class="word-item">
+            <div class="word"><span>bi</span>cycle</div>
+            <div class="pos">noun</div>
+            <div class="defn">A vehicle with two wheels.</div>
+            <div class="example">"She rode her bicycle to school."</div>
+          </div>
+          <div class="word-item">
+            <div class="word"><span>bi</span>ped</div>
+            <div class="pos">noun</div>
+            <div class="defn">A creature that walks on two feet.</div>
+            <div class="example">"Humans are bipeds; dogs are quadrupeds."</div>
+          </div>
+          <div class="word-item">
+            <div class="word"><span>bi</span>annual</div>
+            <div class="pos">adjective</div>
+            <div class="defn">Happening twice a year.</div>
+            <div class="example">"The biannual report is due in June and December."</div>
+          </div>
+          <div class="word-item">
+            <div class="word"><span>bi</span>ennial</div>
+            <div class="pos">adjective</div>
+            <div class="defn">Happening once every two years.</div>
+            <div class="example">"The biennial festival draws crowds every other summer."</div>
+          </div>
+          <div class="word-item">
+            <div class="word"><span>bi</span>lateral</div>
+            <div class="pos">adjective</div>
+            <div class="defn">Involving two sides or parties.</div>
+            <div class="example">"The two countries signed a bilateral trade agreement."</div>
+          </div>
+          <div class="word-item">
+            <div class="word"><span>bi</span>focal</div>
+            <div class="pos">adjective</div>
+            <div class="defn">Having two focal lengths (as in lenses).</div>
+            <div class="example">"Her bifocal glasses correct both near and far vision."</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-tag">Root 2 — tri</div>
+      <div class="root-card">
+        <h2>tri–</h2>
+        <div class="root-meaning">Latin/Greek · meaning: three</div>
+        <div class="word-grid">
+          <div class="word-item">
+            <div class="word"><span>tri</span>cycle</div>
+            <div class="pos">noun</div>
+            <div class="defn">A vehicle with three wheels.</div>
+          </div>
+          <div class="word-item">
+            <div class="word"><span>tri</span>pod</div>
+            <div class="pos">noun</div>
+            <div class="defn">A three-legged stand.</div>
+            <div class="example">"The photographer set the camera on a tripod."</div>
+          </div>
+          <div class="word-item">
+            <div class="word"><span>tri</span>lateral</div>
+            <div class="pos">adjective</div>
+            <div class="defn">Involving three sides or parties.</div>
+          </div>
+          <div class="word-item">
+            <div class="word"><span>tri</span>ennial</div>
+            <div class="pos">adjective</div>
+            <div class="defn">Happening once every three years.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-tag">Root 3 — quad / quadr</div>
+      <div class="root-card">
+        <h2>quad– / quadr–</h2>
+        <div class="root-meaning">Latin · meaning: four</div>
+        <div class="word-grid">
+          <div class="word-item">
+            <div class="word"><span>quad</span>ruped</div>
+            <div class="pos">noun</div>
+            <div class="defn">An animal that walks on four feet.</div>
+            <div class="example">"A horse is a quadruped; a human is a biped."</div>
+          </div>
+          <div class="word-item">
+            <div class="word"><span>quad</span>ruple</div>
+            <div class="pos">verb / adjective</div>
+            <div class="defn">To multiply by four; consisting of four parts.</div>
+          </div>
+          <div class="word-item">
+            <div class="word"><span>quad</span>rilateral</div>
+            <div class="pos">noun</div>
+            <div class="defn">A four-sided polygon.</div>
+            <div class="example">"A square is a type of quadrilateral."</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-tag">Root 4 — cent</div>
+      <div class="root-card">
+        <h2>cent– / centi–</h2>
+        <div class="root-meaning">Latin · meaning: hundred</div>
+        <div class="word-grid">
+          <div class="word-item">
+            <div class="word"><span>cent</span>ury</div>
+            <div class="pos">noun</div>
+            <div class="defn">A period of one hundred years.</div>
+          </div>
+          <div class="word-item">
+            <div class="word"><span>cent</span>ennial</div>
+            <div class="pos">noun / adjective</div>
+            <div class="defn">A hundredth anniversary; happening every hundred years.</div>
+            <div class="example">"The city celebrated its centennial with a parade."</div>
+          </div>
+          <div class="word-item">
+            <div class="word"><span>cent</span>ipede</div>
+            <div class="pos">noun</div>
+            <div class="defn">Literally "hundred-footed" — a many-legged insect.</div>
+          </div>
+          <div class="word-item">
+            <div class="word"><span>cent</span>enarian</div>
+            <div class="pos">noun</div>
+            <div class="defn">A person who is one hundred years old or more.</div>
+            <div class="example">"At 102, she was the oldest centenarian in the district."</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-row">
+        <button class="nav-btn primary" onclick="goSection('sec-ex1')">Next: Fill-in Exercises ›</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 2: Fill-in Exercises -->
+  <div id="sec-ex1" class="hidden">
+    <div class="session-wrap">
+      <div class="progress-bar-wrap">
+        <div class="progress-labels"><span>Start</span><span>Section 2 of 5</span><span>Exit Slip</span></div>
+        <div class="progress-track"><div class="progress-fill" style="width:30%"></div></div>
+      </div>
+
+      <div class="section-tag">Fill-in exercises</div>
+      <div class="exercise-block">
+        <h3>Complete each word using the correct root</h3>
+        <div class="ex-instr">Use what you've just learned. Type the complete word in the blank. The root hint is in brackets.</div>
+
+        <div class="ex-item" id="ex1">
+          <div class="q">1. A person who has reached the age of 100 is a <strong>c___________</strong>. [cent + suffix meaning "person of that age"]</div>
+          <input type="text" id="ex1-ans" placeholder="Type the word..." oninput="clearFeedback('ex1')">
+          <div class="ex-feedback" id="ex1-fb"></div>
+        </div>
+
+        <div class="ex-item" id="ex2">
+          <div class="q">2. An animal with four legs is a <strong>q___________</strong>. [quad + ped]</div>
+          <input type="text" id="ex2-ans" placeholder="Type the word..." oninput="clearFeedback('ex2')">
+          <div class="ex-feedback" id="ex2-fb"></div>
+        </div>
+
+        <div class="ex-item" id="ex3">
+          <div class="q">3. A lens that corrects two focal lengths is called <strong>b___________</strong>. [bi + focal]</div>
+          <input type="text" id="ex3-ans" placeholder="Type the word..." oninput="clearFeedback('ex3')">
+          <div class="ex-feedback" id="ex3-fb"></div>
+        </div>
+
+        <div class="ex-item" id="ex4">
+          <div class="q">4. An event that happens twice a year is <strong>b___________</strong>. [bi + annual]</div>
+          <input type="text" id="ex4-ans" placeholder="Type the word..." oninput="clearFeedback('ex4')">
+          <div class="ex-feedback" id="ex4-fb"></div>
+        </div>
+
+        <div class="ex-item" id="ex5">
+          <div class="q">5. A 100th anniversary celebration is called a <strong>c___________</strong>. [cent + ennial]</div>
+          <input type="text" id="ex5-ans" placeholder="Type the word..." oninput="clearFeedback('ex5')">
+          <div class="ex-feedback" id="ex5-fb"></div>
+        </div>
+
+        <div class="ex-item" id="ex6">
+          <div class="q">6. A three-legged camera stand is a <strong>t___________</strong>. [tri + pod]</div>
+          <input type="text" id="ex6-ans" placeholder="Type the word..." oninput="clearFeedback('ex6')">
+          <div class="ex-feedback" id="ex6-fb"></div>
+        </div>
+
+        <button class="check-btn" onclick="checkExercises()">Check my answers</button>
+
+        <div class="insight" id="ex-insight">
+          <strong>Key insight:</strong> Notice how bi– always means two, tri– always three, quad– always four, and cent– always hundred — regardless of what follows. Once you know a root, you can decode dozens of words you've never seen. Try: <em>bimonthly, triennium, quadrant, centimeter</em> — you already know what they mean.
+        </div>
+      </div>
+
+      <div class="nav-row">
+        <button class="nav-btn" onclick="goSection('sec-intro')">‹ Back</button>
+        <button class="nav-btn primary" id="next-ex1" onclick="goSection('sec-context')" disabled>Next: Think With the Words ›</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 3: Think With the Words -->
+  <div id="sec-context" class="hidden">
+    <div class="session-wrap">
+      <div class="progress-bar-wrap">
+        <div class="progress-labels"><span>Start</span><span>Section 3 of 5</span><span>Exit Slip</span></div>
+        <div class="progress-track"><div class="progress-fill" style="width:52%"></div></div>
+      </div>
+
+      <div class="section-tag">Think with the words</div>
+      <div class="exercise-block">
+        <h3>Use each word in context</h3>
+        <div class="ex-instr">Each sentence has a blank. Decide which word from this week fits best. The first letter is given.</div>
+
+        <div class="ex-item" id="ctx1">
+          <div class="q">1. India and the US signed a <strong>b___________</strong> agreement to reduce import duties on both sides.</div>
+          <input type="text" id="ctx1-ans" placeholder="Type the word..." oninput="clearFeedback('ctx1')">
+          <div class="ex-feedback" id="ctx1-fb"></div>
+        </div>
+
+        <div class="ex-item" id="ctx2">
+          <div class="q">2. The election is <strong>b___________</strong> — it happens once every two years, not twice a year.</div>
+          <input type="text" id="ctx2-ans" placeholder="Type the word..." oninput="clearFeedback('ctx2')">
+          <div class="ex-feedback" id="ctx2-fb"></div>
+        </div>
+
+        <div class="ex-item" id="ctx3">
+          <div class="q">3. At 103, she was the oldest <strong>c___________</strong> in the village — and still did yoga every morning.</div>
+          <input type="text" id="ctx3-ans" placeholder="Type the word..." oninput="clearFeedback('ctx3')">
+          <div class="ex-feedback" id="ctx3-fb"></div>
+        </div>
+
+        <div class="ex-item" id="ctx4">
+          <div class="q">4. Unlike the dog, a <strong>q___________</strong>, humans are <strong>b___________</strong>s who evolved to walk upright on two legs.</div>
+          <input type="text" id="ctx4a-ans" placeholder="First blank..." oninput="clearFeedback('ctx4')" style="margin-bottom:8px">
+          <input type="text" id="ctx4b-ans" placeholder="Second blank..." oninput="clearFeedback('ctx4')">
+          <div class="ex-feedback" id="ctx4-fb"></div>
+        </div>
+
+        <button class="check-btn" onclick="checkContext()">Check my answers</button>
+      </div>
+
+      <div class="nav-row">
+        <button class="nav-btn" onclick="goSection('sec-ex1')">‹ Back</button>
+        <button class="nav-btn primary" id="next-ctx" onclick="goSection('sec-recall')" disabled>Next: Word Recall ›</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 4: Word Recall -->
+  <div id="sec-recall" class="hidden">
+    <div class="session-wrap">
+      <div class="progress-bar-wrap">
+        <div class="progress-labels"><span>Start</span><span>Section 4 of 5</span><span>Exit Slip</span></div>
+        <div class="progress-track"><div class="progress-fill" style="width:72%"></div></div>
+      </div>
+
+      <div class="section-tag">Word recall</div>
+      <div class="exercise-block">
+        <h3>Definition → Word</h3>
+        <div class="ex-instr">The definition is given. Write the word. The starting letter(s) are provided as a hint.</div>
+
+        <div class="ex-item" id="rc1">
+          <div class="q">1. A four-sided geometric figure &nbsp;<strong>q___________</strong></div>
+          <input type="text" id="rc1-ans" placeholder="quadri..." oninput="clearFeedback('rc1')">
+          <div class="ex-feedback" id="rc1-fb"></div>
+        </div>
+        <div class="ex-item" id="rc2">
+          <div class="q">2. Occurring once every hundred years &nbsp;<strong>c___________</strong></div>
+          <input type="text" id="rc2-ans" placeholder="cent..." oninput="clearFeedback('rc2')">
+          <div class="ex-feedback" id="rc2-fb"></div>
+        </div>
+        <div class="ex-item" id="rc3">
+          <div class="q">3. Involving or agreed upon by two parties &nbsp;<strong>b___________</strong></div>
+          <input type="text" id="rc3-ans" placeholder="bi..." oninput="clearFeedback('rc3')">
+          <div class="ex-feedback" id="rc3-fb"></div>
+        </div>
+        <div class="ex-item" id="rc4">
+          <div class="q">4. To multiply by four &nbsp;<strong>q___________</strong></div>
+          <input type="text" id="rc4-ans" placeholder="quad..." oninput="clearFeedback('rc4')">
+          <div class="ex-feedback" id="rc4-fb"></div>
+        </div>
+        <div class="ex-item" id="rc5">
+          <div class="q">5. A person 100 years old or older &nbsp;<strong>c___________</strong></div>
+          <input type="text" id="rc5-ans" placeholder="cent..." oninput="clearFeedback('rc5')">
+          <div class="ex-feedback" id="rc5-fb"></div>
+        </div>
+
+        <button class="check-btn" onclick="checkRecall()">Check my answers</button>
+      </div>
+
+      <div class="nav-row">
+        <button class="nav-btn" onclick="goSection('sec-context')">‹ Back</button>
+        <button class="nav-btn primary" id="next-rc" onclick="goSection('sec-exit')" disabled>Begin Exit Slip ›</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 5: Exit Slip (MCQ — tracked) -->
+  <div id="sec-exit" class="hidden">
+    <div class="session-wrap">
+      <div class="progress-bar-wrap">
+        <div class="progress-labels"><span>Start</span><span>Exit Slip — 5 questions</span><span>Submit</span></div>
+        <div class="progress-track"><div class="progress-fill" style="width:90%"></div></div>
+      </div>
+
+      <div class="exit-card" id="exit-questions">
+        <h2>Exit Slip</h2>
+        <div class="exit-sub">5 questions. Choose the best answer for each. Your answers will be logged to the tracker.</div>
+
+        <!-- Q1 -->
+        <div class="exit-q" id="eqw1">
+          <div class="q-num">Question 1 of 5</div>
+          <div class="q-text">The word <em>biennial</em> describes an event that occurs —</div>
+          <div class="options-grid">
+            <button class="opt-btn" onclick="selectOpt(1,'A')">A. Twice a year</button>
+            <button class="opt-btn" onclick="selectOpt(1,'B')">B. Every two years</button>
+            <button class="opt-btn" onclick="selectOpt(1,'C')">C. Every hundred years</button>
+            <button class="opt-btn" onclick="selectOpt(1,'D')">D. Once a year</button>
+          </div>
+        </div>
+
+        <!-- Q2 -->
+        <div class="exit-q" id="eqw2">
+          <div class="q-num">Question 2 of 5</div>
+          <div class="q-text">A <em>quadruped</em> is an animal that —</div>
+          <div class="options-grid">
+            <button class="opt-btn" onclick="selectOpt(2,'A')">A. Has four wings</button>
+            <button class="opt-btn" onclick="selectOpt(2,'B')">B. Walks on four legs</button>
+            <button class="opt-btn" onclick="selectOpt(2,'C')">C. Lives for four years</button>
+            <button class="opt-btn" onclick="selectOpt(2,'D')">D. Has four eyes</button>
+          </div>
+        </div>
+
+        <!-- Q3 -->
+        <div class="exit-q" id="eqw3">
+          <div class="q-num">Question 3 of 5</div>
+          <div class="q-text">India and Pakistan signed a <em>bilateral</em> ceasefire agreement. The word <em>bilateral</em> means —</div>
+          <div class="options-grid">
+            <button class="opt-btn" onclick="selectOpt(3,'A')">A. International</button>
+            <button class="opt-btn" onclick="selectOpt(3,'B')">B. Temporary</button>
+            <button class="opt-btn" onclick="selectOpt(3,'C')">C. Involving two sides</button>
+            <button class="opt-btn" onclick="selectOpt(3,'D')">D. Military in nature</button>
+          </div>
+        </div>
+
+        <!-- Q4 -->
+        <div class="exit-q" id="eqw4">
+          <div class="q-num">Question 4 of 5</div>
+          <div class="q-text">Which word means "a 100th anniversary"?</div>
+          <div class="options-grid">
+            <button class="opt-btn" onclick="selectOpt(4,'A')">A. Biennial</button>
+            <button class="opt-btn" onclick="selectOpt(4,'B')">B. Centennial</button>
+            <button class="opt-btn" onclick="selectOpt(4,'C')">C. Triennial</button>
+            <button class="opt-btn" onclick="selectOpt(4,'D')">D. Millennial</button>
+          </div>
+        </div>
+
+        <!-- Q5 -->
+        <div class="exit-q" id="eqw5">
+          <div class="q-num">Question 5 of 5</div>
+          <div class="q-text">The prefix <em>bi–</em> means two, and <em>focal</em> relates to focus. So <em>bifocal</em> lenses must —</div>
+          <div class="options-grid">
+            <button class="opt-btn" onclick="selectOpt(5,'A')">A. Be very strong in power</button>
+            <button class="opt-btn" onclick="selectOpt(5,'B')">B. Correct vision in two distances</button>
+            <button class="opt-btn" onclick="selectOpt(5,'C')">C. Have two separate frames</button>
+            <button class="opt-btn" onclick="selectOpt(5,'D')">D. Be made of two materials</button>
+          </div>
+        </div>
+
+        <div class="nav-row">
+          <button class="nav-btn primary" id="submit-exit-btn" onclick="submitExitSlip()" disabled>Submit Exit Slip ›</button>
+        </div>
+      </div>
+
+      <!-- Score reveal -->
+      <div class="score-reveal" id="score-reveal">
+        <div class="score-big" id="score-big">0/5</div>
+        <div class="score-label">Exit Slip Score</div>
+        <div class="score-grade" id="score-grade"></div>
+        <div class="score-msg" id="score-msg"></div>
+        <button class="submit-btn" id="log-btn" onclick="logToSheet()">Log to Tracker ›</button>
+        <div class="submit-status" id="submit-status"></div>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- /session-screen -->
+
+<script>
+// ── Config ──────────────────────────────────────────────────────
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwGGxswx4hcBUFiT0QJIglowhKcJCv47MOR5LKBv9sILl-evsgZeKCms5y6s5zEXOUo6Q/exec";
+const SESSION_NAME = "IWP Week 1 — Number Roots";
+
+// ── State ────────────────────────────────────────────────────────
+let studentName = "", studentPin = "", studentBatch = "";
+let timerInterval = null, secondsElapsed = 0;
+let exitAnswers = { 1: null, 2: null, 3: null, 4: null, 5: null };
+const CORRECT_ANSWERS = { 1: 'B', 2: 'B', 3: 'C', 4: 'B', 5: 'B' };
+let exercisesPassed = false, contextPassed = false, recallPassed = false;
+
+// ── Exercise answers (accept variants) ──────────────────────────
+const EX_ANSWERS = {
+  ex1: ["centenarian"],
+  ex2: ["quadruped"],
+  ex3: ["bifocal"],
+  ex4: ["biannual"],
+  ex5: ["centennial"],
+  ex6: ["tripod"]
+};
+const CTX_ANSWERS = {
+  ctx1: ["bilateral"],
+  ctx2: ["biennial"],
+  ctx3: ["centenarian"],
+  ctx4a: ["quadruped"],
+  ctx4b: ["biped"]
+};
+const RC_ANSWERS = {
+  rc1: ["quadrilateral"],
+  rc2: ["centennial"],
+  rc3: ["bilateral"],
+  rc4: ["quadruple"],
+  rc5: ["centenarian"]
+};
+
+// ── Timer ────────────────────────────────────────────────────────
+function startTimer() {
+  timerInterval = setInterval(() => {
+    secondsElapsed++;
+    const m = String(Math.floor(secondsElapsed / 60)).padStart(2, '0');
+    const s = String(secondsElapsed % 60).padStart(2, '0');
+    document.getElementById('timer-display').textContent = m + ':' + s;
+  }, 1000);
+}
+function getTimeTaken() {
+  const m = String(Math.floor(secondsElapsed / 60)).padStart(2, '0');
+  const s = String(secondsElapsed % 60).padStart(2, '0');
+  return m + ':' + s;
+}
+
+// ── Login ────────────────────────────────────────────────────────
+const ADMIN_PIN_LIST = ['IMS1111111111','IMS2222222222','IMS3333333333','IMS4444444444','IMS5555555555'];
+function startSession() {
+  const name  = document.getElementById('inp-name').value.trim();
+  const pin   = document.getElementById('inp-pin').value.trim().toUpperCase();
+  const batch = document.getElementById('inp-batch').value;
+  const err   = document.getElementById('login-err');
+
+  if (!name || !pin || !batch) {
+    err.textContent = 'Please fill in all fields.';
+    err.style.display = 'block'; return;
+  }
+  if (!/^(STU|IMS)\d{10}$/.test(pin)) {
+    err.textContent = 'PIN must be STU or IMS followed by 10 digits (e.g. STU0001184727).';
+    err.style.display = 'block'; return;
+  }
+  const isAdminPin = ADMIN_PIN_LIST.includes(pin);
+  if (isAdminPin && batch !== 'Admin') {
+    err.textContent = 'Admin PIN must be used with the Admin batch only.';
+    err.style.display = 'block'; return;
+  }
+  if (!isAdminPin && batch === 'Admin') {
+    err.textContent = 'Only Admin PINs can select the Admin batch.';
+    err.style.display = 'block'; return;
+  }
+
+  err.style.display = 'none';
+  studentName = name; studentPin = pin; studentBatch = batch;
+  document.getElementById('header-title').textContent = SESSION_NAME + ' · ' + name;
+  document.getElementById('login-screen').classList.add('hidden');
+  document.getElementById('session-screen').classList.remove('hidden');
+  goSection('sec-intro');
+  startTimer();
+}
+
+// ── Navigation ───────────────────────────────────────────────────
+function goSection(id) {
+  ['sec-intro','sec-ex1','sec-context','sec-recall','sec-exit'].forEach(s => {
+    document.getElementById(s).classList.add('hidden');
+  });
+  document.getElementById(id).classList.remove('hidden');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ── Exercise checking ─────────────────────────────────────────────
+function norm(s) { return s.toLowerCase().trim().replace(/[^a-z]/g, ''); }
+
+function checkExercises() {
+  let allGood = true;
+  ['ex1','ex2','ex3','ex4','ex5','ex6'].forEach(id => {
+    const inp = document.getElementById(id + '-ans');
+    const fb  = document.getElementById(id + '-fb');
+    const val = norm(inp.value);
+    const correct = EX_ANSWERS[id].map(norm);
+    if (correct.includes(val)) {
+      inp.classList.add('correct'); inp.classList.remove('wrong');
+      fb.textContent = '✓ Correct!'; fb.className = 'ex-feedback correct';
+    } else if (val.length > 0) {
+      inp.classList.add('wrong'); inp.classList.remove('correct');
+      fb.textContent = '✗ The answer is: ' + EX_ANSWERS[id][0];
+      fb.className = 'ex-feedback wrong';
+      allGood = false;
+    } else {
+      allGood = false;
+    }
+  });
+  document.getElementById('ex-insight').classList.add('show');
+  document.getElementById('next-ex1').disabled = false;
+  exercisesPassed = true;
+}
+
+function checkContext() {
+  let go = true;
+  [['ctx1','ctx1'],['ctx2','ctx2'],['ctx3','ctx3']].forEach(([id, key]) => {
+    const inp = document.getElementById(id + '-ans');
+    const fb  = document.getElementById(id + '-fb');
+    const val = norm(inp.value);
+    const correct = CTX_ANSWERS[key].map(norm);
+    if (val.length === 0) { go = false; return; }
+    if (correct.includes(val)) {
+      inp.classList.add('correct'); fb.textContent = '✓ Correct!'; fb.className = 'ex-feedback correct';
+    } else {
+      inp.classList.add('wrong');
+      fb.textContent = '✗ Answer: ' + CTX_ANSWERS[key][0]; fb.className = 'ex-feedback wrong';
+    }
+  });
+  // ctx4 (two blanks)
+  const a = norm(document.getElementById('ctx4a-ans').value);
+  const b = norm(document.getElementById('ctx4b-ans').value);
+  const fb4 = document.getElementById('ctx4-fb');
+  if (a.length && b.length) {
+    const aOk = CTX_ANSWERS.ctx4a.map(norm).includes(a);
+    const bOk = CTX_ANSWERS.ctx4b.map(norm).includes(b);
+    if (aOk && bOk) {
+      fb4.textContent = '✓ Both correct!'; fb4.className = 'ex-feedback correct';
+    } else {
+      fb4.textContent = '✗ Answers: quadruped / biped'; fb4.className = 'ex-feedback wrong';
+    }
+  } else { go = false; }
+  document.getElementById('next-ctx').disabled = false;
+  contextPassed = true;
+}
+
+function checkRecall() {
+  ['rc1','rc2','rc3','rc4','rc5'].forEach(id => {
+    const inp = document.getElementById(id + '-ans');
+    const fb  = document.getElementById(id + '-fb');
+    const val = norm(inp.value);
+    const correct = RC_ANSWERS[id].map(norm);
+    if (correct.includes(val)) {
+      inp.classList.add('correct'); fb.textContent = '✓ ' + RC_ANSWERS[id][0]; fb.className = 'ex-feedback correct';
+    } else if (val.length > 0) {
+      inp.classList.add('wrong');
+      fb.textContent = '✗ Answer: ' + RC_ANSWERS[id][0]; fb.className = 'ex-feedback wrong';
+    }
+  });
+  document.getElementById('next-rc').disabled = false;
+  recallPassed = true;
+}
+
+function clearFeedback(id) {
+  const fb = document.getElementById(id + '-fb');
+  if (fb) { fb.className = 'ex-feedback'; }
+}
+
+// ── Exit Slip ────────────────────────────────────────────────────
+function selectOpt(qNum, opt) {
+  const q = document.getElementById('eqw' + qNum);
+  q.querySelectorAll('.opt-btn').forEach(b => b.classList.remove('selected'));
+  const btns = q.querySelectorAll('.opt-btn');
+  ['A','B','C','D'].forEach((letter, i) => {
+    if (letter === opt) btns[i].classList.add('selected');
+  });
+  exitAnswers[qNum] = opt;
+  const allAnswered = Object.values(exitAnswers).every(v => v !== null);
+  document.getElementById('submit-exit-btn').disabled = !allAnswered;
+}
+
+function submitExitSlip() {
+  // Disable all buttons
+  document.querySelectorAll('.opt-btn').forEach(b => {
+    b.disabled = true;
+    const idx = ['A','B','C','D'].indexOf(b.textContent[0]);
+    if (idx === -1) return;
+    const letter = ['A','B','C','D'][idx];
+  });
+
+  // Show correct/wrong
+  let correct = 0;
+  for (let q = 1; q <= 5; q++) {
+    const qEl = document.getElementById('eqw' + q);
+    const btns = qEl.querySelectorAll('.opt-btn');
+    const correctLetter = CORRECT_ANSWERS[q];
+    ['A','B','C','D'].forEach((letter, i) => {
+      if (letter === correctLetter) {
+        btns[i].classList.add('correct-ans');
+      } else if (letter === exitAnswers[q] && letter !== correctLetter) {
+        btns[i].classList.add('wrong-ans');
+      }
+    });
+    if (exitAnswers[q] === correctLetter) correct++;
+  }
+
+  // Grade
+  const grades = [
+    { min: 5, label: 'Superb', msg: 'Perfect score. The roots are locked in. Move to Week 2.' },
+    { min: 4, label: 'Excellent', msg: 'Strong grasp. Quickly re-read any words you missed before Week 2.' },
+    { min: 3, label: 'Good', msg: 'Solid foundation. Review the root cards once more before next week.' },
+    { min: 0, label: 'Needs review', msg: 'Go back to the root cards and redo the exercises before Week 2.' }
+  ];
+  const grade = grades.find(g => correct >= g.min);
+
+  document.getElementById('exit-questions').style.display = 'none';
+  document.getElementById('score-big').textContent = correct + '/5';
+  document.getElementById('score-grade').textContent = grade.label;
+  document.getElementById('score-msg').textContent = grade.msg;
+  document.getElementById('score-reveal').classList.add('show');
+}
+
+// ── Log to Sheet ─────────────────────────────────────────────────
+function logToSheet() {
+  const btn = document.getElementById('log-btn');
+  const status = document.getElementById('submit-status');
+  btn.disabled = true;
+  btn.textContent = 'Logging...';
+  status.textContent = 'Sending to tracker...';
+  status.className = 'submit-status';
+
+  const correct = Object.keys(CORRECT_ANSWERS).filter(q => exitAnswers[q] === CORRECT_ANSWERS[q]).length;
+  const answerString = [1,2,3,4,5].map(q => q + ':' + (exitAnswers[q] || '-')).join('|');
+  const exitScore = Math.round((correct / 5) * 100);
+
+  const payload = {
+    type: "selfStudy",
+    sessionName: SESSION_NAME,
+    name: studentName,
+    pin: studentPin,
+    batch: studentBatch,
+    timeTaken: getTimeTaken(),
+    exitScore: exitScore,
+    exitCorrect: correct,
+    exitTotal: 5,
+    answers: answerString,
+    timestamp: new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })
+  };
+
+  fetch(APPS_SCRIPT_URL, {
+    method: "POST",
+    headers: { "Content-Type": "text/plain" },
+    body: JSON.stringify(payload)
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (data.status === "ok") {
+      status.textContent = '✓ Logged successfully! Your progress has been recorded.';
+      status.className = 'submit-status ok';
+      btn.textContent = 'Logged ✓';
+    } else {
+      throw new Error("Unexpected response");
+    }
+  })
+  .catch(() => {
+    status.textContent = '✗ Could not reach the tracker. Screenshot this page and send to Sahil Sir.';
+    status.className = 'submit-status err';
+    btn.disabled = false;
+    btn.textContent = 'Retry ›';
+  });
+}
+
+// ── saveToTracker (localStorage backup) ─────────────────────────
+function saveLocal() {
+  const key = 'riim_' + studentBatch + '_' + studentName;
+  const existing = JSON.parse(localStorage.getItem(key) || '{}');
+  existing[SESSION_NAME] = {
+    done: true,
+    timeTaken: getTimeTaken(),
+    exitScore: Object.keys(CORRECT_ANSWERS).filter(q => exitAnswers[q] === CORRECT_ANSWERS[q]).length,
+    timestamp: new Date().toISOString()
+  };
+  localStorage.setItem(key, JSON.stringify(existing));
+}
+</script>
+</body>
+</html>
