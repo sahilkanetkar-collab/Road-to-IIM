@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Road to IIM — Paper 19</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;}
+:root{
+  --navy:#0d1b2a;--navy2:#1a2e45;--gold:#c9a84c;--gold2:#e8c76a;
+  --green:#2ecc71;--red:#e74c3c;--grey:#8899aa;--white:#f0f4f8;
+  --purple:#9b59b6;--panel:280px;
+}
+body{background:var(--navy);color:var(--white);font-family:'Segoe UI',sans-serif;min-height:100vh;}
+
+/* ── LOGIN ── */
+#loginScreen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:20px;}
+.login-box{background:var(--navy2);border:1px solid var(--gold);border-radius:12px;padding:40px 36px;width:100%;max-width:440px;}
+.login-box h1{color:var(--gold);font-size:1.5rem;text-align:center;margin-bottom:6px;}
+.login-box p{color:var(--grey);font-size:.85rem;text-align:center;margin-bottom:28px;}
+.login-box label{display:block;font-size:.8rem;color:var(--grey);margin-bottom:4px;margin-top:14px;}
+.login-box input,.login-box select{width:100%;background:#0d1b2a;border:1px solid #2a4060;border-radius:6px;padding:10px 12px;color:var(--white);font-size:.95rem;}
+.login-box input:focus,.login-box select:focus{outline:none;border-color:var(--gold);}
+.login-box select option{background:var(--navy);}
+#startBtn{width:100%;margin-top:24px;padding:12px;background:var(--gold);color:var(--navy);font-size:1rem;font-weight:700;border:none;border-radius:8px;cursor:pointer;}
+#startBtn:hover{background:var(--gold2);}
+#loginError{color:var(--red);font-size:.82rem;text-align:center;margin-top:10px;min-height:18px;}
+
+/* ── TEST SCREEN ── */
+#testScreen{display:none;min-height:100vh;}
+#topBar{background:var(--navy2);border-bottom:1px solid #1e3a5a;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;height:54px;}
+#topBar .logo{color:var(--gold);font-weight:700;font-size:1rem;}
+
+/* FIXED ABSOLUTE TIMER DESIGN */
+#timerDisplay{
+  position:fixed !important;
+  top:12px !important;
+  right:20px !important;
+  z-index:99999 !important;
+  font-size:1.1rem !important;
+  font-weight:700 !important;
+  color:var(--green) !important;
+  background:#0a2a1a !important;
+  padding:6px 16px !important;
+  border-radius:20px !important;
+  border:1px solid var(--green) !important;
+  display:none; /* Toggled strictly via startTimer javascript mapping */
+}
+#timerDisplay.urgent{color:var(--red) !important;background:#2a0a0a !important;border-color:var(--red) !important;}
+#progressBar{height:3px;background:#1e3a5a;}
+#progressFill{height:100%;background:var(--gold);transition:width .3s;}
+
+/* ── MAIN LAYOUT ── */
+#mainLayout{display:flex;min-height:calc(100vh - 54px);}
+#questionArea{flex:1;padding:28px 32px;max-width:calc(100% - var(--panel));}
+#sectionTag{display:inline-block;background:#1e3a5a;color:var(--gold);font-size:.72rem;font-weight:700;letter-spacing:.08em;padding:3px 10px;border-radius:4px;margin-bottom:10px;text-transform:uppercase;}
+#questionNumber{color:var(--grey);font-size:.85rem;margin-bottom:8px;}
+#questionStem{font-size:1.05rem;line-height:1.7;color:var(--white);margin-bottom:22px;}
+#questionStem .blank{border-bottom:2px solid var(--gold);padding:0 4px;color:var(--gold2);}
+#questionStem em{font-style:italic;color:var(--gold2);}
+#questionStem strong{color:var(--gold2);}
+.options-list{list-style:none;display:flex;flex-direction:column;gap:10px;}
+.option-btn{background:#0d1b2a;border:1px solid #1e3a5a;border-radius:8px;padding:12px 16px;cursor:pointer;text-align:left;font-size:.95rem;color:var(--white);transition:all .2s;width:100%;}
+.option-btn:hover{border-color:var(--gold);background:#162030;}
+.option-btn.selected{border-color:var(--gold);background:#1e2e10;color:var(--gold2);}
+.option-btn.marked{border-color:var(--purple);}
+.opt-label{display:inline-block;width:24px;font-weight:700;color:var(--gold);}
+
+/* ── PALETTE ── */
+#paletteOverlay{position:fixed;top:0;right:0;width:100%;height:100%;z-index:200;pointer-events:none;display:flex;justify-content:flex-end;}
+#palettePanel{width:280px;height:100%;background:var(--navy2);border-left:1px solid #1e3a5a;padding:16px 12px;overflow-y:auto;pointer-events:all;}
+#palettePanel h3{color:var(--gold);font-size:.85rem;margin-bottom:12px;text-align:center;letter-spacing:.06em;}
+#paletteGrid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:16px;}
+.pal-btn{width:100%;aspect-ratio:1;border-radius:6px;border:1px solid #1e3a5a;background:#0d1b2a;color:var(--grey);font-size:.78rem;font-weight:600;cursor:pointer;transition:all .15s;}
+.pal-btn.answered{background:var(--green);color:#fff;border-color:var(--green);}
+.pal-btn.marked{background:var(--purple);color:#fff;border-color:var(--purple);}
+.pal-btn.current{border:2px solid var(--gold);color:var(--gold);}
+.palette-legend{font-size:.72rem;color:var(--grey);line-height:1.8;}
+.pal-dot{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:middle;}
+
+/* ── NAV BAR ── */
+#navBar{position:fixed;bottom:0;left:0;right:var(--panel);background:var(--navy2);border-top:1px solid #1e3a5a;display:flex;align-items:center;justify-content:space-between;padding:10px 20px;z-index:150;}
+.nav-btn{background:#1e3a5a;color:var(--white);border:none;border-radius:6px;padding:8px 18px;cursor:pointer;font-size:.9rem;font-weight:600;}
+.nav-btn:hover{background:#2a4a6a;}
+#questionsBtn{color:var(--gold);background:transparent;border:1px solid var(--gold);}
+#markBtn{color:var(--purple);background:transparent;border:1px solid var(--purple);}
+#submitBtn{background:var(--gold);color:var(--navy);font-weight:700;display:none;}
+#submitBtn:hover{background:var(--gold2);}
+
+/* ── RESULTS ── */
+#resultsScreen{display:none;padding:20px;max-width:900px;margin:0 auto;}
+.score-hero{background:var(--navy2);border:1px solid var(--gold);border-radius:12px;padding:32px;text-align:center;margin-bottom:24px;}
+.score-hero .score-val{font-size:3.5rem;font-weight:900;color:var(--gold);}
+.score-hero .out-of{font-size:1rem;color:var(--grey);}
+.score-hero .student-info{margin-top:10px;color:var(--grey);font-size:.9rem;}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
+.stat-box{background:var(--navy2);border-radius:8px;padding:16px;text-align:center;border:1px solid #1e3a5a;}
+.stat-box .val{font-size:1.6rem;font-weight:800;}
+.stat-box .lbl{font-size:.75rem;color:var(--grey);margin-top:4px;}
+.stat-box.correct .val{color:var(--green);}
+.stat-box.wrong .val{color:var(--red);}
+.stat-box.skipped .val{color:var(--grey);}
+.stat-box.accuracy .val{color:var(--gold);}
+#sheet-notice{padding:10px 16px;border-radius:8px;text-align:center;margin-bottom:16px;font-size:.875rem;font-weight:600;}
+.notice-submitting{background:#2a2a0a;color:#e8c76a;border:1px solid #c9a84c;}
+.notice-success{background:#0a2a0a;color:#2ecc71;border:1px solid #2ecc71;}
+.notice-failure{background:#2a0a0a;color:#e74c3c;border:1px solid #e74c3c;}
+.results-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:24px;}
+.res-btn{padding:10px 22px;border-radius:8px;font-size:.9rem;font-weight:700;cursor:pointer;border:none;}
+.res-btn.primary{background:var(--gold);color:var(--navy);}
+.res-btn.ghost{background:transparent;border:1px solid var(--gold);color:var(--gold);}
+.res-btn.pdf-btn{background:#2a3a5a;color:var(--white);border:1px solid #3a4a6a;}
+
+/* ── REVIEW ── */
+#review-list{margin-bottom:24px;}
+.review-card{background:var(--navy2);border-radius:10px;margin-bottom:14px;overflow:hidden;border-left:4px solid var(--grey);}
+.review-card.correct{border-left-color:var(--green);}
+.review-card.wrong{border-left-color:var(--red);}
+.review-card.skipped{border-left-color:var(--grey);}
+.review-card-header{padding:12px 16px;display:flex;align-items:center;gap:10px;}
+.review-badge{font-size:.75rem;font-weight:700;padding:3px 10px;border-radius:12px;}
+.badge-correct{background:#0a2a0a;color:var(--green);}
+.badge-wrong{background:#2a0a0a;color:var(--red);}
+.badge-skipped{background:#1e3a5a;color:var(--grey);}
+.review-card-body{padding:12px 16px 14px;}
+.review-stem{font-size:.92rem;line-height:1.6;margin-bottom:10px;color:var(--white);}
+.review-opts{font-size:.85rem;line-height:1.8;color:var(--grey);}
+.review-opts .opt-correct{color:var(--green);font-weight:600;}
+.review-opts .opt-wrong-pick{color:var(--red);}
+.review-exp{background:#0a2a15;border-left:3px solid var(--green);padding:10px 14px;border-radius:0 6px 6px 0;font-size:0.83rem;line-height:1.6;color:#a8e6c0;margin-top:8px;}
+
+/* ── RETRY & MISSES ── */
+#retrySection{background:var(--navy2);border:1px solid #1e3a5a;border-radius:10px;padding:20px;margin-bottom:20px;}
+#retrySection h3{color:var(--gold);margin-bottom:14px;}
+.retry-q{margin-bottom:16px;border-bottom:1px solid #1e3a5a;padding-bottom:12px;}
+.retry-q .retry-stem{font-size:.92rem;margin-bottom:8px;}
+.retry-opts{display:flex;flex-direction:column;gap:6px;}
+.retry-opt{background:#0d1b2a;border:1px solid #1e3a5a;border-radius:6px;padding:8px 12px;cursor:pointer;font-size:.85rem;color:var(--white);}
+.retry-opt:hover{border-color:var(--gold);}
+.retry-opt.r-correct{border-color:var(--green);background:#0a2a0a;color:var(--green);}
+.retry-opt.r-wrong{border-color:var(--red);background:#2a0a0a;color:var(--red);}
+#missesSection{background:var(--navy2);border:1px solid #1e3a5a;border-radius:10px;padding:20px;margin-bottom:20px;}
+#missesSection h3{color:var(--gold);margin-bottom:10px;}
+#missesText{background:#0d1b2a;border:1px solid #1e3a5a;border-radius:6px;padding:14px;font-size:.82rem;line-height:1.9;white-space:pre-wrap;color:var(--grey);max-height:260px;overflow-y:auto;}
+#copyMissesBtn{margin-top:10px;padding:8px 18px;background:var(--gold);color:var(--navy);border:none;border-radius:6px;font-weight:700;cursor:pointer;font-size:.85rem;}
+</style>
+</head>
+<body>
+
+<div id="timerDisplay">30:00</div>
+
+<div id="loginScreen">
+  <div class="login-box">
+    <h1>Road to IIM</h1>
+    <p>Paper 19 · Grammar, Analogies &amp; Hybrid · 30 min</p>
+    <label>Full Name</label>
+    <input type="text" id="inputName" placeholder="Your full name" autocomplete="off"/>
+    <label>IMS PIN</label>
+    <input type="text" id="inputPin" placeholder="IMS/STU + 10 digits" autocomplete="off" maxlength="13"/>
+    <label>Batch</label>
+    <select id="inputBatch">
+      <option value="">— Select Batch —</option>
+      <optgroup label="Classroom">
+        <option>A2701</option><option>A2702</option><option>A2703</option><option>A2704</option>
+        <option>A2705</option><option>A2706</option><option>A2707</option><option>A2708</option>
+        <option>A2709</option><option>A2710</option><option>A2711</option><option>A2712</option>
+      </optgroup>
+      <optgroup label="School">
+        <option>Zebar</option>
+      </optgroup>
+      <optgroup label="Online">
+        <option>27E101</option><option>27E102</option><option>27E103</option><option>27E104</option><option>27E105</option>
+      </optgroup>
+      <optgroup label="Admin">
+        <option>Admin</option>
+      </optgroup>
+    </select>
+    <button id="startBtn" onclick="startTest()">Start Test</button>
+    <div id="loginError"></div>
+  </div>
+</div>
+
+<div id="testScreen">
+  <div id="topBar">
+    <span class="logo">Road to IIM · Paper 19</span>
+  </div>
+  <div id="progressBar"><div id="progressFill" style="width:0%"></div></div>
+
+  <div id="mainLayout">
+    <div id="questionArea">
+      <div id="sectionTag"></div>
+      <div id="questionNumber"></div>
+      <div id="questionStem"></div>
+      <ul class="options-list" id="optionsList"></ul>
+    </div>
+  </div>
+
+  <div id="paletteOverlay">
+    <div id="palettePanel">
+      <h3>QUESTIONS</h3>
+      <div id="paletteGrid"></div>
+      <div class="palette-legend">
+        <div><span class="pal-dot" style="background:var(--green)"></span>Answered</div>
+        <div><span class="pal-dot" style="background:var(--purple)"></span>Marked</div>
+        <div><span class="pal-dot" style="background:#1e3a5a"></span>Not visited</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="navBar">
+    <button class="nav-btn" onclick="navigate(-1)">← Prev</button>
+    <button class="nav-btn" id="questionsBtn" onclick="scrollToTop()">Questions</button>
+    <button class="nav-btn" id="markBtn" onclick="toggleMark()">★ Mark</button>
+    <button class="nav-btn" onclick="navigate(1)">Next →</button>
+    <button class="nav-btn" id="submitBtn" onclick="confirmSubmit()">Submit</button>
+  </div>
+</div>
+
+<div id="resultsScreen">
+  <div class="score-hero" id="scoreHero">
+    <div class="score-val" id="heroScore">0</div>
+    <div class="out-of">out of 180</div>
+    <div class="student-info" id="heroInfo"></div>
+  </div>
+  <div class="stats-grid">
+    <div class="stat-box correct"><div class="val" id="statCorrect">0</div><div class="lbl">Correct</div></div>
+    <div class="stat-box wrong"><div class="val" id="statWrong">0</div><div class="lbl">Wrong</div></div>
+    <div class="stat-box skipped"><div class="val" id="statSkipped">0</div><div class="lbl">Skipped</div></div>
+    <div class="stat-box accuracy"><div class="val" id="statAccuracy">0%</div><div class="lbl">Accuracy</div></div>
+  </div>
+  <div id="sheet-notice"></div>
+  <div class="results-btns">
+    <button class="res-btn primary" onclick="location.href='road_to_iim_tracker_v2.html'">Go to Tracker</button>
+    <button class="res-btn ghost" onclick="location.href='https://sahilkanetkar-collab.github.io/Road-to-IIM/'">All Tests</button>
+    <button class="res-btn pdf-btn" onclick="generatePDF()">Download PDF</button>
+  </div>
+  <div id="retrySection" style="display:none">
+    <h3>Retry Wrong Questions</h3>
+    <div id="retryContainer"></div>
+  </div>
+  <div id="missesSection">
+    <h3>Grammar Misses</h3>
+    <div id="missesText"></div>
+    <button id="copyMissesBtn" onclick="copyMisses(event)">Copy Misses</button>
+  </div>
+  <div id="review-list"></div>
+</div>
+
+<script>
+const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbwGGxswx4hcBUFiT0QJIglowhKcJCv47MOR5LKBv9sILl-evsgZeKCms5y6s5zEXOUo6Q/exec';
+const timer_duration=30;
+const adminPins=['IMS1111111111','IMS2222222222','IMS3333333333','IMS4444444444','IMS5555555555'];
+
+const QUESTIONS=[
+{id:1,section:"Grammar — Tenses",type:"mcq",
+stem:`Select the option that correctly fills the blank in the sentence below.<br><br>By the time the structural inspectors <strong>___</strong> the integrity of the bridge, several micro-fractures had already developed in the main support columns.`,
+options:["examine","examined","had examined","were examining"],
+answer:"B",
+exp:"<strong>Correct Answer: B. examined</strong><br><br>The subordinate clause introduced by the time-conjunction 'by the time' requires the simple past tense ('examined') when sequencing against a main clause action already completed in the past perfect ('had already developed'). Option A is an un-shifted present form that violates past narrative structure. Option C uses the past perfect in both clauses, making the chronological sequence ambiguous. Option D implies an ongoing action at that moment, contradicting the completed past boundary established by the main clause layout."},
+
+{id:2,section:"Grammar — Tenses",type:"mcq",
+stem:`Select the option that correctly fills the blank in the sentence below.<br><br>The central bank <strong>___</strong> a series of aggressive monetary interventions for nearly three quarters before the inflation rate finally stabilized last month.`,
+options:["implemented","had been implementing","has been implementing","was implementing"],
+answer:"B",
+exp:"<strong>Correct Answer: B. had been implementing</strong><br><br>The past perfect continuous tense ('had been implementing') is necessary here because the action was ongoing over a stated duration ('for nearly three quarters') up to a definitive past milestone point ('last month'). Option A (simple past) drops the essential structural marker of continuous duration. Option C (present perfect continuous) erroneously implies that the action continues into the present moment, directly clashing with the 'last month' boundary. Option D (past continuous) captures a past action without structuring its cumulative accumulation over a long period leading to a past milestone."},
+
+{id:3,section:"Grammar — Tenses",type:"mcq",
+stem:`Four versions of the same sentence are given. Identify the version that is grammatically correct.<br><br>(A) The compliance team has audited the transaction ledger before the regulatory agency arrived.<br>(B) The compliance team audited the transaction ledger before the regulatory agency had arrived.<br>(C) The compliance team had audited the transaction ledger before the regulatory agency arrived.<br>(D) The compliance team was auditing the transaction ledger before the regulatory agency arrived.`,
+options:["Version A","Version B","Version C","Version D"],
+answer:"C",
+exp:"<strong>Correct Answer: C. Version C</strong><br><br>Version C correctly deploys the sequence-of-tenses rule for past narratives: the past perfect ('had audited') marks the earlier event, while the simple past ('arrived') marks the subsequent event. Version A incorrectly introduces the present perfect ('has audited') into an entirely past narrative frame. Version B places the past perfect in the wrong clause, falsely implying the subsequent action happened first. Version D uses the past continuous, which alters the meaning by framing the ledger audit as incomplete at the moment of arrival."},
+
+{id:4,section:"Grammar — Tenses",type:"mcq",
+stem:`Select the option that correctly fills the blank in the sentence below.<br><br>The regulatory mandate demands that every legal counsel <strong>___</strong> the updated operational guidelines immediately rather than waiting for the next fiscal cycle.`,
+options:["implement","implements","implemented","would implement"],
+answer:"A",
+exp:"<strong>Correct Answer: A. implement</strong><br><br>The verb 'demand' is a mandative operator that forces a subjunctive layout requiring a bare root infinitive ('implement') inside its dependent that-clause, irrespective of the subject's singular property. Option B applies a standard third-person singular indicative inflection, which is ungrammatical in a mandative subjunctive structure. Option C shifts the action to the past indicative tense. Option D introduces an unnecessary modal auxiliary ('would'), which violates the required bare infinitive configuration."},
+
+{id:5,section:"Grammar — Tenses",type:"mcq",
+stem:`Identify the sentence that contains a tense error.<br><br>(A) The spacecraft will have passed Jupiter by the time the ground team establishes the transmission link.<br>(B) The director stated that the marketing division has executed the launch strategy the previous week.<br>(C) The epidemiologist has been tracking the pathogen vectors since the initial outbreak occurred.<br>(D) The engineers had not anticipated the thermal expansion until the laboratory readings were published.`,
+options:["Sentence A","Sentence B","Sentence C","Sentence D"],
+answer:"B",
+exp:"<strong>Correct Answer: B. Sentence B</strong><br><br>Sentence B contains a tense error. When a reporting verb is positioned in the simple past ('stated'), the reported clause must shift backward along the chronological timeline; therefore, the present perfect ('has executed') must convert to the past perfect ('had executed'). Sentence A is correct because the future perfect ('will have passed') cleanly evaluates against a simple present time marker ('establishes'). Sentence C correctly anchors a present perfect continuous action via a past milestone ('since'). Sentence D correctly sequences a past perfect condition against a simple past event ('were published')."},
+
+{id:6,section:"Grammar — Tenses",type:"mcq",
+stem:`Select the option that correctly fills the blank in the sentence below.<br><br>It is high time that the board of directors <strong>___</strong> appropriate strategic remediation to prevent a hostile takeover.`,
+options:["enacted","enacts","enact","had enacted"],
+answer:"A",
+exp:"<strong>Correct Answer: A. enacted</strong><br><br>The fixed idiomatic phrase 'It is high time that' requires a simple past subjunctive clause layout ('enacted') to communicate a critical present or future necessity. Option B uses a simple present configuration, which is incorrect following this specific idiom. Option C utilizes the bare infinitive root form, which is appropriate for mandative structures but invalid after 'It is high time'. Option D uses the past perfect, which falsely shifts the framing into a retrospective evaluation of a past failure."},
+
+{id:7,section:"Grammar — Prepositions",type:"mcq",
+stem:`Select the option that correctly fills the blank in the sentence below.<br><br>The policy was formulated <strong>___</strong> response to the widespread criticism the government had received from international observers.`,
+options:["with","as","for","in"],
+answer:"D",
+exp:"<strong>Correct Answer: D. in</strong><br><br>The fixed prepositional idiom is 'in response to', which functions as a standardized structural unit. Options A ('with response to'), B ('as response to'), and C ('for response to') form non-standard collocations that violate formal written syntax requirements."},
+
+{id:8,section:"Grammar — Prepositions",type:"mcq",
+stem:`Identify the sentence in which the underlined preposition is used incorrectly.<br><br>(A) The local magistrate was completely oblivious <u>to</u> the systemic irregularities in the land registry.<br>(B) The managing director remains deeply confident <u>of</u> securing the institutional equity partner.<br>(C) The newly appointed operations coordinator is fully capable <u>for</u> managing multiple global supply chains.<br>(D) The members of the executive committee were entirely unanimous <u>in</u> their determination to pivot the brand.`,
+options:["Sentence A","Sentence B","Sentence C","Sentence D"],
+answer:"C",
+exp:"<strong>Correct Answer: C. Sentence C</strong><br><br>Sentence C is incorrect because the adjective 'capable' collocates exclusively with the preposition 'of' followed by a gerund argument ('capable of managing') in standard formal registers. The preposition usage in Sentence A ('oblivious to'), Sentence B ('confident of'), and Sentence D ('unanimous in') represents accurate, canonical English collocations."},
+
+{id:9,section:"Grammar — Prepositions",type:"mcq",
+stem:`Select the option that correctly fills the blank in the sentence below.<br><br>The new commercial operational strategy is aimed <strong>___</strong> capturing the emerging enterprise software market segment.`,
+options:["at","to","for","towards"],
+answer:"A",
+exp:"<strong>Correct Answer: A. at</strong><br><br>The passive structure 'is aimed' must pair with the fixed preposition 'at' when it is followed by an active gerund object ('curbing' or 'capturing'). Option B ('aimed to') requires a base infinitive verb string ('aims to capture') rather than a gerund. Options C ('aimed for') and D ('aimed towards') are non-standard alternatives that violate academic and professional writing protocols."},
+
+{id:10,section:"Grammar — Prepositions",type:"mcq",
+stem:`Select the option that correctly fills the blank in the sentence below.<br><br>The data processing analyst was deeply engrossed <strong>___</strong> parsing the transaction logs when the network went offline.`,
+options:["with","into","by","in"],
+answer:"D",
+exp:"<strong>Correct Answer: D. in</strong><br><br>The adjective 'engrossed' structurally requires the preposition 'in' to indicate deep mental absorption within an active work track. Options A ('engrossed with') and B ('engrossed into') are incorrect collocations. Option C ('engrossed by') works in passive agentive statements (e.g., 'engrossed by a book'), but when a subject is actively performing a task, 'in' is the correct choice."},
+
+{id:11,section:"Grammar — Prepositions",type:"mcq",
+stem:`Four versions of the same sentence are given. Identify the version that is grammatically correct.<br><br>(A) The findings are consistent to earlier research on this subject.<br>(B) The findings are consistent for earlier research on this subject.<br>(C) The findings are consistent with earlier research on this subject.<br>(D) The findings are consistent by earlier research on this subject.`,
+options:["Version A","Version B","Version C","Version D"],
+answer:"C",
+exp:"<strong>Correct Answer: C. Version C</strong><br><br>The relational property adjective 'consistent' aligns exclusively with the preposition 'with' to denote absolute logical or structural harmony. Versions A ('consistent to'), B ('consistent for'), and D ('consistent by') introduce non-standard prepositions that break canonical academic usage definitions."},
+
+{id:12,section:"Grammar — Prepositions",type:"mcq",
+stem:`Select the option that correctly fills the blank in the sentence below.<br><br>The independent audit team evaluated the asset valuation models entirely independently <strong>___</strong> the internal accounting department.`,
+options:["from","to","of","against"],
+answer:"C",
+exp:"<strong>Correct Answer: C. of</strong><br><br>The adverbial phrase 'independently of' is the required configuration in formal standard English. Option A ('independently from') occurs in casual dialects but is rejected as non-standard in formal professional writing style sheets. Options B and D form incorrect, ungrammatical preposition pairings."},
+
+{id:13,section:"Grammar — SVA",type:"mcq",
+stem:`Identify the sentence in which subject-verb agreement is violated.<br><br>(A) Neither the managing director nor the regional supervisors were willing to approve the capital outlay.<br>(B) The parliamentary committee has submitted its comprehensive review of the healthcare bill to the cabinet.<br>(C) A substantial number of structural defects have been identified in the residential high-rise complex.<br>(D) The breaking news of the cross-border currency liquidations are causing extreme market volatility.`,
+options:["Sentence A","Sentence B","Sentence C","Sentence D"],
+answer:"D",
+exp:"<strong>Correct Answer: D. Sentence D</strong><br><br>Sentence D violates subject-verb agreement. The syntactic head noun is 'the news', which is an uncountable singular mass noun requiring the verb 'is' rather than the plural 'are'. The intervening prepositional phrase 'of the cross-border currency liquidations' is a structural modifier and cannot change the number value of the head noun. Sentence A is correct because the verb matches the closest plural argument ('supervisors'). Sentence B treats the collective noun 'committee' as a single singular entity. Sentence C correctly matches the plural marker 'a number of' with a plural verb."},
+
+{id:14,section:"Grammar — SVA",type:"mcq",
+stem:`Select the option that correctly fills the blank in the sentence below.<br><br>The overall consistency of the laboratory samples <strong>___</strong> verified by multiple independent testing methodologies.`,
+options:["have","has","had","were"],
+answer:"B",
+exp:"<strong>Correct Answer: B. has</strong><br><br>The true grammatical head noun of the sentence is the singular argument 'the consistency'. Intervening plural phrases like 'of the laboratory samples' do not affect the agreement calculation; hence, the singular verb 'has' is required. Option A ('have') and Option D ('were') match the plural modifier instead of the head noun. Option C shifts the tense to past perfect without a past reference point, breaking the sentence logic."},
+
+{id:15,section:"Grammar — SVA",type:"mcq",
+stem:`Select the option that correctly fills the blank in the sentence below.<br><br>Every lead researcher and every academic consultant <strong>___</strong> legally bound to declare any competing financial interests.`,
+options:["are","were","is","have been"],
+answer:"C",
+exp:"<strong>Correct Answer: C. is</strong><br><br>When singular compound subjects joined by 'and' are distributed by the modifying adjectives 'each' or 'every', they are treated syntactically as singular arguments and must take a singular verb ('is'). Options A ('are'), B ('were'), and D ('have been') are plural forms that violate this distributive distribution rule."},
+
+{id:16,section:"Grammar — SVA",type:"mcq",
+stem:`Identify the sentence in which subject-verb agreement is correctly maintained.<br><br>(A) The core data transmitted from the subterranean tracking station were reviewed by the astrophysics lab.<br>(B) Each of the shortlisted executive candidates have undergone comprehensive psychological profiling.<br>(C) There is an unprecedented number of contract amendments pending signature in the legal repository.<br>(D) More than one board representative were visibly displeased with the proposed dividend cuts.`,
+options:["Sentence A","Sentence B","Sentence C","Sentence D"],
+answer:"A",
+exp:"<strong>Correct Answer: A. Sentence A</strong><br><br>Sentence A correctly maintains subject-verb agreement because 'data' is treated as a formal plural count noun requiring 'were' in academic, scientific, and corporate registers. Sentence B is incorrect because 'each of' strictly requires a singular verb ('has undergone'). Sentence C is incorrect because the plural expression 'a number of' requires a plural verb ('there are an unprecedented number'). Sentence D is incorrect because the construction 'more than one' structures its agreement directly off the singular noun argument ('delegate' or 'representative'), requiring 'was'."},
+
+{id:17,section:"Grammar — SVA",type:"mcq",
+stem:`Select the option that correctly fills the blank in the sentence below.<br><br>The panel of judges, after evaluating the competing architectural presentations for eight hours, <strong>___</strong> final consensus.`,
+options:["have reached","has reached","were reaching","are reaching"],
+answer:"B",
+exp:"<strong>Correct Answer: B. has reached</strong><br><br>The subject is 'the panel', a collective noun phrase acting as a single, unified organizational unit, which requires the singular verb 'has reached'. The intervening plural modifier 'of judges' does not alter the singular status of the head noun. Option A ('have reached') incorrectly switches to a plural subject configuration. Options C and D introduce a plural continuous aspect that distorts the completed nature of the consensus."},
+
+{id:18,section:"Grammar — SVA",type:"mcq",
+stem:`Four versions of the same sentence are given. Identify the version in which SVA is correctly maintained.<br><br>(A) Neither the research report nor the statistical charts was double-checked by the peer reviewers.<br>(B) The absolute number of clerical errors in the medical transcripts is unexpectedly low.<br>(C) The newly assembled team of environmental inspectors have submitted their recommendations.<br>(D) One of the primary motivations outlined by the executive directors are highly problematic.`,
+options:["Version A","Version B","Version C","Version D"],
+answer:"B",
+exp:"<strong>Correct Answer: B. Version B</strong><br><br>Version B is accurate because the phrase 'the number of' operates as a singular unit specifying an objective total count value, requiring the singular verb 'is'. Version A is incorrect because with correlative conjunctions ('neither...nor'), the verb must agree with the closest noun argument ('charts'), which requires the plural form 'were'. Version C is incorrect because the collective noun 'team' is acting here as a single cohesive unit and requires the singular verb 'has'. Version D is incorrect because the singular subject pronoun 'one' is the head argument, requiring the singular verb 'is'."},
+
+{id:19,section:"Analogies",type:"mcq",
+stem:`Complete the analogy.<br><br><strong>RECLUSION : HERMIT</strong> as <strong>ERUDITION : ___</strong>`,
+options:["Novice","Scholar","Ascetic","Charlatan"],
+answer:"B",
+exp:"<strong>Correct Answer: B. Scholar</strong><br><br>The relationship type is: characteristic trait : person who embodies that trait. A hermit is defined by a life of reclusion. Similarly, a scholar is defined by a life of erudition (profound scholarly knowledge). Option A is incorrect because a novice lacks knowledge. Option C is incorrect because an ascetic is defined by self-denial, not necessarily deep learning. Option D is incorrect because a charlatan falsely claims knowledge or skill, acting as the antithesis of genuine erudition."},
+
+{id:20,section:"Analogies",type:"mcq",
+stem:`Complete the analogy.<br><br><strong>ATTENUATE : FORCE</strong> as <strong>OBLITERATE : ___</strong>`,
+options:["Memory","Existence","Clarity","Structure"],
+answer:"B",
+exp:"<strong>Correct Answer: B. Existence</strong><br><br>The relationship is: verb : the structural abstract property it completely minimizes or removes. To attenuate is to reduce force to a fraction of its strength. To obliterate is to completely eliminate or wipe out existence. Option A is incorrect because memories fade or are repressed, while physical or absolute realities are obliterated. Options C and D are incorrect because clarity and structure can be compromised or altered without undergoing the total elimination signified by obliteration."},
+
+{id:21,section:"Analogies",type:"mcq",
+stem:`Four word pairs are given. Three follow the same relationship. Identify the pair that does NOT follow the same relationship as the other three.<br><br>(A) Ephemeral : Perennial<br>(B) Audacious : Timorous<br>(C) Taciturn : Reticent<br>(D) Ingenuous : Disingenuous`,
+options:["Pair C","Pair A","Pair B","Pair D"],
+answer:"A",
+exp:"<strong>Correct Answer: A. Pair C</strong><br><br>Pairs A, B, and D display explicit semantic antonym pairs: Ephemeral (short-lived) is the antonym of Perennial (enduring); Audacious (bold) is the antonym of Timorous (fearful); Ingenuous (naive/innocent) is the antonym of Disingenuous (insincere). Pair C (Taciturn : Reticent) breaks this pattern because both words are synonyms that denote a disposition to remain silent. Therefore, Pair C is the odd pair out."},
+
+{id:22,section:"Analogies",type:"mcq",
+stem:`Complete the analogy.<br><br><strong>Garrulous is to constraint as obstinate is to ___.</strong>`,
+options:["Flexibility","Defiance","Persistence","Firmness"],
+answer:"A",
+exp:"<strong>Correct Answer: A. Flexibility</strong><br><br>The relationship is: adjective describing an extreme personality trait : the specific behavioral property that characteristically clashing with it. A garrulous person (excessively talkative) lacks constraint; an obstinate person (stubbornly unyielding) lacks flexibility. Option B describes an attitude that aligns with stubbornness rather than what it lacks. Options C and D name synonyms for the trait of obstinacy itself, violating the negative relation schema."},
+
+{id:24,section:"Analogies",type:"mcq",
+stem:`Four word pairs are given. Three follow the same relationship. Identify the pair that does NOT follow the same relationship as the other three.<br><br>(A) Alacrity : Eagerness<br>(B) Perfidy : Treachery<br>(C) Probity : Corruption<br>(D) Lassitude : Lethargy`,
+options:["Pair C","Pair A","Pair B","Pair D"],
+answer:"C",
+exp:"<strong>Correct Answer: C. Pair C</strong><br><br>Pairs A, B, and D map synonym configurations: Alacrity and Eagerness denote cheerful readiness; Perfidy and Treachery mean deceitfulness; Lassitude and Lethargy signify physical fatigue. Pair C breaks this layout by presenting an absolute antonym pairing: Probity (adherence to highest moral principles) is the direct opposite of Corruption. This makes Pair C the correct choice."},
+
+{id:23,section:"Analogies",type:"mcq",
+stem:`Complete the analogy.<br><br><strong>ARCHAEOLOGIST : ARTIFACT</strong> as <strong>BIOGRAPHER : ___</strong>`,
+options:["Subject","History","Narrative","Chronicle"],
+answer:"A",
+exp:"<strong>Correct Answer: A. Subject</strong><br><br>The relationship is: investigator/analyst professional : the primary targeted individual entity that forms the baseline focus of their analytical compilation work. An archaeologist studies an artifact; a biographer studies a subject. Option B is too broad, as many disciplines explore history. Options C and D refer to the organizational structure or format of the output work, not the empirical focus entity under evaluation."},
+
+{id:25,section:"Analogies",type:"mcq",
+stem:`Complete the analogy.<br><br><strong>Glutton is to moderation as sycophant is to ___.</strong>`,
+options:["Flattery","Deference","Integrity","Ambition"],
+answer:"C",
+exp:"<strong>Correct Answer: C. Integrity</strong><br><br>The relationship is: a specific archetype persona : the moral or behavioral quality they conspicuously lack. A glutton acts without moderation; a sycophant (a self-seeking flatterer) acts without integrity. Option A is what a sycophant uses, not what they lack. Option B is a characteristic behavior they display. Option D is an internal drive they possess, not an absent value trait."},
+
+{id:26,section:"Analogies",type:"mcq",
+stem:`Complete the analogy.<br><br><strong>Chide is to anger as condone is to ___.</strong>`,
+options:["Punishment","Acceptance","Indignation","Overlook"],
+answer:"B",
+exp:"<strong>Correct Answer: B. Acceptance</strong><br><br>The relationship is: an outward verb action : the underlying internal psychological state or attitude that drives it. To chide (scold) is an expression of anger; to condone (allow/forgive an offense) is an expression of acceptance. Option A is an action that runs counter to condoning. Option C is an emotional state that prompts opposition, not tolerance. Option D is a synonymous verb alternative, not the underlying emotional or cognitive state required by the pairing."},
+
+{id:27,section:"Vocab-Grammar Hybrid — Precision Blank",type:"mcq",
+stem:`Choose the option that correctly fills the blank. The grammar structure of the sentence determines which word is appropriate.<br><br>The international arbitration court could not <strong>___</strong> the corporation from its environmental cleanup liabilities, as the treaty protocols were binding.`,
+options:["prevent","preclude","exempt","deter"],
+answer:"C",
+exp:"<strong>Correct Answer: C. exempt</strong><br><br>In formal statutory and legal registers, the construction 'exempt [someone] from [an obligation]' is the precise terminology for granting legal release from a duty. While Option A ('prevent from') and Option B ('preclude from') are grammatically possible, they denote blocking an active movement rather than granting formal relief from a pre-existing legal obligation. Option D ('deter from') means to discourage, which is semantically too weak for an absolute judicial determination rule."},
+
+{id:28,section:"Vocab-Grammar Hybrid — Precision Blank",type:"mcq",
+stem:`Choose the option that correctly fills the blank. The grammar structure of the sentence determines which word is appropriate.<br><br>The chief financial officer refused to <strong>___</strong> to the aggressive terms of the venture capital firm during the restructuring talks.`,
+options:["concede","comply","succumb","acquiesce"],
+answer:"A",
+exp:"<strong>Correct Answer: A. concede</strong><br><br>The verb 'concede' correctly pairs with the target preposition 'to' and accurately describes yielding to specific points during formal commercial negotiations. Option B ('comply') is ungrammatical because it requires the preposition 'with'. Option C ('succumb') implies complete physical or emotional collapse under overwhelming strain, which is inappropriate for a controlled executive negotiating stance. Option D ('acquiesce') formally requires the preposition 'in' or 'to' when adjusting to situations, but idiomatically structures as 'acquiesce in a decision', making 'concede to terms' the superior choice."},
+
+{id:29,section:"Vocab-Grammar Hybrid — Precision Blank",type:"mcq",
+stem:`Choose the option that correctly fills the blank. The grammar structure of the sentence determines which word is appropriate.<br><br>The lead detective was completely <strong>___</strong> by the absolute absence of physical evidence at the high-profile digital extraction site.`,
+options:["astounded","perplexed","bewildered","confounded"],
+answer:"D",
+exp:"<strong>Correct Answer: D. confounded</strong><br><br>'Confounded' is the most precise selection in a formal investigative context because it highlights a state of intellectual paralysis caused by contradictory data or a complete failure of basic logical expectations. Option A matches emotional surprise rather than logical breakdown. Options B and C describe general mental confusion, which lacks the analytical severity required by an investigative data failure profile."},
+
+{id:30,section:"Vocab-Grammar Hybrid — Register Match",type:"mcq",
+stem:`Choose the word that fits both the grammar slot AND the formal register of the sentence.<br><br>The oversight committee officially expressed its <strong>___</strong> regarding the non-transparent allocation of municipal infrastructure bonds.`,
+options:["unhappiness","annoyance","frustration","displeasure"],
+answer:"D",
+exp:"<strong>Correct Answer: D. displeasure</strong><br><br>'Displeasure' is the only noun here that fits the formal administrative register used in official institutional decrees. Options A ('unhappiness'), B ('annoyance'), and C ('frustration') introduce casual, emotionally raw states that are inappropriate for formal, objective committee communications."},
+
+{id:31,section:"Vocab-Grammar Hybrid — Register Match",type:"mcq",
+stem:`Choose the word that fits both the grammar slot AND the formal register of the sentence.<br><br>The external forensic team was directed to <strong>___</strong> all unexplained ledger discrepancies within the subsidiary's accounting system.`,
+options:["examine","look into","check out","go through"],
+answer:"A",
+exp:"<strong>Correct Answer: A. examine</strong><br><br>Formal regulatory directives systematically prefer single-word Latinate verbs ('examine', 'investigate') over conversational multi-word phrasal alternatives. Option B ('look into') and Option D ('go through') are semi-formal colloquial alternatives. Option C ('check out') is highly informal and unsuitable for a corporate auditing register."},
+
+{id:32,section:"Vocab-Grammar Hybrid — Register Match",type:"mcq",
+stem:`Choose the word that fits both the grammar slot AND the formal register of the sentence.<br><br>The medical director <strong>___</strong> all department heads to submit an exhaustive inventory of controlled critical substances by midnight.`,
+options:["told","asked","requested","directed"],
+answer:"D",
+exp:"<strong>Correct Answer: D. directed</strong><br><br>'Directed' carries formal legal institutional structural authorization weight from a senior administrator script profile. Option A is too informal and conversational. Option B is polite but lacks the formal authority of an official directive. Option C implies an optional request or favor rather than a mandatory institutional instruction."},
+
+{id:33,section:"Vocab-Grammar Hybrid — Tone-Grammar Cloze",type:"mcq",
+stem:`A short paragraph is given with two blanks. Each option provides a word pair (Blank 1 ; Blank 2). Choose the option that correctly fills both blanks, with Blank 1 testing grammar and Blank 2 testing vocabulary.<br><br><em>The prime minister's address was crafted to <u>Blank 1</u> market anxieties regarding upcoming sovereign debt corrections. However, the unexpected statements had a counterproductive effect and only served to <u>Blank 2</u> the prevailing panic across the trading desks.</em>`,
+options:["alleviate ; exacerbate","mitigate ; resolve","assuage ; diminish","calm ; intensified"],
+answer:"A",
+exp:"<strong>Correct Answer: A. alleviate ; exacerbate</strong><br><br>Blank 1 requires a bare root infinitive following the structural marker 'to' that means to lessen or soothe anxiety; 'alleviate', 'mitigate', 'assuage', and 'calm' are all grammatically and semantically viable. Blank 2 introduces a logical contrast indicated by the shift marker 'however', demanding a verb that means to aggravate or worsen a negative condition ('exacerbate'). Option B ('resolve') points in the wrong direction. Option C ('diminish') repeats the lessening effect, violating the contrast schema. Option D ('intensified') uses an inflected past tense form, which violates the structural requirement for an uninflected base verb following 'served to'."},
+
+{id:34,section:"Vocab-Grammar Hybrid — Tone-Grammar Cloze",type:"mcq",
+stem:`A short paragraph is given with two blanks. Each option provides a word pair (Blank 1 ; Blank 2). Choose the option that correctly fills both blanks, with Blank 1 testing grammar and Blank 2 testing vocabulary.<br><br><em>Despite <u>Blank 1</u> the terms of the agreement carefully, the delegates remained <u>Blank 2</u> about the long-term implications of the clause on intellectual property rights.</em>`,
+options:["to scrutinise ; ambiguous","scrutinising ; ambivalent","scrutinised ; sceptical","scrutinise ; uncertain"],
+answer:"B",
+exp:"<strong>Correct Answer: B. scrutinising ; ambivalent</strong><br><br>Blank 1 follows the preposition 'Despite', which strictly requires a gerund ('scrutinising') object framework. This rule immediately invalidates Option A ('to scrutinise') and Option D ('scrutinise'). Blank 2 describes the internal state of a professional team encountering mixed or conflicting technical indicators; 'ambivalent' precisely captures this divided mental state. Option A ('ambiguous') is a property of un-clarified language, not human psychology. Option C ('scrutinised') captures doubt but uses an ungrammatical past participle choice in the first position after 'Despite'. The answer maps directly to choice B."},
+
+{id:35,section:"Vocab-Grammar Hybrid — Tone-Grammar Cloze",type:"mcq",
+stem:`A short paragraph is given with two blanks. Each option provides a word pair (Blank 1 ; Blank 2). Choose the option that correctly fills both blanks, with Blank 1 testing grammar and Blank 2 testing vocabulary.<br><br><em>The professor insisted that the research methodology <u>Blank 1</u> peer review before publication, a standard that the journal had been <u>Blank 2</u> for over a decade.</em>`,
+options:["undergoes ; upholding","undergo ; upholding","undergone ; championing","underwent ; maintaining"],
+answer:"B",
+exp:"<strong>Correct Answer: B. undergo ; upholding</strong><br><br>The mandative matrix verb 'insisted' commands a subjunctive clause layout that demands an un-inflected bare root infinitive ('undergo') for Blank 1. This rule eliminates Option A ('undergoes'), Option C ('undergone'), and Option D ('underwent'). Blank 2 completes a past perfect continuous tense construction ('had been upholding'), where 'upholding' accurately denotes the active enforcement of a structural policy standard over an extended timeline."},
+
+{id:36,section:"Grammar — Mixed",type:"mcq",
+stem:`Select the option that correctly fills the blank in the sentence below.<br><br>Had the intelligence operatives <strong>___</strong> the decryption protocol earlier, the critical security breach might have been neutralized entirely.`,
+options:["spoke","speak","spoken","would have spoken"],
+answer:"C",
+exp:"<strong>Correct Answer: C. spoken</strong><br><br>The sentence utilizes an inverted third conditional architecture with a fronted auxiliary ('Had the operatives spoken' is structurally identical to 'If the operatives had spoken'). This construction requires a past participle ('spoken'). Option A is a simple past layout. Option B is a base present form. Option D introduces a conditional modal helper ('would have') into the hypothetical condition clause, which is grammatically incorrect."},
+
+{id:37,section:"Grammar — Mixed",type:"mcq",
+stem:`Identify the sentence that correctly uses the article.<br><br>(A) The honesty is always rewarded in the long run.<br>(B) She is studying at university in the United Kingdom.<br>(C) He was selected as the best researcher in a team.<br>(D) Great white sharks is considered the apex predators of the marine ecosystem.`,
+options:["Sentence A","Sentence B","Sentence C","Sentence D"],
+answer:"B",
+exp:"<strong>Correct Answer: B. Sentence B</strong><br><br>Sentence B is grammatically flawless. In formal British English usage, the zero-article layout 'at university' is standard when referencing a student's institutional status, and political unions containing common descriptors ('United Kingdom') require the definite article 'the'. Sentence A incorrectly applies a definite article to an abstract mass noun ('The integrity') used in a general statement. Sentence C incorrectly structures a unique identifier by attaching an indefinite article to a specific group argument ('in a team' should be 'in the team'). Sentence D pairs a plural subject argument ('sharks') with a singular verb ('is')."},
+
+{id:38,section:"Grammar — Mixed",type:"mcq",
+stem:`Identify the sentence that contains a grammatical error.<br><br>(A) No sooner had the economic data been published than the retail investors began to liquidate equities.<br>(B) Hardly had the security patch been executed when the network operations center detected a second attack.<br>(C) Scarcely did the security team realize the threat before the entire server array went completely dark.<br>(D) No sooner had the press conference commenced than the market index dropped sharply.`,
+options:["Sentence A","Sentence B","Sentence C","Sentence D"],
+answer:"C",
+exp:"<strong>Correct Answer: C. Sentence C</strong><br><br>Sentence C is grammatically incorrect. Negative introductory adverbs ('Scarcely', 'Hardly', 'No sooner') require subject-auxiliary inversion with the past perfect tense ('Scarcely had the security team realized') rather than simple past inversion using 'did'. Sentences A, B, and D display correct past perfect inversion frameworks mapped to their matching correlative conjunction configurations ('no sooner...than' / 'hardly...when')."},
+
+{id:39,section:"Grammar — Mixed",type:"mcq",
+stem:`Select the option that correctly fills the blank in the sentence below.<br><br>The diplomatic envoy arrived long after midnight, <strong>___</strong> complicated the scheduling of the bilateral talks.`,
+options:["who","that","what","which"],
+answer:"D",
+exp:"<strong>Correct Answer: D. which</strong><br><br>The blank introduces a non-restrictive relative clause that references the entire preceding situational fact block ('The diplomatic envoy arrived long after midnight'). In formal standard English, the relative pronoun 'which' is the only marker authorized to perform clausal antecedent referencing across non-restrictive breaks. Option A ('who') requires a human noun referent. Option B ('that') cannot operate within comma-bounded non-restrictive clauses. Option C ('what') functions exclusively within dependent noun clauses."},
+
+{id:40,section:"Grammar — Mixed",type:"mcq",
+stem:`Select the option that correctly fills the blank in the sentence below.<br><br>The ethics panel recommended that the laboratory trial protocols <strong>___</strong> suspended until an external audit could be completed.`,
+options:["are","were","be","would be"],
+answer:"C",
+exp:"<strong>Correct Answer: C. be</strong><br><br>The matrix verb 'recommend' functions as a mandative driver, commanding a dependent that-clause that strictly requires a subjunctive bare infinitive root verb ('be'). Option A uses a present indicative layout. Option B uses a past indicative configuration. Option D inserts a conditional modal string ('would be'), which violates the clean bare verb requirement of the mandative framework."},
+
+{id:41,section:"Grammar — Mixed",type:"mcq",
+stem:`Select the option that correctly fills the blank in the sentence below.<br><br>The prime minister's emergency decree, <strong>___</strong> was initially characterized as unconstitutional by opposition lawyers, eventually stabilized the bond market.`,
+options:["who","that","what","which"],
+answer:"D",
+exp:"<strong>Correct Answer: D. which</strong><br><br>The clause is non-restrictive and describes a non-human corporate noun asset ('emergency decree'). Formal punctuation standards dictate that non-restrictive descriptor clauses use 'which'. Option A ('who') requires a human target. Option B ('that') is restricted to boundary-locked restrictive clauses and cannot cross comma barriers. Option C ('what') is a fused relative pronoun containing its own internal noun argument, making it illegal here."},
+
+{id:42,section:"Grammar — Error ID",type:"mcq",
+stem:`One of the four underlined portions contains a grammatical error. Identify it.<br><br>The legal delegation, <u>(A) comprising</u> senior partners from both practices, <u>(B) were unanimous</u> in <u>(C) its decision</u> to <u>(D) terminate the merger talks</u>.`,
+options:["(A) comprising","(B) were unanimous","(C) its decision","(D) terminate the merger talks"],
+answer:"B",
+exp:"<strong>Correct Answer: B. were unanimous</strong><br><br>The grammatical error sits at option B. The matrix subject argument is 'The legal delegation', a collective noun functioning as a single unified operational unit, which requires the singular verb 'was' rather than the plural 'were'. Portion A is correct because 'comprising' means 'consisting of' and does not take 'of'. Portion C accurately maintains singular relative alignment ('its decision'), reflecting the singular nature of the collective noun. Portion D is a standard infinitive phrase mapping."},
+
+{id:43,section:"Grammar — Error ID",type:"mcq",
+stem:`One of the four underlined portions contains a grammatical error. Identify it.<br><br>The panel suggested that <u>(A) each of the candidates</u> <u>(B) were given</u> an equal opportunity <u>(C) to present</u> <u>(D) his or her</u> qualifications before the committee.`,
+options:["(A) each of the candidates","(B) were given","(C) to present","(D) his or her"],
+answer:"B",
+exp:"<strong>Correct Answer: B. were given</strong><br><br>The error is located at option B. The main clause verb 'suggested' acts as a mandative trigger that mandates a bare passive subjunctive structure ('be given') inside its dependent that-clause, rendering past indicative inflections like 'were given' ungrammatical. Portion A is a standard noun phrase. Portion C matches normal infinitive syntax rules. Portion D uses a singular gender-neutral distributive pronoun pairing ('his or her') that correctly aligns with the singular head argument 'each'."},
+
+{id:44,section:"Grammar — Error ID",type:"mcq",
+stem:`One of the four underlined portions contains a grammatical error. Identify it.<br><br><u>(A) Having indexed</u> all the transaction ledgers, the forensic auditor <u>(B) concluded that</u> the funds <u>(C) had been diverted</u> and <u>(D) awarding heavy penalties</u> to the branch.`,
+options:["(A) Having indexed","(B) concluded that","(C) had been diverted","(D) awarding heavy penalties"],
+answer:"D",
+exp:"<strong>Correct Answer: D. awarding heavy penalties</strong><br><br>The error occurs at option D. The sentence structures two finite past action blocks governed by a single coordinating conjunction, meaning both verbs must share a parallel past tense form ('concluded... and awarded'). Replacing the second finite verb with a active participle ('awarding') breaks the parallel structure. Portion A is a correct perfect participial phrase. Portion B matches regular reporting syntax. Portion C correctly uses the past perfect passive to track an action that occurred prior to the past audit conclusion."},
+
+{id:45,section:"Grammar — Error ID",type:"mcq",
+stem:`One of the four underlined portions contains a grammatical error. Identify it.<br><br>It is imperative that <u>(A) every member</u> of the finance committee <u>(B) submits</u> <u>(C) their expenditure report</u> <u>(D) before the stipulated deadline</u>.`,
+options:["(A) every member","(B) submits","(C) their expenditure report","(D) before the stipulated deadline"],
+answer:"B",
+exp:"<strong>Correct Answer: B. submits</strong><br><br>The error is located at option B. The structural framework operator 'It is imperative that' triggers a mandative subjunctive structure, which requires an uninflected bare root infinitive ('submit') and renders third-person indicative modifications like 'submits' ungrammatical. Portion A is a correct noun phrase. Portion C is an acceptable plural pronoun usage for generalized singular distributives in modern administrative writing. Portion D is a standard prepositional layout phrase."}
+];
+
+// ── STATE ──
+let studentName='', studentPin='', studentBatch='';
+let currentQ=0, secondsLeft=timer_duration*60;
+let userAnswers=new Array(45).fill(null);
+let markedQuestions=new Set();
+let timerInterval=null;
+
+// ── LOGIN ──
+function startTest(){
+  const n=document.getElementById('inputName').value.trim();
+  const p=document.getElementById('inputPin').value.trim();
+  const b=document.getElementById('inputBatch').value;
+  const err=document.getElementById('loginError');
+  if(!n){err.textContent='Please enter your full name.';return;}
+  if(!/^(STU|IMS)\d{10}$/.test(p)){err.textContent='PIN must start with STU or IMS followed by 10 digits.';return;}
+  if(!b){err.textContent='Please select your batch.';return;}
+  const isAdmin=adminPins.includes(p);
+  if(isAdmin&&b!=='Admin'){err.textContent='Admin PIN must use the Admin batch.';return;}
+  if(!isAdmin&&b==='Admin'){err.textContent='Non-admin PIN cannot select the Admin batch.';return;}
+  studentName=n; studentPin=p; studentBatch=b;
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('testScreen').style.display='block';
+  buildPalette(); renderQuestion(); startTimer();
+}
+
+// ── TIMER ──
+function startTimer(){
+  // Force strict style block override so element can accept mutations instantly
+  const td = document.getElementById('timerDisplay');
+  if (td) {
+    td.style.setProperty('display', 'block', 'important');
+  }
+  updateTimerDisplay();
+  
+  timerInterval=setInterval(()=>{
+    secondsLeft--;
+    updateTimerDisplay();
+    if(secondsLeft<=0){clearInterval(timerInterval);submitTest();}
+  },1000);
+}
+
+function updateTimerDisplay() {
+  const m=Math.floor(secondsLeft/60), s=secondsLeft%60;
+  const td=document.getElementById('timerDisplay');
+  if (td) {
+    td.textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+    if(secondsLeft<=300){td.classList.add('urgent');}
+  }
+}
+
+// ── RENDER QUESTION ──
+function renderQuestion(){
+  const q=QUESTIONS[currentQ];
+  document.getElementById('sectionTag').textContent=q.section;
+  document.getElementById('questionNumber').textContent=`Question ${currentQ+1} of 45`;
+  document.getElementById('questionStem').innerHTML=q.stem;
+  const ol=document.getElementById('optionsList');
+  ol.innerHTML='';
+  const labels=['A','B','C','D'];
+  q.options.forEach((opt,i)=>{
+    const li=document.createElement('li');
+    const btn=document.createElement('button');
+    btn.className='option-btn'+(userAnswers[currentQ]===labels[i]?' selected':'')+(markedQuestions.has(currentQ)?' marked':'');
+    btn.innerHTML=`<span class="opt-label">${labels[i]}.</span> ${opt}`;
+    btn.onclick=()=>selectOption(labels[i]);
+    li.appendChild(btn);
+    ol.appendChild(li);
+  });
+  const sb=document.getElementById('submitBtn');
+  sb.style.display=currentQ===44?'inline-block':'none';
+  const answered=userAnswers.filter(a=>a!==null).length;
+  document.getElementById('progressFill').style.width=(answered/45*100)+'%';
+  updatePalette();
+}
+
+function selectOption(letter){
+  userAnswers[currentQ]=letter;
+  renderQuestion();
+}
+
+// ── NAVIGATION ──
+function navigate(dir){
+  const next=currentQ+dir;
+  if(next>=0&&next<45){currentQ=next;renderQuestion();}
+}
+
+function scrollToTop(){window.scrollTo({top:0,behavior:'smooth'});}
+
+function toggleMark(){
+  if(markedQuestions.has(currentQ))markedQuestions.delete(currentQ);
+  else markedQuestions.add(currentQ);
+  renderQuestion();
+}
+
+// ── PALETTE ──
+function buildPalette(){
+  const grid=document.getElementById('paletteGrid');
+  grid.innerHTML='';
+  for(let i=0;i<45;i++){
+    const btn=document.createElement('button');
+    btn.className='pal-btn';
+    btn.id=`pal${i}`;
+    btn.textContent=i+1;
+    btn.onclick=()=>{currentQ=i;renderQuestion();};
+    grid.appendChild(btn);
+  }
+}
+
+function updatePalette(){
+  for(let i=0;i<45;i++){
+    const btn=document.getElementById(`pal${i}`);
+    if(!btn)continue;
+    btn.className='pal-btn'+(userAnswers[i]?' answered':'')+(markedQuestions.has(i)?' marked':'')+(i===currentQ?' current':'');
+  }
+}
+
+// ── SUBMIT ──
+function confirmSubmit(){
+  const unanswered=userAnswers.filter(a=>a===null).length;
+  if(unanswered>0){
+    if(!confirm(`You have ${unanswered} unanswered question(s). Submit anyway?`))return;
+  }
+  submitTest();
+}
+
+function submitTest(){
+  clearInterval(timerInterval);
+  const td = document.getElementById('timerDisplay');
+  if (td) {
+    td.style.setProperty('display', 'none', 'important');
+  }
+  let correct=0,wrong=0,skipped=0;
+  QUESTIONS.forEach((q,i)=>{
+    if(userAnswers[i]===null){skipped++;}
+    else if(userAnswers[i]===q.answer){correct++;}
+    else{wrong++;}
+  });
+  const score=correct*4-wrong;
+  showResults(score,correct,wrong,skipped);
+  saveToTracker(score,correct,wrong,skipped);
+  logToSheet(score,correct,wrong,skipped);
+}
+
+// ── RESULTS ──
+function showResults(score,correct,wrong,skipped){
+  document.getElementById('testScreen').style.display='none';
+  document.getElementById('resultsScreen').style.display='block';
+  document.getElementById('heroScore').textContent=score;
+  document.getElementById('heroInfo').textContent=`${studentName} · ${studentPin} · ${studentBatch}`;
+  document.getElementById('statCorrect').textContent=correct;
+  document.getElementById('statWrong').textContent=wrong;
+  document.getElementById('statSkipped').textContent=skipped;
+  const acc=correct+wrong>0?Math.round(correct/(correct+wrong)*100):0;
+  document.getElementById('statAccuracy').textContent=acc+'%';
+  buildReview();
+  buildRetry();
+  buildMisses();
+}
+
+function buildReview(){
+  const container=document.getElementById('review-list');
+  container.innerHTML='';
+  const labels=['A','B','C','D'];
+  QUESTIONS.forEach((q,i)=>{
+    const ua=userAnswers[i];
+    const status=ua===null?'skipped':ua===q.answer?'correct':'wrong';
+    const card=document.createElement('div');
+    card.className=`review-card ${status}`;
+    const badge=status==='correct'?'CORRECT':status==='wrong'?'WRONG':'SKIPPED';
+    const badgeClass=status==='correct'?'badge-correct':status==='wrong'?'badge-wrong':'badge-skipped';
+    let optsHtml='';
+    q.options.forEach((opt,j)=>{
+      const l=labels[j];
+      let cls='';
+      if(l===q.answer)cls='opt-correct';
+      else if(l===ua)cls='opt-wrong-pick';
+      optsHtml+=`<div class="review-opts ${cls}">${l}. ${opt}</div>`;
+    });
+    card.innerHTML=`
+      <div class="review-card-header">
+        <span class="review-badge ${badgeClass}">${badge}</span>
+        <span style="color:var(--grey);font-size:.82rem">Q${i+1} · ${q.section}</span>
+        ${ua?`<span style="margin-left:auto;font-size:.82rem;color:var(--grey)">Your answer: <strong style="color:${status==='correct'?'var(--green)':'var(--red)'}">${ua}</strong></span>`:''}
+      </div>
+      <div class="review-card-body">
+        <div class="review-stem">${q.stem}</div>
+        ${optsHtml}
+        <div class="review-exp">${q.exp}</div>
+      </div>`;
+    container.appendChild(card);
+  });
+}
+
+function buildRetry(){
+  const wrongIdxs=QUESTIONS.map((_,i)=>i).filter(i=>userAnswers[i]!==null&&userAnswers[i]!==QUESTIONS[i].answer);
+  if(!wrongIdxs.length)return;
+  document.getElementById('retrySection').style.display='block';
+  const container=document.getElementById('retryContainer');
+  container.innerHTML='';
+  const labels=['A','B','C','D'];
+  wrongIdxs.forEach(i=>{
+    const q=QUESTIONS[i];
+    const div=document.createElement('div');
+    div.className='retry-q';
+    div.innerHTML=`<div class="retry-stem">Q${i+1}: ${q.stem}</div><div class="retry-opts" id="retry-opts-${i}"></div>`;
+    container.appendChild(div);
+    const optsDiv=document.getElementById(`retry-opts-${i}`);
+    q.options.forEach((opt,j)=>{
+      const btn=document.createElement('button');
+      btn.className='retry-opt';
+      btn.textContent=`${labels[j]}. ${opt}`;
+      btn.onclick=()=>{
+        Array.from(optsDiv.children).forEach(b=>b.classList.remove('r-correct','r-wrong'));
+        if(labels[j]===q.answer){btn.classList.add('r-correct');}
+        else{btn.classList.add('r-wrong');optsDiv.children[['A','B','C','D'].indexOf(q.answer)].classList.add('r-correct');}
+      };
+      optsDiv.appendChild(btn);
+    });
+  });
+}
+
+function buildMisses(){
+  const wrongIdxs=QUESTIONS.map((_,i)=>i).filter(i=>userAnswers[i]!==null&&userAnswers[i]!==QUESTIONS[i].answer);
+  if(!wrongIdxs.length){document.getElementById('missesText').textContent='No misses — clean sheet!';return;}
+  const lines=wrongIdxs.map(i=>{
+    const q=QUESTIONS[i];
+    return `Q${i+1} [${q.section}]\nYour answer: ${userAnswers[i]} | Correct: ${q.answer}\n${q.exp}`;
+  });
+  document.getElementById('missesText').textContent=lines.join('\n\n───\n\n');
+}
+
+// ── SAVE TO TRACKER (localStorage) ──
+function saveToTracker(score,correct,wrong,skipped){
+  const s=Math.floor(timer_duration*60-secondsLeft);
+  const mm=String(Math.floor(s/60)).padStart(2,'0');
+  const ss=String(s%60).padStart(2,'0');
+  const timeTaken=mm+':'+ss;
+  const entry={testName:'Road to IIM Paper 19',name:studentName,pin:studentPin,batch:studentBatch,
+    score,correct,wrong,skipped,maxMarks:180,timeTaken,timestamp:new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'})};
+  const key=`riim_${studentPin}`;
+  const existing=JSON.parse(localStorage.getItem(key)||'[]');
+  existing.push(entry);
+  localStorage.setItem(key,JSON.stringify(existing));
+}
+
+// ── LOG TO SHEET ──
+function logToSheet(score,correct,wrong,skipped){
+  const notice=document.getElementById('sheet-notice');
+  notice.className='notice-submitting';
+  notice.textContent='Submitting your results…';
+  const s=Math.floor(timer_duration*60-secondsLeft);
+  const mm=String(Math.floor(s/60)).padStart(2,'0');
+  const ss=String(s%60).padStart(2,'0');
+  const timeTaken=mm+':'+ss;
+  const sectionErrors={};
+  const wrongQuestions=[];
+  QUESTIONS.forEach((q,i)=>{
+    if(userAnswers[i]!==null&&userAnswers[i]!==q.answer){
+      wrongQuestions.push(i+1);
+      sectionErrors[q.section]=(sectionErrors[q.section]||0)+1;
+    }
+  });
+  const payload={
+    testName:'Road to IIM Paper 19',
+    name:studentName,
+    pin:studentPin,
+    batch:studentBatch,
+    score:score,
+    correct:correct,
+    wrong:wrong,
+    skipped:skipped,
+    maxMarks:180,
+    timeTaken:timeTaken,
+    timestamp:new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'}),
+    sectionErrors:JSON.stringify(sectionErrors),
+    wrongQuestions:JSON.stringify(wrongQuestions),
+    studentAnswers:userAnswers.map(a=>a===null?null:a)
+  };
+  fetch(APPS_SCRIPT_URL,{
+    method:'POST',mode:'no-cors',
+    headers:{'Content-Type':'text/plain'},
+    body:JSON.stringify(payload)
+  }).then(()=>{
+    notice.className='notice-success';
+    notice.textContent='Results saved successfully!';
+  }).catch(()=>{
+    notice.className='notice-failure';
+    notice.textContent='Could not reach the server. Results saved locally.';
+  });
+}
+
+// ── PDF ──
+function generatePDF(){
+  const el=document.getElementById('review-list');
+  const opt={margin:10,filename:`RoadToIIM_P19_${studentName.replace(/\s/g,'_')}.pdf`,
+    image:{type:'jpeg',quality:0.9},
+    html2canvas:{scale:2,backgroundColor:'#0d1b2a'},
+    jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}};
+  html2pdf().set(opt).from(el).save();
+}
+</script>
+
+<script>
+document.addEventListener('contextmenu',function(e){e.preventDefault();});
+document.addEventListener('keydown',function(e){
+  if((e.ctrlKey||e.metaKey)&&['c','a','u','s','p'].includes(e.key.toLowerCase())){e.preventDefault();}
+});
+</script>
+</body>
+</html>
