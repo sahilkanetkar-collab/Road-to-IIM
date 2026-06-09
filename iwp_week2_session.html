@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IWP Week 2 — Foot Roots</title>
+<style>
+  :root {
+    --bg:         #0f1117;
+    --card:       #1c2230;
+    --header:     #161b27;
+    --field:      #252d3d;
+    --gold:       #c9a027;
+    --gold-dim:   #a07e1a;
+    --text:       #e8edf2;
+    --muted:      #6b7a99;
+    --label:      #8a95b0;
+    --border:     #2c3650;
+    --correct:    #22c55e;
+    --wrong:      #ef4444;
+    --correct-bg: rgba(34,197,94,0.12);
+    --wrong-bg:   rgba(239,68,68,0.12);
+    --highlight:  #c9a027;
+    --root-bg:    #1a2235;
+    --chip-bg:    #212b40;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  .site-header {
+    background: var(--header);
+    padding: 12px 28px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+  }
+  .header-left { flex: 1; }
+  .header-sup {
+    font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--gold); margin-bottom: 2px;
+  }
+  .header-title { font-size: 15px; font-weight: 600; color: #fff; }
+  .timer-display {
+    font-size: 15px; font-weight: 700; color: var(--gold);
+    font-variant-numeric: tabular-nums; letter-spacing: 1px;
+  }
+
+  /* ── LOGIN SCREEN ── */
+  #login-screen {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg);
+    padding: 24px;
+  }
+  .login-card {
+    background: var(--card);
+    border-radius: 12px;
+    padding: 40px 44px;
+    width: 100%; max-width: 480px;
+  }
+  .login-eyebrow {
+    font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--gold); margin-bottom: 10px;
+  }
+  .login-title {
+    font-size: 28px; font-weight: 700; color: #fff; margin-bottom: 6px;
+  }
+  .login-sub {
+    font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 32px;
+  }
+  .login-sub em { font-style: italic; color: #aab; }
+  .form-group { margin-bottom: 20px; }
+  .form-group label {
+    display: block;
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 1.2px; text-transform: uppercase;
+    color: var(--label); margin-bottom: 8px;
+  }
+  .form-group input,
+  .form-group select {
+    width: 100%;
+    padding: 13px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    color: var(--text);
+    background: var(--field);
+    outline: none;
+    appearance: none;
+    transition: background 0.15s;
+  }
+  .form-group input::placeholder { color: var(--muted); }
+  .form-group input:focus,
+  .form-group select:focus { background: #2e3850; }
+  .form-group select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b7a99' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 14px center;
+    padding-right: 40px;
+  }
+  .form-group select option { background: #252d3d; color: #e8edf2; }
+  .error-msg { color: var(--wrong); font-size: 12px; margin-top: 6px; display: none; }
+  .btn-start {
+    width: 100%; padding: 15px;
+    background: var(--gold);
+    color: #111;
+    border: none; border-radius: 6px;
+    font-size: 15px; font-weight: 700;
+    cursor: pointer; letter-spacing: 0.3px;
+    transition: background 0.15s, transform 0.1s;
+    margin-top: 4px;
+  }
+  .btn-start:hover { background: #d4aa30; }
+  .btn-start:active { transform: scale(0.99); }
+
+  /* ── MAIN LAYOUT ── */
+  #main-screen { display: none; }
+  .main-wrap { max-width: 860px; margin: 0 auto; padding: 28px 20px 60px; }
+
+  /* ── PROGRESS BAR ── */
+  .progress-track { display: flex; gap: 5px; margin-bottom: 28px; }
+  .prog-step { flex: 1; height: 3px; border-radius: 2px; background: var(--border); transition: background 0.3s; }
+  .prog-step.done   { background: var(--correct); }
+  .prog-step.active { background: var(--gold); }
+
+  /* ── SECTION CARD ── */
+  .section-card {
+    background: var(--card);
+    border-radius: 10px;
+    padding: 30px 28px;
+    margin-bottom: 20px;
+    display: none;
+  }
+  .section-card.active { display: block; }
+  .section-eyebrow {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1.2px; color: var(--gold); margin-bottom: 6px;
+  }
+  .section-title { font-size: 22px; font-weight: 700; color: #fff; margin-bottom: 6px; }
+  .section-desc  { font-size: 14px; color: var(--muted); margin-bottom: 24px; line-height: 1.6; }
+
+  /* ── HOOK BOX ── */
+  .hook-box {
+    background: var(--root-bg);
+    border-left: 3px solid var(--gold);
+    border-radius: 8px;
+    padding: 18px 20px;
+    margin-bottom: 22px;
+  }
+  .hook-box .hook-q   { font-size: 15px; font-weight: 600; color: #fff; margin-bottom: 5px; }
+  .hook-box .hook-sub { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+  /* ── ROOT CARDS ── */
+  .root-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 14px; margin-bottom: 24px;
+  }
+  .root-card {
+    background: var(--root-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px;
+  }
+  .root-label {
+    font-size: 10px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1px; color: var(--gold); margin-bottom: 10px;
+  }
+  .root-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .root-tag {
+    font-size: 20px; font-weight: 800; color: var(--gold);
+    background: rgba(201,160,39,0.1);
+    padding: 4px 10px; border-radius: 5px;
+  }
+  .root-meaning { font-size: 14px; color: var(--muted); font-style: italic; }
+  .word-row { display: flex; flex-wrap: wrap; gap: 8px; }
+  .word-chip {
+    background: var(--chip-bg);
+    border-radius: 7px;
+    padding: 10px 12px;
+    font-size: 13px;
+    min-width: 130px; flex: 1;
+  }
+  .chip-word { font-weight: 700; color: #e8edf2; font-size: 14px; }
+  .chip-word .hl { color: var(--gold); }
+  .chip-pos  { font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--gold); letter-spacing: 0.5px; margin: 3px 0; }
+  .chip-def  { font-size: 12px; color: var(--muted); line-height: 1.4; margin-bottom: 4px; }
+  .chip-ex   { font-size: 11px; color: #6b7a99; font-style: italic; line-height: 1.4; border-top: 1px solid var(--border); padding-top: 4px; margin-top: 4px; }
+
+  /* ── EXERCISES ── */
+  .ex-item {
+    margin-bottom: 16px; padding: 16px 18px;
+    background: var(--root-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .ex-prompt { font-size: 15px; color: var(--text); margin-bottom: 10px; line-height: 1.6; }
+  .hint-tag {
+    display: inline-block;
+    background: rgba(201,160,39,0.1); border: 1px solid rgba(201,160,39,0.3);
+    color: var(--gold); font-size: 11px; font-weight: 700;
+    padding: 2px 8px; border-radius: 4px; margin-left: 4px;
+  }
+  .ex-input-row { display: flex; gap: 10px; align-items: center; }
+  .ex-input {
+    padding: 9px 13px;
+    background: var(--field); border: 1px solid var(--border);
+    border-radius: 6px; font-size: 14px; color: var(--text);
+    width: 200px; outline: none; transition: border-color 0.15s;
+  }
+  .ex-input::placeholder { color: var(--muted); }
+  .ex-input:focus { border-color: var(--gold); }
+  .ex-input.correct { border-color: var(--correct); background: var(--correct-bg); }
+  .ex-input.wrong   { border-color: var(--wrong);   background: var(--wrong-bg);   }
+  .btn-check {
+    padding: 9px 18px;
+    background: var(--field); color: var(--text);
+    border: 1px solid var(--border); border-radius: 6px;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+    white-space: nowrap; transition: all 0.15s;
+  }
+  .btn-check:hover { background: #2e3850; border-color: var(--gold); color: var(--gold); }
+  .btn-check:disabled { opacity: 0.4; cursor: not-allowed; }
+  .feedback-msg { font-size: 13px; margin-top: 8px; display: none; font-weight: 500; line-height: 1.5; }
+  .feedback-msg.show { display: block; }
+  .feedback-msg.ok  { color: var(--correct); }
+  .feedback-msg.err { color: var(--wrong); }
+
+  /* ── RECALL ── */
+  .recall-item {
+    margin-bottom: 14px; padding: 14px 16px;
+    background: var(--root-bg); border: 1px solid var(--border); border-radius: 8px;
+  }
+  .recall-def  { font-size: 14px; color: var(--muted); margin-bottom: 6px; line-height: 1.5; }
+  .recall-hint { font-size: 13px; color: var(--gold); font-weight: 700; margin-bottom: 8px; }
+
+  /* ── EXIT SLIP ── */
+  .quiz-item {
+    margin-bottom: 18px; padding: 18px 20px;
+    background: var(--root-bg); border: 1px solid var(--border); border-radius: 8px;
+  }
+  .quiz-q { font-size: 15px; font-weight: 500; color: var(--text); margin-bottom: 14px; line-height: 1.6; }
+  .qnum {
+    display: inline-block;
+    background: var(--gold); color: #111;
+    font-size: 11px; font-weight: 800;
+    padding: 2px 7px; border-radius: 3px; margin-right: 6px;
+  }
+  .options-grid { display: flex; flex-direction: column; gap: 7px; }
+  .option-btn {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 14px;
+    background: var(--chip-bg); border: 1px solid var(--border);
+    border-radius: 6px; cursor: pointer;
+    text-align: left; font-size: 14px; color: var(--text);
+    transition: all 0.12s;
+  }
+  .option-btn:hover:not(:disabled) { border-color: var(--gold); background: #262f45; }
+  .option-btn.selected { border-color: var(--gold); background: rgba(201,160,39,0.1); }
+  .option-btn.correct  { border-color: var(--correct); background: var(--correct-bg); color: var(--correct); font-weight: 600; }
+  .option-btn.wrong    { border-color: var(--wrong);   background: var(--wrong-bg);   color: var(--wrong); }
+  .option-btn:disabled { cursor: default; }
+  .opt-letter {
+    width: 24px; height: 24px; border-radius: 50%;
+    background: var(--border); color: var(--label);
+    font-weight: 700; font-size: 11px;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .option-btn.selected .opt-letter { background: var(--gold); color: #111; }
+  .option-btn.correct  .opt-letter { background: var(--correct); color: #fff; }
+  .option-btn.wrong    .opt-letter { background: var(--wrong); color: #fff; }
+
+  /* ── SCORE CARD ── */
+  .score-card {
+    text-align: center; padding: 36px 24px;
+    background: var(--card); border-radius: 10px;
+    margin-bottom: 20px; display: none;
+  }
+  .score-card.show { display: block; }
+  .score-big   { font-size: 64px; font-weight: 900; color: var(--gold); line-height: 1; }
+  .score-label { font-size: 18px; font-weight: 700; color: #fff; margin: 10px 0 4px; }
+  .score-sub   { font-size: 14px; color: var(--muted); }
+
+  /* ── NEXT / SUBMIT / LOG BUTTONS ── */
+  .next-bar { display: flex; justify-content: flex-end; margin-top: 24px; }
+  .btn-next {
+    padding: 11px 26px;
+    background: var(--gold); color: #111;
+    border: none; border-radius: 6px;
+    font-size: 14px; font-weight: 700;
+    cursor: pointer; transition: background 0.15s;
+  }
+  .btn-next:hover:not(:disabled) { background: #d4aa30; }
+  .btn-next:disabled { background: var(--border); color: var(--muted); cursor: not-allowed; }
+  .btn-submit {
+    padding: 13px 32px;
+    background: var(--gold); color: #111;
+    border: none; border-radius: 6px;
+    font-size: 15px; font-weight: 700;
+    cursor: pointer; transition: background 0.15s;
+  }
+  .btn-submit:hover:not(:disabled) { background: #d4aa30; }
+  .btn-submit:disabled { background: var(--border); color: var(--muted); cursor: not-allowed; }
+  .btn-log {
+    padding: 13px 32px;
+    background: var(--correct); color: #fff;
+    border: none; border-radius: 6px;
+    font-size: 15px; font-weight: 700;
+    cursor: pointer; transition: background 0.15s;
+  }
+  .btn-log:hover:not(:disabled) { background: #16a34a; }
+  .log-status { margin-top: 12px; font-size: 14px; font-weight: 600; text-align: center; display: none; }
+  .log-status.ok  { color: var(--correct); display: block; }
+  .log-status.err { color: var(--wrong);   display: block; }
+
+  /* ── COMPLETE SCREEN ── */
+  #complete-screen { display: none; min-height: 60vh; align-items: center; justify-content: center; text-align: center; padding: 40px 20px; flex-direction: column; }
+  #complete-screen.show { display: flex; }
+  .complete-icon  { font-size: 52px; margin-bottom: 16px; }
+  .complete-title { font-size: 26px; font-weight: 700; color: #fff; margin-bottom: 8px; }
+  .complete-sub   { font-size: 15px; color: var(--muted); max-width: 380px; line-height: 1.6; }
+
+  @media (max-width: 600px) {
+    .login-card { padding: 28px 20px; }
+    .section-card { padding: 22px 16px; }
+    .root-grid { grid-template-columns: 1fr; }
+    .ex-input { width: 140px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-eyebrow">Camp Verbal &times; Road to IIM</div>
+    <div class="login-title">Week 2 &mdash; Foot Roots</div>
+    <div class="login-sub">Sessions 5&ndash;8 from <em>Instant Word Power</em>. Complete all sections, then submit your exit slip to log your progress.</div>
+
+    <div class="form-group">
+      <label for="inp-name">Your Name</label>
+      <input type="text" id="inp-name" placeholder="Full name" autocomplete="name">
+    </div>
+
+    <div class="form-group">
+      <label for="inp-pin">IMS PIN</label>
+      <input type="text" id="inp-pin" placeholder="STU / IMS + 10 digits" autocomplete="off" maxlength="13">
+      <div class="error-msg" id="pin-error">PIN must be STU or IMS followed by 10 digits.</div>
+    </div>
+
+    <div class="form-group">
+      <label for="inp-batch">Batch</label>
+      <select id="inp-batch">
+        <option value="" disabled selected>&mdash; Select batch &mdash;</option>
+        <optgroup label="Classroom">
+          <option>A2701</option><option>A2702</option><option>A2703</option>
+          <option>A2704</option><option>A2705</option><option>A2706</option>
+          <option>A2707</option><option>A2708</option><option>A2709</option>
+          <option>A2710</option><option>A2711</option><option>A2712</option>
+        </optgroup>
+        <optgroup label="School">
+          <option>Zebar</option>
+        </optgroup>
+        <optgroup label="Online">
+          <option>27E101</option><option>27E102</option><option>27E103</option>
+          <option>27E104</option><option>27E105</option>
+        </optgroup>
+        <optgroup label="Admin">
+          <option>Admin</option>
+        </optgroup>
+      </select>
+    </div>
+
+    <button class="btn-start" onclick="startSession()">Begin Session &rsaquo;</button>
+  </div>
+</div>
+
+<!-- MAIN SCREEN -->
+<div id="main-screen">
+  <header class="site-header">
+    <div class="header-left">
+      <div class="header-sup">Road to IIM &middot; Self Study</div>
+      <div class="header-title">Instant Word Power</div>
+    </div>
+    <div class="timer-display" id="timer-display">00:00</div>
+  </header>
+
+  <div class="main-wrap">
+    <!-- Progress -->
+    <div class="progress-track">
+      <div class="prog-step active" id="ps1"></div>
+      <div class="prog-step" id="ps2"></div>
+      <div class="prog-step" id="ps3"></div>
+      <div class="prog-step" id="ps4"></div>
+      <div class="prog-step" id="ps5"></div>
+    </div>
+
+    <!-- ── SECTION 1: Root Cards ── -->
+    <div class="section-card active" id="sec1">
+      <div class="section-eyebrow">Section 1 of 5</div>
+      <div class="section-title">Root Introduction</div>
+      <div class="section-desc">Two roots, one idea: "foot." Latin <strong>ped-</strong> and Greek <strong>pod-</strong> both mean foot. Read every card before moving on.</div>
+
+      <div class="hook-box">
+        <div class="hook-q">🦶 Quick Think: What do a <em>pedestrian</em>, a <em>podium</em>, and a <em>pedicure</em> have in common?</div>
+        <div class="hook-sub">All three come from roots meaning "foot." One root is Latin, one is Greek — yet they travelled different paths into English and settled into completely different words. Let's meet them.</div>
+      </div>
+
+      <div class="root-grid">
+        <!-- Root 1: ped- Latin -->
+        <div class="root-card">
+          <div class="root-label">Latin Root</div>
+          <div class="root-header">
+            <div class="root-tag">ped-</div>
+            <div class="root-meaning">= foot</div>
+          </div>
+          <div class="word-row">
+            <div class="word-chip">
+              <div class="chip-word">im<span class="hl">ped</span>e</div>
+              <div class="chip-pos">verb</div>
+              <div class="chip-def">To obstruct or slow down progress</div>
+              <div class="chip-ex">"Heavy traffic will impede our arrival."</div>
+            </div>
+            <div class="word-chip">
+              <div class="chip-word">ex<span class="hl">ped</span>ite</div>
+              <div class="chip-pos">verb</div>
+              <div class="chip-def">To speed up; remove obstacles from the path</div>
+              <div class="chip-ex">"Please expedite this order — it's urgent."</div>
+            </div>
+            <div class="word-chip">
+              <div class="chip-word">ex<span class="hl">ped</span>itious</div>
+              <div class="chip-pos">adjective</div>
+              <div class="chip-def">Prompt, speedy, efficient</div>
+              <div class="chip-ex">"The team handled it in an expeditious manner."</div>
+            </div>
+            <div class="word-chip">
+              <div class="chip-word">ex<span class="hl">ped</span>ition</div>
+              <div class="chip-pos">noun</div>
+              <div class="chip-def">A journey with a specific purpose</div>
+              <div class="chip-ex">"The researchers set off on an Antarctic expedition."</div>
+            </div>
+            <div class="word-chip">
+              <div class="chip-word"><span class="hl">ped</span>estrian</div>
+              <div class="chip-pos">noun / adj</div>
+              <div class="chip-def">A person on foot; also: dull, unimaginative</div>
+              <div class="chip-ex">"The film was technically fine but pedestrian in its storytelling."</div>
+            </div>
+            <div class="word-chip">
+              <div class="chip-word"><span class="hl">ped</span>icure</div>
+              <div class="chip-pos">noun</div>
+              <div class="chip-def">Care and grooming of the feet and toenails</div>
+              <div class="chip-ex">"She booked a pedicure before the wedding."</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Root 2: pod- Greek -->
+        <div class="root-card">
+          <div class="root-label">Greek Root</div>
+          <div class="root-header">
+            <div class="root-tag">pod-</div>
+            <div class="root-meaning">= foot</div>
+          </div>
+          <div class="word-row">
+            <div class="word-chip">
+              <div class="chip-word"><span class="hl">pod</span>ium</div>
+              <div class="chip-pos">noun</div>
+              <div class="chip-def">A raised platform or lectern for a speaker</div>
+              <div class="chip-ex">"The conductor stepped up to the podium."</div>
+            </div>
+            <div class="word-chip">
+              <div class="chip-word"><span class="hl">pod</span>iatrist</div>
+              <div class="chip-pos">noun</div>
+              <div class="chip-def">A doctor who specialises in foot ailments</div>
+              <div class="chip-ex">"His ingrown toenail was treated by a podiatrist."</div>
+            </div>
+            <div class="word-chip">
+              <div class="chip-word">chiro<span class="hl">pod</span>ist</div>
+              <div class="chip-pos">noun</div>
+              <div class="chip-def">Another term for a foot specialist; from Greek cheir (hand) + pod (foot)</div>
+              <div class="chip-ex">"In the UK, a chiropodist is the common term."</div>
+            </div>
+            <div class="word-chip">
+              <div class="chip-word">tri<span class="hl">pod</span></div>
+              <div class="chip-pos">noun</div>
+              <div class="chip-def">A three-legged support stand</div>
+              <div class="chip-ex">"The photographer steadied her camera on a tripod."</div>
+            </div>
+            <div class="word-chip">
+              <div class="chip-word">anti<span class="hl">pod</span>ean</div>
+              <div class="chip-pos">adjective / noun</div>
+              <div class="chip-def">From the opposite side of the earth (anti = against + pod = foot: standing foot-to-foot)</div>
+              <div class="chip-ex">"Australia is often described as the antipodean nation."</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bonus: ex-/im- prefix logic -->
+        <div class="root-card" style="grid-column: 1 / -1;">
+          <div class="root-label">Prefix Logic</div>
+          <div class="root-header">
+            <div class="root-tag">im- / ex-</div>
+            <div class="root-meaning">in / out</div>
+          </div>
+          <div class="word-row">
+            <div class="word-chip">
+              <div class="chip-word"><span class="hl">im</span>pede</div>
+              <div class="chip-pos">im- = in + ped- = foot</div>
+              <div class="chip-def">To put something <em>in</em> the way of someone's <em>feet</em> → to obstruct</div>
+              <div class="chip-ex">An obstacle impedes progress.</div>
+            </div>
+            <div class="word-chip">
+              <div class="chip-word"><span class="hl">ex</span>pedite</div>
+              <div class="chip-pos">ex- = out + ped- = foot</div>
+              <div class="chip-def">To take obstacles <em>out</em> of the way of someone's <em>feet</em> → to speed up</div>
+              <div class="chip-ex">Clearing the path expedites movement.</div>
+            </div>
+            <div class="word-chip">
+              <div class="chip-word"><span class="hl">ex</span>trovert</div>
+              <div class="chip-pos">extro- = outside + verto = turn</div>
+              <div class="chip-def">One whose interests turn outward; sociable, people-oriented</div>
+              <div class="chip-ex">Extroverts energise themselves through people.</div>
+            </div>
+            <div class="word-chip">
+              <div class="chip-word"><span class="hl">in</span>trovert</div>
+              <div class="chip-pos">intro- = inside + verto = turn</div>
+              <div class="chip-def">One whose interests turn inward; reflective, prefers solitude</div>
+              <div class="chip-ex">Introverts recharge by spending time alone.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="next-bar">
+        <button class="btn-next" id="next1" onclick="goSection(2)">Next: Fill-in Exercises →</button>
+      </div>
+    </div>
+
+    <!-- ── SECTION 2: Fill-in ── -->
+    <div class="section-card" id="sec2">
+      <div class="section-eyebrow">Section 2 of 5</div>
+      <div class="section-title">Fill-in Exercises</div>
+      <div class="section-desc">A root hint is given for each blank. Use it to recall the correct word, then type your answer and click Check.</div>
+
+      <!-- Q1 -->
+      <div class="ex-item" id="ex1">
+        <div class="ex-prompt">The bureaucratic process will <strong>_____</strong> the delivery of your passport. <span class="hint-tag">ped- (Latin)</span></div>
+        <div class="ex-input-row">
+          <input type="text" class="ex-input" id="exinp1" placeholder="Your answer" autocomplete="off">
+          <button class="btn-check" onclick="checkFill(1)">Check</button>
+        </div>
+        <div class="feedback-msg" id="exfb1"></div>
+      </div>
+
+      <!-- Q2 -->
+      <div class="ex-item" id="ex2">
+        <div class="ex-prompt">The new software update will <strong>_____</strong> the checkout process for customers. <span class="hint-tag">ped- (Latin)</span></div>
+        <div class="ex-input-row">
+          <input type="text" class="ex-input" id="exinp2" placeholder="Your answer" autocomplete="off">
+          <button class="btn-check" onclick="checkFill(2)">Check</button>
+        </div>
+        <div class="feedback-msg" id="exfb2"></div>
+      </div>
+
+      <!-- Q3 -->
+      <div class="ex-item" id="ex3">
+        <div class="ex-prompt">Her stutter was no longer a speech <strong>_____</strong> — therapy had worked wonders. <span class="hint-tag">ped- (Latin)</span></div>
+        <div class="ex-input-row">
+          <input type="text" class="ex-input" id="exinp3" placeholder="Your answer" autocomplete="off">
+          <button class="btn-check" onclick="checkFill(3)">Check</button>
+        </div>
+        <div class="feedback-msg" id="exfb3"></div>
+      </div>
+
+      <!-- Q4 -->
+      <div class="ex-item" id="ex4">
+        <div class="ex-prompt">The keynote speaker adjusted the microphone as she stepped up to the <strong>_____</strong> to address the audience. <span class="hint-tag">pod- (Greek)</span></div>
+        <div class="ex-input-row">
+          <input type="text" class="ex-input" id="exinp4" placeholder="Your answer" autocomplete="off">
+          <button class="btn-check" onclick="checkFill(4)">Check</button>
+        </div>
+        <div class="feedback-msg" id="exfb4"></div>
+      </div>
+
+      <!-- Q5 -->
+      <div class="ex-item" id="ex5">
+        <div class="ex-prompt">She consulted a <strong>_____</strong> about her persistent heel pain. <span class="hint-tag">pod- (Greek)</span></div>
+        <div class="ex-input-row">
+          <input type="text" class="ex-input" id="exinp5" placeholder="Your answer" autocomplete="off">
+          <button class="btn-check" onclick="checkFill(5)">Check</button>
+        </div>
+        <div class="feedback-msg" id="exfb5"></div>
+      </div>
+
+      <!-- Q6 -->
+      <div class="ex-item" id="ex6">
+        <div class="ex-prompt">The wildlife documentary crew mounted their cameras on a <strong>_____</strong> for stability. <span class="hint-tag">pod- (Greek)</span></div>
+        <div class="ex-input-row">
+          <input type="text" class="ex-input" id="exinp6" placeholder="Your answer" autocomplete="off">
+          <button class="btn-check" onclick="checkFill(6)">Check</button>
+        </div>
+        <div class="feedback-msg" id="exfb6"></div>
+      </div>
+
+      <div class="next-bar">
+        <button class="btn-next" id="next2" onclick="goSection(3)" disabled>Next: Think with Words →</button>
+      </div>
+    </div>
+
+    <!-- ── SECTION 3: Context Sentences ── -->
+    <div class="section-card" id="sec3">
+      <div class="section-eyebrow">Section 3 of 5</div>
+      <div class="section-title">Think With Words</div>
+      <div class="section-desc">Each sentence below describes a situation. Type the word from this week's roots that best fits.</div>
+
+      <!-- C1 -->
+      <div class="ex-item" id="cx1">
+        <div class="ex-prompt">1. Priya is excellent at meeting people, thrives at social events, and seems to gain energy from conversation. In a single word, she is a natural <strong>_____</strong>.</div>
+        <div class="ex-input-row">
+          <input type="text" class="ex-input" id="ctxinp1" placeholder="Your answer" autocomplete="off" style="width:180px">
+          <button class="btn-check" onclick="checkCtx(1)">Check</button>
+        </div>
+        <div class="feedback-msg" id="ctxfb1"></div>
+      </div>
+
+      <!-- C2 -->
+      <div class="ex-item" id="cx2">
+        <div class="ex-prompt">2. The geologist led a team into the Himalayas with specific objectives, equipment, and a defined timeline. This organised journey is best described as a scientific <strong>_____</strong>.</div>
+        <div class="ex-input-row">
+          <input type="text" class="ex-input" id="ctxinp2" placeholder="Your answer" autocomplete="off" style="width:180px">
+          <button class="btn-check" onclick="checkCtx(2)">Check</button>
+        </div>
+        <div class="feedback-msg" id="ctxfb2"></div>
+      </div>
+
+      <!-- C3 -->
+      <div class="ex-item" id="cx3">
+        <div class="ex-prompt">3. The essay was technically correct but utterly unimaginative — the same clichés repeated, nothing original. One could say the writing was rather <strong>_____</strong>.</div>
+        <div class="ex-input-row">
+          <input type="text" class="ex-input" id="ctxinp3" placeholder="Your answer" autocomplete="off" style="width:180px">
+          <button class="btn-check" onclick="checkCtx(3)">Check</button>
+        </div>
+        <div class="feedback-msg" id="ctxfb3"></div>
+      </div>
+
+      <!-- C4 -->
+      <div class="ex-item" id="cx4">
+        <div class="ex-prompt">4. The government fast-tracked the relief funds to reach the flood victims without delay. Officials promised to <strong>_____</strong> all aid disbursements.</div>
+        <div class="ex-input-row">
+          <input type="text" class="ex-input" id="ctxinp4" placeholder="Your answer" autocomplete="off" style="width:180px">
+          <button class="btn-check" onclick="checkCtx(4)">Check</button>
+        </div>
+        <div class="feedback-msg" id="ctxfb4"></div>
+      </div>
+
+      <div class="next-bar">
+        <button class="btn-next" id="next3" onclick="goSection(4)" disabled>Next: Word Recall →</button>
+      </div>
+    </div>
+
+    <!-- ── SECTION 4: Word Recall ── -->
+    <div class="section-card" id="sec4">
+      <div class="section-eyebrow">Section 4 of 5</div>
+      <div class="section-title">Word Recall</div>
+      <div class="section-desc">A definition is given, along with the first letter(s). Write the complete word.</div>
+
+      <!-- R1 -->
+      <div class="recall-item" id="rc1">
+        <div class="recall-def">A noun. A barrier or hindrance that blocks normal progress — something standing in the way.</div>
+        <div class="recall-hint">First letters: <strong>im___</strong></div>
+        <div class="ex-input-row">
+          <input type="text" class="ex-input" id="rcinp1" placeholder="im..." autocomplete="off" style="width:200px">
+          <button class="btn-check" onclick="checkRecall(1)">Check</button>
+        </div>
+        <div class="feedback-msg" id="rcfb1"></div>
+      </div>
+
+      <!-- R2 -->
+      <div class="recall-item" id="rc2">
+        <div class="recall-def">A medical specialist — not a GP — whose entire practice is focused on diagnosing and treating conditions of the foot.</div>
+        <div class="recall-hint">First letters: <strong>p___</strong></div>
+        <div class="ex-input-row">
+          <input type="text" class="ex-input" id="rcinp2" placeholder="p..." autocomplete="off" style="width:200px">
+          <button class="btn-check" onclick="checkRecall(2)">Check</button>
+        </div>
+        <div class="feedback-msg" id="rcfb2"></div>
+      </div>
+
+      <!-- R3 -->
+      <div class="recall-item" id="rc3">
+        <div class="recall-def">Prompt, speedy, and efficient — wasting no time.</div>
+        <div class="recall-hint">First letters: <strong>ex___</strong></div>
+        <div class="ex-input-row">
+          <input type="text" class="ex-input" id="rcinp3" placeholder="ex..." autocomplete="off" style="width:200px">
+          <button class="btn-check" onclick="checkRecall(3)">Check</button>
+        </div>
+        <div class="feedback-msg" id="rcfb3"></div>
+      </div>
+
+      <!-- R4 -->
+      <div class="recall-item" id="rc4">
+        <div class="recall-def">A three-legged camera or instrument stand.</div>
+        <div class="recall-hint">First letters: <strong>t___</strong></div>
+        <div class="ex-input-row">
+          <input type="text" class="ex-input" id="rcinp4" placeholder="t..." autocomplete="off" style="width:200px">
+          <button class="btn-check" onclick="checkRecall(4)">Check</button>
+        </div>
+        <div class="feedback-msg" id="rcfb4"></div>
+      </div>
+
+      <!-- R5 -->
+      <div class="recall-item" id="rc5">
+        <div class="recall-def">One whose personality and interests are turned inward; prefers solitude and reflection.</div>
+        <div class="recall-hint">First letters: <strong>i___</strong></div>
+        <div class="ex-input-row">
+          <input type="text" class="ex-input" id="rcinp5" placeholder="i..." autocomplete="off" style="width:200px">
+          <button class="btn-check" onclick="checkRecall(5)">Check</button>
+        </div>
+        <div class="feedback-msg" id="rcfb5"></div>
+      </div>
+
+      <div class="next-bar">
+        <button class="btn-next" id="next4" onclick="goSection(5)" disabled>Next: Exit Slip →</button>
+      </div>
+    </div>
+
+    <!-- ── SECTION 5: Exit Slip ── -->
+    <div class="section-card" id="sec5">
+      <div class="section-eyebrow">Section 5 of 5 · Exit Slip</div>
+      <div class="section-title">Final Check</div>
+      <div class="section-desc">5 questions. Select one option per question, then submit. Your score will be logged to the tracker.</div>
+
+      <!-- Q1 -->
+      <div class="quiz-item">
+        <div class="quiz-q"><span class="qnum">Q1</span> The word <em>expedite</em> is built on the Latin prefix <em>ex-</em> meaning "out" and <em>ped-</em> meaning "foot." Its core meaning is therefore closest to:</div>
+        <div class="options-grid" id="q1opts">
+          <button class="option-btn" onclick="selectOpt(1,'A')"><span class="opt-letter">A</span> To stumble over an obstacle</button>
+          <button class="option-btn" onclick="selectOpt(1,'B')"><span class="opt-letter">B</span> To clear the path and speed up progress</button>
+          <button class="option-btn" onclick="selectOpt(1,'C')"><span class="opt-letter">C</span> To walk with great care</button>
+          <button class="option-btn" onclick="selectOpt(1,'D')"><span class="opt-letter">D</span> To examine the feet for problems</button>
+        </div>
+      </div>
+
+      <!-- Q2 -->
+      <div class="quiz-item">
+        <div class="quiz-q"><span class="qnum">Q2</span> A sports journalist describes a midfielder as "a pedestrian player with no sense of creativity." Here, <em>pedestrian</em> means:</div>
+        <div class="options-grid" id="q2opts">
+          <button class="option-btn" onclick="selectOpt(2,'A')"><span class="opt-letter">A</span> A person who walks on foot rather than drives</button>
+          <button class="option-btn" onclick="selectOpt(2,'B')"><span class="opt-letter">B</span> Physically slow; unable to run</button>
+          <button class="option-btn" onclick="selectOpt(2,'C')"><span class="opt-letter">C</span> Dull, unimaginative, lacking originality</button>
+          <button class="option-btn" onclick="selectOpt(2,'D')"><span class="opt-letter">D</span> Belonging to a pedestrian zone of the city</button>
+        </div>
+      </div>
+
+      <!-- Q3 -->
+      <div class="quiz-item">
+        <div class="quiz-q"><span class="qnum">Q3</span> Which sentence uses the word <em>impede</em> correctly?</div>
+        <div class="options-grid" id="q3opts">
+          <button class="option-btn" onclick="selectOpt(3,'A')"><span class="opt-letter">A</span> The new expressway impeded the daily commute for thousands of drivers.</button>
+          <button class="option-btn" onclick="selectOpt(3,'B')"><span class="opt-letter">B</span> The landslide impeded traffic on the mountain highway for hours.</button>
+          <button class="option-btn" onclick="selectOpt(3,'C')"><span class="opt-letter">C</span> A well-designed road system impedes the flow of vehicles.</button>
+          <button class="option-btn" onclick="selectOpt(3,'D')"><span class="opt-letter">D</span> The new policy impeded business growth by encouraging investment.</button>
+        </div>
+      </div>
+
+      <!-- Q4 -->
+      <div class="quiz-item">
+        <div class="quiz-q"><span class="qnum">Q4</span> Rohan's presentation was technically accurate but utterly predictable — every argument was a cliché, every example borrowed. A critic would most accurately describe it as:</div>
+        <div class="options-grid" id="q4opts">
+          <button class="option-btn" onclick="selectOpt(4,'A')"><span class="opt-letter">A</span> Expeditious</button>
+          <button class="option-btn" onclick="selectOpt(4,'B')"><span class="opt-letter">B</span> Antipodean</button>
+          <button class="option-btn" onclick="selectOpt(4,'C')"><span class="opt-letter">C</span> Pedestrian</button>
+          <button class="option-btn" onclick="selectOpt(4,'D')"><span class="opt-letter">D</span> Expeditionary</button>
+        </div>
+      </div>
+
+      <!-- Q5 -->
+      <div class="quiz-item">
+        <div class="quiz-q"><span class="qnum">Q5</span> An <em>extrovert</em> and an <em>introvert</em> differ primarily in the <em>direction</em> their personality turns — outward vs. inward. This distinction comes from the Latin prefixes <em>extro-</em> and <em>intro-</em>. Which of the following pairs follows the SAME prefix logic?</div>
+        <div class="options-grid" id="q5opts">
+          <button class="option-btn" onclick="selectOpt(5,'A')"><span class="opt-letter">A</span> <em>export</em> vs. <em>import</em> — carrying out vs. carrying in</button>
+          <button class="option-btn" onclick="selectOpt(5,'B')"><span class="opt-letter">B</span> <em>perfect</em> vs. <em>imperfect</em> — flawed vs. flawless</button>
+          <button class="option-btn" onclick="selectOpt(5,'C')"><span class="opt-letter">C</span> <em>biped</em> vs. <em>quadruped</em> — two-footed vs. four-footed</button>
+          <button class="option-btn" onclick="selectOpt(5,'D')"><span class="opt-letter">D</span> <em>decade</em> vs. <em>century</em> — ten years vs. hundred years</button>
+        </div>
+      </div>
+
+      <div class="next-bar" style="justify-content: center; flex-direction: column; align-items: center; gap: 14px;">
+        <button class="btn-submit" id="btn-submit" onclick="submitExitSlip()" disabled>Submit Exit Slip</button>
+      </div>
+    </div>
+
+    <!-- Score Card -->
+    <div class="score-card" id="score-card">
+      <div class="score-big" id="score-display">0/5</div>
+      <div class="score-label" id="score-grade">—</div>
+      <div class="score-sub" id="score-pct">—</div>
+    </div>
+
+    <!-- Complete Screen -->
+    <div id="complete-screen">
+      <div class="complete-icon">🎉</div>
+      <div class="complete-title">Week 2 Complete!</div>
+      <div class="complete-sub">Your results have been logged. See you next week for <strong>oct-, dec-, nona-, septu-</strong> — the age and number roots!</div>
+    </div>
+
+    <!-- Log Button -->
+    <div id="log-bar" style="display:none; text-align:center; margin-top: 10px;">
+      <button class="btn-log" id="btn-log" onclick="logToTracker()">Log to Tracker</button>
+      <div class="log-status" id="log-status"></div>
+    </div>
+
+  </div><!-- /.main-wrap -->
+</div><!-- /#main-screen -->
+
+<script>
+// ══════════════════════════════════════════════════════════════
+//  CONSTANTS
+// ══════════════════════════════════════════════════════════════
+const SESSION_NAME   = 'IWP Week 2 — Foot Roots';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwGGxswx4hcBUFiT0QJIglowhKcJCv47MOR5LKBv9sILl-evsgZeKCms5y6s5zEXOUo6Q/exec';
+
+// ── Answer keys ──
+const EX_ANSWERS = {
+  1: 'impede',
+  2: 'expedite',
+  3: 'impediment',
+  4: 'podium',
+  5: 'podiatrist',
+  6: 'tripod'
+};
+
+const CTX_ANSWERS = {
+  1: 'extrovert',
+  2: 'expedition',
+  3: 'pedestrian',
+  4: 'expedite'
+};
+
+const RC_ANSWERS = {
+  1: 'impediment',
+  2: 'podiatrist',
+  3: 'expeditious',
+  4: 'tripod',
+  5: 'introvert'
+};
+
+const CORRECT_ANSWERS = { 1:'B', 2:'C', 3:'B', 4:'C', 5:'A' };
+
+// ══════════════════════════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════════════════════════
+let studentName = '', studentPin = '', studentBatch = '';
+let timerInterval = null;
+let secondsElapsed = 0;
+
+// Track attempted counts per section
+const fillAttempted  = new Set();
+const ctxAttempted   = new Set();
+const recallAttempted = new Set();
+let quizSubmitted    = false;
+const quizSelected   = {};   // {1: 'B', 2: 'C', ...}
+let exitScore = 0, exitCorrect = 0;
+const answerLog = {};        // {1: 'B', ...}
+
+// ══════════════════════════════════════════════════════════════
+//  TIMER
+// ══════════════════════════════════════════════════════════════
+function startTimer() {
+  timerInterval = setInterval(() => {
+    secondsElapsed++;
+    const m = String(Math.floor(secondsElapsed / 60)).padStart(2,'0');
+    const s = String(secondsElapsed % 60).padStart(2,'0');
+    document.getElementById('timer-display').textContent = m + ':' + s;
+  }, 1000);
+}
+
+function getTimeTaken() {
+  const m = String(Math.floor(secondsElapsed / 60)).padStart(2,'0');
+  const s = String(secondsElapsed % 60).padStart(2,'0');
+  return m + ':' + s;
+}
+
+// ══════════════════════════════════════════════════════════════
+//  LOGIN
+// ══════════════════════════════════════════════════════════════
+function startSession() {
+  const name  = document.getElementById('inp-name').value.trim();
+  const pin   = document.getElementById('inp-pin').value.trim().toUpperCase();
+  const batch = document.getElementById('inp-batch').value;
+
+  // Validate name
+  if (!name) { alert('Please enter your full name.'); return; }
+
+  // Validate PIN
+  const pinOk = /^(STU|IMS)\d{10}$/.test(pin);
+  if (!pinOk) {
+    document.getElementById('pin-error').style.display = 'block';
+    return;
+  }
+  document.getElementById('pin-error').style.display = 'none';
+
+  // Validate batch selected
+  if (!batch) { alert('Please select your batch.'); return; }
+
+
+  studentName  = name;
+  studentPin   = pin;
+  studentBatch = batch;
+
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('main-screen').style.display  = 'block';
+  startTimer();
+}
+
+// ══════════════════════════════════════════════════════════════
+//  SECTION NAVIGATION
+// ══════════════════════════════════════════════════════════════
+function goSection(n) {
+  // Hide all sections
+  [1,2,3,4,5].forEach(i => {
+    document.getElementById('sec'+i).classList.remove('active');
+  });
+  document.getElementById('sec'+n).classList.add('active');
+
+  // Update progress steps
+  [1,2,3,4,5].forEach(i => {
+    const el = document.getElementById('ps'+i);
+    if (i < n)      { el.className = 'prog-step done'; }
+    else if (i === n){ el.className = 'prog-step active'; }
+    else             { el.className = 'prog-step'; }
+  });
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ══════════════════════════════════════════════════════════════
+//  FILL-IN CHECKS
+// ══════════════════════════════════════════════════════════════
+function checkFill(n) {
+  const input  = document.getElementById('exinp'+n);
+  const fb     = document.getElementById('exfb'+n);
+  const answer = EX_ANSWERS[n];
+  const val    = input.value.trim().toLowerCase();
+
+  input.disabled = true;
+  fillAttempted.add(n);
+
+  if (val === answer) {
+    input.classList.add('correct');
+    fb.textContent = '✓ Correct! "' + answer + '" — well done.';
+    fb.className = 'feedback-msg show ok';
+  } else {
+    input.classList.add('wrong');
+    fb.textContent = '✗ The correct answer is "' + answer + '." Review the root card and try to see why.';
+    fb.className = 'feedback-msg show err';
+  }
+
+  if (fillAttempted.size === 6) {
+    document.getElementById('next2').disabled = false;
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+//  CONTEXT CHECKS
+// ══════════════════════════════════════════════════════════════
+function checkCtx(n) {
+  const input  = document.getElementById('ctxinp'+n);
+  const fb     = document.getElementById('ctxfb'+n);
+  const answer = CTX_ANSWERS[n];
+  const val    = input.value.trim().toLowerCase();
+
+  input.disabled = true;
+  ctxAttempted.add(n);
+
+  if (val === answer) {
+    input.classList.add('correct');
+    fb.textContent = '✓ Correct — "' + answer + '."';
+    fb.className = 'feedback-msg show ok';
+  } else {
+    input.classList.add('wrong');
+    fb.textContent = '✗ The expected answer is "' + answer + '." Think about which root fits the context.';
+    fb.className = 'feedback-msg show err';
+  }
+
+  if (ctxAttempted.size === 4) {
+    document.getElementById('next3').disabled = false;
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+//  RECALL CHECKS
+// ══════════════════════════════════════════════════════════════
+function checkRecall(n) {
+  const input  = document.getElementById('rcinp'+n);
+  const fb     = document.getElementById('rcfb'+n);
+  const answer = RC_ANSWERS[n];
+  const val    = input.value.trim().toLowerCase();
+
+  input.disabled = true;
+  recallAttempted.add(n);
+
+  if (val === answer) {
+    input.classList.add('correct');
+    fb.textContent = '✓ Correct — "' + answer + '."';
+    fb.className = 'feedback-msg show ok';
+  } else {
+    input.classList.add('wrong');
+    fb.textContent = '✗ The answer is "' + answer + '." Use the first-letter hint and the root to reconstruct it.';
+    fb.className = 'feedback-msg show err';
+  }
+
+  if (recallAttempted.size === 5) {
+    document.getElementById('next4').disabled = false;
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+//  EXIT SLIP
+// ══════════════════════════════════════════════════════════════
+function selectOpt(qn, letter) {
+  if (quizSubmitted) return;
+
+  quizSelected[qn] = letter;
+  const opts = document.getElementById('q'+qn+'opts');
+  opts.querySelectorAll('.option-btn').forEach((btn, i) => {
+    btn.classList.remove('selected');
+    const letters = ['A','B','C','D'];
+    if (letters[i] === letter) btn.classList.add('selected');
+  });
+
+  // Enable submit once all 5 answered
+  if (Object.keys(quizSelected).length === 5) {
+    document.getElementById('btn-submit').disabled = false;
+  }
+}
+
+function submitExitSlip() {
+  if (quizSubmitted) return;
+  quizSubmitted = true;
+
+  document.getElementById('btn-submit').disabled = true;
+
+  let correct = 0;
+  for (let q = 1; q <= 5; q++) {
+    const selected = quizSelected[q];
+    const answer   = CORRECT_ANSWERS[q];
+    answerLog[q]   = selected;
+
+    const opts = document.getElementById('q'+q+'opts');
+    const letters = ['A','B','C','D'];
+    opts.querySelectorAll('.option-btn').forEach((btn, i) => {
+      btn.disabled = true;
+      btn.classList.remove('selected');
+      const L = letters[i];
+      if (L === answer)   btn.classList.add('correct');
+      else if (L === selected && selected !== answer) btn.classList.add('wrong');
+    });
+    if (selected === answer) correct++;
+  }
+
+  exitCorrect = correct;
+  exitScore   = Math.round((correct / 5) * 100);
+
+  // Show score card
+  const scoreCard = document.getElementById('score-card');
+  scoreCard.classList.add('show');
+  document.getElementById('score-display').textContent = correct + '/5';
+
+  const grades = { 5: 'Superb! 🌟', 4: 'Excellent!', 3: 'Good', 2: 'Needs Review', 1: 'Needs Review', 0: 'Needs Review' };
+  document.getElementById('score-grade').textContent = grades[correct] || 'Needs Review';
+  document.getElementById('score-pct').textContent   = exitScore + '% — ' + correct + ' correct out of 5';
+
+  // Stop timer
+  clearInterval(timerInterval);
+
+  // Show log button
+  document.getElementById('log-bar').style.display = 'block';
+
+  window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+}
+
+// ══════════════════════════════════════════════════════════════
+//  LOG TO TRACKER
+// ══════════════════════════════════════════════════════════════
+function logToTracker() {
+  document.getElementById('btn-log').disabled = true;
+  document.getElementById('btn-log').textContent = 'Logging…';
+
+  // Build answer string: "1:B|2:C|3:B|4:B|5:A"
+  const answerString = [1,2,3,4,5]
+    .map(q => q + ':' + (answerLog[q] || '?'))
+    .join('|');
+
+  const payload = {
+    type:       'selfStudy',
+    sessionName: SESSION_NAME,
+    name:        studentName,
+    pin:         studentPin,
+    batch:       studentBatch,
+    timeTaken:   getTimeTaken(),
+    exitScore:   exitScore,
+    exitCorrect: exitCorrect,
+    exitTotal:   5,
+    answers:     answerString,
+    timestamp:   new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })
+  };
+
+  fetch(APPS_SCRIPT_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain' },
+    body: JSON.stringify(payload)
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data && data.status === 'ok') {
+      document.getElementById('log-status').textContent  = '✓ Score logged successfully! See you next week.';
+      document.getElementById('log-status').className    = 'log-status ok';
+      document.getElementById('log-bar').style.display   = 'none';
+      document.getElementById('complete-screen').className = 'show';
+    } else {
+      throw new Error('Bad response');
+    }
+  })
+  .catch(() => {
+    document.getElementById('btn-log').disabled    = false;
+    document.getElementById('btn-log').textContent = 'Log to Tracker';
+    document.getElementById('log-status').textContent = '✗ Logging failed. Please check your internet connection and try again.';
+    document.getElementById('log-status').className   = 'log-status err';
+  });
+}
+</script>
+</body>
+</html>
