@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Road to IIM — Paper 20</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-user-select:none;
+-moz-user-select:none;-ms-user-select:none;user-select:none;}
+:root{
+--navy:#0d1b2a;--navy2:#1a2e45;--gold:#c9a84c;--gold2:#e8c76a;
+--green:#2ecc71;--red:#e74c3c;--grey:#8899aa;--white:#f0f4f8;
+--purple:#9b59b6;--panel:280px;
+}
+body{background:var(--navy);color:var(--white);
+font-family:'Segoe UI',sans-serif;min-height:100vh;overflow-x:hidden;}
+#loginScreen{display:flex;flex-direction:column;align-items:center;
+justify-content:center;min-height:100vh;padding:20px;}
+.login-box{background:var(--navy2);border:1px solid var(--gold);
+border-radius:12px;padding:40px 36px;width:100%;max-width:440px;}
+.login-box h1{color:var(--gold);font-size:1.5rem;text-align:center;margin-bottom:6px;}
+.login-box p{color:var(--grey);font-size:.85rem;text-align:center;margin-bottom:28px;}
+.login-box label{display:block;font-size:.8rem;color:var(--grey);
+margin-bottom:4px;margin-top:14px;}
+.login-box input,.login-box select{width:100%;background:#0d1b2a;
+border:1px solid #2a4060;border-radius:6px;padding:10px 12px;
+color:var(--white);font-size:.95rem;}
+#startBtn{width:100%;margin-top:24px;padding:12px;background:var(--gold);
+color:var(--navy);font-size:1rem;font-weight:700;border:none;
+border-radius:8px;cursor:pointer;}
+#topBar{background:var(--navy2);border-bottom:1px solid #1e3a5a;
+padding:10px 20px;display:flex;align-items:center;
+justify-content:space-between;position:sticky;top:0;z-index:100;
+padding-right:calc(var(--panel) + 20px);}
+#topBar .logo{color:var(--gold);font-weight:700;font-size:1rem;}
+#timerDisplay{font-size:1.1rem;font-weight:700;color:var(--green);
+background:#0a2a1a;padding:6px 16px;border-radius:20px;
+border:1px solid var(--green);}
+#timerDisplay.urgent{color:var(--red);background:#2a0a0a;border-color:var(--red);}
+#progressBar{height:3px;background:#1e3a5a;margin-right:var(--panel);}
+#progressFill{height:100%;background:var(--gold);transition:width .3s;}
+#mainLayout{display:flex;min-height:calc(100vh - 54px);}
+#questionArea{flex:1;padding:28px 32px 80px 32px;max-width:calc(100% - var(--panel));}
+#sectionTag{display:inline-block;background:#1e3a5a;color:var(--gold);
+font-size:.72rem;font-weight:700;letter-spacing:.08em;
+padding:3px 10px;border-radius:4px;margin-bottom:10px;text-transform:uppercase;}
+#questionNumber{color:var(--grey);font-size:.85rem;margin-bottom:8px;}
+#questionStem{font-size:1.05rem;line-height:1.7;color:var(--white);margin-bottom:22px;word-break:break-word;overflow-wrap:break-word;}
+.options-list{list-style:none;display:flex;flex-direction:column;gap:10px;}
+.option-btn{background:#0d1b2a;border:1px solid #1e3a5a;border-radius:8px;
+padding:12px 16px;cursor:pointer;text-align:left;font-size:.95rem;
+color:var(--white);transition:all .2s;width:100%;}
+.option-btn:hover{border-color:var(--gold);background:#162030;}
+.option-btn.selected{border-color:var(--gold);background:#1e2e10;color:var(--gold2);}
+.option-btn.marked{border-color:var(--purple);}
+.opt-label{display:inline-block;width:24px;font-weight:700;color:var(--gold);}
+#paletteOverlay{position:fixed;top:0;right:0;width:100%;height:100%;
+z-index:200;pointer-events:none;display:flex;justify-content:flex-end;}
+#palettePanel{width:280px;height:100%;background:var(--navy2);
+border-left:1px solid #1e3a5a;padding:16px 12px;overflow-y:auto;
+pointer-events:all;}
+#paletteGrid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;
+margin-bottom:16px;}
+.pal-btn{width:100%;aspect-ratio:1;border-radius:6px;border:1px solid #1e3a5a;
+background:#0d1b2a;color:var(--grey);font-size:.78rem;font-weight:600;cursor:pointer;}
+.pal-btn.answered{background:var(--green);color:#fff;border-color:var(--green);}
+.pal-btn.marked{background:var(--purple);color:#fff;border-color:var(--purple);}
+.pal-btn.current{border:2px solid var(--gold);color:var(--gold);}
+#navBar{position:fixed;bottom:0;left:0;right:var(--panel);
+background:var(--navy2);border-top:1px solid #1e3a5a;
+display:flex;align-items:center;justify-content:space-between;
+padding:10px 20px;z-index:150;}
+.nav-btn{background:#1e3a5a;color:var(--white);border:none;
+border-radius:6px;padding:8px 18px;cursor:pointer;font-size:.9rem;font-weight:600;}
+#submitBtn{background:var(--gold);color:var(--navy);font-weight:700;display:none;}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;
+margin-bottom:20px;}
+.stat-box{background:var(--navy2);border-radius:8px;padding:16px;
+text-align:center;border:1px solid #1e3a5a;}
+.stat-box .val{font-size:1.6rem;font-weight:800;}
+.stat-box .lbl{font-size:.75rem;color:var(--grey);margin-top:4px;}
+.stat-box.correct .val{color:var(--green);}
+.stat-box.wrong .val{color:var(--red);}
+.stat-box.accuracy .val{color:var(--gold);}
+.review-card{background:var(--navy2);border-radius:10px;margin-bottom:14px;
+overflow:hidden;border-left:4px solid var(--grey);word-break:break-word;overflow-wrap:break-word;}
+.review-card.correct{border-left-color:var(--green);}
+.review-card.wrong{border-left-color:var(--red);}
+.review-exp{background:#0a2a15;border-left:3px solid var(--green);
+padding:10px 14px;font-size:.83rem;line-height:1.6;color:#a8e6c0;margin-top:8px;}
+#testScreen{display:none;}
+#resultsScreen{display:none;padding:28px 32px;max-width:calc(100% - var(--panel));}
+.score-hero{text-align:center;margin-bottom:28px;}
+.score-hero .score-num{font-size:3.5rem;font-weight:900;color:var(--gold);}
+.score-hero .score-sub{font-size:1rem;color:var(--grey);margin-top:4px;}
+.result-btn{padding:10px 24px;border-radius:8px;border:none;cursor:pointer;
+font-size:.95rem;font-weight:700;margin:0 6px;}
+.result-btn.gold{background:var(--gold);color:var(--navy);}
+.result-btn.ghost{background:transparent;border:1px solid var(--gold);color:var(--gold);}
+#sheet-notice{padding:10px 14px;border-radius:6px;font-size:.85rem;
+margin-bottom:16px;display:none;}
+#sheet-notice.submitting{background:#1a2e10;color:#c9e88a;border:1px solid #4a7a20;}
+#sheet-notice.success{background:#0a2a15;color:#2ecc71;border:1px solid #2ecc71;}
+#sheet-notice.failure{background:#2a0a0a;color:#e74c3c;border:1px solid #e74c3c;}
+.review-card-header{padding:14px 16px;display:flex;align-items:flex-start;gap:10px;}
+.review-badge{min-width:32px;height:32px;border-radius:6px;display:flex;
+align-items:center;justify-content:center;font-weight:800;font-size:.85rem;}
+.badge-correct{background:var(--green);color:#fff;}
+.badge-wrong{background:var(--red);color:#fff;}
+.badge-skipped{background:var(--grey);color:#fff;}
+.review-stem{font-size:.9rem;line-height:1.6;flex:1;}
+.review-opts{padding:0 16px 8px;}
+.review-opt{font-size:.83rem;padding:4px 0;color:var(--grey);}
+.review-opt.correct-opt{color:var(--green);font-weight:700;}
+.review-opt.your-wrong{color:var(--red);}
+.misses-box{background:#0d1b2a;border:1px solid #2a4060;border-radius:8px;
+padding:14px;margin-top:20px;}
+.misses-box h3{color:var(--gold);font-size:.9rem;margin-bottom:8px;}
+.misses-box textarea{width:100%;background:#0a1520;border:1px solid #1e3a5a;
+border-radius:6px;padding:10px;color:var(--white);font-size:.83rem;
+font-family:'Segoe UI',sans-serif;resize:vertical;min-height:80px;}
+.copy-btn{margin-top:8px;padding:6px 14px;background:var(--navy2);
+border:1px solid var(--gold);color:var(--gold);border-radius:6px;
+font-size:.8rem;cursor:pointer;}
+#retrySection{margin-top:24px;}
+#retrySection h3{color:var(--gold);margin-bottom:16px;}
+.retry-card{background:var(--navy2);border-radius:10px;padding:16px;
+margin-bottom:12px;border:1px solid #1e3a5a;}
+.retry-card .r-stem{font-size:.95rem;line-height:1.6;margin-bottom:12px;}
+.retry-opt{display:block;width:100%;background:#0d1b2a;border:1px solid #1e3a5a;
+border-radius:6px;padding:9px 14px;text-align:left;font-size:.88rem;
+color:var(--white);cursor:pointer;margin-bottom:6px;}
+.retry-opt.r-correct{border-color:var(--green);background:#0a2a15;color:var(--green);}
+.retry-opt.r-wrong{border-color:var(--red);background:#2a0a0a;color:var(--red);}
+.pal-legend{font-size:.72rem;color:var(--grey);margin-top:8px;}
+.pal-legend span{display:inline-block;width:10px;height:10px;border-radius:3px;
+margin-right:4px;vertical-align:middle;}
+
+/* ── MOBILE RESPONSIVE (≤768px) ─────────────────────────────── */
+@media (max-width:768px){
+
+  /* Palette: hidden by default on mobile */
+  #paletteOverlay{display:none;}
+  #palettePanel{width:280px;}
+
+  /* Question area: full width when palette hidden */
+  #questionArea{max-width:100%;padding:16px 16px 80px 16px;}
+
+  /* Top bar: no right padding offset for palette */
+  #topBar{padding-right:16px;}
+
+  /* Progress bar: full width */
+  #progressBar{margin-right:0;}
+
+  /* Nav bar: full width */
+  #navBar{right:0;padding:8px 12px;}
+  .nav-btn{padding:7px 10px;font-size:.8rem;}
+
+  /* Stats grid: 2x2 on mobile */
+  .stats-grid{grid-template-columns:repeat(2,1fr);}
+
+  /* Login inputs: 16px prevents iOS Safari zoom */
+  .login-box input,.login-box select{font-size:1rem;}
+
+  /* Score hero */
+  .score-hero .score-num{font-size:2.4rem;}
+
+  /* Results screen: full width */
+  #resultsScreen{max-width:100%;}
+
+  /* Misses textarea */
+  .misses-box textarea{font-size:.8rem;}
+
+  /* Nav button labels shorter */
+  #submitBtn{padding:7px 10px;}
+}
+
+/* Palette open on mobile — toggled by JS adding class */
+@media (max-width:768px){
+  #paletteOverlay.mobile-open{display:flex;}
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+<div class="login-box">
+  <h1>Road to IIM</h1>
+  <p>Paper 20 &nbsp;·&nbsp; Grammar &amp; Vocabulary &nbsp;·&nbsp; 45 Questions &nbsp;·&nbsp; 30 Minutes</p>
+  <label>Full Name</label>
+  <input type="text" id="inputName" placeholder="Your full name" autocomplete="off">
+  <label>IMS PIN</label>
+  <input type="text" id="inputPin" placeholder="STU or IMS + 10 digits" autocomplete="off">
+  <label>Batch</label>
+  <select id="inputBatch">
+    <option value="">— Select batch —</option>
+    <optgroup label="Classroom">
+      <option>A2701</option><option>A2702</option><option>A2703</option>
+      <option>A2704</option><option>A2705</option><option>A2706</option>
+      <option>A2707</option><option>A2708</option><option>A2709</option>
+      <option>A2710</option><option>A2711</option><option>A2712</option>
+    </optgroup>
+    <optgroup label="School"><option>Zebar</option></optgroup>
+    <optgroup label="Online">
+      <option>27E101</option><option>27E102</option><option>27E103</option>
+      <option>27E104</option><option>27E105</option>
+    </optgroup>
+    <optgroup label="Admin"><option>Admin</option></optgroup>
+  </select>
+  <div id="loginErr" style="display:none;margin-top:10px;color:var(--red);font-size:.83rem;"></div>
+  <button id="startBtn" onclick="startTest()">Begin Test →</button>
+</div>
+</div>
+
+<!-- TEST -->
+<div id="testScreen">
+  <div id="topBar">
+    <span class="logo">Road to IIM · Paper 20</span>
+    <div id="timerDisplay">30:00</div>
+  </div>
+  <div id="progressBar"><div id="progressFill" style="width:0%"></div></div>
+  <div id="mainLayout">
+    <div id="questionArea">
+      <div id="sectionTag"></div>
+      <div id="questionNumber"></div>
+      <div id="questionStem"></div>
+      <ul class="options-list" id="optionsList"></ul>
+    </div>
+  </div>
+  <div id="paletteOverlay">
+    <div id="palettePanel">
+      <div style="color:var(--gold);font-weight:700;font-size:.85rem;margin-bottom:10px;">Questions</div>
+      <div id="paletteGrid"></div>
+      <div class="pal-legend">
+        <span style="background:var(--green)"></span>Answered &nbsp;
+        <span style="background:var(--purple)"></span>Marked &nbsp;
+        <span style="background:#0d1b2a;border:1px solid #1e3a5a"></span>Unvisited
+      </div>
+    </div>
+  </div>
+  <div id="navBar">
+    <button class="nav-btn" onclick="navigate(-1)">← Prev</button>
+    <button class="nav-btn" onclick="togglePalette()">Questions</button>
+    <button class="nav-btn" onclick="markForReview()">★ Mark</button>
+    <button class="nav-btn" onclick="navigate(1)">Next →</button>
+    <button class="nav-btn" id="submitBtn" onclick="confirmSubmit()">Submit Test</button>
+  </div>
+</div>
+
+<!-- RESULTS -->
+<div id="resultsScreen">
+  <div id="topBar2" style="background:var(--navy2);border-bottom:1px solid #1e3a5a;
+    padding:10px 20px;display:flex;align-items:center;justify-content:space-between;
+    position:sticky;top:0;z-index:100;">
+    <span style="color:var(--gold);font-weight:700;">Road to IIM · Paper 20 — Results</span>
+  </div>
+  <div style="padding:28px 32px;">
+    <div class="score-hero" id="scoreHero"></div>
+    <div id="sheet-notice"></div>
+    <div class="stats-grid" id="statsGrid"></div>
+    <div style="text-align:center;margin-bottom:24px;">
+      <button class="result-btn gold" onclick="location.href='road_to_iim_tracker_v2.html'">Go to Tracker</button>
+      <button class="result-btn ghost" onclick="location.href='https://sahilkanetkar-collab.github.io/Road-to-IIM/'">All Tests</button>
+      <button class="result-btn ghost" onclick="generatePDF()">Download PDF</button>
+    </div>
+    <div class="misses-box">
+      <h3>Grammar &amp; Vocabulary Misses</h3>
+      <textarea id="missesText" readonly></textarea>
+      <button class="copy-btn" onclick="copyMisses(event)">Copy Misses</button>
+    </div>
+    <div id="retrySection"></div>
+    <h3 style="color:var(--gold);margin:24px 0 12px;">Review All Questions</h3>
+    <div id="review-list"></div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script>
+// ── CONFIG ──────────────────────────────────────────────────────────────────
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwGGxswx4hcBUFiT0QJIglowhKcJCv47MOR5LKBv9sILl-evsgZeKCms5y6s5zEXOUo6Q/exec";
+const TIMER_DURATION = 30;
+const ADMIN_PINS = ['IMS1111111111','IMS2222222222','IMS3333333333','IMS4444444444','IMS5555555555'];
+
+// ── QUESTIONS ───────────────────────────────────────────────────────────────
+const QUESTIONS = [
+  // ── VOCABULARY Q1–Q23 ──────────────────────────────────────────────────
+  {
+    section:"Vocabulary",
+    stem:"A student encounters the word <b>centrifugal</b> for the first time. Knowing that <i>centr-</i> derives from Latin <i>centrum</i> (centre) and <i>-fugal</i> from <i>fugere</i> (to flee), centrifugal most accurately describes:",
+    opts:["Something relating to a hundredth part","A force that drives things away from a centre","A machine that counts rotations per minute","A process that repeats every hundred cycles"],
+    ans:1,
+    exp:"centr- (centre) + fugere (to flee) = fleeing from the centre. This is a root-inference trap: cent- in centrifugal does NOT mean hundred — it means centre (centrum). Options A, C, and D all misapply the cent = hundred logic from number roots. B is the only meaning derivable from the actual roots."
+  },
+  {
+    section:"Vocabulary",
+    stem:"Choose the word that best fills the blank.\n\nThe CEO described the new approval workflow as deliberately ___________, designed to slow down unauthorised expenditure rather than accelerate it.",
+    opts:["impeding","expeditious","expedient","pedestrian"],
+    ans:0,
+    exp:"The sentence requires a word meaning obstruction or slowing down. Impede (im- = in/against + ped- = foot) means to put something in the way — to obstruct. Expeditious means speedy and efficient (opposite). Expedient means convenient or practical (no obstructive meaning). Pedestrian means dull or unimaginative (wrong register). A is unambiguous."
+  },
+  {
+    section:"Vocabulary",
+    stem:"Choose the word that best fills the blank.\n\nThe relief agency promised to ___________ the distribution of aid packages to flood-affected villages, cutting through all bureaucratic delays.",
+    opts:["impede","expedite","terminate","implicate"],
+    ans:1,
+    exp:"Expedite (ex- = out + ped- = foot: to free the foot from a trap) means to speed up by removing obstacles — exactly what the sentence describes. Impede means to obstruct (opposite). Terminate means to end. Implicate means to involve in wrongdoing — entirely wrong register. B is unambiguous."
+  },
+  {
+    section:"Vocabulary",
+    stem:"Three of the following words share the Latin root <i>pes/pedis</i> (foot). One does NOT belong to this root family. Identify it.",
+    opts:["Impediment","Expedition","Centipede","Pedantic"],
+    ans:3,
+    exp:"Impediment (im- + ped-), Expedition (ex- + ped-), and Centipede (centi- + ped-) all derive from Latin pes/pedis (foot). Pedantic comes from Greek paideia (education/upbringing) via Italian pedante (schoolmaster) — it has no etymological connection to the foot root. D is the odd one out."
+  },
+  {
+    section:"Vocabulary",
+    stem:"Complete the analogy.\n\n<b>BIPED : TWO LEGS :: ___________ : FOUR LEGS</b>",
+    opts:["Centipede","Quadruped","Trilateral","Quadrant"],
+    ans:1,
+    exp:"A biped walks on two legs (bi- = two + ped- = foot). A quadruped walks on four legs (quad- = four + ped- = foot). The analogy is structurally direct using number + foot roots. Centipede has ped- but not four. Trilateral has tri- but means three-sided, not four-legged. Quadrant has quad- but means a quarter-section. B is unambiguous."
+  },
+  {
+    section:"Vocabulary",
+    stem:"One of the following sentences uses the underlined word <b>incorrectly</b>. Identify it.\n\nA) The new highway was meant to <u>expedite</u> travel, but construction delays have actually <u>impeded</u> commuters for months.\nB) She consulted a <u>podiatrist</u> about the persistent pain in her heel.\nC) The <u>triennial</u> review, held every two years, evaluates all departmental budgets.\nD) The photographer balanced the camera on a <u>tripod</u> before taking the long-exposure shot.",
+    opts:["Sentence A","Sentence B","Sentence C","Sentence D"],
+    ans:2,
+    exp:"Triennial means occurring every THREE years (tri- = three). The sentence says 'every two years' — that is biennial (bi- = two). This is a precise root-based misuse. Sentence A uses expedite and impeded correctly. Sentence B uses podiatrist correctly. Sentence D uses tripod correctly. The error is in Sentence C."
+  },
+  {
+    section:"Vocabulary",
+    stem:"A medical report uses the term <b>podagra</b>. Knowing that <i>pod-</i> means foot and <i>-agra</i> comes from Greek <i>agra</i> (a seizure or acute pain), podagra most likely refers to:",
+    opts:["A severe cramp originating in the lower back","A painful condition of the foot, such as gout","A nerve condition causing loss of feeling in both feet","A surgical procedure to realign foot bones"],
+    ans:1,
+    exp:"pod- (foot) + agra (seizure / acute pain) = a painful seizing condition of the foot. Podagra is the classical term for gout in the foot. A places the pain in the back — wrong root. C describes neuropathy, not what the roots indicate. D is a procedure, not a condition. B is the only meaning derivable from both roots."
+  },
+  {
+    section:"Vocabulary",
+    stem:"Choose the word that best fills the blank.\n\nThe travel writer dismissed the coastal resort as thoroughly ___________: overpriced souvenir shops, identical buffet restaurants, and not a single authentic local experience to be found.",
+    opts:["antipodean","expeditionary","bilateral","pedestrian"],
+    ans:3,
+    exp:"Pedestrian used as an adjective means dull, unimaginative, lacking originality — the extended metaphorical sense. The sentence clearly describes a place devoid of originality. Antipodean means from the opposite side of the earth (no relevance). Expeditionary means relating to a purposeful journey (wrong). Bilateral means involving two sides (wrong). D is unambiguous."
+  },
+  {
+    section:"Vocabulary",
+    stem:"Choose the word that best fills the blank.\n\nThe minister acknowledged that red tape remained the biggest ___________ to foreign investment, promising to address it within six months.",
+    opts:["impedance","impeding","impediment","impede"],
+    ans:2,
+    exp:"The blank follows the superlative adjective 'biggest' — it requires a NOUN. Impediment is the correct noun form meaning a hindrance or obstacle. Impedance is a technical electrical term (resistance in an AC circuit) — wrong register. Impeding is a present participle (verb form) — cannot follow 'biggest.' Impede is a verb. C is unambiguous."
+  },
+  {
+    section:"Vocabulary",
+    stem:"Three of the following words use a number root (bi-, tri-, quad-, cent-) to indicate quantity. One uses a superficially similar spelling but the root does <b>NOT</b> indicate a number. Identify it.",
+    opts:["Biennial","Trilogy","Centrifuge","Quadrant"],
+    ans:0,
+    exp:"Wait — Biennial IS a number root (bi- = two). Let me re-read: Biennial (bi- = two: every two years), Trilogy (tri- = three: a set of three), Quadrant (quad- = four: a four-part division) — all genuine number roots. Centrifuge contains centr- from centrum (centre), NOT cent- meaning hundred. The -fuge suffix means to flee (fugere). Centrifuge has zero quantity meaning. C is the odd one out — answer position A above is WRONG. This question's correct answer is C (Centrifuge), placed at option index 2.",
+    // NOTE: This will be caught and fixed before final build — see audit below
+  },
+  {
+    section:"Vocabulary",
+    stem:"The Latin root <i>verto/vertere</i> means 'to turn.' An <b>extrovert</b> turns outward; an <b>introvert</b> turns inward. What would an <b>ambivert</b> most likely be?",
+    opts:["A person who turns completely away from social interaction","A person who exhibits both extroverted and introverted tendencies","A person who turns aggressively toward conflict in social settings","A person who is unable to form lasting social connections"],
+    ans:1,
+    exp:"Ambi- is Latin for 'both' (as in ambidextrous = using both hands equally). An ambivert turns both ways — outward AND inward — exhibiting traits of both extrovert and introvert. A describes a recluse (purely introverted, not ambi). C invents an aggression meaning with no etymological support. D is about social connection — unrelated to the direction of turning. B is unambiguous."
+  },
+  {
+    section:"Vocabulary",
+    stem:"Complete the analogy.\n\n<b>EXPEDITE : REMOVE OBSTACLES :: IMPEDE : ___________</b>",
+    opts:["Speed up progress","Move forward efficiently","Create obstacles","Examine the path carefully"],
+    ans:2,
+    exp:"Expedite (ex- = out + ped- = foot: free the foot from a trap) means to remove obstacles and speed up. Impede (im- = in + ped- = foot: put something against the foot) means to place an obstacle in the way. The analogy is functional-antonymous: expedite removes, impede creates. A is the meaning of expedite (wrong direction). B has no root support. D has no etymological grounding. C is unambiguous."
+  },
+  {
+    section:"Vocabulary",
+    stem:"Choose the word that best fills the blank.\n\nIn the ornithology report, the ___________ nature of the albatross was noted: the bird spends years at sea with no need to return to land.",
+    opts:["expeditious","introversive","bilateral","peregrine"],
+    ans:3,
+    exp:"Peregrine derives from Latin peregrinus (per- = through + ager = field/land) meaning foreign, far-wandering. A peregrine creature travels far from its origins — exactly the albatross. Expeditious means speedy and efficient (not about travel habits). Introversive is non-standard and describes inward personality, not travel. Bilateral means involving two sides (wrong). D is unambiguous."
+  },
+  {
+    section:"Vocabulary",
+    stem:"Choose the word that best fills the blank.\n\nThough initially reluctant to speak in public, years of teaching had made her surprisingly ___________, able to project her voice to the back of any hall without effort.",
+    opts:["pedestrian","expedient","mellifluous","vociferous"],
+    ans:3,
+    exp:"The sentence describes someone who can project their voice powerfully. Vociferous = vox (voice) + ferre (to carry/bear) = loudly insistent, with a powerful projecting voice. Pedestrian means dull or unimaginative (wrong). Expedient means convenient or practical (no voice connection). Mellifluous (mel- = honey + fluere = to flow) means smooth and sweetly flowing — the opposite of a powerful projected voice. D is unambiguous."
+  },
+  {
+    section:"Vocabulary",
+    stem:"One of the following sentences uses the underlined word <b>incorrectly</b>. Identify it.\n\nA) The <u>antipodean</u> wildlife of Australia includes species found nowhere else on earth.\nB) His <u>introvert</u> personality made large gatherings exhausting rather than energising.\nC) The <u>triennial</u> census, conducted every three years, tracks population changes.\nD) The <u>podium</u> was draped in the national flag as the ceremony began.",
+    opts:["Sentence A","Sentence B","Sentence C","Sentence D"],
+    ans:1,
+    exp:"Introvert is a NOUN (one who turns inward). The sentence uses it as an ADJECTIVE modifying 'personality' — the correct adjectival form is 'introverted personality.' Using 'introvert' directly before a noun as a modifier is incorrect. A uses antipodean correctly as an adjective. C uses triennial correctly (every three years). D uses podium correctly. The error is in Sentence B."
+  },
+  {
+    section:"Vocabulary",
+    stem:"A biology paper uses the term <b>quadriplegia</b>. Knowing that <i>quadri-</i> means four and <i>-plegia</i> comes from Greek <i>plege</i> (a stroke or blow causing paralysis), quadriplegia most likely refers to:",
+    opts:["A condition involving paralysis of all four limbs","A disorder that causes quadruple or split vision","A surgical technique requiring four separate incisions","A rare bone condition of the four smallest vertebrae"],
+    ans:0,
+    exp:"quadri- (four) + plegia (paralysis from a stroke/blow) = paralysis of four limbs. This is the precise clinical meaning of quadriplegia. B misapplies quad- to vision with no root support. C invents a surgical meaning with no etymological basis. D misapplies it to vertebrae. A is directly and unambiguously derivable from the roots provided."
+  },
+  {
+    section:"Vocabulary",
+    stem:"Choose the word that best fills the blank.\n\nThe mountain rescue team moved through the blizzard with such ___________ that they located all three climbers within four hours of the alert.",
+    opts:["impediment","expedition","expediency","expeditiousness"],
+    ans:3,
+    exp:"The sentence praises the speed and efficiency of the team's movement. Expeditiousness is the noun form of expeditious (prompt, speedy, efficient) — the quality of being expeditious. Impediment means an obstacle (opposite). Expedition means a journey with a specific purpose — it does not describe the quality of movement. Expediency means convenient advantage (a different connotation — doing what is convenient, not necessarily fast). D is unambiguous."
+  },
+  {
+    section:"Vocabulary",
+    stem:"Three of the following words contain the Latin root <i>dict-</i> from <i>dicere</i> (to say or declare). One contains a superficially similar spelling but derives from a <b>different</b> root. Identify it.",
+    opts:["Edict","Abdicate","Verdict","Dictum"],
+    ans:1,
+    exp:"Edict (e- + dict- = to say outward: an official declaration), Verdict (veri- = true + dict- = the true saying: a judicial finding), and Dictum (dict- + -um = a formal saying or maxim) all derive from Latin dicere (to say). Abdicate comes from abdicare = ab- (away) + dicare (to dedicate or proclaim) — a different Latin root. Dicare (dedicate) is etymologically distinct from dicere (to say). B is the odd one out."
+  },
+  {
+    section:"Vocabulary",
+    stem:"Choose the word that best fills the blank.\n\nThe judge's ___________ was unambiguous: the defendant was acquitted on all charges due to insufficient evidence.",
+    opts:["dictum","edict","verdict","mandate"],
+    ans:2,
+    exp:"A verdict is the formal judicial declaration on guilt or innocence (veri- = true + dict- = saying: the true saying). Dictum is a formal maxim or pronouncement, not a judicial outcome. Edict is a proclamation by a government or authority — not a court finding. Mandate is an authoritative instruction or order — not a legal outcome. C is unambiguous."
+  },
+  {
+    section:"Vocabulary",
+    stem:"The word <b>maledicent</b> is formed from <i>male-</i> (badly) and <i>dicere</i> (to say). A maledicent person is therefore someone who:",
+    opts:["Makes poor decisions under pressure","Habitually speaks ill of or slanders others","Refuses to issue any formal declarations","Struggles to articulate thoughts clearly"],
+    ans:1,
+    exp:"male- (badly) + dicere (to say) = one who says bad things about others. Maledicent means given to speaking ill of others. A misreads male- as 'bad decisions' — no connection to speaking. C invents a refusal meaning. D addresses articulation clarity — the root speaks only to the content (bad/harmful speech), not the ability to articulate. B is directly derivable."
+  },
+  {
+    section:"Vocabulary",
+    stem:"Choose the word that best fills the blank.\n\nThe policy paper argued that ___________ measures — minor, incremental adjustments rather than wholesale reform — would fail to address the structural failures of the education system.",
+    opts:["palliative","expedient","pedestrian","bilateral"],
+    ans:0,
+    exp:"Palliative (from Latin palliare = to cloak or conceal) describes measures that ease symptoms without treating the underlying cause — minor adjustments rather than deep reform. The sentence's own definition ('minor, incremental adjustments rather than wholesale reform') maps precisely onto palliative. Expedient means convenient or practical (no relevance to surface vs. deep). Pedestrian means dull (wrong context). Bilateral means involving two sides (wrong). A is unambiguous."
+  },
+  {
+    section:"Vocabulary",
+    stem:"Complete the analogy.\n\n<b>EXPORT : IMPORT :: EXTROVERT : ___________</b>",
+    opts:["ambivert","divert","revert","introvert"],
+    ans:3,
+    exp:"Export (ex- = out) vs Import (im- = in): the analogy is directional opposition using out vs in. Extrovert (extro- = outward, verto = turn) vs Introvert (intro- = inward, verto = turn): the same directional opposition. Ambivert means both directions (not opposite). Divert means to turn aside (per- = different direction, not the inward opposite). Revert means to turn back (re- = again, not inward). D is unambiguous."
+  },
+  {
+    section:"Vocabulary",
+    stem:"One of the following sentences uses the underlined word <b>incorrectly</b>. Identify it.\n\nA) The <u>chiropodist</u> examined her feet and recommended custom orthotic insoles.\nB) Standing at the <u>podium</u>, the director addressed the gathered shareholders.\nC) The <u>biannual</u> summit, held once every two years, brings together all member nations.\nD) The city's <u>centennial</u> celebrations marked exactly one hundred years since its founding.",
+    opts:["Sentence A","Sentence B","Sentence C","Sentence D"],
+    ans:2,
+    exp:"Biannual means TWICE a year (bi- = two + annual = yearly). The sentence says 'once every two years' — that is biennial (bi- + ennial: every two-year period). Biannual and biennial are a classic root-confusion pair. A uses chiropodist correctly (a foot specialist: cheir = hand + pod = foot). B uses podium correctly. D uses centennial correctly (the hundredth anniversary). The error is in Sentence C."
+  },
+
+  // ── GRAMMAR Q24–Q45 ────────────────────────────────────────────────────
+  {
+    section:"Grammar",
+    stem:"Choose the option that correctly completes the sentence.\n\nNeither the manager nor the team members ___________ informed about the change in policy before the announcement was made.",
+    opts:["were","was","has been","is"],
+    ans:0,
+    exp:"In neither...nor constructions, the verb agrees with the subject closest to it (the proximity rule). The subject nearest the verb is 'team members' — plural. The verb must therefore be plural: were. Was and is are singular. Has been is singular perfect. A is unambiguous."
+  },
+  {
+    section:"Grammar",
+    stem:"Identify the grammatically <b>correct</b> sentence.",
+    opts:["She has submitted the report yesterday, before the deadline.","She had submitted the report yesterday, before the deadline.","She has been submitting the report yesterday, before the deadline.","She submitted the report yesterday, before the deadline."],
+    ans:3,
+    exp:"Yesterday is a specific past time marker. The present perfect (has submitted) cannot be used with specific past time markers — it requires present relevance without a defined past point. The simple past (submitted) is the correct tense with yesterday. The past perfect (had submitted) requires a later past event as a reference — none exists here. Has been submitting is present perfect continuous — incompatible with a completed past action and yesterday. D is unambiguous."
+  },
+  {
+    section:"Grammar",
+    stem:"Identify the sentence that contains a <b>dangling modifier</b>.",
+    opts:["Exhausted after the long flight, the hotel room was a welcome sight.","Running through the rain, she arrived at the shelter completely drenched.","Having read the brief carefully, the lawyer drafted a precise response.","Determined to win the contract, the team worked through the night."],
+    ans:0,
+    exp:"'Exhausted after the long flight' is a participial phrase that must logically modify the subject of the main clause. The subject is 'the hotel room' — a room cannot be exhausted after a flight. The logical subject (the traveller) is absent. B: 'she' was running — correct attachment. C: 'the lawyer' read the brief — correct. D: 'the team' was determined — correct. The dangling modifier is in Sentence A."
+  },
+  {
+    section:"Grammar",
+    stem:"Choose the option that correctly restores parallel structure.\n\nThe board approved the new budget, restructured the executive team, and ___________ to a sub-committee for review.",
+    opts:["the sustainability plan was assigned","assigning the sustainability plan","assigned the sustainability plan","the sustainability plan"],
+    ans:2,
+    exp:"The series contains two parallel simple past verbs with the board as subject: 'approved' and 'restructured.' The third element must maintain the same structure: a simple past verb with the board still as subject. 'Assigned the sustainability plan' achieves this. B and C make the sustainability plan the subject, breaking the parallelism. D uses a gerund, breaking the verb pattern. A is unambiguous."
+  },
+  {
+    section:"Grammar",
+    stem:"Which option correctly converts the sentence into reported speech?\n\nDirect: The professor said, \"I will return your assignments next Monday.\"",
+    opts:["The professor said that he will return their assignments next Monday.","The professor said that he returns their assignments next Monday.","The professor said that he had returned their assignments next Monday.","The professor said that he would return their assignments the following Monday."],
+    ans:3,
+    exp:"With the reporting verb 'said' in past tense, the backshift rule applies: will → would. The deictic time reference also shifts: 'next Monday' in direct speech becomes 'the following Monday' in reported speech (the perspective changes from the original moment of speaking). A keeps 'will' and 'next Monday' — both wrong. B shifts to simple present — wrong. C uses past perfect and keeps 'next Monday' — both wrong. D is correct."
+  },
+  {
+    section:"Grammar",
+    stem:"Choose the correct verb form.\n\nA panel of senior economists ___________ been asked to review the fiscal deficit projections before the budget presentation.",
+    opts:["has","have","were","are"],
+    ans:0,
+    exp:"The subject is 'a panel' — a singular collective noun. The prepositional phrase 'of senior economists' modifies the noun but does not change its number. 'A panel' takes a singular verb: has been asked. Have and are treat panel as plural. Were is plural past. A is unambiguous."
+  },
+  {
+    section:"Grammar",
+    stem:"Identify the grammatically <b>correct</b> sentence.",
+    opts:["By the time the ambulance arrived, the patient lost consciousness.","By the time the ambulance arrived, the patient was losing consciousness.","By the time the ambulance arrived, the patient has lost consciousness.","By the time the ambulance arrived, the patient had lost consciousness."],
+    ans:3,
+    exp:"'By the time ... arrived' establishes a completed reference point in the past. An action that was completed BEFORE that reference point requires the past perfect: 'had lost.' Simple past (lost) does not express the before-and-after sequence. Past continuous (was losing) implies the action was in progress at that moment, not completed before it. Present perfect (has lost) is incompatible with a past reference point. D is unambiguous."
+  },
+  {
+    section:"Grammar",
+    stem:"Identify the sentence that contains a <b>misplaced modifier</b>.",
+    opts:["She whispered the answer directly into his ear.","He almost drove his car into every pothole on the road.","The inspector found what appeared to be a forged signature on the document.","The committee only approved three of the twelve proposals submitted."],
+    ans:1,
+    exp:"'Almost' modifies 'drove' — suggesting he came close to driving but did not. However, the intended meaning is that he drove into nearly every pothole (almost every = most). The modifier 'almost' should precede 'every': 'He drove his car into almost every pothole.' A, C, and D have no misplacement issues. The misplaced modifier is in Sentence B."
+  },
+  {
+    section:"Grammar",
+    stem:"Identify the sentence with <b>faulty parallelism</b>.",
+    opts:["She is intelligent, hardworking, and completely reliable.","He spends his weekends reading, hiking, and cooking elaborate meals.","After reviewing the proposal, the board requested several amendments.","The new policy requires employees to log their hours, submit weekly reports, and to attend a monthly review meeting."],
+    ans:3,
+    exp:"The series in D uses infinitives but inconsistently: 'to log ... submit ... and to attend.' Repeating 'to' before 'attend' but not before 'submit' breaks the parallel structure. Correct form: 'to log, submit, and attend' (one 'to' shared) OR 'to log, to submit, and to attend' (all three explicit). A has three adjectives — parallel. B has three gerunds — parallel. C is a single clause with no series. D is unambiguous."
+  },
+  {
+    section:"Grammar",
+    stem:"Which option correctly converts the sentence into passive voice?\n\nActive: The committee will announce the results at midnight.",
+    opts:["The results will be announced by the committee at midnight.","The results are announced by the committee at midnight.","The results were announced by the committee at midnight.","The results would be announced by the committee at midnight."],
+    ans:0,
+    exp:"The active sentence uses 'will announce' — future simple active. The correct passive equivalent is 'will be announced' — future simple passive. B uses present simple passive. C uses past simple passive. D uses 'would be announced' — a conditional or reported form, not future. A is unambiguous."
+  },
+  {
+    section:"Grammar",
+    stem:"Which option correctly converts the sentence into reported speech?\n\nDirect: She asked him, \"Have you finished the quarterly report?\"",
+    opts:["She asked him if he has finished the quarterly report.","She asked him whether he finished the quarterly report.","She asked him if he had finished the quarterly report.","She asked him that had he finished the quarterly report."],
+    ans:2,
+    exp:"The direct question uses present perfect ('have you finished'). With the past-tense reporting verb 'asked,' the backshift rule applies: present perfect → past perfect (had finished). Yes/no questions in reported speech use 'if' or 'whether' — not 'that.' A keeps present perfect — wrong backshift. B shifts to simple past — incorrect; present perfect backshifts to past perfect, not simple past. D uses 'that' and inverts word order — both wrong. C is unambiguous."
+  },
+  {
+    section:"Grammar",
+    stem:"Choose the correct verb form.\n\nAlongside the chairman's speech ___________ two detailed reports from independent auditors, both of which contradicted the official figures.",
+    opts:["are","is","was","have"],
+    ans:0,
+    exp:"This is an inverted sentence. Rewritten in standard order: 'Two detailed reports from independent auditors are alongside the chairman's speech.' The real subject is 'two detailed reports' — plural. The verb must be plural present tense: are. Is and was are singular. Have is plural but changes the meaning and tense inappropriately. A is unambiguous."
+  },
+  {
+    section:"Grammar",
+    stem:"Identify the grammatically <b>correct</b> sentence.",
+    opts:["The scientists study the effects of microplastics on marine life since 2018 and have published six papers so far.","The scientists have been studying the effects of microplastics on marine life since 2018 and have published six papers so far.","The scientists are studying the effects of microplastics on marine life since 2018 and published six papers so far.","The scientists studied the effects of microplastics on marine life since 2018 and have published six papers so far."],
+    ans:1,
+    exp:"'Since 2018' signals an action begun in the past that continues to the present — requiring present perfect or present perfect continuous. 'Have been studying' (present perfect continuous) correctly expresses the ongoing, unfinished research. 'Have published' (present perfect) in the second clause correctly expresses completed actions with present relevance. A uses simple present with 'since' — wrong. C uses present continuous with 'since' — wrong. D uses simple past with 'since' — wrong. B is unambiguous."
+  },
+  {
+    section:"Grammar",
+    stem:"Identify the sentence that contains a <b>dangling modifier</b>.",
+    opts:["Wrapped in waterproof packaging, the team stored the documents safely.","To qualify for the scholarship, applicants must submit three references.","After reviewing the proposal, the board requested several amendments.","Driven by cost concerns, the renovation budget was cut by forty percent."],
+    ans:3,
+    exp:"'Driven by cost concerns' is a participial phrase that must logically modify the subject of the main clause. The subject is 'the renovation budget' — a budget cannot be driven by concerns; it is the decision-makers who are driven by concerns. The logical subject is absent. A: 'the team' stored the documents — correct. B: 'applicants' must qualify — correct. C: 'the board' reviewed — correct. D contains the dangling modifier."
+  },
+  {
+    section:"Grammar",
+    stem:"Choose the correct preposition to complete the sentence.\n\nThe audit committee was deeply concerned ___________ the discrepancies found in three consecutive quarterly reports.",
+    opts:["about","for","with","of"],
+    ans:0,
+    exp:"'Concerned about' is the standard collocation when expressing worry or anxiety about a matter or situation. 'Concerned for' expresses worry about a person's welfare (e.g., concerned for her safety) — not applicable to abstract discrepancies. 'Concerned with' means involved in or dealing with (e.g., the department is concerned with logistics) — a different sense entirely. 'Concerned of' is not a standard collocation. A is unambiguous."
+  },
+  {
+    section:"Grammar",
+    stem:"Identify the sentence in which parallelism with correlative conjunctions is <b>correctly</b> maintained.",
+    opts:["The new CEO not only restructured the sales division but also a complete overhaul of the supply chain was ordered.","She is both a skilled negotiator and has great patience.","Either the director approves the plan or it must be rejected by the committee.","The report neither confirmed the allegations nor provided any exculpatory evidence."],
+    ans:3,
+    exp:"Correlative conjunctions (neither...nor, not only...but also, both...and, either...or) require identical grammatical structure on both sides. D: 'neither confirmed ... nor provided' — both are simple past verbs, parallel. A: 'not only restructured' (verb) but 'a complete overhaul was ordered' (passive noun clause) — not parallel. B: 'both a skilled negotiator' (noun phrase) and 'has great patience' (verb phrase) — not parallel. C: two different subjects with different structures — not parallel. D is unambiguous."
+  },
+  {
+    section:"Grammar",
+    stem:"Choose the correct verb form.\n\nThe decision taken by the three senior partners, all of whom had been with the firm for over twenty years, ___________ overturned by the newly appointed managing director.",
+    opts:["were","have been","was","has"],
+    ans:2,
+    exp:"The subject is 'The decision' — singular. The long relative clause ('all of whom had been with the firm for over twenty years') modifies 'partners' and is an interrupting clause that does not change the number of the head subject. 'The decision ... was overturned' is correct. Were and have been are plural. Has alone is incomplete and changes the meaning. C is unambiguous."
+  },
+  {
+    section:"Grammar",
+    stem:"Identify the grammatically <b>correct</b> sentence.",
+    opts:["By the time the inspection team arrives next Friday, the contractor will complete all the remedial work.","By the time the inspection team arrives next Friday, the contractor will have completed all the remedial work.","By the time the inspection team arrives next Friday, the contractor has completed all the remedial work.","By the time the inspection team arrives next Friday, the contractor completes all the remedial work."],
+    ans:1,
+    exp:"'By the time ... arrives' establishes a future reference point. An action completed BEFORE that future point requires the future perfect: 'will have completed.' A uses simple future ('will complete') — does not express completion before the reference point. C uses present perfect — cannot refer to a future time. D uses simple present — no future meaning. B is unambiguous."
+  },
+  {
+    section:"Grammar",
+    stem:"Which option correctly converts the sentence into reported speech?\n\nDirect: The supervisor told the intern, \"Do not share any confidential files with external parties.\"",
+    opts:["The supervisor told the intern not to share any confidential files with external parties.","The supervisor told the intern that do not share any confidential files with external parties.","The supervisor said the intern to not share any confidential files with external parties.","The supervisor told the intern that he should not have shared confidential files."],
+    ans:0,
+    exp:"Reported commands use the structure: told + object + (not) to + infinitive. 'Told the intern not to share' is the standard and correct form. B incorrectly uses 'that' before a bare imperative — wrong structure for reporting commands. C uses 'said ... to not' — 'said to' is not the correct reporting verb structure for commands; 'told + object' is required. D changes the meaning entirely (a past action vs. an instruction). A is unambiguous."
+  },
+  {
+    section:"Grammar",
+    stem:"Identify the grammatically <b>incorrect</b> sentence.",
+    opts:["The new policy has been circulated to all department heads.","The results of the three-day audit were present to the board yesterday.","The report was submitted on time, despite the last-minute changes.","All employees are required to complete the compliance training by Friday."],
+    ans:1,
+    exp:"'Were present' is grammatically wrong here. Present is an adjective meaning in attendance — 'results' cannot be physically present. The required form is the past passive 'were presented.' A uses 'has been circulated' correctly. C uses 'was submitted' correctly. D uses 'are required' correctly. The error is in Sentence B."
+  },
+  {
+    section:"Grammar",
+    stem:"Choose the correct preposition to complete the sentence.\n\nThe new amendment is fully compliant ___________ the regulations set out in the International Trade Agreement of 2019.",
+    opts:["to","of","with","for"],
+    ans:2,
+    exp:"'Compliant with' is the only standard collocation in English — meaning in accordance with a rule, standard, or requirement. 'Compliant to' is non-standard. 'Compliant of' is not a recognised collocation. 'Compliant for' is not a recognised collocation. C is unambiguous."
+  },
+  {
+    section:"Grammar",
+    stem:"Choose the correct verb form.\n\nAnalysing large volumes of unstructured data without reliable computational tools ___________ time-consuming and prone to significant error.",
+    opts:["are","have been","were","is"],
+    ans:3,
+    exp:"The subject is the entire gerund phrase 'Analysing large volumes of unstructured data without reliable computational tools.' A gerund phrase functioning as the subject of a sentence is always treated as singular, regardless of its length or complexity. It therefore takes a singular verb: is. Are, have been, and were all treat the subject as plural. D is unambiguous."
+  }
+];
+
+// ── Fix Q10 — correct answer is Centrifuge which is at index 2 (option C) ──
+// Q10 answer was set to 0 (A=Biennial) in the plan — this needs to be C (index 2)
+// HOWEVER the distribution key says Q10 = A (index 0)
+// Resolution: reorder Q10 options so Centrifuge is at position A (index 0)
+// Q10 opts reordered: [Centrifuge, Biennial, Trilogy, Quadrant] → ans=0
+QUESTIONS[9].opts = ["Centrifuge","Biennial","Trilogy","Quadrant"];
+QUESTIONS[9].ans = 0;
+QUESTIONS[9].exp = "Biennial (bi- = two: every two years), Trilogy (tri- = three: a set of three works), and Quadrant (quad- = four: a quarter-section) all use genuine number roots to indicate quantity. Centrifuge contains centr- from Latin centrum (centre), NOT cent- meaning hundred. The -fuge suffix derives from fugere (to flee). Centrifuge has no quantity meaning whatsoever — it is a false cognate. A is the odd one out.";
+
+// ── STATE ────────────────────────────────────────────────────────────────────
+let studentName="", studentPin="", studentBatch="";
+let currentQ=0, secondsLeft=TIMER_DURATION*60, timerInterval=null;
+let userAnswers=new Array(45).fill(null);
+let markedForReview=new Array(45).fill(false);
+let testSubmitted=false;
+
+// ── LOGIN ────────────────────────────────────────────────────────────────────
+function startTest(){
+  const name=document.getElementById('inputName').value.trim();
+  const pin=document.getElementById('inputPin').value.trim().toUpperCase();
+  const batch=document.getElementById('inputBatch').value;
+  const err=document.getElementById('loginErr');
+  if(!name||!pin||!batch){err.textContent='Please fill in all fields.';err.style.display='block';return;}
+  if(!/^(STU|IMS)\d{10}$/.test(pin)){err.textContent='PIN must be STU or IMS followed by exactly 10 digits.';err.style.display='block';return;}
+  const isAdmin=ADMIN_PINS.includes(pin);
+  if(isAdmin&&batch!=='Admin'){err.textContent='Admin PIN must be used with the Admin batch only.';err.style.display='block';return;}
+  if(!isAdmin&&batch==='Admin'){err.textContent='Only Admin PINs may select the Admin batch.';err.style.display='block';return;}
+  studentName=name; studentPin=pin; studentBatch=batch;
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('testScreen').style.display='block';
+  // On mobile, palette starts hidden; on desktop, starts visible
+  if(window.innerWidth > 768){
+    document.getElementById('paletteOverlay').style.display='flex';
+  } else {
+    document.getElementById('paletteOverlay').style.display='none';
+  }
+  buildPalette();
+  renderQuestion();
+  startTimer();
+}
+
+// ── TIMER ────────────────────────────────────────────────────────────────────
+function startTimer(){
+  timerInterval=setInterval(()=>{
+    secondsLeft--;
+    const m=String(Math.floor(secondsLeft/60)).padStart(2,'0');
+    const s=String(secondsLeft%60).padStart(2,'0');
+    const el=document.getElementById('timerDisplay');
+    el.textContent=m+':'+s;
+    if(secondsLeft<=300) el.classList.add('urgent');
+    if(secondsLeft<=0){clearInterval(timerInterval);submitTest();}
+  },1000);
+}
+
+// ── RENDER QUESTION ──────────────────────────────────────────────────────────
+function renderQuestion(){
+  const q=QUESTIONS[currentQ];
+  document.getElementById('sectionTag').textContent=q.section;
+  document.getElementById('questionNumber').textContent='Question '+(currentQ+1)+' of 45';
+  document.getElementById('questionStem').innerHTML=q.stem.replace(/\n/g,'<br>');
+  const ol=document.getElementById('optionsList');
+  ol.innerHTML='';
+  q.opts.forEach((opt,i)=>{
+    const li=document.createElement('li');
+    const btn=document.createElement('button');
+    btn.className='option-btn';
+    if(userAnswers[currentQ]===i) btn.classList.add('selected');
+    if(markedForReview[currentQ]) btn.classList.add('marked');
+    btn.innerHTML='<span class="opt-label">'+['A','B','C','D'][i]+'</span> '+opt;
+    btn.onclick=()=>selectAnswer(i);
+    li.appendChild(btn); ol.appendChild(li);
+  });
+  // Submit button: visible only on Q45 (index 44)
+  document.getElementById('submitBtn').style.display=(currentQ===44)?'block':'none';
+  updatePalette();
+  updateProgress();
+}
+
+function selectAnswer(idx){
+  userAnswers[currentQ]=idx;
+  renderQuestion();
+}
+
+function navigate(dir){
+  const next=currentQ+dir;
+  if(next>=0&&next<45){currentQ=next;renderQuestion();}
+}
+
+let paletteOpen = window.innerWidth > 768;
+function togglePalette(){
+  paletteOpen=!paletteOpen;
+  const isMobile = window.innerWidth <= 768;
+  const overlay = document.getElementById('paletteOverlay');
+  const navBar  = document.getElementById('navBar');
+  const qArea   = document.getElementById('questionArea');
+  if(isMobile){
+    overlay.classList.toggle('mobile-open', paletteOpen);
+  } else {
+    overlay.style.display = paletteOpen ? 'flex' : 'none';
+    navBar.style.right    = paletteOpen ? 'var(--panel)' : '0';
+    qArea.style.maxWidth  = paletteOpen ? 'calc(100% - var(--panel))' : '100%';
+  }
+}
+
+function markForReview(){
+  markedForReview[currentQ]=!markedForReview[currentQ];
+  renderQuestion();
+}
+
+function buildPalette(){
+  const grid=document.getElementById('paletteGrid');
+  grid.innerHTML='';
+  for(let i=0;i<45;i++){
+    const btn=document.createElement('button');
+    btn.className='pal-btn';
+    btn.id='pb'+(i+1);
+    btn.textContent=i+1;
+    btn.onclick=(()=>{const idx=i;return()=>{currentQ=idx;renderQuestion();}})();
+    grid.appendChild(btn);
+  }
+}
+
+function updatePalette(){
+  for(let i=0;i<45;i++){
+    const btn=document.getElementById('pb'+(i+1));
+    if(!btn) continue;
+    btn.className='pal-btn';
+    if(markedForReview[i]) btn.classList.add('marked');
+    else if(userAnswers[i]!==null) btn.classList.add('answered');
+    if(i===currentQ) btn.classList.add('current');
+  }
+}
+
+function updateProgress(){
+  const answered=userAnswers.filter(a=>a!==null).length;
+  document.getElementById('progressFill').style.width=(answered/45*100)+'%';
+}
+
+function confirmSubmit(){
+  const unanswered=userAnswers.filter(a=>a===null).length;
+  let msg='Submit the test?';
+  if(unanswered>0) msg='You have '+unanswered+' unanswered question'+(unanswered>1?'s':'')+'. Submit anyway?';
+  if(confirm(msg)) submitTest();
+}
+
+// ── SUBMIT ───────────────────────────────────────────────────────────────────
+function submitTest(){
+  if(testSubmitted) return;
+  testSubmitted=true;
+  clearInterval(timerInterval);
+  let correct=0,wrong=0,skipped=0;
+  const sectionErrors={};
+  const wrongQuestions=[];
+  QUESTIONS.forEach((q,i)=>{
+    const sec=q.section;
+    if(userAnswers[i]===null){skipped++;}
+    else if(userAnswers[i]===q.ans){correct++;}
+    else{
+      wrong++;
+      wrongQuestions.push(i+1);
+      sectionErrors[sec]=(sectionErrors[sec]||0)+1;
+    }
+  });
+  const score=correct*4-wrong*1;
+  showResults(score,correct,wrong,skipped);
+  saveToTracker(score,correct,wrong,skipped);
+  logToSheet(score,correct,wrong,skipped,sectionErrors,wrongQuestions);
+}
+
+function showResults(score,correct,wrong,skipped){
+  document.getElementById('testScreen').style.display='none';
+  document.getElementById('resultsScreen').style.display='block';
+  const acc=((correct/(45-skipped||1))*100).toFixed(1);
+  document.getElementById('scoreHero').innerHTML=
+    '<div class="score-num">'+score+'</div>'+
+    '<div class="score-sub">out of 180 &nbsp;·&nbsp; '+studentName+' &nbsp;·&nbsp; '+studentPin+' &nbsp;·&nbsp; '+studentBatch+'</div>';
+  document.getElementById('statsGrid').innerHTML=
+    '<div class="stat-box correct"><div class="val">'+correct+'</div><div class="lbl">Correct</div></div>'+
+    '<div class="stat-box wrong"><div class="val">'+wrong+'</div><div class="lbl">Wrong</div></div>'+
+    '<div class="stat-box"><div class="val" style="color:var(--grey)">'+skipped+'</div><div class="lbl">Skipped</div></div>'+
+    '<div class="stat-box accuracy"><div class="val">'+acc+'%</div><div class="lbl">Accuracy</div></div>';
+  buildReview();
+  buildMisses();
+  buildRetry();
+}
+
+function buildReview(){
+  const list=document.getElementById('review-list');
+  list.innerHTML='';
+  QUESTIONS.forEach((q,i)=>{
+    const ua=userAnswers[i];
+    const correct=(ua===q.ans);
+    const skipped=(ua===null);
+    const card=document.createElement('div');
+    card.className='review-card '+(skipped?'':correct?'correct':'wrong');
+    let badgeClass=skipped?'badge-skipped':correct?'badge-correct':'badge-wrong';
+    let badgeText=skipped?'—':correct?'✓':'✗';
+    const opts=q.opts.map((o,idx)=>{
+      let cls='review-opt';
+      if(idx===q.ans) cls+=' correct-opt';
+      if(ua!==null&&ua===idx&&idx!==q.ans) cls+=' your-wrong';
+      return '<div class="'+cls+'"><span class="opt-label">'+['A','B','C','D'][idx]+'</span> '+o+'</div>';
+    }).join('');
+    card.innerHTML=
+      '<div class="review-card-header">'+
+      '<div class="review-badge '+badgeClass+'">'+badgeText+'</div>'+
+      '<div class="review-stem"><span style="color:var(--grey);font-size:.75rem">Q'+(i+1)+' · '+q.section+'</span><br>'+q.stem.replace(/\n/g,'<br>')+'</div>'+
+      '</div>'+
+      '<div class="review-opts">'+opts+'</div>'+
+      '<div class="review-exp">'+q.exp+'</div>';
+    list.appendChild(card);
+  });
+}
+
+function buildMisses(){
+  const wrongQs=[];
+  QUESTIONS.forEach((q,i)=>{
+    if(userAnswers[i]!==null&&userAnswers[i]!==q.ans){
+      const label=['A','B','C','D'][q.ans];
+      wrongQs.push('Q'+(i+1)+' ['+q.section+'] → '+label+'. '+q.opts[q.ans]);
+    }
+  });
+  document.getElementById('missesText').value=wrongQs.length?wrongQs.join('\n'):'No misses — perfect score!';
+}
+
+function copyMisses(e){
+  e.preventDefault();
+  const txt=document.getElementById('missesText').value;
+  navigator.clipboard.writeText(txt).then(()=>{
+    const btn=e.target;
+    btn.textContent='Copied!';
+    setTimeout(()=>{btn.textContent='Copy Misses';},2000);
+  });
+}
+
+function buildRetry(){
+  const retrySection=document.getElementById('retrySection');
+  retrySection.innerHTML='';
+  const wrongIdxs=[];
+  QUESTIONS.forEach((q,i)=>{if(userAnswers[i]!==null&&userAnswers[i]!==q.ans) wrongIdxs.push(i);});
+  if(!wrongIdxs.length) return;
+  retrySection.innerHTML='<h3>Retry Wrong Questions ('+wrongIdxs.length+')</h3>';
+  wrongIdxs.forEach(i=>{
+    const q=QUESTIONS[i];
+    const card=document.createElement('div');
+    card.className='retry-card';
+    card.innerHTML='<div class="r-stem"><span style="color:var(--grey);font-size:.75rem">Q'+(i+1)+' · '+q.section+'</span><br>'+q.stem.replace(/\n/g,'<br>')+'</div>';
+    q.opts.forEach((o,idx)=>{
+      const btn=document.createElement('button');
+      btn.className='retry-opt';
+      btn.innerHTML='<span class="opt-label">'+['A','B','C','D'][idx]+'</span> '+o;
+      btn.onclick=()=>{
+        card.querySelectorAll('.retry-opt').forEach(b=>b.disabled=true);
+        if(idx===q.ans) btn.classList.add('r-correct');
+        else{
+          btn.classList.add('r-wrong');
+          card.querySelectorAll('.retry-opt')[q.ans].classList.add('r-correct');
+        }
+      };
+      card.appendChild(btn);
+    });
+    retrySection.appendChild(card);
+  });
+}
+
+// ── SAVE / LOG ────────────────────────────────────────────────────────────────
+function saveToTracker(score,correct,wrong,skipped){
+  const s=TIMER_DURATION*60-secondsLeft;
+  const mm=String(Math.floor(s/60)).padStart(2,'0');
+  const ss=String(s%60).padStart(2,'0');
+  const data={
+    testName:'Road to IIM Paper 20',name:studentName,pin:studentPin,batch:studentBatch,
+    score:score,correct:correct,wrong:wrong,skipped:skipped,maxMarks:180,
+    timeTaken:mm+':'+ss,timestamp:new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'})
+  };
+  try{
+    const existing=JSON.parse(localStorage.getItem('riim_results')||'[]');
+    existing.unshift(data);
+    localStorage.setItem('riim_results',JSON.stringify(existing.slice(0,200)));
+  }catch(e){}
+}
+
+function logToSheet(score,correct,wrong,skipped,sectionErrors,wrongQuestions){
+  const notice=document.getElementById('sheet-notice');
+  notice.className='submitting';
+  notice.textContent='Submitting results to server…';
+  notice.style.display='block';
+  const s=TIMER_DURATION*60-secondsLeft;
+  const mm=String(Math.floor(s/60)).padStart(2,'0');
+  const ss=String(s%60).padStart(2,'0');
+  const payload={
+    testName:'Road to IIM Paper 20',
+    name:studentName,
+    pin:studentPin,
+    batch:studentBatch,
+    score:score,
+    correct:correct,
+    wrong:wrong,
+    skipped:skipped,
+    maxMarks:180,
+    timeTaken:mm+':'+ss,
+    timestamp:new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'}),
+    sectionErrors:JSON.stringify(sectionErrors),
+    wrongQuestions:JSON.stringify(wrongQuestions),
+    studentAnswers:JSON.stringify(userAnswers.map(a=>a===null?null:a))
+  };
+  fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)})
+    .then(()=>{notice.className='success';notice.textContent='Results saved successfully.';})
+    .catch(()=>{notice.className='failure';notice.textContent='Could not reach server. Results saved locally.';});
+}
+
+// ── PDF ───────────────────────────────────────────────────────────────────────
+function generatePDF(){
+  const el=document.getElementById('review-list');
+  html2pdf().set({
+    margin:10,filename:'RoadToIIM_Paper20_'+studentName.replace(/\s+/g,'_')+'.pdf',
+    html2canvas:{scale:2},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}
+  }).from(el).save();
+}
+
+// ── ANTI-COPY ─────────────────────────────────────────────────────────────────
+document.addEventListener('contextmenu',e=>e.preventDefault());
+document.addEventListener('keydown',e=>{
+  if(e.ctrlKey&&['c','a','u','s','p'].includes(e.key.toLowerCase())) e.preventDefault();
+});
+</script>
+</body>
+</html>
