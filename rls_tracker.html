@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RLS Tracker — Read Like a Scholar | Road to IIM</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700;9..144,900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#003A72; --navy-deep:#022B54; --maroon:#920043; --gold:#EFAF35;
+  --paper:#FAF6EE; --ink:#232A3A; --muted:#5B6477; --line:#E3E0D6; --white:#FFF;
+  --green:#1E7B45; --red:#C0392B;
+  --shadow:0 2px 14px rgba(2,43,84,.10);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',system-ui,sans-serif;color:var(--ink);background:#F2F0E9;line-height:1.6;font-size:15.5px}
+header{background:linear-gradient(135deg,var(--navy-deep),var(--navy));color:var(--white);padding:26px 22px;text-align:center}
+header .eyebrow{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);font-weight:700}
+header h1{font-family:'Fraunces',serif;font-weight:900;font-size:clamp(24px,4vw,34px)}
+header p{color:#CFE0F2;font-size:14px;margin-top:4px}
+.wrap{max-width:1080px;margin:0 auto;padding:28px 18px 70px}
+
+/* login */
+.logincard{max-width:420px;margin:30px auto;background:var(--white);border:1px solid var(--line);border-radius:16px;padding:28px;box-shadow:var(--shadow)}
+.logincard h2{font-family:'Fraunces',serif;color:var(--navy);font-size:21px;margin-bottom:6px}
+.logincard p{font-size:13.5px;color:var(--muted);margin-bottom:14px}
+.logincard label{display:block;font-size:12px;font-weight:700;color:var(--navy-deep);letter-spacing:.06em;text-transform:uppercase;margin:12px 0 5px}
+.logincard input{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:11px 13px;font-size:15px}
+.logincard input:focus-visible{outline:3px solid var(--gold)}
+#lerr{display:none;color:var(--red);font-size:13px;font-weight:600;margin-top:10px}
+#lerr.show{display:block}
+.btn{display:inline-block;border:none;cursor:pointer;font-weight:700;font-size:15px;border-radius:999px;padding:12px 30px;background:var(--gold);color:var(--navy-deep);width:100%;margin-top:16px}
+.btn:disabled{opacity:.5;cursor:wait}
+.btn:focus-visible{outline:3px solid var(--navy);outline-offset:2px}
+
+/* dashboard */
+#dash{display:none}
+.statrow{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:22px}
+.stat{flex:1;min-width:140px;background:var(--white);border:1px solid var(--line);border-radius:14px;padding:16px 18px;box-shadow:var(--shadow);text-align:center}
+.stat b{display:block;font-family:'Fraunces',serif;font-weight:900;font-size:30px;color:var(--navy)}
+.stat span{font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600}
+h2.sec{font-family:'Fraunces',serif;font-weight:900;color:var(--navy);font-size:22px;margin:26px 0 12px}
+.controls{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;align-items:center}
+.controls input{flex:1;min-width:200px;border:1.5px solid var(--line);border-radius:999px;padding:9px 16px;font-size:14px;background:var(--white)}
+.wkbtn{border:1.5px solid var(--navy);background:var(--white);color:var(--navy);font-weight:700;font-size:13px;border-radius:999px;padding:7px 14px;cursor:pointer}
+.wkbtn[aria-pressed="true"]{background:var(--navy);color:var(--white)}
+.gridwrap{overflow-x:auto;background:var(--white);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow)}
+table{border-collapse:collapse;width:100%;font-size:14px;min-width:640px}
+th{background:var(--navy);color:var(--white);padding:10px 12px;text-align:left;font-size:12.5px;letter-spacing:.05em;position:sticky;top:0}
+th.wk{text-align:center;width:64px}
+td{padding:9px 12px;border-top:1px solid var(--line)}
+td.wk{text-align:center;font-weight:700}
+td.done{color:var(--green)}
+td.miss{color:#C8C3B6}
+tr:nth-child(even){background:#FAF9F4}
+.skelcard{background:var(--white);border:1px solid var(--line);border-left:5px solid var(--gold);border-radius:12px;padding:14px 18px;margin:10px 0;box-shadow:var(--shadow)}
+.skelcard .top{display:flex;gap:10px;flex-wrap:wrap;align-items:baseline;font-size:13px;color:var(--muted);margin-bottom:6px}
+.skelcard .top b{color:var(--navy-deep);font-size:14.5px}
+.tag{display:inline-block;border-radius:999px;padding:2px 10px;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase}
+.tag.add{background:#EAF1FA;color:var(--navy)}
+.tag.arg{background:#F8ECF1;color:var(--maroon)}
+.tag.wk{background:var(--gold);color:var(--navy-deep)}
+.skelcard .text{font-size:15px;font-style:italic;color:var(--ink)}
+.empty{text-align:center;color:var(--muted);padding:30px;font-size:14.5px}
+#logoutrow{text-align:right;margin-bottom:8px}
+#logoutbtn{background:none;border:none;color:var(--maroon);font-weight:700;font-size:13px;cursor:pointer;text-decoration:underline}
+footer{text-align:center;padding:24px;color:var(--muted);font-size:12.5px}
+@media(max-width:640px){ .wrap{padding:20px 12px 50px} }
+</style>
+</head>
+<body>
+<header>
+  <div class="eyebrow">Road to IIM · Self Study</div>
+  <h1>Read Like a Scholar — Tracker</h1>
+  <p>Completion, drill scores and skeleton journal review</p>
+</header>
+
+<div class="wrap">
+
+  <!-- LOGIN -->
+  <div class="logincard" id="logincard">
+    <h2>Sign in</h2>
+    <p>Mentors: admin PIN + batch <strong>Admin</strong> for the full dashboard. Students: your own PIN to see your progress.</p>
+    <label for="tpin">PIN</label>
+    <input id="tpin" type="text" autocapitalize="characters" placeholder="IMS or STU + 10 digits">
+    <label for="tbatch">Batch</label>
+    <input id="tbatch" type="text" autocapitalize="characters" placeholder="Admin / your batch code">
+    <div id="lerr"></div>
+    <button class="btn" id="loadbtn" onclick="loadData()">Open tracker</button>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="dash">
+    <div id="logoutrow"><button id="logoutbtn" onclick="location.reload()">Sign out</button></div>
+    <div class="statrow" id="statrow"></div>
+
+    <h2 class="sec">Completion grid</h2>
+    <div class="controls">
+      <input id="search" type="text" placeholder="Search name or batch..." oninput="renderAll()">
+    </div>
+    <div class="gridwrap">
+      <table id="grid">
+        <thead><tr id="gridhead"></tr></thead>
+        <tbody id="gridbody"></tbody>
+      </table>
+    </div>
+
+    <h2 class="sec">Skeleton journal review</h2>
+    <div class="controls" id="wkfilters"></div>
+    <div id="skellist"></div>
+  </div>
+</div>
+
+<footer>Read Like a Scholar · Road to IIM Self Study · Mentor tracker v1</footer>
+
+<script>
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwGGxswx4hcBUFiT0QJIglowhKcJCv47MOR5LKBv9sILl-evsgZeKCms5y6s5zEXOUo6Q/exec';
+const WEEKS = [1,2,3,4,5,6];
+let rows = [];
+let isAdmin = false;
+let wkFilter = 0; // 0 = all
+
+function loadData(){
+  const pin   = document.getElementById('tpin').value.trim().toUpperCase();
+  const batch = document.getElementById('tbatch').value.trim();
+  const err   = document.getElementById('lerr');
+  if(!/^(IMS|STU)\d{10}$/.test(pin)){
+    err.textContent = 'PIN must be IMS or STU followed by 10 digits.'; err.classList.add('show'); return;
+  }
+  err.classList.remove('show');
+  const btn = document.getElementById('loadbtn');
+  btn.disabled = true; btn.textContent = 'Loading...';
+
+  fetch(SCRIPT_URL + '?mode=rls&pin=' + encodeURIComponent(pin) + '&batch=' + encodeURIComponent(batch))
+    .then(r => r.json())
+    .then(j => {
+      if(j.status !== 'success'){ throw new Error(j.message || 'Server error'); }
+      rows = j.data || [];
+      isAdmin = !!j.isAdmin;
+      document.getElementById('logincard').style.display = 'none';
+      document.getElementById('dash').style.display = 'block';
+      buildWeekFilters();
+      renderAll();
+    })
+    .catch(e => {
+      err.textContent = 'Could not load: ' + e.message; err.classList.add('show');
+      btn.disabled = false; btn.textContent = 'Open tracker';
+    });
+}
+
+/* Best score per student per week; latest skeleton kept per submission list */
+function studentMap(){
+  const map = {};
+  rows.forEach(r => {
+    if(!r.pin) return;
+    if(!map[r.pin]) map[r.pin] = { name: r.name, batch: r.batch, weeks: {} };
+    map[r.pin].name = r.name; map[r.pin].batch = r.batch;
+    const w = r.week;
+    if(!map[r.pin].weeks[w] || r.score > map[r.pin].weeks[w].score){
+      map[r.pin].weeks[w] = { score: r.score, attempts: 0 };
+    }
+    map[r.pin].weeks[w].attempts = (map[r.pin].weeks[w].attempts || 0) + 1;
+  });
+  return map;
+}
+
+function renderAll(){
+  const q = (document.getElementById('search').value || '').toLowerCase();
+  const map = studentMap();
+  const pins = Object.keys(map).filter(p => {
+    const s = map[p];
+    return !q || s.name.toLowerCase().includes(q) || s.batch.toLowerCase().includes(q);
+  }).sort((a,b) => map[a].name.localeCompare(map[b].name));
+
+  /* stats */
+  const totalSubs = rows.length;
+  const uniq = Object.keys(map).length;
+  const w1done = Object.values(map).filter(s => s.weeks[1]).length;
+  document.getElementById('statrow').innerHTML =
+    '<div class="stat"><b>' + uniq + '</b><span>Students</span></div>' +
+    '<div class="stat"><b>' + totalSubs + '</b><span>Submissions</span></div>' +
+    '<div class="stat"><b>' + w1done + '</b><span>Week 1 done</span></div>';
+
+  /* grid */
+  let head = '<th>Name</th><th>Batch</th>';
+  WEEKS.forEach(w => head += '<th class="wk">W' + w + '</th>');
+  document.getElementById('gridhead').innerHTML = head;
+
+  let body = '';
+  pins.forEach(p => {
+    const s = map[p];
+    body += '<tr><td>' + esc(s.name) + '</td><td>' + esc(s.batch) + '</td>';
+    WEEKS.forEach(w => {
+      const cell = s.weeks[w];
+      body += cell
+        ? '<td class="wk done">' + cell.score + '/6</td>'
+        : '<td class="wk miss">—</td>';
+    });
+    body += '</tr>';
+  });
+  document.getElementById('gridbody').innerHTML = body || '<tr><td colspan="8" class="empty">No submissions yet.</td></tr>';
+
+  /* skeletons */
+  const list = rows
+    .filter(r => (wkFilter === 0 || r.week === wkFilter))
+    .filter(r => !q || r.name.toLowerCase().includes(q) || r.batch.toLowerCase().includes(q))
+    .sort((a,b) => (b.timestamp||'').localeCompare(a.timestamp||''));
+
+  let html = '';
+  list.forEach(r => {
+    const typ = r.passageType === 'additive'
+      ? '<span class="tag add">Additive</span>'
+      : '<span class="tag arg">Argumentative</span>';
+    html += '<div class="skelcard"><div class="top">' +
+      '<span class="tag wk">W' + r.week + '</span>' +
+      '<b>' + esc(r.name) + '</b><span>' + esc(r.batch) + '</span>' + typ +
+      '<span>' + r.score + '/6 · ' + esc(r.timeTaken) + '</span></div>' +
+      '<div class="text">"' + esc(r.skeleton) + '"</div></div>';
+  });
+  document.getElementById('skellist').innerHTML = html || '<div class="empty">No skeleton entries for this filter.</div>';
+}
+
+function buildWeekFilters(){
+  let html = '<button class="wkbtn" aria-pressed="true" onclick="setWk(0,this)">All weeks</button>';
+  WEEKS.forEach(w => html += '<button class="wkbtn" aria-pressed="false" onclick="setWk(' + w + ',this)">W' + w + '</button>');
+  document.getElementById('wkfilters').innerHTML = html;
+}
+function setWk(w, btn){
+  wkFilter = w;
+  document.querySelectorAll('.wkbtn').forEach(b => b.setAttribute('aria-pressed','false'));
+  btn.setAttribute('aria-pressed','true');
+  renderAll();
+}
+function esc(s){
+  return (s == null ? '' : String(s)).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+</script>
+</body>
+</html>
