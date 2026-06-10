@@ -150,8 +150,8 @@ table.fourq td:first-child{font-family:'Fraunces',serif;font-weight:900;color:va
 .loginbox h3{margin-top:0;color:var(--navy);font-family:'Fraunces',serif;font-size:22px}
 .loginbox p{font-size:14px;color:var(--muted);margin-bottom:16px}
 .loginbox label{display:block;font-size:12.5px;font-weight:700;color:var(--navy-deep);letter-spacing:.06em;text-transform:uppercase;margin:14px 0 5px}
-.loginbox input{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:11px 13px;font-family:'Inter',sans-serif;font-size:15.5px}
-.loginbox input:focus-visible{outline:3px solid var(--gold)}
+.loginbox input,.loginbox select{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:11px 13px;font-family:'Inter',sans-serif;font-size:15.5px;background:var(--white);color:var(--ink)}
+.loginbox input:focus-visible,.loginbox select:focus-visible{outline:3px solid var(--gold)}
 #loginerr{display:none;color:var(--red);font-size:13.5px;font-weight:600;margin-top:12px}
 #loginerr.show{display:block}
 .loginbox .btn{width:100%;margin-top:18px}
@@ -437,7 +437,22 @@ footer img{height:34px;opacity:.85;border-radius:6px}
     <label for="lpin">PIN</label>
     <input id="lpin" type="text" autocapitalize="characters" placeholder="IMS or STU + 10 digits">
     <label for="lbatch">Batch</label>
-    <input id="lbatch" type="text" autocapitalize="characters" placeholder="e.g. A2701 / 27E101">
+    <select id="lbatch">
+      <option value="" selected disabled>Select your batch</option>
+      <optgroup label="Classroom">
+        <option>A2701</option><option>A2702</option><option>A2703</option>
+        <option>A2704</option><option>A2705</option><option>A2706</option>
+        <option>A2707</option><option>A2708</option><option>A2709</option>
+        <option>A2710</option><option>A2711</option><option>A2712</option>
+      </optgroup>
+      <optgroup label="Online">
+        <option>27E101</option><option>27E102</option><option>27E103</option>
+        <option>27E104</option><option>27E105</option>
+      </optgroup>
+      <optgroup label="School">
+        <option>Zebar</option>
+      </optgroup>
+    </select>
     <div id="loginerr"></div>
     <button class="btn gold" onclick="doLogin()">Start the drill →</button>
   </div>
@@ -486,7 +501,7 @@ function startDrill(){
 function doLogin(){
   const name  = document.getElementById('lname').value.trim();
   const pin   = document.getElementById('lpin').value.trim().toUpperCase();
-  const batch = document.getElementById('lbatch').value.trim().toUpperCase();
+  const batch = document.getElementById('lbatch').value.trim();
   const err   = document.getElementById('loginerr');
 
   if(name.length < 3){
@@ -495,8 +510,8 @@ function doLogin(){
   if(!/^(IMS|STU)\d{10}$/.test(pin)){
     err.textContent = 'PIN must be IMS or STU followed by 10 digits.'; err.classList.add('show'); return;
   }
-  if(batch.length < 2){
-    err.textContent = 'Please enter your batch code.'; err.classList.add('show'); return;
+  if(!batch){
+    err.textContent = 'Please select your batch.'; err.classList.add('show'); return;
   }
   err.classList.remove('show');
   student = { name: name, pin: pin, batch: batch };
