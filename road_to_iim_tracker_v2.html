@@ -526,6 +526,58 @@
     margin-top: 40px;
   }
 
+  /* ── RLS MODULE (Read Like a Scholar) — NEW, additive only ── */
+  .rls-divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 8px 0 28px;
+  }
+  .rls-banner {
+    background: rgba(74,158,221,0.07);
+    border: 1px solid rgba(74,158,221,0.25);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+  }
+  .rls-banner-title {
+    font-family: 'Fraunces', serif;
+    font-size: 17px;
+    color: var(--blue);
+    margin-bottom: 4px;
+  }
+  .rls-banner-sub { font-size: 12.5px; color: var(--text-dim); line-height: 1.5; }
+  .rls-wk-cell { font-family: 'DM Mono', monospace; font-size: 13px; text-align: center; }
+  .rls-wk-done { color: var(--green); }
+  .rls-wk-miss { color: rgba(255,255,255,0.18); }
+  .rls-skel {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--blue);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-bottom: 10px;
+  }
+  .rls-skel-top {
+    display: flex; flex-wrap: wrap; gap: 10px; align-items: baseline;
+    font-size: 12px; color: var(--text-dim); margin-bottom: 6px;
+  }
+  .rls-skel-top b { color: var(--text); font-size: 14px; }
+  .rls-skel-text { font-size: 14px; font-style: italic; color: var(--text); line-height: 1.6; }
+  .rls-tag {
+    display: inline-block; padding: 2px 9px; border-radius: 20px;
+    font-size: 10.5px; font-family: 'DM Mono', monospace; letter-spacing: 0.4px;
+    border: 1px solid var(--border); color: var(--text-dim);
+  }
+  .rls-tag.wk  { background: rgba(74,158,221,0.15); border-color: rgba(74,158,221,0.3); color: var(--blue); }
+  .rls-tag.add { background: rgba(76,175,135,0.12); border-color: rgba(76,175,135,0.25); color: var(--green); }
+  .rls-tag.arg { background: rgba(155,127,232,0.12); border-color: rgba(155,127,232,0.25); color: var(--purple); }
+  .rls-search {
+    background: var(--card); border: 1px solid var(--border); border-radius: 8px;
+    padding: 8px 14px; color: var(--text); font-family: 'DM Sans', sans-serif;
+    font-size: 13px; outline: none; min-width: 220px;
+  }
+  .rls-search:focus { border-color: var(--blue); }
+
   @media (max-width: 600px) {
     .login-card { padding: 32px 24px; }
     .content { padding: 20px 16px; }
@@ -602,6 +654,9 @@
       <div class="loading-text">Fetching your data…</div>
     </div>
   </div>
+
+  <!-- RLS MODULE SECTION — NEW. Separate container: never touched by dashContent re-renders -->
+  <div class="content" id="rlsContent" style="display:none; padding-top:0;"></div>
 
   <div class="footer-bar">Road to IIM &nbsp;·&nbsp; Sahil Sir &nbsp;·&nbsp; IMS Ahmedabad</div>
 </div>
@@ -681,6 +736,7 @@ function doLogin() {
     name + (isAdminPin ? '' : ' · ' + batch);
 
   fetchAndRender();
+  fetchRLS(); // NEW: load Read Like a Scholar module data alongside test data
 }
 
 function doLogout() {
@@ -690,6 +746,8 @@ function doLogout() {
   document.getElementById('loginError').style.display = 'none';
   document.getElementById('dashboard').style.display  = 'none';
   document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('rlsContent').style.display = 'none'; // NEW: clear RLS section
+  document.getElementById('rlsContent').innerHTML = '';          // NEW
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -1237,6 +1295,211 @@ function closeModal() {
 document.getElementById('reviewModal').addEventListener('click', function(e) {
   if (e.target === this) closeModal();
 });
+
+// ══════════════════════════════════════════════════════════════
+//  RLS MODULE — READ LIKE A SCHOLAR (NEW — additive integration)
+//  Fetches ?mode=rls from the same Apps Script and renders into
+//  #rlsContent, a separate container untouched by dashContent
+//  re-renders. No existing function above is modified.
+// ══════════════════════════════════════════════════════════════
+const RLS_WEEKS = [1, 2, 3, 4, 5, 6];
+const RLS_MAX = 6; // questions per drill
+let rlsRows = [];
+let rlsWeekFilter = 0; // 0 = all
+
+function rlsEsc(s) {
+  return (s == null ? '' : String(s)).replace(/[&<>"']/g, c =>
+    ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function fetchRLS() {
+  const params = new URLSearchParams({
+    mode:  'rls',
+    pin:   currentUser.pin,
+    batch: currentUser.batch
+  });
+  fetch(APPS_SCRIPT_URL + '?' + params.toString())
+    .then(r => r.json())
+    .then(data => {
+      if (data.status !== 'success') return; // fail silently — test view unaffected
+      rlsRows = (data.data || []).filter(r => !ADMIN_PINS.includes(r.pin));
+      renderRLS();
+    })
+    .catch(() => { /* RLS section simply doesn't render; test tracker unaffected */ });
+}
+
+function renderRLS() {
+  const el = document.getElementById('rlsContent');
+  el.style.display = 'block';
+  if (currentUser.isAdmin) renderRLSAdmin();
+  else                     renderRLSStudent();
+}
+
+// ── per-student best score per week ──
+function rlsStudentMap(rows) {
+  const map = {};
+  rows.forEach(r => {
+    const key = r.pin || r.name;
+    if (!key) return;
+    if (!map[key]) map[key] = { name: r.name, batch: r.batch, weeks: {} };
+    map[key].name = r.name; map[key].batch = r.batch;
+    const w = r.week;
+    if (!map[key].weeks[w] || r.score > map[key].weeks[w]) map[key].weeks[w] = r.score;
+  });
+  return map;
+}
+
+// ── ADMIN: completion grid + skeleton review ──
+function renderRLSAdmin() {
+  const el = document.getElementById('rlsContent');
+
+  if (!rlsRows.length) {
+    el.innerHTML = `
+      <hr class="rls-divider">
+      <div class="rls-banner">
+        <div class="rls-banner-title">Read Like a Scholar — Module Tracker</div>
+        <div class="rls-banner-sub">No module submissions yet. Drill results and skeleton sentences will appear here as students complete Week 1.</div>
+      </div>`;
+    return;
+  }
+
+  const q = (document.getElementById('rlsSearch') ? document.getElementById('rlsSearch').value : '').toLowerCase();
+  const map = rlsStudentMap(rlsRows);
+  const keys = Object.keys(map)
+    .filter(k => !q || map[k].name.toLowerCase().includes(q) || (map[k].batch||'').toLowerCase().includes(q))
+    .sort((a,b) => map[a].name.localeCompare(map[b].name));
+
+  const uniq   = Object.keys(map).length;
+  const w1done = Object.values(map).filter(s => s.weeks[1] !== undefined).length;
+
+  let gridRows = '';
+  keys.forEach(k => {
+    const s = map[k];
+    gridRows += `<tr><td>${rlsEsc(s.name)}</td>
+      <td><span style="font-family:'DM Mono',monospace;font-size:12px;color:var(--text-dim)">${rlsEsc(s.batch)}</span></td>`;
+    RLS_WEEKS.forEach(w => {
+      gridRows += s.weeks[w] !== undefined
+        ? `<td class="rls-wk-cell rls-wk-done">${s.weeks[w]}/${RLS_MAX}</td>`
+        : `<td class="rls-wk-cell rls-wk-miss">—</td>`;
+    });
+    gridRows += '</tr>';
+  });
+
+  const skels = rlsRows
+    .filter(r => rlsWeekFilter === 0 || r.week === rlsWeekFilter)
+    .filter(r => !q || (r.name||'').toLowerCase().includes(q) || (r.batch||'').toLowerCase().includes(q))
+    .sort((a,b) => String(b.timestamp).localeCompare(String(a.timestamp)));
+
+  const skelCards = skels.map(r => {
+    const typ = r.passageType === 'additive'
+      ? '<span class="rls-tag add">additive</span>'
+      : '<span class="rls-tag arg">argumentative</span>';
+    return `<div class="rls-skel">
+      <div class="rls-skel-top">
+        <span class="rls-tag wk">W${r.week}</span>
+        <b>${rlsEsc(r.name)}</b>
+        <span style="font-family:'DM Mono',monospace">${rlsEsc(r.batch)}</span>
+        ${typ}
+        <span>${r.score}/${RLS_MAX} · ${rlsEsc(r.timeTaken)}</span>
+      </div>
+      <div class="rls-skel-text">&ldquo;${rlsEsc(r.skeleton)}&rdquo;</div>
+    </div>`;
+  }).join('') || '<div class="empty-state">No skeleton entries for this filter.</div>';
+
+  const wkOpts = ['<option value="0">All Weeks</option>']
+    .concat(RLS_WEEKS.map(w => `<option value="${w}" ${rlsWeekFilter===w?'selected':''}>Week ${w}</option>`)).join('');
+
+  el.innerHTML = `
+    <hr class="rls-divider">
+    <div class="rls-banner">
+      <div class="rls-banner-title">Read Like a Scholar — Module Tracker</div>
+      <div class="rls-banner-sub">Active reading programme · completion, drill scores and skeleton journal review</div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-label">Students</div><div class="stat-value" style="color:var(--blue)">${uniq}</div><div class="stat-sub">attempted the module</div></div>
+      <div class="stat-card"><div class="stat-label">Submissions</div><div class="stat-value" style="color:var(--blue)">${rlsRows.length}</div><div class="stat-sub">all weeks</div></div>
+      <div class="stat-card"><div class="stat-label">Week 1 Done</div><div class="stat-value" style="color:var(--blue)">${w1done}</div><div class="stat-sub">of ${uniq} students</div></div>
+    </div>
+
+    <div class="section-header">Module Completion</div>
+    <div class="filter-row">
+      <input class="rls-search" id="rlsSearch" type="text" placeholder="Search name or batch…" value="${rlsEsc(q)}" oninput="renderRLSAdmin()">
+      <select class="filter-select" id="rlsWeekSel" onchange="rlsSetWeek()">${wkOpts}</select>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Name</th><th>Batch</th>${RLS_WEEKS.map(w => `<th style="text-align:center">W${w}</th>`).join('')}</tr></thead>
+        <tbody>${gridRows || `<tr><td colspan="8" class="empty-state">No matching students.</td></tr>`}</tbody>
+      </table>
+    </div>
+
+    <div class="section-header">Skeleton Journal Review
+      <span style="font-size:12px;color:var(--text-dim)">${skels.length} entr${skels.length === 1 ? 'y' : 'ies'}</span>
+    </div>
+    ${skelCards}`;
+
+  // restore focus to search box after re-render (typing triggers renderRLSAdmin)
+  const sb = document.getElementById('rlsSearch');
+  if (q && sb) { sb.focus(); sb.setSelectionRange(sb.value.length, sb.value.length); }
+}
+
+function rlsSetWeek() {
+  rlsWeekFilter = parseInt(document.getElementById('rlsWeekSel').value, 10) || 0;
+  renderRLSAdmin();
+}
+
+// ── STUDENT: personal progress + own skeletons ──
+function renderRLSStudent() {
+  const el = document.getElementById('rlsContent');
+  const mine = rlsRows; // backend already filters to this PIN
+
+  if (!mine.length) {
+    el.innerHTML = `
+      <hr class="rls-divider">
+      <div class="rls-banner">
+        <div class="rls-banner-title">Read Like a Scholar</div>
+        <div class="rls-banner-sub">The 6-week active reading programme. Week 1 is live —
+          <a href="RLS_Week1.html" style="color:var(--blue)">start The Demanding Reader →</a></div>
+      </div>`;
+    return;
+  }
+
+  const best = {};
+  mine.forEach(r => { if (best[r.week] === undefined || r.score > best[r.week]) best[r.week] = r.score; });
+  const chips = RLS_WEEKS.map(w =>
+    best[w] !== undefined
+      ? `<div class="chip taken">W${w}<br><span style="font-size:10px;opacity:0.8">${best[w]}/${RLS_MAX}</span></div>`
+      : `<div class="chip">W${w}<br><span style="font-size:10px;opacity:0.5">—</span></div>`
+  ).join('');
+
+  const skelCards = mine
+    .slice()
+    .sort((a,b) => String(b.timestamp).localeCompare(String(a.timestamp)))
+    .map(r => {
+      const typ = r.passageType === 'additive'
+        ? '<span class="rls-tag add">additive</span>'
+        : '<span class="rls-tag arg">argumentative</span>';
+      return `<div class="rls-skel">
+        <div class="rls-skel-top">
+          <span class="rls-tag wk">W${r.week}</span>${typ}
+          <span>${r.score}/${RLS_MAX} · ${rlsEsc(r.timeTaken)}</span>
+        </div>
+        <div class="rls-skel-text">&ldquo;${rlsEsc(r.skeleton)}&rdquo;</div>
+      </div>`;
+    }).join('');
+
+  el.innerHTML = `
+    <hr class="rls-divider">
+    <div class="rls-banner">
+      <div class="rls-banner-title">Read Like a Scholar — Your Progress</div>
+      <div class="rls-banner-sub">Active reading programme · your drill scores and skeleton journal</div>
+    </div>
+    <div class="section-header">Weeks Completed</div>
+    <div class="chips-wrap" style="margin-bottom:28px;">${chips}</div>
+    <div class="section-header">Your Skeleton Journal</div>
+    ${skelCards}`;
+}
 
 // ══════════════════════════════════════════════════════════════
 //  UTILITY
