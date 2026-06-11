@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Road to IIM - Paper 21</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-user-select:none;
+-moz-user-select:none;-ms-user-select:none;user-select:none;}
+:root{
+--navy:#0d1b2a;--navy2:#1a2e45;--gold:#c9a84c;--gold2:#e8c76a;
+--green:#2ecc71;--red:#e74c3c;--grey:#8899aa;--white:#f0f4f8;
+--purple:#9b59b6;--panel:280px;
+}
+body{background:var(--navy);color:var(--white);
+font-family:'Segoe UI',sans-serif;min-height:100vh;overflow-x:hidden;}
+#loginScreen{display:flex;flex-direction:column;align-items:center;
+justify-content:center;min-height:100vh;padding:20px;}
+.login-box{background:var(--navy2);border:1px solid var(--gold);
+border-radius:12px;padding:40px 36px;width:100%;max-width:440px;}
+.login-box h1{color:var(--gold);font-size:1.5rem;text-align:center;margin-bottom:6px;}
+.login-box p{color:var(--grey);font-size:.85rem;text-align:center;margin-bottom:28px;}
+.login-box label{display:block;font-size:.8rem;color:var(--grey);
+margin-bottom:4px;margin-top:14px;}
+.login-box input,.login-box select{width:100%;background:#0d1b2a;
+border:1px solid #2a4060;border-radius:6px;padding:10px 12px;
+color:var(--white);font-size:.95rem;}
+#startBtn{width:100%;margin-top:24px;padding:12px;background:var(--gold);
+color:var(--navy);font-size:1rem;font-weight:700;border:none;
+border-radius:8px;cursor:pointer;}
+#topBar{background:var(--navy2);border-bottom:1px solid #1e3a5a;
+padding:10px 20px;display:flex;align-items:center;
+justify-content:space-between;position:sticky;top:0;z-index:100;
+padding-right:calc(var(--panel) + 20px);}
+#topBar .logo{color:var(--gold);font-weight:700;font-size:1rem;}
+#timerDisplay{font-size:1.1rem;font-weight:700;color:var(--green);
+background:#0a2a1a;padding:6px 16px;border-radius:20px;
+border:1px solid var(--green);}
+#timerDisplay.urgent{color:var(--red);background:#2a0a0a;border-color:var(--red);}
+#progressBar{height:3px;background:#1e3a5a;margin-right:var(--panel);}
+#progressFill{height:100%;background:var(--gold);transition:width .3s;}
+#mainLayout{display:flex;min-height:calc(100vh - 54px);}
+#questionArea{flex:1;padding:28px 32px 80px 32px;max-width:calc(100% - var(--panel));}
+#sectionTag{display:inline-block;background:#1e3a5a;color:var(--gold);
+font-size:.72rem;font-weight:700;letter-spacing:.08em;
+padding:3px 10px;border-radius:4px;margin-bottom:10px;text-transform:uppercase;}
+#questionNumber{color:var(--grey);font-size:.85rem;margin-bottom:8px;}
+#questionStem{font-size:1.05rem;line-height:1.7;color:var(--white);margin-bottom:22px;word-break:break-word;overflow-wrap:break-word;}
+.options-list{list-style:none;display:flex;flex-direction:column;gap:10px;}
+.option-btn{background:#0d1b2a;border:1px solid #1e3a5a;border-radius:8px;
+padding:12px 16px;cursor:pointer;text-align:left;font-size:.95rem;
+color:var(--white);transition:all .2s;width:100%;}
+.option-btn:hover{border-color:var(--gold);background:#162030;}
+.option-btn.selected{border-color:var(--gold);background:#1e2e10;color:var(--gold2);}
+.option-btn.marked{border-color:var(--purple);}
+.opt-label{display:inline-block;width:24px;font-weight:700;color:var(--gold);}
+#paletteOverlay{position:fixed;top:0;right:0;width:100%;height:100%;
+z-index:200;pointer-events:none;display:flex;justify-content:flex-end;}
+#palettePanel{width:280px;height:100%;background:var(--navy2);
+border-left:1px solid #1e3a5a;padding:16px 12px;overflow-y:auto;
+pointer-events:all;}
+#paletteGrid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;
+margin-bottom:16px;}
+.pal-btn{width:100%;aspect-ratio:1;border-radius:6px;border:1px solid #1e3a5a;
+background:#0d1b2a;color:var(--grey);font-size:.78rem;font-weight:600;cursor:pointer;}
+.pal-btn.answered{background:var(--green);color:#fff;border-color:var(--green);}
+.pal-btn.marked{background:var(--purple);color:#fff;border-color:var(--purple);}
+.pal-btn.current{border:2px solid var(--gold);color:var(--gold);}
+#navBar{position:fixed;bottom:0;left:0;right:var(--panel);
+background:var(--navy2);border-top:1px solid #1e3a5a;
+display:flex;align-items:center;justify-content:space-between;
+padding:10px 20px;z-index:150;}
+.nav-btn{background:#1e3a5a;color:var(--white);border:none;
+border-radius:6px;padding:8px 18px;cursor:pointer;font-size:.9rem;font-weight:600;}
+#submitBtn{background:var(--gold);color:var(--navy);font-weight:700;display:none;}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;
+margin-bottom:20px;}
+.stat-box{background:var(--navy2);border-radius:8px;padding:16px;
+text-align:center;border:1px solid #1e3a5a;}
+.stat-box .val{font-size:1.6rem;font-weight:800;}
+.stat-box .lbl{font-size:.75rem;color:var(--grey);margin-top:4px;}
+.stat-box.correct .val{color:var(--green);}
+.stat-box.wrong .val{color:var(--red);}
+.stat-box.accuracy .val{color:var(--gold);}
+.review-card{background:var(--navy2);border-radius:10px;margin-bottom:14px;
+overflow:hidden;border-left:4px solid var(--grey);word-break:break-word;overflow-wrap:break-word;}
+.review-card.correct{border-left-color:var(--green);}
+.review-card.wrong{border-left-color:var(--red);}
+.review-exp{background:#0a2a15;border-left:3px solid var(--green);
+padding:10px 14px;font-size:.83rem;line-height:1.6;color:#a8e6c0;margin-top:8px;}
+#testScreen{display:none;}
+#resultsScreen{display:none;padding:28px 32px;max-width:calc(100% - var(--panel));}
+.score-hero{text-align:center;margin-bottom:28px;}
+.score-hero .score-num{font-size:3.5rem;font-weight:900;color:var(--gold);}
+.score-hero .score-sub{font-size:1rem;color:var(--grey);margin-top:4px;}
+.result-btn{padding:10px 24px;border-radius:8px;border:none;cursor:pointer;
+font-size:.95rem;font-weight:700;margin:0 6px;}
+.result-btn.gold{background:var(--gold);color:var(--navy);}
+.result-btn.ghost{background:transparent;border:1px solid var(--gold);color:var(--gold);}
+#sheet-notice{padding:10px 14px;border-radius:6px;font-size:.85rem;
+margin-bottom:16px;display:none;}
+#sheet-notice.submitting{background:#1a2e10;color:#c9e88a;border:1px solid #4a7a20;}
+#sheet-notice.success{background:#0a2a15;color:#2ecc71;border:1px solid #2ecc71;}
+#sheet-notice.failure{background:#2a0a0a;color:#e74c3c;border:1px solid #e74c3c;}
+.review-card-header{padding:14px 16px;display:flex;align-items:flex-start;gap:10px;}
+.review-badge{min-width:32px;height:32px;border-radius:6px;display:flex;
+align-items:center;justify-content:center;font-weight:800;font-size:.85rem;}
+.badge-correct{background:var(--green);color:#fff;}
+.badge-wrong{background:var(--red);color:#fff;}
+.badge-skipped{background:var(--grey);color:#fff;}
+.review-stem{font-size:.9rem;line-height:1.6;flex:1;}
+.review-opts{padding:0 16px 8px;}
+.review-opt{font-size:.83rem;padding:4px 0;color:var(--grey);}
+.review-opt.correct-opt{color:var(--green);font-weight:700;}
+.review-opt.your-wrong{color:var(--red);}
+.misses-box{background:#0d1b2a;border:1px solid #2a4060;border-radius:8px;
+padding:14px;margin-top:20px;}
+.misses-box h3{color:var(--gold);font-size:.9rem;margin-bottom:8px;}
+.misses-box textarea{width:100%;background:#0a1520;border:1px solid #1e3a5a;
+border-radius:6px;padding:10px;color:var(--white);font-size:.83rem;
+font-family:'Segoe UI',sans-serif;resize:vertical;min-height:80px;}
+.copy-btn{margin-top:8px;padding:6px 14px;background:var(--navy2);
+border:1px solid var(--gold);color:var(--gold);border-radius:6px;
+font-size:.8rem;cursor:pointer;}
+#retrySection{margin-top:24px;}
+#retrySection h3{color:var(--gold);margin-bottom:16px;}
+.retry-card{background:var(--navy2);border-radius:10px;padding:16px;
+margin-bottom:12px;border:1px solid #1e3a5a;}
+.retry-card .r-stem{font-size:.95rem;line-height:1.6;margin-bottom:12px;}
+.retry-opt{display:block;width:100%;background:#0d1b2a;border:1px solid #1e3a5a;
+border-radius:6px;padding:9px 14px;text-align:left;font-size:.88rem;
+color:var(--white);cursor:pointer;margin-bottom:6px;}
+.retry-opt.r-correct{border-color:var(--green);background:#0a2a15;color:var(--green);}
+.retry-opt.r-wrong{border-color:var(--red);background:#2a0a0a;color:var(--red);}
+.pal-legend{font-size:.72rem;color:var(--grey);margin-top:8px;}
+.pal-legend span{display:inline-block;width:10px;height:10px;border-radius:3px;
+margin-right:4px;vertical-align:middle;}
+
+@media (max-width:768px){
+#paletteOverlay{display:none;}
+#palettePanel{width:280px;}
+#questionArea{max-width:100%;padding:16px 16px 80px 16px;}
+#topBar{padding-right:16px;}
+#progressBar{margin-right:0;}
+#navBar{right:0;padding:8px 12px;}
+.nav-btn{padding:7px 10px;font-size:.8rem;}
+.stats-grid{grid-template-columns:repeat(2,1fr);}
+.login-box input,.login-box select{font-size:1rem;}
+.score-hero .score-num{font-size:2.4rem;}
+#resultsScreen{max-width:100%;}
+.misses-box textarea{font-size:.8rem;}
+#submitBtn{padding:7px 10px;}
+}
+@media (max-width:768px){
+#paletteOverlay.mobile-open{display:flex;}
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+<div class="login-box">
+  <h1>Road to IIM</h1>
+  <p>Paper 21 &nbsp;&middot;&nbsp; Grammar &amp; Vocabulary &nbsp;&middot;&nbsp; 45 Questions &nbsp;&middot;&nbsp; 30 Minutes</p>
+  <label>Full Name</label>
+  <input type="text" id="inputName" placeholder="Your full name" autocomplete="off">
+  <label>IMS PIN</label>
+  <input type="text" id="inputPin" placeholder="STU or IMS + 10 digits" autocomplete="off">
+  <label>Batch</label>
+  <select id="inputBatch">
+    <option value="">-- Select batch --</option>
+    <optgroup label="Classroom">
+      <option>A2701</option><option>A2702</option><option>A2703</option>
+      <option>A2704</option><option>A2705</option><option>A2706</option>
+      <option>A2707</option><option>A2708</option><option>A2709</option>
+      <option>A2710</option><option>A2711</option><option>A2712</option>
+    </optgroup>
+    <optgroup label="School"><option>Zebar</option></optgroup>
+    <optgroup label="Online">
+      <option>27E101</option><option>27E102</option><option>27E103</option>
+      <option>27E104</option><option>27E105</option>
+    </optgroup>
+    <optgroup label="Admin"><option>Admin</option></optgroup>
+  </select>
+  <div id="loginErr" style="display:none;margin-top:10px;color:var(--red);font-size:.83rem;"></div>
+  <button id="startBtn" onclick="startTest()">Begin Test &rarr;</button>
+</div>
+</div>
+
+<!-- TEST -->
+<div id="testScreen">
+  <div id="topBar">
+    <span class="logo">Road to IIM &middot; Paper 21</span>
+    <div id="timerDisplay">30:00</div>
+  </div>
+  <div id="progressBar"><div id="progressFill" style="width:0%"></div></div>
+  <div id="mainLayout">
+    <div id="questionArea">
+      <div id="sectionTag"></div>
+      <div id="questionNumber"></div>
+      <div id="questionStem"></div>
+      <ul class="options-list" id="optionsList"></ul>
+    </div>
+  </div>
+  <div id="paletteOverlay">
+    <div id="palettePanel">
+      <div style="color:var(--gold);font-weight:700;font-size:.85rem;margin-bottom:10px;">Questions</div>
+      <div id="paletteGrid"></div>
+      <div class="pal-legend">
+        <span style="background:var(--green)"></span>Answered &nbsp;
+        <span style="background:var(--purple)"></span>Marked &nbsp;
+        <span style="background:#0d1b2a;border:1px solid #1e3a5a"></span>Unvisited
+      </div>
+    </div>
+  </div>
+  <div id="navBar">
+    <button class="nav-btn" onclick="navigate(-1)">&larr; Prev</button>
+    <button class="nav-btn" onclick="togglePalette()">Questions</button>
+    <button class="nav-btn" onclick="markForReview()">&#9733; Mark</button>
+    <button class="nav-btn" onclick="navigate(1)">Next &rarr;</button>
+    <button class="nav-btn" id="submitBtn" onclick="confirmSubmit()">Submit Test</button>
+  </div>
+</div>
+
+<!-- RESULTS -->
+<div id="resultsScreen">
+  <div id="topBar2" style="background:var(--navy2);border-bottom:1px solid #1e3a5a;
+    padding:10px 20px;display:flex;align-items:center;justify-content:space-between;
+    position:sticky;top:0;z-index:100;">
+    <span style="color:var(--gold);font-weight:700;">Road to IIM &middot; Paper 21 &middot; Results</span>
+  </div>
+  <div style="padding:28px 32px;">
+    <div class="score-hero" id="scoreHero"></div>
+    <div id="sheet-notice"></div>
+    <div class="stats-grid" id="statsGrid"></div>
+    <div style="text-align:center;margin-bottom:24px;">
+      <button class="result-btn gold" onclick="location.href='road_to_iim_tracker_v2.html'">Go to Tracker</button>
+      <button class="result-btn ghost" onclick="location.href='https://sahilkanetkar-collab.github.io/Road-to-IIM/'">All Tests</button>
+      <button class="result-btn ghost" onclick="generatePDF()">Download PDF</button>
+    </div>
+    <div class="misses-box" id="missesSection">
+      <h3>Grammar &amp; Vocabulary Misses</h3>
+      <textarea id="missesText" readonly></textarea>
+      <button class="copy-btn" onclick="copyMisses(event)">Copy Misses</button>
+    </div>
+    <div id="retrySection"></div>
+    <h3 style="color:var(--gold);margin:24px 0 12px;">Review All Questions</h3>
+    <div id="review-list"></div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script>
+// -- CONFIG --
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwGGxswx4hcBUFiT0QJIglowhKcJCv47MOR5LKBv9sILl-evsgZeKCms5y6s5zEXOUo6Q/exec";
+const TIMER_DURATION = 30;
+const ADMIN_PINS = ['IMS1111111111','IMS2222222222','IMS3333333333','IMS4444444444','IMS5555555555'];
+
+// -- QUESTIONS --
+const QUESTIONS = [
+
+  // ======= VOCABULARY Q1-Q20 =======
+
+  // Q1 [B] intrepid
+  {
+    section:"Vocabulary",
+    stem:"Choose the word that most accurately completes the sentence.\n\nThe documentary followed an <b>intrepid</b> mountaineer who continued climbing despite deteriorating weather conditions and warnings from her team.",
+    opts:["reckless and careless","fearless and bold","cheerful and sociable","meticulous and cautious"],
+    ans:1,
+    exp:"Correct Answer: B. fearless and bold. Intrepid (Latin intrepidus: in- = not, trepidus = alarmed) means fearless in the face of danger. It carries a sense of courage without implying carelessness. A (reckless) wrongly implies disregard for consequences, which is not part of the word's meaning. C (cheerful) is unrelated. D (meticulous) refers to precision, not bravery. B is the only meaning derivable from the word's etymology and standard usage."
+  },
+
+  // Q2 [A] tepid
+  {
+    section:"Vocabulary",
+    stem:"The committee's response to the proposal was decidedly <b>tepid</b>: no objections were raised, but no enthusiasm was shown either.\n\nIn this sentence, tepid most nearly means:",
+    opts:["lukewarm and unenthusiastic","hostile and dismissive","cautious and deliberate","warmly approving"],
+    ans:0,
+    exp:"Correct Answer: A. lukewarm and unenthusiastic. Tepid (Latin tepidus = moderately warm) literally describes water that is neither hot nor cold. Figuratively it describes a response or reception that is neither enthusiastic nor hostile. B (hostile) contradicts the sentence, which says no objections were raised. C (cautious) introduces a different idea not present in the word. D (warmly approving) is the antonym. A is unambiguous."
+  },
+
+  // Q3 [C] trifle
+  {
+    section:"Vocabulary",
+    stem:"Which sentence uses the word <b>trifle</b> correctly as a verb?",
+    opts:["She trifled the entire budget allocation in a single afternoon.","The manager trifled his team with a difficult new assignment.","One should not trifle with the patience of a seasoned examiner.","The accountant trifled the figures to match the expected outcome."],
+    ans:2,
+    exp:"Correct Answer: C. One should not trifle with the patience of a seasoned examiner. As a verb, trifle with means to treat something or someone without due seriousness, to deal with carelessly. A misuses trifle as a synonym for squander. B misuses it as a synonym for burden or test. D misuses it as a synonym for manipulate or falsify. C is the only sentence that uses trifle with its correct verbal meaning."
+  },
+
+  // Q4 [D] tromp
+  {
+    section:"Vocabulary",
+    stem:"After the long monsoon trail, the hikers could be heard <b>tromping</b> through the muddy path towards the camp.\n\nTromping most nearly means:",
+    opts:["slipping and sliding noisily","marching briskly and silently","crying out in exhaustion","walking heavily and noisily"],
+    ans:3,
+    exp:"Correct Answer: D. walking heavily and noisily. Tromp means to walk with heavy, loud, stamping steps. A (slipping) introduces the wrong kind of movement. B (marching briskly and silently) contradicts the noisiness implied by tromp. C (crying out) is entirely unrelated to movement. D captures both the heaviness and the noise that define tromp. D is unambiguous."
+  },
+
+  // Q5 [B] sonder
+  {
+    section:"Vocabulary",
+    stem:"The word <b>sonder</b> refers to:",
+    opts:["the melancholy of parting from a place one loves","the sudden realisation that every stranger has a life as vivid and complex as one's own","the deep fatigue that follows a period of intense creativity","the sensation of recognising a familiar face in an unfamiliar crowd"],
+    ans:1,
+    exp:"Correct Answer: B. the sudden realisation that every stranger has a life as vivid and complex as one's own. Sonder is a coined word from The Dictionary of Obscure Sorrows describing the awareness that each passerby carries a complete inner world. A describes nostalgia or hiraeth, not sonder. C describes burnout or creative exhaustion. D describes a form of recognition, not sonder's core meaning of interior-life awareness in strangers. B is the only accurate definition."
+  },
+
+  // Q6 [A] purport
+  {
+    section:"Vocabulary",
+    stem:"The document <b>purported</b> to be an official transcript from the university, but several formatting inconsistencies made the admissions officer suspicious.\n\nThe word purported is closest in meaning to:",
+    opts:["claimed or appeared","was confirmed","was submitted","was authenticated"],
+    ans:0,
+    exp:"Correct Answer: A. claimed or appeared. Purport (Latin purportare = to carry forth, to signify) means to claim or appear to be something, often with an implication that the claim may be false or unverified. The sentence itself reinforces this with mention of suspicion. B (was confirmed) is the antonym of the implication. C (was submitted) removes the element of false or unverified claim. D (was authenticated) directly contradicts the suspicious tone. A is unambiguous."
+  },
+
+  // Q7 [C] artless
+  {
+    section:"Vocabulary",
+    stem:"His <b>artless</b> confession disarmed the entire board: there was no calculation, no rehearsed phrasing, simply the unguarded truth.\n\nThe word artless most nearly means:",
+    opts:["lacking artistic sensibility","incompetent in performance","without guile or cunning; natural","crude and unsophisticated in manner"],
+    ans:2,
+    exp:"Correct Answer: C. without guile or cunning; natural. Artless does not primarily mean lacking art in the aesthetic sense. It means free from deceit, simple, and natural. The sentence confirms this: no calculation, unguarded truth. A (lacking artistic sensibility) is the literal misreading of art + less, which is a trap. B (incompetent) introduces a negative judgment not present in the word's standard meaning. D (crude) has negative connotations the word does not carry when used correctly. C is the right definition."
+  },
+
+  // Q8 [D] acquiesce
+  {
+    section:"Vocabulary",
+    stem:"Choose the sentence in which <b>acquiesce</b> is used correctly.",
+    opts:["The protesters acquiesced loudly against the proposed demolition of the heritage building.","The general acquiesced the enemy forces into surrender after a prolonged siege.","She acquiesced her rights to the property in exchange for a financial settlement.","After hours of debate, the senior partner finally acquiesced to the junior team's recommendation."],
+    ans:3,
+    exp:"Correct Answer: D. After hours of debate, the senior partner finally acquiesced to the junior team's recommendation. Acquiesce means to accept or comply with something reluctantly but without protest. The correct collocation is acquiesce to or acquiesce in something. A uses acquiesced against, which reverses the meaning entirely. B confuses acquiesce with coerce or compel. C confuses acquiesce with relinquish or waive. D uses the word correctly with the preposition to. D is unambiguous."
+  },
+
+  // Q9 [B] shenanigans
+  {
+    section:"Vocabulary",
+    stem:"The auditors uncovered elaborate financial <b>shenanigans</b> that had been concealed from regulators for nearly a decade.\n\nShenanigans most nearly means:",
+    opts:["clerical errors made under time pressure","dishonest or underhand conduct","theatrical performances staged for publicity","unnecessary bureaucratic procedures"],
+    ans:1,
+    exp:"Correct Answer: B. dishonest or underhand conduct. Shenanigans means mischievous, underhand, or deceitful behaviour. The word does not specifically mean secret; the secrecy in the sentence comes from the context (concealed from regulators), not the word itself. B (dishonest or underhand conduct) is the most accurate definition. A (clerical errors) introduces accidental mistakes with no element of deliberate mischief or deception. C (theatrical performances) is entirely unrelated. D (unnecessary bureaucratic procedures) is entirely unrelated."
+  },
+
+  // Q10 [A] verisimilitude
+  {
+    section:"Vocabulary",
+    stem:"A novelist who obsessively researches period details to make her fiction feel authentic is primarily concerned with:",
+    opts:["verisimilitude","verisimilar","verifiable","vernacular"],
+    ans:0,
+    exp:"Correct Answer: A. verisimilitude. Verisimilitude (Latin verisimilis: verus = true + similis = like) means the appearance of being true or real. A novelist researching for authenticity is seeking to create the semblance of truth in fiction. B (verisimilar) is an adjective meaning having the appearance of truth, not the noun that fits the blank. C (verifiable) means capable of being checked, which is about evidence, not fictional authenticity. D (vernacular) refers to local dialect or everyday language. A is unambiguous."
+  },
+
+  // Q11 [C] malarkey
+  {
+    section:"Vocabulary",
+    stem:"The senior economist dismissed the tabloid's economic predictions as sheer <b>malarkey</b>.\n\nMalarkey most nearly means:",
+    opts:["technical jargon","extreme pessimism","nonsense or foolish talk","deliberate misinformation"],
+    ans:2,
+    exp:"Correct Answer: C. nonsense or foolish talk. Malarkey is an informal word meaning meaningless or insincere talk, rubbish, or bunkum. A (technical jargon) is a neutral term with no sense of falseness or nonsense. B (extreme pessimism) introduces a specific emotional register the word does not carry. D (deliberate misinformation) implies purposeful deception, whereas malarkey does not necessarily imply intent. C is the standard definition."
+  },
+
+  // Q12 [D] vicissitudes
+  {
+    section:"Vocabulary",
+    stem:"Having navigated the <b>vicissitudes</b> of three economic recessions, the family business emerged with a resilience its founders had never anticipated.\n\nVicissitudes most nearly means:",
+    opts:["sudden opportunities arising from change","the recurring cycles of profit and loss","harsh and unjust circumstances","alternating changes and difficulties"],
+    ans:3,
+    exp:"Correct Answer: D. alternating changes and difficulties. Vicissitudes (Latin vicissitudo: vicis = change, turn) refers to the changes and shifts of fortune, especially difficulties, that mark a person's or institution's experience over time. A (sudden opportunities) misses the element of difficulty and change. B (cycles of profit and loss) is too narrow and commercially specific. C (harsh and unjust circumstances) adds a moral dimension of injustice that vicissitudes does not carry. D captures the breadth of the word's meaning."
+  },
+
+  // Q13 [B] beguile
+  {
+    section:"Vocabulary",
+    stem:"The advertisement's <b>beguiling</b> visuals distracted consumers from the product's rather ordinary performance.\n\nBeguiling most nearly means:",
+    opts:["factually inaccurate","charming in a deceptive way","technically sophisticated","aggressively persuasive"],
+    ans:1,
+    exp:"Correct Answer: B. charming in a deceptive way. Beguile (Middle English bigilen = to deceive) means to charm or enchant, often with a suggestion of deception or distraction. The sentence confirms this: the visuals distract from an ordinary product. A (factually inaccurate) focuses on truth value, which is not what beguile means. C (technically sophisticated) is unrelated. D (aggressively persuasive) misses the charm element and introduces aggression. B is unambiguous."
+  },
+
+  // Q14 [A] laconic
+  {
+    section:"Vocabulary",
+    stem:"When asked to explain his decision to resign, the director gave a <b>laconic</b> reply: 'It was time.'\n\nLaconic most nearly means:",
+    opts:["brief and using few words","evasive and misleading","cold and unsympathetic","carefully worded and precise"],
+    ans:0,
+    exp:"Correct Answer: A. brief and using few words. Laconic (from Laconia, the region of ancient Sparta, whose inhabitants were famous for terse speech) means using very few words to express a complete thought. B (evasive and misleading) adds a sense of deception not present in the word. C (cold and unsympathetic) introduces an emotional register. D (carefully worded and precise) is closer to terse or exact but does not capture the central idea of brevity. A is the standard definition."
+  },
+
+  // Q15 [C] taciturn
+  {
+    section:"Vocabulary",
+    stem:"Which pair of words are closest in meaning?",
+    opts:["voluble and taciturn","taciturn and loquacious","reticent and taciturn","taciturn and garrulous"],
+    ans:2,
+    exp:"Correct Answer: C. reticent and taciturn. Both reticent and taciturn mean habitually silent or disinclined to speak. A pairs taciturn with voluble (tending to talk at length), which are antonyms. B pairs taciturn with loquacious (very talkative), also antonyms. D pairs taciturn with garrulous (excessively talkative), also antonyms. C is the only pair that are genuine synonyms."
+  },
+
+  // Q16 [D] perfidious
+  {
+    section:"Vocabulary",
+    stem:"Choose the sentence in which the word in bold is used incorrectly.",
+    opts:["His <b>treacherous</b> decision to betray the alliance shocked all parties.","The <b>duplicitous</b> negotiator gave one assurance in public and the opposite in private.","Her <b>guileful</b> manipulation of the tender process was exposed by an internal audit.","The <b>perfidious</b> scientist shared all his findings openly, to the delight of his colleagues."],
+    ans:3,
+    exp:"Correct Answer: D. The perfidious scientist shared all his findings openly, to the delight of his colleagues. Perfidious (Latin perfidus: per = through, fides = faith) means guilty of betrayal; deceitful and untrustworthy. The sentence describes the opposite behaviour: open sharing. A uses treacherous correctly (involving betrayal). B uses duplicitous correctly (double-dealing). C uses guileful correctly (cunning and deceitful). D applies perfidious to someone whose described behaviour is entirely transparent and trustworthy, making it the incorrect usage."
+  },
+
+  // Q17 [B] ebullient
+  {
+    section:"Vocabulary",
+    stem:"The newly appointed coach was <b>ebullient</b> at the press conference, effusively praising the team's potential and predicting strong results for the season.\n\nEbullient most nearly means:",
+    opts:["nervously restless","enthusiastic and full of energy","composed under pressure","forceful and direct"],
+    ans:1,
+    exp:"Correct Answer: B. enthusiastic and full of energy. Ebullient (Latin ebullire = to bubble up: e- = out, bullire = to boil) means exuberantly enthusiastic. The sentence reinforces this with 'effusively praising.' A (nervously restless) confuses energy with anxiety. C (composed) is the antonym of the bubbly, overflowing quality the word conveys. D (forceful and direct) describes a different personality trait. B is unambiguous."
+  },
+
+  // Q18 [A] ostensible
+  {
+    section:"Vocabulary",
+    stem:"The <b>ostensible</b> purpose of the meeting was to discuss the quarterly review; however, most attendees understood it was about the impending restructuring.\n\nOstensible most nearly means:",
+    opts:["stated or apparent, but not necessarily real","already discussed and agreed upon","hidden from general knowledge","officially documented"],
+    ans:0,
+    exp:"Correct Answer: A. stated or apparent, but not necessarily real. Ostensible (Latin ostendere = to show) means outwardly appearing as such, the stated reason that may or may not be the actual one. The sentence signals a gap between the declared purpose and the real one. B (already agreed upon) introduces a different idea. C (hidden from general knowledge) is the opposite of ostensible, which refers to what is visible or stated. D (officially documented) does not capture the outward vs. real distinction. A is the standard definition."
+  },
+
+  // Q19 [C] in context - purport / verisimilitude / artless / sonder
+  {
+    section:"Vocabulary",
+    stem:"Four students each used a word from this test's vocabulary list. Which student used the word <b>incorrectly</b>?",
+    opts:["Priya: 'His purported expertise in derivatives turned out to be vastly overstated.'","Rohan: 'The film's verisimilitude was remarkable; even historians praised its period accuracy.'","Meera: 'She delivered an artless performance, cleverly concealing her true motives with polished technique.'","Arjun: 'Sitting in a crowded train and experiencing sonder, he suddenly felt both alone and deeply connected.'"],
+    ans:2,
+    exp:"Correct Answer: C. Meera's sentence. Artless means free from cunning or deception; sincere and natural. Meera's sentence says the opposite: 'cleverly concealing her true motives with polished technique' describes exactly the kind of calculated artifice that artless negates. You cannot simultaneously be artless and carefully concealing motives. A uses purported correctly (claimed, possibly falsely). B uses verisimilitude correctly (appearance of truth). D uses sonder correctly (awareness of others' inner lives). C is the incorrect usage."
+  },
+
+  // Q20 [D] analogy - acquiesce : resist :: purport : ?
+  {
+    section:"Vocabulary",
+    stem:"ACQUIESCE : RESIST\n\nWhich pair has the same relationship as the pair above?",
+    opts:["malarkey : nonsense","vicissitude : change","tepid : lukewarm","sonder : disregard"],
+    ans:3,
+    exp:"Correct Answer: D. sonder : disregard. The relationship between acquiesce and resist is antonymy: acquiesce means to comply passively; resist means to oppose. We need a pair of antonyms. A: malarkey and nonsense are synonyms, not antonyms. B: vicissitude and change are related in meaning, not antonyms. C: tepid and lukewarm are synonyms. D: sonder is the realisation of others' inner lives and complexity; disregard means to pay no attention to. These are antonyms in the context of awareness of others. D is the only antonym pair."
+  },
+
+  // ======= IDIOMS AND PHRASAL VERBS Q21-Q30 =======
+
+  // Q21 [A] idiom - costs an arm and a leg
+
+  // ======= IDIOMS AND PHRASAL VERBS Q21-Q30 =======
+
+  // Q21 [B] made to bear the responsibility for othe
+  {
+    section:"Idioms and Phrasal Verbs",
+    stem:"When the financial irregularities came to light, the two senior partners quietly resigned and relocated abroad, while their junior associate was <u>left holding the bag</u>.\n\nLeft holding the bag most nearly means:",
+    opts:["given the largest share of the proceeds","made to bear the responsibility for others' wrongdoing","entrusted with safeguarding confidential evidence","singled out for public recognition despite personal reluctance"],
+    ans:1,
+    exp:"Correct Answer: B. made to bear the responsibility for others' wrongdoing. 'Left holding the bag' means to be made to take the blame or face the consequences of a situation that others caused and then abandoned. The senior partners' departure is the key signal: they escaped, leaving the junior associate exposed. A inverts the meaning entirely. C introduces safeguarding evidence, which is not implied. D reads 'holding the bag' as a reward, which contradicts the idiom's negative connotation."
+  },
+
+  // Q22 [A] subjected to severe and repeated critici
+  {
+    section:"Idioms and Phrasal Verbs",
+    stem:"The managing director <u>raked the project team over the coals</u> for three consecutive quarters of cost overruns, refusing to let the matter rest despite their revised projections.\n\nRaked over the coals most nearly means:",
+    opts:["subjected to severe and repeated criticism","rewarded with additional financial oversight responsibilities","asked to submit a formal written explanation","removed from their positions and reassigned"],
+    ans:0,
+    exp:"Correct Answer: A. subjected to severe and repeated criticism. 'Rake over the coals' (also 'haul over the coals') means to reprimand someone harshly and at length, particularly about a past failure. The sentence confirms severity: three consecutive quarters, refusing to let the matter rest. B (rewarded) inverts the meaning. C (written explanation) falls well short of the severity the idiom implies. D (removed and reassigned) describes a consequence, not the act of verbal reprimand the idiom specifically conveys."
+  },
+
+  // Q23 [D] in serious difficulty with no available 
+  {
+    section:"Idioms and Phrasal Verbs",
+    stem:"With the sole witness having retracted her statement and the forensic evidence ruled inadmissible, the prosecution found itself <u>up the creek without a paddle</u> on the morning of the trial.\n\nUp the creek without a paddle most nearly means:",
+    opts:["forced to rely on untested legal arguments","proceeding cautiously to avoid further setbacks","in disagreement with the presiding judge over procedure","in serious difficulty with no available means of escape"],
+    ans:3,
+    exp:"Correct Answer: D. in serious difficulty with no available means of escape. 'Up the creek without a paddle' means to be in a very difficult or hopeless situation with no resources to help oneself out. The sentence enumerates two specific disasters: the witness retracted and evidence was ruled inadmissible. A (untested legal arguments) partially captures difficulty but misses the helplessness that defines the idiom. B (proceeding cautiously) contradicts the sense of crisis. C (disagreement with the judge) introduces a procedural conflict not implied."
+  },
+
+  // Q24 [C] someone fundamentally unsuited to the ro
+  {
+    section:"Idioms and Phrasal Verbs",
+    stem:"Colleagues privately admitted that appointing the celebrated research scientist to lead the government's public communications strategy had been a mistake: she was, by every account, <u>a square peg in a round hole</u>.\n\nA square peg in a round hole most nearly means:",
+    opts:["someone whose unconventional methods ultimately produce superior results","a person who refuses to compromise their principles under institutional pressure","someone fundamentally unsuited to the role they have been placed in","a specialist whose expertise is being wasted on a task beneath their ability"],
+    ans:2,
+    exp:"Correct Answer: C. someone fundamentally unsuited to the role they have been placed in. 'A square peg in a round hole' describes a person whose character, skills, or temperament are structurally incompatible with the position they occupy. A introduces unconventional success, which the idiom does not imply. B (refusing to compromise principles) introduces a moral dimension absent from the idiom. D (expertise wasted) is close but specifically wrong: the idiom is about incompatibility of fit, not hierarchy of talent."
+  },
+
+  // Q25 [B] to commit to joining a group and sharing
+  {
+    section:"Idioms and Phrasal Verbs",
+    stem:"When the coalition fractured, several mid-ranking ministers surprised observers by choosing to <u>throw in their lot with</u> the breakaway faction rather than remain with the established party.\n\nThrow in their lot with most nearly means:",
+    opts:["to challenge the authority of a group by open defiance","to commit to joining a group and sharing whatever fortune it encounters","to surrender a position to a rival without resistance","to cast doubt on the motives of those leading a movement"],
+    ans:1,
+    exp:"Correct Answer: B. to commit to joining a group and sharing whatever fortune it encounters. 'Throw in one's lot with' means to align oneself with a person or cause and accept whatever consequences follow. The idiom derives from casting lots: putting your portion in with another's. A (open defiance) introduces confrontation not present in the idiom. C (surrender without resistance) is a deliberate trap: students confuse this with 'throw in the towel,' which means to give up. D (cast doubt on motives) is entirely unrelated."
+  },
+
+  // Q26 [A] failed completely and collapsed after su
+  {
+    section:"Idioms and Phrasal Verbs",
+    stem:"Despite aggressive cost-cutting and two emergency injections of capital, the once-dominant retail chain ultimately <u>went to the wall</u>, filing for insolvency in the spring.\n\nWent to the wall most nearly means:",
+    opts:["failed completely and collapsed after sustained effort","retreated to a defensive position while awaiting external rescue","was absorbed into a larger competitor at a reduced valuation","reached an impasse from which no further progress was possible"],
+    ans:0,
+    exp:"Correct Answer: A. failed completely and collapsed after sustained effort. 'Go to the wall' means to fail utterly and be ruined, particularly after making a determined effort to survive. The sentence confirms both the effort (cost-cutting, capital injections) and the outcome (insolvency). B (retreated to defensive position) exploits the literal image of a wall as a barrier: the most common misdirection for this idiom. C (absorbed by competitor) is a specific corporate outcome not captured by the idiom. D (impasse) implies stasis, not collapse."
+  },
+
+  // Q27 [D] reversed the situation so that the previ
+  {
+    section:"Idioms and Phrasal Verbs",
+    stem:"The underdog legal team <u>turned the tables</u> in the second week of proceedings when their expert witness demolished the plaintiff's central technical claim.\n\nTurned the tables most nearly means:",
+    opts:["revealed concealed evidence that had undermined the original case","introduced a procedural objection that suspended the proceedings","appealed to a higher authority to review the original judgment","reversed the situation so that the previously disadvantaged party gained the upper hand"],
+    ans:3,
+    exp:"Correct Answer: D. reversed the situation so that the previously disadvantaged party gained the upper hand. 'Turn the tables' means to completely reverse a situation so the party who was losing now holds the advantage. The sentence signals this: the 'underdog' team (previously weak) demolishes the central claim. A (revealed concealed evidence) describes a dramatic act but not what the idiom itself means. B (procedural objection) is too narrow. C (appeal to higher authority) describes escalation, not reversal of advantage."
+  },
+
+  // Q28 [C] something that fails to produce the anti
+  {
+    section:"Idioms and Phrasal Verbs",
+    stem:"The product launch, which the marketing team had spent six months building up as a market-defining moment, proved to be <u>a damp squib</u>: modest sales, muted press coverage, and no discernible shift in brand awareness.\n\nA damp squib most nearly means:",
+    opts:["a deliberate deception intended to mislead investors","an event that causes significant unintended collateral damage","something that fails to produce the anticipated impact","a situation that deteriorates rapidly after a promising start"],
+    ans:2,
+    exp:"Correct Answer: C. something that fails to produce the anticipated impact. A 'damp squib' is a firework that fails to ignite because it is wet: the anticipated spectacle simply does not materialise. Figuratively it means any event that disappoints by failing to deliver the expected effect. A (deliberate deception) imports intent and malice that the idiom does not carry. B (significant collateral damage) inverts the meaning entirely: a damp squib produces no impact, not widespread harm. D (deteriorates after a promising start) is a carefully placed trap: the idiom describes a failure to ignite at all, not a collapse after initial success."
+  },
+
+  // Q29 [B] diminished the appeal of something by re
+  {
+    section:"Idioms and Phrasal Verbs",
+    stem:"The discovery that the award carried no monetary prize and required the recipient to fund their own attendance at the ceremony rather <u>took the gilt off the gingerbread</u> for most nominees.\n\nTook the gilt off the gingerbread most nearly means:",
+    opts:["revealed the true cost concealed beneath an attractive proposal","diminished the appeal of something by removing its most attractive feature","exposed a fundamental dishonesty at the heart of a prestigious institution","discouraged participation by imposing unreasonable financial conditions"],
+    ans:1,
+    exp:"Correct Answer: B. diminished the appeal of something by removing its most attractive feature. 'Take the gilt off the gingerbread' means to strip away the decorative element that made something appealing, leaving it far less desirable. Gilt is gold leaf applied for ornament; its removal reveals the plain thing beneath. The sentence confirms: the award's prestige is undercut by the financial conditions attached. A (revealed hidden cost) is close but wrong in emphasis: the idiom is about reduction of appeal, not revelation of deception. C (fundamental dishonesty) imports a moral charge the idiom does not carry. D (discouraged participation) describes a consequence, not the meaning of the idiom itself."
+  },
+
+  // Q30 [A] at the very last moment before an irreve
+  {
+    section:"Idioms and Phrasal Verbs",
+    stem:"A settlement was reached <u>at the eleventh hour</u>, just as the judge was preparing to deliver a verdict that would have exposed both parties to substantial reputational damage.\n\nAt the eleventh hour most nearly means:",
+    opts:["at the very last moment before an irreversible outcome","after all formal avenues of resolution had been exhausted","under conditions of extreme secrecy to avoid press scrutiny","following a prolonged period of failed negotiation"],
+    ans:0,
+    exp:"Correct Answer: A. at the very last moment before an irreversible outcome. 'At the eleventh hour' means at the last possible moment before a critical deadline or irreversible event, from the biblical parable of labourers hired at the eleventh hour of a twelve-hour working day. The sentence confirms extreme imminence: 'just as the judge was preparing.' B (after all avenues exhausted) describes a process, not timing. C (extreme secrecy) introduces confidentiality absent from the idiom. D (prolonged failed negotiation) describes prior history that the idiom itself does not contain."
+  },
+
+
+  {
+    section:"Grammar",
+    stem:"Choose the grammatically correct sentence.",
+    opts:["More than one analyst were surprised by the scale of the quarterly loss.","Neither the director nor the shareholders was informed of the breach before it became public.","The number of errors in the final submission was significantly higher than expected.","Each of the shortlisted candidates were asked to present a ten-minute plan."],
+    ans:2,
+    exp:"Correct Answer: C. The number of errors in the final submission was significantly higher than expected. The phrase 'the number of' functions as a singular subject and requires a singular verb; 'was' is correct. A: 'more than one' followed by a singular noun takes a singular verb; 'more than one analyst was surprised' is required, not 'were surprised.' B: in a neither...nor construction the verb agrees with the closer subject; the closer element is 'the shareholders' (plural), so 'were informed' is required, not 'was informed.' D: 'each of' takes a singular verb; 'was asked' is required, not 'were asked.' C is the only correct sentence."
+  },
+
+  // Q32 [D] reported speech tense shift
+  {
+    section:"Grammar",
+    stem:"Identify the grammatically incorrect sentence.",
+    opts:["She mentioned that she had already submitted the application before the deadline.","The analyst reported that the figures were consistent with the previous quarter.","He explained that the project had been delayed due to supply chain disruptions.","The manager announced that the team has completed all deliverables on schedule."],
+    ans:3,
+    exp:"Correct Answer: D. The manager announced that the team has completed all deliverables on schedule. In reported speech following a past reporting verb (announced), the verb in the subordinate clause must backshift. 'Has completed' (present perfect) should become 'had completed' (past perfect). A correctly uses 'had already submitted' (backshifted from past perfect). B correctly uses 'were consistent' (backshifted from present). C correctly uses 'had been delayed' (backshifted from past perfect). D fails to apply the required backshift. D is the incorrect sentence."
+  },
+
+  // Q33 [A] articles
+  {
+    section:"Grammar",
+    stem:"Choose the correct option to complete the sentence.\n\nThe panel agreed that ___________ evidence presented by the second witness was more compelling than any prior testimony.",
+    opts:["the","a","an","no article required"],
+    ans:0,
+    exp:"Correct Answer: A. the. The definite article the is required because the noun phrase 'evidence presented by the second witness' refers to a specific, already identified piece of evidence, not evidence in general. B (a) is incorrect because a is used with singular countable nouns to indicate non-specific reference; evidence is uncountable. C (an) is the same issue. D (no article) is incorrect because specific reference to particular evidence requires the. A is unambiguous."
+  },
+
+  // Q34 [B] parallel structure
+  {
+    section:"Grammar",
+    stem:"Identify the sentence that is grammatically correct in its use of parallel structure.",
+    opts:["The new policy aims to reduce costs, improving efficiency, and to create a fairer appraisal system.","The auditors noted that the records were incomplete, that several entries were undated, and that two accounts had been incorrectly merged.","To succeed in this field requires dedication, having technical knowledge, and to build strong networks.","He was praised for his thoroughness, being punctual, and his collaborative spirit."],
+    ans:1,
+    exp:"Correct Answer: B. The auditors noted that the records were incomplete, that several entries were undated, and that two accounts had been incorrectly merged. Parallel structure requires that items in a list share the same grammatical form, not the same tense. All three items in B share the form: that + noun phrase + verb phrase. The tense varies - two clauses use past simple, one uses past perfect - but this is grammatically correct: 'had been incorrectly merged' uses the past perfect because the merging occurred before the auditors made their observation. Tense variation within parallel clauses is permitted whenever the tenses reflect different temporal relationships to the main verb. A mixes infinitive (to reduce), gerund (improving), and infinitive (to create). C mixes a noun (dedication), a gerund phrase (having technical knowledge), and an infinitive (to build). D mixes a noun phrase (his thoroughness), a participial phrase (being punctual), and a noun phrase (his collaborative spirit). B is the only fully parallel sentence."
+  },
+
+  // Q35 [C] conditional
+  {
+    section:"Grammar",
+    stem:"Choose the correct option to complete the conditional sentence.\n\nIf the committee ___________ the final report by Friday, the project can proceed to implementation next week.",
+    opts:["will approve","would approve","approves","would have approved"],
+    ans:2,
+    exp:"Correct Answer: C. approves. This is a first conditional (Type 1) sentence describing a real and possible future event. The correct structure for a Type 1 conditional is: If + present simple, ... will/can + base verb. C (approves) is correct: present simple in the if-clause, can + proceed in the main clause. A (will approve) is incorrect; the if-clause of a Type 1 conditional does not use will. B (would approve) belongs to a Type 2 conditional expressing hypothetical or unlikely events. D (would have approved) belongs to a Type 3 conditional referring to past hypotheticals. C is unambiguous."
+  },
+
+  // Q36 [A] pronoun reference
+  {
+    section:"Grammar",
+    stem:"Choose the option that correctly completes the sentence without creating a pronoun reference error.\n\nThe board of directors and the audit committee submitted ___________ respective reports to the regulator.",
+    opts:["their","its","his","her"],
+    ans:0,
+    exp:"Correct Answer: A. their. The subject is a compound: 'the board of directors and the audit committee.' When two nouns are joined by and, the subject is plural and requires a plural pronoun. Their is the appropriate plural pronoun. B (its) is singular and would only be correct if one collective body submitted a single report. C (his) and D (her) are singular personal pronouns inappropriate for referring to institutions. A is unambiguous."
+  },
+
+  // Q37 [D] dangling modifier
+  {
+    section:"Grammar",
+    stem:"Identify the sentence that contains a dangling modifier.",
+    opts:["After reviewing the contract, the lawyers advised their client to accept the settlement.","Having secured the necessary permits, the construction team began work immediately.","While preparing for the presentation, she discovered a critical error in the data.","Exhausted after the twelve-hour journey, the conference began without the keynote speaker."],
+    ans:3,
+    exp:"Correct Answer: D. Exhausted after the twelve-hour journey, the conference began without the keynote speaker. A dangling modifier is a participial phrase whose implied subject does not match the grammatical subject of the main clause. In D, 'Exhausted after the twelve-hour journey' should logically refer to the keynote speaker, but the grammatical subject of the main clause is 'the conference.' Conferences do not get exhausted. A correctly: the lawyers reviewed the contract. B correctly: the construction team secured the permits. C correctly: she prepared for the presentation. D is the dangling modifier."
+  },
+
+  // Q38 [B] preposition collocations
+  {
+    section:"Grammar",
+    stem:"Choose the correct preposition.\n\nThe finance team is responsible ___________ ensuring that all expenditure falls within the approved budget.",
+    opts:["to","of","about","for"],
+    ans:1,
+    exp:"Correct Answer: D. for. The fixed collocation in formal written English is 'responsible for doing something,' meaning having a duty to carry out an action. A (to) belongs to 'responsible to someone,' meaning accountable to a person, which is a different construction not applicable here. B (about) is not a standard collocation with responsible in any context. C (at) is not a standard collocation with responsible. D is the only correct preposition."
+  },
+
+  // Q39 [C] tense - present perfect vs simple past
+  {
+    section:"Grammar",
+    stem:"Choose the grammatically correct sentence.",
+    opts:["The government implemented a major infrastructure reform already.","She has submitted the tender documents yesterday morning.","Since the new regulations came into effect, compliance costs have risen sharply.","They have launched the product last November with considerable fanfare."],
+    ans:2,
+    exp:"Correct Answer: C. Since the new regulations came into effect, compliance costs have risen sharply. The present perfect (have risen) is correctly used here because 'since' signals an ongoing relevance from a past event to the present. A: 'already' with simple past (implemented) is non-standard in formal written English; 'already' with present perfect is required: has already implemented. B: 'yesterday' is a specific past time marker that requires simple past, not present perfect; 'submitted' is required, not 'has submitted.' D: 'last November' is a specific past time marker; present perfect cannot be used with specific past time references. C is the only correct sentence."
+  },
+
+  // Q40 [A] identify the error - one portion
+  {
+    section:"Grammar",
+    stem:"Read the sentence and identify the portion that contains a grammatical error.\n\n<b>(A)</b> The findings of the independent inquiry <b>(B)</b> contradicts the government's earlier claim <b>(C)</b> that no protocol had been violated <b>(D)</b> during the procurement process.",
+    opts:["(A) The findings of the independent inquiry","(B) contradicts the government's earlier claim","(C) that no protocol had been violated","(D) during the procurement process"],
+    ans:0,
+    exp:"Correct Answer: B. (B) contradicts the government's earlier claim. The subject of the sentence is 'findings' (plural noun). A plural subject requires a plural verb: 'contradict,' not 'contradicts.' Portion A contains the subject and is grammatically clean. Portion B contains the error word 'contradicts,' which does not agree with the plural subject. Portions C and D are grammatically clean subordinate elements. The error is in B."
+  },
+
+  // Q41 [D] identify the error
+  {
+    section:"Grammar",
+    stem:"Read the sentence and identify the portion that contains a grammatical error.\n\n<b>(A)</b> Neither the external auditors <b>(B)</b> nor the internal compliance team <b>(C)</b> were able to explain <b>(D)</b> the discrepancy in the quarterly figures.",
+    opts:["(A) Neither the external auditors","(B) nor the internal compliance team","(C) were able to explain","(D) the discrepancy in the quarterly figures"],
+    ans:2,
+    exp:"Correct Answer: C. were able to explain. In a neither...nor construction, the verb agrees with the subject closer to it (the last element). The last element before the verb is 'the internal compliance team,' which is singular. Therefore the verb should be 'was able to explain,' not 'were able to explain.' A is grammatically clean. B is grammatically clean. D is grammatically clean. The error is in C: 'were' should be 'was.'"
+  },
+
+  // Q42 [B] identify correct sentence
+  {
+    section:"Grammar",
+    stem:"Identify the grammatically correct sentence.",
+    opts:["The percentage of projects completed on time have increased significantly this quarter.","Every employee and every contractor is required to sign the updated non-disclosure agreement.","The committee have reached a unanimous decision after two hours of deliberation.","The number of applicants who have submitted incomplete forms are surprisingly high."],
+    ans:1,
+    exp:"Correct Answer: B. Every employee and every contractor is required to sign the updated non-disclosure agreement. When two singular subjects are joined by 'every...and every,' the verb is singular; 'is required' is correct. A: 'the percentage of...have increased' is incorrect; 'percentage' is a singular noun and requires 'has increased.' C: in strict formal written English, collective nouns such as 'committee' take singular verbs; 'committee have' is non-standard. D: 'the number of applicants...are' is incorrect; 'the number of' always takes a singular verb; 'is surprisingly high' is required. B is the only correct sentence."
+  },
+
+  // Q43 [C] voice - passive construction
+  {
+    section:"Grammar",
+    stem:"Choose the option that correctly converts the sentence into the passive voice.\n\nActive: The investigating officer questioned all three suspects before filing the preliminary report.",
+    opts:["All three suspects were questioned by the investigating officer before the preliminary report had been filed.","All three suspects were questioned by the investigating officer before filing the preliminary report.","All three suspects were questioned by the investigating officer before the preliminary report was filed.","The preliminary report was filed after questioning all three suspects by the investigating officer."],
+    ans:2,
+    exp:"Correct Answer: C. All three suspects were questioned by the investigating officer before the preliminary report was filed. To convert properly, the main verb 'questioned' becomes passive: 'were questioned by the investigating officer.' The second action 'filing the report' should also be in passive voice for consistency and grammatical completeness: 'the preliminary report was filed.' A incorrectly uses past perfect (had been filed) where simple past is needed, implying the filing happened before the questioning. B incorrectly retains an active gerund phrase 'before filing the preliminary report' without a clear subject. D restructures incorrectly, making the preliminary report the grammatical subject of the main clause. C is the correct passive conversion."
+  },
+
+  // Q44 [A] gerund vs infinitive
+  {
+    section:"Grammar",
+    stem:"Choose the correct option to complete the sentence.\n\nThe board decided ___________ all non-essential travel expenditure with immediate effect.",
+    opts:["to suspend","suspending","having suspended","to have suspended"],
+    ans:0,
+    exp:"Correct Answer: A. to suspend. The verb 'decide' is followed by an infinitive, not a gerund. The correct structure is decide + to + base verb. A (to suspend) follows this correctly. B (suspending) uses a gerund; decide does not take a gerund complement. C (having suspended) is a perfect gerund suggesting the action is already complete before the deciding, which contradicts the meaning. D (to have suspended) is a perfect infinitive; while grammatically possible in some contexts (to have done something by a prior time), the sentence does not call for a past reference. A is the standard and unambiguous correct form."
+  },
+
+  // Q45 [D] sentence correction
+  {
+    section:"Grammar",
+    stem:"The sentence below contains one error. Choose the option that corrects it.\n\n<i>Despite of the considerable progress made in the first quarter, the project remains significantly behind its original schedule.</i>",
+    opts:["Despite the considerable progress made in the first quarter, although the project remains significantly behind its original schedule.","In spite of the considerable progress made in the first quarter, but the project remains significantly behind its original schedule.","Despite of the considerable progress made in the first quarter, the project is remaining significantly behind its original schedule.","Despite the considerable progress made in the first quarter, the project remains significantly behind its original schedule."],
+    ans:3,
+    exp:"Correct Answer: D. Despite the considerable progress made in the first quarter, the project remains significantly behind its original schedule. The error in the original sentence is 'despite of.' Despite is a preposition that is never followed by 'of.' The correct forms are: 'despite' + noun phrase, or 'in spite of' + noun phrase. 'Despite of' is a common error that conflates these two forms. A incorrectly adds 'although' creating a double concession. B incorrectly adds 'but' creating a double contrast marker. C retains the erroneous 'despite of' and also changes the verb incorrectly. D removes 'of' from 'despite of' and is otherwise identical to the original. D is the correct answer."
+  }
+
+];
+
+// ── Fix Q38 answer: opts are [to, of, about, for] and correct is 'for' = index 3 ──
+QUESTIONS[37].opts = ["to","about","at","for"];
+QUESTIONS[37].ans = 3;
+QUESTIONS[37].exp = "Correct Answer: D. for. The fixed collocation in formal English is 'responsible for doing something' when responsible means having a duty to do something. A (to) is used in 'responsible to someone' meaning accountable to a person, not relevant here. B (about) is not a standard collocation with responsible. C (at) is not a standard collocation with responsible. D is unambiguous.";
+
+// ── Fix Q40: error is in (B) contradicts, not (A) ──
+QUESTIONS[39].ans = 1;
+QUESTIONS[39].exp = "Correct Answer: B. contradicts the government's earlier claim. The subject of the sentence is 'findings' (plural noun). A plural subject requires a plural verb: 'contradict,' not 'contradicts.' Portion A contains the subject and is grammatically clean. Portion B contains the singular verb 'contradicts' which does not agree with the plural subject 'findings.' Portions C and D are grammatically clean subordinate elements. The error is in B.";
+
+// ── Fix Q41: error is in (C) were able, ans should be index 2 ──
+// Already set to ans:2 above. Confirmed.
+
+// ── Re-check distribution after fixes ──
+// Q38 was B(1), now D(3). Q40 was A(0), now B(1).
+// Original plan: Q38=B(1), Q40=A(0)
+// After fix: Q38=D(3), Q40=B(1)
+// Need to recount: 
+// Let me trace: planned ans array had Q38=index1=B, Q40=index0=A
+// After fix: Q38=index3=D, Q40=index1=B
+// Impact on distribution: B loses 1 (Q40 was A, now B = +1 to B), D gains 1 (Q38 was B, now D)
+// A loses 1 (Q40 was A), B gains 1 (Q40 now B), D gains 1 (Q38 now D), B loses 1 (Q38 was B)
+// Net: A: -1, B: +1-1=0, D: +1. Let me just count properly.
+
+// -- STATE --
+let studentName="", studentPin="", studentBatch="";
+let currentQ=0, secondsLeft=TIMER_DURATION*60, timerInterval=null;
+let userAnswers=new Array(45).fill(null);
+let markedForReview=new Array(45).fill(false);
+let testSubmitted=false;
+
+// -- LOGIN --
+function startTest(){
+  const name=document.getElementById('inputName').value.trim();
+  const pin=document.getElementById('inputPin').value.trim().toUpperCase();
+  const batch=document.getElementById('inputBatch').value;
+  const err=document.getElementById('loginErr');
+  if(!name||!pin||!batch){err.textContent='Please fill in all fields.';err.style.display='block';return;}
+  if(!/^(STU|IMS)\d{10}$/.test(pin)){err.textContent='PIN must be STU or IMS followed by exactly 10 digits.';err.style.display='block';return;}
+  const isAdmin=ADMIN_PINS.includes(pin);
+  if(isAdmin&&batch!=='Admin'){err.textContent='Admin PIN must be used with the Admin batch only.';err.style.display='block';return;}
+  if(!isAdmin&&batch==='Admin'){err.textContent='Only Admin PINs may select the Admin batch.';err.style.display='block';return;}
+  studentName=name; studentPin=pin; studentBatch=batch;
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('testScreen').style.display='block';
+  if(window.innerWidth > 768){
+    document.getElementById('paletteOverlay').style.display='flex';
+  } else {
+    document.getElementById('paletteOverlay').style.display='none';
+  }
+  buildPalette();
+  renderQuestion();
+  startTimer();
+}
+
+// -- TIMER --
+function startTimer(){
+  timerInterval=setInterval(()=>{
+    secondsLeft--;
+    const m=String(Math.floor(secondsLeft/60)).padStart(2,'0');
+    const s=String(secondsLeft%60).padStart(2,'0');
+    const el=document.getElementById('timerDisplay');
+    el.textContent=m+':'+s;
+    if(secondsLeft<=300) el.classList.add('urgent');
+    if(secondsLeft<=0){clearInterval(timerInterval);submitTest();}
+  },1000);
+}
+
+// -- RENDER QUESTION --
+function renderQuestion(){
+  const q=QUESTIONS[currentQ];
+  document.getElementById('sectionTag').textContent=q.section;
+  document.getElementById('questionNumber').textContent='Question '+(currentQ+1)+' of 45';
+  document.getElementById('questionStem').innerHTML=q.stem.replace(/\n/g,'<br>');
+  const ol=document.getElementById('optionsList');
+  ol.innerHTML='';
+  q.opts.forEach((opt,i)=>{
+    const li=document.createElement('li');
+    const btn=document.createElement('button');
+    btn.className='option-btn';
+    if(userAnswers[currentQ]===i) btn.classList.add('selected');
+    if(markedForReview[currentQ]) btn.classList.add('marked');
+    btn.innerHTML='<span class="opt-label">'+['A','B','C','D'][i]+'</span> '+opt;
+    btn.onclick=()=>selectAnswer(i);
+    li.appendChild(btn); ol.appendChild(li);
+  });
+  document.getElementById('submitBtn').style.display=(currentQ===44)?'block':'none';
+  updatePalette();
+  updateProgress();
+}
+
+function selectAnswer(idx){
+  userAnswers[currentQ]=idx;
+  renderQuestion();
+}
+
+function navigate(dir){
+  const next=currentQ+dir;
+  if(next>=0&&next<45){currentQ=next;renderQuestion();}
+}
+
+let paletteOpen = window.innerWidth > 768;
+function togglePalette(){
+  paletteOpen=!paletteOpen;
+  const isMobile = window.innerWidth <= 768;
+  const overlay = document.getElementById('paletteOverlay');
+  const navBar  = document.getElementById('navBar');
+  const qArea   = document.getElementById('questionArea');
+  if(isMobile){
+    overlay.classList.toggle('mobile-open', paletteOpen);
+  } else {
+    overlay.style.display = paletteOpen ? 'flex' : 'none';
+    navBar.style.right    = paletteOpen ? 'var(--panel)' : '0';
+    qArea.style.maxWidth  = paletteOpen ? 'calc(100% - var(--panel))' : '100%';
+  }
+}
+
+function markForReview(){
+  markedForReview[currentQ]=!markedForReview[currentQ];
+  renderQuestion();
+}
+
+function buildPalette(){
+  const grid=document.getElementById('paletteGrid');
+  grid.innerHTML='';
+  for(let i=0;i<45;i++){
+    const btn=document.createElement('button');
+    btn.className='pal-btn';
+    btn.id='pb'+(i+1);
+    btn.textContent=i+1;
+    btn.onclick=(()=>{const idx=i;return()=>{currentQ=idx;renderQuestion();}})();
+    grid.appendChild(btn);
+  }
+}
+
+function updatePalette(){
+  for(let i=0;i<45;i++){
+    const btn=document.getElementById('pb'+(i+1));
+    if(!btn) continue;
+    btn.className='pal-btn';
+    if(markedForReview[i]) btn.classList.add('marked');
+    else if(userAnswers[i]!==null) btn.classList.add('answered');
+    if(i===currentQ) btn.classList.add('current');
+  }
+}
+
+function updateProgress(){
+  const answered=userAnswers.filter(a=>a!==null).length;
+  document.getElementById('progressFill').style.width=(answered/45*100)+'%';
+}
+
+function confirmSubmit(){
+  const unanswered=userAnswers.filter(a=>a===null).length;
+  let msg='Submit the test?';
+  if(unanswered>0) msg='You have '+unanswered+' unanswered question'+(unanswered>1?'s':'')+'. Submit anyway?';
+  if(confirm(msg)) submitTest();
+}
+
+// -- SUBMIT --
+function submitTest(){
+  if(testSubmitted) return;
+  testSubmitted=true;
+  clearInterval(timerInterval);
+  let correct=0,wrong=0,skipped=0;
+  const sectionErrors={};
+  const wrongQuestions=[];
+  QUESTIONS.forEach((q,i)=>{
+    const sec=q.section;
+    if(userAnswers[i]===null){skipped++;}
+    else if(userAnswers[i]===q.ans){correct++;}
+    else{
+      wrong++;
+      wrongQuestions.push(i+1);
+      sectionErrors[sec]=(sectionErrors[sec]||0)+1;
+    }
+  });
+  const score=correct*4-wrong*1;
+  showResults(score,correct,wrong,skipped);
+  saveToTracker(score,correct,wrong,skipped);
+  logToSheet(score,correct,wrong,skipped,sectionErrors,wrongQuestions);
+}
+
+function showResults(score,correct,wrong,skipped){
+  document.getElementById('testScreen').style.display='none';
+  document.getElementById('resultsScreen').style.display='block';
+  const acc=((correct/(45-skipped||1))*100).toFixed(1);
+  document.getElementById('scoreHero').innerHTML=
+    '<div class="score-num">'+score+'</div>'+
+    '<div class="score-sub">out of 180 &nbsp;&middot;&nbsp; '+studentName+' &nbsp;&middot;&nbsp; '+studentPin+' &nbsp;&middot;&nbsp; '+studentBatch+'</div>';
+  document.getElementById('statsGrid').innerHTML=
+    '<div class="stat-box correct"><div class="val">'+correct+'</div><div class="lbl">Correct</div></div>'+
+    '<div class="stat-box wrong"><div class="val">'+wrong+'</div><div class="lbl">Wrong</div></div>'+
+    '<div class="stat-box"><div class="val" style="color:var(--grey)">'+skipped+'</div><div class="lbl">Skipped</div></div>'+
+    '<div class="stat-box accuracy"><div class="val">'+acc+'%</div><div class="lbl">Accuracy</div></div>';
+  buildReview();
+  buildMisses();
+  buildRetry();
+}
+
+function buildReview(){
+  const list=document.getElementById('review-list');
+  list.innerHTML='';
+  QUESTIONS.forEach((q,i)=>{
+    const ua=userAnswers[i];
+    const correct=(ua===q.ans);
+    const skipped=(ua===null);
+    const card=document.createElement('div');
+    card.className='review-card '+(skipped?'':correct?'correct':'wrong');
+    let badgeClass=skipped?'badge-skipped':correct?'badge-correct':'badge-wrong';
+    let badgeText=skipped?'--':correct?'checkmark':'X';
+    badgeText=skipped?'&ndash;':correct?'&#10003;':'&#10007;';
+    const opts=q.opts.map((o,idx)=>{
+      let cls='review-opt';
+      if(idx===q.ans) cls+=' correct-opt';
+      if(ua!==null&&ua===idx&&idx!==q.ans) cls+=' your-wrong';
+      return '<div class="'+cls+'"><span class="opt-label">'+['A','B','C','D'][idx]+'</span> '+o+'</div>';
+    }).join('');
+    card.innerHTML=
+      '<div class="review-card-header">'+
+      '<div class="review-badge '+badgeClass+'">'+badgeText+'</div>'+
+      '<div class="review-stem"><span style="color:var(--grey);font-size:.75rem">Q'+(i+1)+' &middot; '+q.section+'</span><br>'+q.stem.replace(/\n/g,'<br>')+'</div>'+
+      '</div>'+
+      '<div class="review-opts">'+opts+'</div>'+
+      '<div class="review-exp">'+q.exp+'</div>';
+    list.appendChild(card);
+  });
+}
+
+function buildMisses(){
+  const wrongQs=[];
+  QUESTIONS.forEach((q,i)=>{
+    if(userAnswers[i]!==null&&userAnswers[i]!==q.ans){
+      const label=['A','B','C','D'][q.ans];
+      wrongQs.push('Q'+(i+1)+' ['+q.section+'] '+label+'. '+q.opts[q.ans]);
+    }
+  });
+  document.getElementById('missesText').value=wrongQs.length?wrongQs.join('\n'):'No misses -- perfect score!';
+}
+
+function copyMisses(e){
+  e.preventDefault();
+  const txt=document.getElementById('missesText').value;
+  navigator.clipboard.writeText(txt).then(()=>{
+    const btn=e.target;
+    btn.textContent='Copied!';
+    setTimeout(()=>{btn.textContent='Copy Misses';},2000);
+  });
+}
+
+function buildRetry(){
+  const retrySection=document.getElementById('retrySection');
+  retrySection.innerHTML='';
+  const wrongIdxs=[];
+  QUESTIONS.forEach((q,i)=>{if(userAnswers[i]!==null&&userAnswers[i]!==q.ans) wrongIdxs.push(i);});
+  if(!wrongIdxs.length) return;
+  retrySection.innerHTML='<h3>Retry Wrong Questions ('+wrongIdxs.length+')</h3>';
+  wrongIdxs.forEach(i=>{
+    const q=QUESTIONS[i];
+    const card=document.createElement('div');
+    card.className='retry-card';
+    card.innerHTML='<div class="r-stem"><span style="color:var(--grey);font-size:.75rem">Q'+(i+1)+' &middot; '+q.section+'</span><br>'+q.stem.replace(/\n/g,'<br>')+'</div>';
+    q.opts.forEach((o,idx)=>{
+      const btn=document.createElement('button');
+      btn.className='retry-opt';
+      btn.innerHTML='<span class="opt-label">'+['A','B','C','D'][idx]+'</span> '+o;
+      btn.onclick=()=>{
+        card.querySelectorAll('.retry-opt').forEach(b=>b.disabled=true);
+        if(idx===q.ans) btn.classList.add('r-correct');
+        else{
+          btn.classList.add('r-wrong');
+          card.querySelectorAll('.retry-opt')[q.ans].classList.add('r-correct');
+        }
+      };
+      card.appendChild(btn);
+    });
+    retrySection.appendChild(card);
+  });
+}
+
+// -- SAVE / LOG --
+function saveToTracker(score,correct,wrong,skipped){
+  const s=TIMER_DURATION*60-secondsLeft;
+  const mm=String(Math.floor(s/60)).padStart(2,'0');
+  const ss=String(s%60).padStart(2,'0');
+  const data={
+    testName:'Road to IIM Paper 21',name:studentName,pin:studentPin,batch:studentBatch,
+    score:score,correct:correct,wrong:wrong,skipped:skipped,maxMarks:180,
+    timeTaken:mm+':'+ss,timestamp:new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'})
+  };
+  try{
+    const existing=JSON.parse(localStorage.getItem('riim_results')||'[]');
+    existing.unshift(data);
+    localStorage.setItem('riim_results',JSON.stringify(existing.slice(0,200)));
+  }catch(e){}
+}
+
+function logToSheet(score,correct,wrong,skipped,sectionErrors,wrongQuestions){
+  const notice=document.getElementById('sheet-notice');
+  notice.className='submitting';
+  notice.textContent='Submitting results to server...';
+  notice.style.display='block';
+  const s=TIMER_DURATION*60-secondsLeft;
+  const mm=String(Math.floor(s/60)).padStart(2,'0');
+  const ss=String(s%60).padStart(2,'0');
+  const payload={
+    testName:'Road to IIM Paper 21',
+    name:studentName,
+    pin:studentPin,
+    batch:studentBatch,
+    score:score,
+    correct:correct,
+    wrong:wrong,
+    skipped:skipped,
+    maxMarks:180,
+    timeTaken:mm+':'+ss,
+    timestamp:new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'}),
+    sectionErrors:JSON.stringify(sectionErrors),
+    wrongQuestions:JSON.stringify(wrongQuestions),
+    studentAnswers:JSON.stringify(userAnswers.map(a=>a===null?null:a))
+  };
+  fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)})
+    .then(()=>{notice.className='success';notice.textContent='Results saved successfully.';})
+    .catch(()=>{notice.className='failure';notice.textContent='Could not reach server. Results saved locally.';});
+}
+
+// -- PDF --
+function generatePDF(){
+  const el=document.getElementById('review-list');
+  html2pdf().set({
+    margin:10,filename:'RoadToIIM_Paper21_'+studentName.replace(/\s+/g,'_')+'.pdf',
+    html2canvas:{scale:2},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}
+  }).from(el).save();
+}
+
+// -- ANTI-COPY --
+document.addEventListener('contextmenu',e=>e.preventDefault());
+document.addEventListener('keydown',e=>{
+  if(e.ctrlKey&&['c','a','u','s','p'].includes(e.key.toLowerCase())) e.preventDefault();
+});
+</script>
+</body>
+</html>
