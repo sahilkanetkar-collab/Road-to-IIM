@@ -2026,6 +2026,90 @@
           "sub": "Mixed grammar"
         }
       }
+    },
+    "22": {
+      "q": {
+        "1": {
+          "area": "RC",
+          "sub": "Main idea / central theme"
+        },
+        "2": {
+          "area": "RC",
+          "sub": "Author's purpose / function of detail"
+        },
+        "3": {
+          "area": "RC",
+          "sub": "Word meaning in context"
+        },
+        "4": {
+          "area": "RC",
+          "sub": "Phrase / expression in context"
+        },
+        "5": {
+          "area": "RC",
+          "sub": "Main idea / central theme"
+        },
+        "6": {
+          "area": "RC",
+          "sub": "Author's purpose / function of detail"
+        },
+        "7": {
+          "area": "RC",
+          "sub": "Word meaning in context"
+        },
+        "8": {
+          "area": "RC",
+          "sub": "Phrase / expression in context"
+        },
+        "9": {
+          "area": "RC",
+          "sub": "Main idea / central theme"
+        },
+        "10": {
+          "area": "RC",
+          "sub": "Author's purpose / function of detail"
+        },
+        "11": {
+          "area": "RC",
+          "sub": "Word meaning in context"
+        },
+        "12": {
+          "area": "RC",
+          "sub": "Phrase / expression in context"
+        },
+        "13": {
+          "area": "RC",
+          "sub": "Main idea / central theme"
+        },
+        "14": {
+          "area": "RC",
+          "sub": "Author's purpose / function of detail"
+        },
+        "15": {
+          "area": "RC",
+          "sub": "Word meaning in context"
+        },
+        "16": {
+          "area": "RC",
+          "sub": "Phrase / expression in context"
+        },
+        "17": {
+          "area": "RC",
+          "sub": "Main idea / central theme"
+        },
+        "18": {
+          "area": "RC",
+          "sub": "Author's purpose / function of detail"
+        },
+        "19": {
+          "area": "RC",
+          "sub": "Word meaning in context"
+        },
+        "20": {
+          "area": "RC",
+          "sub": "Phrase / expression in context"
+        }
+      }
     }
   }
 }

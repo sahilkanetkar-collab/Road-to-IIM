@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Road to IIM — Test 22</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-user-select:none;
+-moz-user-select:none;-ms-user-select:none;user-select:none;}
+:root{
+--navy:#0d1b2a;--navy2:#1a2e45;--gold:#c9a84c;--gold2:#e8c76a;
+--green:#2ecc71;--red:#e74c3c;--grey:#8899aa;--white:#f0f4f8;
+--purple:#9b59b6;--panel:280px;
+}
+body{background:var(--navy);color:var(--white);
+font-family:'Segoe UI',sans-serif;min-height:100vh;overflow-x:hidden;}
+
+/* ── LOGIN ── */
+#loginScreen{display:flex;flex-direction:column;align-items:center;
+justify-content:center;min-height:100vh;padding:20px;}
+.login-box{background:var(--navy2);border:1px solid var(--gold);
+border-radius:12px;padding:40px 36px;width:100%;max-width:440px;}
+.login-box h1{color:var(--gold);font-size:1.5rem;text-align:center;margin-bottom:6px;}
+.login-box p{color:var(--grey);font-size:.85rem;text-align:center;margin-bottom:28px;}
+.login-box label{display:block;font-size:.8rem;color:var(--grey);
+margin-bottom:4px;margin-top:14px;}
+.login-box input,.login-box select{width:100%;background:#0d1b2a;
+border:1px solid #2a4060;border-radius:6px;padding:10px 12px;
+color:var(--white);font-size:.95rem;}
+#startBtn{width:100%;margin-top:24px;padding:12px;background:var(--gold);
+color:var(--navy);font-size:1rem;font-weight:700;border:none;
+border-radius:8px;cursor:pointer;}
+#loginErr{margin-top:10px;color:var(--red);font-size:.83rem;display:none;}
+
+/* ── TOP BAR ── */
+#topBar{background:var(--navy2);border-bottom:1px solid #1e3a5a;
+padding:10px 20px;display:flex;align-items:center;
+justify-content:space-between;position:sticky;top:0;z-index:100;
+padding-right:calc(var(--panel) + 20px);}
+#topBar .logo{color:var(--gold);font-weight:700;font-size:1rem;}
+#timerDisplay{font-size:1.1rem;font-weight:700;color:var(--green);
+background:#0a2a1a;padding:6px 16px;border-radius:20px;
+border:1px solid var(--green);}
+#timerDisplay.urgent{color:var(--red);background:#2a0a0a;border-color:var(--red);}
+
+/* ── PROGRESS ── */
+#progressBar{height:3px;background:#1e3a5a;margin-right:var(--panel);}
+#progressFill{height:100%;background:var(--gold);transition:width .3s;}
+
+/* ── LAYOUT ── */
+#mainLayout{display:flex;min-height:calc(100vh - 57px);}
+
+/* ── RC SPLIT PANEL ── */
+#rcSplit{
+  display:flex;
+  flex:1;
+  max-width:calc(100% - var(--panel));
+  height:calc(100vh - 57px);
+  overflow:hidden;
+}
+
+/* Left: passage */
+#passagePane{
+  flex:1;
+  overflow-y:auto;
+  padding:20px 22px 80px 24px;
+  border-right:1px solid #1e3a5a;
+  scroll-behavior:smooth;
+}
+#passageBlock{
+  background:#111e2e;
+  border:1px solid #1e3a5a;
+  border-radius:10px;
+  padding:18px 20px;
+  line-height:1.75;
+  font-size:.92rem;
+  color:#c8d8e8;
+  border-left:4px solid var(--gold);
+}
+#passageTitle{
+  color:var(--gold);font-size:.72rem;font-weight:700;
+  letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px;
+}
+#passageSource{
+  color:var(--grey);font-size:.73rem;margin-top:10px;
+  font-style:italic;border-top:1px solid #1e3a5a;padding-top:8px;
+}
+#passageText p{margin:0 0 8px 0;}
+#passageText p:last-child{margin-bottom:0;}
+
+/* Right: question + options */
+#questionPane{
+  width:46%;
+  min-width:340px;
+  max-width:520px;
+  overflow-y:auto;
+  padding:20px 20px 80px 20px;
+  display:flex;
+  flex-direction:column;
+}
+
+/* ── QUESTION ── */
+#sectionTag{display:inline-block;background:#1e3a5a;color:var(--gold);
+font-size:.72rem;font-weight:700;letter-spacing:.08em;
+padding:3px 10px;border-radius:4px;margin-bottom:10px;text-transform:uppercase;}
+#questionNumber{color:var(--grey);font-size:.83rem;margin-bottom:6px;}
+#questionStem{font-size:.97rem;line-height:1.65;color:var(--white);
+margin-bottom:16px;word-break:break-word;overflow-wrap:break-word;}
+.options-list{list-style:none;display:flex;flex-direction:column;gap:9px;}
+.option-btn{background:#0d1b2a;border:1px solid #1e3a5a;border-radius:8px;
+padding:11px 14px;cursor:pointer;text-align:left;font-size:.9rem;
+color:var(--white);transition:all .2s;width:100%;}
+.option-btn:hover{border-color:var(--gold);background:#162030;}
+.option-btn.selected{border-color:var(--gold);background:#1a2e12;color:var(--gold2);}
+.option-btn.marked{border-color:var(--purple);}
+.opt-label{display:inline-block;width:24px;font-weight:700;color:var(--gold);}
+
+/* ── PALETTE ── */
+#paletteOverlay{position:fixed;top:0;right:0;width:100%;height:100%;
+z-index:200;pointer-events:none;display:flex;justify-content:flex-end;}
+#palettePanel{width:280px;height:100%;background:var(--navy2);
+border-left:1px solid #1e3a5a;padding:16px 12px;overflow-y:auto;
+pointer-events:all;}
+#paletteGrid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;
+margin-bottom:16px;}
+.pal-btn{width:100%;aspect-ratio:1;border-radius:6px;border:1px solid #1e3a5a;
+background:#0d1b2a;color:var(--grey);font-size:.78rem;font-weight:600;cursor:pointer;}
+.pal-btn.answered{background:var(--green);color:#fff;border-color:var(--green);}
+.pal-btn.marked{background:var(--purple);color:#fff;border-color:var(--purple);}
+.pal-btn.current{border:2px solid var(--gold);color:var(--gold);}
+.pal-legend{font-size:.72rem;color:var(--grey);margin-top:8px;}
+.pal-legend span{display:inline-block;width:10px;height:10px;border-radius:3px;
+margin-right:4px;vertical-align:middle;}
+
+/* ── PASSAGE MAP IN PALETTE ── */
+.pal-passage-label{color:var(--gold);font-size:.72rem;font-weight:700;
+letter-spacing:.06em;margin:12px 0 6px 0;text-transform:uppercase;}
+
+/* ── NAV BAR ── */
+#navBar{position:fixed;bottom:0;right:var(--panel);
+background:var(--navy2);border-top:1px solid #1e3a5a;
+display:flex;align-items:center;justify-content:space-between;
+padding:10px 16px;z-index:150;
+left:50%;} /* sits under question pane */
+.nav-btn{background:#1e3a5a;color:var(--white);border:none;
+border-radius:6px;padding:8px 14px;cursor:pointer;font-size:.85rem;font-weight:600;}
+#submitBtn{background:var(--gold);color:var(--navy);font-weight:700;display:none;}
+
+/* ── RESULTS ── */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;
+margin-bottom:20px;}
+.stat-box{background:var(--navy2);border-radius:8px;padding:16px;
+text-align:center;border:1px solid #1e3a5a;}
+.stat-box .val{font-size:1.6rem;font-weight:800;}
+.stat-box .lbl{font-size:.75rem;color:var(--grey);margin-top:4px;}
+.stat-box.correct .val{color:var(--green);}
+.stat-box.wrong .val{color:var(--red);}
+.stat-box.accuracy .val{color:var(--gold);}
+.review-card{background:var(--navy2);border-radius:10px;margin-bottom:14px;
+overflow:hidden;border-left:4px solid var(--grey);word-break:break-word;overflow-wrap:break-word;}
+.review-card.correct{border-left-color:var(--green);}
+.review-card.wrong{border-left-color:var(--red);}
+.review-exp{background:#0a2a15;border-left:3px solid var(--green);
+padding:10px 14px;font-size:.83rem;line-height:1.7;color:#a8e6c0;margin-top:8px;}
+#testScreen{display:none;}
+#resultsScreen{display:none;padding:28px 32px;max-width:calc(100% - var(--panel));}
+.score-hero{text-align:center;margin-bottom:28px;}
+.score-hero .score-num{font-size:3.5rem;font-weight:900;color:var(--gold);}
+.score-hero .score-sub{font-size:1rem;color:var(--grey);margin-top:4px;}
+.result-btn{padding:10px 24px;border-radius:8px;border:none;cursor:pointer;
+font-size:.95rem;font-weight:700;margin:0 6px;}
+.result-btn.gold{background:var(--gold);color:var(--navy);}
+.result-btn.ghost{background:transparent;border:1px solid var(--gold);color:var(--gold);}
+#sheet-notice{padding:10px 14px;border-radius:6px;font-size:.85rem;
+margin-bottom:16px;display:none;}
+#sheet-notice.submitting{background:#1a2e10;color:#c9e88a;border:1px solid #4a7a20;}
+#sheet-notice.success{background:#0a2a15;color:#2ecc71;border:1px solid #2ecc71;}
+#sheet-notice.failure{background:#2a0a0a;color:#e74c3c;border:1px solid #e74c3c;}
+.review-card-header{padding:14px 16px;display:flex;align-items:flex-start;gap:10px;}
+.review-badge{min-width:32px;height:32px;border-radius:6px;display:flex;
+align-items:center;justify-content:center;font-weight:800;font-size:.85rem;}
+.badge-correct{background:var(--green);color:#fff;}
+.badge-wrong{background:var(--red);color:#fff;}
+.badge-skipped{background:var(--grey);color:#fff;}
+.review-stem{font-size:.9rem;line-height:1.6;flex:1;}
+.review-opts{padding:0 16px 8px;}
+.review-opt{font-size:.83rem;padding:4px 0;color:var(--grey);}
+.review-opt.correct-opt{color:var(--green);font-weight:700;}
+.review-opt.your-wrong{color:var(--red);}
+.review-passage{background:#0d1b2a;border-left:3px solid var(--gold);
+padding:10px 14px;font-size:.82rem;line-height:1.7;color:#8899aa;
+margin:0 16px 8px 16px;border-radius:4px;}
+.misses-box{background:#0d1b2a;border:1px solid #2a4060;border-radius:8px;
+padding:14px;margin-top:20px;}
+.misses-box h3{color:var(--gold);font-size:.9rem;margin-bottom:8px;}
+.misses-box textarea{width:100%;background:#0a1520;border:1px solid #1e3a5a;
+border-radius:6px;padding:10px;color:var(--white);font-size:.83rem;
+font-family:'Segoe UI',sans-serif;resize:vertical;min-height:80px;}
+.copy-btn{margin-top:8px;padding:6px 14px;background:var(--navy2);
+border:1px solid var(--gold);color:var(--gold);border-radius:6px;
+font-size:.8rem;cursor:pointer;}
+#retrySection{margin-top:24px;}
+#retrySection h3{color:var(--gold);margin-bottom:16px;}
+.retry-card{background:var(--navy2);border-radius:10px;padding:16px;
+margin-bottom:12px;border:1px solid #1e3a5a;}
+.retry-card .r-stem{font-size:.95rem;line-height:1.6;margin-bottom:12px;}
+.retry-opt{display:block;width:100%;background:#0d1b2a;border:1px solid #1e3a5a;
+border-radius:6px;padding:9px 14px;text-align:left;font-size:.88rem;
+color:var(--white);cursor:pointer;margin-bottom:6px;}
+.retry-opt.r-correct{border-color:var(--green);background:#0a2a15;color:var(--green);}
+.retry-opt.r-wrong{border-color:var(--red);background:#2a0a0a;color:var(--red);}
+
+/* ── MOBILE ── */
+@media (max-width:768px){
+  #paletteOverlay{display:none;}
+  #rcSplit{flex-direction:column;height:auto;overflow:visible;}
+  #passagePane{height:auto;overflow-y:visible;border-right:none;border-bottom:1px solid #1e3a5a;padding:16px 14px 14px;}
+  #questionPane{width:100%;max-width:100%;padding:14px 14px 80px;}
+  #topBar{padding-right:16px;}
+  #progressBar{margin-right:0;}
+  #navBar{left:0;right:0;padding:8px 12px;}
+  .nav-btn{padding:7px 10px;font-size:.8rem;}
+  .stats-grid{grid-template-columns:repeat(2,1fr);}
+  .login-box input,.login-box select{font-size:1rem;}
+  .score-hero .score-num{font-size:2.4rem;}
+  #resultsScreen{max-width:100%;padding:16px;}
+}
+@media (max-width:768px){
+  #paletteOverlay.mobile-open{display:flex;}
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+<div class="login-box">
+  <h1>Road to IIM</h1>
+  <p>Test 22 &nbsp;·&nbsp; Reading Comprehension Drill &nbsp;·&nbsp; 20 Questions &nbsp;·&nbsp; 25 Minutes</p>
+  <label>Full Name</label>
+  <input type="text" id="inputName" placeholder="Your full name" autocomplete="off">
+  <label>IMS PIN</label>
+  <input type="text" id="inputPin" placeholder="STU or IMS + 10 digits" autocomplete="off">
+  <label>Batch</label>
+  <select id="inputBatch">
+    <option value="">-- Select batch --</option>
+    <optgroup label="Classroom">
+      <option>A2701</option><option>A2702</option><option>A2703</option>
+      <option>A2704</option><option>A2705</option><option>A2706</option>
+      <option>A2707</option><option>A2708</option><option>A2709</option>
+      <option>A2710</option><option>A2711</option><option>A2712</option>
+    </optgroup>
+    <optgroup label="School"><option>Zebar</option></optgroup>
+    <optgroup label="Online">
+      <option>27E101</option><option>27E102</option><option>27E103</option>
+      <option>27E104</option><option>27E105</option>
+    </optgroup>
+    <optgroup label="Admin"><option>Admin</option></optgroup>
+  </select>
+  <div id="loginErr">Please fill in all fields.</div>
+  <button id="startBtn" onclick="startTest()">Begin Drill &#8594;</button>
+</div>
+</div>
+
+<!-- TEST -->
+<div id="testScreen">
+  <div id="topBar">
+    <span class="logo">Road to IIM &nbsp;&#183;&nbsp; Test 22</span>
+    <div id="timerDisplay">25:00</div>
+  </div>
+  <div id="progressBar"><div id="progressFill" style="width:0%"></div></div>
+  <div id="mainLayout">
+    <div id="rcSplit">
+      <div id="passagePane">
+        <div id="passageBlock">
+          <div id="passageTitle"></div>
+          <div id="passageText"></div>
+          <div id="passageSource"></div>
+        </div>
+      </div>
+      <div id="questionPane">
+        <div id="sectionTag"></div>
+        <div id="questionNumber"></div>
+        <div id="questionStem"></div>
+        <ul class="options-list" id="optionsList"></ul>
+      </div>
+    </div>
+  <div id="paletteOverlay">
+    <div id="palettePanel">
+      <div style="color:var(--gold);font-weight:700;font-size:.85rem;margin-bottom:10px;">Questions</div>
+      <div id="paletteGrid"></div>
+      <div class="pal-legend">
+        <span style="background:var(--green)"></span>Answered &nbsp;
+        <span style="background:var(--purple)"></span>Marked &nbsp;
+        <span style="background:#0d1b2a;border:1px solid #1e3a5a"></span>Unvisited
+      </div>
+    </div>
+  </div>
+  <div id="navBar">
+    <button class="nav-btn" onclick="navigate(-1)">&#8592; Prev</button>
+    <button class="nav-btn" onclick="togglePalette()">Questions</button>
+    <button class="nav-btn" onclick="markForReview()">&#9733; Mark</button>
+    <button class="nav-btn" onclick="clearAnswer()">&#10005; Clear</button>
+    <button class="nav-btn" onclick="navigate(1)">Next &#8594;</button>
+    <button class="nav-btn" id="submitBtn" onclick="confirmSubmit()">Submit Test</button>
+  </div>
+</div>
+</div>
+
+<!-- RESULTS -->
+<div id="resultsScreen">
+  <div id="topBar2" style="background:var(--navy2);border-bottom:1px solid #1e3a5a;
+    padding:10px 20px;display:flex;align-items:center;justify-content:space-between;
+    position:sticky;top:0;z-index:100;">
+    <span style="color:var(--gold);font-weight:700;">Road to IIM &nbsp;&#183;&nbsp; Test 22 -- Results</span>
+  </div>
+  <div style="padding:28px 32px;">
+    <div class="score-hero" id="scoreHero"></div>
+    <div id="sheet-notice"></div>
+    <div class="stats-grid" id="statsGrid"></div>
+    <div style="text-align:center;margin-bottom:24px;">
+      <button class="result-btn gold" onclick="location.href='road_to_iim_tracker_v2.html'">Go to Tracker</button>
+      <button class="result-btn ghost" onclick="location.href='https://sahilkanetkar-collab.github.io/Road-to-IIM/'">All Tests</button>
+      <button class="result-btn ghost" onclick="generatePDF()">Download PDF</button>
+    </div>
+    <div class="misses-box" id="missesSection">
+      <h3>RC Misses</h3>
+      <textarea id="missesText" readonly></textarea>
+      <button class="copy-btn" onclick="copyMisses(event)">Copy Misses</button>
+    </div>
+    <div id="retrySection"></div>
+    <h3 style="color:var(--gold);margin:28px 0 16px 0;">Full Review</h3>
+    <div id="review-list"></div>
+  </div>
+</div>
+
+<script>
+// ── APPS SCRIPT URL ───────────────────────────────────────────────────────────
+const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbx5Ojm_zp4LfsMeelx5e06KNjVH1wfsXdV0keS4407m4FO1HU4EpVb7GKj-ibAsxnspeA/exec';
+
+// ── TIMER ─────────────────────────────────────────────────────────────────────
+const timer_duration=25;
+
+// ── PASSAGES ─────────────────────────────────────────────────────────────────
+const PASSAGES=[
+  {
+    id:1,
+    title:"Passage 1 -- Science / Nature",
+    source:"Adapted from The Selfish Gene (1976) by Richard Dawkins, Oxford University Press.",
+    text:`The universe we observe has precisely the properties we should expect if there is, at bottom, no design, no purpose, no evil and no good -- nothing but blind, pitiless indifference. Genes do not care about our suffering. They do not plan. They simply replicate, and those that replicate most efficiently persist. What we call behaviour -- nurturing, aggression, cooperation -- is best understood not as the expression of feeling but as the output of survival machinery built across millions of years of selection pressure.\n\nThis does not mean organisms are consciously selfish. A gene propagates without intention. The bird that feeds its chicks is not acting out of love in any philosophically meaningful sense -- it is executing a programme that historically produced more surviving copies of itself. The chick that cries loudest gets fed most. Both bird and chick are, in a precise sense, vehicles -- vessels through which genetic information passes on.\n\nThe uncomfortable insight is that altruism, too, is explainable in these terms. When an animal sacrifices itself for its kin, the genes shared between them continue. The sacrifice is not noble -- it is statistically advantageous. This reframing does not diminish the behaviour we observe in nature. It merely relocates its cause from sentiment to mathematics.`
+  },
+  {
+    id:2,
+    title:"Passage 2 -- History / Culture",
+    source:"Adapted from The Civilization of the Renaissance in Italy (1860) by Jacob Burckhardt. Public domain.",
+    text:`In the Middle Ages, man was conscious of himself only as a member of a race, a people, a party, a family -- some general category. It was in Italy that this veil first melted into air. There arose, for the first time, the fully formed individual. The conditions that produced this shift were not primarily intellectual. They were political. The collapse of universal authority -- papal and imperial -- left a vacuum in which the signorie, the despotic city-states of the peninsula, competed ferociously for survival.\n\nThe prince who ruled such a state could not rely on hereditary legitimacy. He had to justify himself through ability -- through craft, cunning, and what contemporaries called virtu. This was not virtue in the moral sense. It was closer to force of will: the capacity to impose one's design upon circumstances. A prince who lost that quality lost everything. There was no birthright to fall back on.\n\nWhat emerged from this sustained competitive pressure was a new human type: self-aware, calculating, deeply concerned with reputation and legacy. The Renaissance individual was not born free -- he was forged under competition. The arts, the letters, the diplomacy of the period all bear the imprint of this fundamental anxiety: that to stop performing was to cease to exist.`
+  },
+  {
+    id:3,
+    title:"Passage 3 -- Psychology / Behaviour",
+    source:"Original passage written for Road to IIM RC Drill Series, Test 22.",
+    text:`Psychologists have long noted that people are poor judges of their own ignorance. This is not simply a failure of knowledge -- it is a failure of the metacognitive machinery that would allow them to recognise such a failure. The less a person knows about a domain, the less equipped they are to notice the gap. Competence and the awareness of incompetence arrive together; their absence is equally paired.\n\nThis creates a paradox with significant social consequences. The individual who most needs to update their beliefs is precisely the one least likely to feel the need to do so. Overconfidence is not a character flaw distributed randomly across a population -- it is structurally more likely to concentrate in those whose exposure to a field has been shallow. A little knowledge does not merely fail to illuminate; it actively forecloses the curiosity that deeper ignorance might have preserved.\n\nWhat makes this effect particularly durable is that it is self-insulating. Correction requires openness to feedback, but the overconfident mind interprets contradicting evidence as confirmation of the critic's own bias. The mechanism that would allow revision is the first casualty of the condition it is meant to repair. This is why, historically, the most dangerous epistemic states have not been those of profound ignorance but of confident, partial knowledge.`
+  },
+  {
+    id:4,
+    title:"Passage 4 -- Philosophy / Ethics",
+    source:"Adapted from On Liberty (1859) by John Stuart Mill. Public domain.",
+    text:`The peculiar evil of silencing the expression of an opinion is that it is robbing the human race -- posterity as well as the existing generation. If the opinion is right, they are deprived of the opportunity of exchanging error for truth. If wrong, they lose what is almost as great a benefit: the clearer perception and livelier impression of truth produced by its collision with error.\n\nIt is not enough that an opinion be merely tolerated so long as nobody vigorously attacks it. The person who knows only their own side of the argument knows little even of that. Their reasons may be good and nobody may have been able to refute them -- but if they are equally unable to refute the reasons on the other side, if they do not so much as know what those reasons are, they have no ground for preferring either opinion.\n\nYet the fact that an argument has not been rebutted does not make it true, nor does the sincerity with which it is held. What gives an opinion its claim on our assent is not the credentials of the holder or the force of assertion but the quality of its engagement with opposition. The habit of cornering objections and answering them -- not caricaturing them -- is the only intellectual practice that produces beliefs worth holding.`
+  },
+  {
+    id:5,
+    title:"Passage 5 -- Literature / Criticism",
+    source:"Adapted from Aspects of the Novel (1927) by E.M. Forster. Public domain.",
+    text:`The historian and the novelist both deal in human lives, but their obligations pull in opposite directions. The historian must state what happened; the novelist must state what might have happened if life had the coherence that art imposes. Causality in history is a retrospective imposition -- we know the outcome and work backwards, constructing a logic that was not visible to those who lived through events. The novel's causality is prospective and willed: the author chooses which detail will matter, which character will be revealed, which moment will resonate.\n\nThis distinction matters because it changes what we mean by truth. The historian's truth is correctness -- fidelity to the record. The novelist's truth is necessity -- the sense that nothing in the work could have been otherwise without the whole becoming untrue. A character in a novel who acts inconsistently without artistic purpose is a failure; a historical figure who acts inconsistently is merely human.\n\nThe danger is that readers trained on one form import its criteria into the other. Those who read novels as history demand factual fidelity from works of imagination. Those who read history as narrative demand the satisfactions of plot -- resolution, revelation, a shape. Both errors are common. Both impoverish the form being misread. The discipline of reading is, in part, the discipline of knowing which kind of truth you are in the presence of.`
+  }
+];
+
+// ── QUESTIONS ─────────────────────────────────────────────────────────────────
+const QUESTIONS=[
+{id:1,section:"RC -- Passage 1",passage:1,qtype:"Main Idea",
+stem:`What is the central claim of this passage?`,
+opts:["Genes are the only meaningful unit of biological analysis","All behaviour, including altruism, is ultimately driven by gene replication logic","Organisms are consciously selfish because their genes compel them to be","Natural selection has produced a world without morality or meaning"],
+answer:"B",
+exp:`Correct Answer: B. All behaviour, including altruism, is ultimately driven by gene replication logic.\n\nPassage type: Argumentative. Skeleton at end (final paragraph delivers the key reframing).\n\nB is correct because the passage opens with the indifference frame, pivots to behaviour (nurturing, aggression), and closes by showing altruism itself folds into the same logic -- gene replication efficiency.\n\nA is too narrow: genes as unit is assumed, not argued.\nC is directly contradicted: the passage states organisms are NOT consciously selfish.\nD is seductive (Dawkins does open with "no good, no evil") but that is the frame, not the sustained argument. The passage quickly moves past nihilism into a specific claim about behaviour.`},
+
+{id:2,section:"RC -- Passage 1",passage:1,qtype:"Primary Purpose",
+stem:`The author's primary purpose in writing this passage is to --`,
+opts:["Challenge the reader's emotional attachment to concepts like love and nobility","Argue that biology has rendered ethics meaningless","Reframe apparently selfless behaviour as the product of gene-level selection logic","Demonstrate that animals are incapable of genuine feeling"],
+answer:"C",
+exp:`Correct Answer: C. Reframe apparently selfless behaviour as the product of gene-level selection logic.\n\nPassage type: Argumentative. Purpose is the argumentative move the whole passage executes.\n\nC is correct. The passage's entire structure -- indifference frame, behaviour as machinery, altruism as statistical advantage -- is built to perform one reframing: selfless behaviour explained by selfish genes.\n\nA is partially true (the tone is provocative) but purpose is not tone.\nB overstates the claim. The passage explicitly says the reframing "does not diminish" behaviour -- pulling back from nihilism.\nD is a distortion: "not acting out of love in any philosophically meaningful sense" is not the same as incapable of feeling.`},
+
+{id:3,section:"RC -- Passage 1",passage:1,qtype:"Vocabulary",
+stem:`As used in the passage, the word <b>vehicles</b> most nearly means --`,
+opts:["Organisms that actively choose to serve their genes","Bodies that transport genes from one generation to the next physically","Metaphors used to simplify complex biological processes","Carriers of genetic instruction with no independent agency"],
+answer:"D",
+exp:`Correct Answer: D. Carriers of genetic instruction with no independent agency.\n\nThe passage says "Both bird and chick are, in a precise sense, vehicles." The word appears in the context of organisms executing programmes without intention.\n\nD is correct: "no independent agency" is the operative idea.\nB sounds close -- transport is literal -- but misses the key point: Dawkins is arguing the organism has no will of its own. B does not capture that.\nC is meta -- about the word itself, not its referent.\nA directly contradicts "without intention."`},
+
+{id:4,section:"RC -- Passage 1",passage:1,qtype:"Vocabulary",
+stem:`When the author says altruism is <b>"statistically advantageous,"</b> the phrase implies that --`,
+opts:["Self-sacrifice that benefits kin is selected because the shared genes it preserves outnumber those lost","Self-sacrifice only occurs when the odds of the individual's own survival are favourable","What appears as moral virtue is in fact a pattern selected for its replication efficiency","Altruism is a strategy organisms consciously adopt to preserve their species"],
+answer:"A",
+exp:`Correct Answer: A. Self-sacrifice that benefits kin is selected because the shared genes it preserves outnumber those lost.\n\nThe passage states: "When an animal sacrifices itself for its kin, the genes shared between them continue. The sacrifice is not noble -- it is statistically advantageous." The phrase "statistically advantageous" refers to gene-level mathematics: kin share genes, so a sacrifice that kills one organism but preserves several kin propagates more copies of the shared genes than survival would. A captures this precisely -- it names kin, shared genes, and the mathematical logic of the trade-off.\n\nC is the strongest distractor. It correctly identifies that altruism is selected rather than moral, but the phrase "moral virtue" is exactly what the passage rejects: "the sacrifice is not noble." C frames the answer in the ethical language the passage dismantles. A uses the passage's own logic: mathematics, not morality.\n\nB misreads "advantageous" as referring to the individual's survival odds. The passage is about gene propagation across kin, not the individual's personal odds.\n\nD imputes conscious strategy. The passage is explicit: genes propagate "without intention."`},
+
+{id:5,section:"RC -- Passage 2",passage:2,qtype:"Main Idea",
+stem:`Which of the following best states the central argument of this passage?`,
+opts:["The Renaissance was primarily an artistic movement enabled by political stability","Italian city-states created the conditions under which the modern individual first emerged","The collapse of papal authority allowed humanist philosophy to flourish across Europe","Renaissance rulers were more capable than medieval kings because they lacked inherited power"],
+answer:"B",
+exp:`Correct Answer: B. Italian city-states created the conditions under which the modern individual first emerged.\n\nPassage type: Argumentative. Skeleton at end (the new human type is described in the final paragraph).\n\nB covers both cause (city-states, competitive pressure) and effect (the fully formed individual) precisely.\n\nA contradicts the passage: the shift was driven by political instability, not stability.\nC introduces "humanist philosophy" and "across Europe" -- neither appears in the passage.\nD is a tempting inference but the passage does not rank rulers across periods; it explains what competitive pressure produced.`},
+
+{id:6,section:"RC -- Passage 2",passage:2,qtype:"Primary Purpose",
+stem:`The author writes this passage primarily to --`,
+opts:["Celebrate the cultural achievements of Renaissance Italy","Argue that political insecurity was the generative condition of Renaissance individualism","Contrast medieval collectivism with Renaissance humanism","Explain why Italian princes were more ruthless than their European counterparts"],
+answer:"B",
+exp:`Correct Answer: B. Argue that political insecurity was the generative condition of Renaissance individualism.\n\nThe purpose is causal: why did the individual emerge here and now? The answer the passage builds is: because political insecurity removed all other grounds of legitimacy.\n\nA misreads tone. Burckhardt is analytical here, not celebratory.\nC is close -- the contrast is real -- but contrast is the method, not the purpose. The purpose is to explain why individualism arose.\nD is too narrow and comparative in a way the passage does not support.`},
+
+{id:7,section:"RC -- Passage 2",passage:2,qtype:"Vocabulary",
+stem:`As used in the passage, <b>virtu</b> most nearly means --`,
+opts:["Moral excellence and adherence to Christian principle","Inherited nobility of character","The capacity to bend circumstances through sheer force of will","Diplomatic skill in managing rival city-states"],
+answer:"C",
+exp:`Correct Answer: C. The capacity to bend circumstances through sheer force of will.\n\nThe passage provides its own gloss: "not virtue in the moral sense -- closer to force of will: the capacity to impose one's design upon circumstances."\n\nC is confirmed directly by the passage's own definition.\nA is the trap: the passage explicitly says virtu is NOT virtue in the moral sense.\nB contradicts the argument: the whole point is that no birthright exists -- virtu replaces inheritance.\nD is too narrow: virtu is a general capacity for imposing one's will, not specifically diplomatic skill.`},
+
+{id:8,section:"RC -- Passage 2",passage:2,qtype:"Vocabulary",
+stem:`When the author says <b>"to stop performing was to cease to exist,"</b> the word <b>performing</b> implies --`,
+opts:["Staging theatrical productions as a form of political propaganda","Continuously demonstrating ability, will, and relevance in a competitive environment","Fulfilling ceremonial duties required of Renaissance rulers","Actively justifying one's claim to power through demonstrated ability, in the absence of any hereditary right"],
+answer:"D",
+exp:`Correct Answer: D. Actively justifying one's claim to power through demonstrated ability, in the absence of any hereditary right.\n\nThe passage has established the precise conditions under which "performing" operates: "The prince who ruled such a state could not rely on hereditary legitimacy. He had to justify himself through ability... There was no birthright to fall back on." Performing here is not generic self-presentation -- it is the ongoing act of legitimation that fills the vacuum left by the absence of birthright. D captures all three elements: active justification, demonstrated ability, and no hereditary claim.\n\nB is the strongest distractor and is partially correct -- "demonstrating ability, will, and relevance" maps onto virtu. But B is generic enough to describe any competitive context. It omits the specific logic that makes performing existential in this passage: there is no birthright, so performance IS legitimacy. Stop performing, and there is nothing else. D names this explicitly.\n\nA and C both invoke literal performance -- theatrical or ceremonial -- which the passage uses metaphorically. C is particularly weak: "ceremonial duties" implies routine and obligation, the opposite of the anxious, active self-justification the passage describes.`},
+
+{id:9,section:"RC -- Passage 3",passage:3,qtype:"Main Idea",
+stem:`The passage is primarily concerned with --`,
+opts:["The psychological reasons why people resist feedback from others","The structural relationship between limited knowledge and inflated self-assessment","Why education systems fail to produce genuinely self-aware thinkers","The social dangers of overconfidence in leadership and decision-making"],
+answer:"B",
+exp:`Correct Answer: B. The structural relationship between limited knowledge and inflated self-assessment.\n\nPassage type: Argumentative. Skeleton at end (the final paragraph identifies why the effect is durable and names the most dangerous epistemic state).\n\nB names both components of the central argument: limited knowledge and inflated self-assessment are paired -- and the passage's central claim is that this pairing is structural, not accidental.\n\nA is real but secondary: resistance to feedback is a consequence described in paragraph 3, not the central subject.\nC introduces education systems -- absent from the passage.\nD takes a consequence (social danger) and elevates it to the focus. The passage is diagnostic about the mechanism, not primarily a warning about leadership.`},
+
+{id:10,section:"RC -- Passage 3",passage:3,qtype:"Primary Purpose",
+stem:`The author's primary purpose is to --`,
+opts:["Describe and explain a self-reinforcing cognitive condition that resists correction","Warn readers against trusting the opinions of non-experts","Argue that ignorance is more dangerous than overconfidence","Propose a method by which individuals can identify their own blind spots"],
+answer:"A",
+exp:`Correct Answer: A. Describe and explain a self-reinforcing cognitive condition that resists correction.\n\nThe passage is diagnostic throughout: it names the condition, explains why it clusters where it does, and explains why it is hard to correct.\n\nA is exact: the passage describes (what it is), explains (why it forms), and shows it resists correction (self-insulating).\n\nB is a practical takeaway a reader might draw, but the author does not argue it.\nC inverts the passage's claim: the passage says confident partial knowledge is MORE dangerous than profound ignorance -- not that ignorance is more dangerous than overconfidence.\nD: no method is proposed. The passage is purely diagnostic.`},
+
+{id:11,section:"RC -- Passage 3",passage:3,qtype:"Vocabulary",
+stem:`As used in the passage, <b>metacognitive</b> most nearly means --`,
+opts:["Relating to memory and the storage of learned information","Concerned with thinking about one's own thought processes","Describing advanced or expert-level reasoning ability","Referring to unconscious mental processes that operate below awareness"],
+answer:"B",
+exp:`Correct Answer: B. Concerned with thinking about one's own thought processes.\n\nThe passage uses "metacognitive machinery" to describe the internal capacity to notice one's own ignorance. The context is self-monitoring, not memory, expertise, or the unconscious.\n\nB is exact: metacognition is literally thinking about thinking -- which is precisely what is described as absent in the incompetent person.\n\nA relates to memory -- a different cognitive domain entirely.\nC (expert-level reasoning) misreads meta- as meaning advanced rather than self-referential.\nD is attractive because it sounds like something below awareness -- but metacognition is specifically the capacity to be AWARE of one's thinking, not the absence of such awareness.`},
+
+{id:12,section:"RC -- Passage 3",passage:3,qtype:"Vocabulary",
+stem:`When the author describes the effect as <b>"self-insulating,"</b> the word implies that --`,
+opts:["The condition is contagious and spreads through social networks","Overconfident individuals deliberately protect themselves from criticism","The condition contains within itself the mechanism that prevents its own correction","Isolation from social feedback is the primary cause of overconfidence"],
+answer:"C",
+exp:`Correct Answer: C. The condition contains within itself the mechanism that prevents its own correction.\n\nThe passage confirms this in the very next sentence: "The mechanism that would allow revision is the first casualty of the condition it is meant to repair."\n\nC is correct: self-insulating means the condition generates its own immunity to correction from within.\n\nB imputes deliberateness -- the passage frames this as structural, not intentional.\nD reverses cause and effect: isolation is not the cause of overconfidence; it is a feature of the self-insulating condition.\nA introduces contagion -- not in the passage.`},
+
+{id:13,section:"RC -- Passage 4",passage:4,qtype:"Main Idea",
+stem:`Which of the following best captures the central argument of this passage?`,
+opts:["Society must legally protect free speech to prevent tyranny of the majority","Sincerity of belief and strength of assertion are insufficient grounds for holding an opinion","Tolerating dissent is more valuable than actively seeking it out","The value of an opinion lies in its having survived genuine engagement with opposing views"],
+answer:"D",
+exp:`Correct Answer: D. The value of an opinion lies in its having survived genuine engagement with opposing views.\n\nPassage type: Argumentative. Skeleton at end (Mill's final sentence delivers the normative conclusion).\n\nD covers the full arc: silencing robs both sides of benefits (paragraph 1), knowing only one side is inadequate (paragraph 2), what justifies a belief is its engagement with opposition (paragraph 3).\n\nA invokes legal protection -- Mill's broader political project, but not what this excerpt argues.\nB is true and stated, but it is a supporting point in paragraph 3, not the central claim.\nC is a misread: Mill argues tolerance alone is insufficient; the passage calls for active engagement with objections, not mere tolerance.`},
+
+{id:14,section:"RC -- Passage 4",passage:4,qtype:"Primary Purpose",
+stem:`Mill's primary purpose in this passage is to --`,
+opts:["Defend the right of minority opinions to be heard in democratic societies","Demonstrate that truth emerges only through the collision of opposing views","Argue that a belief is only intellectually justified if it has been tested against opposition","Criticise those who hold opinions without having studied counterarguments"],
+answer:"C",
+exp:`Correct Answer: C. Argue that a belief is only intellectually justified if it has been tested against opposition.\n\nPassage type: Argumentative. Purpose is the normative claim the whole passage builds toward.\n\nThe purpose is normative: Mill is not just describing how truth works but prescribing what justifies a belief.\n\nC is the normative claim the passage builds toward: an opinion earns its claim on assent only through engagement with opposition.\n\nB is real (Mill does argue this) but it is the epistemological mechanism, not the purpose. The purpose is to establish a standard for justified belief.\nA is the political reading of Mill's broader work, not this excerpt.\nD is a consequence: Mill is not primarily criticising anyone here -- he is establishing a positive standard.`},
+
+{id:15,section:"RC -- Passage 4",passage:4,qtype:"Vocabulary",
+stem:`As used in the passage, <b>collision</b> most nearly means --`,
+opts:["Violent conflict between incompatible political ideologies","The accidental meeting of two arguments that share common ground","A rhetorical technique used to expose logical flaws in opposing views","Productive confrontation between opposing ideas that sharpens understanding"],
+answer:"D",
+exp:`Correct Answer: D. Productive confrontation between opposing ideas that sharpens understanding.\n\nMill uses "collision" to describe how truth is sharpened when it meets error: "the clearer perception and livelier impression of truth produced by its collision with error."\n\nD is correct: collision here is productive and clarifying, not destructive.\n\nA takes "collision" literally and imports "violent" -- the passage uses it positively and metaphorically.\nB introduces "accidental" -- Mill means deliberate engagement, not chance encounter.\nC is too narrow: collision is not a technique, it is a condition that produces understanding.`},
+
+{id:16,section:"RC -- Passage 4",passage:4,qtype:"Vocabulary",
+stem:`When Mill warns against <b>"caricaturing"</b> objections, the word implies --`,
+opts:["Representing opposing views in a distorted or weakened form to make them easier to dismiss","Using humour or satire to trivialise opposing arguments","Failing to understand the emotional basis of arguments one disagrees with","Producing written or visual parodies of political opponents"],
+answer:"A",
+exp:`Correct Answer: A. Representing opposing views in a distorted or weakened form to make them easier to dismiss.\n\nMill contrasts "answering" with "caricaturing" -- the intellectual meaning is a strawman argument, not a cartoon.\n\nA is correct: caricaturing means distorting the opposition's actual position.\n\nB and D both invoke the literal meaning of caricature (satire, visual parody) -- classic surface traps that ignore the argumentative context.\nC introduces "emotional basis" -- the passage is about logical engagement, not emotional understanding.`},
+
+{id:17,section:"RC -- Passage 5",passage:5,qtype:"Main Idea",
+stem:`The passage argues that --`,
+opts:["History and fiction operate under different and mutually exclusive conceptions of truth","Novelists are better equipped than historians to reveal psychological truth","The truthfulness of a novel is measured by its fidelity to historical fact","Most readers lack the discipline to read either history or fiction correctly"],
+answer:"A",
+exp:`Correct Answer: A. History and fiction operate under different and mutually exclusive conceptions of truth.\n\nPassage type: Argumentative. Skeleton in the middle (paragraph 2 names the two truths: correctness vs necessity).\n\nA states the core distinction the entire passage is built to establish: historian's truth = correctness; novelist's truth = necessity. These are not compatible standards.\n\nB is an inference a reader might draw but Forster does not argue novelists are superior -- he argues they are different.\nC directly contradicts the passage: the novelist's truth is necessity, not fidelity.\nD takes the final paragraph's observation about reader error and makes it the central claim -- it is a consequence, not the argument.`},
+
+{id:18,section:"RC -- Passage 5",passage:5,qtype:"Primary Purpose",
+stem:`Forster's primary purpose in this passage is to --`,
+opts:["Warn against the misreading that occurs when readers confuse historical and fictional truth","Establish that history is a more reliable guide to human behaviour than fiction","Distinguish between two fundamentally different conceptions of truth operative in history and fiction","Argue that the novel is a superior art form because it imposes coherence on experience"],
+answer:"C",
+exp:`Correct Answer: C. Distinguish between two fundamentally different conceptions of truth operative in history and fiction.\n\nC covers the passage's full structure: establish the distinction (paragraph 1), elaborate it (paragraph 2), then show why it matters (paragraph 3).\n\nA is the purpose of the final paragraph only -- not the whole passage.\nB contradicts the passage: no hierarchy is established between history and fiction.\nD is a misread: Forster says the novel "imposes" coherence, but the word "imposes" carries an ambiguous connotation -- and in any case, the passage does not claim the novel is superior.`},
+
+{id:19,section:"RC -- Passage 5",passage:5,qtype:"Vocabulary",
+stem:`As used in the passage, <b>retrospective</b> most nearly means --`,
+opts:["Constructed by working backwards from a known outcome to impose a logic that was not visible at the time","Applied after the fact to events whose outcome is already known","Concerned with the emotional recollection of past experience","Methodical and careful in reconstructing the sequence of events"],
+answer:"A",
+exp:`Correct Answer: A. Constructed by working backwards from a known outcome to impose a logic that was not visible at the time.\n\nThe passage's full phrase is: "Causality in history is a retrospective imposition -- we know the outcome and work backwards, constructing a logic that was not visible to those who lived through events." Retrospective here carries three elements: direction (backwards from outcome), act (imposition, construction), and epistemic status (the logic was not visible at the time). A captures all three.\n\nB is the strongest distractor. "Applied after the fact to events whose outcome is already known" is accurate as far as it goes -- it correctly captures the temporal direction. But it stops at "after the fact" and misses the key Forsterian point: that the logic is constructed, imposed, and was not available to those living through it. B describes when; A describes what is being done and why it matters.\n\nC introduces "emotional recollection" -- tempting because retrospective sounds like nostalgic looking-back, but Forster is making a structural argument about historical causality, not a psychological one about memory.\n\nD sounds scholarly but misses the direction entirely: "methodical reconstruction" describes careful forward-reconstruction, not the backward imposition from a known outcome that the passage names.`},
+
+{id:20,section:"RC -- Passage 5",passage:5,qtype:"Vocabulary",
+stem:`When Forster says the novelist's causality is <b>"prospective and willed,"</b> the phrase implies that --`,
+opts:["Novelists predict future events by extrapolating from patterns in human behaviour","Unlike historians, novelists are free to invent causality because they face no accountability","The author deliberately shapes which events lead to which outcomes, building necessity forward from choice","The novelist actively constructs causal logic forward from chosen details, in contrast to the historian who imposes logic backwards from a known outcome"],
+answer:"C",
+exp:`Correct Answer: C. The author deliberately shapes which events lead to which outcomes, building necessity forward from choice.\n\nThe passage provides its own definition of "prospective and willed" via the colon that immediately follows: "the author chooses which detail will matter, which character will be revealed, which moment will resonate." Prospective = forward-building from choice. Willed = the author actively decides what matters. C maps precisely onto this definition.\n\nD is the strongest distractor. It adds the contrast with the historian's retrospective method, which is present in the passage. But the stem asks what "prospective and willed" implies -- and the phrase is defined by the clause that follows it, not by the surrounding contrast. Importing the historian contrast into the meaning of the phrase is an over-read. D goes beyond what the phrase itself implies.\n\nB introduces "no accountability" -- a cynical inference Forster does not make. The passage is analytical, not evaluative.\n\nA imports "predict" -- prospective here means forward-building, not prophetic or extrapolative. The novelist does not forecast; the novelist constructs.`}
+];
+
+// ── STATE ─────────────────────────────────────────────────────────────────────
+let studentName="", studentPin="", studentBatch="";
+let currentQ=0, secondsLeft=timer_duration*60, timerInterval=null;
+let userAnswers=new Array(20).fill(null);
+let markedForReview=new Array(20).fill(false);
+let testSubmitted=false;
+
+// ── ADMIN PINS ────────────────────────────────────────────────────────────────
+const adminPins=["IMS1111111111","IMS2222222222","IMS3333333333","IMS4444444444","IMS5555555555"];
+
+// ── LOGIN ─────────────────────────────────────────────────────────────────────
+function startTest(){
+  const name=document.getElementById('inputName').value.trim();
+  const pin=document.getElementById('inputPin').value.trim().toUpperCase();
+  const batch=document.getElementById('inputBatch').value;
+  const err=document.getElementById('loginErr');
+  err.style.display='none';
+  if(!name||!pin||!batch){err.textContent='Please fill in all fields.';err.style.display='block';return;}
+  const validPin=/^(STU|IMS)\d{10}$/.test(pin);
+  if(!validPin){err.textContent='PIN must be STU or IMS followed by 10 digits.';err.style.display='block';return;}
+  studentName=name; studentPin=pin; studentBatch=batch;
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('testScreen').style.display='block';
+  buildPalette();
+  renderQuestion(0);
+  startTimer();
+}
+
+// ── TIMER ─────────────────────────────────────────────────────────────────────
+function startTimer(){
+  const disp=document.getElementById('timerDisplay');
+  timerInterval=setInterval(()=>{
+    secondsLeft--;
+    const m=Math.floor(secondsLeft/60),s=secondsLeft%60;
+    disp.textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+    if(secondsLeft<=300) disp.classList.add('urgent');
+    if(secondsLeft<=0){clearInterval(timerInterval);autoSubmit();}
+  },1000);
+}
+
+function autoSubmit(){
+  if(!testSubmitted) submitTest();
+}
+
+// ── PALETTE ───────────────────────────────────────────────────────────────────
+function buildPalette(){
+  const grid=document.getElementById('paletteGrid');
+  grid.innerHTML='';
+  QUESTIONS.forEach((_,i)=>{
+    const btn=document.createElement('button');
+    btn.className='pal-btn';
+    btn.id='pal-'+i;
+    btn.textContent=i+1;
+    btn.onclick=()=>renderQuestion(i);
+    grid.appendChild(btn);
+  });
+}
+
+function updatePalette(){
+  QUESTIONS.forEach((_,i)=>{
+    const btn=document.getElementById('pal-'+i);
+    btn.className='pal-btn'+(i===currentQ?' current':'')+(markedForReview[i]?' marked':userAnswers[i]!==null?' answered':'');
+  });
+}
+
+function togglePalette(){
+  document.getElementById('paletteOverlay').classList.toggle('mobile-open');
+}
+
+// ── RENDER QUESTION ───────────────────────────────────────────────────────────
+function renderQuestion(idx){
+  currentQ=idx;
+  const q=QUESTIONS[idx];
+  const p=PASSAGES[q.passage-1];
+
+  // passage block
+  document.getElementById('passageTitle').textContent=p.title;
+  document.getElementById('passageText').innerHTML=p.text.split('\n').map(para=>para.trim()?'<p>'+para+'</p>':'').join('');
+  document.getElementById('passageSource').textContent='Source: '+p.source;
+
+  // section / number
+  document.getElementById('sectionTag').textContent=q.section+' -- '+q.qtype;
+  document.getElementById('questionNumber').textContent='Question '+(idx+1)+' of '+QUESTIONS.length;
+
+  // stem
+  document.getElementById('questionStem').innerHTML=q.stem;
+
+  // options
+  const ul=document.getElementById('optionsList');
+  ul.innerHTML='';
+  const labels=['A','B','C','D'];
+  q.opts.forEach((opt,i)=>{
+    const li=document.createElement('li');
+    const btn=document.createElement('button');
+    btn.className='option-btn'+(userAnswers[idx]===i?' selected':'');
+    btn.innerHTML='<span class="opt-label">'+labels[i]+'</span> '+opt;
+    btn.onclick=()=>selectAnswer(idx,i);
+    li.appendChild(btn);
+    ul.appendChild(li);
+  });
+
+  // progress
+  const answered=userAnswers.filter(a=>a!==null).length;
+  document.getElementById('progressFill').style.width=(answered/QUESTIONS.length*100)+'%';
+
+  // submit btn
+  // submit btn shown only on Q20 (index 19)
+  document.getElementById('submitBtn').style.display=(currentQ===19)?'inline-block':'none';
+
+  updatePalette();
+}
+
+// ── SELECT ANSWER ─────────────────────────────────────────────────────────────
+function selectAnswer(qIdx,optIdx){
+  userAnswers[qIdx]=optIdx;
+  renderQuestion(qIdx);
+}
+
+// ── NAVIGATION ────────────────────────────────────────────────────────────────
+function navigate(dir){
+  const next=currentQ+dir;
+  if(next>=0&&next<QUESTIONS.length) renderQuestion(next);
+}
+
+function markForReview(){
+  markedForReview[currentQ]=!markedForReview[currentQ];
+  updatePalette();
+}
+
+function clearAnswer(){
+  userAnswers[currentQ]=null;
+  renderQuestion(currentQ);
+}
+
+// ── SUBMIT ────────────────────────────────────────────────────────────────────
+function confirmSubmit(){
+  const unanswered=userAnswers.filter(a=>a===null).length;
+  const msg=unanswered>0
+    ?'You have '+unanswered+' unanswered question(s). Submit anyway?'
+    :'Submit the test? This cannot be undone.';
+  if(confirm(msg)) submitTest();
+}
+
+function submitTest(){
+  if(testSubmitted) return;
+  testSubmitted=true;
+  clearInterval(timerInterval);
+  const labels=['A','B','C','D'];
+  let correct=0,wrong=0,skipped=0;
+  const sectionErrors={};
+  const wrongQuestions=[];
+  QUESTIONS.forEach((q,i)=>{
+    const ua=userAnswers[i];
+    const correctIdx=labels.indexOf(q.answer);
+    if(ua===null){skipped++;}
+    else if(ua===correctIdx){correct++;}
+    else{
+      wrong++;
+      if(!sectionErrors[q.section]) sectionErrors[q.section]=0;
+      sectionErrors[q.section]++;
+      wrongQuestions.push({q:i+1,section:q.section,chosen:labels[ua],correct:q.answer});
+    }
+  });
+  const score=correct*4-wrong*1;
+  showResults(score,correct,wrong,skipped);
+  saveToTracker(score,correct,wrong,skipped);
+  logToSheet(score,correct,wrong,skipped,sectionErrors,wrongQuestions);
+}
+
+// ── RESULTS ───────────────────────────────────────────────────────────────────
+function showResults(score,correct,wrong,skipped){
+  document.getElementById('testScreen').style.display='none';
+  document.getElementById('resultsScreen').style.display='block';
+  const acc=(correct/(20-skipped||1)*100).toFixed(1);
+  document.getElementById('scoreHero').innerHTML=
+    '<div class="score-num">'+score+'</div>'+
+    '<div class="score-sub">out of 80 &nbsp;&#183;&nbsp; '+studentName+' &nbsp;&#183;&nbsp; '+studentPin+' &nbsp;&#183;&nbsp; '+studentBatch+'</div>';
+  document.getElementById('statsGrid').innerHTML=
+    '<div class="stat-box correct"><div class="val">'+correct+'</div><div class="lbl">Correct</div></div>'+
+    '<div class="stat-box wrong"><div class="val">'+wrong+'</div><div class="lbl">Wrong</div></div>'+
+    '<div class="stat-box"><div class="val" style="color:var(--grey)">'+skipped+'</div><div class="lbl">Skipped</div></div>'+
+    '<div class="stat-box accuracy"><div class="val">'+acc+'%</div><div class="lbl">Accuracy</div></div>';
+  buildReview();
+  buildMisses();
+  buildRetry();
+}
+
+function buildReview(){
+  const list=document.getElementById('review-list');
+  list.innerHTML='';
+  const labels=['A','B','C','D'];
+  let lastPassage=-1;
+  QUESTIONS.forEach((q,i)=>{
+    const ua=userAnswers[i];
+    const correctIdx=labels.indexOf(q.answer);
+    const isCorrect=(ua===correctIdx);
+    const isSkipped=(ua===null);
+    if(q.passage!==lastPassage){
+      lastPassage=q.passage;
+      const ph=document.createElement('div');
+      ph.style.cssText='color:var(--gold);font-size:.8rem;font-weight:700;margin:20px 0 8px 0;letter-spacing:.06em;text-transform:uppercase;';
+      ph.textContent=PASSAGES[q.passage-1].title;
+      list.appendChild(ph);
+      const pt=document.createElement('div');
+      pt.className='review-passage';
+      pt.innerHTML=PASSAGES[q.passage-1].text.split('\n').map(para=>para.trim()?'<p style="margin:0 0 6px 0">'+para+'</p>':'').join('');
+      list.appendChild(pt);
+    }
+    const card=document.createElement('div');
+    card.className='review-card '+(isSkipped?'':isCorrect?'correct':'wrong');
+    const badgeClass=isSkipped?'badge-skipped':isCorrect?'badge-correct':'badge-wrong';
+    const badgeText=isSkipped?'--':isCorrect?'&#10003;':'&#10007;';
+    const opts=q.opts.map((o,idx)=>{
+      let cls='review-opt';
+      if(idx===correctIdx) cls+=' correct-opt';
+      if(ua!==null&&ua===idx&&idx!==correctIdx) cls+=' your-wrong';
+      return '<div class="'+cls+'"><span class="opt-label">'+labels[idx]+'</span> '+o+'</div>';
+    }).join('');
+    card.innerHTML=
+      '<div class="review-card-header">'+
+      '<div class="review-badge '+badgeClass+'">'+badgeText+'</div>'+
+      '<div class="review-stem"><span style="color:var(--grey);font-size:.75rem">Q'+(i+1)+' &nbsp;&#183;&nbsp; '+q.section+' &nbsp;&#183;&nbsp; '+q.qtype+'</span><br>'+q.stem+'</div>'+
+      '</div>'+
+      '<div class="review-opts">'+opts+'</div>'+
+      '<div class="review-exp">'+q.exp.replace(/\n/g,'<br>')+'</div>';
+    list.appendChild(card);
+  });
+}
+
+function buildMisses(){
+  const labels=['A','B','C','D'];
+  const wrongQs=[];
+  QUESTIONS.forEach((q,i)=>{
+    const correctIdx=labels.indexOf(q.answer);
+    if(userAnswers[i]!==null&&userAnswers[i]!==correctIdx){
+      wrongQs.push('Q'+(i+1)+' ['+q.section+' -- '+q.qtype+'] Correct: '+q.answer+'. '+q.opts[correctIdx]);
+    }
+  });
+  document.getElementById('missesText').value=wrongQs.length?wrongQs.join('\n'):'No misses -- perfect score!';
+}
+
+function copyMisses(e){
+  e.preventDefault();
+  const txt=document.getElementById('missesText').value;
+  navigator.clipboard.writeText(txt).then(()=>{
+    const btn=e.target;
+    btn.textContent='Copied!';
+    setTimeout(()=>{btn.textContent='Copy Misses';},2000);
+  });
+}
+
+function buildRetry(){
+  const labels=['A','B','C','D'];
+  const retrySection=document.getElementById('retrySection');
+  retrySection.innerHTML='';
+  const wrongIdxs=[];
+  QUESTIONS.forEach((q,i)=>{
+    const correctIdx=labels.indexOf(q.answer);
+    if(userAnswers[i]!==null&&userAnswers[i]!==correctIdx) wrongIdxs.push(i);
+  });
+  if(!wrongIdxs.length) return;
+  retrySection.innerHTML='<h3 style="color:var(--gold);margin-bottom:16px;">Retry Wrong Questions ('+wrongIdxs.length+')</h3>';
+  wrongIdxs.forEach(i=>{
+    const q=QUESTIONS[i];
+    const correctIdx=labels.indexOf(q.answer);
+    const card=document.createElement('div');
+    card.className='retry-card';
+    card.innerHTML='<div class="r-stem"><span style="color:var(--grey);font-size:.75rem">Q'+(i+1)+' &nbsp;&#183;&nbsp; '+q.section+'</span><br>'+q.stem+'</div>';
+    q.opts.forEach((o,idx)=>{
+      const btn=document.createElement('button');
+      btn.className='retry-opt';
+      btn.innerHTML='<span class="opt-label">'+labels[idx]+'</span> '+o;
+      btn.onclick=()=>{
+        card.querySelectorAll('.retry-opt').forEach(b=>b.disabled=true);
+        if(idx===correctIdx) btn.classList.add('r-correct');
+        else{btn.classList.add('r-wrong');card.querySelectorAll('.retry-opt')[correctIdx].classList.add('r-correct');}
+      };
+      card.appendChild(btn);
+    });
+    retrySection.appendChild(card);
+  });
+}
+
+// ── SAVE / LOG ────────────────────────────────────────────────────────────────
+function saveToTracker(score,correct,wrong,skipped){
+  const s=timer_duration*60-secondsLeft;
+  const mm=String(Math.floor(s/60)).padStart(2,'0');
+  const ss=String(s%60).padStart(2,'0');
+  const data={
+    testName:'Road to IIM Test 22',name:studentName,pin:studentPin,batch:studentBatch,
+    score:score,correct:correct,wrong:wrong,skipped:skipped,maxMarks:80,
+    timeTaken:mm+':'+ss,timestamp:new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'})
+  };
+  try{
+    const existing=JSON.parse(localStorage.getItem('riim_results')||'[]');
+    existing.unshift(data);
+    localStorage.setItem('riim_results',JSON.stringify(existing.slice(0,200)));
+  }catch(e){}
+}
+
+function logToSheet(score,correct,wrong,skipped,sectionErrors,wrongQuestions){
+  const notice=document.getElementById('sheet-notice');
+  notice.className='submitting';
+  notice.textContent='Submitting results to server...';
+  notice.style.display='block';
+  const s=timer_duration*60-secondsLeft;
+  const mm=String(Math.floor(s/60)).padStart(2,'0');
+  const ss=String(s%60).padStart(2,'0');
+  const payload={
+    testName:'Road to IIM Test 22',
+    name:studentName,
+    pin:studentPin,
+    batch:studentBatch,
+    score:score,
+    correct:correct,
+    wrong:wrong,
+    skipped:skipped,
+    maxMarks:80,
+    timeTaken:mm+':'+ss,
+    timestamp:new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'}),
+    sectionErrors:JSON.stringify(sectionErrors),
+    wrongQuestions:JSON.stringify(wrongQuestions),
+    studentAnswers:JSON.stringify(userAnswers.map(a=>a===null?null:a))
+  };
+  fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)})
+    .then(()=>{notice.className='success';notice.textContent='Results saved successfully.';})
+    .catch(()=>{notice.className='failure';notice.textContent='Could not reach server. Results saved locally.';});
+}
+
+// ── PDF ───────────────────────────────────────────────────────────────────────
+function generatePDF(){
+  const el=document.getElementById('review-list');
+  html2pdf().set({
+    margin:10,filename:'RoadToIIM_Test22_'+studentName.replace(/\s+/g,'_')+'.pdf',
+    html2canvas:{scale:2},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}
+  }).from(el).save();
+}
+
+// ── ANTI-COPY ─────────────────────────────────────────────────────────────────
+document.addEventListener('contextmenu',e=>e.preventDefault());
+document.addEventListener('keydown',e=>{
+  if(e.ctrlKey&&['c','a','u','s','p'].includes(e.key.toLowerCase())) e.preventDefault();
+});
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</body>
+</html>
