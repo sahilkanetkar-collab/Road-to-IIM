@@ -5,338 +5,362 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>IWP Week 3 — Age Roots</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@400;500;600&display=swap');
-
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
   :root {
-    --bg: #0f1117;
-    --card: #1c2230;
-    --card-border: #252d3d;
-    --header: #161b27;
-    --gold: #c9a027;
-    --gold-dim: #a07d1a;
-    --text: #e8eaf0;
-    --text-muted: #8a95b0;
-    --text-dim: #5a6480;
-    --input-bg: #252d3d;
-    --correct: #2a7a4b;
-    --correct-text: #6ee49a;
-    --wrong: #7a2a2a;
-    --wrong-text: #f0a0a0;
-    --root-highlight: rgba(201, 160, 39, 0.18);
-    --root-border: rgba(201, 160, 39, 0.45);
+    --bg:         #0f1117;
+    --card:       #1c2230;
+    --header:     #161b27;
+    --field:      #252d3d;
+    --gold:       #c9a027;
+    --gold-dim:   #a07e1a;
+    --text:       #e8edf2;
+    --muted:      #6b7a99;
+    --label:      #8a95b0;
+    --border:     #2c3650;
+    --correct:    #22c55e;
+    --wrong:      #ef4444;
+    --correct-bg: rgba(34,197,94,0.12);
+    --wrong-bg:   rgba(239,68,68,0.12);
+    --highlight:  #c9a027;
+    --root-bg:    #1a2235;
+    --chip-bg:    #212b40;
   }
 
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
   body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
     background: var(--bg);
     color: var(--text);
-    font-family: 'DM Sans', sans-serif;
     min-height: 100vh;
-    display: flex;
-    flex-direction: column;
   }
 
   /* ── HEADER ── */
   .site-header {
     background: var(--header);
-    padding: 12px 24px;
+    padding: 12px 28px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    border-bottom: 1px solid var(--card-border);
-    position: sticky; top: 0; z-index: 100;
+    border-bottom: 1px solid var(--border);
   }
-  .header-brand { display: flex; flex-direction: column; gap: 2px; }
-  .header-eyebrow {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 10px; font-weight: 600;
-    letter-spacing: 0.12em; text-transform: uppercase;
-    color: var(--gold);
+  .header-left { flex: 1; }
+  .header-sup {
+    font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--gold); margin-bottom: 2px;
   }
-  .header-title {
-    font-family: 'Fraunces', serif;
-    font-size: 16px; font-weight: 600;
-    color: var(--text);
-  }
-  .header-timer {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px; font-weight: 600;
-    color: var(--gold);
-    letter-spacing: 0.06em;
-    background: rgba(201,160,39,0.1);
-    padding: 5px 12px; border-radius: 6px;
-    border: 1px solid rgba(201,160,39,0.25);
+  .header-title { font-size: 15px; font-weight: 600; color: #fff; }
+  .timer-display {
+    font-size: 15px; font-weight: 700; color: var(--gold);
+    font-variant-numeric: tabular-nums; letter-spacing: 1px;
   }
 
-  /* ── SCREENS ── */
-  .screen { display: none; flex: 1; padding: 32px 16px; justify-content: center; align-items: flex-start; }
-  .screen.active { display: flex; }
-
-  /* ── CARD ── */
-  .card {
+  /* ── LOGIN SCREEN ── */
+  #login-screen {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg);
+    padding: 24px;
+  }
+  .login-card {
     background: var(--card);
-    border: 1px solid var(--card-border);
     border-radius: 12px;
-    padding: 32px;
-    width: 100%; max-width: 680px;
+    padding: 40px 44px;
+    width: 100%; max-width: 480px;
   }
-
-  /* ── LOGIN ── */
   .login-eyebrow {
-    font-size: 10px; font-weight: 600;
-    letter-spacing: 0.14em; text-transform: uppercase;
-    color: var(--gold); margin-bottom: 10px;
-  }
-  .login-title {
-    font-family: 'Fraunces', serif;
-    font-size: 28px; font-weight: 700;
-    color: var(--text); line-height: 1.2; margin-bottom: 6px;
-  }
-  .login-subtitle {
-    font-size: 13px; color: var(--text-muted);
-    line-height: 1.6; margin-bottom: 28px;
-  }
-  .field { margin-bottom: 18px; }
-  .field label {
-    display: block; font-size: 10px; font-weight: 600;
-    letter-spacing: 0.1em; text-transform: uppercase;
-    color: var(--text-muted); margin-bottom: 7px;
-  }
-  .field input, .field select {
-    width: 100%; background: var(--input-bg);
-    border: 1px solid transparent; border-radius: 7px;
-    padding: 11px 14px; font-size: 14px;
-    font-family: 'DM Sans', sans-serif;
-    color: var(--text); outline: none;
-    transition: border-color 0.2s;
-    appearance: none; -webkit-appearance: none;
-  }
-  .field input::placeholder { color: var(--text-dim); }
-  .field input:focus, .field select:focus { border-color: var(--gold); }
-  .field select { cursor: pointer; }
-  .field select option { background: #1c2230; color: var(--text); }
-  .btn-primary {
-    width: 100%; padding: 13px;
-    background: var(--gold); border: none; border-radius: 8px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 15px; font-weight: 700;
-    color: #1a1200; cursor: pointer;
-    letter-spacing: 0.02em;
-    transition: background 0.2s, transform 0.1s;
-    margin-top: 8px;
-  }
-  .btn-primary:hover { background: #d4ab2e; }
-  .btn-primary:active { transform: scale(0.99); }
-  .error-msg {
-    font-size: 12px; color: var(--wrong-text);
-    background: var(--wrong); border-radius: 6px;
-    padding: 9px 12px; margin-top: 10px; display: none;
-  }
-
-  /* ── SECTION HEADER ── */
-  .section-tag {
-    font-size: 10px; font-weight: 600;
-    letter-spacing: 0.12em; text-transform: uppercase;
-    color: var(--gold); margin-bottom: 6px;
-  }
-  .section-title {
-    font-family: 'Fraunces', serif;
-    font-size: 22px; font-weight: 600;
-    color: var(--text); margin-bottom: 6px; line-height: 1.25;
-  }
-  .section-intro {
-    font-size: 14px; color: var(--text-muted);
-    line-height: 1.65; margin-bottom: 24px;
-  }
-  hr.divider {
-    border: none; border-top: 1px solid var(--card-border);
-    margin: 22px 0;
-  }
-
-  /* ── ROOT CARDS ── */
-  .root-grid { display: grid; gap: 16px; margin-bottom: 20px; }
-  .root-card {
-    background: rgba(255,255,255,0.03);
-    border: 1px solid var(--card-border);
-    border-radius: 10px; padding: 18px 20px;
-  }
-  .root-label {
-    font-size: 10px; font-weight: 600; letter-spacing: 0.1em;
+    font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
     text-transform: uppercase; color: var(--gold); margin-bottom: 10px;
   }
-  .word-list { display: flex; flex-direction: column; gap: 10px; }
-  .word-item { display: grid; grid-template-columns: 1fr auto; gap: 6px; }
-  .word-name {
-    font-family: 'Fraunces', serif; font-size: 16px;
-    font-weight: 600; color: var(--text);
+  .login-title {
+    font-size: 28px; font-weight: 700; color: #fff; margin-bottom: 6px;
   }
-  .word-name .root {
-    color: var(--gold);
-    background: var(--root-highlight);
-    border-bottom: 1px solid var(--root-border);
-    padding: 0 2px;
+  .login-sub {
+    font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 32px;
   }
-  .word-pos {
-    font-size: 11px; color: var(--text-dim);
-    font-style: italic; align-self: center;
+  .login-sub em { font-style: italic; color: #aab; }
+  .form-group { margin-bottom: 20px; }
+  .form-group label {
+    display: block;
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 1.2px; text-transform: uppercase;
+    color: var(--label); margin-bottom: 8px;
   }
-  .word-def {
-    font-size: 13px; color: var(--text-muted);
-    line-height: 1.5; grid-column: 1 / -1;
+  .form-group input,
+  .form-group select {
+    width: 100%;
+    padding: 13px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    color: var(--text);
+    background: var(--field);
+    outline: none;
+    appearance: none;
+    transition: background 0.15s;
   }
-  .word-ex {
-    font-size: 12px; color: var(--text-dim);
-    font-style: italic; grid-column: 1 / -1;
-    padding-left: 10px; border-left: 2px solid var(--card-border);
+  .form-group input::placeholder { color: var(--muted); }
+  .form-group input:focus,
+  .form-group select:focus { background: #2e3850; }
+  .form-group select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b7a99' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 14px center;
+    padding-right: 40px;
   }
-
-  /* ── EXERCISES ── */
-  .ex-item { margin-bottom: 20px; }
-  .ex-sentence {
-    font-size: 14px; color: var(--text);
-    line-height: 1.7; margin-bottom: 10px;
-  }
-  .ex-clue {
-    font-size: 11px; color: var(--gold);
-    background: rgba(201,160,39,0.1);
-    padding: 3px 8px; border-radius: 4px;
-    display: inline-block; margin-bottom: 8px;
-  }
-  .input-row { display: flex; gap: 8px; align-items: center; }
-  .input-row input {
-    flex: 1; background: var(--input-bg);
-    border: 1px solid var(--card-border); border-radius: 7px;
-    padding: 9px 13px; font-size: 14px;
-    font-family: 'DM Sans', sans-serif; color: var(--text); outline: none;
-    transition: border-color 0.2s;
-  }
-  .input-row input:focus { border-color: var(--gold); }
-  .btn-check {
-    padding: 9px 16px; background: rgba(201,160,39,0.12);
-    border: 1px solid rgba(201,160,39,0.35); border-radius: 7px;
-    color: var(--gold); font-family: 'DM Sans', sans-serif;
-    font-size: 13px; font-weight: 600; cursor: pointer;
-    transition: background 0.2s; white-space: nowrap;
-  }
-  .btn-check:hover { background: rgba(201,160,39,0.22); }
-  .feedback {
-    margin-top: 7px; font-size: 13px; padding: 7px 11px;
-    border-radius: 6px; display: none;
-  }
-  .feedback.correct { background: var(--correct); color: var(--correct-text); display: block; }
-  .feedback.wrong { background: var(--wrong); color: var(--wrong-text); display: block; }
-
-  /* ── NEXT BUTTON ── */
-  .btn-next {
-    margin-top: 24px; width: 100%; padding: 13px;
-    background: var(--gold); border: none; border-radius: 8px;
-    font-family: 'DM Sans', sans-serif;
+  .form-group select option { background: #252d3d; color: #e8edf2; }
+  .error-msg { color: var(--wrong); font-size: 12px; margin-top: 6px; display: none; }
+  .btn-start {
+    width: 100%; padding: 15px;
+    background: var(--gold);
+    color: #111;
+    border: none; border-radius: 6px;
     font-size: 15px; font-weight: 700;
-    color: #1a1200; cursor: pointer;
-    transition: background 0.2s, opacity 0.2s;
+    cursor: pointer; letter-spacing: 0.3px;
+    transition: background 0.15s, transform 0.1s;
+    margin-top: 4px;
   }
-  .btn-next:disabled { opacity: 0.35; cursor: not-allowed; }
-  .btn-next:not(:disabled):hover { background: #d4ab2e; }
+  .btn-start:hover { background: #d4aa30; }
+  .btn-start:active { transform: scale(0.99); }
 
-  /* ── MCQ (EXIT SLIP) ── */
-  .mcq-item { margin-bottom: 22px; }
-  .mcq-stem {
-    font-size: 14px; color: var(--text);
-    line-height: 1.65; margin-bottom: 12px;
-    font-weight: 500;
-  }
-  .mcq-options { display: flex; flex-direction: column; gap: 8px; }
-  .mcq-option {
-    display: flex; align-items: center; gap: 10px;
-    background: rgba(255,255,255,0.03);
-    border: 1px solid var(--card-border); border-radius: 8px;
-    padding: 10px 14px; cursor: pointer;
-    transition: border-color 0.2s, background 0.2s;
-    font-size: 14px; color: var(--text);
-  }
-  .mcq-option:hover { border-color: var(--gold); background: rgba(201,160,39,0.07); }
-  .mcq-option.selected { border-color: var(--gold); background: rgba(201,160,39,0.12); }
-  .mcq-option input[type="radio"] { accent-color: var(--gold); width: 15px; height: 15px; }
-
-  /* ── SCORE DISPLAY ── */
-  .score-display {
-    text-align: center; padding: 24px 0;
-  }
-  .score-big {
-    font-family: 'Fraunces', serif;
-    font-size: 56px; font-weight: 700; color: var(--gold);
-    line-height: 1;
-  }
-  .score-label {
-    font-size: 14px; color: var(--text-muted); margin-top: 6px;
-  }
-  .score-grade {
-    font-family: 'Fraunces', serif;
-    font-size: 22px; font-weight: 600;
-    color: var(--text); margin-top: 10px;
-  }
-  .log-msg { font-size: 13px; margin-top: 14px; color: var(--text-muted); min-height: 20px; }
+  /* ── MAIN LAYOUT ── */
+  #main-screen { display: none; }
+  .main-wrap { max-width: 860px; margin: 0 auto; padding: 28px 20px 60px; }
 
   /* ── PROGRESS BAR ── */
-  .progress-bar {
-    height: 3px; background: var(--card-border);
-    border-radius: 2px; margin-bottom: 22px; overflow: hidden;
-  }
-  .progress-fill {
-    height: 100%; background: var(--gold);
-    border-radius: 2px; transition: width 0.4s ease;
-  }
+  .progress-track { display: flex; gap: 5px; margin-bottom: 28px; }
+  .prog-step { flex: 1; height: 3px; border-radius: 2px; background: var(--border); transition: background 0.3s; }
+  .prog-step.done   { background: var(--correct); }
+  .prog-step.active { background: var(--gold); }
 
-  /* ── HOOK ── */
+  /* ── SECTION CARD ── */
+  .section-card {
+    background: var(--card);
+    border-radius: 10px;
+    padding: 30px 28px;
+    margin-bottom: 20px;
+    display: none;
+  }
+  .section-card.active { display: block; }
+  .section-eyebrow {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1.2px; color: var(--gold); margin-bottom: 6px;
+  }
+  .section-title { font-size: 22px; font-weight: 700; color: #fff; margin-bottom: 6px; }
+  .section-desc  { font-size: 14px; color: var(--muted); margin-bottom: 24px; line-height: 1.6; }
+
+  /* ── HOOK BOX ── */
   .hook-box {
-    background: rgba(201,160,39,0.08);
-    border: 1px solid rgba(201,160,39,0.25);
-    border-radius: 10px; padding: 18px 20px;
+    background: var(--root-bg);
+    border-left: 3px solid var(--gold);
+    border-radius: 8px;
+    padding: 18px 20px;
     margin-bottom: 22px;
   }
-  .hook-q {
-    font-family: 'Fraunces', serif;
-    font-size: 18px; font-weight: 600;
-    color: var(--text); line-height: 1.4;
+  .hook-box .hook-q   { font-size: 15px; font-weight: 600; color: #fff; margin-bottom: 5px; }
+  .hook-box .hook-sub { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+  /* ── ROOT CARDS ── */
+  .root-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 14px; margin-bottom: 24px;
   }
-  .hook-hint { font-size: 13px; color: var(--text-muted); margin-top: 8px; }
+  .root-card {
+    background: var(--root-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px;
+  }
+  .root-label {
+    font-size: 10px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1px; color: var(--gold); margin-bottom: 10px;
+  }
+  .root-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .root-tag {
+    font-size: 20px; font-weight: 800; color: var(--gold);
+    background: rgba(201,160,39,0.1);
+    padding: 4px 10px; border-radius: 5px;
+  }
+  .root-meaning { font-size: 14px; color: var(--muted); font-style: italic; }
+  .word-row { display: flex; flex-wrap: wrap; gap: 8px; }
+  .word-chip {
+    background: var(--chip-bg);
+    border-radius: 7px;
+    padding: 10px 12px;
+    font-size: 13px;
+    min-width: 130px; flex: 1;
+  }
+  .chip-word { font-weight: 700; color: #e8edf2; font-size: 14px; }
+  .chip-word .hl { color: var(--gold); }
+  .chip-pos  { font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--gold); letter-spacing: 0.5px; margin: 3px 0; }
+  .chip-def  { font-size: 12px; color: var(--muted); line-height: 1.4; margin-bottom: 4px; }
+  .chip-ex   { font-size: 11px; color: #6b7a99; font-style: italic; line-height: 1.4; border-top: 1px solid var(--border); padding-top: 4px; margin-top: 4px; }
+
+  /* ── EXERCISES ── */
+  .ex-item {
+    margin-bottom: 16px; padding: 16px 18px;
+    background: var(--root-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .ex-prompt { font-size: 15px; color: var(--text); margin-bottom: 10px; line-height: 1.6; }
+  .hint-tag {
+    display: inline-block;
+    background: rgba(201,160,39,0.1); border: 1px solid rgba(201,160,39,0.3);
+    color: var(--gold); font-size: 11px; font-weight: 700;
+    padding: 2px 8px; border-radius: 4px; margin-left: 4px;
+  }
+  .ex-input-row { display: flex; gap: 10px; align-items: center; }
+  .ex-input {
+    padding: 9px 13px;
+    background: var(--field); border: 1px solid var(--border);
+    border-radius: 6px; font-size: 14px; color: var(--text);
+    width: 200px; outline: none; transition: border-color 0.15s;
+  }
+  .ex-input::placeholder { color: var(--muted); }
+  .ex-input:focus { border-color: var(--gold); }
+  .ex-input.correct { border-color: var(--correct); background: var(--correct-bg); }
+  .ex-input.wrong   { border-color: var(--wrong);   background: var(--wrong-bg);   }
+  .btn-check {
+    padding: 9px 18px;
+    background: var(--field); color: var(--text);
+    border: 1px solid var(--border); border-radius: 6px;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+    white-space: nowrap; transition: all 0.15s;
+  }
+  .btn-check:hover { background: #2e3850; border-color: var(--gold); color: var(--gold); }
+  .btn-check:disabled { opacity: 0.4; cursor: not-allowed; }
+  .feedback-msg { font-size: 13px; margin-top: 8px; display: none; font-weight: 500; line-height: 1.5; }
+  .feedback-msg.show { display: block; }
+  .feedback-msg.ok  { color: var(--correct); }
+  .feedback-msg.err { color: var(--wrong); }
+
+  /* ── RECALL ── */
+  .recall-item {
+    margin-bottom: 14px; padding: 14px 16px;
+    background: var(--root-bg); border: 1px solid var(--border); border-radius: 8px;
+  }
+  .recall-def  { font-size: 14px; color: var(--muted); margin-bottom: 6px; line-height: 1.5; }
+  .recall-hint { font-size: 13px; color: var(--gold); font-weight: 700; margin-bottom: 8px; }
+
+  /* ── EXIT SLIP ── */
+  .quiz-item {
+    margin-bottom: 18px; padding: 18px 20px;
+    background: var(--root-bg); border: 1px solid var(--border); border-radius: 8px;
+  }
+  .quiz-q { font-size: 15px; font-weight: 500; color: var(--text); margin-bottom: 14px; line-height: 1.6; }
+  .qnum {
+    display: inline-block;
+    background: var(--gold); color: #111;
+    font-size: 11px; font-weight: 800;
+    padding: 2px 7px; border-radius: 3px; margin-right: 6px;
+  }
+  .options-grid { display: flex; flex-direction: column; gap: 7px; }
+  .option-btn {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 14px;
+    background: var(--chip-bg); border: 1px solid var(--border);
+    border-radius: 6px; cursor: pointer;
+    text-align: left; font-size: 14px; color: var(--text);
+    transition: all 0.12s;
+  }
+  .option-btn:hover:not(:disabled) { border-color: var(--gold); background: #262f45; }
+  .option-btn.selected { border-color: var(--gold); background: rgba(201,160,39,0.1); }
+  .option-btn.correct  { border-color: var(--correct); background: var(--correct-bg); color: var(--correct); font-weight: 600; }
+  .option-btn.wrong    { border-color: var(--wrong);   background: var(--wrong-bg);   color: var(--wrong); }
+  .option-btn:disabled { cursor: default; }
+  .opt-letter {
+    width: 24px; height: 24px; border-radius: 50%;
+    background: var(--border); color: var(--label);
+    font-weight: 700; font-size: 11px;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .option-btn.selected .opt-letter { background: var(--gold); color: #111; }
+  .option-btn.correct  .opt-letter { background: var(--correct); color: #fff; }
+  .option-btn.wrong    .opt-letter { background: var(--wrong); color: #fff; }
+
+  /* ── SCORE CARD ── */
+  .score-card {
+    text-align: center; padding: 36px 24px;
+    background: var(--card); border-radius: 10px;
+    margin-bottom: 20px; display: none;
+  }
+  .score-card.show { display: block; }
+  .score-big   { font-size: 64px; font-weight: 900; color: var(--gold); line-height: 1; }
+  .score-label { font-size: 18px; font-weight: 700; color: #fff; margin: 10px 0 4px; }
+  .score-sub   { font-size: 14px; color: var(--muted); }
+
+  /* ── NEXT / SUBMIT / LOG BUTTONS ── */
+  .next-bar { display: flex; justify-content: flex-end; margin-top: 24px; }
+  .btn-next {
+    padding: 11px 26px;
+    background: var(--gold); color: #111;
+    border: none; border-radius: 6px;
+    font-size: 14px; font-weight: 700;
+    cursor: pointer; transition: background 0.15s;
+  }
+  .btn-next:hover:not(:disabled) { background: #d4aa30; }
+  .btn-next:disabled { background: var(--border); color: var(--muted); cursor: not-allowed; }
+  .btn-submit {
+    padding: 13px 32px;
+    background: var(--gold); color: #111;
+    border: none; border-radius: 6px;
+    font-size: 15px; font-weight: 700;
+    cursor: pointer; transition: background 0.15s;
+  }
+  .btn-submit:hover:not(:disabled) { background: #d4aa30; }
+  .btn-submit:disabled { background: var(--border); color: var(--muted); cursor: not-allowed; }
+  .btn-log {
+    padding: 13px 32px;
+    background: var(--correct); color: #fff;
+    border: none; border-radius: 6px;
+    font-size: 15px; font-weight: 700;
+    cursor: pointer; transition: background 0.15s;
+  }
+  .btn-log:hover:not(:disabled) { background: #16a34a; }
+  .log-status { margin-top: 12px; font-size: 14px; font-weight: 600; text-align: center; display: none; }
+  .log-status.ok  { color: var(--correct); display: block; }
+  .log-status.err { color: var(--wrong);   display: block; }
+
+  /* ── COMPLETE SCREEN ── */
+  #complete-screen { display: none; min-height: 60vh; align-items: center; justify-content: center; text-align: center; padding: 40px 20px; flex-direction: column; }
+  #complete-screen.show { display: flex; }
+  .complete-icon  { font-size: 52px; margin-bottom: 16px; }
+  .complete-title { font-size: 26px; font-weight: 700; color: #fff; margin-bottom: 8px; }
+  .complete-sub   { font-size: 15px; color: var(--muted); max-width: 380px; line-height: 1.6; }
+
+  @media (max-width: 600px) {
+    .login-card { padding: 28px 20px; }
+    .section-card { padding: 22px 16px; }
+    .root-grid { grid-template-columns: 1fr; }
+    .ex-input { width: 140px; }
+  }
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
-<header class="site-header">
-  <div class="header-brand">
-    <span class="header-eyebrow">ROAD TO IIM · SELF STUDY</span>
-    <span class="header-title">Instant Word Power</span>
-  </div>
-  <div class="header-timer" id="timerDisplay">00:00</div>
-</header>
+<!-- LOGIN SCREEN -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-eyebrow">Camp Verbal &times; Road to IIM</div>
+    <div class="login-title">Week 3 &mdash; Age Roots</div>
+    <div class="login-sub">Sessions 9&ndash;11 from <em>Instant Word Power</em>. Learn the number roots that name the decades of life: <em>oct-</em>, <em>dec-</em>, <em>nona-</em>, <em>septu-</em>. Complete all sections, then submit your exit slip to log your progress.</div>
 
-<!-- ════════════════════════════════════════
-     SCREEN 0 — LOGIN
-     ════════════════════════════════════════ -->
-<div class="screen active" id="screen-login">
-  <div class="card">
-    <div class="login-eyebrow">CAMP VERBAL × ROAD TO IIM</div>
-    <div class="login-title">Week 3 — Age Roots</div>
-    <div class="login-subtitle">
-      Sessions 9–11 from Instant Word Power. Learn the number roots that name the decades of life: <em>oct-</em>, <em>dec-</em>, <em>nona-</em>, <em>septu-</em>. Complete all sections, then submit your exit slip to log your score.
+    <div class="form-group">
+      <label for="inp-name">Your Name</label>
+      <input type="text" id="inp-name" placeholder="Full name" autocomplete="name">
     </div>
 
-    <div class="field">
-      <label for="inp-name">YOUR NAME</label>
-      <input type="text" id="inp-name" placeholder="Full name" autocomplete="off">
-    </div>
-    <div class="field">
+    <div class="form-group">
       <label for="inp-pin">IMS PIN</label>
-      <input type="text" id="inp-pin" placeholder="IMS or STU followed by 10 digits" autocomplete="off">
+      <input type="text" id="inp-pin" placeholder="STU / IMS + 10 digits" autocomplete="off" maxlength="13">
+      <div class="error-msg" id="pin-error">PIN must be STU or IMS followed by 10 digits.</div>
     </div>
-    <div class="field">
-      <label for="inp-batch">BATCH</label>
+
+    <div class="form-group">
+      <label for="inp-batch">Batch</label>
       <select id="inp-batch">
-        <option value="" disabled selected>Select your batch</option>
+        <option value="" disabled selected>&mdash; Select batch &mdash;</option>
         <optgroup label="Classroom">
           <option>A2701</option><option>A2702</option><option>A2703</option>
           <option>A2704</option><option>A2705</option><option>A2706</option>
@@ -356,686 +380,750 @@
       </select>
     </div>
 
-    <button class="btn-primary" onclick="handleLogin()">Begin Session ›</button>
-    <div class="error-msg" id="login-error"></div>
+    <button class="btn-start" onclick="startSession()">Begin Session &rsaquo;</button>
   </div>
 </div>
 
-<!-- ════════════════════════════════════════
-     SCREEN 1 — HOOK + ROOT INTRO
-     ════════════════════════════════════════ -->
-<div class="screen" id="screen-1">
-  <div class="card">
-    <div class="progress-bar"><div class="progress-fill" style="width:20%"></div></div>
+<!-- MAIN SCREEN -->
+<div id="main-screen">
+  <header class="site-header">
+    <div class="header-left">
+      <div class="header-sup">Road to IIM &middot; Self Study</div>
+      <div class="header-title">Instant Word Power</div>
+    </div>
+    <div class="timer-display" id="timer-display">00:00</div>
+  </header>
 
-    <div class="section-tag">Section 1 of 5</div>
-    <div class="section-title">The Roots of Age</div>
-    <div class="section-intro">
-      Norman Lewis builds a whole vocabulary of life stages from four number roots. Once you know them, you'll never confuse a septuagenarian with a nonagenarian again.
+  <div class="main-wrap">
+    <!-- Progress -->
+    <div class="progress-track">
+      <div class="prog-step active" id="ps1"></div>
+      <div class="prog-step" id="ps2"></div>
+      <div class="prog-step" id="ps3"></div>
+      <div class="prog-step" id="ps4"></div>
+      <div class="prog-step" id="ps5"></div>
     </div>
 
-    <div class="hook-box">
-      <div class="hook-q">If someone is in their "eighth decade," how old are they?</div>
-      <div class="hook-hint">Think: the first decade is 0–9, the second is 10–19, so the eighth is... 70–79? Or 80–89? The Latin root will settle it.</div>
-    </div>
+    <!-- ── SECTION 1: Root Cards ── -->
+    <div class="section-card active" id="sec1">
+      <div class="section-eyebrow">Section 1 of 5</div>
+      <div class="section-title">Root Introduction</div>
+      <div class="section-desc">Four roots, one idea: the decades of life. Latin number roots tell you exactly how old someone is — if you know them. Read every card before moving on.</div>
 
-    <hr class="divider">
+      <div class="hook-box">
+        <div class="hook-q">🎂 Quick Think: What is the difference between an <em>octogenarian</em> and a <em>nonagenarian</em>?</div>
+        <div class="hook-sub">Both are age words. Both end in <em>-genarian</em>. The difference is in the root — and the root tells you the decade. By the end of this section, you'll know all four age brackets by their Latin origins.</div>
+      </div>
 
-    <div class="root-grid">
-
-      <!-- ROOT: oct / octo -->
-      <div class="root-card">
-        <div class="root-label">Root 1 — OCT / OCTO (Latin &amp; Greek) = eight</div>
-        <div class="word-list">
-          <div class="word-item">
-            <div class="word-name"><span class="root">oct</span>ogenarian</div>
-            <div class="word-pos">noun</div>
-            <div class="word-def">A person in their eighties — aged 80 to 89. Built on Latin <em>octoginta</em> (eighty).</div>
-            <div class="word-ex">"Many <span style="color:var(--text)">octogenarians</span> today live active, independent lives."</div>
+      <div class="root-grid">
+        <!-- Root 1: oct- -->
+        <div class="root-card">
+          <div class="root-label">Root 1 — OCT / OCTO · Latin &amp; Greek · eight</div>
+          <div class="root-header">
+            <div class="root-tag">oct-</div>
+            <div class="root-meaning">= eight (Latin <em>octo</em>, Greek <em>okto</em>)</div>
           </div>
-          <div class="word-item">
-            <div class="word-name"><span class="root">oct</span>agon</div>
-            <div class="word-pos">noun</div>
-            <div class="word-def">An eight-sided / eight-angled geometric figure. From <em>octo</em> (eight) + Greek <em>gonia</em> (angle).</div>
-            <div class="word-ex">"A stop sign is <span style="color:var(--text)">octagonal</span> — eight sides, unmistakable at a glance."</div>
+          <div class="word-row">
+            <div class="word-chip">
+              <div class="chip-word"><span class="hl">oct</span>ogenarian</div>
+              <div class="chip-pos">noun</div>
+              <div class="chip-def">A person in their eighties (80–89). From Latin <em>octoginta</em> = eighty.</div>
+              <div class="chip-ex">"Many octogenarians today live active, independent lives well into their late eighties."</div>
+            </div>
+            <div class="word-chip">
+              <div class="chip-word"><span class="hl">oct</span>agon</div>
+              <div class="chip-pos">noun</div>
+              <div class="chip-def">An eight-sided geometric figure. From <em>octo</em> + Greek <em>gonia</em> (angle).</div>
+              <div class="chip-ex">"A stop sign is octagonal — eight sides, instantly recognisable on any road."</div>
+            </div>
+            <div class="word-chip">
+              <div class="chip-word"><span class="hl">oct</span>et</div>
+              <div class="chip-pos">noun</div>
+              <div class="chip-def">A musical group of eight, or a composition for eight performers.</div>
+              <div class="chip-ex">"Schubert's Octet in F major remains one of his most celebrated chamber works."</div>
+            </div>
           </div>
-          <div class="word-item">
-            <div class="word-name"><span class="root">oct</span>et</div>
-            <div class="word-pos">noun</div>
-            <div class="word-def">A musical group of eight, or a composition written for eight performers.</div>
-            <div class="word-ex">"Schubert's <span style="color:var(--text)">Octet</span> in F major is one of his most celebrated chamber works."</div>
+        </div>
+
+        <!-- Root 2: dec- -->
+        <div class="root-card">
+          <div class="root-label">Root 2 — DEC / DEKA · Latin &amp; Greek · ten</div>
+          <div class="root-header">
+            <div class="root-tag">dec-</div>
+            <div class="root-meaning">= ten (Latin <em>decem</em>, Greek <em>deka</em>)</div>
+          </div>
+          <div class="word-row">
+            <div class="word-chip">
+              <div class="chip-word"><span class="hl">dec</span>ade</div>
+              <div class="chip-pos">noun</div>
+              <div class="chip-def">A period of ten years. From Greek <em>deka</em>.</div>
+              <div class="chip-ex">"The decade of the 1960s was defined by social upheaval and nonconformism."</div>
+            </div>
+            <div class="word-chip">
+              <div class="chip-word"><span class="hl">dec</span>agon</div>
+              <div class="chip-pos">noun</div>
+              <div class="chip-def">A ten-sided geometric figure. From <em>deka</em> + <em>gonia</em> (angle).</div>
+              <div class="chip-ex">"A decagon has exactly ten angles and ten sides — double the pentagon."</div>
+            </div>
+            <div class="word-chip">
+              <div class="chip-word">penta<span class="hl">gon</span></div>
+              <div class="chip-pos">noun</div>
+              <div class="chip-def">A five-sided figure. Shares the <em>-gon</em> (angle) root with octagon and decagon. From Greek <em>penta</em> (five).</div>
+              <div class="chip-ex">"The US Defense building is called the Pentagon for its five equal sides."</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Root 3: nona- -->
+        <div class="root-card">
+          <div class="root-label">Root 3 — NONA · Latin nonaginta · ninety</div>
+          <div class="root-header">
+            <div class="root-tag">nona-</div>
+            <div class="root-meaning">= ninety (Latin <em>nonaginta</em>)</div>
+          </div>
+          <div class="word-row">
+            <div class="word-chip">
+              <div class="chip-word"><span class="hl">nona</span>genarian</div>
+              <div class="chip-pos">noun</div>
+              <div class="chip-def">A person in their nineties (90–99). From Latin <em>nonaginta</em> = ninety.</div>
+              <div class="chip-ex">"The nonagenarian still completed the morning crossword every day without help."</div>
+            </div>
+            <div class="word-chip">
+              <div class="chip-word">centenarian</div>
+              <div class="chip-pos">noun</div>
+              <div class="chip-def">A person who has reached 100. From Latin <em>centum</em> (100). Endpoint of the age-bracket series.</div>
+              <div class="chip-ex">"When she turned 100, local papers ran a story about the town's newest centenarian."</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Root 4: septu- -->
+        <div class="root-card">
+          <div class="root-label">Root 4 — SEPTU · Latin septuaginta · seventy</div>
+          <div class="root-header">
+            <div class="root-tag">septu-</div>
+            <div class="root-meaning">= seventy (Latin <em>septuaginta</em>)</div>
+          </div>
+          <div class="word-row">
+            <div class="word-chip">
+              <div class="chip-word"><span class="hl">septu</span>agenarian</div>
+              <div class="chip-pos">noun</div>
+              <div class="chip-def">A person in their seventies (70–79). From Latin <em>septuaginta</em> = seventy.</div>
+              <div class="chip-ex">"She retired as a septuagenarian and promptly enrolled in a painting class."</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Age bracket summary -->
+        <div class="root-card" style="grid-column: 1 / -1;">
+          <div class="root-label">The Full Sequence — Commit This to Memory</div>
+          <div class="word-row">
+            <div class="word-chip" style="text-align:center;">
+              <div class="chip-word" style="color:var(--gold);">70s</div>
+              <div class="chip-pos">septu-</div>
+              <div class="chip-def">septuagenarian</div>
+            </div>
+            <div class="word-chip" style="text-align:center;">
+              <div class="chip-word" style="color:var(--gold);">80s</div>
+              <div class="chip-pos">oct-</div>
+              <div class="chip-def">octogenarian</div>
+            </div>
+            <div class="word-chip" style="text-align:center;">
+              <div class="chip-word" style="color:var(--gold);">90s</div>
+              <div class="chip-pos">nona-</div>
+              <div class="chip-def">nonagenarian</div>
+            </div>
+            <div class="word-chip" style="text-align:center;">
+              <div class="chip-word" style="color:var(--gold);">100</div>
+              <div class="chip-pos">centum</div>
+              <div class="chip-def">centenarian</div>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- ROOT: dec / deka -->
-      <div class="root-card">
-        <div class="root-label">Root 2 — DEC / DEKA (Latin &amp; Greek) = ten</div>
-        <div class="word-list">
-          <div class="word-item">
-            <div class="word-name"><span class="root">dec</span>ade</div>
-            <div class="word-pos">noun</div>
-            <div class="word-def">A period of ten years. From Greek <em>deka</em> (ten).</div>
-            <div class="word-ex">"The <span style="color:var(--text)">decade</span> of the 1960s was marked by social upheaval and nonconformism."</div>
-          </div>
-          <div class="word-item">
-            <div class="word-name"><span class="root">dec</span>agon</div>
-            <div class="word-pos">noun</div>
-            <div class="word-def">A ten-sided geometric figure. From Greek <em>deka</em> (ten) + <em>gonia</em> (angle).</div>
-            <div class="word-ex">"A <span style="color:var(--text)">decagon</span> has ten angles and ten sides — double the pentagon."</div>
-          </div>
-          <div class="word-item">
-            <div class="word-name">penta<span class="root">gon</span></div>
-            <div class="word-pos">noun</div>
-            <div class="word-def">A five-sided figure. From Greek <em>penta</em> (five) + <em>gonia</em> (angle). Shares the <em>-gon</em> root with octagon and decagon.</div>
-            <div class="word-ex">"The <span style="color:var(--text)">Pentagon</span> got its name because the building has five equal sides."</div>
-          </div>
+      <div class="next-bar">
+        <button class="btn-next" id="next1" onclick="goSection(2)">Next: Fill-in Exercises →</button>
+      </div>
+    </div>
+
+    <!-- ── SECTION 2: Fill-in ── -->
+    <div class="section-card" id="sec2">
+      <div class="section-eyebrow">Section 2 of 5</div>
+      <div class="section-title">Fill-in Exercises</div>
+      <div class="section-desc">A root hint is given for each blank. Use it to recall the correct word, then type your answer and click Check.</div>
+
+      <div class="ex-item" id="ex1">
+        <div class="ex-prompt">She turned 83 last month and celebrated with her entire family. The newspaper called her a remarkable <strong>_____</strong>. <span class="hint-tag">octo (eighty) + -genarian</span></div>
+        <div class="ex-input-row">
+          <input type="text" class="ex-input" id="exinp1" placeholder="Your answer" autocomplete="off">
+          <button class="btn-check" onclick="checkFill(1)">Check</button>
+        </div>
+        <div class="feedback-msg" id="exfb1"></div>
+      </div>
+
+      <div class="ex-item" id="ex2">
+        <div class="ex-prompt">He had lived through three wars and nine prime ministers. At 94, the <strong>_____</strong> had stories no young person could imagine. <span class="hint-tag">nona (ninety) + -genarian</span></div>
+        <div class="ex-input-row">
+          <input type="text" class="ex-input" id="exinp2" placeholder="Your answer" autocomplete="off">
+          <button class="btn-check" onclick="checkFill(2)">Check</button>
+        </div>
+        <div class="feedback-msg" id="exfb2"></div>
+      </div>
+
+      <div class="ex-item" id="ex3">
+        <div class="ex-prompt">Schubert's chamber masterpiece was written for eight players — it remains the most performed <strong>_____</strong> in classical music. <span class="hint-tag">oct- (eight) + -et</span></div>
+        <div class="ex-input-row">
+          <input type="text" class="ex-input" id="exinp3" placeholder="Your answer" autocomplete="off">
+          <button class="btn-check" onclick="checkFill(3)">Check</button>
+        </div>
+        <div class="feedback-msg" id="exfb3"></div>
+      </div>
+
+      <div class="ex-item" id="ex4">
+        <div class="ex-prompt">The 1980s were a turbulent <strong>_____</strong> — defined by economic reform, the Cold War, and a new era of global pop culture. <span class="hint-tag">deka (ten) + -ade</span></div>
+        <div class="ex-input-row">
+          <input type="text" class="ex-input" id="exinp4" placeholder="Your answer" autocomplete="off">
+          <button class="btn-check" onclick="checkFill(4)">Check</button>
+        </div>
+        <div class="feedback-msg" id="exfb4"></div>
+      </div>
+
+      <div class="ex-item" id="ex5">
+        <div class="ex-prompt">The US Department of Defense building is named for its shape — five equal sides make it a <strong>_____</strong>. <span class="hint-tag">penta (five) + gon (angle)</span></div>
+        <div class="ex-input-row">
+          <input type="text" class="ex-input" id="exinp5" placeholder="Your answer" autocomplete="off">
+          <button class="btn-check" onclick="checkFill(5)">Check</button>
+        </div>
+        <div class="feedback-msg" id="exfb5"></div>
+      </div>
+
+      <div class="ex-item" id="ex6">
+        <div class="ex-prompt">At 76, she refused to be called old. "I'm a <strong>_____</strong>," she insisted, "not an octogenarian yet." <span class="hint-tag">septu (seventy) + -agenarian</span></div>
+        <div class="ex-input-row">
+          <input type="text" class="ex-input" id="exinp6" placeholder="Your answer" autocomplete="off">
+          <button class="btn-check" onclick="checkFill(6)">Check</button>
+        </div>
+        <div class="feedback-msg" id="exfb6"></div>
+      </div>
+
+      <div class="next-bar">
+        <button class="btn-next" id="next2" onclick="goSection(3)" disabled>Next: Think with Words →</button>
+      </div>
+    </div>
+
+    <!-- ── SECTION 3: Context Sentences ── -->
+    <div class="section-card" id="sec3">
+      <div class="section-eyebrow">Section 3 of 5</div>
+      <div class="section-title">Think With Words</div>
+      <div class="section-desc">Each sentence below describes a situation. Type the word from this week's roots that best fits.</div>
+
+      <div class="ex-item" id="cx1">
+        <div class="ex-prompt">1. The soap box had eight equal sides — the packaging proudly described it as <strong>_____</strong> in shape.</div>
+        <div class="ex-input-row">
+          <input type="text" class="ex-input" id="ctxinp1" placeholder="Your answer" autocomplete="off" style="width:180px">
+          <button class="btn-check" onclick="checkCtx(1)">Check</button>
+        </div>
+        <div class="feedback-msg" id="ctxfb1"></div>
+      </div>
+
+      <div class="ex-item" id="cx2">
+        <div class="ex-prompt">2. She was 102 years old and still lucid. The local government sent her a congratulatory letter acknowledging that she had become their oldest <strong>_____</strong>.</div>
+        <div class="ex-input-row">
+          <input type="text" class="ex-input" id="ctxinp2" placeholder="Your answer" autocomplete="off" style="width:180px">
+          <button class="btn-check" onclick="checkCtx(2)">Check</button>
+        </div>
+        <div class="feedback-msg" id="ctxfb2"></div>
+      </div>
+
+      <div class="ex-item" id="cx3">
+        <div class="ex-prompt">3. The recession lasted nearly the entire <strong>_____</strong> — from 2001 to 2010, the economy struggled to regain its footing.</div>
+        <div class="ex-input-row">
+          <input type="text" class="ex-input" id="ctxinp3" placeholder="Your answer" autocomplete="off" style="width:180px">
+          <button class="btn-check" onclick="checkCtx(3)">Check</button>
+        </div>
+        <div class="feedback-msg" id="ctxfb3"></div>
+      </div>
+
+      <div class="ex-item" id="cx4">
+        <div class="ex-prompt">4. The community centre was built specifically for people in their seventies — it served the area's large <strong>_____</strong> population.</div>
+        <div class="ex-input-row">
+          <input type="text" class="ex-input" id="ctxinp4" placeholder="Your answer" autocomplete="off" style="width:180px">
+          <button class="btn-check" onclick="checkCtx(4)">Check</button>
+        </div>
+        <div class="feedback-msg" id="ctxfb4"></div>
+      </div>
+
+      <div class="next-bar">
+        <button class="btn-next" id="next3" onclick="goSection(4)" disabled>Next: Word Recall →</button>
+      </div>
+    </div>
+
+    <!-- ── SECTION 4: Word Recall ── -->
+    <div class="section-card" id="sec4">
+      <div class="section-eyebrow">Section 4 of 5</div>
+      <div class="section-title">Word Recall</div>
+      <div class="section-desc">A definition is given, along with the first letter(s). Write the complete word.</div>
+
+      <div class="recall-item" id="rc1">
+        <div class="recall-def">A person in their eighties — aged 80 to 89.</div>
+        <div class="recall-hint">First letters: <strong>oct___</strong></div>
+        <div class="ex-input-row">
+          <input type="text" class="ex-input" id="rcinp1" placeholder="oct..." autocomplete="off" style="width:200px">
+          <button class="btn-check" onclick="checkRecall(1)">Check</button>
+        </div>
+        <div class="feedback-msg" id="rcfb1"></div>
+      </div>
+
+      <div class="recall-item" id="rc2">
+        <div class="recall-def">A person who has reached the age of 100.</div>
+        <div class="recall-hint">First letters: <strong>cent___</strong></div>
+        <div class="ex-input-row">
+          <input type="text" class="ex-input" id="rcinp2" placeholder="cent..." autocomplete="off" style="width:200px">
+          <button class="btn-check" onclick="checkRecall(2)">Check</button>
+        </div>
+        <div class="feedback-msg" id="rcfb2"></div>
+      </div>
+
+      <div class="recall-item" id="rc3">
+        <div class="recall-def">A ten-year period.</div>
+        <div class="recall-hint">First letters: <strong>dec___</strong></div>
+        <div class="ex-input-row">
+          <input type="text" class="ex-input" id="rcinp3" placeholder="dec..." autocomplete="off" style="width:200px">
+          <button class="btn-check" onclick="checkRecall(3)">Check</button>
+        </div>
+        <div class="feedback-msg" id="rcfb3"></div>
+      </div>
+
+      <div class="recall-item" id="rc4">
+        <div class="recall-def">A person in their nineties — aged 90 to 99.</div>
+        <div class="recall-hint">First letters: <strong>non___</strong></div>
+        <div class="ex-input-row">
+          <input type="text" class="ex-input" id="rcinp4" placeholder="non..." autocomplete="off" style="width:200px">
+          <button class="btn-check" onclick="checkRecall(4)">Check</button>
+        </div>
+        <div class="feedback-msg" id="rcfb4"></div>
+      </div>
+
+      <div class="recall-item" id="rc5">
+        <div class="recall-def">An eight-sided geometric figure.</div>
+        <div class="recall-hint">First letters: <strong>oct___</strong></div>
+        <div class="ex-input-row">
+          <input type="text" class="ex-input" id="rcinp5" placeholder="oct..." autocomplete="off" style="width:200px">
+          <button class="btn-check" onclick="checkRecall(5)">Check</button>
+        </div>
+        <div class="feedback-msg" id="rcfb5"></div>
+      </div>
+
+      <div class="next-bar">
+        <button class="btn-next" id="next4" onclick="goSection(5)" disabled>Next: Exit Slip →</button>
+      </div>
+    </div>
+    <!-- ── SECTION 5: Exit Slip ── -->
+    <div class="section-card" id="sec5">
+      <div class="section-eyebrow">Section 5 of 5 · Exit Slip</div>
+      <div class="section-title">Final Check</div>
+      <div class="section-desc">5 questions. Select one option per question, then submit. Your score will be logged to the tracker.</div>
+
+      <!-- Q1 -->
+      <div class="quiz-item">
+        <div class="quiz-q"><span class="qnum">Q1</span> A person who is 87 years old would correctly be called a —</div>
+        <div class="options-grid" id="q1opts">
+          <button class="option-btn" onclick="selectOpt(1,'A')"><span class="opt-letter">A</span> septuagenarian</button>
+          <button class="option-btn" onclick="selectOpt(1,'B')"><span class="opt-letter">B</span> octogenarian</button>
+          <button class="option-btn" onclick="selectOpt(1,'C')"><span class="opt-letter">C</span> nonagenarian</button>
+          <button class="option-btn" onclick="selectOpt(1,'D')"><span class="opt-letter">D</span> centenarian</button>
         </div>
       </div>
 
-      <!-- ROOT: nona / nonaginta -->
-      <div class="root-card">
-        <div class="root-label">Root 3 — NONA (Latin nonaginta) = ninety</div>
-        <div class="word-list">
-          <div class="word-item">
-            <div class="word-name"><span class="root">nona</span>genarian</div>
-            <div class="word-pos">noun</div>
-            <div class="word-def">A person in their nineties — aged 90 to 99. Built on Latin <em>nonaginta</em> (ninety).</div>
-            <div class="word-ex">"The <span style="color:var(--text)">nonagenarian</span> still completed the morning crossword every day without help."</div>
-          </div>
-          <div class="word-item">
-            <div class="word-name">cente<span class="root">narian</span></div>
-            <div class="word-pos">noun</div>
-            <div class="word-def">A person who has reached 100 years of age. From Latin <em>centum</em> (100). Completes the age bracket series.</div>
-            <div class="word-ex">"When she turned 100, local papers ran a story about the new <span style="color:var(--text)">centenarian</span> in town."</div>
-          </div>
+      <!-- Q2 -->
+      <div class="quiz-item">
+        <div class="quiz-q"><span class="qnum">Q2</span> The word <em>decade</em> derives from a root meaning —</div>
+        <div class="options-grid" id="q2opts">
+          <button class="option-btn" onclick="selectOpt(2,'A')"><span class="opt-letter">A</span> year</button>
+          <button class="option-btn" onclick="selectOpt(2,'B')"><span class="opt-letter">B</span> hundred</button>
+          <button class="option-btn" onclick="selectOpt(2,'C')"><span class="opt-letter">C</span> ten</button>
+          <button class="option-btn" onclick="selectOpt(2,'D')"><span class="opt-letter">D</span> eight</button>
         </div>
       </div>
 
-      <!-- ROOT: septu / septuaginta -->
-      <div class="root-card">
-        <div class="root-label">Root 4 — SEPTU (Latin septuaginta) = seventy</div>
-        <div class="word-list">
-          <div class="word-item">
-            <div class="word-name"><span class="root">septu</span>agenarian</div>
-            <div class="word-pos">noun</div>
-            <div class="word-def">A person in their seventies — aged 70 to 79. Built on Latin <em>septuaginta</em> (seventy).</div>
-            <div class="word-ex">"She retired as a <span style="color:var(--text)">septuagenarian</span> and promptly enrolled in a painting class."</div>
-          </div>
+      <!-- Q3 -->
+      <div class="quiz-item">
+        <div class="quiz-q"><span class="qnum">Q3</span> Which correctly arranges the age terms in ascending order?</div>
+        <div class="options-grid" id="q3opts">
+          <button class="option-btn" onclick="selectOpt(3,'A')"><span class="opt-letter">A</span> octogenarian → nonagenarian → septuagenarian → centenarian</button>
+          <button class="option-btn" onclick="selectOpt(3,'B')"><span class="opt-letter">B</span> nonagenarian → octogenarian → centenarian → septuagenarian</button>
+          <button class="option-btn" onclick="selectOpt(3,'C')"><span class="opt-letter">C</span> septuagenarian → octogenarian → nonagenarian → centenarian</button>
+          <button class="option-btn" onclick="selectOpt(3,'D')"><span class="opt-letter">D</span> centenarian → nonagenarian → octogenarian → septuagenarian</button>
         </div>
       </div>
 
-    </div><!-- /root-grid -->
-
-    <div class="section-intro" style="font-size:13px; color:var(--text-dim);">
-      <strong style="color:var(--text-muted)">The full age bracket sequence:</strong><br>
-      70s → <em>septu</em>agenarian &nbsp;|&nbsp; 80s → <em>oct</em>ogenarian &nbsp;|&nbsp; 90s → <em>nona</em>genarian &nbsp;|&nbsp; 100 → centenarian
-    </div>
-
-    <button class="btn-next" onclick="goTo(2)">Next: Fill-in Exercises ›</button>
-  </div>
-</div>
-
-<!-- ════════════════════════════════════════
-     SCREEN 2 — FILL-IN EXERCISES
-     ════════════════════════════════════════ -->
-<div class="screen" id="screen-2">
-  <div class="card">
-    <div class="progress-bar"><div class="progress-fill" style="width:40%"></div></div>
-
-    <div class="section-tag">Section 2 of 5</div>
-    <div class="section-title">Fill in the Root</div>
-    <div class="section-intro">
-      Complete each word using the root and suffix clue in brackets. Type your answer and click Check. All 6 must be attempted before you can move on.
-    </div>
-
-    <!-- EX 1 -->
-    <div class="ex-item">
-      <div class="ex-sentence">She turned 83 last month and celebrated with her entire family. The newspaper called her a remarkable <strong>___________</strong>.</div>
-      <div class="ex-clue">Root: octo (eight) + ginta (eighty) + -arian</div>
-      <div class="input-row">
-        <input type="text" id="ex1" placeholder="Type the word..." autocomplete="off">
-        <button class="btn-check" onclick="checkEx(1)">Check</button>
+      <!-- Q4 -->
+      <div class="quiz-item">
+        <div class="quiz-q"><span class="qnum">Q4</span> An <em>octet</em> at a concert hall would consist of —</div>
+        <div class="options-grid" id="q4opts">
+          <button class="option-btn" onclick="selectOpt(4,'A')"><span class="opt-letter">A</span> five musicians</button>
+          <button class="option-btn" onclick="selectOpt(4,'B')"><span class="opt-letter">B</span> ten musicians</button>
+          <button class="option-btn" onclick="selectOpt(4,'C')"><span class="opt-letter">C</span> six musicians</button>
+          <button class="option-btn" onclick="selectOpt(4,'D')"><span class="opt-letter">D</span> eight musicians</button>
+        </div>
       </div>
-      <div class="feedback" id="fb1"></div>
-    </div>
 
-    <!-- EX 2 -->
-    <div class="ex-item">
-      <div class="ex-sentence">He had lived through three wars, two recessions, and nine prime ministers. At 94, the <strong>___________</strong> had stories no young person could imagine.</div>
-      <div class="ex-clue">Root: nona (ninety) + -genarian</div>
-      <div class="input-row">
-        <input type="text" id="ex2" placeholder="Type the word..." autocomplete="off">
-        <button class="btn-check" onclick="checkEx(2)">Check</button>
+      <!-- Q5 -->
+      <div class="quiz-item">
+        <div class="quiz-q"><span class="qnum">Q5</span> Which sentence uses <em>nonagenarian</em> correctly?</div>
+        <div class="options-grid" id="q5opts">
+          <button class="option-btn" onclick="selectOpt(5,'A')"><span class="opt-letter">A</span> The club is open to nonagenarians — anyone aged 70 or above.</button>
+          <button class="option-btn" onclick="selectOpt(5,'B')"><span class="opt-letter">B</span> She became a nonagenarian on her hundredth birthday.</button>
+          <button class="option-btn" onclick="selectOpt(5,'C')"><span class="opt-letter">C</span> The nonagenarian still swam every morning despite being 96.</button>
+          <button class="option-btn" onclick="selectOpt(5,'D')"><span class="opt-letter">D</span> A nonagenarian is someone who has just entered their eighties.</button>
+        </div>
       </div>
-      <div class="feedback" id="fb2"></div>
-    </div>
 
-    <!-- EX 3 -->
-    <div class="ex-item">
-      <div class="ex-sentence">Schubert's chamber masterpiece was written for eight players. It remains one of the most performed <strong>___________</strong>s in classical music.</div>
-      <div class="ex-clue">Root: oct (eight) + -et (group)</div>
-      <div class="input-row">
-        <input type="text" id="ex3" placeholder="Type the word..." autocomplete="off">
-        <button class="btn-check" onclick="checkEx(3)">Check</button>
-      </div>
-      <div class="feedback" id="fb3"></div>
-    </div>
-
-    <!-- EX 4 -->
-    <div class="ex-item">
-      <div class="ex-sentence">The 1980s were a turbulent <strong>___________</strong> — defined by economic reform, the Cold War, and a new era of global pop culture.</div>
-      <div class="ex-clue">Root: dec / deka (ten) + -ade (period)</div>
-      <div class="input-row">
-        <input type="text" id="ex4" placeholder="Type the word..." autocomplete="off">
-        <button class="btn-check" onclick="checkEx(4)">Check</button>
-      </div>
-      <div class="feedback" id="fb4"></div>
-    </div>
-
-    <!-- EX 5 -->
-    <div class="ex-item">
-      <div class="ex-sentence">The Department of Defense building in Washington is named for its shape — five equal sides make it a <strong>___________</strong>.</div>
-      <div class="ex-clue">Root: penta (five) + gon (angle)</div>
-      <div class="input-row">
-        <input type="text" id="ex5" placeholder="Type the word..." autocomplete="off">
-        <button class="btn-check" onclick="checkEx(5)">Check</button>
-      </div>
-      <div class="feedback" id="fb5"></div>
-    </div>
-
-    <!-- EX 6 -->
-    <div class="ex-item">
-      <div class="ex-sentence">At 76, she refused to be called old. "I'm a <strong>___________</strong>," she insisted, "not an octogenarian yet."</div>
-      <div class="ex-clue">Root: septu (seventy) + -agenarian</div>
-      <div class="input-row">
-        <input type="text" id="ex6" placeholder="Type the word..." autocomplete="off">
-        <button class="btn-check" onclick="checkEx(6)">Check</button>
-      </div>
-      <div class="feedback" id="fb6"></div>
-    </div>
-
-    <button class="btn-next" id="next-ex" onclick="goTo(3)" disabled>Next: Think with Words ›</button>
-  </div>
-</div>
-
-<!-- ════════════════════════════════════════
-     SCREEN 3 — CONTEXTUAL CLOZE
-     ════════════════════════════════════════ -->
-<div class="screen" id="screen-3">
-  <div class="card">
-    <div class="progress-bar"><div class="progress-fill" style="width:60%"></div></div>
-
-    <div class="section-tag">Section 3 of 5</div>
-    <div class="section-title">Think with Words</div>
-    <div class="section-intro">
-      Choose the right word from this week's set to complete each sentence. Type the word and click Check. All 4 must be attempted before moving on.
-    </div>
-
-    <!-- CTX 1 -->
-    <div class="ex-item">
-      <div class="ex-sentence">The geometric figure on the soap box had eight equal sides. The packaging proudly described it as <strong>___________</strong> in shape.</div>
-      <div class="input-row">
-        <input type="text" id="ctx1" placeholder="Type the word..." autocomplete="off">
-        <button class="btn-check" onclick="checkCtx(1)">Check</button>
-      </div>
-      <div class="feedback" id="ctxfb1"></div>
-    </div>
-
-    <!-- CTX 2 -->
-    <div class="ex-item">
-      <div class="ex-sentence">She was 102 years old and still lucid. The local government sent her a congratulatory letter acknowledging that she had become their oldest <strong>___________</strong>.</div>
-      <div class="input-row">
-        <input type="text" id="ctx2" placeholder="Type the word..." autocomplete="off">
-        <button class="btn-check" onclick="checkCtx(2)">Check</button>
-      </div>
-      <div class="feedback" id="ctxfb2"></div>
-    </div>
-
-    <!-- CTX 3 -->
-    <div class="ex-item">
-      <div class="ex-sentence">The recession lasted nearly the entire <strong>___________</strong> — from 2001 to 2010, the economy struggled to regain its footing.</div>
-      <div class="input-row">
-        <input type="text" id="ctx3" placeholder="Type the word..." autocomplete="off">
-        <button class="btn-check" onclick="checkCtx(3)">Check</button>
-      </div>
-      <div class="feedback" id="ctxfb3"></div>
-    </div>
-
-    <!-- CTX 4 -->
-    <div class="ex-item">
-      <div class="ex-sentence">The community centre was designed to serve people in their seventies. It was built specifically for the area's large <strong>___________</strong> population.</div>
-      <div class="input-row">
-        <input type="text" id="ctx4" placeholder="Type the word..." autocomplete="off">
-        <button class="btn-check" onclick="checkCtx(4)">Check</button>
-      </div>
-      <div class="feedback" id="ctxfb4"></div>
-    </div>
-
-    <button class="btn-next" id="next-ctx" onclick="goTo(4)" disabled>Next: Word Recall ›</button>
-  </div>
-</div>
-
-<!-- ════════════════════════════════════════
-     SCREEN 4 — WORD RECALL
-     ════════════════════════════════════════ -->
-<div class="screen" id="screen-4">
-  <div class="card">
-    <div class="progress-bar"><div class="progress-fill" style="width:80%"></div></div>
-
-    <div class="section-tag">Section 4 of 5</div>
-    <div class="section-title">Word Recall</div>
-    <div class="section-intro">
-      A definition is given. Type the correct word. The first letter(s) are shown as a hint. All 5 must be attempted before moving on.
-    </div>
-
-    <!-- RC 1 -->
-    <div class="ex-item">
-      <div class="ex-sentence"><strong>Definition:</strong> A person in their eighties (80–89).</div>
-      <div class="ex-clue">Hint: o_______________</div>
-      <div class="input-row">
-        <input type="text" id="rc1" placeholder="Type the word..." autocomplete="off">
-        <button class="btn-check" onclick="checkRc(1)">Check</button>
-      </div>
-      <div class="feedback" id="rcfb1"></div>
-    </div>
-
-    <!-- RC 2 -->
-    <div class="ex-item">
-      <div class="ex-sentence"><strong>Definition:</strong> A person who has reached the age of 100.</div>
-      <div class="ex-clue">Hint: c_______________</div>
-      <div class="input-row">
-        <input type="text" id="rc2" placeholder="Type the word..." autocomplete="off">
-        <button class="btn-check" onclick="checkRc(2)">Check</button>
-      </div>
-      <div class="feedback" id="rcfb2"></div>
-    </div>
-
-    <!-- RC 3 -->
-    <div class="ex-item">
-      <div class="ex-sentence"><strong>Definition:</strong> A ten-year period.</div>
-      <div class="ex-clue">Hint: d_______________</div>
-      <div class="input-row">
-        <input type="text" id="rc3" placeholder="Type the word..." autocomplete="off">
-        <button class="btn-check" onclick="checkRc(3)">Check</button>
-      </div>
-      <div class="feedback" id="rcfb3"></div>
-    </div>
-
-    <!-- RC 4 -->
-    <div class="ex-item">
-      <div class="ex-sentence"><strong>Definition:</strong> A person in their nineties (90–99).</div>
-      <div class="ex-clue">Hint: n_______________</div>
-      <div class="input-row">
-        <input type="text" id="rc4" placeholder="Type the word..." autocomplete="off">
-        <button class="btn-check" onclick="checkRc(4)">Check</button>
-      </div>
-      <div class="feedback" id="rcfb4"></div>
-    </div>
-
-    <!-- RC 5 -->
-    <div class="ex-item">
-      <div class="ex-sentence"><strong>Definition:</strong> An eight-sided geometric figure.</div>
-      <div class="ex-clue">Hint: o_______________</div>
-      <div class="input-row">
-        <input type="text" id="rc5" placeholder="Type the word..." autocomplete="off">
-        <button class="btn-check" onclick="checkRc(5)">Check</button>
-      </div>
-      <div class="feedback" id="rcfb5"></div>
-    </div>
-
-    <button class="btn-next" id="next-rc" onclick="goTo(5)" disabled>Next: Exit Slip ›</button>
-  </div>
-</div>
-
-<!-- ════════════════════════════════════════
-     SCREEN 5 — EXIT SLIP
-     ════════════════════════════════════════ -->
-<div class="screen" id="screen-5">
-  <div class="card">
-    <div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div>
-
-    <div class="section-tag">Section 5 of 5 — Exit Slip</div>
-    <div class="section-title">5-Question Check</div>
-    <div class="section-intro">
-      Select the best answer for each question. Your score will be logged to the tracker when you click Log to Tracker.
-    </div>
-
-    <!-- Q1 -->
-    <div class="mcq-item">
-      <div class="mcq-stem">1. A person who is 87 years old would correctly be called a —</div>
-      <div class="mcq-options" id="q1-opts">
-        <label class="mcq-option"><input type="radio" name="q1" value="A"> A. septuagenarian</label>
-        <label class="mcq-option"><input type="radio" name="q1" value="B"> B. octogenarian</label>
-        <label class="mcq-option"><input type="radio" name="q1" value="C"> C. nonagenarian</label>
-        <label class="mcq-option"><input type="radio" name="q1" value="D"> D. centenarian</label>
+      <div class="next-bar" style="justify-content: center; flex-direction: column; align-items: center; gap: 14px;">
+        <button class="btn-submit" id="btn-submit" onclick="submitExitSlip()" disabled>Submit Exit Slip</button>
       </div>
     </div>
 
-    <!-- Q2 -->
-    <div class="mcq-item">
-      <div class="mcq-stem">2. The word "decade" derives from a root meaning —</div>
-      <div class="mcq-options" id="q2-opts">
-        <label class="mcq-option"><input type="radio" name="q2" value="A"> A. year</label>
-        <label class="mcq-option"><input type="radio" name="q2" value="B"> B. hundred</label>
-        <label class="mcq-option"><input type="radio" name="q2" value="C"> C. ten</label>
-        <label class="mcq-option"><input type="radio" name="q2" value="D"> D. eight</label>
-      </div>
+    <!-- Score Card -->
+    <div class="score-card" id="score-card">
+      <div class="score-big" id="score-display">0/5</div>
+      <div class="score-label" id="score-grade">—</div>
+      <div class="score-sub" id="score-pct">—</div>
     </div>
 
-    <!-- Q3 -->
-    <div class="mcq-item">
-      <div class="mcq-stem">3. Which of the following correctly arranges the age terms in ascending order?</div>
-      <div class="mcq-options" id="q3-opts">
-        <label class="mcq-option"><input type="radio" name="q3" value="A"> A. octogenarian → nonagenarian → septuagenarian → centenarian</label>
-        <label class="mcq-option"><input type="radio" name="q3" value="B"> B. nonagenarian → octogenarian → centenarian → septuagenarian</label>
-        <label class="mcq-option"><input type="radio" name="q3" value="C"> C. septuagenarian → octogenarian → nonagenarian → centenarian</label>
-        <label class="mcq-option"><input type="radio" name="q3" value="D"> D. centenarian → nonagenarian → octogenarian → septuagenarian</label>
-      </div>
+    <!-- Complete Screen -->
+    <div id="complete-screen">
+      <div class="complete-icon">🎉</div>
+      <div class="complete-title">Week 3 Complete!</div>
+      <div class="complete-sub">Your results have been logged. See you next week for <strong>sed-, sid-, sess-</strong> — the sitting roots!</div>
     </div>
 
-    <!-- Q4 -->
-    <div class="mcq-item">
-      <div class="mcq-stem">4. An octet at a concert hall would most likely consist of —</div>
-      <div class="mcq-options" id="q4-opts">
-        <label class="mcq-option"><input type="radio" name="q4" value="A"> A. five musicians</label>
-        <label class="mcq-option"><input type="radio" name="q4" value="B"> B. ten musicians</label>
-        <label class="mcq-option"><input type="radio" name="q4" value="C"> C. six musicians</label>
-        <label class="mcq-option"><input type="radio" name="q4" value="D"> D. eight musicians</label>
-      </div>
+    <!-- Log Button -->
+    <div id="log-bar" style="display:none; text-align:center; margin-top: 10px;">
+      <button class="btn-log" id="btn-log" onclick="logToTracker()">Log to Tracker</button>
+      <div class="log-status" id="log-status"></div>
     </div>
 
-    <!-- Q5 -->
-    <div class="mcq-item">
-      <div class="mcq-stem">5. Which sentence uses the word "nonagenarian" correctly?</div>
-      <div class="mcq-options" id="q5-opts">
-        <label class="mcq-option"><input type="radio" name="q5" value="A"> A. The club is open to nonagenarians — anyone aged 70 or above.</label>
-        <label class="mcq-option"><input type="radio" name="q5" value="B"> B. She became a nonagenarian on her hundredth birthday.</label>
-        <label class="mcq-option"><input type="radio" name="q5" value="C"> C. The nonagenarian still swam every morning despite being 96.</label>
-        <label class="mcq-option"><input type="radio" name="q5" value="D"> D. A nonagenarian is someone who has just entered their eighties.</label>
-      </div>
-    </div>
+  </div><!-- /.main-wrap -->
+</div><!-- /#main-screen -->
 
-    <button class="btn-primary" id="submit-btn" onclick="submitExit()">Submit Exit Slip</button>
-
-    <!-- SCORE DISPLAY (hidden until submit) -->
-    <div id="score-area" style="display:none;">
-      <hr class="divider">
-      <div class="score-display">
-        <div class="score-big" id="score-num">—</div>
-        <div class="score-label">out of 5</div>
-        <div class="score-grade" id="score-grade"></div>
-      </div>
-      <button class="btn-next" id="log-btn" onclick="logScore()">Log to Tracker ›</button>
-      <div class="log-msg" id="log-msg"></div>
-    </div>
-
-  </div>
-</div>
-
-<!-- ════════════════════════════════════════
-     SCRIPT
-     ════════════════════════════════════════ -->
 <script>
-  // ── CONSTANTS ──────────────────────────────────────────────────────
-  const SESSION_NAME = 'IWP Week 3 — Age Roots';
-  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwGGxswx4hcBUFiT0QJIglowhKcJCv47MOR5LKBv9sILl-evsgZeKCms5y6s5zEXOUo6Q/exec';
+// ══════════════════════════════════════════════════════════════
+//  CONSTANTS
+// ══════════════════════════════════════════════════════════════
+const SESSION_NAME   = 'IWP Week 3 — Age Roots';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwGGxswx4hcBUFiT0QJIglowhKcJCv47MOR5LKBv9sILl-evsgZeKCms5y6s5zEXOUo6Q/exec';
 
-  const EX_ANSWERS = {
-    1: 'octogenarian',
-    2: 'nonagenarian',
-    3: 'octet',
-    4: 'decade',
-    5: 'pentagon',
-    6: 'septuagenarian'
-  };
+// ── Answer keys ──
+const EX_ANSWERS = {
+  1: 'octogenarian',
+  2: 'nonagenarian',
+  3: 'octet',
+  4: 'decade',
+  5: 'pentagon',
+  6: 'septuagenarian'
+};
 
-  const CTX_ANSWERS = {
-    1: 'octagonal',
-    2: 'centenarian',
-    3: 'decade',
-    4: 'septuagenarian'
-  };
+const CTX_ANSWERS = {
+  1: 'octagonal',
+  2: 'centenarian',
+  3: 'decade',
+  4: 'septuagenarian'
+};
 
-  const RC_ANSWERS = {
-    1: 'octogenarian',
-    2: 'centenarian',
-    3: 'decade',
-    4: 'nonagenarian',
-    5: 'octagon'
-  };
+const RC_ANSWERS = {
+  1: 'octogenarian',
+  2: 'centenarian',
+  3: 'decade',
+  4: 'nonagenarian',
+  5: 'octagon'
+};
 
-  const CORRECT_ANSWERS = { 1: 'B', 2: 'C', 3: 'C', 4: 'D', 5: 'C' };
+const CORRECT_ANSWERS = { 1:'B', 2:'C', 3:'C', 4:'D', 5:'C' };
 
-  // ── STATE ──────────────────────────────────────────────────────────
-  let studentName = '', studentPin = '', studentBatch = '';
-  let startTime = null;
-  let timerInterval = null;
-  let exChecked = {}, ctxChecked = {}, rcChecked = {};
-  let exitScore = 0, exitAnswers = '';
+// ══════════════════════════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════════════════════════
+let studentName = '', studentPin = '', studentBatch = '';
+let timerInterval = null;
+let secondsElapsed = 0;
 
-  // ── TIMER ──────────────────────────────────────────────────────────
-  function startTimer() {
-    startTime = Date.now();
-    timerInterval = setInterval(updateTimer, 1000);
+// Track attempted counts per section
+const fillAttempted  = new Set();
+const ctxAttempted   = new Set();
+const recallAttempted = new Set();
+let quizSubmitted    = false;
+const quizSelected   = {};   // {1: 'B', 2: 'C', ...}
+let exitScore = 0, exitCorrect = 0;
+const answerLog = {};        // {1: 'B', ...}
+
+// ══════════════════════════════════════════════════════════════
+//  TIMER
+// ══════════════════════════════════════════════════════════════
+function startTimer() {
+  timerInterval = setInterval(() => {
+    secondsElapsed++;
+    const m = String(Math.floor(secondsElapsed / 60)).padStart(2,'0');
+    const s = String(secondsElapsed % 60).padStart(2,'0');
+    document.getElementById('timer-display').textContent = m + ':' + s;
+  }, 1000);
+}
+
+function getTimeTaken() {
+  const m = String(Math.floor(secondsElapsed / 60)).padStart(2,'0');
+  const s = String(secondsElapsed % 60).padStart(2,'0');
+  return m + ':' + s;
+}
+
+// ══════════════════════════════════════════════════════════════
+//  LOGIN
+// ══════════════════════════════════════════════════════════════
+function startSession() {
+  const name  = document.getElementById('inp-name').value.trim();
+  const pin   = document.getElementById('inp-pin').value.trim().toUpperCase();
+  const batch = document.getElementById('inp-batch').value;
+
+  // Validate name
+  if (!name) { alert('Please enter your full name.'); return; }
+
+  // Validate PIN
+  const pinOk = /^(STU|IMS)\d{10}$/.test(pin);
+  if (!pinOk) {
+    document.getElementById('pin-error').style.display = 'block';
+    return;
   }
+  document.getElementById('pin-error').style.display = 'none';
 
-  function updateTimer() {
-    const elapsed = Math.floor((Date.now() - startTime) / 1000);
-    const m = Math.floor(elapsed / 60).toString().padStart(2, '0');
-    const s = (elapsed % 60).toString().padStart(2, '0');
-    document.getElementById('timerDisplay').textContent = m + ':' + s;
-  }
+  // Validate batch selected
+  if (!batch) { alert('Please select your batch.'); return; }
 
-  function getTimeTaken() {
-    if (!startTime) return '00:00';
-    const elapsed = Math.floor((Date.now() - startTime) / 1000);
-    const m = Math.floor(elapsed / 60).toString().padStart(2, '0');
-    const s = (elapsed % 60).toString().padStart(2, '0');
-    return m + ':' + s;
-  }
 
-  // ── LOGIN ──────────────────────────────────────────────────────────
-  function handleLogin() {
-    const nameEl = document.getElementById('inp-name');
-    const pinEl = document.getElementById('inp-pin');
-    const batchEl = document.getElementById('inp-batch');
-    const errEl = document.getElementById('login-error');
+  studentName  = name;
+  studentPin   = pin;
+  studentBatch = batch;
 
-    const name = nameEl.value.trim();
-    const pin = pinEl.value.trim().toUpperCase();
-    const batch = batchEl.value;
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('main-screen').style.display  = 'block';
+  startTimer();
+}
 
-    errEl.style.display = 'none';
+// ══════════════════════════════════════════════════════════════
+//  SECTION NAVIGATION
+// ══════════════════════════════════════════════════════════════
+function goSection(n) {
+  // Hide all sections
+  [1,2,3,4,5].forEach(i => {
+    document.getElementById('sec'+i).classList.remove('active');
+  });
+  document.getElementById('sec'+n).classList.add('active');
 
-    if (!name) { showErr('Please enter your full name.'); return; }
-    if (!pin || !/^(STU|IMS)\d{10}$/.test(pin)) {
-      showErr('Invalid IMS PIN. Format: IMS or STU followed by exactly 10 digits.'); return;
-    }
-    if (!batch) { showErr('Please select your batch.'); return; }
-
-    studentName = name;
-    studentPin = pin;
-    studentBatch = batch;
-
-    startTimer();
-    goTo(1);
-  }
-
-  function showErr(msg) {
-    const e = document.getElementById('login-error');
-    e.textContent = msg; e.style.display = 'block';
-  }
-
-  // ── NAVIGATION ────────────────────────────────────────────────────
-  function goTo(n) {
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    document.getElementById('screen-' + (n === 1 ? '1' : n === 2 ? '2' : n === 3 ? '3' : n === 4 ? '4' : n === 5 ? '5' : 'login')).classList.add('active');
-    window.scrollTo(0, 0);
-  }
-
-  // ── FILL-IN CHECK ─────────────────────────────────────────────────
-  function normalize(s) { return s.trim().toLowerCase().replace(/\s+/g, ''); }
-
-  function checkEx(n) {
-    const val = normalize(document.getElementById('ex' + n).value);
-    const ans = EX_ANSWERS[n].toLowerCase();
-    const fb = document.getElementById('fb' + n);
-    exChecked[n] = true;
-
-    if (val === ans) {
-      fb.textContent = '✓ Correct — ' + EX_ANSWERS[n];
-      fb.className = 'feedback correct';
-    } else {
-      fb.textContent = '✗ Not quite. Answer: ' + EX_ANSWERS[n];
-      fb.className = 'feedback wrong';
-    }
-
-    checkExAllDone();
-  }
-
-  function checkExAllDone() {
-    if (Object.keys(exChecked).length >= 6) {
-      document.getElementById('next-ex').disabled = false;
-    }
-  }
-
-  // ── CONTEXT CHECK ─────────────────────────────────────────────────
-  function checkCtx(n) {
-    const val = normalize(document.getElementById('ctx' + n).value);
-    const ans = CTX_ANSWERS[n].toLowerCase();
-    const fb = document.getElementById('ctxfb' + n);
-    ctxChecked[n] = true;
-
-    if (val === ans) {
-      fb.textContent = '✓ Correct — ' + CTX_ANSWERS[n];
-      fb.className = 'feedback correct';
-    } else {
-      fb.textContent = '✗ Not quite. Answer: ' + CTX_ANSWERS[n];
-      fb.className = 'feedback wrong';
-    }
-
-    if (Object.keys(ctxChecked).length >= 4) {
-      document.getElementById('next-ctx').disabled = false;
-    }
-  }
-
-  // ── RECALL CHECK ──────────────────────────────────────────────────
-  function checkRc(n) {
-    const val = normalize(document.getElementById('rc' + n).value);
-    const ans = RC_ANSWERS[n].toLowerCase();
-    const fb = document.getElementById('rcfb' + n);
-    rcChecked[n] = true;
-
-    if (val === ans) {
-      fb.textContent = '✓ Correct — ' + RC_ANSWERS[n];
-      fb.className = 'feedback correct';
-    } else {
-      fb.textContent = '✗ Not quite. Answer: ' + RC_ANSWERS[n];
-      fb.className = 'feedback wrong';
-    }
-
-    if (Object.keys(rcChecked).length >= 5) {
-      document.getElementById('next-rc').disabled = false;
-    }
-  }
-
-  // ── EXIT SLIP SUBMIT ──────────────────────────────────────────────
-  function submitExit() {
-    const answers = {};
-    for (let i = 1; i <= 5; i++) {
-      const sel = document.querySelector(`input[name="q${i}"]:checked`);
-      answers[i] = sel ? sel.value : null;
-    }
-
-    const unanswered = Object.values(answers).filter(v => !v).length;
-    if (unanswered > 0) {
-      alert('Please answer all 5 questions before submitting.');
-      return;
-    }
-
-    let correct = 0;
-    let ansStr = '';
-    for (let i = 1; i <= 5; i++) {
-      if (answers[i] === CORRECT_ANSWERS[i]) correct++;
-      ansStr += (i > 1 ? '|' : '') + i + ':' + answers[i];
-    }
-
-    exitScore = Math.round((correct / 5) * 100);
-    exitAnswers = ansStr;
-    window._exitCorrect = correct;
-
-    document.getElementById('score-num').textContent = correct + '/5';
-    const grades = { 5: 'Superb', 4: 'Excellent', 3: 'Good' };
-    document.getElementById('score-grade').textContent = correct >= 3 ? grades[correct] || 'Excellent' : 'Needs Review';
-    document.getElementById('score-area').style.display = 'block';
-    document.getElementById('submit-btn').disabled = true;
-  }
-
-  // ── LOG TO TRACKER ────────────────────────────────────────────────
-  function logScore() {
-    const logBtn = document.getElementById('log-btn');
-    const logMsg = document.getElementById('log-msg');
-
-    logBtn.disabled = true;
-    logMsg.textContent = 'Sending…';
-
-    const payload = {
-      type: 'selfStudy',
-      sessionName: SESSION_NAME,
-      name: studentName,
-      pin: studentPin,
-      batch: studentBatch,
-      timeTaken: getTimeTaken(),
-      exitScore: exitScore,
-      exitCorrect: window._exitCorrect,
-      exitTotal: 5,
-      answers: exitAnswers,
-      timestamp: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })
-    };
-
-    fetch(APPS_SCRIPT_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify(payload)
-    })
-    .then(r => r.json())
-    .then(data => {
-      if (data.status === 'ok') {
-        logMsg.textContent = '✓ Score logged successfully. Well done!';
-        logMsg.style.color = 'var(--correct-text)';
-      } else {
-        logMsg.textContent = '⚠ Server returned an error. Please screenshot and inform Sahil Sir.';
-        logBtn.disabled = false;
-      }
-    })
-    .catch(() => {
-      logMsg.textContent = '⚠ Could not connect. Check your internet and try again.';
-      logMsg.style.color = 'var(--wrong-text)';
-      logBtn.disabled = false;
-    });
-  }
-
-  // ── RADIO OPTION STYLING ──────────────────────────────────────────
-  document.querySelectorAll('.mcq-options').forEach(opts => {
-    opts.querySelectorAll('input[type="radio"]').forEach(radio => {
-      radio.addEventListener('change', () => {
-        opts.querySelectorAll('.mcq-option').forEach(o => o.classList.remove('selected'));
-        radio.closest('.mcq-option').classList.add('selected');
-      });
-    });
+  // Update progress steps
+  [1,2,3,4,5].forEach(i => {
+    const el = document.getElementById('ps'+i);
+    if (i < n)      { el.className = 'prog-step done'; }
+    else if (i === n){ el.className = 'prog-step active'; }
+    else             { el.className = 'prog-step'; }
   });
 
-  // ── ENTER KEY SUPPORT ─────────────────────────────────────────────
-  document.querySelectorAll('.input-row input').forEach(inp => {
-    inp.addEventListener('keydown', e => {
-      if (e.key === 'Enter') {
-        const btn = inp.nextElementSibling;
-        if (btn && btn.classList.contains('btn-check')) btn.click();
-      }
-    });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ══════════════════════════════════════════════════════════════
+//  FILL-IN CHECKS
+// ══════════════════════════════════════════════════════════════
+function checkFill(n) {
+  const input  = document.getElementById('exinp'+n);
+  const fb     = document.getElementById('exfb'+n);
+  const answer = EX_ANSWERS[n];
+  const val    = input.value.trim().toLowerCase();
+
+  input.disabled = true;
+  fillAttempted.add(n);
+
+  if (val === answer) {
+    input.classList.add('correct');
+    fb.textContent = '✓ Correct! "' + answer + '" — well done.';
+    fb.className = 'feedback-msg show ok';
+  } else {
+    input.classList.add('wrong');
+    fb.textContent = '✗ The correct answer is "' + answer + '." Review the root card and try to see why.';
+    fb.className = 'feedback-msg show err';
+  }
+
+  if (fillAttempted.size === 6) {
+    document.getElementById('next2').disabled = false;
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+//  CONTEXT CHECKS
+// ══════════════════════════════════════════════════════════════
+function checkCtx(n) {
+  const input  = document.getElementById('ctxinp'+n);
+  const fb     = document.getElementById('ctxfb'+n);
+  const answer = CTX_ANSWERS[n];
+  const val    = input.value.trim().toLowerCase();
+
+  input.disabled = true;
+  ctxAttempted.add(n);
+
+  if (val === answer) {
+    input.classList.add('correct');
+    fb.textContent = '✓ Correct — "' + answer + '."';
+    fb.className = 'feedback-msg show ok';
+  } else {
+    input.classList.add('wrong');
+    fb.textContent = '✗ The expected answer is "' + answer + '." Think about which root fits the context.';
+    fb.className = 'feedback-msg show err';
+  }
+
+  if (ctxAttempted.size === 4) {
+    document.getElementById('next3').disabled = false;
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+//  RECALL CHECKS
+// ══════════════════════════════════════════════════════════════
+function checkRecall(n) {
+  const input  = document.getElementById('rcinp'+n);
+  const fb     = document.getElementById('rcfb'+n);
+  const answer = RC_ANSWERS[n];
+  const val    = input.value.trim().toLowerCase();
+
+  input.disabled = true;
+  recallAttempted.add(n);
+
+  if (val === answer) {
+    input.classList.add('correct');
+    fb.textContent = '✓ Correct — "' + answer + '."';
+    fb.className = 'feedback-msg show ok';
+  } else {
+    input.classList.add('wrong');
+    fb.textContent = '✗ The answer is "' + answer + '." Use the first-letter hint and the root to reconstruct it.';
+    fb.className = 'feedback-msg show err';
+  }
+
+  if (recallAttempted.size === 5) {
+    document.getElementById('next4').disabled = false;
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+//  EXIT SLIP
+// ══════════════════════════════════════════════════════════════
+function selectOpt(qn, letter) {
+  if (quizSubmitted) return;
+
+  quizSelected[qn] = letter;
+  const opts = document.getElementById('q'+qn+'opts');
+  opts.querySelectorAll('.option-btn').forEach((btn, i) => {
+    btn.classList.remove('selected');
+    const letters = ['A','B','C','D'];
+    if (letters[i] === letter) btn.classList.add('selected');
   });
+
+  // Enable submit once all 5 answered
+  if (Object.keys(quizSelected).length === 5) {
+    document.getElementById('btn-submit').disabled = false;
+  }
+}
+
+function submitExitSlip() {
+  if (quizSubmitted) return;
+  quizSubmitted = true;
+
+  document.getElementById('btn-submit').disabled = true;
+
+  let correct = 0;
+  for (let q = 1; q <= 5; q++) {
+    const selected = quizSelected[q];
+    const answer   = CORRECT_ANSWERS[q];
+    answerLog[q]   = selected;
+
+    const opts = document.getElementById('q'+q+'opts');
+    const letters = ['A','B','C','D'];
+    opts.querySelectorAll('.option-btn').forEach((btn, i) => {
+      btn.disabled = true;
+      btn.classList.remove('selected');
+      const L = letters[i];
+      if (L === answer)   btn.classList.add('correct');
+      else if (L === selected && selected !== answer) btn.classList.add('wrong');
+    });
+    if (selected === answer) correct++;
+  }
+
+  exitCorrect = correct;
+  exitScore   = Math.round((correct / 5) * 100);
+
+  // Show score card
+  const scoreCard = document.getElementById('score-card');
+  scoreCard.classList.add('show');
+  document.getElementById('score-display').textContent = correct + '/5';
+
+  const grades = { 5: 'Superb! 🌟', 4: 'Excellent!', 3: 'Good', 2: 'Needs Review', 1: 'Needs Review', 0: 'Needs Review' };
+  document.getElementById('score-grade').textContent = grades[correct] || 'Needs Review';
+  document.getElementById('score-pct').textContent   = exitScore + '% — ' + correct + ' correct out of 5';
+
+  // Stop timer
+  clearInterval(timerInterval);
+
+  // Show log button
+  document.getElementById('log-bar').style.display = 'block';
+
+  window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+}
+
+// ══════════════════════════════════════════════════════════════
+//  LOG TO TRACKER
+// ══════════════════════════════════════════════════════════════
+function logToTracker() {
+  document.getElementById('btn-log').disabled = true;
+  document.getElementById('btn-log').textContent = 'Logging…';
+
+  // Build answer string: "1:B|2:C|3:B|4:B|5:A"
+  const answerString = [1,2,3,4,5]
+    .map(q => q + ':' + (answerLog[q] || '?'))
+    .join('|');
+
+  const payload = {
+    type:       'selfStudy',
+    sessionName: SESSION_NAME,
+    name:        studentName,
+    pin:         studentPin,
+    batch:       studentBatch,
+    timeTaken:   getTimeTaken(),
+    exitScore:   exitScore,
+    exitCorrect: exitCorrect,
+    exitTotal:   5,
+    answers:     answerString,
+    timestamp:   new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })
+  };
+
+  fetch(APPS_SCRIPT_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain' },
+    body: JSON.stringify(payload)
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data && data.status === 'ok') {
+      document.getElementById('log-status').textContent  = '✓ Score logged successfully! See you next week.';
+      document.getElementById('log-status').className    = 'log-status ok';
+      document.getElementById('log-bar').style.display   = 'none';
+      document.getElementById('complete-screen').className = 'show';
+    } else {
+      throw new Error('Bad response');
+    }
+  })
+  .catch(() => {
+    document.getElementById('btn-log').disabled    = false;
+    document.getElementById('btn-log').textContent = 'Log to Tracker';
+    document.getElementById('log-status').textContent = '✗ Logging failed. Please check your internet connection and try again.';
+    document.getElementById('log-status').className   = 'log-status err';
+  });
+}
 </script>
-
 </body>
 </html>

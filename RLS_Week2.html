@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Read Like a Scholar — Week 2: The First Pass | Road to IIM</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700;9..144,900&family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#003A72;--navy-deep:#022B54;--maroon:#920043;--gold:#EFAF35;--gold-soft:#F8E3B0;
+  --paper:#FAF6EE;--ink:#232A3A;--muted:#5B6477;--line:#E3E0D6;--white:#FFFFFF;
+  --red:#C0392B;--yellow:#C79100;--orange:#D8731F;--green:#1E7B45;
+  --shadow:0 2px 14px rgba(2,43,84,.10);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',system-ui,sans-serif;color:var(--ink);background:#F2F0E9;line-height:1.65;font-size:16.5px}
+img{display:block}
+.brandbar{background:var(--white);border-bottom:3px solid var(--gold);padding:10px 22px;display:flex;align-items:center;justify-content:space-between;gap:14px}
+.brandbar img{height:52px;width:auto}
+.brandbar .cv{height:56px;border-radius:10px}
+.brandbar .mid{text-align:center;flex:1;min-width:0}
+.brandbar .mid .series{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--maroon);font-weight:700}
+.brandbar .mid .plat{font-family:'Fraunces',serif;font-weight:900;color:var(--navy);font-size:clamp(17px,2.6vw,22px);line-height:1.15}
+.hero{background:linear-gradient(135deg,var(--navy-deep) 0%,var(--navy) 62%,#0B4E8F 100%);color:var(--white);padding:38px 22px 30px;text-align:center;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;inset:auto 0 0 0;height:5px;background:linear-gradient(90deg,var(--gold),var(--maroon),var(--gold))}
+.hero .wk{display:inline-block;background:var(--gold);color:var(--navy-deep);font-weight:700;font-size:12px;letter-spacing:.18em;text-transform:uppercase;padding:5px 14px;border-radius:999px;margin-bottom:14px}
+.hero h1{font-family:'Fraunces',serif;font-weight:900;font-size:clamp(30px,5.4vw,48px);line-height:1.08;margin-bottom:10px}
+.hero p{max-width:640px;margin:0 auto;color:#CFE0F2;font-size:15.5px}
+.hero .meta{margin-top:16px;font-size:13px;color:#9DBBDB;letter-spacing:.06em}
+.tabs{position:sticky;top:0;z-index:40;background:var(--white);border-bottom:1px solid var(--line);display:flex;justify-content:center;box-shadow:0 1px 6px rgba(0,0,0,.05)}
+.tab{flex:1;max-width:280px;border:none;background:none;cursor:pointer;padding:14px 8px 12px;font-family:'Inter',sans-serif;font-weight:600;font-size:13.5px;color:var(--muted);border-bottom:3px solid transparent;transition:color .15s,border-color .15s}
+.tab .num{display:block;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--maroon);font-weight:700;margin-bottom:2px}
+.tab[aria-selected="true"]{color:var(--navy);border-bottom-color:var(--gold)}
+.tab:focus-visible{outline:3px solid var(--gold);outline-offset:-3px}
+.wrap{max-width:880px;margin:0 auto;padding:34px 20px 80px}
+.panel{display:none}
+.panel.active{display:block;animation:fadeup .35s ease}
+@keyframes fadeup{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.panel.active{animation:none}html{scroll-behavior:auto}}
+h2{font-family:'Fraunces',serif;font-weight:900;color:var(--navy);font-size:clamp(23px,3.6vw,30px);margin:38px 0 14px}
+h2:first-child{margin-top:0}
+h3{font-family:'Fraunces',serif;font-weight:700;color:var(--maroon);font-size:19px;margin:26px 0 10px}
+.panel p{margin:0 0 14px}
+strong{color:var(--navy-deep)}
+.kicker{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--maroon);font-weight:700;margin-bottom:4px}
+.card{background:var(--white);border:1px solid var(--line);border-radius:14px;padding:24px 26px;box-shadow:var(--shadow);margin:18px 0}
+.drumbeat{font-family:'Fraunces',serif;font-weight:900;color:var(--navy);font-size:22px;text-align:center;letter-spacing:.04em;background:var(--gold-soft);border-radius:12px;padding:14px;margin:18px 0}
+.alertcard{border-radius:12px;padding:18px 20px;margin:14px 0;border-left:6px solid;background:var(--white);box-shadow:var(--shadow)}
+.alertcard.red{border-color:var(--red)}.alertcard.yellow{border-color:var(--yellow)}.alertcard.orange{border-color:var(--orange)}
+.alertcard h4{font-size:16px;margin-bottom:6px;font-weight:700}
+.alertcard.red h4{color:var(--red)}.alertcard.yellow h4{color:var(--yellow)}.alertcard.orange h4{color:var(--orange)}
+.law{background:var(--navy);color:var(--white);border-radius:12px;padding:18px 22px;text-align:center;font-family:'Fraunces',serif;font-size:19px;margin:20px 0}
+.law em{color:var(--gold);font-style:normal;font-weight:700}
+.sigtable{width:100%;border-collapse:collapse;margin:16px 0;background:var(--white);border-radius:12px;overflow:hidden;box-shadow:var(--shadow);font-size:15px}
+.sigtable th{text-align:left;padding:12px 16px;font-weight:700;font-size:13px;letter-spacing:.06em;text-transform:uppercase}
+.sigtable th:first-child{background:var(--maroon);color:var(--white);width:50%}
+.sigtable th:last-child{background:var(--navy);color:var(--white)}
+.sigtable td{padding:11px 16px;border-top:1px solid var(--line);vertical-align:top;line-height:1.5}
+.sigtable td code{background:var(--gold-soft);color:var(--navy-deep);border-radius:5px;padding:1px 6px;font-family:'Inter',monospace;font-size:13.5px;font-weight:600}
+.passage{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:28px 30px;font-family:'Source Serif 4',Georgia,serif;font-size:17.5px;line-height:1.85;box-shadow:var(--shadow)}
+.passage p{margin:0 0 16px}
+.passage p:last-child{margin-bottom:0}
+.wordcount{text-align:right;font-family:'Inter',sans-serif;font-size:12.5px;color:var(--muted);margin-top:8px}
+.reveal-btn{display:inline-flex;align-items:center;gap:8px;border:1.5px dashed;border-radius:999px;background:var(--white);cursor:pointer;font-family:'Inter',sans-serif;font-weight:600;font-size:13.5px;padding:8px 16px;margin:4px 0 16px;transition:transform .12s}
+.reveal-btn:hover{transform:translateY(-1px)}
+.reveal-btn:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.reveal-btn.q1{color:var(--navy);border-color:var(--navy)}
+.reveal-btn.red{color:var(--red);border-color:var(--red)}
+.reveal-btn.yellow{color:var(--yellow);border-color:var(--yellow)}
+.reveal-btn.orange{color:var(--orange);border-color:var(--orange)}
+.reveal-btn.gold{color:var(--maroon);border-color:var(--maroon)}
+.annot{display:none;border-radius:12px;padding:16px 20px;margin:-6px 0 18px;font-family:'Inter',sans-serif;font-size:15px;background:var(--white);border:1px solid var(--line);border-left-width:6px;box-shadow:var(--shadow)}
+.annot.open{display:block}
+.annot.q1{border-left-color:var(--navy)}.annot.red{border-left-color:var(--red)}
+.annot.yellow{border-left-color:var(--yellow)}.annot.orange{border-left-color:var(--orange)}.annot.gold{border-left-color:var(--gold)}
+.annot .tag{font-weight:700;font-size:12px;letter-spacing:.14em;text-transform:uppercase;display:block;margin-bottom:6px}
+.annot.q1 .tag{color:var(--navy)}.annot.red .tag{color:var(--red)}.annot.yellow .tag{color:var(--yellow)}
+.annot.orange .tag{color:var(--orange)}.annot.gold .tag{color:var(--maroon)}
+.startbox{text-align:center;padding:34px 20px}
+.btn{display:inline-block;border:none;cursor:pointer;font-family:'Inter',sans-serif;font-weight:700;font-size:15.5px;border-radius:999px;padding:14px 34px;transition:transform .12s,box-shadow .12s}
+.btn:focus-visible{outline:3px solid var(--navy);outline-offset:2px}
+.btn.gold{background:var(--gold);color:var(--navy-deep);box-shadow:0 3px 12px rgba(239,175,53,.45)}
+.btn.gold:hover{transform:translateY(-2px)}
+.btn.navy{background:var(--navy);color:var(--white)}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none}
+#timerbar{display:none;position:sticky;top:54px;z-index:35;background:var(--navy-deep);color:var(--white);border-radius:12px;padding:10px 18px;margin:0 0 20px;text-align:center;font-weight:600;box-shadow:var(--shadow)}
+#timerbar .clock{font-family:'Fraunces',serif;font-weight:900;font-size:24px;color:var(--gold);letter-spacing:.06em}
+#timerbar.over{background:var(--maroon)}
+.question{background:var(--white);border:1px solid var(--line);border-radius:14px;padding:20px 24px;margin:16px 0;box-shadow:var(--shadow)}
+.question .stem{font-weight:600;color:var(--navy-deep);margin-bottom:12px}
+.question .stem .qn{font-family:'Fraunces',serif;font-weight:900;color:var(--maroon);margin-right:6px}
+.opt{display:flex;gap:10px;align-items:flex-start;padding:9px 12px;border-radius:10px;cursor:pointer;border:1.5px solid transparent;font-size:15.5px}
+.opt:hover{background:#F4F6FA}
+.opt input{margin-top:4px;accent-color:var(--navy);flex:none}
+.opt.correct{background:#EAF6EE;border-color:var(--green)}
+.opt.wrong{background:#FBEDEC;border-color:var(--red)}
+.expl{display:none;margin-top:12px;border-top:1px dashed var(--line);padding-top:12px;font-size:14.5px;color:#3A4254}
+.expl .verdict{font-weight:700;margin-bottom:4px}
+.expl .verdict.ok{color:var(--green)}.expl .verdict.no{color:var(--red)}.expl .verdict.skip{color:var(--orange)}
+.journal{background:linear-gradient(180deg,#FFF9EC,#FFF4DC);border:1.5px solid var(--gold);border-radius:14px;padding:24px 26px;margin:26px 0;box-shadow:var(--shadow)}
+.journal h3{margin-top:0;color:var(--navy)}
+.journal textarea{width:100%;min-height:84px;border:1.5px solid var(--line);border-radius:10px;padding:12px 14px;font-family:'Source Serif 4',Georgia,serif;font-size:16px;resize:vertical;background:var(--white)}
+.journal textarea:focus-visible{outline:3px solid var(--gold)}
+.typebtns{display:flex;gap:10px;margin:14px 0 4px;flex-wrap:wrap}
+.typebtn{flex:1;min-width:150px;border:1.5px solid var(--navy);background:var(--white);color:var(--navy);font-weight:700;font-size:14px;border-radius:999px;padding:10px 14px;cursor:pointer}
+.typebtn[aria-pressed="true"]{background:var(--navy);color:var(--white)}
+.typebtn:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.gatehint{font-size:13px;color:var(--maroon);font-weight:600;margin-top:10px}
+#results{display:none;background:var(--navy);color:var(--white);border-radius:14px;padding:26px;margin:26px 0;text-align:center}
+#results h3{color:var(--gold);margin-top:0}
+#results .nums{display:flex;justify-content:center;gap:26px;flex-wrap:wrap;margin-top:10px}
+#results .nums div{min-width:90px}
+#results .nums b{display:block;font-family:'Fraunces',serif;font-weight:900;font-size:34px}
+#results .nums span{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#BFD4EA}
+#results .c b{color:var(--gold)}#results .w b{color:#FF9DAA}#results .s b{color:#9DBBDB}
+#modelskel{display:none}
+.takeaway{background:var(--navy-deep);color:var(--white);border-radius:16px;padding:34px 32px;margin:34px 0 10px;position:relative;overflow:hidden}
+.takeaway::before{content:"";position:absolute;inset:0 0 auto 0;height:5px;background:linear-gradient(90deg,var(--gold),var(--maroon),var(--gold))}
+.takeaway h2{color:var(--gold);margin-top:0}
+.takeaway p{color:#D9E5F2}
+.takeaway strong{color:var(--white)}
+.takeaway .oneline{font-family:'Fraunces',serif;font-size:20px;color:var(--gold);text-align:center;border-top:1px solid rgba(255,255,255,.18);border-bottom:1px solid rgba(255,255,255,.18);padding:16px 8px;margin:22px 0;font-style:italic}
+.takeaway .next{font-size:14px;color:#9DBBDB}
+#results,#drillpassage{scroll-margin-top:130px}
+#loginoverlay{display:none;position:fixed;inset:0;z-index:100;background:rgba(2,43,84,.72);backdrop-filter:blur(3px);align-items:center;justify-content:center;padding:18px}
+#loginoverlay.show{display:flex}
+.loginbox{background:var(--white);border-radius:16px;padding:30px 28px;max-width:430px;width:100%;box-shadow:0 18px 50px rgba(0,0,0,.35)}
+.loginbox h3{margin-top:0;color:var(--navy);font-family:'Fraunces',serif;font-size:22px}
+.loginbox p{font-size:14px;color:var(--muted);margin-bottom:16px}
+.loginbox label{display:block;font-size:12.5px;font-weight:700;color:var(--navy-deep);letter-spacing:.06em;text-transform:uppercase;margin:14px 0 5px}
+.loginbox input,.loginbox select{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:11px 13px;font-family:'Inter',sans-serif;font-size:15.5px;background:var(--white);color:var(--ink)}
+.loginbox input:focus-visible,.loginbox select:focus-visible{outline:3px solid var(--gold)}
+#loginerr{display:none;color:var(--red);font-size:13.5px;font-weight:600;margin-top:12px}
+#loginerr.show{display:block}
+.loginbox .btn{width:100%;margin-top:18px}
+#savestatus{margin-top:14px;font-size:14px;font-weight:600;display:none}
+#savestatus.show{display:block}
+#savestatus.ok{color:var(--gold)}
+#savestatus.fail{color:#FF9DAA}
+#retrybtn{display:none;margin-top:10px;background:var(--gold);color:var(--navy-deep);border:none;border-radius:999px;font-weight:700;font-size:13.5px;padding:9px 22px;cursor:pointer}
+#retrybtn.show{display:inline-block}
+footer{text-align:center;padding:26px 16px 40px;color:var(--muted);font-size:13px}
+footer .logos{display:flex;justify-content:center;align-items:center;gap:18px;margin-bottom:10px}
+footer img{height:34px;opacity:.85;border-radius:6px}
+@media(max-width:640px){
+  .brandbar img{height:40px}.brandbar .cv{height:44px}
+  .wrap{padding:26px 14px 60px}
+  .card,.passage{padding:20px 18px}
+  .tab{font-size:12px;padding:11px 4px 9px}
+  #timerbar{top:46px}
+}
+</style>
+</head>
+<body>
+<!-- HEADER -->
+<header class="brandbar">
+  <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAQDAwMDAgQDAwMEBAQFBgoGBgUFBgwICQcKDgwPDg4MDQ0PERYTDxAVEQ0NExoTFRcYGRkZDxIbHRsYHRYYGRj/2wBDAQQEBAYFBgsGBgsYEA0QGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBj/wAARCADhAOEDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD7+ooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACivFvif8AtRfCP4WXUmlanrx1fXEPlnR9GAuJ0fskjZCRE+jsD6A15mfjD+1f8Tufhh8HLXwjpTn5NT8UsRIR67JPLI/COQe5oA+tMj1pa+JvEHg74vgF/i/+2boPhLzR81jY3SW2M9lKvbk/ka4ufwV8Cs51n9tLxVqEvd7a8klT3x/rP50DsfobRX55W/gr4E53aN+2j4r0+XPElxeSwAf+i/512WgeDvjA53fB/wDbO0HxayfMljfXMdwW9iXe5I9PuigLH23RXyUfi9+1h8M23fEv4O2ni/SkPz6n4XJMgX12R+YT+McY9xXpfwx/ai+EfxRuYtL0zW20fXXby/7G1lRbzs/dUOTHIfZGJ9QKAse1UUUUCCiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKq3V1bWFjLeXkyQW0KGSWWRtqRqBksxPQADrQBmeKfFOg+DPCl74j8UarBpulWUfmT3U5wB6ADqSTgBRkkkAc18pan40+LX7StpeXXhvVH+Fnwet932rxJet5N3qMQ4YocjavXoQo7u5zGM7VNV039obxBqfxa+Jd7LpPwK8HTMNOsJcodbnU7DK6jlgSdgUZJyIxgmXPzp8a/j94i+MGqrp0a/wBh+DrIhdM8PW5CRxqvEbSheHkxjA+6vRem4hSR6bL8Zvgf8Dom0v4A+BrbxNr0QKP4x18FwzdC0Q4ZhkA4j8qM9RmvHvG3x3+LvxClceJfHmrG1c5+wWEv2O3A9PLixvH+/urzoEHpS0F2GJFHGxaONUycnAxk0+mh0LYDg/Q06gYUx445GBkjRipyMjODTsjdjIz6UtAHofgn46/F34eTIfDPjzVVtlOfsF/L9stSPTy5c7B/u7T717Avxn+B/wAcoP7J+P3gS28O65MoiTxhoClQrdA0owWAyejiWMdTivlyigVkfeem+NPi1+zZaWd14h1F/ir8HrgobbxHYv511psLHClzk7k5HUlT0DpxGfq7wt4q0Dxr4TsvE3hbVbfVNJvU3wXUDZDdiCOqsDuBU4IIIIzX5cfBT49eJfhBqpsGVtZ8HXrEal4euDvjkRuHaEPwsmO33W6N13D6J03VtM/Z68QaX8YPhley6n8DPGEq/wBqabECx0W4b5BKinlMEbCp5GwxnJEQAZtH23RVa1ube/soby0mSe2mQSRSxsGWRSMhgR1BBqzQIKKKKACiiigAooooAKKKKACiiigAooooAKKKKACvnT9rbXdau/BXhv4PeGJzFrPj/VU0l5ARmKzBBuJMdxgqCP7pevouvm3xVGmt/wDBTvwNYXK749D8H3eqQKeiyyytCT+WPyoBHzN+1r4vsNO13RvgL4NJtPCvg22ijmgRuJ7wx5HmepVGBz3aWQnkCvrf4CfD3wBqf7L/AIA1HUfA/hy8u7jQbSSa4uNNhkklYxDLMzLkk+pr81/H2qXOufFvxVrF3IXmu9YvJyWO7AM8hA/AYH4V+pv7Of8AyaX8OP8AsXrP/wBFLQUz4B/az0Ow0v8Aa11bRfDmjW1pC1vZLBY2ECxK0jxL8qIgAyxP4k19V/BH9jzwP4R8N2mq/EfR7PxP4nmQSTQ3iebZWZOD5ccTfLIR/wA9GBOc4CjivKPiPY2+pf8ABXHw5Z3aB4Wu7CQqwyCYrUyr/wCPRivvc9MUCbOB8QfBL4R+KNGbS9a+G/hqa3IwpisIoZI/eOSMBkPuCK8A8IfsKeEtL+LOp6n4p1WbW/CUTq2laSzGOWTPLC6kXG4KeAFxuH3u4PGfAz9pj4n+Mf2yYPDviDWBd+Htdury3i0vyIkSxEcUssRjYDdkCIKck5yT1xX3dIwSFnPQAmgNjim+DfwlbQRor/DLwidPC7RbnSLfaP8Axzr718bftR/sraX4G8OT/Ef4Z28sOi2xzqukNI032VS3+viJyfLBOHUk7RyMAEVH8C/2n/i14w/aw0fSPEGvLeaB4hvJojpTWsSJaL5UskflMFDApsQHJORnPJyPvXWNKstd8P32jajCs1ne27208bDIdHUqwP4GgFofmb+zH+z0vxs8SX2qeILq5tPCmkyLHcm1YLLeTEbvIV/4BtwXfrhlAwTkfe+kfAD4JaJpy2Vl8KvCToFCmS70yK6lf/fklDMx9yTXjP7Bet6U/wADtb8JxXKnVNK1mWS4RiPMkjlRNkuPQlHXP+xXpXxw+BF18YZbCe1+JfifwtJYxskdvp8mbSRic+ZJECpLds7un40A3qeV/tI/svfC61+DniHx54Q0WPwvqmiWMuoeVpo2Wt0sYLGN4furkZwy7SDjORxXh/7JfjGwv/EWsfAjxiftXhXxnbTRxW0jcQ3QjJJT0Lxoeezxxkcmuh+KPhz9pP4GfCvXdC13xX/wnXw/1iyl0u4u7h5JpLLzlKBv3hMsJyRj55Iz0IBIr5r8DarcaF8VPC+t2shSay1ezuFI/wBmZSR+IyPxoGj9E/2Std1bT/CHib4N+Jbg3GseANWfS0lJ5lsmJNtJjsMBwB2UJX0ZXzX4YRdG/wCCoPjWxtUCR634OtdTuccZliljgU/98j9TX0pQSFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABXzV8TZD4S/wCCg3wo8WTrsstf0288NyTn7qyjMkSn/ekkQD6V9K141+0r8NNR+JPwOnTw0rL4q0G4j1zQ5I8b/tUOSFUnjLLvUZ43FCelAI/N34x+F7jwd+0D4y8OXETx+Rq08kORgGGV/NiI/wC2ciV+nH7Of/JpXw4/7F6z/wDRQr5A+NOkQftB/AnSP2hPB1mD4h0i2GneLdJiH72ER8l9h5/dkluRkxSA/wDLPFdj8Kv2z/hr4F+B/hPwbqvh3xZPfaPpUFlPNawWxido4wCULTgkcdwKCnqZfjn/AJTBeG/+vi0/9IJK+8e1fl94j+OfhXV/26tJ+Nlvpmsx6DaSQSSWjxRfazstWiOFEmzqR/GOK+kh+358Jv8AoU/G4/7drX/5IoE0z5Y/Zk/5Pl8G/wDYRvv/AEjua/VC4/485v8Acb+VfkP8IPHelfD79ozQPH+sWt7c6bp91cXE0NoqtMRJBNGMB3AzmQdSO9fZ0n7fHwnkheMeFPGoLAjm2tf/AJIoHI+Rv2ZP+Twvh7/2EZf/AElmr9aQc1+O3wh8Yad8Pvjt4X8baxb3c9hpN01xPFaIrSsDDJHhAxAzlx1Ir7b/AOG+/hNn/kVfGv8A4DWv/wAkUA0eH/s1fBXxH4+8Ma9498B/EXUfBnizSNZlsIJ4UEltPCYopNkicE8seu5eBlCRX1h8JrT9p2x8XS2nxd1PwTqfh5LdvKvNLWRbySbI2nARI9uN2fl9MV8QfAn9pXW/ge2qaZb+HrPW9C1O9N9PC8xt7iOQqELJIAw+6i/KV6jqM19GH/goL4B+w7k+H3i43WP9WWtRHn/f83OP+A0A0z3745tpK/s0+Pf7a8v7EdBvFcP3JhYKB77sY98V+XHwe8M3XjL4++DfDduhc3OrQPNtGQIYmEspPt5cb13Pxu/ac8bfGizGiT2cHh7wyriQ6TaymY3DA5DTSlR5mOoUKoB5OSoI9C+CekW/wA+Bmr/tEeMrQf29qtsdP8JaTMD5s/m8iTA5/eEA8DIijJ/5aYoDZHvnw3nXxb/wUO+Kvim2TfZeH9Js/DcdwOjSEiWVR7rJHIDX0nXjX7NHw01H4cfA+EeJAzeKdeupNc1qSTG83M2DsbHGVUIDjjdvI617LQSFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQB8r/FHwJ4w+CnxQvvjv8INKbU9KvufF/hKP7tzHklrmJAD83JJxyCS2CGkFeE+NfgZ4V+Lvheb4s/s0zRX1pITJqnhAkR3FjKRkiJM4H/XPOCOYyRha/R0gHrXzd8Rf2Y5h4yk+JPwJ8RnwF4zG6SWCD5bHUCTkiSMAhcnr8rKTyUJ5oGj81riC4tL2azvLea2uoGMc1vPGY5ImHVXQ8qfY80yvsnxt448KarfReHf2w/gzeeHNd/1Fv4z0GFtsuOhDxklhwTsUzD1RelcjP+ybpHjK2k1H4E/GPwz4vt1/5h+ozCC7h9nMYPPs0cdBfMfMlFesa9+zN8efDsji9+Ger3MS9JdNaK+De4ETu35gVxFz8P8A4hWb7bv4eeMID/dl0K7T+cdA7o56iuitvh98QrsgWnw78ZXBJwBFoV238o67XQf2Zvjx4hnRbP4Z6vao3WbUjHYqv1ErI35A0BdHlFPggnu7yGztLeW5uZ2EcMEEZkklY9FRBy59hX0xD+yXpXg2zj1P47fGLw14Rtj1sNOl+0XUvtGZAPm9ljkrrvBPjjwppF3L4c/Y++DN74m17b5M/jPXYTsiB7l5CCo77GMI9EPSgXOcr4H+Bnhb4TeGYviz+0tPHp9pE3m6Z4OyklzfSjkCVM4b18rOAOZCBla9z+F/gTxd8b/inZ/HT4vaY2l6Lp/PhDwpIPltk+8tzKO7cAjPUgHACoK2vhz+zDM/jOP4l/HfxG3jzxnlXigm+axsCOQI4yAHwcEfKqgjITPNfSQ6UENgOlFFFAgooooAKKKKACiiigAooooAKKKKACiiigAorgvHnirx/wCHb+zg8G/C248YwTIz3E8WsW1j9mYEbVKy8tkEnI6Y+lct/wALN+Of/Rtd9/4VVh/jQB7NRXjP/Czfjn/0bXff+FVYf40f8LN+Of8A0bXff+FVYf40AezUV4z/AMLN+Of/AEbXff8AhVWH+NH/AAs345/9G133/hVWH+NAHrGpaVpmtaVLpus6da39lMNstrdxLLG49CrZBrwHxf8AsV/BXxJfjUtE0/UfB+og70uNCufLWM/7MUgZE/4AFrpv+Fm/HP8A6Nrvv/CqsP8AGj/hZvxz/wCja77/AMKqw/xoA8zH7N37QvhYGPwD+05qz2y/6u21qF5sexZ3lH5IKUeFP28tPBih+I/gPUlHAlmjVGP/AJJivS/+Fm/HP/o2u+/8Kqw/xo/4Wb8c/wDo2u+/8Kqw/wAaB3PNT4U/by1ACGb4j+AtMQ8GSCMOw/OzNM/4Zu/aE8VDZ4//AGm9VS2b/WW2iQyQ59sxvEPzU16b/wALN+Of/Rtd9/4VVh/jR/ws345/9G133/hVWH+NAXOZ8IfsVfBXw3fHUdasNS8X6g3L3Gu3O9ZD/tRxhVf/AIGGr33StJ0zQ9Ig0vR9PtNPsoV2R21pCIokHoEXgV5R/wALN+Of/Rtd9/4VVh/jR/ws345/9G133/hVWH+NAj2aivGf+Fm/HP8A6Nrvv/CqsP8AGj/hZvxz/wCja77/AMKqw/xoA9morxn/AIWb8c/+ja77/wAKqw/xo/4Wb8c/+ja77/wqrD/GgD2aivGf+Fm/HP8A6Nrvv/CqsP8AGj/hZvxz/wCja77/AMKqw/xoA9morxn/AIWb8c/+ja77/wAKqw/xo/4Wb8c/+ja77/wqrD/GgD2aivGf+Fm/HP8A6Nrvv/CqsP8AGur8B+KfH3iO9vovGXwun8HRQIjW0sur2999pJJ3DEXKYwDz1zQB3dFFFABRRRQAUUUUAFFFFABRRRQBxPjmPxzbabd6x4Y8S6RptvZ2Ms0lveaS120rqC2Q4nj2jAAxg/WuQ+GnjXxTf/Dzwf47+IPjnwva2HiPTIbiPT1042bC4lhE4RJnuGDBY1mJGzJC5yMGvSvGJx8OtfJ7adcH/wAhNXzbaWFlqP7O/wCyzaahbxXFu+q6SWilUMrkaTdEZU9eQKAPo/R/GHhbxFNDFoXiHTdRkms11CJLS4WQyWzOUWYAHmMsjAN0ODTj4r8NLpl9qJ1/Tvsmn3TWd5P9oXZbzggGJznh8so29ckCvKdQ1vQvCH7bfmeINSstGtNW8FRwWE13IsEU0kF7K8sYc4G4LNG23rgk9q43w1b6X4s+HPi6a08cw+FLk/FC8vNH1S6jR4mukcNErRSFBIsgBwuQTlSDnFAHrniT4z+CfDtr4fu4tVtNRttb1j+xo57W4RkgkG/zXkOeBGU2sOoJAOO3S6l438I6MsB1bxLplkZrf7YgmuEQmAYzLg9IxkZc8DPWvANc8W69rHh3wZqHjJdFgbRPihbWM2s6TmOxvkEMqC5TcTsBkm8pwWOJFYZrT0O/l0f9pf4mDVfG2l+HrrVnsr3TZdUgjkjv9OS0RAYJWkUFI5TNlB0Mm4/6zJAPc9X8WeGtB0e31XWfEGnWFjcuqW9xcXCokzMMqsZz85I5AGc1w3gHxXd+Ifj18Q7a310aloFrbaTLpixSLJCnmwzGQxsOu4oM89RXm/hXTtE8B/Hf4ZWt/wCJI9Q8LxeFNSs/D2rXe2C3a7ku45PKj/hB+zYSPB5jjOM11Hwku9I1D9qP4z3mixqLWZtGcyoPkuW+zShpU9VJBGehKk85zQB0XxJ8Y6XF4z0P4bf8JrP4YvdZinme+smiFzFHGFCrGZFdUZ2kGCVPCOBgkEddqHjfwfoeotpWreKdMtbyBY/OjuLlFeIPwhk/u7j0zjPauH8buo/a8+EoJGf7M184z/sWdcr8MtW8N+F/gj47sPiNdWsWrx6zq0niK3vCPOvPOmk8k7DzIJbY26R4zkAKOmKAPZtd8ZeE/C2T4m8S6VpGLd7z/T7pIP3MbKryfMfugyRqT6so7ineKvEcPhn4c614uFtLfw6Zps+o+Rb8vOsUTSbU9zjA+tfPHw58O6nD8QvgTpXjyyM2s2HgPUnkjvR5kkEvmWSANn+MRvtP419H+ItY0rw34Q1LXNZcppdhbSXN0RGZMRIpLfIoJPAPAFAHE+AtQ8d+JNI8L+Mm8W+HtT0XVrX7VfWdrYlVjEkW6MW0okJO18I3mA5GT8hGK7FfFfhlvC154lTxBp50az877TqIuE8mDyWKy73zgbCrA56FTmvBrHwt4P8ADHxw8Cah8BNdFvYa1dTS65oOjX3n6VLYG3kb7WYATHCRKIEVk25MmPWuauPFfh3S/wBiD4ueEdQ1e3t9ftLjxNbTaS0gF0HmubmVP3X3ipjkWTcBjbk5wCaAPp7VfFXhzQrS1utY1ywsYbxhHatNOq/aWIyBGOrnHOBnioYfG3hGfwrceJ4vFGjtotu7pPqP2yPyImU4ZXkzhSDwQeQeK8jsby10H9q3Q9U8WTx2+n6h4Mt7Dw/fXThYFuxKZLqBXPAmkTyGx1ZYzjODT/ivqehN44+G3ik3FndeDNL8TTnW7uBg1tbXf2Zo7eadhxiOUgFzwjEZIxQB61p3jPwpq4vjpniLTbk2CCS8CXCZtlIJVpBnKKQCQTgHBp2jeL/C/iK5aDQfEOnajMsS3Bjtp1dvKbOyTA6xnBw/Q44NeU/tDTWHiP4Ia5a+HZ7bUp7ebTLjWYrBVuZjpqXaySh0Q5kTyxOfL/iHmAA5NSS2/hjxf4p0bxJdfFvSdTjs9I1Dy00aOJDJY3EKiZndXciNdkTg4A3qn0oA9Q0vxp4S1m7ubTSPEul3s9tF9omjguVcrFuK+Z1+5lWG7pkGn6H4u8MeJp7iDw/r+nanLbIkk0drOshjSTPluQP4W2PtPQ7TjOK+ftMe7Xwdqvwj8W+OPDviLwHceBrpovGWlwi1uNMsgEgRbnDvEd0chZGG3f8AZ5PlODjv/hbrfjSPx7qvgzxPq/h/xVBYaZaXFt4n0i2Nu0qO0gWC5QO6ebhTINhAw+cDPIB7BRRRQAUUUUAFFFFABRRRQAUUUUAcF4++Jth4CubO2v8Awj4y1wXiOwPh/RJtQSMAgYkMY+QnPAPXmuPH7RXh1FjRfhP8WwqfcA8GXWF+nHFe2YHpRgegoA8Puv2hPC94EF58IvivP5bbk83wVdPsPqMrwaJf2g/C88D283wj+K8kUvLxv4KumVz7jbzXuGB6CjA9BQB4g37QfhiSw+ySfCL4sPbY2+Q3gq6K49MbcUyf9oDwpcxxx3Pwg+KsyxHKLJ4JunCfTK8V7lgegowPQUAeIXf7Q3hm9tjb3nwj+LFzCesc3gq6dT+BWnp+0V4dhYlPhR8XFJABx4MuxwOnavbMD0FGB6CgDxRv2jPD7SJI3wp+LpdM7SfBl3kZ9PlqGX9oLwrPex3U3wh+K8txD/qpX8FXRaP6HbkV7jgegowPQUAeKH9o3QDKJD8Kfi6XHAb/AIQy7yP/AB2nH9pHQiOfhZ8X/wDwjbv/AAr2nA9BRgegoA8Ns/j94T08ONP+D3xVtRK29xD4Iuo959Rheacf2gfCzXr3X/CoPiqbiRfLeb/hCbrcy+hO3JHtXuGB6CjA9BQB4hcftDeGrq1Ntc/CT4szwngxy+C7plP4EUqftE+HI7UW0fwm+LawhdgjHgu6CgemMdK9uwPQUYHoKAPD7T9oPwxYwLb2Pwj+LFrCDkRw+CrpFz9AtJbftBeFrTzPsnwi+K9v5rbpPK8E3Sbz6nC8mvccD0FGB6CgDw63/aB8LWsTw2nwh+K8EchLOkfgq6UMT1JAXmux+HHxB0bxi17Y6P4K8WeG4rRUkI1vQZdMjl3E/wCr3gBjxzj1FegYHoKXAoAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooA//9k=" alt="IMS">
+  <div class="mid">
+    <div class="series">Road to IIM · Self Study</div>
+    <div class="plat">Read Like a Scholar</div>
+  </div>
+  <img class="cv" src="data:image/jpeg;base64,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" alt="Camp Verbal">
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <span class="wk">Week 2 of 6</span>
+  <h1>The First Pass</h1>
+  <p>Before you answer a single question, classify the passage and find its skeleton. This week, you install that habit.</p>
+  <div class="meta">~70 minutes · 3 sittings · No negative marking — this is the gym, not the match</div>
+</section>
+<!-- TABS -->
+<nav class="tabs" role="tablist">
+  <button class="tab" role="tab" aria-selected="true" aria-controls="p1" id="t1" onclick="showTab(1)"><span class="num">Sitting 1 · 25 min</span>The Lesson</button>
+  <button class="tab" role="tab" aria-selected="false" aria-controls="p2" id="t2" onclick="showTab(2)"><span class="num">Sitting 2 · 20 min</span>Worked Example</button>
+  <button class="tab" role="tab" aria-selected="false" aria-controls="p3" id="t3" onclick="showTab(3)"><span class="num">Sitting 3 · 25 min</span>The Drill</button>
+</nav>
+
+<main class="wrap">
+<!-- ===== PANEL 1: LESSON ===== -->
+<div class="panel active" id="p1" role="tabpanel" aria-labelledby="t1">
+<div class="kicker">Week 2 · The Lesson</div>
+<h2>Your First Job Is Classification</h2>
+<p>Last week you learned that the demanding reader asks four questions of every passage. But here is the thing no one tells you: <strong>you cannot answer those questions in order if you don't know what kind of passage you're reading first.</strong></p>
+<p>The first pass is a fast, purposeful sweep whose only goal is to classify and orient. Not to understand everything. Not to annotate. Not to answer questions. Just to find the floor plan before you move in.</p>
+<div class="law">Every passage has a skeleton. <em>The first pass finds it.</em> The answers follow.</div>
+
+<h3>Two Moves on the First Pass</h3>
+<p>The first pass has two moves that happen in quick succession. Think of them as two gears, not two separate sessions.</p>
+<div class="card">
+  <strong>Move 1 — Systematic Skimming</strong>
+  <p style="margin-top:10px">Read the first sentence of each paragraph. Read the last paragraph in full. Look for any sentence that seems to be summing up or pivoting. You are not reading the passage — you are reading its <em>structure</em>. After 60 seconds of this, you should know: what is this about, and where is the argument going?</p>
+</div>
+<div class="card">
+  <strong>Move 2 — Superficial Reading</strong>
+  <p style="margin-top:10px">Now read the passage through — once, without stopping. The rule is blunt: <em>"Read it through without ever stopping to look up or ponder the things you do not understand right away."</em> Mark your Three Alerts as you go, but do not stop for them. The flag is not a roadblock. Forward momentum is the point.</p>
+</div>
+
+<h2>Classifying the Passage</h2>
+<p>The single most important thing the first pass tells you is <strong>what kind of passage you are reading</strong>. In RC, this almost always comes down to one question: is the author stacking information, or pushing a position?</p>
+<p>Think of it this way — some texts teach you <em>that</em> something is true. Others teach you <em>what you should do or believe</em> about it. You can feel the difference in the language.</p>
+
+<table class="sigtable">
+  <tr>
+    <th>⚔️ Argumentative</th>
+    <th>📚 Additive</th>
+  </tr>
+  <tr>
+    <td>Author is <strong>pushing a position</strong>. Signal words: <code>however</code> <code>but</code> <code>yet</code> <code>despite</code> <code>should</code> <code>ought</code> <code>must</code> <code>contrary to</code></td>
+    <td>Author is <strong>stacking information</strong>. Signal words: <code>furthermore</code> <code>in addition</code> <code>also</code> <code>another</code> <code>similarly</code></td>
+  </tr>
+  <tr>
+    <td>Skeleton sits <strong>at the end</strong>. The passage builds toward a claim. Read the last paragraph first on your skim.</td>
+    <td>Skeleton sits <strong>near the start</strong>. The passage announces a topic and elaborates. The first paragraph usually gives it to you.</td>
+  </tr>
+  <tr>
+    <td>Tone markers: <em>criticism, concern, urgency, counter-argument.</em> The author disagrees with someone.</td>
+    <td>Tone markers: <em>neutral, explanatory, survey-like.</em> The author is informing, not debating.</td>
+  </tr>
+</table>
+
+<h2>The Skeleton Rule</h2>
+<p>The rule is simple and ruthless: <strong>"State the unity of the whole passage in a single sentence."</strong> And there's no softening it — <em>"Do not be satisfied with 'feeling the unity' that you cannot express. The reader who says, 'I know what it is, but I just can't say it,' probably does not even fool himself."</em></p>
+<p>This is your skeleton. Not a summary. Not a list of topics. One sentence that captures what the author is <em>doing</em> — and why. Until you can write it, you have not finished the first pass.</p>
+<div class="drumbeat">You cannot find the skeleton by stopping at every brick. Read the whole building first.</div>
+
+<h3>The Three Alerts on the First Pass</h3>
+<div class="alertcard red">
+  <h4>🔴 Red Alert — Unknown Word</h4>
+  <p>Mark it. Keep moving. You will come back with context. Stopping now gives you the worst possible position for inference — you haven't read what comes next yet.</p>
+</div>
+<div class="alertcard yellow">
+  <h4>🟡 Yellow Alert — Reread Sentence</h4>
+  <p>Mark it. Keep moving. A confusing sentence is almost always clarified two sentences later. Trust the passage.</p>
+</div>
+<div class="alertcard orange">
+  <h4>🟠 Orange Alert — Paragraph Disconnect</h4>
+  <p>This is your most important alert on the first pass. A paragraph that shifts direction unexpectedly is usually the hinge of the argument — the pivot where the author's position becomes clear. Mark it, and pay attention to the sentence that follows.</p>
+</div>
+
+<h2>Why This Changes Everything</h2>
+<p>When you know the passage type before you answer, you eliminate half the trap options instantly. A main-idea question on an argumentative passage will always have one option that states the topic — not the argument. Students who skipped the first pass fall for it every time. The student who classified first knows the answer must capture the <em>position</em>, not just the <em>subject</em>.</p>
+
+<div class="takeaway">
+  <h2>This Week's Takeaway</h2>
+  <p>The first pass is not slow reading. It is a fast sweep for structure. You are looking for the floor plan, not the furniture. Thirty seconds of skimming before you read properly will save you two minutes of confusion after.</p>
+  <div class="oneline">"Every passage has a skeleton. The first pass finds it. The answers follow."</div>
+  <p class="next"><strong>Next week — Coming to Terms:</strong> Now that you've read through and flagged your Red Alerts, what do you actually do with an unknown word? The answer is not the dictionary.</p>
+</div>
+</div><!-- /p1 -->
+
+<!-- ===== PANEL 2: WORKED EXAMPLE ===== -->
+<div class="panel" id="p2" role="tabpanel" aria-labelledby="t2">
+<div class="kicker">Week 2 · Worked Example</div>
+<h2>Applying the First Pass</h2>
+<p>Read the passage below using the two-move approach: skim the topic sentences first (30 seconds), then read through without stopping. Work through the annotations after.</p>
+
+<div class="passage">
+  <p>Sleep has long been treated as the passive counterpart to wakefulness — a period of biological rest during which little of consequence occurs. Neuroscientific research over the past two decades has overturned this view almost entirely. Far from being a state of suspension, sleep is now understood to be a period of intense and highly organised neural activity.</p>
+  <p>The most significant discoveries concern the role of sleep in memory consolidation. During slow-wave sleep, the hippocampus replays sequences of neural activity that occurred during waking hours, effectively transferring newly acquired information into longer-term cortical storage. During REM sleep, the brain appears to integrate this information with existing knowledge structures, making connections that were not apparent during waking experience.</p>
+  <p>A second function concerns the clearance of metabolic waste. The glymphatic system — a network of fluid-filled channels surrounding blood vessels in the brain — operates primarily during sleep, flushing out proteins such as beta-amyloid that accumulate during neural activity. Disrupted sleep has been associated with elevated beta-amyloid levels, a marker strongly linked to the development of Alzheimer's disease.</p>
+  <p>What emerges from this research is a picture of sleep not as absence but as architecture. The body is still; the brain is not.</p>
+</div>
+<div class="wordcount">~195 words</div>
+
+<h3>Work through the annotations</h3>
+
+<button class="reveal-btn q1" onclick="toggleAnnot(this,'a1')" aria-expanded="false">🔍 Move 1: What did the skim tell you?</button>
+<div class="annot q1" id="a1">
+  <span class="tag">Systematic Skimming</span>
+  Topic sentence P1: <em>"Sleep has long been treated as passive…"</em> — a prior view being set up. Topic sentence P2: memory consolidation. Topic sentence P3: clearance of metabolic waste. Final paragraph: <em>"sleep not as absence but as architecture."</em> Three cues: the opening overturns a prior view, the middle paragraphs stack evidence, the last delivers a conclusion. This looks additive — the author is building a cumulative picture.
+</div>
+
+<button class="reveal-btn yellow" onclick="toggleAnnot(this,'a2')" aria-expanded="false">📚 Move 2: Classify the passage</button>
+<div class="annot yellow" id="a2">
+  <span class="tag">Classification — Additive</span>
+  <strong>Additive.</strong> The prior view ("sleep is passive") is dismissed in sentence one. Everything that follows <em>adds</em> to a picture of sleep's active functions: memory consolidation, glymphatic clearance, integrating metaphor. Signal words throughout are additive: <em>a second function, what emerges.</em> No counter-argument appears. Skeleton sits near the start — confirmed by P1's topic sentence.
+</div>
+
+<button class="reveal-btn orange" onclick="toggleAnnot(this,'a3')" aria-expanded="false">🟠 Orange Alert: Where is the pivot?</button>
+<div class="annot orange" id="a3">
+  <span class="tag">Orange Alert — Paragraph Disconnect</span>
+  The only potential disconnect is P1 → P2. P1 is about perception; P2 suddenly introduces hippocampal replay and cortical storage. This is not a contradiction — it is the first piece of evidence for the overturned view. The Orange Alert here signals a <em>shift from framing to evidence</em>. Once you recognise this as additive, the structure resolves immediately.
+</div>
+
+<button class="reveal-btn red" onclick="toggleAnnot(this,'a4')" aria-expanded="false">🔴 Red Alert: Glymphatic system</button>
+<div class="annot red" id="a4">
+  <span class="tag">Red Alert — Unknown Term</span>
+  <em>Glymphatic system</em> is a technical term most readers won't know. But the passage immediately defines it: <em>"a network of fluid-filled channels surrounding blood vessels in the brain."</em> This is the pattern — mark the Red Alert, keep reading, and the passage gives you what you need within one sentence. The passage was the dictionary.
+</div>
+
+<button class="reveal-btn gold" onclick="toggleAnnot(this,'a5')" aria-expanded="false">✍️ The skeleton</button>
+<div class="annot gold" id="a5">
+  <span class="tag">Model Skeleton</span>
+  <em>"Sleep is not passive rest but a period of organised neural activity, serving critical functions in memory consolidation and brain waste clearance."</em><br><br>
+  One sentence, captures the <em>what</em> (organised neural activity) and the <em>why it matters</em> (memory, waste clearance). A student who wrote this before answering questions would have eliminated every "topic-only" wrong option instantly.
+</div>
+</div><!-- /p2 -->
+<!-- ===== PANEL 3: DRILL ===== -->
+<div class="panel" id="p3" role="tabpanel" aria-labelledby="t3">
+<div class="kicker">Week 2 · The Drill</div>
+<h2>The Drill</h2>
+<p>You have 8 minutes. Apply the first pass — skim, classify, read through — before writing your skeleton. The skeleton gate must be unlocked before you can check answers.</p>
+
+<div class="startbox" id="startbox">
+  <p style="color:var(--muted);margin-bottom:20px;font-size:15px">Login to begin. Your result and skeleton will be logged automatically.</p>
+  <button class="btn gold" onclick="startDrill()">Begin the drill →</button>
+</div>
+
+<div id="timerbar"><span class="clock" id="clock">08:00</span><span id="timermsg" style="margin-left:14px;font-size:14px">Skim · Classify · Find the skeleton — then answer.</span></div>
+
+<div id="drillarea" style="display:none">
+
+<div class="passage" id="drillpassage">
+  <p>For most of the twentieth century, urban planners treated the private car as the natural endpoint of city design. Roads were widened, rail lines removed, and entire neighbourhoods demolished to make way for expressways. The logic seemed unassailable: more roads would reduce congestion by giving vehicles more space to move.</p>
+  <p>The evidence, however, has consistently told a different story. Traffic engineers now recognise the phenomenon of induced demand — the observation that new road capacity does not relieve congestion but generates additional traffic to fill it. When Seoul demolished its elevated Cheonggyecheon expressway in 2005, traffic modellers predicted gridlock. Instead, congestion in the surrounding area fell. When San Francisco's Embarcadero Freeway collapsed in an earthquake and was later removed, the traffic it had carried simply vanished. Drivers adjusted their routes, their timings, and their modes.</p>
+  <p>These cases are not anomalies. A comprehensive review of road expansion projects across major cities found that a ten percent increase in lane kilometres produces, on average, a ten percent increase in vehicle kilometres travelled within a decade — effectively erasing the intended benefit. The road builds the traffic that justifies the road.</p>
+  <p>The implication is uncomfortable for planners who have spent careers expanding road networks: the only reliable way to reduce car traffic in cities is to reduce the space and convenience available to cars. Investment in driving capacity is, paradoxically, an investment in more driving.</p>
+</div>
+<div class="wordcount">~240 words</div>
+
+<!-- SKELETON JOURNAL -->
+<div class="journal">
+  <h3>Your Skeleton</h3>
+  <p>Before checking answers, write the skeleton of the passage in <strong>one sentence</strong>. Then identify the passage type.</p>
+  <textarea id="skeltext" placeholder="This passage argues that... / This passage explains that..."></textarea>
+  <div class="typebtns">
+    <button class="typebtn" id="typeAdd" aria-pressed="false" onclick="pickType('add')">📚 Additive</button>
+    <button class="typebtn" id="typeArg" aria-pressed="false" onclick="pickType('arg')">⚔️ Argumentative</button>
+  </div>
+  <p class="gatehint" id="gatehint">🔒 Write your skeleton and pick a passage type to unlock checking.</p>
+</div>
+
+<!-- QUESTIONS -->
+<div class="question" id="q1" data-correct="2">
+  <div class="stem"><span class="qn">Q1</span>Which of the following best states the central argument of the passage?</div>
+  <label class="opt"><input type="radio" name="q1" value="0"> <span>Urban planners in the twentieth century made several significant errors in road design that are only now being corrected.</span></label>
+  <label class="opt"><input type="radio" name="q1" value="1"> <span>The removal of urban expressways has been shown to reduce congestion in cities such as Seoul and San Francisco.</span></label>
+  <label class="opt"><input type="radio" name="q1" value="2"> <span>Expanding road capacity does not reduce urban congestion because additional supply generates additional demand, making car-space reduction the only effective intervention.</span></label>
+  <label class="opt"><input type="radio" name="q1" value="3"> <span>Traffic modelling is an unreliable discipline, as evidenced by failed predictions following expressway removals in Seoul and San Francisco.</span></label>
+  <div class="expl"><div class="verdict"></div><p><strong>A</strong> describes a historical pattern but not the argument — the passage is not primarily about planning errors. <strong>B</strong> states only one piece of evidence, not the central claim. <strong>C</strong> is correct: it captures induced demand (supply creates demand) and the implication (reduce car space). <strong>D</strong> distorts the passage — the modellers' failed prediction is used as evidence for induced demand, not as a critique of traffic modelling as a discipline.</p></div>
+</div>
+
+<div class="question" id="q2" data-correct="1">
+  <div class="stem"><span class="qn">Q2</span>The author's primary purpose in mentioning Seoul and San Francisco is to —</div>
+  <label class="opt"><input type="radio" name="q2" value="0"> <span>demonstrate that earthquake damage can have unexpected urban benefits.</span></label>
+  <label class="opt"><input type="radio" name="q2" value="1"> <span>provide empirical evidence that removing road capacity can reduce, rather than increase, congestion.</span></label>
+  <label class="opt"><input type="radio" name="q2" value="2"> <span>argue that all elevated expressways in cities should be demolished on environmental grounds.</span></label>
+  <label class="opt"><input type="radio" name="q2" value="3"> <span>show that traffic modellers consistently underestimate the adaptability of urban commuters.</span></label>
+  <div class="expl"><div class="verdict"></div><p><strong>A</strong> misreads — the San Francisco earthquake is incidental; the passage concerns what happened after removal. <strong>B</strong> is correct: both cities are offered as evidence that removal relieved, not worsened, congestion. <strong>C</strong> introduces environmental arguments the passage never makes. <strong>D</strong> is partially true but too narrow — commuter adaptability is a mechanism, not the primary purpose of the examples.</p></div>
+</div>
+
+<div class="question" id="q3" data-correct="0">
+  <div class="stem"><span class="qn">Q3</span>Which of the following can be inferred from the passage's discussion of induced demand?</div>
+  <label class="opt"><input type="radio" name="q3" value="0"> <span>A city that builds a new motorway to ease traffic should expect congestion to return to previous levels within roughly a decade.</span></label>
+  <label class="opt"><input type="radio" name="q3" value="1"> <span>Induced demand applies only to cities that have already removed at least one major road.</span></label>
+  <label class="opt"><input type="radio" name="q3" value="2"> <span>Traffic engineers have recently begun to accept that induced demand is a genuine phenomenon, having previously dismissed it entirely.</span></label>
+  <label class="opt"><input type="radio" name="q3" value="3"> <span>The only way cities can avoid induced demand is by investing exclusively in public transport.</span></label>
+  <div class="expl"><div class="verdict"></div><p><strong>A</strong> is correct: a ten percent increase in lanes produces a ten percent increase in vehicle kilometres within a decade — the benefit is erased. This is a direct, permitted inference. <strong>B</strong> contradicts the passage — induced demand is a general phenomenon. <strong>C</strong> cannot be inferred — the passage says engineers "now recognise" it, not that they previously dismissed it. <strong>D</strong> goes beyond the passage — public transport is never mentioned.</p></div>
+</div>
+
+<div class="question" id="q4" data-correct="3">
+  <div class="stem"><span class="qn">Q4</span>The phrase "the road builds the traffic that justifies the road" is best understood as —</div>
+  <label class="opt"><input type="radio" name="q4" value="0"> <span>a criticism of urban planners for failing to consult traffic engineers before approving road projects.</span></label>
+  <label class="opt"><input type="radio" name="q4" value="1"> <span>a claim that roads are self-maintaining infrastructure that require no external justification.</span></label>
+  <label class="opt"><input type="radio" name="q4" value="2"> <span>an acknowledgment that road expansion is sometimes the only feasible solution to urban congestion.</span></label>
+  <label class="opt"><input type="radio" name="q4" value="3"> <span>a summary of induced demand — road expansion generates the additional traffic that appears to confirm the original need for expansion.</span></label>
+  <div class="expl"><div class="verdict"></div><p><strong>A</strong> introduces a blame-angle absent from the passage. <strong>B</strong> misreads "justifies" as physical maintenance rather than policy rationale. <strong>C</strong> contradicts the passage's position. <strong>D</strong> is correct: the phrase is a compact, ironic summary of the induced demand cycle — new roads create new traffic, which then appears to prove that the road was needed.</p></div>
+</div>
+
+<div class="question" id="q5" data-correct="1">
+  <div class="stem"><span class="qn">Q5</span>The author's tone in the final paragraph is best described as —</div>
+  <label class="opt"><input type="radio" name="q5" value="0"> <span>sympathetic to planners who made good-faith decisions with the information available to them.</span></label>
+  <label class="opt"><input type="radio" name="q5" value="1"> <span>dispassionately direct, presenting an uncomfortable conclusion as a logical consequence of the evidence.</span></label>
+  <label class="opt"><input type="radio" name="q5" value="2"> <span>frustrated with the slow pace at which urban planning has responded to the research on induced demand.</span></label>
+  <label class="opt"><input type="radio" name="q5" value="3"> <span>optimistic that planners will eventually reduce road capacity once the evidence becomes sufficiently persuasive.</span></label>
+  <div class="expl"><div class="verdict"></div><p>The final paragraph calls the implication "uncomfortable" and presents it plainly as a paradox. <strong>A</strong> would require expressions of understanding or forgiveness — none appear. <strong>B</strong> is correct: the author acknowledges the awkwardness but doesn't soften it; the conclusion follows from the evidence without emotional charge. <strong>C</strong> would require language of impatience. <strong>D</strong> would require forward-looking, hopeful language — the passage ends on a paradox, not a prediction.</p></div>
+</div>
+
+<div class="question" id="q6" data-correct="2">
+  <div class="stem"><span class="qn">Q6</span>When the Cheonggyecheon expressway was demolished, traffic engineers predicted gridlock. What does the passage imply about this prediction?</div>
+  <label class="opt"><input type="radio" name="q6" value="0"> <span>It was based on a correct understanding of induced demand but proved wrong due to unusual circumstances specific to Seoul.</span></label>
+  <label class="opt"><input type="radio" name="q6" value="1"> <span>It was deliberately overstated to discourage demolition and protect existing road infrastructure.</span></label>
+  <label class="opt"><input type="radio" name="q6" value="2"> <span>It reflected an assumption that traffic volumes are fixed, rather than responsive to the availability of road space.</span></label>
+  <label class="opt"><input type="radio" name="q6" value="3"> <span>It proved correct in the short term but was reversed within a decade as new traffic filled the surrounding roads.</span></label>
+  <div class="expl"><div class="verdict"></div><p><strong>A</strong> contradicts the passage — induced demand is precisely why the prediction was wrong. <strong>B</strong> imputes motive the passage does not support. <strong>C</strong> is correct: the prediction assumed traffic was fixed. The passage shows the opposite — traffic is elastic; drivers "adjusted their routes, timings, and modes." <strong>D</strong> contradicts the passage directly — congestion fell, and no subsequent reversal is mentioned.</p></div>
+</div>
+
+<div style="margin:24px 0 8px;text-align:center">
+  <button class="btn navy" id="checkbtn" onclick="checkAnswers()" disabled>Check answers</button>
+</div>
+<div id="savestatus"></div>
+<button id="retrybtn" onclick="submitRLS()">↺ Retry saving</button>
+
+<div id="results">
+  <h3>Drill Complete</h3>
+  <div class="nums">
+    <div class="c"><b id="rc">—</b><span>Correct</span></div>
+    <div class="w"><b id="rw">—</b><span>Wrong</span></div>
+    <div class="s"><b id="rs">—</b><span>Skipped</span></div>
+  </div>
+  <p style="margin-top:14px;font-size:14px;color:#BFD4EA">Scroll up to read every explanation — the wrong options teach more than the right ones.</p>
+</div>
+
+<div id="modelskel">
+  <h3 style="font-family:'Fraunces',serif;color:var(--maroon);margin:28px 0 10px">Model Skeleton</h3>
+  <div class="drumbeat">"Expanding road capacity does not relieve urban congestion — it generates new traffic to fill the space — so the only effective intervention is reducing the space and convenience available to cars."</div>
+  <p style="font-size:14px;color:var(--muted);margin-top:8px">This is an <strong>argumentative</strong> passage. The skeleton must capture the <em>position</em> (road expansion fails) and the <em>implication</em> (reduce car space) — not just the topic (urban traffic). If your skeleton named the topic without the claim, that is the gap to close before next week.</p>
+</div>
+
+</div><!-- /drillarea -->
+</div><!-- /p3 -->
+</main>
+<!-- LOGIN MODAL -->
+<div id="loginoverlay">
+  <div class="loginbox">
+    <h3>Start the Drill</h3>
+    <p>Your result and skeleton will be logged automatically.</p>
+    <label for="lname">Full Name</label>
+    <input id="lname" type="text" autocomplete="name" placeholder="e.g. Rahul Sharma">
+    <label for="lpin">PIN</label>
+    <input id="lpin" type="text" autocapitalize="characters" placeholder="IMS or STU + 10 digits">
+    <label for="lbatch">Batch</label>
+    <select id="lbatch">
+      <option value="" selected disabled>Select your batch</option>
+      <optgroup label="Classroom">
+        <option>A2701</option><option>A2702</option><option>A2703</option>
+        <option>A2704</option><option>A2705</option><option>A2706</option>
+        <option>A2707</option><option>A2708</option><option>A2709</option>
+        <option>A2710</option><option>A2711</option><option>A2712</option>
+      </optgroup>
+      <optgroup label="Online">
+        <option>27E101</option><option>27E102</option><option>27E103</option>
+        <option>27E104</option><option>27E105</option>
+      </optgroup>
+      <optgroup label="School">
+        <option>Zebar</option>
+      </optgroup>
+    </select>
+    <div id="loginerr"></div>
+    <button class="btn gold" onclick="doLogin()">Start the drill →</button>
+  </div>
+</div>
+
+<footer>
+  <div class="logos">
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==" alt="IMS">
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==" alt="Camp Verbal">
+  </div>
+  Read Like a Scholar · Week 2 of 6 · Road to IIM Self Study<br>
+  All passages and questions are original. © 2026
+</footer>
+
+<script>
+const SCRIPT_URL='https://script.google.com/macros/s/AKfycbwGGxswx4hcBUFiT0QJIglowhKcJCv47MOR5LKBv9sILl-evsgZeKCms5y6s5zEXOUo6Q/exec';
+let student=null,secondsLeft=480,timerId=null,checked=false,pickedType=null,rlsPayload=null,submitting=false;
+
+function showTab(n){
+  for(let i=1;i<=3;i++){
+    document.getElementById('p'+i).classList.toggle('active',i===n);
+    document.getElementById('t'+i).setAttribute('aria-selected',i===n?'true':'false');
+  }
+  window.scrollTo({top:0});
+}
+
+function toggleAnnot(btn,id){
+  const el=document.getElementById(id);
+  const open=el.classList.toggle('open');
+  btn.setAttribute('aria-expanded',open?'true':'false');
+}
+
+function startDrill(){
+  document.getElementById('loginoverlay').classList.add('show');
+  document.getElementById('lname').focus();
+}
+
+function doLogin(){
+  const name=document.getElementById('lname').value.trim();
+  const pin=document.getElementById('lpin').value.trim().toUpperCase();
+  const batch=document.getElementById('lbatch').value.trim();
+  const err=document.getElementById('loginerr');
+  if(name.length<3){err.textContent='Please enter your full name.';err.classList.add('show');return;}
+  if(!/^(IMS|STU)\d{10}$/.test(pin)){err.textContent='PIN must be IMS or STU followed by 10 digits.';err.classList.add('show');return;}
+  if(!batch){err.textContent='Please select your batch.';err.classList.add('show');return;}
+  err.classList.remove('show');
+  student={name,pin,batch};
+  document.getElementById('loginoverlay').classList.remove('show');
+  beginDrill();
+}
+
+function beginDrill(){
+  document.getElementById('startbox').style.display='none';
+  document.getElementById('drillarea').style.display='block';
+  document.getElementById('timerbar').style.display='block';
+  timerId=setInterval(tick,1000);
+  document.getElementById('drillpassage').scrollIntoView({behavior:'smooth'});
+}
+
+function fmt(s){return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');}
+
+function tick(){
+  secondsLeft--;
+  document.getElementById('clock').textContent=fmt(Math.max(secondsLeft,0));
+  if(secondsLeft<=0){
+    clearInterval(timerId);timerId=null;
+    document.getElementById('timerbar').classList.add('over');
+    document.getElementById('timermsg').textContent="Time's up — finish your skeleton and check your answers.";
+  }
+}
+
+function pickType(t){
+  pickedType=t;
+  document.getElementById('typeAdd').setAttribute('aria-pressed',t==='add'?'true':'false');
+  document.getElementById('typeArg').setAttribute('aria-pressed',t==='arg'?'true':'false');
+  gateCheck();
+}
+
+document.addEventListener('input',function(e){if(e.target&&e.target.id==='skeltext')gateCheck();});
+
+function gateCheck(){
+  const ok=document.getElementById('skeltext').value.trim().length>=15&&pickedType!==null;
+  document.getElementById('checkbtn').disabled=!ok||checked;
+  document.getElementById('gatehint').textContent=ok
+    ?'🔓 Unlocked. Check when ready.'
+    :'🔒 Write your skeleton (at least a few words) and pick a passage type to unlock checking.';
+}
+
+function checkAnswers(){
+  if(checked)return;
+  checked=true;
+  if(timerId){clearInterval(timerId);timerId=null;}
+  document.getElementById('checkbtn').disabled=true;
+  document.getElementById('timermsg').textContent='Drill finished in '+fmt(480-Math.max(secondsLeft,0))+'.';
+  let correct=0,wrong=0,skipped=0;
+  for(let i=1;i<=6;i++){
+    const qEl=document.getElementById('q'+i);
+    const corr=parseInt(qEl.dataset.correct,10);
+    const opts=qEl.querySelectorAll('.opt');
+    const chosen=qEl.querySelector('input:checked');
+    const expl=qEl.querySelector('.expl');
+    const verdict=expl.querySelector('.verdict');
+    opts[corr].classList.add('correct');
+    qEl.querySelectorAll('input').forEach(inp=>inp.disabled=true);
+    if(!chosen){skipped++;verdict.textContent='— Skipped';verdict.className='verdict skip';}
+    else if(parseInt(chosen.value,10)===corr){correct++;verdict.textContent='✔ Correct';verdict.className='verdict ok';}
+    else{wrong++;chosen.closest('.opt').classList.add('wrong');verdict.textContent='✘ Wrong — read the explanation below';verdict.className='verdict no';}
+    expl.style.display='block';
+  }
+  document.getElementById('rc').textContent=correct;
+  document.getElementById('rw').textContent=wrong;
+  document.getElementById('rs').textContent=skipped;
+  document.getElementById('results').style.display='block';
+  document.getElementById('modelskel').style.display='block';
+  document.getElementById('results').scrollIntoView({behavior:'smooth'});
+  rlsPayload={
+    type:'rls',testName:'RLS-W2',
+    name:student.name,pin:student.pin,batch:student.batch,
+    score:correct,correct,wrong,skipped,
+    skeleton:document.getElementById('skeltext').value.trim(),
+    passageType:pickedType==='add'?'additive':'argumentative',
+    timeTaken:fmt(480-Math.max(secondsLeft,0)),
+    timestamp:new Date().toISOString()
+  };
+  submitRLS();
+}
+
+function submitRLS(){
+  if(!rlsPayload||submitting)return;
+  submitting=true;
+  const st=document.getElementById('savestatus');
+  const rb=document.getElementById('retrybtn');
+  st.className='show';st.textContent='Saving your result...';
+  rb.classList.remove('show');
+  fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(rlsPayload)})
+    .then(()=>{st.className='show ok';st.textContent='✔ Result and skeleton sent to Sahil Sir\u2019s sheet.';submitting=false;})
+    .catch(()=>{st.className='show fail';st.textContent='✘ Could not save — check your connection.';rb.classList.add('show');submitting=false;});
+}
+</script>
+</body>
+</html>
