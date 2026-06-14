@@ -578,6 +578,104 @@
   }
   .rls-search:focus { border-color: var(--blue); }
 
+  /* ── MY PATTERNS (topic accuracy) — additive only ── */
+  .pat-divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 8px 0 28px;
+  }
+  .pat-banner {
+    background: rgba(155,127,232,0.07);
+    border: 1px solid rgba(155,127,232,0.25);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+  }
+  .pat-banner-title {
+    font-family: 'Fraunces', serif;
+    font-size: 17px;
+    color: var(--purple);
+    margin-bottom: 4px;
+  }
+  .pat-banner-sub { font-size: 12.5px; color: var(--text-dim); line-height: 1.5; }
+
+  .pat-coverage-note {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    font-size: 12px;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+  .pat-coverage-note b { color: var(--text); }
+
+  .pat-area-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 10px;
+    margin-top: 4px;
+    padding-left: 2px;
+  }
+
+  .pat-topic-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 8px;
+  }
+  .pat-topic-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .pat-topic-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .pat-verdict-chip {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 20px;
+    white-space: nowrap;
+  }
+  .pv-strong { background: rgba(76,175,135,0.15);  border: 1px solid rgba(76,175,135,0.3);  color: var(--green); }
+  .pv-build  { background: rgba(232,200,74,0.12);   border: 1px solid rgba(232,200,74,0.25);  color: var(--gold); }
+  .pv-work   { background: rgba(224,82,82,0.12);    border: 1px solid rgba(224,82,82,0.25);   color: var(--red); }
+  .pv-avoid  { background: rgba(224,82,82,0.12);    border: 1px solid rgba(224,82,82,0.25);   color: var(--red); }
+  .pv-thin   { background: rgba(255,255,255,0.04);  border: 1px solid var(--border);           color: var(--text-dim); }
+
+  .pat-bar-wrap {
+    background: rgba(255,255,255,0.06);
+    border-radius: 3px;
+    height: 5px;
+    overflow: hidden;
+    margin-bottom: 8px;
+  }
+  .pat-bar-fill { height: 100%; border-radius: 3px; transition: width 0.5s ease; }
+  .pb-strong { background: var(--green); }
+  .pb-build  { background: var(--gold); }
+  .pb-work   { background: var(--red); }
+  .pb-avoid  { background: var(--red); opacity: 0.5; }
+  .pb-thin   { background: rgba(255,255,255,0.2); }
+
+  .pat-topic-stats {
+    display: flex;
+    gap: 14px;
+    font-size: 11px;
+    color: var(--text-dim);
+    flex-wrap: wrap;
+  }
+  .pat-topic-stats b { color: var(--text); }
+
   @media (max-width: 600px) {
     .login-card { padding: 32px 24px; }
     .content { padding: 20px 16px; }
@@ -658,6 +756,9 @@
   <!-- RLS MODULE SECTION — NEW. Separate container: never touched by dashContent re-renders -->
   <div class="content" id="rlsContent" style="display:none; padding-top:0;"></div>
 
+  <!-- MY PATTERNS SECTION — additive, never touched by dashContent/rlsContent re-renders -->
+  <div class="content" id="patternsContent" style="display:none; padding-top:0;"></div>
+
   <div class="footer-bar">Road to IIM &nbsp;·&nbsp; Sahil Sir &nbsp;·&nbsp; IMS Ahmedabad</div>
 </div>
 
@@ -737,6 +838,7 @@ function doLogin() {
 
   fetchAndRender();
   fetchRLS(); // NEW: load Read Like a Scholar module data alongside test data
+  fetchPatterns(); // MY PATTERNS: load topic accuracy data (students only)
 }
 
 function doLogout() {
@@ -748,6 +850,8 @@ function doLogout() {
   document.getElementById('loginScreen').style.display = 'flex';
   document.getElementById('rlsContent').style.display = 'none'; // NEW: clear RLS section
   document.getElementById('rlsContent').innerHTML = '';          // NEW
+  document.getElementById('patternsContent').style.display = 'none'; // clear patterns
+  document.getElementById('patternsContent').innerHTML = '';          // clear patterns
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -1499,6 +1603,183 @@ function renderRLSStudent() {
     <div class="chips-wrap" style="margin-bottom:28px;">${chips}</div>
     <div class="section-header">Your Skeleton Journal</div>
     ${skelCards}`;
+}
+
+// ══════════════════════════════════════════════════════════════
+//  MY PATTERNS — topic accuracy across tests (student only)
+//  Fetches ?mode=mytopics from Apps Script + riim_tags.json
+//  Renders into #patternsContent (never touches dashContent/rlsContent)
+// ══════════════════════════════════════════════════════════════
+
+const PAT_TAGS_URL = 'https://sahilkanetkar-collab.github.io/Road-to-IIM/riim_tags.json';
+
+// Verdict thresholds
+const PAT_STRONG     = 70;   // accuracy % ≥ this → Strong
+const PAT_BUILD_LOW  = 45;   // accuracy % < this → Needs Work (else Building)
+const PAT_MINSEEN    = 5;    // fewer questions seen → Thin Data
+const PAT_AVOID_RATE = 0.30; // attempt rate < this → Avoids
+
+function fetchPatterns() {
+  // Admins don't get topic view — it's per-student only
+  if (!currentUser || currentUser.isAdmin) return;
+
+  const el = document.getElementById('patternsContent');
+  el.style.display = 'block';
+  el.innerHTML = `
+    <hr class="pat-divider">
+    <div class="pat-banner">
+      <div class="pat-banner-title">My Patterns</div>
+      <div class="pat-banner-sub">Loading topic data…</div>
+    </div>`;
+
+  const params = new URLSearchParams({
+    mode: 'mytopics',
+    pin:  currentUser.pin
+  });
+
+  Promise.all([
+    fetch(APPS_SCRIPT_URL + '?' + params.toString()).then(r => r.json()),
+    fetch(PAT_TAGS_URL).then(r => r.json())
+  ])
+  .then(([results, tags]) => {
+    if (results.status !== 'success') {
+      el.innerHTML = `
+        <hr class="pat-divider">
+        <div class="pat-banner">
+          <div class="pat-banner-title">My Patterns</div>
+          <div class="pat-banner-sub">Could not load topic data. Try refreshing.</div>
+        </div>`;
+      return;
+    }
+    renderPatterns(el, results.data || [], tags);
+  })
+  .catch(() => {
+    el.innerHTML = `
+      <hr class="pat-divider">
+      <div class="pat-banner">
+        <div class="pat-banner-title">My Patterns</div>
+        <div class="pat-banner-sub">Topic data unavailable — check your connection.</div>
+      </div>`;
+  });
+}
+
+function renderPatterns(el, testRows, tags) {
+  // Tests with studentAnswers tracking (16 onwards) that are also in tags
+  const TRACKABLE = new Set(['16','17','18','19','21']);
+  const tracked = testRows.filter(r =>
+    TRACKABLE.has(String(r.test)) &&
+    r.studentAnswers && r.studentAnswers.length > 0 &&
+    tags.tests && tags.tests[String(r.test)]
+  );
+  const untracked = testRows.filter(r =>
+    tags.tests && tags.tests[String(r.test)] &&
+    (!r.studentAnswers || r.studentAnswers.length === 0)
+  );
+
+  // Accumulate per topic: topicMap[area][sub] = {seen,correct,wrong,skipped}
+  const topicMap = {};
+  tracked.forEach(row => {
+    const testId   = String(row.test);
+    const testTags = tags.tests[testId].q;
+    const wrongSet = new Set((row.wrongQuestions || []).map(Number));
+    const answers  = row.studentAnswers;
+
+    answers.forEach((ans, idx) => {
+      const qNum = String(idx + 1);
+      const tag  = testTags[qNum];
+      if (!tag) return;
+      const { area, sub } = tag;
+      if (!topicMap[area])      topicMap[area] = {};
+      if (!topicMap[area][sub]) topicMap[area][sub] = {seen:0,correct:0,wrong:0,skipped:0};
+      const b = topicMap[area][sub];
+      b.seen++;
+      if (ans === null)           b.skipped++;
+      else if (wrongSet.has(idx+1)) b.wrong++;
+      else                          b.correct++;
+    });
+  });
+
+  // Build HTML
+  let html = `<hr class="pat-divider">
+  <div class="pat-banner">
+    <div class="pat-banner-title">My Patterns</div>
+    <div class="pat-banner-sub">Topic accuracy · ${tracked.length} test${tracked.length!==1?'s':''} analysed · Tests 16 onwards</div>
+  </div>`;
+
+  // Coverage note
+  if (untracked.length > 0) {
+    const names = untracked.map(r => 'T'+r.test).join(', ');
+    html += `<div class="pat-coverage-note">
+      <b>${untracked.length} older test${untracked.length!==1?'s':''} (${names})</b> count in your scores but not here —
+      question-level tracking started from Test 16.
+    </div>`;
+  }
+
+  if (Object.keys(topicMap).length === 0) {
+    html += `<div style="text-align:center;padding:40px 20px;color:var(--text-dim);font-size:14px;">
+      No topic data yet. Complete Tests 16 or later to see your patterns.
+    </div>`;
+    el.innerHTML = html;
+    return;
+  }
+
+  // Render Grammar then Vocabulary
+  ['Grammar','Vocabulary'].forEach(area => {
+    if (!topicMap[area]) return;
+
+    // Compute metrics per sub, sort by concern
+    const subs = Object.entries(topicMap[area]).map(([sub, d]) => {
+      const attempted   = d.correct + d.wrong;
+      const accPct      = attempted > 0 ? Math.round(100 * d.correct / attempted) : null;
+      const attemptRate = d.seen > 0 ? attempted / d.seen : 0;
+      const verdict     = patVerdict(d.seen, attempted, accPct, attemptRate);
+      return { sub, ...d, attempted, accPct, attemptRate, verdict };
+    }).sort((a,b) => patConcern(b) - patConcern(a));
+
+    html += `<div class="section-header">${area}</div>`;
+
+    subs.forEach(s => {
+      const barPct   = s.accPct !== null ? s.accPct : 0;
+      const vKey     = s.verdict.key;
+      const chipCls  = {strong:'pv-strong',build:'pv-build',work:'pv-work',avoid:'pv-avoid',thin:'pv-thin'}[vKey]||'pv-thin';
+      const barCls   = {strong:'pb-strong',build:'pb-build',work:'pb-work',avoid:'pb-avoid',thin:'pb-thin'}[vKey]||'pb-thin';
+
+      html += `<div class="pat-topic-card">
+        <div class="pat-topic-top">
+          <span class="pat-topic-name">${s.sub}</span>
+          <span class="pat-verdict-chip ${chipCls}">${s.verdict.label}</span>
+        </div>
+        <div class="pat-bar-wrap">
+          <div class="pat-bar-fill ${barCls}" style="width:${barPct}%"></div>
+        </div>
+        <div class="pat-topic-stats">
+          <span><b>${s.accPct !== null ? s.accPct+'%' : '—'}</b> accuracy</span>
+          <span><b>${s.correct}</b>/${s.attempted} attempted</span>
+          <span><b>${s.seen}</b> seen</span>
+          ${s.skipped > 0 ? `<span><b>${s.skipped}</b> skipped</span>` : ''}
+        </div>
+      </div>`;
+    });
+  });
+
+  el.innerHTML = html;
+}
+
+function patVerdict(seen, attempted, accPct, attemptRate) {
+  if (seen < PAT_MINSEEN)          return {key:'thin',   label:'Thin data'};
+  if (attemptRate < PAT_AVOID_RATE) return {key:'avoid',  label:'Avoids'};
+  if (accPct === null)              return {key:'thin',   label:'Thin data'};
+  if (accPct >= PAT_STRONG)         return {key:'strong', label:'Strong'};
+  if (accPct < PAT_BUILD_LOW)       return {key:'work',   label:'Needs work'};
+  return                                   {key:'build',  label:'Building'};
+}
+
+function patConcern(s) {
+  if (s.verdict.key === 'avoid')  return 90 + s.seen;
+  if (s.verdict.key === 'work')   return 60 + (100 - (s.accPct || 50));
+  if (s.verdict.key === 'build')  return 30 + (100 - (s.accPct || 50));
+  if (s.verdict.key === 'thin')   return 20;
+  return 0; // strong
 }
 
 // ══════════════════════════════════════════════════════════════
