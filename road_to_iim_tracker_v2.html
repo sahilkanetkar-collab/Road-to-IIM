@@ -1664,6 +1664,18 @@ function fetchPatterns() {
 }
 
 function renderPatterns(el, testRows, tags) {
+  // Safely parse fields that may arrive as JSON strings (Tests 18, 19, 20)
+  testRows.forEach(r => {
+    if (typeof r.wrongQuestions === 'string') {
+      try { r.wrongQuestions = JSON.parse(r.wrongQuestions); } catch(e) { r.wrongQuestions = []; }
+    }
+    if (typeof r.studentAnswers === 'string') {
+      try { r.studentAnswers = JSON.parse(r.studentAnswers); } catch(e) { r.studentAnswers = []; }
+    }
+    if (!Array.isArray(r.wrongQuestions)) r.wrongQuestions = [];
+    if (!Array.isArray(r.studentAnswers)) r.studentAnswers = [];
+  });
+
   // Tests with studentAnswers tracking (16 onwards) that are also in tags
   const TRACKABLE = new Set(['16','17','18','19','21']);
   const tracked = testRows.filter(r =>
