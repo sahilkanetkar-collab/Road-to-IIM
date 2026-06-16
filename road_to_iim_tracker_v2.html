@@ -31,6 +31,7 @@
     color: var(--text);
     font-family: 'DM Sans', sans-serif;
     min-height: 100vh;
+    overflow-x: hidden;
   }
 
   /* ── LOGIN ── */
@@ -174,7 +175,7 @@
   }
   .logout-btn:hover { border-color: var(--red); color: var(--red); }
 
-  .content { padding: 28px 24px; max-width: 1100px; margin: 0 auto; }
+  .content { padding: 28px 24px; max-width: 1100px; margin: 0 auto; overflow-x: hidden; }
 
   /* ── STAT CARDS ── */
   .stats-grid {
@@ -235,7 +236,7 @@
     margin-bottom: 28px;
   }
 
-  table { width: 100%; border-collapse: collapse; }
+  table { width: 100%; border-collapse: collapse; table-layout: fixed; }
 
   thead th {
     background: rgba(255,255,255,0.04);
@@ -247,6 +248,9 @@
     text-transform: uppercase;
     color: var(--text-dim);
     border-bottom: 1px solid var(--border);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   tbody tr {
@@ -261,6 +265,10 @@
     padding: 12px 16px;
     font-size: 14px;
     color: var(--text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 0;
   }
 
   .score-pill {
