@@ -212,6 +212,12 @@ color:var(--white);cursor:pointer;margin-bottom:6px;}
 .retry-opt.r-correct{border-color:var(--green);background:#0a2a15;color:var(--green);}
 .retry-opt.r-wrong{border-color:var(--red);background:#2a0a0a;color:var(--red);}
 
+/* ── QUESTION TIME BAR ── */
+.q-time-bar{display:flex;gap:16px;align-items:center;padding:8px 16px 10px;
+border-top:1px solid #1e3a5a;flex-wrap:wrap;}
+.q-time-mine{font-size:.78rem;color:var(--grey);}
+.q-time-fast{font-size:.78rem;color:var(--gold);font-weight:700;}
+
 /* ── MOBILE ── */
 @media (max-width:768px){
   #paletteOverlay{display:none;}
@@ -507,6 +513,8 @@ let currentQ=0, secondsLeft=timer_duration*60, timerInterval=null;
 let userAnswers=new Array(20).fill(null);
 let markedForReview=new Array(20).fill(false);
 let testSubmitted=false;
+let questionTimestamps=new Array(20).fill(null); // epoch ms when student first lands on each Q
+let questionTimes=new Array(20).fill(null);      // seconds spent per Q (computed at submit)
 
 // ── ADMIN PINS ────────────────────────────────────────────────────────────────
 const adminPins=["IMS1111111111","IMS2222222222","IMS3333333333","IMS4444444444","IMS5555555555"];
@@ -572,7 +580,15 @@ function togglePalette(){
 
 // ── RENDER QUESTION ───────────────────────────────────────────────────────────
 function renderQuestion(idx){
+  // Log time when student leaves the previous question
+  if(currentQ!==idx && questionTimestamps[currentQ]!==null){
+    const elapsed=Math.round((Date.now()-questionTimestamps[currentQ])/1000);
+    questionTimes[currentQ]=(questionTimes[currentQ]||0)+elapsed;
+  }
   currentQ=idx;
+  // Start timing this question if not yet visited
+  if(questionTimestamps[idx]===null) questionTimestamps[idx]=Date.now();
+  else questionTimestamps[idx]=Date.now(); // restart clock each visit; accumulate above
   const q=QUESTIONS[idx];
   const p=PASSAGES[q.passage-1];
 
@@ -648,6 +664,11 @@ function submitTest(){
   if(testSubmitted) return;
   testSubmitted=true;
   clearInterval(timerInterval);
+  // Finalise time for whichever question was active at submit
+  if(questionTimestamps[currentQ]!==null){
+    const elapsed=Math.round((Date.now()-questionTimestamps[currentQ])/1000);
+    questionTimes[currentQ]=(questionTimes[currentQ]||0)+elapsed;
+  }
   const labels=['A','B','C','D'];
   let correct=0,wrong=0,skipped=0;
   const sectionErrors={};
@@ -683,12 +704,21 @@ function showResults(score,correct,wrong,skipped){
     '<div class="stat-box wrong"><div class="val">'+wrong+'</div><div class="lbl">Wrong</div></div>'+
     '<div class="stat-box"><div class="val" style="color:var(--grey)">'+skipped+'</div><div class="lbl">Skipped</div></div>'+
     '<div class="stat-box accuracy"><div class="val">'+acc+'%</div><div class="lbl">Accuracy</div></div>';
-  buildReview();
   buildMisses();
   buildRetry();
+  // Fetch fastest times from Apps Script, then build review
+  const url=APPS_SCRIPT_URL.replace('/exec','')+'/../exec?mode=fastestTimes&testName='+encodeURIComponent('Road to IIM Test 23');
+  fetch(APPS_SCRIPT_URL+'?mode=fastestTimes&testName='+encodeURIComponent('Road to IIM Test 23'))
+    .then(r=>r.json())
+    .then(data=>{
+      const fastest=(data.status==='success'&&data.fastest)?data.fastest:[];
+      buildReview(fastest);
+    })
+    .catch(()=>buildReview([]));
 }
 
-function buildReview(){
+function buildReview(fastestTimes){
+  fastestTimes=fastestTimes||[];
   const list=document.getElementById('review-list');
   list.innerHTML='';
   const labels=['A','B','C','D'];
@@ -719,15 +749,37 @@ function buildReview(){
       if(ua!==null&&ua===idx&&idx!==correctIdx) cls+=' your-wrong';
       return '<div class="'+cls+'"><span class="opt-label">'+labels[idx]+'</span> '+o+'</div>';
     }).join('');
+    // Your time on this question
+    const myTime=questionTimes[i];
+    const myTimeStr=myTime!=null?formatSecs(myTime):null;
+    // Fastest time across all students
+    const fastSecs=fastestTimes[i];
+    const fastStr=fastSecs!=null?formatSecs(fastSecs):null;
+    // Build time badge
+    let timeBadge='';
+    if(myTimeStr||fastStr){
+      timeBadge='<div class="q-time-bar">';
+      if(myTimeStr) timeBadge+='<span class="q-time-mine">&#128336; Your time: '+myTimeStr+'</span>';
+      if(fastStr) timeBadge+='<span class="q-time-fast">&#9889; Fastest: '+fastStr+'</span>';
+      timeBadge+='</div>';
+    }
     card.innerHTML=
       '<div class="review-card-header">'+
       '<div class="review-badge '+badgeClass+'">'+badgeText+'</div>'+
       '<div class="review-stem"><span style="color:var(--grey);font-size:.75rem">Q'+(i+1)+' &nbsp;&#183;&nbsp; '+q.section+' &nbsp;&#183;&nbsp; '+q.qtype+'</span><br>'+q.stem+'</div>'+
       '</div>'+
       '<div class="review-opts">'+opts+'</div>'+
-      '<div class="review-exp">'+q.exp.replace(/\n/g,'<br>')+'</div>';
+      '<div class="review-exp">'+q.exp.replace(/\n/g,'<br>')+'</div>'+
+      timeBadge;
     list.appendChild(card);
   });
+}
+
+function formatSecs(s){
+  if(s==null) return null;
+  const m=Math.floor(s/60);
+  const sec=s%60;
+  return m>0?m+'m '+String(sec).padStart(2,'0')+'s':s+'s';
 }
 
 function buildMisses(){
@@ -835,7 +887,8 @@ function logToSheet(score,correct,wrong,skipped,sectionErrors,wrongQuestions){
     timestamp:new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'}),
     sectionErrors:JSON.stringify(sectionErrors),
     wrongQuestions:JSON.stringify(wrongQuestions),
-    studentAnswers:JSON.stringify(userAnswers.map(a=>a===null?null:a))
+    studentAnswers:JSON.stringify(userAnswers.map(a=>a===null?null:a)),
+    questionTimes:JSON.stringify(questionTimes)
   };
   fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)})
     .then(()=>{notice.className='success';notice.textContent='Results saved successfully.';})
