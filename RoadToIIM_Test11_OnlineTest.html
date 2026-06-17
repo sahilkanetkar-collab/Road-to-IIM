@@ -2,527 +2,488 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Road to IIM — Test 11</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Road to IIM - Test 11</title>
 <style>
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-:root{
-  --gold:#C9A84C;--dark:#1A1A2E;--red:#C0392B;--green:#1E8449;
-  --bg:#F7F5F0;--card:#FFFFFF;--text:#1A1A2E;--muted:#666;--border:rgba(0,0,0,0.1);
+*{box-sizing:border-box;margin:0;padding:0;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;}
+:root{--navy:#0d1b2a;--navy2:#1a2e45;--gold:#c9a84c;--gold2:#e8c76a;--green:#2ecc71;--red:#e74c3c;--grey:#8899aa;--white:#f0f4f8;--purple:#9b59b6;--panel:280px;}
+body{background:var(--navy);color:var(--white);font-family:'Segoe UI',sans-serif;min-height:100vh;overflow-x:hidden;}
+#loginScreen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:20px;}
+.login-box{background:var(--navy2);border:1px solid var(--gold);border-radius:12px;padding:40px 36px;width:100%;max-width:440px;}
+.login-box h1{color:var(--gold);font-size:1.5rem;text-align:center;margin-bottom:6px;}
+.login-box p{color:var(--grey);font-size:.85rem;text-align:center;margin-bottom:28px;}
+.login-box label{display:block;font-size:.8rem;color:var(--grey);margin-bottom:4px;margin-top:14px;}
+.login-box input,.login-box select{width:100%;background:#0d1b2a;border:1px solid #2a4060;border-radius:6px;padding:10px 12px;color:var(--white);font-size:.95rem;}
+#startBtn{width:100%;margin-top:24px;padding:12px;background:var(--gold);color:var(--navy);font-size:1rem;font-weight:700;border:none;border-radius:8px;cursor:pointer;}
+#topBar{background:var(--navy2);border-bottom:1px solid #1e3a5a;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;padding-right:calc(var(--panel) + 20px);}
+#topBar .logo{color:var(--gold);font-weight:700;font-size:1rem;}
+#timerDisplay{font-size:1.1rem;font-weight:700;color:var(--green);background:#0a2a1a;padding:6px 16px;border-radius:20px;border:1px solid var(--green);}
+#timerDisplay.urgent{color:var(--red);background:#2a0a0a;border-color:var(--red);}
+#progressBar{height:3px;background:#1e3a5a;margin-right:var(--panel);}
+#progressFill{height:100%;background:var(--gold);transition:width .3s;}
+#mainLayout{display:flex;min-height:calc(100vh - 54px);}
+#questionArea{flex:1;padding:28px 32px 80px 32px;max-width:calc(100% - var(--panel));}
+#sectionTag{display:inline-block;background:#1e3a5a;color:var(--gold);font-size:.72rem;font-weight:700;letter-spacing:.08em;padding:3px 10px;border-radius:4px;margin-bottom:10px;text-transform:uppercase;}
+#questionNumber{color:var(--grey);font-size:.85rem;margin-bottom:8px;}
+#questionStem{font-size:1.05rem;line-height:1.7;color:var(--white);margin-bottom:22px;word-break:break-word;overflow-wrap:break-word;}
+.options-list{list-style:none;display:flex;flex-direction:column;gap:10px;}
+.option-btn{background:#0d1b2a;border:1px solid #1e3a5a;border-radius:8px;padding:12px 16px;cursor:pointer;text-align:left;font-size:.95rem;color:var(--white);transition:all .2s;width:100%;display:flex;align-items:flex-start;gap:8px;}
+.option-btn:hover{border-color:var(--gold);background:#162030;}
+.option-btn.selected{border-color:var(--gold);background:#1e2e10;color:var(--gold2);}
+.option-btn.marked{border-color:var(--purple);}
+.opt-label{display:inline-block;min-width:24px;font-weight:700;color:var(--gold);flex-shrink:0;}
+.opt-text{flex:1;}
+#paletteOverlay{position:fixed;top:0;right:0;width:100%;height:100%;z-index:200;pointer-events:none;display:flex;justify-content:flex-end;}
+#palettePanel{width:280px;height:100%;background:var(--navy2);border-left:1px solid #1e3a5a;padding:16px 12px;overflow-y:auto;pointer-events:all;}
+#paletteGrid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:16px;}
+.pal-btn{width:100%;aspect-ratio:1;border-radius:6px;border:1px solid #1e3a5a;background:#0d1b2a;color:var(--grey);font-size:.78rem;font-weight:600;cursor:pointer;}
+.pal-btn.answered{background:var(--green);color:#fff;border-color:var(--green);}
+.pal-btn.marked{background:var(--purple);color:#fff;border-color:var(--purple);}
+.pal-btn.current{border:2px solid var(--gold);color:var(--gold);}
+#navBar{position:fixed;bottom:0;left:0;right:var(--panel);background:var(--navy2);border-top:1px solid #1e3a5a;display:flex;align-items:center;justify-content:space-between;padding:10px 20px;z-index:150;gap:4px;}
+.nav-btn{background:#1e3a5a;color:var(--white);border:none;border-radius:6px;padding:8px 14px;cursor:pointer;font-size:.9rem;font-weight:600;flex:1;}
+#submitBtn{background:var(--gold);color:var(--navy);font-weight:700;display:none;}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
+.stat-box{background:var(--navy2);border-radius:8px;padding:16px;text-align:center;border:1px solid #1e3a5a;}
+.stat-box .val{font-size:1.6rem;font-weight:800;}
+.stat-box .lbl{font-size:.75rem;color:var(--grey);margin-top:4px;}
+.stat-box.correct .val{color:var(--green);}
+.stat-box.wrong .val{color:var(--red);}
+.stat-box.accuracy .val{color:var(--gold);}
+.review-card{background:var(--navy2);border-radius:10px;margin-bottom:14px;overflow:hidden;border-left:4px solid var(--grey);word-break:break-word;overflow-wrap:break-word;}
+.review-card.correct{border-left-color:var(--green);}
+.review-card.wrong{border-left-color:var(--red);}
+.review-exp{background:#0a2a15;border-left:3px solid var(--green);padding:10px 14px;font-size:.83rem;line-height:1.6;color:#a8e6c0;margin-top:8px;}
+#testScreen{display:none;}
+#resultsScreen{display:none;padding:28px 32px;max-width:calc(100% - var(--panel));}
+.score-hero{text-align:center;margin-bottom:28px;}
+.score-hero .score-num{font-size:3.5rem;font-weight:900;color:var(--gold);}
+.score-hero .score-sub{font-size:1rem;color:var(--grey);margin-top:4px;}
+.result-btn{padding:10px 24px;border-radius:8px;border:none;cursor:pointer;font-size:.95rem;font-weight:700;margin:0 6px;}
+.result-btn.gold{background:var(--gold);color:var(--navy);}
+.result-btn.ghost{background:transparent;border:1px solid var(--gold);color:var(--gold);}
+#sheet-notice{padding:10px 14px;border-radius:6px;font-size:.85rem;margin-bottom:16px;display:none;}
+#sheet-notice.submitting{background:#1a2e10;color:#c9e88a;border:1px solid #4a7a20;}
+#sheet-notice.success{background:#0a2a15;color:#2ecc71;border:1px solid #2ecc71;}
+#sheet-notice.failure{background:#2a0a0a;color:#e74c3c;border:1px solid #e74c3c;}
+.review-card-header{padding:14px 16px;display:flex;align-items:flex-start;gap:10px;}
+.review-badge{min-width:32px;height:32px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.85rem;}
+.badge-correct{background:var(--green);color:#fff;}
+.badge-wrong{background:var(--red);color:#fff;}
+.badge-skipped{background:var(--grey);color:#fff;}
+.review-stem{font-size:.9rem;line-height:1.6;flex:1;}
+.review-opts{padding:0 16px 8px;}
+.review-opt{font-size:.83rem;padding:4px 0;color:var(--grey);}
+.review-opt.correct-opt{color:var(--green);font-weight:700;}
+.review-opt.your-wrong{color:var(--red);}
+.misses-box{background:#0d1b2a;border:1px solid #2a4060;border-radius:8px;padding:14px;margin-top:20px;}
+.misses-box h3{color:var(--gold);font-size:.9rem;margin-bottom:8px;}
+.misses-box textarea{width:100%;background:#0a1520;border:1px solid #1e3a5a;border-radius:6px;padding:10px;color:var(--white);font-size:.83rem;font-family:'Segoe UI',sans-serif;resize:vertical;min-height:80px;}
+.copy-btn{margin-top:8px;padding:6px 14px;background:var(--navy2);border:1px solid var(--gold);color:var(--gold);border-radius:6px;font-size:.8rem;cursor:pointer;}
+#retrySection{margin-top:24px;}
+#retrySection h3{color:var(--gold);margin-bottom:16px;}
+.retry-card{background:var(--navy2);border-radius:10px;padding:16px;margin-bottom:12px;border:1px solid #1e3a5a;}
+.retry-card .r-stem{font-size:.95rem;line-height:1.6;margin-bottom:12px;}
+.retry-opt{display:block;width:100%;background:#0d1b2a;border:1px solid #1e3a5a;border-radius:6px;padding:9px 14px;text-align:left;font-size:.88rem;color:var(--white);cursor:pointer;margin-bottom:6px;}
+.retry-opt.r-correct{border-color:var(--green);background:#0a2a15;color:var(--green);}
+.retry-opt.r-wrong{border-color:var(--red);background:#2a0a0a;color:var(--red);}
+.pal-legend{font-size:.72rem;color:var(--grey);margin-top:8px;}
+.pal-legend span{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px;vertical-align:middle;}
+@media (max-width:768px){
+  #paletteOverlay{display:none;}
+  #questionArea{max-width:100%;padding:16px 16px 80px 16px;}
+  #topBar{padding-right:16px;}
+  #progressBar{margin-right:0;}
+  #navBar{right:0;padding:8px 6px;}
+  .nav-btn{padding:7px 4px;font-size:.72rem;}
+  .stats-grid{grid-template-columns:repeat(2,1fr);}
+  .login-box input,.login-box select{font-size:1rem;}
+  .score-hero .score-num{font-size:2.4rem;}
+  #resultsScreen{max-width:100%;}
 }
-html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text)}
-#app{max-width:480px;margin:0 auto;min-height:100vh}
-
-/* LOGIN */
-#login-screen{padding:1.5rem 1.25rem;display:flex;flex-direction:column;gap:1.25rem}
-.brand-header{text-align:center;padding:1.25rem 0 0.25rem}
-.brand-logo{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-weight:700}
-.brand-title{font-size:22px;font-weight:800;color:var(--dark);margin-top:4px}
-.brand-sub{font-size:13px;color:var(--muted);margin-top:4px}
-.login-card{background:var(--card);border-radius:16px;padding:1.5rem;border:0.5px solid var(--border)}
-.login-card h2{font-size:15px;font-weight:700;margin-bottom:1.25rem}
-.field{display:flex;flex-direction:column;gap:6px;margin-bottom:1rem}
-.field label{font-size:11px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:var(--muted)}
-.field input,.field select{border:1.5px solid var(--border);border-radius:10px;padding:13px 14px;font-size:15px;background:var(--bg);color:var(--text);outline:none;width:100%;appearance:none;-webkit-appearance:none}
-.field input:focus,.field select:focus{border-color:var(--gold)}
-.select-wrap{position:relative}
-.select-wrap::after{content:"▾";position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none;font-size:14px}
-.test-meta{background:var(--bg);border-radius:10px;padding:1rem;display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:1.25rem}
-.meta-item{display:flex;flex-direction:column;gap:2px}
-.meta-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px}
-.meta-val{font-size:14px;font-weight:700;color:var(--dark)}
-.btn-start{width:100%;padding:16px;background:var(--dark);color:#fff;border:none;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;letter-spacing:0.3px}
-.btn-start:active{opacity:0.9}
-
-/* TEST */
-#test-screen{display:none;flex-direction:column;height:100vh;height:100dvh}
-.test-topbar{background:var(--dark);padding:10px 1rem;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-.topbar-left{display:flex;flex-direction:column}
-.topbar-brand{font-size:10px;color:var(--gold);letter-spacing:2px;text-transform:uppercase}
-.topbar-qnum{font-size:14px;color:#fff;font-weight:700;margin-top:2px}
-.timer-box{background:rgba(201,168,76,0.15);border:1px solid var(--gold);border-radius:8px;padding:5px 12px;text-align:center}
-.timer-label{font-size:9px;color:var(--gold);text-transform:uppercase;letter-spacing:1px}
-.timer-val{font-size:19px;font-weight:800;color:#fff;font-variant-numeric:tabular-nums;letter-spacing:1px}
-.timer-val.urgent{color:#ff6b6b}
-.section-tag{background:rgba(201,168,76,0.12);border-bottom:0.5px solid rgba(201,168,76,0.3);padding:5px 1rem}
-.section-tag span{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold)}
-.progress-bar{height:2px;background:rgba(255,255,255,0.08);flex-shrink:0}
-.progress-fill{height:100%;background:var(--gold);transition:width 0.3s}
-.q-body{flex:1;overflow-y:auto;padding:1.25rem;-webkit-overflow-scrolling:touch}
-.q-stem{font-size:16px;line-height:1.65;color:var(--text);margin-bottom:1.25rem;font-weight:500}
-.q-stem em{font-style:italic;color:#555}
-.options{display:flex;flex-direction:column;gap:10px}
-.opt-btn{display:flex;align-items:flex-start;gap:12px;padding:14px;border-radius:12px;border:1.5px solid var(--border);background:var(--card);cursor:pointer;text-align:left;width:100%;transition:border-color 0.15s,background 0.15s}
-.opt-btn.selected{border-color:var(--gold);background:#FBF7EE}
-.opt-key{width:30px;height:30px;border-radius:50%;background:var(--bg);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0;color:var(--muted);margin-top:1px}
-.opt-btn.selected .opt-key{background:var(--gold);border-color:var(--gold);color:#fff}
-.opt-text{font-size:15px;line-height:1.45;color:var(--text);padding-top:5px}
-.q-actions{padding:0.9rem 1.25rem;background:var(--card);border-top:0.5px solid var(--border);display:flex;gap:10px;flex-shrink:0}
-.btn-nav{flex:1;padding:14px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;border:1.5px solid var(--border);background:var(--bg);color:var(--dark)}
-.btn-nav:disabled{opacity:0.3}
-.btn-mark{flex:0 0 auto;padding:14px 16px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;border:1.5px solid #8B5CF6;background:#F5F0FF;color:#5B21B6;white-space:nowrap}
-.btn-mark.marked{background:#8B5CF6;color:#fff}
-.btn-next{flex:1;padding:14px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;border:none;background:var(--dark);color:#fff}
-
-/* PALETTE BUTTON */
-.palette-fab{position:fixed;bottom:84px;right:16px;width:46px;height:46px;border-radius:50%;background:var(--dark);border:2px solid var(--gold);color:#fff;font-size:11px;font-weight:800;cursor:pointer;display:none;align-items:center;justify-content:center;z-index:50;letter-spacing:0}
-
-/* PALETTE DRAWER */
-.palette-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:99}
-.palette-overlay.show{display:block}
-.palette-drawer{position:fixed;bottom:0;left:0;right:0;max-width:480px;margin:0 auto;background:var(--card);border-radius:20px 20px 0 0;border-top:0.5px solid var(--border);padding:1rem;transform:translateY(100%);transition:transform 0.3s;z-index:100;max-height:65vh;overflow-y:auto}
-.palette-drawer.open{transform:translateY(0)}
-.palette-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem}
-.palette-hdr h3{font-size:14px;font-weight:700}
-.palette-close{background:var(--bg);border:none;border-radius:8px;padding:6px 14px;font-size:13px;cursor:pointer;color:var(--muted)}
-.palette-legend{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:12px}
-.legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted)}
-.legend-dot{width:10px;height:10px;border-radius:50%}
-.palette-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
-.p-btn{aspect-ratio:1;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;border:1.5px solid var(--border);background:var(--bg);color:var(--muted);display:flex;align-items:center;justify-content:center}
-.p-btn.answered{background:var(--green);border-color:var(--green);color:#fff}
-.p-btn.marked-p{background:#8B5CF6;border-color:#8B5CF6;color:#fff}
-.p-btn.active{border-color:var(--gold);color:var(--gold)}
-
-/* CONFIRM OVERLAY */
-.confirm-wrap{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;align-items:center;justify-content:center;padding:1.5rem}
-.confirm-wrap.show{display:flex}
-.confirm-card{background:var(--card);border-radius:20px;padding:1.75rem;width:100%;max-width:360px}
-.confirm-card h3{font-size:17px;font-weight:800;margin-bottom:8px}
-.confirm-card p{font-size:14px;color:var(--muted);line-height:1.55;margin-bottom:1.25rem}
-.confirm-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:1.5rem}
-.cstat{background:var(--bg);border-radius:10px;padding:10px;text-align:center}
-.cstat-num{font-size:22px;font-weight:800}
-.cstat-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-top:2px}
-.confirm-btns{display:flex;gap:10px}
-.btn-cancel{flex:1;padding:14px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;border:1.5px solid var(--border);background:var(--bg);color:var(--dark)}
-.btn-confirm{flex:1;padding:14px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;border:none;background:var(--dark);color:#fff}
-
-/* SUBMITTING */
-#submitting-screen{display:none;align-items:center;justify-content:center;min-height:100vh;flex-direction:column;gap:1rem;padding:2rem;text-align:center}
-.spinner{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin 0.8s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.submitting-text{font-size:16px;font-weight:600;color:var(--dark)}
-.submitting-sub{font-size:13px;color:var(--muted)}
-
-/* RESULTS */
-#results-screen{display:none;padding:1.5rem 1.25rem 4rem}
-.results-hero{background:var(--dark);border-radius:16px;padding:1.75rem;text-align:center;margin-bottom:1.25rem}
-.results-label{font-size:10px;color:var(--gold);letter-spacing:2.5px;text-transform:uppercase}
-.results-score{font-size:56px;font-weight:900;color:#fff;line-height:1;margin:8px 0 4px}
-.results-max{font-size:13px;color:rgba(255,255,255,0.45)}
-.results-name{font-size:14px;color:rgba(255,255,255,0.75);margin-top:10px}
-.results-batch{font-size:12px;color:rgba(255,255,255,0.45);margin-top:3px}
-.stats-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:1.25rem}
-.stat-card{background:var(--card);border-radius:12px;padding:1rem;text-align:center;border:0.5px solid var(--border)}
-.stat-num{font-size:26px;font-weight:800}
-.stat-num.sg{color:var(--green)}.stat-num.sr{color:var(--red)}.stat-num.sm{color:var(--muted)}
-.stat-label{font-size:10px;color:var(--muted);margin-top:3px;text-transform:uppercase;letter-spacing:0.5px}
-.sheet-notice{background:#EAF7EF;border:0.5px solid #A8D5B5;border-radius:10px;padding:0.9rem 1rem;font-size:13px;color:#1E5631;margin-bottom:1.25rem;text-align:center}
-.sheet-notice.error{background:#FDECEC;border-color:#F5A0A0;color:#7B1E1E}
-.review-section h3{font-size:14px;font-weight:700;margin-bottom:12px}
-.review-item{background:var(--card);border-radius:12px;padding:1rem;margin-bottom:10px;border:0.5px solid var(--border)}
-.review-meta{display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap}
-.review-badge{font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px}
-.b-correct{background:#EAF7EF;color:var(--green)}.b-wrong{background:#FDECEC;color:var(--red)}.b-skip{background:#F3F4F6;color:var(--muted)}
-.review-q{font-size:13px;color:var(--text);line-height:1.5;margin-bottom:6px}
-.review-ans{font-size:12px;color:var(--muted);line-height:1.7}
-.ans-correct{color:var(--green);font-weight:700}.ans-wrong{color:var(--red);font-weight:700}
+@media (max-width:768px){#paletteOverlay.mobile-open{display:flex;}}
 </style>
 </head>
 <body>
-<div id="app">
 
-<!-- LOGIN -->
-<div id="login-screen">
-  <div class="brand-header">
-    <div class="brand-logo">Road to IIM</div>
-    <div class="brand-title">Verbal Ability Test</div>
-    <div class="brand-sub">Paper 11 &middot; Vocabulary &middot; 45 Questions</div>
+<div id="loginScreen">
+<div class="login-box">
+  <h1>Road to IIM</h1>
+  <p>Test 11 &nbsp;&middot;&nbsp; Vocabulary & Word Usage &nbsp;&middot;&nbsp; 45 Questions &nbsp;&middot;&nbsp; 30 Minutes</p>
+  <label>Full Name</label>
+  <input type="text" id="inputName" placeholder="Your full name" autocomplete="off">
+  <label>IMS PIN</label>
+  <input type="text" id="inputPin" placeholder="STU or IMS + 10 digits" autocomplete="off">
+  <label>Batch</label>
+  <select id="inputBatch">
+    <option value="">-- Select batch --</option>
+    <optgroup label="Classroom">
+      <option>A2701</option><option>A2702</option><option>A2703</option>
+      <option>A2704</option><option>A2705</option><option>A2706</option>
+      <option>A2707</option><option>A2708</option><option>A2709</option>
+      <option>A2710</option><option>A2711</option><option>A2712</option>
+    </optgroup>
+    <optgroup label="School"><option>Zebar</option></optgroup>
+    <optgroup label="Online">
+      <option>27E101</option><option>27E102</option><option>27E103</option>
+      <option>27E104</option><option>27E105</option>
+    </optgroup>
+    <optgroup label="Admin"><option>Admin</option></optgroup>
+  </select>
+  <div id="loginErr" style="display:none;margin-top:10px;color:var(--red);font-size:.83rem;"></div>
+  <button id="startBtn" onclick="startTest()">Begin Test</button>
+</div>
+</div>
+
+<div id="testScreen">
+  <div id="topBar">
+    <span class="logo">Road to IIM &middot; Test 11</span>
+    <div id="timerDisplay">30:00</div>
   </div>
-  <div class="login-card">
-    <h2>Student Details</h2>
-    <div class="field"><label>Full Name</label><input type="text" id="inp-name" placeholder="e.g. Aryan Shah" autocomplete="off" autocorrect="off"></div>
-    <div class="field"><label>IMS PIN</label><input type="text" id="inp-pin" placeholder="e.g. IMS20250001" autocomplete="off" autocorrect="off" inputmode="text"></div>
-    <div class="field">
-      <label>Batch</label>
-      <div class="select-wrap">
-        <select id="inp-batch">
-          <option value="">— Select your batch —</option>
-          <option>A2701</option><option>A2702</option><option>A2703</option>
-          <option>A2704</option><option>A2705</option><option>A2706</option>
-          <option>A2707</option><option>A2708</option><option>A2709</option>
-          <option>A2710</option><option>A2711</option><option>A2712</option>
-          <option>A2713</option><option>A2714</option><option>A2715</option>
-          <option>Zebar</option>
-          <option>27E101</option><option>27E102</option><option>27E103</option>
-          <option>27E104</option><option>27E105</option>
-        </select>
+  <div id="progressBar"><div id="progressFill" style="width:0%"></div></div>
+  <div id="mainLayout">
+    <div id="questionArea">
+      <div id="sectionTag"></div>
+      <div id="questionNumber"></div>
+      <div id="questionStem"></div>
+      <ul class="options-list" id="optionsList"></ul>
+    </div>
+  </div>
+  <div id="paletteOverlay">
+    <div id="palettePanel">
+      <div style="color:var(--gold);font-weight:700;font-size:.85rem;margin-bottom:10px;">Questions</div>
+      <div id="paletteGrid"></div>
+      <div class="pal-legend">
+        <span style="background:var(--green)"></span>Answered &nbsp;
+        <span style="background:var(--purple)"></span>Marked &nbsp;
+        <span style="background:#0d1b2a;border:1px solid #1e3a5a"></span>Unvisited
       </div>
     </div>
-    <div class="test-meta">
-      <div class="meta-item"><span class="meta-label">Questions</span><span class="meta-val">45</span></div>
-      <div class="meta-item"><span class="meta-label">Duration</span><span class="meta-val">50 mins</span></div>
-      <div class="meta-item"><span class="meta-label">Correct</span><span class="meta-val">+4</span></div>
-      <div class="meta-item"><span class="meta-label">Wrong</span><span class="meta-val">&minus;1</span></div>
-    </div>
-    <button class="btn-start" onclick="startTest()">Begin Test &rarr;</button>
+  </div>
+  <div id="navBar">
+    <button class="nav-btn" onclick="navigate(-1)">Prev</button>
+    <button class="nav-btn" onclick="togglePalette()">Questions</button>
+    <button class="nav-btn" onclick="markForReview()">Mark</button>
+    <button class="nav-btn" onclick="clearAnswer()">Clear</button>
+    <button class="nav-btn" onclick="navigate(1)">Next</button>
+    <button class="nav-btn" id="submitBtn" onclick="confirmSubmit()">Submit</button>
   </div>
 </div>
 
-<!-- TEST -->
-<div id="test-screen">
-  <div class="test-topbar">
-    <div class="topbar-left">
-      <span class="topbar-brand">Road to IIM</span>
-      <span class="topbar-qnum" id="qnum-label">Q1 of 45</span>
+<div id="resultsScreen">
+  <div style="background:var(--navy2);border-bottom:1px solid #1e3a5a;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;">
+    <span style="color:var(--gold);font-weight:700;">Road to IIM &middot; Test 11 &mdash; Results</span>
+  </div>
+  <div style="padding:28px 32px;">
+    <div class="score-hero" id="scoreHero"></div>
+    <div id="sheet-notice"></div>
+    <div class="stats-grid" id="statsGrid"></div>
+    <div style="text-align:center;margin-bottom:24px;">
+      <button class="result-btn gold" onclick="location.href='road_to_iim_tracker_v2.html'">Go to Tracker</button>
+      <button class="result-btn ghost" onclick="location.href='https://sahilkanetkar-collab.github.io/Road-to-IIM/'">All Tests</button>
+      <button class="result-btn ghost" onclick="generatePDF()">Download PDF</button>
     </div>
-    <div class="timer-box">
-      <div class="timer-label">Time Left</div>
-      <div class="timer-val" id="timer">50:00</div>
+    <div class="misses-box">
+      <h3>Vocabulary Misses</h3>
+      <textarea id="missesText" readonly></textarea>
+      <button class="copy-btn" onclick="copyMisses(event)">Copy Misses</button>
     </div>
-  </div>
-  <div class="section-tag"><span id="section-tag-text">Fill in the Blanks</span></div>
-  <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:2%"></div></div>
-  <div class="q-body">
-    <div class="q-stem" id="q-stem"></div>
-    <div class="options" id="options"></div>
-  </div>
-  <div class="q-actions">
-    <button class="btn-nav" id="btn-prev" onclick="prevQ()" disabled>&#8592; Prev</button>
-    <button class="btn-mark" id="btn-mark" onclick="toggleMark()">&#9734; Mark</button>
-    <button class="btn-next" id="btn-next" onclick="nextOrSubmit()">Next &#8594;</button>
-  </div>
-</div>
-
-<!-- PALETTE FAB -->
-<button class="palette-fab" id="palette-fab" onclick="openPalette()" aria-label="Question palette">&#9632;&#9632;<br>&#9632;&#9632;</button>
-
-<!-- PALETTE -->
-<div class="palette-overlay" id="palette-overlay" onclick="closePalette()"></div>
-<div class="palette-drawer" id="palette-drawer">
-  <div class="palette-hdr">
-    <h3>Question Palette</h3>
-    <button class="palette-close" onclick="closePalette()">Close</button>
-  </div>
-  <div class="palette-legend">
-    <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>Answered</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#8B5CF6"></div>Marked</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#ddd"></div>Not visited</div>
-  </div>
-  <div class="palette-grid" id="palette-grid"></div>
-</div>
-
-<!-- CONFIRM -->
-<div class="confirm-wrap" id="confirm-wrap">
-  <div class="confirm-card">
-    <h3>Submit Test?</h3>
-    <p id="confirm-msg">You have unanswered questions. Submit anyway?</p>
-    <div class="confirm-stats">
-      <div class="cstat"><div class="cstat-num" style="color:var(--green)" id="c-ans">0</div><div class="cstat-lbl">Answered</div></div>
-      <div class="cstat"><div class="cstat-num" style="color:#8B5CF6" id="c-mark">0</div><div class="cstat-lbl">Marked</div></div>
-      <div class="cstat"><div class="cstat-num" style="color:var(--muted)" id="c-skip">0</div><div class="cstat-lbl">Skipped</div></div>
-    </div>
-    <div class="confirm-btns">
-      <button class="btn-cancel" onclick="closeConfirm()">Go Back</button>
-      <button class="btn-confirm" onclick="doSubmit()">Submit</button>
-    </div>
-  </div>
-</div>
-
-<!-- SUBMITTING -->
-<div id="submitting-screen">
-  <div class="spinner"></div>
-  <div class="submitting-text">Submitting your test...</div>
-  <div class="submitting-sub">Please do not close this page</div>
-</div>
-
-<!-- RESULTS -->
-<div id="results-screen">
-  <div class="results-hero">
-    <div class="results-label">Test Complete &mdash; Paper 11</div>
-    <div class="results-score" id="r-score">0</div>
-    <div class="results-max">out of 180 marks</div>
-    <div class="results-name" id="r-name"></div>
-    <div class="results-batch" id="r-batch"></div>
-  </div>
-  <div class="stats-grid">
-    <div class="stat-card"><div class="stat-num sg" id="r-correct">0</div><div class="stat-label">Correct</div></div>
-    <div class="stat-card"><div class="stat-num sr" id="r-wrong">0</div><div class="stat-label">Wrong</div></div>
-    <div class="stat-card"><div class="stat-num sm" id="r-skip">0</div><div class="stat-label">Skipped</div></div>
-  </div>
-  <div class="sheet-notice" id="sheet-notice"></div>
-  <div class="review-section">
-    <h3>Question Review</h3>
+    <div id="retrySection"></div>
+    <h3 style="color:var(--gold);margin:24px 0 12px;">Review All Questions</h3>
     <div id="review-list"></div>
   </div>
 </div>
 
-</div><!-- /app -->
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script>
-const SHEET_URL = "https://script.google.com/macros/s/AKfycbx5Ojm_zp4LfsMeelx5e06KNjVH1wfsXdV0keS4407m4FO1HU4EpVb7GKj-ibAsxnspeA/exec";
-const TEST_NAME = "Road to IIM Paper 11";
-const TOTAL_SECS = 50 * 60;
+const APPS_SCRIPT_URL="https://script.google.com/macros/s/AKfycbwGGxswx4hcBUFiT0QJIglowhKcJCv47MOR5LKBv9sILl-evsgZeKCms5y6s5zEXOUo6Q/exec";
+const TIMER_DURATION=30;
+const ADMIN_PINS=['IMS1111111111','IMS2222222222','IMS3333333333','IMS4444444444','IMS5555555555'];
 
 const QUESTIONS = [
-  {tag:"Fill in the Blanks",stem:"The inspector _______ the records for evidence of fraud; every ledger, every receipt, was examined with forensic care.",opts:["Scoured","Scrutinised","Examined","Investigated"],ans:0},
-  {tag:"Fill in the Blanks",stem:"The young analyst was _______ with unsolicited advice from senior colleagues; every conversation became an unwanted tutorial.",opts:["Burdened","Inundated","Presented","Overwhelmed"],ans:1},
-  {tag:"Fill in the Blanks",stem:"The committee chair _______ the dissent before it could gain momentum; the proposal was quietly withdrawn before the vote.",opts:["Curtailed","Stifled","Squelched","Suppressed"],ans:2},
-  {tag:"Fill in the Blanks",stem:"The regime's propaganda was _______ with half-truths; every official statement contained just enough fact to seem credible.",opts:["Riddled","Rife","Replete","Laced"],ans:3},
-  {tag:"Fill in the Blanks",stem:"The diplomat was _______ about her government's position; she neither confirmed nor denied the reports circulating in the press.",opts:["Equivocal","Reticent","Cagey","Guarded"],ans:0},
-  {tag:"Fill in the Blanks",stem:"The retired general remained _______ under cross-examination; not once did his composure waver despite three hours of questioning.",opts:["Stoic","Impassive","Unruffled","Phlegmatic"],ans:0},
-  {tag:"Fill in the Blanks",stem:"The auditor was _______ in pointing out the firm's accounting irregularities; she named every discrepancy before the board could frame a rebuttal.",opts:["Candid","Forthright","Frank","Transparent"],ans:1},
-  {tag:"Fill in the Blanks",stem:"The billionaire's lifestyle was a _______ of excess; private jets, art collections, and estates on three continents.",opts:["Portrait","Surfeit","Display","Testament"],ans:1},
-  {tag:"Fill in the Blanks",stem:"The council's decision was _______ with the wishes of the residents; they had voted overwhelmingly against the development.",opts:["At odds","Inconsistent","Out of keeping","At variance"],ans:3},
-  {tag:"Fill in the Blanks",stem:"She had a tendency _______ magnify minor slights into profound grievances, exhausting the patience of those around her.",opts:["of","towards","for","to"],ans:3},
-  {tag:"Fill in the Blanks",stem:"The journalist _______ through three years of court documents, looking for the single line that would break the story open.",opts:["Trawled","Searched","Scoured","Combed"],ans:2},
-  {tag:"Fill in the Blanks",stem:"The editor's feedback was _______ in its criticism; every sentence and word choice was subjected to withering scrutiny.",opts:["Scathing","Pointed","Damning","Trenchant"],ans:3},
-  {tag:"Fill in the Blanks",stem:"The opposition leader was _______ for her decades of resistance; statues were proposed in three cities before she had even retired.",opts:["Celebrated","Acclaimed","Lauded","Commended"],ans:2},
-  {tag:"Fill in the Blanks",stem:"The verdict was _______ by the defence team; they filed an appeal within hours of the judgment being read.",opts:["Contested","Challenged","Disputed","Questioned"],ans:0},
-  {tag:"Fill in the Blanks",stem:"The new regulation was _______ with existing case law; legal commentators predicted years of litigation over the contradictions.",opts:["In conflict","At odds","Inconsistent","Out of step"],ans:3},
-  {tag:"Fill in the Blanks",stem:"The researcher was _______ about the limitations of her sample size; she flagged the caveat in the abstract itself.",opts:["Frank","Candid","Transparent","Forthright"],ans:2},
-  {tag:"Fill in the Blanks",stem:"The recovering economy was _______ in debt after the banking collapse; a decade of austerity followed before growth returned.",opts:["Buried","Drowning","Mired","Swamped"],ans:2},
-  {tag:"Fill in the Blanks",stem:"The protestors were _______ by riot police before their march could reach the parliament building.",opts:["Squelched","Dispersed","Contained","Suppressed"],ans:0},
-  {tag:"Word in Context",stem:"The LACHRYMOSE farewell speech drew tears from even the most stoic members of the audience; few had expected such raw emotion from the departing chairman.",opts:["Unexpectedly emotional and moving","Excessively long and meandering","Marked by sorrow and weeping","Delivered with quiet dignity"],ans:2},
-  {tag:"Word in Context",stem:"The SANGUINE forecast issued by the treasury proved embarrassing when growth came in at half the projected figure three quarters later.",opts:["Overly optimistic and confident","Based on incomplete data","Officially endorsed by the government","Cautiously positive about prospects"],ans:0},
-  {tag:"Word in Context",stem:"The RECONDITE nature of the manuscript meant that only three scholars in the country were qualified to authenticate it.",opts:["Extremely rare and therefore valuable","Obscure and known only to specialists","Damaged beyond ordinary repair","Written in a long-dead dialect"],ans:1},
-  {tag:"Word in Context",stem:"His PUSILLANIMOUS response to the allegations — a carefully worded non-denial issued through a spokesperson — satisfied no one.",opts:["Diplomatically cautious given the circumstances","Cowardly and lacking moral courage","Legally advised and therefore limited","Deliberately vague to preserve options"],ans:1},
-  {tag:"Word in Context",stem:"The TENDENTIOUS documentary was praised by activists and condemned by industry groups, each seeing in it exactly what they expected.",opts:["Factually inaccurate in its central claims","Deliberately one-sided to promote a cause","Provocative without being informative","Sensationalist in its editing choices"],ans:1},
-  {tag:"Word in Context",stem:"The NUGATORY amendment proposed by the backbencher was dismissed without debate; the Speaker ruled it added nothing of substance to the bill.",opts:["Procedurally irregular and therefore inadmissible","Too technical for general parliamentary debate","Redundant given existing legislation","Of no value or importance"],ans:3},
-  {tag:"Word in Context",stem:"The EQUANIMITY with which she received both the prize and, two years later, the scandal, unnerved those who had expected visible distress.",opts:["Practised indifference to public opinion","An unwillingness to engage with criticism","Mental calmness under difficult circumstances","Outward composure masking private turmoil"],ans:2},
-  {tag:"Word in Context",stem:"The LABYRINTHINE procurement process deterred smaller suppliers from bidding; only firms with dedicated compliance teams could navigate the paperwork.",opts:["Unnecessarily expensive for smaller organisations","Slow due to bureaucratic inefficiency","Deliberately exclusionary by design","Excessively complex and difficult to navigate"],ans:3},
-  {tag:"Word in Context",stem:"The VERBOSE briefing document, running to forty pages for a decision that required one, became an internal joke about the department's inefficiency.",opts:["Using far more words than necessary","Poorly structured and hard to follow","Written without adequate research","Circulated too late to be of use"],ans:0},
-  {tag:"Odd One Out",stem:"Which word does NOT belong with the others?",opts:["Cupidity","Rapacity","Avarice","Equanimity"],ans:3},
-  {tag:"Odd One Out",stem:"Which word does NOT belong with the others?",opts:["Tenacious","Pusillanimous","Resolute","Steadfast"],ans:1},
-  {tag:"Odd One Out",stem:"Which word does NOT belong with the others?",opts:["Equivocal","Candid","Forthright","Transparent"],ans:0},
-  {tag:"Odd One Out",stem:"Which word does NOT belong with the others?",opts:["Lachrymose","Sanguine","Lugubrious","Doleful"],ans:1},
-  {tag:"Odd One Out",stem:"Which word does NOT belong with the others?",opts:["Laconic","Verbose","Loquacious","Garrulous"],ans:0},
-  {tag:"Odd One Out",stem:"Which word does NOT belong with the others?",opts:["Recondite","Esoteric","Abstruse","Pellucid"],ans:3},
-  {tag:"Odd One Out",stem:"Which word does NOT belong with the others?",opts:["Enervate","Debilitate","Fortify","Sap"],ans:2},
-  {tag:"Odd One Out",stem:"Which word does NOT belong with the others?",opts:["Tendentious","Polemical","Partisan","Dispassionate"],ans:3},
-  {tag:"Analogy Pairs",stem:"SCOUR : SEARCH",opts:["Scrutinise : Examine","Glance : Read","Browse : Devour","Skim : Study"],ans:0},
-  {tag:"Analogy Pairs",stem:"SURFEIT : SCARCITY",opts:["Abundance : Dearth","Profusion : Lack","Excess : Moderation","Glut : Shortage"],ans:3},
-  {tag:"Analogy Pairs",stem:"DEMAGOGUE : RHETORIC",opts:["Pedant : Precision","Charlatan : Deception","Tyrant : Cruelty","Sycophant : Flattery"],ans:1},
-  {tag:"Analogy Pairs",stem:"ELEGY : GRIEF",opts:["Diatribe : Contempt","Satire : Ridicule","Libel : Malice","Eulogy : Admiration"],ans:1},
-  {tag:"Analogy Pairs",stem:"RECONDITE : ACCESSIBILITY",opts:["Verbose : Brevity","Tendentious : Balance","Pusillanimous : Courage","Nugatory : Significance"],ans:3},
-  {tag:"Analogy Pairs",stem:"MOLLIFY : ANGER",opts:["Squelch : Dissent","Enervate : Vigour","Fortify : Weakness","Exacerbate : Calm"],ans:0},
-  {tag:"One Word Substitution",stem:"An overabundance of something to the point where it becomes disagreeable or causes satiation.",opts:["Surfeit","Profusion","Plethora","Glut"],ans:0},
-  {tag:"One Word Substitution",stem:"The quality of being proactively open and direct, especially in stating unpleasant truths without being asked.",opts:["Candour","Transparency","Probity","Forthrightness"],ans:3},
-  {tag:"One Word Substitution",stem:"A person who uses excessive flattery and agreement to gain favour with those in power.",opts:["Charlatan","Demagogue","Sycophant","Sybarite"],ans:2},
-  {tag:"One Word Substitution",stem:"Mental calmness and composure, especially when facing difficulty or provocation.",opts:["Stoicism","Equanimity","Sang-froid","Phlegm"],ans:1},
+  {section:"Fill in the Blanks",stem:"The inspector _______ the records for evidence of fraud; every ledger, every receipt, was examined with forensic care.",opts:["Scoured","Scrutinised","Examined","Investigated"],ans:0,exp:"Correct Answer: A. Scoured is the most precise fit for the context. Scrutinised; Examined; Investigated are either too broad, imprecise in register, or semantically off."},
+  {section:"Fill in the Blanks",stem:"The young analyst was _______ with unsolicited advice from senior colleagues; every conversation became an unwanted tutorial.",opts:["Burdened","Inundated","Presented","Overwhelmed"],ans:1,exp:"Correct Answer: B. Inundated is the most precise fit for the context. Burdened; Presented; Overwhelmed are either too broad, imprecise in register, or semantically off."},
+  {section:"Fill in the Blanks",stem:"The committee chair _______ the dissent before it could gain momentum; the proposal was quietly withdrawn before the vote.",opts:["Curtailed","Stifled","Squelched","Suppressed"],ans:2,exp:"Correct Answer: C. Squelched is the most precise fit for the context. Curtailed; Stifled; Suppressed are either too broad, imprecise in register, or semantically off."},
+  {section:"Fill in the Blanks",stem:"The regime's propaganda was _______ with half-truths; every official statement contained just enough fact to seem credible.",opts:["Riddled","Rife","Replete","Laced"],ans:3,exp:"Correct Answer: D. Laced is the most precise fit for the context. Riddled; Rife; Replete are either too broad, imprecise in register, or semantically off."},
+  {section:"Fill in the Blanks",stem:"The diplomat was _______ about her government's position; she neither confirmed nor denied the reports circulating in the press.",opts:["Equivocal","Reticent","Cagey","Guarded"],ans:0,exp:"Correct Answer: A. Equivocal is the most precise fit for the context. Reticent; Cagey; Guarded are either too broad, imprecise in register, or semantically off."},
+  {section:"Fill in the Blanks",stem:"The retired general remained _______ under cross-examination; not once did his composure waver despite three hours of questioning.",opts:["Stoic","Impassive","Unruffled","Phlegmatic"],ans:0,exp:"Correct Answer: A. Stoic is the most precise fit for the context. Impassive; Unruffled; Phlegmatic are either too broad, imprecise in register, or semantically off."},
+  {section:"Fill in the Blanks",stem:"The auditor was _______ in pointing out the firm's accounting irregularities; she named every discrepancy before the board could frame a rebuttal.",opts:["Candid","Forthright","Frank","Transparent"],ans:1,exp:"Correct Answer: B. Forthright is the most precise fit for the context. Candid; Frank; Transparent are either too broad, imprecise in register, or semantically off."},
+  {section:"Fill in the Blanks",stem:"The billionaire's lifestyle was a _______ of excess; private jets, art collections, and estates on three continents.",opts:["Portrait","Surfeit","Display","Testament"],ans:1,exp:"Correct Answer: B. Surfeit is the most precise fit for the context. Portrait; Display; Testament are either too broad, imprecise in register, or semantically off."},
+  {section:"Fill in the Blanks",stem:"The council's decision was _______ with the wishes of the residents; they had voted overwhelmingly against the development.",opts:["At odds","Inconsistent","Out of keeping","At variance"],ans:3,exp:"Correct Answer: D. At variance is the most precise fit for the context. At odds; Inconsistent; Out of keeping are either too broad, imprecise in register, or semantically off."},
+  {section:"Fill in the Blanks",stem:"She had a tendency _______ magnify minor slights into profound grievances, exhausting the patience of those around her.",opts:["of","towards","for","to"],ans:3,exp:"Correct Answer: D. to is the most precise fit for the context. of; towards; for are either too broad, imprecise in register, or semantically off."},
+  {section:"Fill in the Blanks",stem:"The journalist _______ through three years of court documents, looking for the single line that would break the story open.",opts:["Trawled","Searched","Scoured","Combed"],ans:2,exp:"Correct Answer: C. Scoured is the most precise fit for the context. Trawled; Searched; Combed are either too broad, imprecise in register, or semantically off."},
+  {section:"Fill in the Blanks",stem:"The editor's feedback was _______ in its criticism; every sentence and word choice was subjected to withering scrutiny.",opts:["Scathing","Pointed","Damning","Trenchant"],ans:3,exp:"Correct Answer: D. Trenchant is the most precise fit for the context. Scathing; Pointed; Damning are either too broad, imprecise in register, or semantically off."},
+  {section:"Fill in the Blanks",stem:"The opposition leader was _______ for her decades of resistance; statues were proposed in three cities before she had even retired.",opts:["Celebrated","Acclaimed","Lauded","Commended"],ans:2,exp:"Correct Answer: C. Lauded is the most precise fit for the context. Celebrated; Acclaimed; Commended are either too broad, imprecise in register, or semantically off."},
+  {section:"Fill in the Blanks",stem:"The verdict was _______ by the defence team; they filed an appeal within hours of the judgment being read.",opts:["Contested","Challenged","Disputed","Questioned"],ans:0,exp:"Correct Answer: A. Contested is the most precise fit for the context. Challenged; Disputed; Questioned are either too broad, imprecise in register, or semantically off."},
+  {section:"Fill in the Blanks",stem:"The new regulation was _______ with existing case law; legal commentators predicted years of litigation over the contradictions.",opts:["In conflict","At odds","Inconsistent","Out of step"],ans:3,exp:"Correct Answer: D. Out of step is the most precise fit for the context. In conflict; At odds; Inconsistent are either too broad, imprecise in register, or semantically off."},
+  {section:"Fill in the Blanks",stem:"The researcher was _______ about the limitations of her sample size; she flagged the caveat in the abstract itself.",opts:["Frank","Candid","Transparent","Forthright"],ans:2,exp:"Correct Answer: C. Transparent is the most precise fit for the context. Frank; Candid; Forthright are either too broad, imprecise in register, or semantically off."},
+  {section:"Fill in the Blanks",stem:"The recovering economy was _______ in debt after the banking collapse; a decade of austerity followed before growth returned.",opts:["Buried","Drowning","Mired","Swamped"],ans:2,exp:"Correct Answer: C. Mired is the most precise fit for the context. Buried; Drowning; Swamped are either too broad, imprecise in register, or semantically off."},
+  {section:"Fill in the Blanks",stem:"The protestors were _______ by riot police before their march could reach the parliament building.",opts:["Squelched","Dispersed","Contained","Suppressed"],ans:0,exp:"Correct Answer: A. Squelched is the most precise fit for the context. Dispersed; Contained; Suppressed are either too broad, imprecise in register, or semantically off."},
+  {section:"Word in Context",stem:"The LACHRYMOSE farewell speech drew tears from even the most stoic members of the audience; few had expected such raw emotion from the departing chairman.",opts:["Unexpectedly emotional and moving","Excessively long and meandering","Marked by sorrow and weeping","Delivered with quiet dignity"],ans:2,exp:"Correct Answer: C. The passage context signals marked by sorrow and weeping. Unexpectedly emotional and moving; Excessively long and meandering; Delivered with quiet dignity each miss the precise shade of meaning required."},
+  {section:"Word in Context",stem:"The SANGUINE forecast issued by the treasury proved embarrassing when growth came in at half the projected figure three quarters later.",opts:["Overly optimistic and confident","Based on incomplete data","Officially endorsed by the government","Cautiously positive about prospects"],ans:0,exp:"Correct Answer: A. The passage context signals overly optimistic and confident. Based on incomplete data; Officially endorsed by the government; Cautiously positive about prospects each miss the precise shade of meaning required."},
+  {section:"Word in Context",stem:"The RECONDITE nature of the manuscript meant that only three scholars in the country were qualified to authenticate it.",opts:["Extremely rare and therefore valuable","Obscure and known only to specialists","Damaged beyond ordinary repair","Written in a long-dead dialect"],ans:1,exp:"Correct Answer: B. The passage context signals obscure and known only to specialists. Extremely rare and therefore valuable; Damaged beyond ordinary repair; Written in a long-dead dialect each miss the precise shade of meaning required."},
+  {section:"Word in Context",stem:"His PUSILLANIMOUS response to the allegations — a carefully worded non-denial issued through a spokesperson — satisfied no one.",opts:["Diplomatically cautious given the circumstances","Legally advised and therefore limited","Cowardly and lacking moral courage","Deliberately vague to preserve options"],ans:2,exp:"Correct Answer: C. The passage context signals cowardly and lacking moral courage. Diplomatically cautious given the circumstances; Legally advised and therefore limited; Deliberately vague to preserve options each miss the precise shade of meaning required."},
+  {section:"Word in Context",stem:"The TENDENTIOUS documentary was praised by activists and condemned by industry groups, each seeing in it exactly what they expected.",opts:["Factually inaccurate in its central claims","Deliberately one-sided to promote a cause","Provocative without being informative","Sensationalist in its editing choices"],ans:1,exp:"Correct Answer: B. The passage context signals deliberately one-sided to promote a cause. Factually inaccurate in its central claims; Provocative without being informative; Sensationalist in its editing choices each miss the precise shade of meaning required."},
+  {section:"Word in Context",stem:"The NUGATORY amendment proposed by the backbencher was dismissed without debate; the Speaker ruled it added nothing of substance to the bill.",opts:["Procedurally irregular and therefore inadmissible","Too technical for general parliamentary debate","Redundant given existing legislation","Of no value or importance"],ans:3,exp:"Correct Answer: D. The passage context signals of no value or importance. Procedurally irregular and therefore inadmissible; Too technical for general parliamentary debate; Redundant given existing legislation each miss the precise shade of meaning required."},
+  {section:"Word in Context",stem:"The EQUANIMITY with which she received both the prize and, two years later, the scandal, unnerved those who had expected visible distress.",opts:["Practised indifference to public opinion","An unwillingness to engage with criticism","Mental calmness under difficult circumstances","Outward composure masking private turmoil"],ans:2,exp:"Correct Answer: C. The passage context signals mental calmness under difficult circumstances. Practised indifference to public opinion; An unwillingness to engage with criticism; Outward composure masking private turmoil each miss the precise shade of meaning required."},
+  {section:"Word in Context",stem:"The LABYRINTHINE procurement process deterred smaller suppliers from bidding; only firms with dedicated compliance teams could navigate the paperwork.",opts:["Unnecessarily expensive for smaller organisations","Slow due to bureaucratic inefficiency","Deliberately exclusionary by design","Excessively complex and difficult to navigate"],ans:3,exp:"Correct Answer: D. The passage context signals excessively complex and difficult to navigate. Unnecessarily expensive for smaller organisations; Slow due to bureaucratic inefficiency; Deliberately exclusionary by design each miss the precise shade of meaning required."},
+  {section:"Word in Context",stem:"The VERBOSE briefing document, running to forty pages for a decision that required one, became an internal joke about the department's inefficiency.",opts:["Using far more words than necessary","Poorly structured and hard to follow","Written without adequate research","Circulated too late to be of use"],ans:0,exp:"Correct Answer: A. The passage context signals using far more words than necessary. Poorly structured and hard to follow; Written without adequate research; Circulated too late to be of use each miss the precise shade of meaning required."},
+  {section:"Odd One Out",stem:"Which word does NOT belong with the others?",opts:["Cupidity","Rapacity","Avarice","Equanimity"],ans:3,exp:"Correct Answer: D. Equanimity. The other options do not share the same relationship or semantic field."},
+  {section:"Odd One Out",stem:"Which word does NOT belong with the others?",opts:["Tenacious","Pusillanimous","Resolute","Steadfast"],ans:1,exp:"Correct Answer: B. Pusillanimous. The other options do not share the same relationship or semantic field."},
+  {section:"Odd One Out",stem:"Which word does NOT belong with the others?",opts:["Equivocal","Candid","Forthright","Transparent"],ans:0,exp:"Correct Answer: A. Equivocal. The other options do not share the same relationship or semantic field."},
+  {section:"Odd One Out",stem:"Which word does NOT belong with the others?",opts:["Lachrymose","Sanguine","Lugubrious","Doleful"],ans:1,exp:"Correct Answer: B. Sanguine. The other options do not share the same relationship or semantic field."},
+  {section:"Odd One Out",stem:"Which word does NOT belong with the others?",opts:["Laconic","Verbose","Loquacious","Garrulous"],ans:0,exp:"Correct Answer: A. Laconic. The other options do not share the same relationship or semantic field."},
+  {section:"Odd One Out",stem:"Which word does NOT belong with the others?",opts:["Recondite","Esoteric","Abstruse","Pellucid"],ans:3,exp:"Correct Answer: D. Pellucid. The other options do not share the same relationship or semantic field."},
+  {section:"Odd One Out",stem:"Which word does NOT belong with the others?",opts:["Enervate","Debilitate","Fortify","Sap"],ans:2,exp:"Correct Answer: C. Fortify. The other options do not share the same relationship or semantic field."},
+  {section:"Odd One Out",stem:"Which word does NOT belong with the others?",opts:["Tendentious","Polemical","Partisan","Dispassionate"],ans:3,exp:"Correct Answer: D. Dispassionate. The other options do not share the same relationship or semantic field."},
+  {section:"Analogy Pairs",stem:"SCOUR : SEARCH",opts:["Scrutinise : Examine","Glance : Read","Browse : Devour","Skim : Study"],ans:0,exp:"Correct Answer: A. Scrutinise : Examine. The other options do not share the same relationship or semantic field."},
+  {section:"Analogy Pairs",stem:"SURFEIT : SCARCITY",opts:["Abundance : Dearth","Profusion : Lack","Excess : Moderation","Glut : Shortage"],ans:3,exp:"Correct Answer: D. Glut : Shortage. The other options do not share the same relationship or semantic field."},
+  {section:"Analogy Pairs",stem:"DEMAGOGUE : RHETORIC",opts:["Pedant : Precision","Charlatan : Deception","Tyrant : Cruelty","Sycophant : Flattery"],ans:1,exp:"Correct Answer: B. Charlatan : Deception. The other options do not share the same relationship or semantic field."},
+  {section:"Analogy Pairs",stem:"ELEGY : GRIEF",opts:["Diatribe : Contempt","Satire : Ridicule","Libel : Malice","Eulogy : Admiration"],ans:1,exp:"Correct Answer: B. Satire : Ridicule. The other options do not share the same relationship or semantic field."},
+  {section:"Analogy Pairs",stem:"RECONDITE : ACCESSIBILITY",opts:["Verbose : Brevity","Tendentious : Balance","Pusillanimous : Courage","Nugatory : Significance"],ans:3,exp:"Correct Answer: D. Nugatory : Significance. The other options do not share the same relationship or semantic field."},
+  {section:"Analogy Pairs",stem:"MOLLIFY : ANGER",opts:["Squelch : Dissent","Enervate : Vigour","Fortify : Weakness","Exacerbate : Calm"],ans:0,exp:"Correct Answer: A. Squelch : Dissent. The other options do not share the same relationship or semantic field."},
+  {section:"One Word Substitution",stem:"An overabundance of something to the point where it becomes disagreeable or causes satiation.",opts:["Surfeit","Profusion","Plethora","Glut"],ans:0,exp:"Correct Answer: A. Surfeit is the single most precise substitute. The alternatives carry different connotations or registers."},
+  {section:"One Word Substitution",stem:"The quality of being proactively open and direct, especially in stating unpleasant truths without being asked.",opts:["Candour","Transparency","Probity","Forthrightness"],ans:3,exp:"Correct Answer: D. Forthrightness is the single most precise substitute. The alternatives carry different connotations or registers."},
+  {section:"One Word Substitution",stem:"A person who uses excessive flattery and agreement to gain favour with those in power.",opts:["Charlatan","Demagogue","Sycophant","Sybarite"],ans:2,exp:"Correct Answer: C. Sycophant is the single most precise substitute. The alternatives carry different connotations or registers."},
+  {section:"One Word Substitution",stem:"Mental calmness and composure, especially when facing difficulty or provocation.",opts:["Stoicism","Equanimity","Sang-froid","Phlegm"],ans:1,exp:"Correct Answer: B. Equanimity is the single most precise substitute. The alternatives carry different connotations or registers."}
 ];
 
-const S = {
-  cur: 0,
-  answers: new Array(QUESTIONS.length).fill(-1),
-  marked: new Array(QUESTIONS.length).fill(false),
-  secsLeft: TOTAL_SECS,
-  interval: null,
-  name: '', pin: '', batch: '',
-  submitted: false
-};
+let studentName="",studentPin="",studentBatch="";
+let currentQ=0,secondsLeft=TIMER_DURATION*60,timerInterval=null;
+let userAnswers=new Array(45).fill(null);
+let markedForReview=new Array(45).fill(false);
+let testSubmitted=false;
 
-function startTest() {
-  const name = document.getElementById('inp-name').value.trim();
-  const pin = document.getElementById('inp-pin').value.trim();
-  const batch = document.getElementById('inp-batch').value;
-  if (!name) { alert('Please enter your name.'); return; }
-  if (!pin) { alert('Please enter your IMS PIN.'); return; }
-  if (!batch) { alert('Please select your batch.'); return; }
-  S.name = name; S.pin = pin; S.batch = batch;
-  document.getElementById('login-screen').style.display = 'none';
-  document.getElementById('test-screen').style.display = 'flex';
-  document.getElementById('palette-fab').style.display = 'flex';
-  renderQ();
-  buildPalette();
-  S.interval = setInterval(tick, 1000);
+function startTest(){
+  const name=document.getElementById('inputName').value.trim();
+  const pin=document.getElementById('inputPin').value.trim().toUpperCase();
+  const batch=document.getElementById('inputBatch').value;
+  const err=document.getElementById('loginErr');
+  if(!name||!pin||!batch){err.textContent='Please fill in all fields.';err.style.display='block';return;}
+  if(!/^(STU|IMS)\d{10}$/.test(pin)){err.textContent='PIN must be STU or IMS followed by exactly 10 digits.';err.style.display='block';return;}
+  const isAdmin=ADMIN_PINS.includes(pin);
+  if(isAdmin&&batch!=='Admin'){err.textContent='Admin PIN must be used with the Admin batch only.';err.style.display='block';return;}
+  if(!isAdmin&&batch==='Admin'){err.textContent='Only Admin PINs may select the Admin batch.';err.style.display='block';return;}
+  studentName=name;studentPin=pin;studentBatch=batch;
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('testScreen').style.display='block';
+  if(window.innerWidth>768)document.getElementById('paletteOverlay').style.display='flex';
+  else document.getElementById('paletteOverlay').style.display='none';
+  buildPalette();renderQuestion();startTimer();
 }
 
-function tick() {
-  S.secsLeft--;
-  if (S.secsLeft <= 0) { clearInterval(S.interval); doSubmit(); return; }
-  const m = String(Math.floor(S.secsLeft / 60)).padStart(2, '0');
-  const s = String(S.secsLeft % 60).padStart(2, '0');
-  const el = document.getElementById('timer');
-  el.textContent = m + ':' + s;
-  el.className = 'timer-val' + (S.secsLeft <= 60 ? ' urgent' : '');
+function startTimer(){
+  timerInterval=setInterval(()=>{
+    secondsLeft--;
+    const m=String(Math.floor(secondsLeft/60)).padStart(2,'0');
+    const s=String(secondsLeft%60).padStart(2,'0');
+    const el=document.getElementById('timerDisplay');
+    el.textContent=m+':'+s;
+    if(secondsLeft<=300)el.classList.add('urgent');
+    if(secondsLeft<=0){clearInterval(timerInterval);submitTest();}
+  },1000);
 }
 
-function renderQ() {
-  const q = QUESTIONS[S.cur];
-  const i = S.cur;
-  document.getElementById('qnum-label').textContent = 'Q' + (i + 1) + ' of ' + QUESTIONS.length;
-  document.getElementById('section-tag-text').textContent = q.tag;
-  const instructions = {"Analogy Pairs":"Identify the pair that shares the same relationship as the given pair.","One Word Substitution":"Choose the single word that best matches the given description.","Odd One Out":"Choose the word that does not belong with the others.","Word in Context":"Choose the option that best explains the meaning of the capitalised word as used in the sentence."};
-  const instr = instructions[q.tag] || "";
-  const instrHTML = instr ? '<div style="font-size:12px;color:#888;font-style:italic;margin-bottom:10px;line-height:1.5">' + instr + '</div>' : '';
-  document.getElementById('q-stem').innerHTML = instrHTML + 'Q' + (i + 1) + '. ' + q.stem;
-  document.getElementById('progress-fill').style.width = ((i + 1) / QUESTIONS.length * 100) + '%';
-  document.getElementById('btn-prev').disabled = i === 0;
-  const mb = document.getElementById('btn-mark');
-  mb.className = 'btn-mark' + (S.marked[i] ? ' marked' : '');
-  mb.innerHTML = S.marked[i] ? '&#9733; Marked' : '&#9734; Mark';
-  document.getElementById('btn-next').innerHTML = i === QUESTIONS.length - 1 ? 'Submit &#10003;' : 'Next &#8594;';
-  const optDiv = document.getElementById('options');
-  optDiv.innerHTML = '';
-  q.opts.forEach((opt, oi) => {
-    const btn = document.createElement('button');
-    btn.className = 'opt-btn' + (S.answers[i] === oi ? ' selected' : '');
-    btn.innerHTML = '<div class="opt-key">' + String.fromCharCode(65 + oi) + '</div><div class="opt-text">' + opt + '</div>';
-    btn.onclick = () => { S.answers[i] = oi; renderQ(); buildPalette(); };
-    optDiv.appendChild(btn);
+function renderQuestion(){
+  const q=QUESTIONS[currentQ];
+  document.getElementById('sectionTag').textContent=q.section;
+  document.getElementById('questionNumber').textContent='Question '+(currentQ+1)+' of 45';
+  document.getElementById('questionStem').innerHTML=q.stem.replace(/\n/g,'<br>');
+  const ol=document.getElementById('optionsList');
+  ol.innerHTML='';
+  q.opts.forEach((opt,i)=>{
+    const li=document.createElement('li');
+    const btn=document.createElement('button');
+    btn.className='option-btn';
+    if(userAnswers[currentQ]===i)btn.classList.add('selected');
+    if(markedForReview[currentQ])btn.classList.add('marked');
+    btn.innerHTML='<span class="opt-label">'+ ['A','B','C','D'][i]+'</span><span class="opt-text">'+opt+'</span>';
+    btn.onclick=()=>selectAnswer(i);
+    li.appendChild(btn);ol.appendChild(li);
   });
-  buildPalette();
+  document.getElementById('submitBtn').style.display=(currentQ===44)?'block':'none';
+  updatePalette();updateProgress();
 }
 
-function prevQ() { if (S.cur > 0) { S.cur--; renderQ(); } }
+function selectAnswer(idx){userAnswers[currentQ]=idx;renderQuestion();}
+function clearAnswer(){userAnswers[currentQ]=null;renderQuestion();}
+function navigate(dir){const n=currentQ+dir;if(n>=0&&n<45){currentQ=n;renderQuestion();}}
 
-function nextOrSubmit() {
-  if (S.cur < QUESTIONS.length - 1) { S.cur++; renderQ(); }
-  else { showConfirm(); }
+let paletteOpen=window.innerWidth>768;
+function togglePalette(){
+  paletteOpen=!paletteOpen;
+  const mob=window.innerWidth<=768;
+  const ov=document.getElementById('paletteOverlay');
+  const nb=document.getElementById('navBar');
+  const qa=document.getElementById('questionArea');
+  if(mob){ov.classList.toggle('mobile-open',paletteOpen);}
+  else{ov.style.display=paletteOpen?'flex':'none';nb.style.right=paletteOpen?'var(--panel)':'0';qa.style.maxWidth=paletteOpen?'calc(100% - var(--panel))':'100%';}
 }
 
-function toggleMark() { S.marked[S.cur] = !S.marked[S.cur]; renderQ(); }
+function markForReview(){markedForReview[currentQ]=!markedForReview[currentQ];renderQuestion();}
 
-function showConfirm() {
-  const answered = S.answers.filter(a => a !== -1).length;
-  const marked = S.marked.filter(Boolean).length;
-  const skip = QUESTIONS.length - answered;
-  document.getElementById('c-ans').textContent = answered;
-  document.getElementById('c-mark').textContent = marked;
-  document.getElementById('c-skip').textContent = skip;
-  document.getElementById('confirm-msg').textContent = skip > 0
-    ? skip + ' question(s) unanswered. Submit anyway?'
-    : 'All questions answered. Ready to submit?';
-  document.getElementById('confirm-wrap').className = 'confirm-wrap show';
-}
-
-function closeConfirm() { document.getElementById('confirm-wrap').className = 'confirm-wrap'; }
-
-function doSubmit() {
-  if (S.submitted) return;
-  S.submitted = true;
-  clearInterval(S.interval);
-  closeConfirm();
-  document.getElementById('test-screen').style.display = 'none';
-  document.getElementById('palette-fab').style.display = 'none';
-  document.getElementById('submitting-screen').style.display = 'flex';
-  const result = calcResult();
-  sendToSheet(result).then(ok => {
-    document.getElementById('submitting-screen').style.display = 'none';
-    showResults(result, ok);
-  });
-}
-
-function calcResult() {
-  let correct = 0, wrong = 0, skip = 0;
-  QUESTIONS.forEach((q, i) => {
-    if (S.answers[i] === -1) skip++;
-    else if (S.answers[i] === q.ans) correct++;
-    else wrong++;
-  });
-  return { correct, wrong, skip, score: correct * 4 - wrong };
-}
-
-async function sendToSheet(result) {
-  if (!SHEET_URL || SHEET_URL === "PASTE_NEW_APPS_SCRIPT_URL_HERE") return false;
-  const timeTaken = TOTAL_SECS - S.secsLeft;
-  const mm = String(Math.floor(timeTaken / 60)).padStart(2, '0');
-  const ss = String(timeTaken % 60).padStart(2, '0');
-  const payload = {
-    testName: TEST_NAME,
-    name: S.name,
-    pin: S.pin,
-    batch: S.batch,
-    score: result.score,
-    correct: result.correct,
-    wrong: result.wrong,
-    skipped: result.skip,
-    maxMarks: 180,
-    timeTaken: mm + ':' + ss,
-    timestamp: new Date().toLocaleString('en-IN', {timeZone:'Asia/Kolkata'})
-  };
-  try {
-    await fetch(SHEET_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify(payload)
-    });
-    return true;
-  } catch(e) {
-    return false;
-  }
-}
-
-function showResults(result, sheetOk) {
-  document.getElementById('r-score').textContent = result.score;
-  document.getElementById('r-name').textContent = S.name + ' · ' + S.pin;
-  document.getElementById('r-batch').textContent = S.batch;
-  document.getElementById('r-correct').textContent = result.correct;
-  document.getElementById('r-wrong').textContent = result.wrong;
-  document.getElementById('r-skip').textContent = result.skip;
-  const notice = document.getElementById('sheet-notice');
-  if (!SHEET_URL || SHEET_URL === "PASTE_NEW_APPS_SCRIPT_URL_HERE") {
-    notice.className = 'sheet-notice error';
-    notice.textContent = 'Score not logged — Sheet URL not configured.';
-  } else if (sheetOk) {
-    notice.className = 'sheet-notice';
-    notice.textContent = '✔ Score saved to Google Sheet successfully.';
-  } else {
-    notice.className = 'sheet-notice error';
-    notice.textContent = 'Could not save to Sheet. Check your internet connection.';
-  }
-  const rl = document.getElementById('review-list');
-  rl.innerHTML = '';
-  QUESTIONS.forEach((q, i) => {
-    const ua = S.answers[i];
-    const isCorrect = ua === q.ans;
-    const isSkip = ua === -1;
-    const div = document.createElement('div');
-    div.className = 'review-item';
-    const badge = isSkip ? '<span class="review-badge b-skip">Skipped</span>'
-      : isCorrect ? '<span class="review-badge b-correct">+4 Correct</span>'
-      : '<span class="review-badge b-wrong">−1 Wrong</span>';
-    let ansLine = isSkip ? '<span>Not attempted</span>'
-      : isCorrect
-        ? '<span class="ans-correct">' + String.fromCharCode(65 + ua) + ') ' + q.opts[ua] + '</span>'
-        : '<span class="ans-wrong">Your answer: ' + String.fromCharCode(65 + ua) + ') ' + q.opts[ua] + '</span><br><span class="ans-correct">Correct: ' + String.fromCharCode(65 + q.ans) + ') ' + q.opts[q.ans] + '</span>';
-    div.innerHTML = '<div class="review-meta">' + badge + '<span style="font-size:11px;color:var(--muted)">Q' + (i + 1) + ' · ' + q.tag + '</span></div>'
-      + '<div class="review-q">' + q.stem + '</div>'
-      + '<div class="review-ans">' + ansLine + '</div>';
-    rl.appendChild(div);
-  });
-  document.getElementById('results-screen').style.display = 'block';
-  window.scrollTo(0, 0);
-}
-
-function buildPalette() {
-  const grid = document.getElementById('palette-grid');
-  grid.innerHTML = '';
-  QUESTIONS.forEach((_, i) => {
-    const btn = document.createElement('button');
-    let cls = 'p-btn';
-    if (i === S.cur) cls += ' active';
-    if (S.marked[i]) cls += ' marked-p';
-    else if (S.answers[i] !== -1) cls += ' answered';
-    btn.className = cls;
-    btn.textContent = i + 1;
-    btn.onclick = () => { S.cur = i; closePalette(); renderQ(); };
+function buildPalette(){
+  const grid=document.getElementById('paletteGrid');
+  grid.innerHTML='';
+  for(let i=0;i<45;i++){
+    const btn=document.createElement('button');
+    btn.className='pal-btn';btn.id='pb'+(i+1);btn.textContent=i+1;
+    btn.onclick=(()=>{const idx=i;return()=>{currentQ=idx;renderQuestion();}})();
     grid.appendChild(btn);
+  }
+}
+
+function updatePalette(){
+  for(let i=0;i<45;i++){
+    const btn=document.getElementById('pb'+(i+1));if(!btn)continue;
+    btn.className='pal-btn';
+    if(markedForReview[i])btn.classList.add('marked');
+    else if(userAnswers[i]!==null)btn.classList.add('answered');
+    if(i===currentQ)btn.classList.add('current');
+  }
+}
+
+function updateProgress(){
+  const ans=userAnswers.filter(a=>a!==null).length;
+  document.getElementById('progressFill').style.width=(ans/45*100)+'%';
+}
+
+function confirmSubmit(){
+  const u=userAnswers.filter(a=>a===null).length;
+  let msg='Submit the test?';
+  if(u>0)msg='You have '+u+' unanswered question'+(u>1?'s':'')+'. Submit anyway?';
+  if(confirm(msg))submitTest();
+}
+
+function submitTest(){
+  if(testSubmitted)return;
+  testSubmitted=true;clearInterval(timerInterval);
+  let correct=0,wrong=0,skipped=0;
+  const sectionErrors={};const wrongQuestions=[];
+  QUESTIONS.forEach((q,i)=>{
+    const sec=q.section;
+    if(userAnswers[i]===null){skipped++;}
+    else if(userAnswers[i]===q.ans){correct++;}
+    else{wrong++;wrongQuestions.push(i+1);sectionErrors[sec]=(sectionErrors[sec]||0)+1;}
+  });
+  const score=correct*4-wrong;
+  showResults(score,correct,wrong,skipped);
+  saveToTracker(score,correct,wrong,skipped);
+  logToSheet(score,correct,wrong,skipped,sectionErrors,wrongQuestions);
+}
+
+function showResults(score,correct,wrong,skipped){
+  document.getElementById('testScreen').style.display='none';
+  document.getElementById('resultsScreen').style.display='block';
+  const acc=((correct/(45-skipped||1))*100).toFixed(1);
+  document.getElementById('scoreHero').innerHTML=
+    '<div class="score-num">'+score+'</div>'+
+    '<div class="score-sub">out of 180 &nbsp;&middot;&nbsp; '+studentName+' &nbsp;&middot;&nbsp; '+studentPin+' &nbsp;&middot;&nbsp; '+studentBatch+'</div>';
+  document.getElementById('statsGrid').innerHTML=
+    '<div class="stat-box correct"><div class="val">'+correct+'</div><div class="lbl">Correct</div></div>'+
+    '<div class="stat-box wrong"><div class="val">'+wrong+'</div><div class="lbl">Wrong</div></div>'+
+    '<div class="stat-box"><div class="val" style="color:var(--grey)">'+skipped+'</div><div class="lbl">Skipped</div></div>'+
+    '<div class="stat-box accuracy"><div class="val">'+acc+'%</div><div class="lbl">Accuracy</div></div>';
+  buildReview();buildMisses();buildRetry();
+}
+
+function buildReview(){
+  const list=document.getElementById('review-list');
+  list.innerHTML='';
+  QUESTIONS.forEach((q,i)=>{
+    const ua=userAnswers[i];
+    const isC=(ua===q.ans),isSk=(ua===null);
+    const card=document.createElement('div');
+    card.className='review-card '+(isSk?'':isC?'correct':'wrong');
+    const bClass=isSk?'badge-skipped':isC?'badge-correct':'badge-wrong';
+    const bText=isSk?'&mdash;':isC?'&#10003;':'&#10007;';
+    const opts=q.opts.map((o,idx)=>{
+      let cls='review-opt';
+      if(idx===q.ans)cls+=' correct-opt';
+      if(ua!==null&&ua===idx&&idx!==q.ans)cls+=' your-wrong';
+      return '<div class="'+cls+'"><span class="opt-label">'+ ['A','B','C','D'][idx]+'</span> '+o+'</div>';
+    }).join('');
+    const expHtml=q.exp?'<div class="review-exp">'+q.exp+'</div>':''
+    card.innerHTML=
+      '<div class="review-card-header">'+
+      '<div class="review-badge '+bClass+'">'+bText+'</div>'+
+      '<div class="review-stem"><span style="color:var(--grey);font-size:.75rem">Q'+(i+1)+' &middot; '+q.section+'</span><br>'+q.stem.replace(/\n/g,'<br>')+'</div>'+
+      '</div><div class="review-opts">'+opts+'</div>'+expHtml;
+    list.appendChild(card);
   });
 }
 
-function openPalette() {
-  buildPalette();
-  document.getElementById('palette-overlay').className = 'palette-overlay show';
-  document.getElementById('palette-drawer').className = 'palette-drawer open';
+function buildMisses(){
+  const wrongQs=[];
+  QUESTIONS.forEach((q,i)=>{
+    if(userAnswers[i]!==null&&userAnswers[i]!==q.ans){
+      wrongQs.push('Q'+(i+1)+' ['+q.section+'] '+['A','B','C','D'][q.ans]+'. '+q.opts[q.ans]);
+    }
+  });
+  document.getElementById('missesText').value=wrongQs.length?wrongQs.join('\n'):'No misses -- perfect score!';
 }
-function closePalette() {
-  document.getElementById('palette-overlay').className = 'palette-overlay';
-  document.getElementById('palette-drawer').className = 'palette-drawer';
+
+function copyMisses(e){
+  e.preventDefault();
+  const txt=document.getElementById('missesText').value;
+  navigator.clipboard.writeText(txt).then(()=>{
+    const btn=e.target;btn.textContent='Copied!';
+    setTimeout(()=>{btn.textContent='Copy Misses';},2000);
+  });
 }
+
+function buildRetry(){
+  const rs=document.getElementById('retrySection');rs.innerHTML='';
+  const wrong=[];
+  QUESTIONS.forEach((q,i)=>{if(userAnswers[i]!==null&&userAnswers[i]!==q.ans)wrong.push(i);});
+  if(!wrong.length)return;
+  rs.innerHTML='<h3>Retry Wrong Questions ('+wrong.length+')</h3>';
+  wrong.forEach(i=>{
+    const q=QUESTIONS[i];
+    const card=document.createElement('div');card.className='retry-card';
+    card.innerHTML='<div class="r-stem"><span style="color:var(--grey);font-size:.75rem">Q'+(i+1)+' &middot; '+q.section+'</span><br>'+q.stem.replace(/\n/g,'<br>')+'</div>';
+    q.opts.forEach((o,idx)=>{
+      const btn=document.createElement('button');btn.className='retry-opt';
+      btn.innerHTML='<span class="opt-label">'+ ['A','B','C','D'][idx]+'</span> '+o;
+      btn.onclick=()=>{
+        card.querySelectorAll('.retry-opt').forEach(b=>b.disabled=true);
+        if(idx===q.ans)btn.classList.add('r-correct');
+        else{btn.classList.add('r-wrong');card.querySelectorAll('.retry-opt')[q.ans].classList.add('r-correct');}
+      };
+      card.appendChild(btn);
+    });
+    rs.appendChild(card);
+  });
+}
+
+function saveToTracker(score,correct,wrong,skipped){
+  const s=TIMER_DURATION*60-secondsLeft;
+  const mm=String(Math.floor(s/60)).padStart(2,'0');
+  const ss2=String(s%60).padStart(2,'0');
+  const data={testName:'Road to IIM Test 11',name:studentName,pin:studentPin,batch:studentBatch,score:score,correct:correct,wrong:wrong,skipped:skipped,maxMarks:180,timeTaken:mm+':'+ss2,timestamp:new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'})};
+  try{const ex=JSON.parse(localStorage.getItem('riim_results')||'[]');ex.unshift(data);localStorage.setItem('riim_results',JSON.stringify(ex.slice(0,200)));}
+  catch(e){}
+}
+
+function logToSheet(score,correct,wrong,skipped,sectionErrors,wrongQuestions){
+  const notice=document.getElementById('sheet-notice');
+  notice.className='submitting';notice.textContent='Submitting results...';notice.style.display='block';
+  const s=TIMER_DURATION*60-secondsLeft;
+  const mm=String(Math.floor(s/60)).padStart(2,'0');
+  const ss2=String(s%60).padStart(2,'0');
+  const payload={testName:'Road to IIM Test 11',name:studentName,pin:studentPin,batch:studentBatch,score:score,correct:correct,wrong:wrong,skipped:skipped,maxMarks:180,timeTaken:mm+':'+ss2,timestamp:new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'}),sectionErrors:JSON.stringify(sectionErrors),wrongQuestions:JSON.stringify(wrongQuestions),studentAnswers:JSON.stringify(userAnswers.map(a=>a===null?null:a))};
+  fetch('https://script.google.com/macros/s/AKfycbwGGxswx4hcBUFiT0QJIglowhKcJCv47MOR5LKBv9sILl-evsgZeKCms5y6s5zEXOUo6Q/exec',{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)})
+    .then(()=>{notice.className='success';notice.textContent='Results saved successfully.';})
+    .catch(()=>{notice.className='failure';notice.textContent='Could not reach server. Results saved locally.';});
+}
+
+function generatePDF(){
+  const el=document.getElementById('review-list');
+  html2pdf().set({margin:10,filename:'RoadToIIM_Test11_'+studentName.replace(/\s+/g,'_')+'.pdf',html2canvas:{scale:2},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}}).from(el).save();
+}
+
+document.addEventListener('contextmenu',e=>e.preventDefault());
+document.addEventListener('keydown',e=>{if(e.ctrlKey&&['c','a','u','s','p'].includes(e.key.toLowerCase()))e.preventDefault();});
 </script>
 </body>
 </html>

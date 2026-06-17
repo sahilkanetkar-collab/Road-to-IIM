@@ -2,494 +2,488 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Road to IIM — Test 12</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Road to IIM - Test 12</title>
 <style>
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-:root{--gold:#C9A84C;--dark:#1A1A2E;--red:#C0392B;--green:#1E8449;--bg:#F7F5F0;--card:#FFFFFF;--text:#1A1A2E;--muted:#666;--border:rgba(0,0,0,0.1)}
-html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text)}
-#app{max-width:480px;margin:0 auto;min-height:100vh}
-#login-screen{padding:1.5rem 1.25rem;display:flex;flex-direction:column;gap:1.25rem}
-.brand-header{text-align:center;padding:1.25rem 0 0.25rem}
-.brand-logo{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-weight:700}
-.brand-title{font-size:22px;font-weight:800;color:var(--dark);margin-top:4px}
-.brand-sub{font-size:13px;color:var(--muted);margin-top:4px}
-.login-card{background:var(--card);border-radius:16px;padding:1.5rem;border:0.5px solid var(--border)}
-.login-card h2{font-size:15px;font-weight:700;margin-bottom:1.25rem}
-.field{display:flex;flex-direction:column;gap:6px;margin-bottom:1rem}
-.field label{font-size:11px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:var(--muted)}
-.field input,.field select{border:1.5px solid var(--border);border-radius:10px;padding:13px 14px;font-size:15px;background:var(--bg);color:var(--text);outline:none;width:100%;appearance:none;-webkit-appearance:none}
-.field input:focus,.field select:focus{border-color:var(--gold)}
-.select-wrap{position:relative}
-.select-wrap::after{content:"▾";position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none;font-size:14px}
-.test-meta{background:var(--bg);border-radius:10px;padding:1rem;display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:1.25rem}
-.meta-item{display:flex;flex-direction:column;gap:2px}
-.meta-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px}
-.meta-val{font-size:14px;font-weight:700;color:var(--dark)}
-.btn-start{width:100%;padding:16px;background:var(--dark);color:#fff;border:none;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;letter-spacing:0.3px}
-#test-screen{display:none;flex-direction:column;height:100vh;height:100dvh}
-.test-topbar{background:var(--dark);padding:10px 1rem;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-.topbar-left{display:flex;flex-direction:column}
-.topbar-brand{font-size:10px;color:var(--gold);letter-spacing:2px;text-transform:uppercase}
-.topbar-qnum{font-size:14px;color:#fff;font-weight:700;margin-top:2px}
-.timer-box{background:rgba(201,168,76,0.15);border:1px solid var(--gold);border-radius:8px;padding:5px 12px;text-align:center}
-.timer-label{font-size:9px;color:var(--gold);text-transform:uppercase;letter-spacing:1px}
-.timer-val{font-size:19px;font-weight:800;color:#fff;font-variant-numeric:tabular-nums;letter-spacing:1px}
-.timer-val.urgent{color:#ff6b6b}
-.section-tag{background:rgba(201,168,76,0.12);border-bottom:0.5px solid rgba(201,168,76,0.3);padding:5px 1rem}
-.section-tag span{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold)}
-.progress-bar{height:2px;background:rgba(255,255,255,0.08);flex-shrink:0}
-.progress-fill{height:100%;background:var(--gold);transition:width 0.3s}
-.q-body{flex:1;overflow-y:auto;padding:1.25rem;-webkit-overflow-scrolling:touch}
-.q-stem{font-size:16px;line-height:1.65;color:var(--text);margin-bottom:1.25rem;font-weight:500}
-.options{display:flex;flex-direction:column;gap:10px}
-.opt-btn{display:flex;align-items:flex-start;gap:12px;padding:14px;border-radius:12px;border:1.5px solid var(--border);background:var(--card);cursor:pointer;text-align:left;width:100%;transition:border-color 0.15s,background 0.15s}
-.opt-btn.selected{border-color:var(--gold);background:#FBF7EE}
-.opt-key{width:30px;height:30px;border-radius:50%;background:var(--bg);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0;color:var(--muted);margin-top:1px}
-.opt-btn.selected .opt-key{background:var(--gold);border-color:var(--gold);color:#fff}
-.opt-text{font-size:15px;line-height:1.45;color:var(--text);padding-top:5px}
-.q-actions{padding:0.9rem 1.25rem;background:var(--card);border-top:0.5px solid var(--border);display:flex;gap:10px;flex-shrink:0}
-.btn-nav{flex:1;padding:14px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;border:1.5px solid var(--border);background:var(--bg);color:var(--dark)}
-.btn-nav:disabled{opacity:0.3}
-.btn-mark{flex:0 0 auto;padding:14px 16px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;border:1.5px solid #8B5CF6;background:#F5F0FF;color:#5B21B6;white-space:nowrap}
-.btn-mark.marked{background:#8B5CF6;color:#fff}
-.btn-next{flex:1;padding:14px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;border:none;background:var(--dark);color:#fff}
-.palette-fab{position:fixed;bottom:84px;right:16px;width:46px;height:46px;border-radius:50%;background:var(--dark);border:2px solid var(--gold);color:#fff;font-size:11px;font-weight:800;cursor:pointer;display:none;align-items:center;justify-content:center;z-index:50;letter-spacing:0}
-.palette-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:99}
-.palette-overlay.show{display:block}
-.palette-drawer{position:fixed;bottom:0;left:0;right:0;max-width:480px;margin:0 auto;background:var(--card);border-radius:20px 20px 0 0;border-top:0.5px solid var(--border);padding:1rem;transform:translateY(100%);transition:transform 0.3s;z-index:100;max-height:65vh;overflow-y:auto}
-.palette-drawer.open{transform:translateY(0)}
-.palette-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem}
-.palette-hdr h3{font-size:14px;font-weight:700}
-.palette-close{background:var(--bg);border:none;border-radius:8px;padding:6px 14px;font-size:13px;cursor:pointer;color:var(--muted)}
-.palette-legend{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:12px}
-.legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted)}
-.legend-dot{width:10px;height:10px;border-radius:50%}
-.palette-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
-.pq{width:100%;aspect-ratio:1;border-radius:8px;border:1.5px solid var(--border);background:var(--bg);font-size:12px;font-weight:700;cursor:pointer;color:var(--muted)}
-.pq.answered{background:var(--green);border-color:var(--green);color:#fff}
-.pq.marked{background:#8B5CF6;border-color:#8B5CF6;color:#fff}
-.pq.current{border-color:var(--gold);color:var(--dark)}
-.confirm-wrap{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;align-items:center;justify-content:center;padding:1.5rem}
-.confirm-wrap.show{display:flex}
-.confirm-card{background:var(--card);border-radius:20px;padding:1.5rem;width:100%;max-width:340px}
-.confirm-card h3{font-size:18px;font-weight:800;margin-bottom:8px}
-.confirm-card p{font-size:14px;color:var(--muted);margin-bottom:1.25rem;line-height:1.5}
-.confirm-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1.25rem;background:var(--bg);border-radius:12px;padding:1rem}
-.cstat{text-align:center}
-.cstat-num{font-size:22px;font-weight:800}
-.cstat-lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px}
-.confirm-btns{display:flex;gap:10px}
-.btn-cancel{flex:1;padding:13px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg);font-size:14px;font-weight:700;cursor:pointer;color:var(--dark)}
-.btn-confirm{flex:1;padding:13px;border-radius:10px;border:none;background:var(--dark);color:#fff;font-size:14px;font-weight:700;cursor:pointer}
-#submitting-screen{display:none;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;gap:1rem;padding:2rem;text-align:center}
-.spinner{width:44px;height:44px;border:3px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin 0.8s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.submitting-text{font-size:17px;font-weight:700;color:var(--dark)}
-.submitting-sub{font-size:13px;color:var(--muted)}
-#results-screen{display:none;padding:1.5rem}
-.results-hero{background:var(--dark);border-radius:20px;padding:2rem 1.5rem;text-align:center;margin-bottom:1.25rem}
-.results-label{font-size:11px;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:0.75rem}
-.results-score{font-size:64px;font-weight:800;color:#fff;line-height:1}
-.results-max{font-size:14px;color:rgba(255,255,255,0.5);margin-top:4px}
-.results-name{font-size:15px;color:#fff;font-weight:700;margin-top:1rem}
-.results-batch{font-size:12px;color:var(--gold);margin-top:4px}
-.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1.25rem}
-.stat-card{background:var(--card);border-radius:14px;padding:1rem;text-align:center;border:0.5px solid var(--border)}
-.stat-num{font-size:28px;font-weight:800}
-.stat-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-top:4px}
-.sg{color:var(--green)}.sr{color:var(--red)}.sm{color:var(--muted)}
-.sheet-notice{border-radius:10px;padding:10px 14px;font-size:13px;margin-bottom:1.25rem;text-align:center}
-.sheet-notice.ok{background:#EAF7EF;color:var(--green)}
-.sheet-notice.error{background:#FDEDEC;color:var(--red)}
-.review-section{background:var(--card);border-radius:16px;padding:1.25rem;border:0.5px solid var(--border)}
-.review-section h3{font-size:15px;font-weight:700;margin-bottom:1rem}
-.review-item{padding:12px 0;border-bottom:0.5px solid var(--border)}
-.review-item:last-child{border-bottom:none}
-.review-q{font-size:13px;color:var(--muted);margin-bottom:6px}
-.review-ans{font-size:13px;display:flex;gap:8px;flex-wrap:wrap}
-.r-correct{color:var(--green);font-weight:700}
-.r-wrong{color:var(--red);font-weight:700}
-.r-skip{color:var(--muted);font-weight:700}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;}
+:root{--navy:#0d1b2a;--navy2:#1a2e45;--gold:#c9a84c;--gold2:#e8c76a;--green:#2ecc71;--red:#e74c3c;--grey:#8899aa;--white:#f0f4f8;--purple:#9b59b6;--panel:280px;}
+body{background:var(--navy);color:var(--white);font-family:'Segoe UI',sans-serif;min-height:100vh;overflow-x:hidden;}
+#loginScreen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:20px;}
+.login-box{background:var(--navy2);border:1px solid var(--gold);border-radius:12px;padding:40px 36px;width:100%;max-width:440px;}
+.login-box h1{color:var(--gold);font-size:1.5rem;text-align:center;margin-bottom:6px;}
+.login-box p{color:var(--grey);font-size:.85rem;text-align:center;margin-bottom:28px;}
+.login-box label{display:block;font-size:.8rem;color:var(--grey);margin-bottom:4px;margin-top:14px;}
+.login-box input,.login-box select{width:100%;background:#0d1b2a;border:1px solid #2a4060;border-radius:6px;padding:10px 12px;color:var(--white);font-size:.95rem;}
+#startBtn{width:100%;margin-top:24px;padding:12px;background:var(--gold);color:var(--navy);font-size:1rem;font-weight:700;border:none;border-radius:8px;cursor:pointer;}
+#topBar{background:var(--navy2);border-bottom:1px solid #1e3a5a;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;padding-right:calc(var(--panel) + 20px);}
+#topBar .logo{color:var(--gold);font-weight:700;font-size:1rem;}
+#timerDisplay{font-size:1.1rem;font-weight:700;color:var(--green);background:#0a2a1a;padding:6px 16px;border-radius:20px;border:1px solid var(--green);}
+#timerDisplay.urgent{color:var(--red);background:#2a0a0a;border-color:var(--red);}
+#progressBar{height:3px;background:#1e3a5a;margin-right:var(--panel);}
+#progressFill{height:100%;background:var(--gold);transition:width .3s;}
+#mainLayout{display:flex;min-height:calc(100vh - 54px);}
+#questionArea{flex:1;padding:28px 32px 80px 32px;max-width:calc(100% - var(--panel));}
+#sectionTag{display:inline-block;background:#1e3a5a;color:var(--gold);font-size:.72rem;font-weight:700;letter-spacing:.08em;padding:3px 10px;border-radius:4px;margin-bottom:10px;text-transform:uppercase;}
+#questionNumber{color:var(--grey);font-size:.85rem;margin-bottom:8px;}
+#questionStem{font-size:1.05rem;line-height:1.7;color:var(--white);margin-bottom:22px;word-break:break-word;overflow-wrap:break-word;}
+.options-list{list-style:none;display:flex;flex-direction:column;gap:10px;}
+.option-btn{background:#0d1b2a;border:1px solid #1e3a5a;border-radius:8px;padding:12px 16px;cursor:pointer;text-align:left;font-size:.95rem;color:var(--white);transition:all .2s;width:100%;display:flex;align-items:flex-start;gap:8px;}
+.option-btn:hover{border-color:var(--gold);background:#162030;}
+.option-btn.selected{border-color:var(--gold);background:#1e2e10;color:var(--gold2);}
+.option-btn.marked{border-color:var(--purple);}
+.opt-label{display:inline-block;min-width:24px;font-weight:700;color:var(--gold);flex-shrink:0;}
+.opt-text{flex:1;}
+#paletteOverlay{position:fixed;top:0;right:0;width:100%;height:100%;z-index:200;pointer-events:none;display:flex;justify-content:flex-end;}
+#palettePanel{width:280px;height:100%;background:var(--navy2);border-left:1px solid #1e3a5a;padding:16px 12px;overflow-y:auto;pointer-events:all;}
+#paletteGrid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:16px;}
+.pal-btn{width:100%;aspect-ratio:1;border-radius:6px;border:1px solid #1e3a5a;background:#0d1b2a;color:var(--grey);font-size:.78rem;font-weight:600;cursor:pointer;}
+.pal-btn.answered{background:var(--green);color:#fff;border-color:var(--green);}
+.pal-btn.marked{background:var(--purple);color:#fff;border-color:var(--purple);}
+.pal-btn.current{border:2px solid var(--gold);color:var(--gold);}
+#navBar{position:fixed;bottom:0;left:0;right:var(--panel);background:var(--navy2);border-top:1px solid #1e3a5a;display:flex;align-items:center;justify-content:space-between;padding:10px 20px;z-index:150;gap:4px;}
+.nav-btn{background:#1e3a5a;color:var(--white);border:none;border-radius:6px;padding:8px 14px;cursor:pointer;font-size:.9rem;font-weight:600;flex:1;}
+#submitBtn{background:var(--gold);color:var(--navy);font-weight:700;display:none;}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
+.stat-box{background:var(--navy2);border-radius:8px;padding:16px;text-align:center;border:1px solid #1e3a5a;}
+.stat-box .val{font-size:1.6rem;font-weight:800;}
+.stat-box .lbl{font-size:.75rem;color:var(--grey);margin-top:4px;}
+.stat-box.correct .val{color:var(--green);}
+.stat-box.wrong .val{color:var(--red);}
+.stat-box.accuracy .val{color:var(--gold);}
+.review-card{background:var(--navy2);border-radius:10px;margin-bottom:14px;overflow:hidden;border-left:4px solid var(--grey);word-break:break-word;overflow-wrap:break-word;}
+.review-card.correct{border-left-color:var(--green);}
+.review-card.wrong{border-left-color:var(--red);}
+.review-exp{background:#0a2a15;border-left:3px solid var(--green);padding:10px 14px;font-size:.83rem;line-height:1.6;color:#a8e6c0;margin-top:8px;}
+#testScreen{display:none;}
+#resultsScreen{display:none;padding:28px 32px;max-width:calc(100% - var(--panel));}
+.score-hero{text-align:center;margin-bottom:28px;}
+.score-hero .score-num{font-size:3.5rem;font-weight:900;color:var(--gold);}
+.score-hero .score-sub{font-size:1rem;color:var(--grey);margin-top:4px;}
+.result-btn{padding:10px 24px;border-radius:8px;border:none;cursor:pointer;font-size:.95rem;font-weight:700;margin:0 6px;}
+.result-btn.gold{background:var(--gold);color:var(--navy);}
+.result-btn.ghost{background:transparent;border:1px solid var(--gold);color:var(--gold);}
+#sheet-notice{padding:10px 14px;border-radius:6px;font-size:.85rem;margin-bottom:16px;display:none;}
+#sheet-notice.submitting{background:#1a2e10;color:#c9e88a;border:1px solid #4a7a20;}
+#sheet-notice.success{background:#0a2a15;color:#2ecc71;border:1px solid #2ecc71;}
+#sheet-notice.failure{background:#2a0a0a;color:#e74c3c;border:1px solid #e74c3c;}
+.review-card-header{padding:14px 16px;display:flex;align-items:flex-start;gap:10px;}
+.review-badge{min-width:32px;height:32px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.85rem;}
+.badge-correct{background:var(--green);color:#fff;}
+.badge-wrong{background:var(--red);color:#fff;}
+.badge-skipped{background:var(--grey);color:#fff;}
+.review-stem{font-size:.9rem;line-height:1.6;flex:1;}
+.review-opts{padding:0 16px 8px;}
+.review-opt{font-size:.83rem;padding:4px 0;color:var(--grey);}
+.review-opt.correct-opt{color:var(--green);font-weight:700;}
+.review-opt.your-wrong{color:var(--red);}
+.misses-box{background:#0d1b2a;border:1px solid #2a4060;border-radius:8px;padding:14px;margin-top:20px;}
+.misses-box h3{color:var(--gold);font-size:.9rem;margin-bottom:8px;}
+.misses-box textarea{width:100%;background:#0a1520;border:1px solid #1e3a5a;border-radius:6px;padding:10px;color:var(--white);font-size:.83rem;font-family:'Segoe UI',sans-serif;resize:vertical;min-height:80px;}
+.copy-btn{margin-top:8px;padding:6px 14px;background:var(--navy2);border:1px solid var(--gold);color:var(--gold);border-radius:6px;font-size:.8rem;cursor:pointer;}
+#retrySection{margin-top:24px;}
+#retrySection h3{color:var(--gold);margin-bottom:16px;}
+.retry-card{background:var(--navy2);border-radius:10px;padding:16px;margin-bottom:12px;border:1px solid #1e3a5a;}
+.retry-card .r-stem{font-size:.95rem;line-height:1.6;margin-bottom:12px;}
+.retry-opt{display:block;width:100%;background:#0d1b2a;border:1px solid #1e3a5a;border-radius:6px;padding:9px 14px;text-align:left;font-size:.88rem;color:var(--white);cursor:pointer;margin-bottom:6px;}
+.retry-opt.r-correct{border-color:var(--green);background:#0a2a15;color:var(--green);}
+.retry-opt.r-wrong{border-color:var(--red);background:#2a0a0a;color:var(--red);}
+.pal-legend{font-size:.72rem;color:var(--grey);margin-top:8px;}
+.pal-legend span{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px;vertical-align:middle;}
+@media (max-width:768px){
+  #paletteOverlay{display:none;}
+  #questionArea{max-width:100%;padding:16px 16px 80px 16px;}
+  #topBar{padding-right:16px;}
+  #progressBar{margin-right:0;}
+  #navBar{right:0;padding:8px 6px;}
+  .nav-btn{padding:7px 4px;font-size:.72rem;}
+  .stats-grid{grid-template-columns:repeat(2,1fr);}
+  .login-box input,.login-box select{font-size:1rem;}
+  .score-hero .score-num{font-size:2.4rem;}
+  #resultsScreen{max-width:100%;}
+}
+@media (max-width:768px){#paletteOverlay.mobile-open{display:flex;}}
 </style>
 </head>
 <body>
-<div id="app">
 
-<div id="login-screen">
-  <div class="brand-header">
-    <div class="brand-logo">Road to IIM</div>
-    <div class="brand-title">Verbal Ability Test 12</div>
-    <div class="brand-sub">Sahil Sir &middot; IMS Ahmedabad</div>
+<div id="loginScreen">
+<div class="login-box">
+  <h1>Road to IIM</h1>
+  <p>Test 12 &nbsp;&middot;&nbsp; Vocabulary & Word Usage &nbsp;&middot;&nbsp; 45 Questions &nbsp;&middot;&nbsp; 30 Minutes</p>
+  <label>Full Name</label>
+  <input type="text" id="inputName" placeholder="Your full name" autocomplete="off">
+  <label>IMS PIN</label>
+  <input type="text" id="inputPin" placeholder="STU or IMS + 10 digits" autocomplete="off">
+  <label>Batch</label>
+  <select id="inputBatch">
+    <option value="">-- Select batch --</option>
+    <optgroup label="Classroom">
+      <option>A2701</option><option>A2702</option><option>A2703</option>
+      <option>A2704</option><option>A2705</option><option>A2706</option>
+      <option>A2707</option><option>A2708</option><option>A2709</option>
+      <option>A2710</option><option>A2711</option><option>A2712</option>
+    </optgroup>
+    <optgroup label="School"><option>Zebar</option></optgroup>
+    <optgroup label="Online">
+      <option>27E101</option><option>27E102</option><option>27E103</option>
+      <option>27E104</option><option>27E105</option>
+    </optgroup>
+    <optgroup label="Admin"><option>Admin</option></optgroup>
+  </select>
+  <div id="loginErr" style="display:none;margin-top:10px;color:var(--red);font-size:.83rem;"></div>
+  <button id="startBtn" onclick="startTest()">Begin Test</button>
+</div>
+</div>
+
+<div id="testScreen">
+  <div id="topBar">
+    <span class="logo">Road to IIM &middot; Test 12</span>
+    <div id="timerDisplay">30:00</div>
   </div>
-  <div class="login-card">
-    <h2>Enter your details</h2>
-    <div class="field"><label>Full Name</label><input type="text" id="inp-name" placeholder="e.g. Aditya Sharma" autocomplete="name"></div>
-    <div class="field"><label>IMS PIN</label><input type="text" id="inp-pin" placeholder="e.g. 12345" inputmode="numeric"></div>
-    <div class="field"><label>Batch</label>
-      <div class="select-wrap">
-        <select id="inp-batch">
-          <option value="">Select your batch...</option>
-          <optgroup label="Classroom">
-            <option>A2701</option><option>A2702</option><option>A2703</option><option>A2704</option><option>A2705</option>
-            <option>A2706</option><option>A2707</option><option>A2708</option><option>A2709</option><option>A2710</option>
-            <option>A2711</option><option>A2712</option><option>A2713</option><option>A2714</option><option>A2715</option>
-          </optgroup>
-          <optgroup label="School">
-            <option>Zebar</option>
-          </optgroup>
-          <optgroup label="Online">
-            <option>27E101</option><option>27E102</option><option>27E103</option><option>27E104</option><option>27E105</option>
-          </optgroup>
-        </select>
+  <div id="progressBar"><div id="progressFill" style="width:0%"></div></div>
+  <div id="mainLayout">
+    <div id="questionArea">
+      <div id="sectionTag"></div>
+      <div id="questionNumber"></div>
+      <div id="questionStem"></div>
+      <ul class="options-list" id="optionsList"></ul>
+    </div>
+  </div>
+  <div id="paletteOverlay">
+    <div id="palettePanel">
+      <div style="color:var(--gold);font-weight:700;font-size:.85rem;margin-bottom:10px;">Questions</div>
+      <div id="paletteGrid"></div>
+      <div class="pal-legend">
+        <span style="background:var(--green)"></span>Answered &nbsp;
+        <span style="background:var(--purple)"></span>Marked &nbsp;
+        <span style="background:#0d1b2a;border:1px solid #1e3a5a"></span>Unvisited
       </div>
     </div>
-    <div class="test-meta">
-      <div class="meta-item"><span class="meta-label">Questions</span><span class="meta-val">45</span></div>
-      <div class="meta-item"><span class="meta-label">Duration</span><span class="meta-val">40 mins</span></div>
-      <div class="meta-item"><span class="meta-label">Correct</span><span class="meta-val">+4</span></div>
-      <div class="meta-item"><span class="meta-label">Wrong</span><span class="meta-val">&minus;1</span></div>
+  </div>
+  <div id="navBar">
+    <button class="nav-btn" onclick="navigate(-1)">Prev</button>
+    <button class="nav-btn" onclick="togglePalette()">Questions</button>
+    <button class="nav-btn" onclick="markForReview()">Mark</button>
+    <button class="nav-btn" onclick="clearAnswer()">Clear</button>
+    <button class="nav-btn" onclick="navigate(1)">Next</button>
+    <button class="nav-btn" id="submitBtn" onclick="confirmSubmit()">Submit</button>
+  </div>
+</div>
+
+<div id="resultsScreen">
+  <div style="background:var(--navy2);border-bottom:1px solid #1e3a5a;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;">
+    <span style="color:var(--gold);font-weight:700;">Road to IIM &middot; Test 12 &mdash; Results</span>
+  </div>
+  <div style="padding:28px 32px;">
+    <div class="score-hero" id="scoreHero"></div>
+    <div id="sheet-notice"></div>
+    <div class="stats-grid" id="statsGrid"></div>
+    <div style="text-align:center;margin-bottom:24px;">
+      <button class="result-btn gold" onclick="location.href='road_to_iim_tracker_v2.html'">Go to Tracker</button>
+      <button class="result-btn ghost" onclick="location.href='https://sahilkanetkar-collab.github.io/Road-to-IIM/'">All Tests</button>
+      <button class="result-btn ghost" onclick="generatePDF()">Download PDF</button>
     </div>
-    <button class="btn-start" onclick="startTest()">Begin Test &rarr;</button>
-  </div>
-</div>
-
-<div id="test-screen">
-  <div class="test-topbar">
-    <div class="topbar-left">
-      <span class="topbar-brand">Road to IIM</span>
-      <span class="topbar-qnum" id="qnum-label">Q1 of 45</span>
+    <div class="misses-box">
+      <h3>Vocabulary Misses</h3>
+      <textarea id="missesText" readonly></textarea>
+      <button class="copy-btn" onclick="copyMisses(event)">Copy Misses</button>
     </div>
-    <div class="timer-box">
-      <div class="timer-label">Time Left</div>
-      <div class="timer-val" id="timer">40:00</div>
-    </div>
-  </div>
-  <div class="section-tag"><span id="section-tag-text">Fill in the Blanks</span></div>
-  <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:2%"></div></div>
-  <div class="q-body">
-    <div class="q-stem" id="q-stem"></div>
-    <div class="options" id="options"></div>
-  </div>
-  <div class="q-actions">
-    <button class="btn-nav" id="btn-prev" onclick="prevQ()" disabled>&#8592; Prev</button>
-    <button class="btn-mark" id="btn-mark" onclick="toggleMark()">&#9734; Mark</button>
-    <button class="btn-next" id="btn-next" onclick="nextOrSubmit()">Next &#8594;</button>
+    <div id="retrySection"></div>
+    <h3 style="color:var(--gold);margin:24px 0 12px;">Review All Questions</h3>
+    <div id="review-list"></div>
   </div>
 </div>
 
-<button class="palette-fab" id="palette-fab" onclick="openPalette()">&#9632;&#9632;<br>&#9632;&#9632;</button>
-<div class="palette-overlay" id="palette-overlay" onclick="closePalette()"></div>
-<div class="palette-drawer" id="palette-drawer">
-  <div class="palette-hdr"><h3>Question Palette</h3><button class="palette-close" onclick="closePalette()">Close</button></div>
-  <div class="palette-legend">
-    <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>Answered</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#8B5CF6"></div>Marked</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#ddd"></div>Not visited</div>
-  </div>
-  <div class="palette-grid" id="palette-grid"></div>
-</div>
-
-<div class="confirm-wrap" id="confirm-wrap">
-  <div class="confirm-card">
-    <h3>Submit Test?</h3>
-    <p id="confirm-msg">You have unanswered questions. Submit anyway?</p>
-    <div class="confirm-stats">
-      <div class="cstat"><div class="cstat-num" style="color:var(--green)" id="c-ans">0</div><div class="cstat-lbl">Answered</div></div>
-      <div class="cstat"><div class="cstat-num" style="color:#8B5CF6" id="c-mark">0</div><div class="cstat-lbl">Marked</div></div>
-      <div class="cstat"><div class="cstat-num" style="color:var(--muted)" id="c-skip">0</div><div class="cstat-lbl">Skipped</div></div>
-    </div>
-    <div class="confirm-btns">
-      <button class="btn-cancel" onclick="closeConfirm()">Go Back</button>
-      <button class="btn-confirm" onclick="doSubmit()">Submit</button>
-    </div>
-  </div>
-</div>
-
-<div id="submitting-screen">
-  <div class="spinner"></div>
-  <div class="submitting-text">Submitting your test...</div>
-  <div class="submitting-sub">Please do not close this page</div>
-</div>
-
-<div id="results-screen">
-  <div class="results-hero">
-    <div class="results-label">Test Complete &mdash; Paper 12</div>
-    <div class="results-score" id="r-score">0</div>
-    <div class="results-max">out of 180 marks</div>
-    <div class="results-name" id="r-name"></div>
-    <div class="results-batch" id="r-batch"></div>
-  <div style="display:flex;gap:10px;justify-content:center;margin-top:1.25rem;flex-wrap:wrap">
-    <a href="road_to_iim_tracker.html" style="background:#c9a84c;color:#0f0e0c;padding:11px 22px;border-radius:10px;font-size:14px;font-weight:700;text-decoration:none;font-family:-apple-system,sans-serif">Go to tracker &rarr;</a>
-    <a href="https://sahilkanetkar-collab.github.io/Road-to-IIM/" style="background:transparent;color:#fff;padding:11px 22px;border-radius:10px;font-size:14px;font-weight:700;text-decoration:none;border:1.5px solid rgba(255,255,255,0.2);font-family:-apple-system,sans-serif">All tests</a>
-  </div>
-  </div>
-  <div class="stats-grid">
-    <div class="stat-card"><div class="stat-num sg" id="r-correct">0</div><div class="stat-label">Correct</div></div>
-    <div class="stat-card"><div class="stat-num sr" id="r-wrong">0</div><div class="stat-label">Wrong</div></div>
-    <div class="stat-card"><div class="stat-num sm" id="r-skip">0</div><div class="stat-label">Skipped</div></div>
-  </div>
-  <div class="sheet-notice" id="sheet-notice"></div>
-  <div class="review-section"><h3>Question Review</h3><div id="review-list"></div></div>
-</div>
-
-</div>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script>
-var SHEET_URL = "https://script.google.com/macros/s/AKfycbx5Ojm_zp4LfsMeelx5e06KNjVH1wfsXdV0keS4407m4FO1HU4EpVb7GKj-ibAsxnspeA/exec";
-var TRACKER_URL = "https://script.google.com/macros/s/AKfycbxqxXU0ETHfbfA9aXYV-y96ZVS4HKbq4feO2bcPZEkV1Jz17ALek9XqAG03NXUjw9aNTg/exec";
-var TEST_NAME = "Road to IIM Paper 12";
-var TEST_NUMBER = 12;
-var TOTAL_SECS = 40 * 60;
+const APPS_SCRIPT_URL="https://script.google.com/macros/s/AKfycbwGGxswx4hcBUFiT0QJIglowhKcJCv47MOR5LKBv9sILl-evsgZeKCms5y6s5zEXOUo6Q/exec";
+const TIMER_DURATION=30;
+const ADMIN_PINS=['IMS1111111111','IMS2222222222','IMS3333333333','IMS4444444444','IMS5555555555'];
 
-var SECTION_MAP = {
-  "Fill in the Blanks":    "FITB / Collocation",
-  "Word in Context":       "Word in Context",
-  "Odd One Out":           "Odd One Out",
-  "Analogy Pairs":         "Analogy Pairs",
-  "One Word Substitution": "OWS / Cloze"
-};
-
-var QUESTIONS = [
-  // FILL IN THE BLANKS (18)
-  {tag:"Fill in the Blanks",stem:"The minister's _______ during the press conference — answering every question with a question — frustrated journalists who had expected at least a partial admission.",opts:["Equivocation","Evasiveness","Prevarication","Circumlocution"],ans:2,exp:"Prevarication means deliberately stalling or avoiding a direct answer — distinct from equivocation (using ambiguous language) and circumlocution (excessive wordiness). The act of answering every question with a question is classic prevarication."},
-  {tag:"Fill in the Blanks",stem:"The policy paper was _______ in its assumptions; it presumed public cooperation that no government had ever successfully secured.",opts:["Naive","Sanguine","Utopian","Optimistic"],ans:1,exp:"Sanguine means unrealistically optimistic, especially about forecasts or plans. Naive and optimistic are too generic; utopian implies an idealistic vision rather than a faulty assumption about cooperation."},
-  {tag:"Fill in the Blanks",stem:"The professor's lectures were _______ — every concept buried under so many qualifications that students left more confused than when they arrived.",opts:["Abstruse","Opaque","Recondite","Convoluted"],ans:3,exp:"Convoluted means unnecessarily complex in structure — exactly what burying concepts under qualifications produces. Abstruse and recondite describe obscurity by nature, not by poor construction. Opaque = unclear but not structurally tangled."},
-  {tag:"Fill in the Blanks",stem:"She delivered the bad news with _______ — no preamble, no softening, just the facts stated plainly and without apology.",opts:["Candour","Bluntness","Forthrightness","Asperity"],ans:3,exp:"Asperity means harshness of tone or manner. The phrase 'without apology' signals something sharper than candour (openness) or forthrightness (directness). Bluntness is close but lacks the edge asperity carries."},
-  {tag:"Fill in the Blanks",stem:"The general's _______ in the face of mounting casualties drew admiration from his troops and condemnation from the opposition.",opts:["Equanimity","Sang-froid","Impassivity","Stoicism"],ans:3,exp:"Stoicism means enduring hardship without complaint. Equanimity is calm under difficulty but more internal and passive. Sang-froid is cool-headedness in crisis. Stoicism best fits the context of facing mounting casualties with visible resolve."},
-  {tag:"Fill in the Blanks",stem:"The treaty was _______ by a faction within the ruling party; their opposition was enough to stall ratification for three years.",opts:["Impugned","Contested","Opposed","Obstructed"],ans:0,exp:"Impugned means to call into question or attack the validity of something — specifically the treaty's legitimacy. Contested and opposed are too generic. Obstructed means blocked, not challenged in principle."},
-  {tag:"Fill in the Blanks",stem:"The novelist's prose was _______ — each sentence so precisely weighted that removing a single word would collapse the meaning.",opts:["Terse","Economical","Sparse","Lapidary"],ans:3,exp:"Lapidary means elegantly concise, as if carved in stone — it implies artistry in brevity. Terse and sparse just mean brief. Economical is close but does not carry the sense of precision and polish that lapidary does."},
-  {tag:"Fill in the Blanks",stem:"The journalist's _______ report on the pharmaceutical company's trials prompted three parliamentary inquiries and a share price collapse.",opts:["Incendiary","Damning","Scathing","Exposing"],ans:1,exp:"Damning means presenting overwhelming evidence of wrongdoing — appropriate when the consequence is three parliamentary inquiries and a share price collapse. Incendiary = inflammatory. Scathing = harshly critical but not necessarily evidence-based."},
-  {tag:"Fill in the Blanks",stem:"The critic was known for her _______ — she could identify a forgery from across the room before the provenance documents had even been opened.",opts:["Acuity","Perspicacity","Discernment","Acumen"],ans:1,exp:"Perspicacity means having a ready, penetrating insight into complex matters. Acuity = sharpness of perception (more physical/sensory). Discernment = good judgment. Acumen = practical shrewdness. Perspicacity best fits identifying a forgery by sight alone."},
-  {tag:"Fill in the Blanks",stem:"The chairman's resignation letter was _______ with bitterness; between every line of formal courtesy lay an unmistakable sense of betrayal.",opts:["Freighted","Riddled","Suffused","Saturated"],ans:0,exp:"Freighted means loaded or weighted with meaning or emotion — it carries a sense of burden that riddled (full of holes), suffused (spread through gently), and saturated (filled completely) do not. The letter is heavy with unexpressed bitterness."},
-  {tag:"Fill in the Blanks",stem:"The new CEO's approach was _______ — she dismantled three divisions, restructured two more, and replaced half the board within her first year.",opts:["Radical","Trenchant","Sweeping","Ruthless"],ans:1,exp:"Trenchant means vigorous, effective, and direct. The CEO's actions — dismantling, restructuring, replacing — are decisive and sharp. Radical and sweeping describe scope; ruthless describes method without implying effectiveness."},
-  {tag:"Fill in the Blanks",stem:"The ambassador's remarks were so _______ that diplomats from five countries requested clarification before close of business.",opts:["Ambiguous","Gnomic","Oblique","Cryptic"],ans:1,exp:"Gnomic means mysterious and aphoristic — remarks that are deliberately hard to interpret. Cryptic = deliberately obscure. Oblique = indirect. Ambiguous = having two meanings. Gnomic specifically implies the oracular, aphoristic quality that requires five countries to seek clarification."},
-  {tag:"Fill in the Blanks",stem:"His _______ at the negotiating table — conceding minor points to win major ones — made him one of the most effective trade envoys in the country's history.",opts:["Cunning","Guile","Shrewdness","Astuteness"],ans:1,exp:"Guile means the strategic use of clever or cunning tactics — specifically implying deception in service of a goal. Cunning and shrewdness are generic. Astuteness = perceptiveness. Guile captures the deliberate tactical deception at the negotiating table."},
-  {tag:"Fill in the Blanks",stem:"The committee's report was _______ in its conclusions — it named no one, blamed no system, and recommended nothing that would require anyone to change their behaviour.",opts:["Toothless","Anodyne","Vacuous","Nugatory"],ans:1,exp:"Anodyne means deliberately inoffensive and unlikely to cause controversy. The report named no one and recommended nothing — classic anodyne output. Toothless = ineffective. Vacuous = empty of meaning. Nugatory = of no importance (distractor from earlier tests)."},
-  {tag:"Fill in the Blanks",stem:"The activist's _______ tone throughout the documentary alienated viewers who might otherwise have been sympathetic to the cause.",opts:["Tendentious","Strident","Polemical","Hectoring"],ans:3,exp:"Hectoring means bullying or intimidating through an aggressive, domineering tone. This explains alienating even sympathetic viewers. Tendentious = biased. Polemical = arguing a position. Strident = loud and harsh. Hectoring is the only one that implies the listener feels bullied."},
-  {tag:"Fill in the Blanks",stem:"The researcher's _______ approach — revisiting every assumption before drawing any conclusion — produced findings that withstood a decade of scrutiny.",opts:["Rigorous","Meticulous","Scrupulous","Painstaking"],ans:2,exp:"Scrupulous means having careful attention to doing what is right — both ethically and procedurally. Meticulous = very careful about details. Rigorous = thorough. Painstaking = very careful. Scrupulous captures the ethical dimension of revisiting every assumption."},
-  {tag:"Fill in the Blanks",stem:"The speaker's argument was _______ — each point built upon the last with such logical precision that the conclusion seemed inevitable from the opening sentence.",opts:["Lucid","Coherent","Watertight","Cogent"],ans:3,exp:"Cogent means clear, logical, and convincing — it implies both clarity and persuasive force. Lucid = clearly expressed. Coherent = logical and consistent. Watertight = impossible to fault. Cogent specifically captures arguments that build to an inevitable conclusion."},
-  {tag:"Fill in the Blanks",stem:"The politician's _______ — claiming credit for a policy she had publicly opposed three years earlier — was noted by every journalist in the room.",opts:["Duplicity","Hypocrisy","Tergiversation","Effrontery"],ans:2,exp:"Tergiversation means making conflicting or evasive statements and reversing one's position. Claiming credit for a policy you publicly opposed is tergiversation. Duplicity = deception. Hypocrisy = not living by one's stated values. Effrontery = shameless boldness."},
-  // WORD IN CONTEXT (9)
-  {tag:"Word in Context",stem:"The LACHRYMOSE nature of the eulogy surprised those who had known the deceased as a man who found public displays of emotion distasteful.",opts:["Marked by weeping and deep sorrow","Unexpectedly brief and understated","Filled with genuine personal anecdotes","Formal in tone despite the personal loss"],ans:0,exp:"Lachrymose means tearful and marked by weeping or sorrow. The contrast with the deceased's distaste for public displays of emotion makes the answer clear — the eulogy was unexpectedly sorrowful."},
-  {tag:"Word in Context",stem:"The board found the auditor's report TENDENTIOUS — it presented the evidence selectively in a way that led inexorably to a predetermined conclusion.",opts:["Technically flawed in its methodology","Unusually harsh in its language","Biased toward a particular interpretation","Difficult to follow without specialist knowledge"],ans:2,exp:"Tendentious means biased toward a particular interpretation. Presenting evidence selectively to reach a predetermined conclusion is the definition of tendentious — the board identified the bias, not a technical flaw."},
-  {tag:"Word in Context",stem:"The PUSILLANIMOUS handling of the crisis — issuing vague statements rather than taking any decisive action — cost the administration its credibility.",opts:["Excessively cautious but ultimately justified","Technically sound but poorly communicated","Cowardly and lacking any decisive resolve","Diplomatically sensitive given the circumstances"],ans:2,exp:"Pusillanimous means cowardly and lacking decisive resolve. Issuing vague statements instead of taking action under pressure is the defining example. The cost to credibility confirms the cowardice reading."},
-  {tag:"Word in Context",stem:"The novelist's PELLUCID style made even the most complex philosophical ideas feel accessible to an ordinary reader.",opts:["Unusually dense and requiring re-reading","Deliberately ambiguous to invite interpretation","Stylistically ornate and self-consciously literary","Admirably clear and easy to understand"],ans:3,exp:"Pellucid means admirably clear and easy to understand. The context — complex philosophical ideas feeling accessible — directly signals clarity. Dense, ambiguous, and ornate are all opposites."},
-  {tag:"Word in Context",stem:"The PROLIX testimony of the expert witness tried the patience of the jury; the judge eventually asked him to confine himself to the question asked.",opts:["Technically accurate but unnecessarily detailed","Delivered in an unnecessarily aggressive tone","Using far more words than the matter required","Difficult to follow due to specialist terminology"],ans:2,exp:"Prolix means using far more words than the matter requires, to the point of being tedious. The judge's intervention and the jury's patience being tried confirm this is about excessive length, not aggression or specialism."},
-  {tag:"Word in Context",stem:"His MORDANT wit made him a favourite at dinner tables and an enemy in boardrooms; people laughed until they realised the joke was at their expense.",opts:["Cutting and sharply critical in a clever way","Unexpectedly self-deprecating for a man of his status","Warm and inclusive despite its apparent edge","Deliberately provocative to test people's reactions"],ans:0,exp:"Mordant means sharp, biting, and critical in a clever way. The key is that targets laughed — the criticism was witty, not merely harsh. This rules out options that imply warmth or deliberate provocation without wit."},
-  {tag:"Word in Context",stem:"The DIFFIDENT junior minister surprised everyone by delivering the sharpest cross-examination the committee had seen in years.",opts:["Notoriously combative despite a mild manner","Modest and lacking in self-confidence","Recently appointed and therefore inexperienced","Widely regarded as a future party leader"],ans:1,exp:"Diffident means modest and lacking in self-confidence. The surprise at the sharp cross-examination is precisely because diffidence does not predict such performance — the contrast is the point of the sentence."},
-  {tag:"Word in Context",stem:"The PERFIDIOUS ally abandoned the coalition at the moment of greatest vulnerability, switching sides when victory had seemed certain.",opts:["Strategically cautious given the military situation","Motivated purely by self-interest","Deliberately treacherous and disloyal","Exhausted by prolonged engagement in the conflict"],ans:2,exp:"Perfidious means deceitfully treacherous and disloyal. Switching sides at the moment of greatest vulnerability, when victory seemed certain, is the defining act of perfidy. Motivated by self-interest is plausible but less precise."},
-  {tag:"Word in Context",stem:"The IMPECUNIOUS artist refused every commission that compromised his vision, preferring genuine poverty to comfortable compromise.",opts:["Having very little money","Principled to the point of professional isolation","Widely respected but poorly compensated","Temperamentally unsuited to collaborative work"],ans:0,exp:"Impecunious means having very little money. The sentence itself tells you — preferring genuine poverty to comfortable compromise. The word directly states the financial condition, not a personality trait."},
-  // ODD ONE OUT (8)
-  {tag:"Odd One Out",stem:"Which word does NOT belong with the others?",opts:["Duplicity","Candour","Forthrightness","Probity"],ans:0,exp:"Duplicity means deception and double-dealing — it is the opposite of the others. Candour, forthrightness, and probity all relate to honesty and integrity. Duplicity is the odd one out."},
-  {tag:"Odd One Out",stem:"Which word does NOT belong with the others?",opts:["Prolix","Verbose","Garrulous","Laconic"],ans:3,exp:"Laconic means brief and using few words — the opposite of the others. Prolix, verbose, and garrulous all mean using too many words. Laconic is the odd one out."},
-  {tag:"Odd One Out",stem:"Which word does NOT belong with the others?",opts:["Diffident","Reticent","Demure","Assertive"],ans:3,exp:"Assertive means confident and direct — the opposite of the others. Diffident, reticent, and demure all describe restraint, shyness, or reserve. Assertive is the odd one out."},
-  {tag:"Odd One Out",stem:"Which word does NOT belong with the others?",opts:["Mordant","Benign","Acerbic","Caustic"],ans:1,exp:"Benign means gentle and harmless — the opposite of the others. Mordant, acerbic, and caustic all mean sharp, biting, and critical. Benign is the odd one out."},
-  {tag:"Odd One Out",stem:"Which word does NOT belong with the others?",opts:["Abstruse","Pellucid","Lucid","Perspicuous"],ans:0,exp:"Abstruse means obscure and difficult to understand — the opposite of the others. Pellucid, lucid, and perspicuous all mean clear and easy to understand. Abstruse is the odd one out."},
-  {tag:"Odd One Out",stem:"Which word does NOT belong with the others?",opts:["Steadfast","Perfidious","Treacherous","Duplicitous"],ans:0,exp:"Steadfast means loyal and unwavering — the opposite of the others. Perfidious, treacherous, and duplicitous all mean disloyal or deceitful. Steadfast is the odd one out."},
-  {tag:"Odd One Out",stem:"Which word does NOT belong with the others?",opts:["Impecunious","Indigent","Penurious","Opulent"],ans:3,exp:"Opulent means wealthy and luxurious — the opposite of the others. Impecunious, indigent, and penurious all mean poor or lacking money. Opulent is the odd one out."},
-  {tag:"Odd One Out",stem:"Which word does NOT belong with the others?",opts:["Cogent","Compelling","Persuasive","Specious"],ans:3,exp:"Specious means seemingly reasonable but actually unsound — the opposite of the others. Cogent, compelling, and persuasive all mean genuinely convincing. Specious is the odd one out."},
-  // ANALOGY PAIRS (6)
-  {tag:"Analogy Pairs",stem:"TERGIVERSATION : CONSISTENCY",opts:["Prevarication : Honesty","Perfidy : Loyalty","Equivocation : Clarity","Diffidence : Confidence"],ans:1,exp:"Tergiversation is the absence of consistency — it means changing one's position evasively. Perfidy is the absence of loyalty. The relationship is word : what it fundamentally lacks. Prevarication:Honesty is close but prevarication is about evasion, not the betrayal of a position."},
-  {tag:"Analogy Pairs",stem:"LAPIDARY : PROSE",opts:["Mordant : Humour","Pellucid : Argument","Prolix : Speech","Cogent : Reasoning"],ans:0,exp:"Lapidary describes the quality of being elegantly precise when applied to prose. Mordant describes the quality of being sharply biting when applied to humour. Both follow the pattern: adjective describes the defining quality of the noun at its finest or sharpest."},
-  {tag:"Analogy Pairs",stem:"A DEMAGOGUE uses rhetoric to manipulate the masses. In the same way, _______ uses _______ to gain personal favour from those in power.",opts:["A charlatan : deception","A sycophant : flattery","A tyrant : fear","A pedant : precision"],ans:1,exp:"A demagogue uses rhetoric as the tool to manipulate masses for power. A sycophant uses flattery as the tool to gain favour from those in power. The parallel is: person uses tool to achieve goal at others' expense. Charlatan uses deception but for personal gain from victims, not from those above."},
-  {tag:"Analogy Pairs",stem:"IMPUGN : CREDIBILITY",opts:["Mollify : Anger","Enervate : Vigour","Tarnish : Reputation","Squelch : Dissent"],ans:2,exp:"To impugn credibility means to attack and undermine it. To tarnish a reputation means to damage and undermine it. Both pairs follow the pattern: verb that attacks or diminishes : the thing being diminished. Mollify reduces anger; enervate weakens vigour — different relationships."},
-  {tag:"Analogy Pairs",stem:"VERBOSE is to economy of words as PUSILLANIMOUS is to _______",opts:["Moral courage","Equanimity","Forthrightness","Sang-froid"],ans:0,exp:"Verbose means lacking economy of words — the word names what is absent. Pusillanimous means lacking moral courage — same structure. The analogy is: word : the quality it lacks. Equanimity, forthrightness, and sang-froid are all qualities but not what pusillanimous specifically lacks."},
-  {tag:"Analogy Pairs",stem:"ELEGY : GRIEF :: PANEGYRIC : _______",opts:["Admiration","Reverence","Praise","Eulogy"],ans:2,exp:"An elegy is a form of expression whose defining emotional content is grief. A panegyric is a form of expression whose defining emotional content is praise. Admiration and reverence are emotions but not what panegyric expresses — it specifically conveys praise as a public act."},
-  // ONE WORD SUBSTITUTION (4)
-  {tag:"One Word Substitution",stem:"The use of deliberately vague or ambiguous language to avoid committing to a clear position.",opts:["Equivocation","Prevarication","Circumlocution","Tergiversation"],ans:0,exp:"Equivocation means using deliberately vague or ambiguous language to avoid committing to a clear position. Prevarication means stalling or avoiding through evasion. Circumlocution means excessive wordiness. Tergiversation means changing one's position. Equivocation is the precise term for strategic ambiguity."},
-  {tag:"One Word Substitution",stem:"A speech or piece of writing that lavishes extravagant and elaborate praise on its subject.",opts:["Elegy","Eulogy","Panegyric","Encomium"],ans:2,exp:"Panegyric is a public speech or piece of writing that lavishes elaborate praise on its subject. A eulogy is specifically a funeral speech. An encomium is a formal expression of praise but less public and elaborate. Elegy is a lament. Panegyric is the most precise match."},
-  {tag:"One Word Substitution",stem:"Excessively long and tediously detailed in speech or writing, to the point of trying the listener's patience.",opts:["Verbose","Prolix","Loquacious","Garrulous"],ans:1,exp:"Prolix means excessively long and tediously detailed — it specifically implies the listener's patience is tried. Verbose = wordy. Loquacious and garrulous = talkative. Prolix alone captures the tedious length that wears out an audience."},
-  {tag:"One Word Substitution",stem:"The quality of being open and direct in stating one's views or the truth, especially when it may be unwelcome.",opts:["Probity","Forthrightness","Candour","Asperity"],ans:2,exp:"Candour means the quality of being open and direct, especially when the truth may be unwelcome. Probity = moral uprightness. Forthrightness = being direct and outspoken. Asperity = harshness of tone. Candour specifically captures the willingness to say difficult things openly."}
+const QUESTIONS = [
+  {section:"Fill in the Blanks",stem:"The minister's _______ during the press conference — answering every question with a question — frustrated journalists who had expected at least a partial admission.",opts:["Equivocation","Evasiveness","Prevarication","Circumlocution"],ans:2,exp:"Correct Answer: C. Prevarication. Prevarication means deliberately stalling or avoiding a direct answer — distinct from equivocation (using ambiguous language) and circumlocution (excessive wordiness). The act of answering every question with a question is classic prevarication."},
+  {section:"Fill in the Blanks",stem:"The policy paper was _______ in its assumptions; it presumed public cooperation that no government had ever successfully secured.",opts:["Naive","Sanguine","Utopian","Optimistic"],ans:1,exp:"Correct Answer: B. Sanguine. Sanguine means unrealistically optimistic, especially about forecasts or plans. Naive and optimistic are too generic; utopian implies an idealistic vision rather than a faulty assumption about cooperation."},
+  {section:"Fill in the Blanks",stem:"The professor's lectures were _______ — every concept buried under so many qualifications that students left more confused than when they arrived.",opts:["Abstruse","Opaque","Recondite","Convoluted"],ans:3,exp:"Correct Answer: D. Convoluted. Convoluted means unnecessarily complex in structure — exactly what burying concepts under qualifications produces. Abstruse and recondite describe obscurity by nature, not by poor construction. Opaque = unclear but not structurally tangled."},
+  {section:"Fill in the Blanks",stem:"She delivered the bad news with _______ — no preamble, no softening, just the facts stated plainly and without apology.",opts:["Asperity","Bluntness","Forthrightness","Candour"],ans:0,exp:"Correct Answer: A. Asperity. Asperity means harshness of tone or manner. The phrase 'without apology' signals something sharper than candour (openness) or forthrightness (directness). Bluntness is close but lacks the edge asperity carries."},
+  {section:"Fill in the Blanks",stem:"The general's _______ in the face of mounting casualties drew admiration from his troops and condemnation from the opposition.",opts:["Equanimity","Sang-froid","Impassivity","Stoicism"],ans:3,exp:"Correct Answer: D. Stoicism. Stoicism means enduring hardship without complaint. Equanimity is calm under difficulty but more internal and passive. Sang-froid is cool-headedness in crisis. Stoicism best fits the context of facing mounting casualties with visible resolve."},
+  {section:"Fill in the Blanks",stem:"The treaty was _______ by a faction within the ruling party; their opposition was enough to stall ratification for three years.",opts:["Impugned","Contested","Opposed","Obstructed"],ans:0,exp:"Correct Answer: A. Impugned. Impugned means to call into question or attack the validity of something — specifically the treaty's legitimacy. Contested and opposed are too generic. Obstructed means blocked, not challenged in principle."},
+  {section:"Fill in the Blanks",stem:"The novelist's prose was _______ — each sentence so precisely weighted that removing a single word would collapse the meaning.",opts:["Terse","Economical","Sparse","Lapidary"],ans:3,exp:"Correct Answer: D. Lapidary. Lapidary means elegantly concise, as if carved in stone — it implies artistry in brevity. Terse and sparse just mean brief. Economical is close but does not carry the sense of precision and polish that lapidary does."},
+  {section:"Fill in the Blanks",stem:"The journalist's _______ report on the pharmaceutical company's trials prompted three parliamentary inquiries and a share price collapse.",opts:["Incendiary","Damning","Scathing","Exposing"],ans:1,exp:"Correct Answer: B. Damning. Damning means presenting overwhelming evidence of wrongdoing — appropriate when the consequence is three parliamentary inquiries and a share price collapse. Incendiary = inflammatory. Scathing = harshly critical but not necessarily evidence-based."},
+  {section:"Fill in the Blanks",stem:"The critic was known for her _______ — she could identify a forgery from across the room before the provenance documents had even been opened.",opts:["Acuity","Perspicacity","Discernment","Acumen"],ans:1,exp:"Correct Answer: B. Perspicacity. Perspicacity means having a ready, penetrating insight into complex matters. Acuity = sharpness of perception (more physical/sensory). Discernment = good judgment. Acumen = practical shrewdness. Perspicacity best fits identifying a forgery by sight alone."},
+  {section:"Fill in the Blanks",stem:"The chairman's resignation letter was _______ with bitterness; between every line of formal courtesy lay an unmistakable sense of betrayal.",opts:["Freighted","Riddled","Suffused","Saturated"],ans:0,exp:"Correct Answer: A. Freighted. Freighted means loaded or weighted with meaning or emotion — it carries a sense of burden that riddled (full of holes), suffused (spread through gently), and saturated (filled completely) do not. The letter is heavy with unexpressed bitterness."},
+  {section:"Fill in the Blanks",stem:"The new CEO's approach was _______ — she dismantled three divisions, restructured two more, and replaced half the board within her first year.",opts:["Radical","Trenchant","Sweeping","Ruthless"],ans:1,exp:"Correct Answer: B. Trenchant. Trenchant means vigorous, effective, and direct. The CEO's actions — dismantling, restructuring, replacing — are decisive and sharp. Radical and sweeping describe scope; ruthless describes method without implying effectiveness."},
+  {section:"Fill in the Blanks",stem:"The ambassador's remarks were so _______ that diplomats from five countries requested clarification before close of business.",opts:["Ambiguous","Cryptic","Oblique","Gnomic"],ans:3,exp:"Correct Answer: D. Gnomic. Gnomic means mysterious and aphoristic — remarks that are deliberately hard to interpret. Cryptic = deliberately obscure. Oblique = indirect. Ambiguous = having two meanings. Gnomic specifically implies the oracular, aphoristic quality that requires five countries to seek clarification."},
+  {section:"Fill in the Blanks",stem:"His _______ at the negotiating table — conceding minor points to win major ones — made him one of the most effective trade envoys in the country's history.",opts:["Cunning","Guile","Shrewdness","Astuteness"],ans:1,exp:"Correct Answer: B. Guile. Guile means the strategic use of clever or cunning tactics — specifically implying deception in service of a goal. Cunning and shrewdness are generic. Astuteness = perceptiveness. Guile captures the deliberate tactical deception at the negotiating table."},
+  {section:"Fill in the Blanks",stem:"The committee's report was _______ in its conclusions — it named no one, blamed no system, and recommended nothing that would require anyone to change their behaviour.",opts:["Toothless","Anodyne","Vacuous","Nugatory"],ans:1,exp:"Correct Answer: B. Anodyne. Anodyne means deliberately inoffensive and unlikely to cause controversy. The report named no one and recommended nothing — classic anodyne output. Toothless = ineffective. Vacuous = empty of meaning. Nugatory = of no importance (distractor from earlier tests)."},
+  {section:"Fill in the Blanks",stem:"The activist's _______ tone throughout the documentary alienated viewers who might otherwise have been sympathetic to the cause.",opts:["Tendentious","Strident","Polemical","Hectoring"],ans:3,exp:"Correct Answer: D. Hectoring. Hectoring means bullying or intimidating through an aggressive, domineering tone. This explains alienating even sympathetic viewers. Tendentious = biased. Polemical = arguing a position. Strident = loud and harsh. Hectoring is the only one that implies the listener feels bullied."},
+  {section:"Fill in the Blanks",stem:"The researcher's _______ approach — revisiting every assumption before drawing any conclusion — produced findings that withstood a decade of scrutiny.",opts:["Rigorous","Meticulous","Scrupulous","Painstaking"],ans:2,exp:"Correct Answer: C. Scrupulous. Scrupulous means having careful attention to doing what is right — both ethically and procedurally. Meticulous = very careful about details. Rigorous = thorough. Painstaking = very careful. Scrupulous captures the ethical dimension of revisiting every assumption."},
+  {section:"Fill in the Blanks",stem:"The speaker's argument was _______ — each point built upon the last with such logical precision that the conclusion seemed inevitable from the opening sentence.",opts:["Lucid","Coherent","Watertight","Cogent"],ans:3,exp:"Correct Answer: D. Cogent. Cogent means clear, logical, and convincing — it implies both clarity and persuasive force. Lucid = clearly expressed. Coherent = logical and consistent. Watertight = impossible to fault. Cogent specifically captures arguments that build to an inevitable conclusion."},
+  {section:"Fill in the Blanks",stem:"The politician's _______ — claiming credit for a policy she had publicly opposed three years earlier — was noted by every journalist in the room.",opts:["Duplicity","Hypocrisy","Tergiversation","Effrontery"],ans:2,exp:"Correct Answer: C. Tergiversation. Tergiversation means making conflicting or evasive statements and reversing one's position. Claiming credit for a policy you publicly opposed is tergiversation. Duplicity = deception. Hypocrisy = not living by one's stated values. Effrontery = shameless boldness."},
+  {section:"Word in Context",stem:"The LACHRYMOSE nature of the eulogy surprised those who had known the deceased as a man who found public displays of emotion distasteful.",opts:["Marked by weeping and deep sorrow","Unexpectedly brief and understated","Filled with genuine personal anecdotes","Formal in tone despite the personal loss"],ans:0,exp:"Correct Answer: A. Marked by weeping and deep sorrow. Lachrymose means tearful and marked by weeping or sorrow. The contrast with the deceased's distaste for public displays of emotion makes the answer clear — the eulogy was unexpectedly sorrowful."},
+  {section:"Word in Context",stem:"The board found the auditor's report TENDENTIOUS — it presented the evidence selectively in a way that led inexorably to a predetermined conclusion.",opts:["Technically flawed in its methodology","Unusually harsh in its language","Biased toward a particular interpretation","Difficult to follow without specialist knowledge"],ans:2,exp:"Correct Answer: C. Biased toward a particular interpretation. Tendentious means biased toward a particular interpretation. Presenting evidence selectively to reach a predetermined conclusion is the definition of tendentious — the board identified the bias, not a technical flaw."},
+  {section:"Word in Context",stem:"The PUSILLANIMOUS handling of the crisis — issuing vague statements rather than taking any decisive action — cost the administration its credibility.",opts:["Excessively cautious but ultimately justified","Technically sound but poorly communicated","Cowardly and lacking any decisive resolve","Diplomatically sensitive given the circumstances"],ans:2,exp:"Correct Answer: C. Cowardly and lacking any decisive resolve. Pusillanimous means cowardly and lacking decisive resolve. Issuing vague statements instead of taking action under pressure is the defining example. The cost to credibility confirms the cowardice reading."},
+  {section:"Word in Context",stem:"The novelist's PELLUCID style made even the most complex philosophical ideas feel accessible to an ordinary reader.",opts:["Unusually dense and requiring re-reading","Deliberately ambiguous to invite interpretation","Stylistically ornate and self-consciously literary","Admirably clear and easy to understand"],ans:3,exp:"Correct Answer: D. Admirably clear and easy to understand. Pellucid means admirably clear and easy to understand. The context — complex philosophical ideas feeling accessible — directly signals clarity. Dense, ambiguous, and ornate are all opposites."},
+  {section:"Word in Context",stem:"The PROLIX testimony of the expert witness tried the patience of the jury; the judge eventually asked him to confine himself to the question asked.",opts:["Technically accurate but unnecessarily detailed","Delivered in an unnecessarily aggressive tone","Using far more words than the matter required","Difficult to follow due to specialist terminology"],ans:2,exp:"Correct Answer: C. Using far more words than the matter required. Prolix means using far more words than the matter requires, to the point of being tedious. The judge's intervention and the jury's patience being tried confirm this is about excessive length, not aggression or specialism."},
+  {section:"Word in Context",stem:"His MORDANT wit made him a favourite at dinner tables and an enemy in boardrooms; people laughed until they realised the joke was at their expense.",opts:["Cutting and sharply critical in a clever way","Unexpectedly self-deprecating for a man of his status","Warm and inclusive despite its apparent edge","Deliberately provocative to test people's reactions"],ans:0,exp:"Correct Answer: A. Cutting and sharply critical in a clever way. Mordant means sharp, biting, and critical in a clever way. The key is that targets laughed — the criticism was witty, not merely harsh. This rules out options that imply warmth or deliberate provocation without wit."},
+  {section:"Word in Context",stem:"The DIFFIDENT junior minister surprised everyone by delivering the sharpest cross-examination the committee had seen in years.",opts:["Notoriously combative despite a mild manner","Modest and lacking in self-confidence","Recently appointed and therefore inexperienced","Widely regarded as a future party leader"],ans:1,exp:"Correct Answer: B. Modest and lacking in self-confidence. Diffident means modest and lacking in self-confidence. The surprise at the sharp cross-examination is precisely because diffidence does not predict such performance — the contrast is the point of the sentence."},
+  {section:"Word in Context",stem:"The PERFIDIOUS ally abandoned the coalition at the moment of greatest vulnerability, switching sides when victory had seemed certain.",opts:["Strategically cautious given the military situation","Motivated purely by self-interest","Deliberately treacherous and disloyal","Exhausted by prolonged engagement in the conflict"],ans:2,exp:"Correct Answer: C. Deliberately treacherous and disloyal. Perfidious means deceitfully treacherous and disloyal. Switching sides at the moment of greatest vulnerability, when victory seemed certain, is the defining act of perfidy. Motivated by self-interest is plausible but less precise."},
+  {section:"Word in Context",stem:"The IMPECUNIOUS artist refused every commission that compromised his vision, preferring genuine poverty to comfortable compromise.",opts:["Having very little money","Principled to the point of professional isolation","Widely respected but poorly compensated","Temperamentally unsuited to collaborative work"],ans:0,exp:"Correct Answer: A. Having very little money. Impecunious means having very little money. The sentence itself tells you — preferring genuine poverty to comfortable compromise. The word directly states the financial condition, not a personality trait."},
+  {section:"Odd One Out",stem:"Which word does NOT belong with the others?",opts:["Duplicity","Candour","Forthrightness","Probity"],ans:0,exp:"Correct Answer: A. Duplicity. Duplicity means deception and double-dealing — it is the opposite of the others. Candour, forthrightness, and probity all relate to honesty and integrity. Duplicity is the odd one out."},
+  {section:"Odd One Out",stem:"Which word does NOT belong with the others?",opts:["Prolix","Verbose","Garrulous","Laconic"],ans:3,exp:"Correct Answer: D. Laconic. Laconic means brief and using few words — the opposite of the others. Prolix, verbose, and garrulous all mean using too many words. Laconic is the odd one out."},
+  {section:"Odd One Out",stem:"Which word does NOT belong with the others?",opts:["Diffident","Reticent","Demure","Assertive"],ans:3,exp:"Correct Answer: D. Assertive. Assertive means confident and direct — the opposite of the others. Diffident, reticent, and demure all describe restraint, shyness, or reserve. Assertive is the odd one out."},
+  {section:"Odd One Out",stem:"Which word does NOT belong with the others?",opts:["Mordant","Benign","Acerbic","Caustic"],ans:1,exp:"Correct Answer: B. Benign. Benign means gentle and harmless — the opposite of the others. Mordant, acerbic, and caustic all mean sharp, biting, and critical. Benign is the odd one out."},
+  {section:"Odd One Out",stem:"Which word does NOT belong with the others?",opts:["Abstruse","Pellucid","Lucid","Perspicuous"],ans:0,exp:"Correct Answer: A. Abstruse. Abstruse means obscure and difficult to understand — the opposite of the others. Pellucid, lucid, and perspicuous all mean clear and easy to understand. Abstruse is the odd one out."},
+  {section:"Odd One Out",stem:"Which word does NOT belong with the others?",opts:["Steadfast","Perfidious","Treacherous","Duplicitous"],ans:0,exp:"Correct Answer: A. Steadfast. Steadfast means loyal and unwavering — the opposite of the others. Perfidious, treacherous, and duplicitous all mean disloyal or deceitful. Steadfast is the odd one out."},
+  {section:"Odd One Out",stem:"Which word does NOT belong with the others?",opts:["Impecunious","Indigent","Penurious","Opulent"],ans:3,exp:"Correct Answer: D. Opulent. Opulent means wealthy and luxurious — the opposite of the others. Impecunious, indigent, and penurious all mean poor or lacking money. Opulent is the odd one out."},
+  {section:"Odd One Out",stem:"Which word does NOT belong with the others?",opts:["Cogent","Compelling","Persuasive","Specious"],ans:3,exp:"Correct Answer: D. Specious. Specious means seemingly reasonable but actually unsound — the opposite of the others. Cogent, compelling, and persuasive all mean genuinely convincing. Specious is the odd one out."},
+  {section:"Analogy Pairs",stem:"TERGIVERSATION : CONSISTENCY",opts:["Prevarication : Honesty","Perfidy : Loyalty","Equivocation : Clarity","Diffidence : Confidence"],ans:1,exp:"Correct Answer: B. Perfidy : Loyalty. Tergiversation is the absence of consistency — it means changing one's position evasively. Perfidy is the absence of loyalty. The relationship is word : what it fundamentally lacks. Prevarication:Honesty is close but prevarication is about evasion, not the betrayal of a position."},
+  {section:"Analogy Pairs",stem:"LAPIDARY : PROSE",opts:["Mordant : Humour","Pellucid : Argument","Prolix : Speech","Cogent : Reasoning"],ans:0,exp:"Correct Answer: A. Mordant : Humour. Lapidary describes the quality of being elegantly precise when applied to prose. Mordant describes the quality of being sharply biting when applied to humour. Both follow the pattern: adjective describes the defining quality of the noun at its finest or sharpest."},
+  {section:"Analogy Pairs",stem:"A DEMAGOGUE uses rhetoric to manipulate the masses. In the same way, _______ uses _______ to gain personal favour from those in power.",opts:["A charlatan : deception","A sycophant : flattery","A tyrant : fear","A pedant : precision"],ans:1,exp:"Correct Answer: B. A sycophant : flattery. A demagogue uses rhetoric as the tool to manipulate masses for power. A sycophant uses flattery as the tool to gain favour from those in power. The parallel is: person uses tool to achieve goal at others' expense. Charlatan uses deception but for personal gain from victims, not from those above."},
+  {section:"Analogy Pairs",stem:"IMPUGN : CREDIBILITY",opts:["Mollify : Anger","Enervate : Vigour","Tarnish : Reputation","Squelch : Dissent"],ans:2,exp:"Correct Answer: C. Tarnish : Reputation. To impugn credibility means to attack and undermine it. To tarnish a reputation means to damage and undermine it. Both pairs follow the pattern: verb that attacks or diminishes : the thing being diminished. Mollify reduces anger; enervate weakens vigour — different relationships."},
+  {section:"Analogy Pairs",stem:"VERBOSE is to economy of words as PUSILLANIMOUS is to _______",opts:["Moral courage","Equanimity","Forthrightness","Sang-froid"],ans:0,exp:"Correct Answer: A. Moral courage. Verbose means lacking economy of words — the word names what is absent. Pusillanimous means lacking moral courage — same structure. The analogy is: word : the quality it lacks. Equanimity, forthrightness, and sang-froid are all qualities but not what pusillanimous specifically lacks."},
+  {section:"Analogy Pairs",stem:"ELEGY : GRIEF :: PANEGYRIC : _______",opts:["Admiration","Reverence","Praise","Eulogy"],ans:2,exp:"Correct Answer: C. Praise. An elegy is a form of expression whose defining emotional content is grief. A panegyric is a form of expression whose defining emotional content is praise. Admiration and reverence are emotions but not what panegyric expresses — it specifically conveys praise as a public act."},
+  {section:"One Word Substitution",stem:"The use of deliberately vague or ambiguous language to avoid committing to a clear position.",opts:["Equivocation","Prevarication","Circumlocution","Tergiversation"],ans:0,exp:"Correct Answer: A. Equivocation. Equivocation means using deliberately vague or ambiguous language to avoid committing to a clear position. Prevarication means stalling or avoiding through evasion. Circumlocution means excessive wordiness. Tergiversation means changing one's position. Equivocation is the precise term for strategic ambiguity."},
+  {section:"One Word Substitution",stem:"A speech or piece of writing that lavishes extravagant and elaborate praise on its subject.",opts:["Elegy","Eulogy","Panegyric","Encomium"],ans:2,exp:"Correct Answer: C. Panegyric. Panegyric is a public speech or piece of writing that lavishes elaborate praise on its subject. A eulogy is specifically a funeral speech. An encomium is a formal expression of praise but less public and elaborate. Elegy is a lament. Panegyric is the most precise match."},
+  {section:"One Word Substitution",stem:"Excessively long and tediously detailed in speech or writing, to the point of trying the listener's patience.",opts:["Verbose","Prolix","Loquacious","Garrulous"],ans:1,exp:"Correct Answer: B. Prolix. Prolix means excessively long and tediously detailed — it specifically implies the listener's patience is tried. Verbose = wordy. Loquacious and garrulous = talkative. Prolix alone captures the tedious length that wears out an audience."},
+  {section:"One Word Substitution",stem:"The quality of being open and direct in stating one's views or the truth, especially when it may be unwelcome.",opts:["Probity","Forthrightness","Candour","Asperity"],ans:2,exp:"Correct Answer: C. Candour. Candour means the quality of being open and direct, especially when the truth may be unwelcome. Probity = moral uprightness. Forthrightness = being direct and outspoken. Asperity = harshness of tone. Candour specifically captures the willingness to say difficult things openly."}
 ];
 
-var S = {
-  cur:0, answers:new Array(QUESTIONS.length).fill(-1),
-  marked:new Array(QUESTIONS.length).fill(false),
-  secsLeft:TOTAL_SECS, interval:null,
-  name:'', pin:'', batch:'', submitted:false
-};
+let studentName="",studentPin="",studentBatch="";
+let currentQ=0,secondsLeft=TIMER_DURATION*60,timerInterval=null;
+let userAnswers=new Array(45).fill(null);
+let markedForReview=new Array(45).fill(false);
+let testSubmitted=false;
 
-function startTest() {
-  var name = document.getElementById('inp-name').value.trim();
-  var pin  = document.getElementById('inp-pin').value.trim();
-  var batch= document.getElementById('inp-batch').value;
-  if (!name){alert('Please enter your name.');return;}
-  if (!pin){alert('Please enter your IMS PIN.');return;}
-  if (!batch){alert('Please select your batch.');return;}
-  S.name=name; S.pin=pin; S.batch=batch;
-  document.getElementById('login-screen').style.display='none';
-  document.getElementById('test-screen').style.display='flex';
-  document.getElementById('palette-fab').style.display='flex';
-  renderQ(); buildPalette();
-  S.interval=setInterval(tick,1000);
+function startTest(){
+  const name=document.getElementById('inputName').value.trim();
+  const pin=document.getElementById('inputPin').value.trim().toUpperCase();
+  const batch=document.getElementById('inputBatch').value;
+  const err=document.getElementById('loginErr');
+  if(!name||!pin||!batch){err.textContent='Please fill in all fields.';err.style.display='block';return;}
+  if(!/^(STU|IMS)\d{10}$/.test(pin)){err.textContent='PIN must be STU or IMS followed by exactly 10 digits.';err.style.display='block';return;}
+  const isAdmin=ADMIN_PINS.includes(pin);
+  if(isAdmin&&batch!=='Admin'){err.textContent='Admin PIN must be used with the Admin batch only.';err.style.display='block';return;}
+  if(!isAdmin&&batch==='Admin'){err.textContent='Only Admin PINs may select the Admin batch.';err.style.display='block';return;}
+  studentName=name;studentPin=pin;studentBatch=batch;
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('testScreen').style.display='block';
+  if(window.innerWidth>768)document.getElementById('paletteOverlay').style.display='flex';
+  else document.getElementById('paletteOverlay').style.display='none';
+  buildPalette();renderQuestion();startTimer();
 }
 
-function tick() {
-  S.secsLeft--;
-  if(S.secsLeft<=0){clearInterval(S.interval);doSubmit();return;}
-  var m=String(Math.floor(S.secsLeft/60)).padStart(2,'0');
-  var s=String(S.secsLeft%60).padStart(2,'0');
-  var el=document.getElementById('timer');
-  el.textContent=m+':'+s;
-  el.className='timer-val'+(S.secsLeft<=60?' urgent':'');
+function startTimer(){
+  timerInterval=setInterval(()=>{
+    secondsLeft--;
+    const m=String(Math.floor(secondsLeft/60)).padStart(2,'0');
+    const s=String(secondsLeft%60).padStart(2,'0');
+    const el=document.getElementById('timerDisplay');
+    el.textContent=m+':'+s;
+    if(secondsLeft<=300)el.classList.add('urgent');
+    if(secondsLeft<=0){clearInterval(timerInterval);submitTest();}
+  },1000);
 }
 
-var INSTRUCTIONS = {
-  "Analogy Pairs": "Identify the pair or option that shares the same relationship as the one given.",
-  "One Word Substitution": "Choose the single word that best matches the given description.",
-  "Odd One Out": "Choose the word that does not belong with the others.",
-  "Word in Context": "Choose the option that best explains the meaning of the capitalised word as used in the sentence."
-};
-
-function renderQ() {
-  var q=QUESTIONS[S.cur]; var i=S.cur;
-  document.getElementById('qnum-label').textContent='Q'+(i+1)+' of '+QUESTIONS.length;
-  document.getElementById('section-tag-text').textContent=q.tag;
-  var instr=INSTRUCTIONS[q.tag]||'';
-  var instrHTML=instr?'<div style="font-size:12px;color:#888;font-style:italic;margin-bottom:10px;line-height:1.5">'+instr+'</div>':'';
-  document.getElementById('q-stem').innerHTML=instrHTML+'Q'+(i+1)+'. '+q.stem;
-  document.getElementById('progress-fill').style.width=((i+1)/QUESTIONS.length*100)+'%';
-  document.getElementById('btn-prev').disabled=i===0;
-  var mb=document.getElementById('btn-mark');
-  mb.className='btn-mark'+(S.marked[i]?' marked':'');
-  mb.innerHTML=S.marked[i]?'&#9733; Marked':'&#9734; Mark';
-  document.getElementById('btn-next').innerHTML=i===QUESTIONS.length-1?'Submit &#10003;':'Next &#8594;';
-  var optDiv=document.getElementById('options'); optDiv.innerHTML='';
-  q.opts.forEach(function(opt,oi){
-    var btn=document.createElement('button');
-    btn.className='opt-btn'+(S.answers[i]===oi?' selected':'');
-    btn.innerHTML='<div class="opt-key">'+String.fromCharCode(65+oi)+'</div><div class="opt-text">'+opt+'</div>';
-    btn.onclick=function(){S.answers[i]=oi;renderQ();buildPalette();};
-    optDiv.appendChild(btn);
+function renderQuestion(){
+  const q=QUESTIONS[currentQ];
+  document.getElementById('sectionTag').textContent=q.section;
+  document.getElementById('questionNumber').textContent='Question '+(currentQ+1)+' of 45';
+  document.getElementById('questionStem').innerHTML=q.stem.replace(/\n/g,'<br>');
+  const ol=document.getElementById('optionsList');
+  ol.innerHTML='';
+  q.opts.forEach((opt,i)=>{
+    const li=document.createElement('li');
+    const btn=document.createElement('button');
+    btn.className='option-btn';
+    if(userAnswers[currentQ]===i)btn.classList.add('selected');
+    if(markedForReview[currentQ])btn.classList.add('marked');
+    btn.innerHTML='<span class="opt-label">'+ ['A','B','C','D'][i]+'</span><span class="opt-text">'+opt+'</span>';
+    btn.onclick=()=>selectAnswer(i);
+    li.appendChild(btn);ol.appendChild(li);
   });
-  buildPalette();
+  document.getElementById('submitBtn').style.display=(currentQ===44)?'block':'none';
+  updatePalette();updateProgress();
 }
 
-function prevQ(){if(S.cur>0){S.cur--;renderQ();}}
+function selectAnswer(idx){userAnswers[currentQ]=idx;renderQuestion();}
+function clearAnswer(){userAnswers[currentQ]=null;renderQuestion();}
+function navigate(dir){const n=currentQ+dir;if(n>=0&&n<45){currentQ=n;renderQuestion();}}
 
-function nextOrSubmit() {
-  if(S.cur<QUESTIONS.length-1){S.cur++;renderQ();}
-  else{showConfirm();}
+let paletteOpen=window.innerWidth>768;
+function togglePalette(){
+  paletteOpen=!paletteOpen;
+  const mob=window.innerWidth<=768;
+  const ov=document.getElementById('paletteOverlay');
+  const nb=document.getElementById('navBar');
+  const qa=document.getElementById('questionArea');
+  if(mob){ov.classList.toggle('mobile-open',paletteOpen);}
+  else{ov.style.display=paletteOpen?'flex':'none';nb.style.right=paletteOpen?'var(--panel)':'0';qa.style.maxWidth=paletteOpen?'calc(100% - var(--panel))':'100%';}
 }
 
-function toggleMark(){S.marked[S.cur]=!S.marked[S.cur];renderQ();}
+function markForReview(){markedForReview[currentQ]=!markedForReview[currentQ];renderQuestion();}
 
-function buildPalette() {
-  var g=document.getElementById('palette-grid'); g.innerHTML='';
-  QUESTIONS.forEach(function(q,i){
-    var b=document.createElement('button');
-    b.className='pq'+(i===S.cur?' current':'')+(S.marked[i]?' marked':'')+(S.answers[i]!==-1?' answered':'');
-    b.textContent=i+1;
-    b.onclick=function(){S.cur=i;renderQ();closePalette();};
-    g.appendChild(b);
+function buildPalette(){
+  const grid=document.getElementById('paletteGrid');
+  grid.innerHTML='';
+  for(let i=0;i<45;i++){
+    const btn=document.createElement('button');
+    btn.className='pal-btn';btn.id='pb'+(i+1);btn.textContent=i+1;
+    btn.onclick=(()=>{const idx=i;return()=>{currentQ=idx;renderQuestion();}})();
+    grid.appendChild(btn);
+  }
+}
+
+function updatePalette(){
+  for(let i=0;i<45;i++){
+    const btn=document.getElementById('pb'+(i+1));if(!btn)continue;
+    btn.className='pal-btn';
+    if(markedForReview[i])btn.classList.add('marked');
+    else if(userAnswers[i]!==null)btn.classList.add('answered');
+    if(i===currentQ)btn.classList.add('current');
+  }
+}
+
+function updateProgress(){
+  const ans=userAnswers.filter(a=>a!==null).length;
+  document.getElementById('progressFill').style.width=(ans/45*100)+'%';
+}
+
+function confirmSubmit(){
+  const u=userAnswers.filter(a=>a===null).length;
+  let msg='Submit the test?';
+  if(u>0)msg='You have '+u+' unanswered question'+(u>1?'s':'')+'. Submit anyway?';
+  if(confirm(msg))submitTest();
+}
+
+function submitTest(){
+  if(testSubmitted)return;
+  testSubmitted=true;clearInterval(timerInterval);
+  let correct=0,wrong=0,skipped=0;
+  const sectionErrors={};const wrongQuestions=[];
+  QUESTIONS.forEach((q,i)=>{
+    const sec=q.section;
+    if(userAnswers[i]===null){skipped++;}
+    else if(userAnswers[i]===q.ans){correct++;}
+    else{wrong++;wrongQuestions.push(i+1);sectionErrors[sec]=(sectionErrors[sec]||0)+1;}
+  });
+  const score=correct*4-wrong;
+  showResults(score,correct,wrong,skipped);
+  saveToTracker(score,correct,wrong,skipped);
+  logToSheet(score,correct,wrong,skipped,sectionErrors,wrongQuestions);
+}
+
+function showResults(score,correct,wrong,skipped){
+  document.getElementById('testScreen').style.display='none';
+  document.getElementById('resultsScreen').style.display='block';
+  const acc=((correct/(45-skipped||1))*100).toFixed(1);
+  document.getElementById('scoreHero').innerHTML=
+    '<div class="score-num">'+score+'</div>'+
+    '<div class="score-sub">out of 180 &nbsp;&middot;&nbsp; '+studentName+' &nbsp;&middot;&nbsp; '+studentPin+' &nbsp;&middot;&nbsp; '+studentBatch+'</div>';
+  document.getElementById('statsGrid').innerHTML=
+    '<div class="stat-box correct"><div class="val">'+correct+'</div><div class="lbl">Correct</div></div>'+
+    '<div class="stat-box wrong"><div class="val">'+wrong+'</div><div class="lbl">Wrong</div></div>'+
+    '<div class="stat-box"><div class="val" style="color:var(--grey)">'+skipped+'</div><div class="lbl">Skipped</div></div>'+
+    '<div class="stat-box accuracy"><div class="val">'+acc+'%</div><div class="lbl">Accuracy</div></div>';
+  buildReview();buildMisses();buildRetry();
+}
+
+function buildReview(){
+  const list=document.getElementById('review-list');
+  list.innerHTML='';
+  QUESTIONS.forEach((q,i)=>{
+    const ua=userAnswers[i];
+    const isC=(ua===q.ans),isSk=(ua===null);
+    const card=document.createElement('div');
+    card.className='review-card '+(isSk?'':isC?'correct':'wrong');
+    const bClass=isSk?'badge-skipped':isC?'badge-correct':'badge-wrong';
+    const bText=isSk?'&mdash;':isC?'&#10003;':'&#10007;';
+    const opts=q.opts.map((o,idx)=>{
+      let cls='review-opt';
+      if(idx===q.ans)cls+=' correct-opt';
+      if(ua!==null&&ua===idx&&idx!==q.ans)cls+=' your-wrong';
+      return '<div class="'+cls+'"><span class="opt-label">'+ ['A','B','C','D'][idx]+'</span> '+o+'</div>';
+    }).join('');
+    const expHtml=q.exp?'<div class="review-exp">'+q.exp+'</div>':''
+    card.innerHTML=
+      '<div class="review-card-header">'+
+      '<div class="review-badge '+bClass+'">'+bText+'</div>'+
+      '<div class="review-stem"><span style="color:var(--grey);font-size:.75rem">Q'+(i+1)+' &middot; '+q.section+'</span><br>'+q.stem.replace(/\n/g,'<br>')+'</div>'+
+      '</div><div class="review-opts">'+opts+'</div>'+expHtml;
+    list.appendChild(card);
   });
 }
 
-function openPalette(){document.getElementById('palette-drawer').classList.add('open');document.getElementById('palette-overlay').classList.add('show');}
-function closePalette(){document.getElementById('palette-drawer').classList.remove('open');document.getElementById('palette-overlay').classList.remove('show');}
-
-function showConfirm() {
-  var answered=S.answers.filter(function(a){return a!==-1;}).length;
-  var marked=S.marked.filter(Boolean).length;
-  var skip=QUESTIONS.length-answered;
-  document.getElementById('c-ans').textContent=answered;
-  document.getElementById('c-mark').textContent=marked;
-  document.getElementById('c-skip').textContent=skip;
-  document.getElementById('confirm-msg').textContent=skip>0?skip+' question(s) unanswered. Submit anyway?':'All questions answered. Ready to submit?';
-  document.getElementById('confirm-wrap').className='confirm-wrap show';
-}
-function closeConfirm(){document.getElementById('confirm-wrap').className='confirm-wrap';}
-
-function doSubmit() {
-  if(S.submitted)return;
-  S.submitted=true;
-  clearInterval(S.interval);
-  closeConfirm();
-  document.getElementById('test-screen').style.display='none';
-  document.getElementById('palette-fab').style.display='none';
-  document.getElementById('submitting-screen').style.display='flex';
-  var result=calcResult();
-  saveToTrackerLocal(result);
-  sendToSheet(result).then(function(ok){
-    document.getElementById('submitting-screen').style.display='none';
-    showResults(result,ok);
-  });
-}
-
-function calcResult() {
-  var correct=0,wrong=0,skip=0;
-  var sectionErrors={};
-  var wrongQuestions=[];
-  QUESTIONS.forEach(function(q,i){
-    if(S.answers[i]===-1){skip++;}
-    else if(S.answers[i]===q.ans){correct++;}
-    else{
-      wrong++;
-      wrongQuestions.push(i+1);
-      var sec=SECTION_MAP[q.tag]||q.tag;
-      sectionErrors[sec]=(sectionErrors[sec]||0)+1;
+function buildMisses(){
+  const wrongQs=[];
+  QUESTIONS.forEach((q,i)=>{
+    if(userAnswers[i]!==null&&userAnswers[i]!==q.ans){
+      wrongQs.push('Q'+(i+1)+' ['+q.section+'] '+['A','B','C','D'][q.ans]+'. '+q.opts[q.ans]);
     }
   });
-  return{correct:correct,wrong:wrong,skip:skip,score:correct*4-wrong,sectionErrors:sectionErrors,wrongQuestions:wrongQuestions};
+  document.getElementById('missesText').value=wrongQs.length?wrongQs.join('\n'):'No misses -- perfect score!';
 }
 
-function saveToTrackerLocal(result) {
-  try {
-    var key = 'riim_' + S.batch + '_' + S.name.replace(/\s+/g,'_').toLowerCase();
-    var existing = localStorage.getItem(key);
-    var entries = existing ? JSON.parse(existing) : [];
-    entries = entries.filter(function(e){ return e.test !== TEST_NUMBER; });
-    entries.push({
-      test: TEST_NUMBER,
-      score: result.score,
-      errors: result.sectionErrors,
-      wrongQuestions: result.wrongQuestions,
-      ts: Date.now()
-    });
-    localStorage.setItem(key, JSON.stringify(entries));
-  } catch(e) {}
-}
-
-async function sendToSheet(result) {
-  var timeTaken=TOTAL_SECS-S.secsLeft;
-  var mm=String(Math.floor(timeTaken/60)).padStart(2,'0');
-  var ss=String(timeTaken%60).padStart(2,'0');
-  var payload={testName:TEST_NAME,name:S.name,pin:S.pin,batch:S.batch,score:result.score,correct:result.correct,wrong:result.wrong,skipped:result.skip,maxMarks:180,timeTaken:mm+':'+ss,timestamp:new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'})};
-  try{await fetch(SHEET_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});}catch(e){}
-  try{
-    var tp={student:S.name,batch:S.batch,test:TEST_NUMBER,score:result.score,errors:result.sectionErrors,wrongQuestions:result.wrongQuestions,ts:Date.now()};
-    await fetch(TRACKER_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(tp)});
-  }catch(e){}
-  return true;
-}
-
-function showResults(result,sheetOk) {
-  document.getElementById('r-score').textContent=result.score;
-  document.getElementById('r-name').textContent=S.name+' · '+S.pin;
-  document.getElementById('r-batch').textContent=S.batch;
-  document.getElementById('r-correct').textContent=result.correct;
-  document.getElementById('r-wrong').textContent=result.wrong;
-  document.getElementById('r-skip').textContent=result.skip;
-  var notice=document.getElementById('sheet-notice');
-  notice.className='sheet-notice ok';
-  notice.textContent='Score submitted successfully.';
-  var reviewList=document.getElementById('review-list');
-  reviewList.innerHTML='';
-  QUESTIONS.forEach(function(q,i){
-    var div=document.createElement('div');
-    div.className='review-item';
-    var userAns=S.answers[i];
-    var correct=userAns===q.ans;
-    var skipped=userAns===-1;
-    var status=skipped?'<span class="r-skip">Skipped</span>':correct?'<span class="r-correct">Correct</span>':'<span class="r-wrong">Wrong &mdash; Correct: '+q.opts[q.ans]+'</span>';
-    var choseHTML=(!skipped&&!correct)?'<div style="color:#888;font-size:12px;margin-top:3px">You chose: '+q.opts[userAns]+'</div>':'';
-    var expHTML=q.exp?'<div style="font-size:12px;color:#888;margin-top:6px;line-height:1.55;padding:8px 10px;background:rgba(255,255,255,0.03);border-radius:6px;border-left:2px solid '+(correct?'#1E8449':'#C0392B')+'">'+q.exp+'</div>':'';
-    div.innerHTML='<div class="review-q">Q'+(i+1)+'. '+q.stem+'</div><div class="review-ans">'+status+'</div>'+choseHTML+expHTML;
-    reviewList.appendChild(div);
+function copyMisses(e){
+  e.preventDefault();
+  const txt=document.getElementById('missesText').value;
+  navigator.clipboard.writeText(txt).then(()=>{
+    const btn=e.target;btn.textContent='Copied!';
+    setTimeout(()=>{btn.textContent='Copy Misses';},2000);
   });
-  document.getElementById('results-screen').style.display='block';
 }
+
+function buildRetry(){
+  const rs=document.getElementById('retrySection');rs.innerHTML='';
+  const wrong=[];
+  QUESTIONS.forEach((q,i)=>{if(userAnswers[i]!==null&&userAnswers[i]!==q.ans)wrong.push(i);});
+  if(!wrong.length)return;
+  rs.innerHTML='<h3>Retry Wrong Questions ('+wrong.length+')</h3>';
+  wrong.forEach(i=>{
+    const q=QUESTIONS[i];
+    const card=document.createElement('div');card.className='retry-card';
+    card.innerHTML='<div class="r-stem"><span style="color:var(--grey);font-size:.75rem">Q'+(i+1)+' &middot; '+q.section+'</span><br>'+q.stem.replace(/\n/g,'<br>')+'</div>';
+    q.opts.forEach((o,idx)=>{
+      const btn=document.createElement('button');btn.className='retry-opt';
+      btn.innerHTML='<span class="opt-label">'+ ['A','B','C','D'][idx]+'</span> '+o;
+      btn.onclick=()=>{
+        card.querySelectorAll('.retry-opt').forEach(b=>b.disabled=true);
+        if(idx===q.ans)btn.classList.add('r-correct');
+        else{btn.classList.add('r-wrong');card.querySelectorAll('.retry-opt')[q.ans].classList.add('r-correct');}
+      };
+      card.appendChild(btn);
+    });
+    rs.appendChild(card);
+  });
+}
+
+function saveToTracker(score,correct,wrong,skipped){
+  const s=TIMER_DURATION*60-secondsLeft;
+  const mm=String(Math.floor(s/60)).padStart(2,'0');
+  const ss2=String(s%60).padStart(2,'0');
+  const data={testName:'Road to IIM Test 12',name:studentName,pin:studentPin,batch:studentBatch,score:score,correct:correct,wrong:wrong,skipped:skipped,maxMarks:180,timeTaken:mm+':'+ss2,timestamp:new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'})};
+  try{const ex=JSON.parse(localStorage.getItem('riim_results')||'[]');ex.unshift(data);localStorage.setItem('riim_results',JSON.stringify(ex.slice(0,200)));}
+  catch(e){}
+}
+
+function logToSheet(score,correct,wrong,skipped,sectionErrors,wrongQuestions){
+  const notice=document.getElementById('sheet-notice');
+  notice.className='submitting';notice.textContent='Submitting results...';notice.style.display='block';
+  const s=TIMER_DURATION*60-secondsLeft;
+  const mm=String(Math.floor(s/60)).padStart(2,'0');
+  const ss2=String(s%60).padStart(2,'0');
+  const payload={testName:'Road to IIM Test 12',name:studentName,pin:studentPin,batch:studentBatch,score:score,correct:correct,wrong:wrong,skipped:skipped,maxMarks:180,timeTaken:mm+':'+ss2,timestamp:new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'}),sectionErrors:JSON.stringify(sectionErrors),wrongQuestions:JSON.stringify(wrongQuestions),studentAnswers:JSON.stringify(userAnswers.map(a=>a===null?null:a))};
+  fetch('https://script.google.com/macros/s/AKfycbwGGxswx4hcBUFiT0QJIglowhKcJCv47MOR5LKBv9sILl-evsgZeKCms5y6s5zEXOUo6Q/exec',{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)})
+    .then(()=>{notice.className='success';notice.textContent='Results saved successfully.';})
+    .catch(()=>{notice.className='failure';notice.textContent='Could not reach server. Results saved locally.';});
+}
+
+function generatePDF(){
+  const el=document.getElementById('review-list');
+  html2pdf().set({margin:10,filename:'RoadToIIM_Test12_'+studentName.replace(/\s+/g,'_')+'.pdf',html2canvas:{scale:2},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}}).from(el).save();
+}
+
+document.addEventListener('contextmenu',e=>e.preventDefault());
+document.addEventListener('keydown',e=>{if(e.ctrlKey&&['c','a','u','s','p'].includes(e.key.toLowerCase()))e.preventDefault();});
 </script>
 </body>
 </html>
