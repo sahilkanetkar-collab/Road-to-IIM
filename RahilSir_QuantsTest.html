@@ -27,8 +27,9 @@ body { font-family: "Segoe UI", sans-serif; background: var(--navy); color: var(
 
 /* ── Login ── */
 #loginScreen {
-  min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px 16px;
+  min-height: 100vh; align-items: center; justify-content: center; padding: 24px 16px;
 }
+#loginScreen.active { display: flex; }
 .login-box {
   background: var(--navy2); border: 1px solid #1e3a5a; border-radius: 12px;
   padding: 32px 28px; width: 100%; max-width: 420px;
