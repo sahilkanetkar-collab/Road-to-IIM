@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Road to IIM · Test 24</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<style>
+:root{
+  --navy:#0d1b2a;--navy2:#1a2e45;--navy3:#0a1520;
+  --gold:#c9a84c;--gold2:#e8c76a;
+  --green:#2ecc71;--green2:#27ae60;
+  --red:#e74c3c;--orange:#e67e22;
+  --purple:#8b5cf6;--purple2:#7c3aed;
+  --grey:#8899aa;--grey2:#556677;
+  --white:#f0f4f8;--white2:#dce8f0;
+  --panel:300px;
+  --topbar:56px;--tabs:42px;--navbar:62px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--navy);color:var(--white);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;overflow-x:hidden;}
+
+/* LOGIN */
+#loginScreen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;}
+.login-box{background:var(--navy2);border:1px solid var(--gold);border-radius:14px;padding:44px 40px;width:100%;max-width:460px;box-shadow:0 8px 40px rgba(0,0,0,.5);}
+.login-logo{display:flex;align-items:center;gap:0;margin-bottom:6px;}
+.login-logo .l-gold{color:var(--gold);font-size:1.3rem;font-weight:800;letter-spacing:.04em;}
+.login-logo .l-white{color:var(--white);font-size:1.3rem;font-weight:400;}
+.login-subtitle{color:var(--grey);font-size:.82rem;margin-bottom:28px;}
+.login-box label{display:block;color:var(--grey);font-size:.75rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-bottom:5px;margin-top:16px;}
+.login-box input,.login-box select{width:100%;background:var(--navy3);border:1px solid #2a4060;border-radius:7px;padding:11px 14px;color:var(--white);font-size:.95rem;outline:none;transition:border-color .2s;}
+.login-box input:focus,.login-box select:focus{border-color:var(--gold);}
+.login-box select option{background:var(--navy2);}
+#startBtn{width:100%;margin-top:24px;padding:13px;background:var(--gold);color:var(--navy);font-size:1rem;font-weight:700;border:none;border-radius:8px;cursor:pointer;letter-spacing:.04em;transition:background .2s;}
+#startBtn:hover{background:var(--gold2);}
+#loginErr{display:none;margin-top:10px;color:var(--red);font-size:.83rem;}
+
+/* TEST SCREEN */
+#testScreen{display:none;}
+
+/* TOP BAR */
+#topBar{
+  height:var(--topbar);background:var(--navy2);border-bottom:1px solid #1e3a5a;
+  padding:0 20px;display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:200;
+  padding-right:calc(var(--panel) + 20px);
+}
+.tb-left{display:flex;align-items:center;}
+.tb-title-gold{color:var(--gold);font-size:1rem;font-weight:800;letter-spacing:.03em;}
+.tb-title-white{color:var(--white);font-size:1rem;font-weight:600;}
+.tb-center{display:flex;align-items:center;gap:10px;}
+.tb-badge{background:var(--white2);color:var(--navy);font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:4px 12px;border-radius:20px;}
+.tb-meta{color:var(--grey);font-size:.78rem;}
+.tb-right{display:flex;align-items:center;gap:14px;}
+.tb-student{color:var(--grey2);font-size:.78rem;font-style:italic;}
+.tb-time-label{color:var(--grey);font-size:.68rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;}
+#timerDisplay{font-size:1.05rem;font-weight:800;color:var(--green);background:#0a2a1a;padding:6px 18px;border-radius:20px;border:1.5px solid var(--green);letter-spacing:.04em;}
+#timerDisplay.urgent{color:var(--red);background:#2a0a0a;border-color:var(--red);}
+.tb-qcount{color:var(--grey);font-size:.78rem;font-weight:600;}
+
+/* SECTION TABS */
+#sectionTabs{
+  height:var(--tabs);background:var(--navy3);border-bottom:1px solid #1e3a5a;
+  display:flex;align-items:center;padding:0 20px;gap:6px;
+  position:sticky;top:var(--topbar);z-index:190;
+  padding-right:calc(var(--panel) + 20px);
+  overflow-x:auto;
+}
+.sec-tab{background:transparent;border:1px solid #2a4060;border-radius:20px;color:var(--grey);font-size:.78rem;font-weight:600;padding:5px 14px;cursor:pointer;transition:all .2s;white-space:nowrap;}
+.sec-tab:hover{border-color:var(--gold);color:var(--gold);}
+.sec-tab.active{background:var(--white);color:var(--navy);border-color:var(--white);font-weight:700;}
+
+/* PROGRESS */
+#progressBar{height:2px;background:#1e3a5a;margin-right:var(--panel);}
+#progressFill{height:100%;background:var(--gold);transition:width .3s;}
+
+/* SPLIT PANEL LAYOUT */
+#mainArea{
+  display:flex;
+  height:calc(100vh - var(--topbar) - var(--tabs) - 2px - var(--navbar));
+  margin-right:var(--panel);
+}
+
+/* PASSAGE PANE (left) */
+#passagePane{
+  width:50%;min-width:280px;max-width:600px;
+  overflow-y:auto;
+  padding:20px 22px 20px 24px;
+  border-right:1px solid #1e3a5a;
+  flex-shrink:0;
+}
+.passage-header{margin-bottom:12px;}
+.passage-title{color:var(--gold);font-size:.8rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:3px;}
+.passage-source{color:var(--grey2);font-size:.72rem;font-style:italic;}
+#passageText{font-size:.9rem;line-height:1.8;color:var(--white2);}
+#passageText p{margin-bottom:10px;}
+
+/* QUESTION PANE (right) */
+#questionPane{
+  flex:1;
+  overflow-y:auto;
+  padding:20px 20px calc(20px) 22px;
+  display:flex;
+  flex-direction:column;
+}
+.instr-bar{background:#1a1a0a;border:1px solid rgba(201,168,76,.3);border-radius:8px;padding:8px 14px;margin-bottom:14px;color:#d4b84a;font-size:.82rem;display:flex;align-items:center;gap:8px;}
+.q-meta{color:var(--grey);font-size:.78rem;margin-bottom:6px;}
+.q-section-tag{display:inline-block;background:#1e3a5a;color:var(--gold);font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:2px 9px;border-radius:4px;margin-right:8px;}
+#questionStem{font-size:.97rem;line-height:1.7;color:var(--white);margin-bottom:18px;font-weight:500;}
+.options-list{list-style:none;display:flex;flex-direction:column;gap:8px;}
+.option-btn{background:var(--navy3);border:1px solid #1e3a5a;border-radius:9px;padding:12px 15px;cursor:pointer;text-align:left;font-size:.9rem;color:var(--white);transition:all .18s;width:100%;display:flex;align-items:flex-start;gap:10px;}
+.option-btn:hover{border-color:var(--gold);background:#0e2035;}
+.option-btn.selected{border-color:var(--gold);background:#1a2e10;}
+.option-btn.marked{border-color:var(--purple);}
+.opt-label{display:inline-block;min-width:20px;font-weight:700;color:var(--gold);flex-shrink:0;font-size:.88rem;}
+.opt-text{line-height:1.5;}
+
+/* RIGHT PANEL */
+#rightPanel{
+  width:var(--panel);position:fixed;top:0;right:0;
+  height:100vh;background:var(--navy2);border-left:1px solid #1e3a5a;
+  overflow-y:auto;display:none;
+  padding-top:calc(var(--topbar) + var(--tabs) + 2px);
+}
+.rp-section{padding:14px 14px 14px 14px;border-bottom:1px solid #1e3a5a;}
+.rp-heading{color:var(--grey);font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px;}
+.ms-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;}
+.ms-label{color:var(--grey);font-size:.82rem;}
+.ms-val.correct{color:var(--green);font-weight:700;font-size:.9rem;}
+.ms-val.wrong{color:var(--red);font-weight:700;font-size:.9rem;}
+.ms-val.skipped{color:var(--grey);font-weight:700;font-size:.9rem;}
+.ms-note{color:var(--grey2);font-size:.7rem;margin-top:7px;line-height:1.5;}
+.legend-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:.74rem;color:var(--grey);}
+.legend-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0;}
+.ld-unvisited{background:#2a3a4a;border:1px solid #3a5a7a;}
+.ld-unanswered{background:var(--red);}
+.ld-answered{background:var(--green);}
+.ld-marked{background:var(--purple);}
+.jump-btns{display:flex;flex-wrap:wrap;gap:6px;}
+.jump-btn{background:transparent;border:1px solid #2a4060;border-radius:14px;color:var(--grey);font-size:.74rem;font-weight:600;padding:4px 12px;cursor:pointer;transition:all .18s;}
+.jump-btn:hover{border-color:var(--gold);color:var(--gold);}
+.jump-btn.active{background:var(--gold);color:var(--navy);border-color:var(--gold);}
+#paletteGrid{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;}
+.pal-btn{width:100%;aspect-ratio:1;border-radius:6px;border:1px solid #2a3a4a;background:#0d1b2a;color:var(--grey);font-size:.75rem;font-weight:600;cursor:pointer;transition:all .15s;}
+.pal-btn:hover{border-color:var(--grey);}
+.pal-btn.answered{background:var(--green2);border-color:var(--green);color:#fff;}
+.pal-btn.marked{background:var(--purple2);border-color:var(--purple);color:#fff;}
+.pal-btn.unanswered{background:var(--red);border-color:#c0392b;color:#fff;}
+.pal-btn.current{outline:2px solid var(--gold);outline-offset:1px;color:var(--gold);}
+
+/* BOTTOM NAV */
+#navBar{
+  position:fixed;bottom:0;left:0;right:var(--panel);
+  height:var(--navbar);background:var(--navy2);border-top:1px solid #1e3a5a;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 16px;z-index:190;gap:8px;
+}
+.nav-btn{padding:9px 18px;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;border:none;transition:all .18s;white-space:nowrap;display:flex;align-items:center;gap:6px;}
+.nav-btn:active{transform:scale(.97);}
+.nb-prev{background:#1e3a5a;color:var(--white);}
+.nb-prev:hover{background:#2a4a6a;}
+.nb-mark{background:var(--purple2);color:#fff;}
+.nb-mark:hover{background:#6d28d9;}
+.nb-mark.active-mark{background:#5b21b6;box-shadow:0 0 0 2px var(--purple);}
+.nb-clear{background:var(--orange);color:#fff;}
+.nb-clear:hover{background:#d35400;}
+.nb-next{background:var(--green2);color:#fff;padding:9px 22px;}
+.nb-next:hover{background:var(--green);}
+.nb-submit{background:transparent;color:var(--gold);border:1.5px solid var(--gold)!important;padding:9px 16px;}
+.nb-submit:hover{background:rgba(201,168,76,.12);}
+.nav-spacer{flex:1;}
+
+/* RESULTS */
+#resultsScreen{display:none;padding:28px 32px;max-width:calc(100% - var(--panel));}
+.score-hero{text-align:center;padding:32px 20px;background:var(--navy2);border-radius:14px;margin-bottom:24px;border:1px solid #1e3a5a;}
+.score-num{font-size:3.5rem;font-weight:800;color:var(--gold);}
+.score-sub{color:var(--grey);font-size:.85rem;margin-top:6px;}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
+.stat-box{background:var(--navy2);border-radius:10px;padding:16px;text-align:center;border:1px solid #1e3a5a;}
+.stat-box .val{font-size:1.6rem;font-weight:800;color:var(--white);}
+.stat-box.correct .val{color:var(--green);}
+.stat-box.wrong .val{color:var(--red);}
+.stat-box.accuracy .val{color:var(--gold);}
+.stat-box .lbl{color:var(--grey);font-size:.78rem;margin-top:4px;}
+.result-btn{padding:10px 22px;border-radius:8px;font-size:.9rem;font-weight:600;cursor:pointer;border:none;margin-right:8px;}
+.result-btn.primary{background:var(--gold);color:var(--navy);}
+.result-btn.ghost{background:transparent;border:1px solid var(--gold)!important;color:var(--gold);}
+#sheet-notice{display:none;padding:10px 14px;border-radius:8px;font-size:.83rem;margin-bottom:16px;}
+#sheet-notice.submitting{background:#1a2e10;color:#c9e88a;border:1px solid #4a7a20;}
+#sheet-notice.success{background:#0a2a15;color:var(--green);border:1px solid var(--green);}
+#sheet-notice.failure{background:#2a0a0a;color:var(--red);border:1px solid var(--red);}
+.review-passage{background:#0a1a2a;border-left:3px solid var(--gold);padding:12px 16px;font-size:.82rem;line-height:1.75;color:var(--white2);margin-bottom:14px;border-radius:0 8px 8px 0;}
+.review-passage p{margin-bottom:6px;}
+.review-card{background:var(--navy2);border-radius:10px;margin-bottom:12px;overflow:hidden;border-left:4px solid var(--grey);}
+.review-card.correct{border-left-color:var(--green);}
+.review-card.wrong{border-left-color:var(--red);}
+.review-card-header{display:flex;gap:12px;padding:12px 14px;align-items:flex-start;}
+.review-badge{min-width:32px;height:32px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.9rem;flex-shrink:0;}
+.badge-correct{background:#0a2a15;color:var(--green);border:1px solid var(--green);}
+.badge-wrong{background:#2a0a0a;color:var(--red);border:1px solid var(--red);}
+.badge-skipped{background:#1e3a5a;color:var(--grey);}
+.review-stem{font-size:.88rem;line-height:1.6;flex:1;}
+.review-opts{padding:0 14px 10px 14px;}
+.review-opt{font-size:.83rem;padding:5px 8px;border-radius:5px;margin-bottom:3px;color:var(--grey);}
+.review-opt.correct-opt{background:#0a2a15;color:var(--green);}
+.review-opt.your-wrong{background:#2a0a0a;color:var(--red);}
+.review-exp{background:#0a2a15;border-left:3px solid var(--green);padding:10px 14px;font-size:.82rem;line-height:1.6;color:#a8e6c0;}
+.retry-card{background:var(--navy2);border-radius:10px;padding:16px;margin-bottom:12px;border:1px solid #1e3a5a;}
+.r-stem{font-size:.9rem;line-height:1.6;margin-bottom:12px;}
+.retry-opt{display:block;width:100%;background:var(--navy3);border:1px solid #1e3a5a;border-radius:6px;padding:9px 14px;text-align:left;font-size:.87rem;color:var(--white);cursor:pointer;margin-bottom:6px;transition:all .15s;}
+.retry-opt:hover{border-color:var(--gold);}
+.retry-opt.r-correct{background:#0a2a15;border-color:var(--green);color:var(--green);}
+.retry-opt.r-wrong{background:#2a0a0a;border-color:var(--red);color:var(--red);}
+.misses-box{background:var(--navy3);border:1px solid #2a4060;border-radius:8px;padding:14px;margin-top:20px;}
+.misses-box textarea{width:100%;background:#0a1520;border:1px solid #1e3a5a;border-radius:6px;padding:10px;color:var(--white);font-size:.82rem;font-family:'Segoe UI',sans-serif;resize:vertical;min-height:80px;}
+.copy-btn{margin-top:8px;padding:6px 14px;background:var(--navy2);border:1px solid var(--gold);color:var(--gold);border-radius:6px;font-size:.8rem;cursor:pointer;}
+
+/* MOBILE */
+@media(max-width:768px){
+  #rightPanel{display:none!important;}
+  #topBar,#sectionTabs{padding-right:16px;}
+  #progressBar{margin-right:0;}
+  #mainArea{flex-direction:column;height:auto;margin-right:0;}
+  #passagePane{width:100%;max-width:100%;border-right:none;border-bottom:1px solid #1e3a5a;max-height:45vh;}
+  #questionPane{padding:16px 14px calc(var(--navbar)+20px) 14px;}
+  #navBar{right:0;}
+  #resultsScreen{max-width:100%;padding:16px;}
+  .stats-grid{grid-template-columns:repeat(2,1fr);}
+  .tb-student,.tb-time-label,.tb-center{display:none;}
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+<div class="login-box">
+  <div class="login-logo">
+    <span class="l-gold">Road to IIM</span>
+    <span class="l-white">&nbsp;·&nbsp; Test 24</span>
+  </div>
+  <div class="login-subtitle">Reading Comprehension Drill &nbsp;·&nbsp; 20 Questions &nbsp;·&nbsp; 25 Minutes</div>
+  <label for="inputName">Full Name</label>
+  <input type="text" id="inputName" placeholder="Your full name" autocomplete="off">
+  <label for="inputPin">Student PIN</label>
+  <input type="text" id="inputPin" placeholder="STU or IMS followed by 10 digits" autocomplete="off">
+  <label for="inputBatch">Batch</label>
+  <select id="inputBatch">
+    <option value="">— Select your batch —</option>
+    <option value="Classroom A2701">Classroom A2701</option>
+    <option value="Classroom A2702">Classroom A2702</option>
+    <option value="Classroom A2703">Classroom A2703</option>
+    <option value="Classroom A2704">Classroom A2704</option>
+    <option value="Classroom A2705">Classroom A2705</option>
+    <option value="Classroom A2706">Classroom A2706</option>
+    <option value="Classroom A2707">Classroom A2707</option>
+    <option value="Classroom A2708">Classroom A2708</option>
+    <option value="Classroom A2709">Classroom A2709</option>
+    <option value="Classroom A2710">Classroom A2710</option>
+    <option value="Classroom A2711">Classroom A2711</option>
+    <option value="Classroom A2712">Classroom A2712</option>
+    <option value="School Zebar">School Zebar</option>
+    <option value="Online 27E101">Online 27E101</option>
+    <option value="Online 27E102">Online 27E102</option>
+    <option value="Online 27E103">Online 27E103</option>
+    <option value="Online 27E104">Online 27E104</option>
+    <option value="Online 27E105">Online 27E105</option>
+    <option value="Admin">Admin</option>
+  </select>
+  <div id="loginErr"></div>
+  <button id="startBtn" onclick="startTest()">Begin Test</button>
+</div>
+</div>
+
+<!-- TEST SCREEN -->
+<div id="testScreen">
+
+  <!-- top bar -->
+  <div id="topBar">
+    <div class="tb-left">
+      <span class="tb-title-gold">Road to IIM</span>
+      <span class="tb-title-white">&nbsp;·&nbsp; Test 24</span>
+    </div>
+    <div class="tb-center">
+      <span class="tb-badge">Reading Comprehension</span>
+      <span class="tb-meta">20 Questions &nbsp;·&nbsp; 25 Minutes &nbsp;·&nbsp; +4/&minus;1</span>
+    </div>
+    <div class="tb-right">
+      <span class="tb-student" id="tbStudentName"></span>
+      <span class="tb-time-label">TIME LEFT</span>
+      <div id="timerDisplay">25:00</div>
+      <span class="tb-qcount" id="tbQCount">Q 1/20</span>
+    </div>
+  </div>
+
+  <!-- section tabs -->
+  <div id="sectionTabs"></div>
+
+  <!-- progress -->
+  <div id="progressBar"><div id="progressFill" style="width:0%"></div></div>
+
+  <!-- split main area -->
+  <div id="mainArea">
+
+    <!-- passage pane -->
+    <div id="passagePane">
+      <div class="passage-header">
+        <div class="passage-title" id="passageTitle"></div>
+        <div class="passage-source" id="passageSource"></div>
+      </div>
+      <div id="passageText"></div>
+    </div>
+
+    <!-- question pane -->
+    <div id="questionPane">
+      <div class="instr-bar">
+        <span>&#9432;</span>
+        <span>Select the correct option.&nbsp; <strong style="color:var(--red);">−1 for wrong answer. Do not guess.</strong></span>
+      </div>
+      <div class="q-meta">
+        <span class="q-section-tag" id="sectionTag"></span>
+        <span id="questionNumber"></span>
+      </div>
+      <div id="questionStem"></div>
+      <ul class="options-list" id="optionsList"></ul>
+    </div>
+
+  </div>
+
+  <!-- right panel -->
+  <div id="rightPanel">
+    <div class="rp-section">
+      <div class="rp-heading">Marking Scheme</div>
+      <div class="ms-row"><span class="ms-label">Correct</span><span class="ms-val correct">+4</span></div>
+      <div class="ms-row"><span class="ms-label">Wrong</span><span class="ms-val wrong">&minus;1</span></div>
+      <div class="ms-row"><span class="ms-label">Skipped</span><span class="ms-val skipped">0</span></div>
+      <div class="ms-note">All 20 questions are MCQ.<br>+4 correct &nbsp;·&nbsp; &minus;1 wrong.</div>
+    </div>
+    <div class="rp-section">
+      <div class="rp-heading">Status</div>
+      <div class="legend-grid">
+        <div class="legend-item"><span class="legend-dot ld-unvisited"></span>Not Visited</div>
+        <div class="legend-item"><span class="legend-dot ld-unanswered"></span>Not Answered</div>
+        <div class="legend-item"><span class="legend-dot ld-answered"></span>Answered</div>
+        <div class="legend-item"><span class="legend-dot ld-marked"></span>Marked for Review</div>
+      </div>
+    </div>
+    <div class="rp-section">
+      <div class="rp-heading">Jump to Section</div>
+      <div class="jump-btns" id="jumpBtns"></div>
+    </div>
+    <div class="rp-section">
+      <div class="rp-heading">Question Palette</div>
+      <div id="paletteGrid"></div>
+    </div>
+  </div>
+
+  <!-- bottom nav -->
+  <div id="navBar">
+    <button class="nav-btn nb-prev" onclick="navigate(-1)">&#9664; Prev</button>
+    <button class="nav-btn nb-mark" id="markBtn" onclick="markForReview()">&#9733; Mark</button>
+    <button class="nav-btn nb-clear" onclick="clearAnswer()">&#10005; Clear</button>
+    <div class="nav-spacer"></div>
+    <button class="nav-btn nb-next" onclick="navigate(1)">Save &amp; Next &#9654;</button>
+    <button class="nav-btn nb-submit" onclick="confirmSubmit()">Submit Test</button>
+  </div>
+
+</div>
+
+<!-- RESULTS -->
+<div id="resultsScreen">
+  <div id="sheet-notice"></div>
+  <div class="score-hero"><div id="scoreHero"></div></div>
+  <div class="stats-grid" id="statsGrid"></div>
+  <button class="result-btn primary" onclick="generatePDF()">Download PDF</button>
+  <button class="result-btn ghost" onclick="location.reload()">Retake Test</button>
+  <div class="misses-box">
+    <strong style="color:var(--gold);font-size:.85rem;">Missed Questions</strong>
+    <textarea id="missesText" readonly></textarea>
+    <button class="copy-btn" onclick="copyMisses(event)">Copy Misses</button>
+  </div>
+  <h3 style="margin:24px 0 12px;color:var(--gold);">Full Review</h3>
+  <div id="review-list"></div>
+  <div id="retrySection"></div>
+</div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────────────────
+const PASSAGES=[
+  {
+    id:1,
+    title:"Passage 1 -- Science / Philosophy of Science",
+    source:"Original passage based on the ideas of Naomi Oreskes and Erik Conway.",
+    text:`The replication of scientific findings has come to be treated as the gold standard of empirical credibility. A result that cannot be reproduced is, on this view, not a result at all but an artefact -- a local disturbance in the data produced by chance, bias, or error. The replication criterion seems, on its face, unimpeachable: if a phenomenon is real, it should be observable more than once under controlled conditions.\n\nWhat this criterion obscures is that not all scientific questions concern phenomena that are stably reproducible in the first place. Historical sciences -- geology, evolutionary biology, cosmology -- concern events that occurred once and left traces. The replication criterion cannot apply to the formation of the Himalayas or the emergence of eukaryotic cells. What these fields offer instead is consilience: the independent convergence of multiple lines of evidence on a single explanation. The explanation is confirmed not by repeating an experiment but by showing that disparate data sets, gathered by different methods, all point in the same direction.\n\nThe unreflective insistence on replication as the sole criterion of scientific legitimacy therefore misrepresents the epistemic structure of a significant portion of science. It imports a standard appropriate to experimental laboratory science and applies it indiscriminately to sciences whose subject matter is inherently singular. The result is not rigour but a category error -- a demand that historical evidence behave like experimental evidence, when the two rest on entirely different epistemic foundations.`
+  },
+  {
+    id:2,
+    title:"Passage 2 -- Abstract / Theory of Knowledge",
+    source:"Original passage based on the ideas of Nelson Goodman and Richard Rorty.",
+    text:`The concept of representation carries within it an unresolved tension. To represent something is, by definition, to stand in its place -- to be present where the thing itself is absent. But this substitution immediately raises a question that the concept cannot answer from within its own resources: in what sense does the representation capture the thing it replaces, and in what sense does it necessarily distort it?\n\nAny act of representation involves selection. The map that represents a territory must omit features of the territory -- elevation, texture, temperature, the specific colour of each stone -- in order to be useful. What is selected and what is omitted is determined not by the territory itself but by the purpose of the representation. The map made for navigation omits what the map made for geology foregrounds. Neither is more faithful to the territory; each is faithful to a different question about it.\n\nThe implication that follows is unsettling for any theory that grounds knowledge in accurate representation. If every representation is purpose-relative, then the claim that a representation is true cannot mean that it reproduces its object. It can only mean that it serves the purposes for which it was constructed. Truth, on this analysis, is not correspondence between a representation and a world but adequacy between a representation and an interest. The world, strictly speaking, never appears in the representation -- only the interest does.`
+  },
+  {
+    id:3,
+    title:"Passage 3 -- Psychology / Motivation",
+    source:"Original passage based on the ideas of Albert Bandura and Carol Dweck.",
+    text:`Psychologists distinguish between two modes of self-evaluation that they call social comparison and temporal comparison. In social comparison, a person assesses their standing by reference to others: am I more or less capable than my peers? In temporal comparison, the reference point is the self across time: am I more or less capable than I was? The two modes do not always agree, and when they diverge, they tend to produce very different motivational consequences.\n\nSocial comparison is structurally competitive. Its reference class is external and unstable: peers improve, new competitors enter the field, and the standard against which one is measured shifts independently of one's own effort. This instability makes social comparison a poor basis for sustained motivation. A person who improves significantly but is surrounded by peers who improve faster will register the improvement as failure.\n\nTemporal comparison, by contrast, anchors evaluation in a reference point the individual controls: their own past performance. Improvement is visible directly, without the interference of others' trajectories. The motivational consequence is a decoupling of effort from rank -- a person can experience growth as real even when their relative standing has not changed. What this suggests about the design of educational environments is pointed: systems that foreground rank and percentile systematically favour social comparison and, with it, the conditions under which genuine improvement is most likely to be invisible.`
+  },
+  {
+    id:4,
+    title:"Passage 4 -- Philosophy / Metaethics",
+    source:"Original passage based on the ideas of A.J. Ayer and R.M. Hare.",
+    text:`The question of whether a moral claim can be true or false in the same sense that an empirical claim can be true or false divides metaethics into two broad camps. The cognitivist holds that moral sentences express genuine propositions -- statements with determinate truth conditions that are either satisfied or not. The non-cognitivist holds that moral sentences do not express propositions at all but rather attitudes, prescriptions, or commitments that are neither true nor false.\n\nThe difficulty with cognitivism is that it must explain how moral truths are known. Empirical truths are known through perception and inference from perceptual evidence. If moral truths are a different kind of truth, a different faculty is required to access them -- what philosophers have called moral intuition. But intuitions vary systematically across individuals, cultures, and historical periods. An epistemology that rests on a faculty whose deliverances are this unreliable faces a serious problem of authority: whose intuitions are to be trusted, and why?\n\nThe difficulty with non-cognitivism is the opposite. If moral sentences do not express propositions, they cannot enter into logical relations with other sentences. But moral reasoning manifestly involves inference. When we say that causing unnecessary suffering is wrong, and that factory farming causes unnecessary suffering, we conclude that factory farming is wrong. This inference is valid only if the premises express propositions. Non-cognitivism appears to render moral argument logically inert -- a sequence of attitude expressions with no inferential structure.`
+  },
+  {
+    id:5,
+    title:"Passage 5 -- Literature / Criticism",
+    source:"Original passage based on the ideas of Edward Said and Chinua Achebe.",
+    text:`Conrad did not write in his first language or his second. Polish was the language of his childhood; French the language of his maritime years. English, the language of nearly all his fiction, was the language in which he arrived late, imperfectly, and with an accent he never lost. This circumstance has been read as a liability -- the source of his famously tortuous syntax, his sentences that loop back on themselves and defer resolution as if reluctant to arrive.\n\nThe reading misses what the circumstance actually produced. A writer who comes to a language from outside does not inherit its idioms as natural equipment. They encounter the language as a system -- as a set of available structures whose effects can be observed and chosen rather than merely absorbed. Where the native speaker reaches for an idiom automatically, the late learner reaches for it deliberately, with awareness of its weight. Conrad's sentences are not tortuous because he struggled with English. They are tortuous because he understood exactly what the language was doing and chose to make that doing visible.\n\nThe result is a prose style whose difficulty is not incidental but structural. The reader cannot move through Conrad's sentences at the speed of recognition -- the speed at which familiar idioms are processed without attention. They are forced to slow down, to hold subordinate clauses in suspension, to experience the sentence as a construction rather than a transparency. This is not a deficiency of style. It is its method.`
+  }
+]
+
+const QUESTIONS=[
+{id:1,section:"RC -- Passage 1",passage:1,qtype:"Main Idea",
+stem:`Which of the following best states the central argument of this passage?`,
+opts:["The replication criterion is valid for experimental science but fails to account for the different methods used by historical sciences","The demand that all sciences meet the replication criterion misrepresents the epistemic structure of sciences whose subject matter is inherently singular","Consilience is a more reliable standard of scientific legitimacy than replication because it draws on multiple independent data sets","The replication crisis in modern science has been caused by the misapplication of laboratory standards to fields that cannot support them"],
+answer:"B",
+exp:`Correct Answer: B. The demand that all sciences meet the replication criterion misrepresents the epistemic structure of sciences whose subject matter is inherently singular.\n\nPassage type: Argumentative. Skeleton at end (paragraph three delivers the verdict: not rigour but a category error).\n\nB covers the full arc: the replication criterion seems valid, but it cannot apply to historical sciences whose objects are singular, so demanding it universally is a category error that misrepresents what those sciences do.\n\nA is too narrow. It only restates the contrast between experimental and historical sciences without capturing the passage's key conclusion -- the category error claim.\nC is tempting but incomplete. Consilience is introduced as the alternative standard, not as the subject of the argument. The passage is arguing against universal replication, not for consilience specifically.\nD introduces the replication crisis as a cause-and-effect claim. The passage does not mention the replication crisis or assign causes to it.`},
+
+{id:2,section:"RC -- Passage 1",passage:1,qtype:"Primary Purpose",
+stem:`The primary purpose of this passage is to --`,
+opts:["Argue that the universal application of the replication criterion misrepresents the epistemic structure of historical sciences","Defend the reliability of historical sciences by explaining how consilience compensates for their inability to replicate findings","Show that experimental science and historical science rest on different epistemic foundations and should be evaluated by different standards","Demonstrate that the concept of scientific rigour has been corrupted by an overemphasis on laboratory methods"],
+answer:"A",
+exp:`Correct Answer: A. Argue that the universal application of the replication criterion misrepresents the epistemic structure of historical sciences.\n\nA names both the argumentative move (universal application is wrong) and the target (historical sciences specifically). This matches the passage precisely.\n\nB frames the purpose as defending historical sciences. The passage does mention consilience, but its purpose is not defensive -- it is making an epistemological argument about the category error of applying one standard universally.\nC states a true claim the passage makes, but it describes a premise rather than the purpose. The purpose is to show that applying the replication criterion universally is therefore an error -- C stops one step short.\nD introduces the concept of corruption and overemphasis on laboratory methods, which are not claims the passage makes. The passage is precise: it is about one criterion applied indiscriminately.`},
+
+{id:3,section:"RC -- Passage 1",passage:1,qtype:"Vocabulary",
+stem:`As used in the passage, the term <b>consilience</b> most nearly means --`,
+opts:["The logical consistency of a scientific explanation with established physical laws","The replication of a finding across different laboratories using the same experimental method","The accumulation of evidence through repeated observation of the same phenomenon","The independent convergence of multiple lines of evidence on a single explanation"],
+answer:"D",
+exp:`Correct Answer: D. The independent convergence of multiple lines of evidence on a single explanation.\n\nThe passage provides its own definition: "consilience: the independent convergence of multiple lines of evidence on a single explanation." D is a direct and accurate paraphrase.\n\nA describes logical consistency with physical laws -- a different criterion entirely, with no basis in the passage's definition.\nB describes replication across laboratories -- this is precisely what consilience is contrasted with. The passage offers consilience as the alternative to replication, not a version of it.\nC describes repeated observation of the same phenomenon -- again, closer to replication than to consilience. Consilience requires independence and multiplicity of method, not repetition.`},
+
+{id:4,section:"RC -- Passage 1",passage:1,qtype:"Vocabulary",
+stem:`When the author describes the demand for universal replication as a <b>category error</b>, the phrase implies that --`,
+opts:["Replication is not a valid standard of scientific legitimacy even within experimental science","The two types of science differ not merely in their methods but in the fundamental nature of what they study","Scientists who insist on replication for historical findings are acting in intellectual bad faith","Historical sciences should develop their own replication procedures suited to their singular subject matter"],
+answer:"B",
+exp:`Correct Answer: B. The two types of science differ not merely in their methods but in the fundamental nature of what they study.\n\nA category error is the mistake of applying a concept or standard appropriate to one kind of thing to a fundamentally different kind. The passage is explicit: the error is "a demand that historical evidence behave like experimental evidence, when the two rest on entirely different epistemic foundations." This means the difference is ontological -- what they study -- not merely methodological.\n\nB captures this precisely.\nA is too strong and directly contradicts the passage. The passage endorses replication as the appropriate standard for experimental laboratory science -- it objects only to its universal application.\nC introduces intellectual bad faith. The passage calls the insistence "unreflective," not dishonest. These are very different charges.\nD proposes a solution the passage does not make. The passage identifies consilience as the existing alternative -- it does not suggest historical sciences need new replication procedures.`},
+
+{id:5,section:"RC -- Passage 2",passage:2,qtype:"Main Idea",
+stem:`The passage argues primarily that --`,
+opts:["All representations are distortions and therefore no representation can be considered true in any meaningful sense","The correspondence theory of truth is more defensible than the adequacy theory because it appeals to objective features of the world","Since every representation is purpose-relative, truth in representation means adequacy to an interest rather than correspondence to the world","Maps are the clearest illustration of how the purpose of a representation determines what it includes and excludes"],
+answer:"C",
+exp:`Correct Answer: C. Since every representation is purpose-relative, truth in representation means adequacy to an interest rather than correspondence to the world.\n\nPassage type: Argumentative. Skeleton at end (paragraph three delivers the conclusion about truth as adequacy to interest).\n\nC follows the full argumentative arc: representation involves selection, selection is purpose-relative, therefore truth cannot mean correspondence but must mean adequacy to purpose.\n\nA is too strong and misrepresents the conclusion. The passage does not say no representation can be true -- it redefines what truth means for representations. Eliminating truth is different from redefining it.\nB introduces the correspondence vs adequacy debate and endorses correspondence -- the opposite of the passage's conclusion.\nD identifies maps as the clearest illustration, but the passage uses maps as a supporting example in paragraph two, not as its subject or conclusion.`},
+
+{id:6,section:"RC -- Passage 2",passage:2,qtype:"Primary Purpose",
+stem:`The author's primary purpose in writing this passage is to --`,
+opts:["Explain why different maps of the same territory can serve different purposes without either being inaccurate","Introduce the unresolved tension within the concept of representation and examine its consequences for theories of truth","Demonstrate that the correspondence theory of truth cannot survive scrutiny and should be replaced by a pragmatic alternative","Argue that knowledge cannot be grounded in accurate representation because every representation is shaped by the purposes of its maker"],
+answer:"D",
+exp:`Correct Answer: D. Argue that knowledge cannot be grounded in accurate representation because every representation is shaped by the purposes of its maker.\n\nD captures the full argument and its epistemological stakes. The passage moves from the internal tension in representation, through the purpose-relativity of selection, to the conclusion that truth as correspondence fails -- and therefore knowledge grounded in accurate representation is not possible.\n\nA is too narrow. Maps are an illustrative example in paragraph two; explaining map differences is not the purpose.\nB describes only the opening move (introducing the tension) and only part of the consequence (examining its effects). The passage reaches a specific conclusion about truth and knowledge -- B understates this.\nC is very close but slightly off. The passage does argue against correspondence, but it does not explicitly name pragmatism as the replacement or call for the correspondence theory to be "replaced." It redefines truth as adequacy, which is a consequence of the argument, not a prescription.`},
+
+{id:7,section:"RC -- Passage 2",passage:2,qtype:"Vocabulary",
+stem:`As used in the passage, the term <b>purpose-relative</b> most nearly means --`,
+opts:["Determined by the goals the representation is meant to serve rather than by the features of the thing being represented","Varying in accuracy depending on the skill and care of the person who produced the representation","Reliable only when the purpose for which the representation was created matches the purpose for which it is being used","Shaped by the cultural and historical assumptions of the community in which the representation was produced"],
+answer:"A",
+exp:`Correct Answer: A. Determined by the goals the representation is meant to serve rather than by the features of the thing being represented.\n\nThe passage states: "What is selected and what is omitted is determined not by the territory itself but by the purpose of the representation." A is a precise paraphrase of this definition.\n\nB introduces the skill and care of the producer -- not what purpose-relative means. Two equally skilled mapmakers with different purposes will produce different maps; the difference is purposive, not qualitative.\nC introduces a reliability condition -- that the representation is reliable when its purpose matches the user's purpose. The passage does not make this claim; it makes a claim about what determines selection.\nD introduces cultural and historical assumptions -- a different kind of relativity (cultural relativism) that the passage does not argue.`},
+
+{id:8,section:"RC -- Passage 2",passage:2,qtype:"Vocabulary",
+stem:`When the author says "the world, strictly speaking, never appears in the representation -- only the interest does," the statement implies that --`,
+opts:["Knowledge derived from representations is always incomplete and must be supplemented by direct experience of the world","A representation reveals more about the purposes of its maker than about the nature of what it purports to represent","The world is in principle unknowable because every available means of accessing it necessarily involves representation","Scientific knowledge is less reliable than other forms of knowledge because science depends more heavily on representation"],
+answer:"B",
+exp:`Correct Answer: B. A representation reveals more about the purposes of its maker than about the nature of what it purports to represent.\n\nTwo steps required. Step one: the world does not appear in the representation -- only what the interest selected appears. Step two: what is selected is determined by the interest, not the world. Therefore the representation is a record of the interest, not of the world.\n\nB follows directly: the representation tells us about the maker's purposes, not about the world.\nA introduces direct experience as a supplement. The passage does not suggest direct experience as an alternative or supplement -- it makes a structural claim about representation itself.\nC claims the world is unknowable in principle. The passage does not go this far -- it argues that representations cannot reproduce the world, not that the world is inaccessible by any means.\nD compares scientific and other knowledge. Science is not mentioned in this passage; the argument is about representation in general.`},
+
+{id:9,section:"RC -- Passage 3",passage:3,qtype:"Main Idea",
+stem:`The central argument of this passage is that --`,
+opts:["Social comparison produces better short-term motivation than temporal comparison but is unsustainable over time","The instability of the social comparison reference class explains why competitive environments consistently demotivate high-achieving students","Temporal comparison decouples effort from rank, making improvement visible in ways that social comparison -- and the educational systems that favour it -- cannot","The design of educational environments should be based on psychological research into the effects of different self-evaluation modes"],
+answer:"C",
+exp:`Correct Answer: C. Temporal comparison decouples effort from rank, making improvement visible in ways that social comparison -- and the educational systems that favour it -- cannot.\n\nPassage type: Argumentative. Skeleton in paragraph three (the decoupling) and applied in the final sentence (educational design).\n\nC covers the full arc: define both modes, show social comparison's structural flaw (instability), show temporal comparison's advantage (decoupling), and derive the implication for education.\n\nA claims social comparison produces better short-term motivation -- not argued. The passage doesn't compare them temporally; it compares them structurally.\nB focuses only on the instability mechanism in paragraph two. This is one premise, not the central argument.\nD is a prescriptive claim about educational design that goes further than the passage. The passage says what this "suggests" about design -- it does not prescribe a research-based approach.`},
+
+{id:10,section:"RC -- Passage 3",passage:3,qtype:"Primary Purpose",
+stem:`The author's primary purpose in this passage is to --`,
+opts:["Compare two modes of self-evaluation, identify the structural flaw in one, and derive implications for the design of educational environments","Argue that social comparison should be eliminated from educational systems and replaced with temporal comparison","Explain why high-achieving students in competitive environments are more susceptible to motivational failure than lower-achieving peers","Demonstrate that psychological research on self-evaluation has been systematically ignored by educational policymakers"],
+answer:"A",
+exp:`Correct Answer: A. Compare two modes of self-evaluation, identify the structural flaw in one, and derive implications for the design of educational environments.\n\nA names all three moves the passage makes: define and compare (paragraph one), identify the flaw in social comparison (paragraph two), derive the educational implication (final sentence of paragraph three). This is the most complete and accurate description of the purpose.\n\nB is prescriptive -- eliminate and replace. The passage says educational environments that foreground rank favour social comparison, not that they should eliminate it. The passage is analytical, not prescriptive.\nC focuses on high-achieving students specifically -- not the subject of the passage. The passage discusses self-evaluation modes for all students, not a subgroup.\nD claims research has been ignored by policymakers -- not argued or implied in the passage.`},
+
+{id:11,section:"RC -- Passage 3",passage:3,qtype:"Vocabulary",
+stem:`As used in the passage, the phrase <b>decoupling of effort from rank</b> most nearly means --`,
+opts:["The elimination of competitive ranking systems from educational and professional contexts","The psychological process by which individuals stop caring about how they compare to others","The removal of external rewards from learning environments so that effort becomes intrinsically motivated","A separation of the experience of genuine improvement from changes in one's relative standing among peers"],
+answer:"D",
+exp:`Correct Answer: D. A separation of the experience of genuine improvement from changes in one's relative standing among peers.\n\nThe passage defines the phrase in the very next clause: "a person can experience growth as real even when their relative standing has not changed." D is a precise paraphrase.\n\nA describes the elimination of ranking systems -- an external, structural change. Decoupling is an internal, psychological state that occurs within a system, not a change to the system itself.\nB says individuals stop caring about peers. The passage does not say indifference to peers is the result -- it says improvement can be experienced as real regardless of rank. These are different claims.\nC introduces intrinsic motivation and the removal of external rewards -- a related but distinct concept (self-determination theory) that is not in this passage.`},
+
+{id:12,section:"RC -- Passage 3",passage:3,qtype:"Vocabulary",
+stem:`When the author says that rank-foregrounding systems create "conditions under which genuine improvement is most likely to be invisible," the statement implies that --`,
+opts:["Students in rank-based systems will exert less effort than students in systems that use growth-based metrics","Educational systems that use percentile rankings are designed to conceal individual progress from students and parents","A student who has improved significantly may nonetheless experience that improvement as failure if faster-improving peers surround them","The most effective educational environments are those that combine social and temporal comparison in carefully calibrated proportions"],
+answer:"C",
+exp:`Correct Answer: C. A student who has improved significantly may nonetheless experience that improvement as failure if faster-improving peers surround them.\n\nThis is the direct implication of the social comparison mechanism described in paragraph two. When the reference class improves faster, personal improvement registers as failure. Invisibility of improvement is therefore not a perceptual failure but a structural consequence of the comparison mode.\n\nC follows directly and precisely.\nA claims less effort will be exerted -- effort levels are not the passage's claim. The passage is about the visibility of improvement, not about whether students try.\nB claims systems are designed to conceal -- a conspiratorial reading with no basis in the passage. The passage says the invisibility is a structural consequence, not an intentional design.\nD proposes a combination of comparison modes as the solution -- not argued. The passage does not prescribe a calibrated combination.`},
+
+{id:13,section:"RC -- Passage 4",passage:4,qtype:"Main Idea",
+stem:`The passage is primarily concerned with showing that --`,
+opts:["Non-cognitivism is ultimately a more defensible position than cognitivism because it avoids the problem of moral intuition","The variability of moral intuitions across cultures proves that moral cognitivism cannot be sustained as a philosophical position","Moral reasoning requires inference and therefore any metaethical position that cannot account for it is fatally flawed","Both cognitivism and non-cognitivism face serious internal difficulties that neither position can resolve without conceding ground to the other"],
+answer:"D",
+exp:`Correct Answer: D. Both cognitivism and non-cognitivism face serious internal difficulties that neither position can resolve without conceding ground to the other.\n\nPassage type: Argumentative -- balanced diagnostic. The passage presents one difficulty for cognitivism (paragraph two) and one for non-cognitivism (paragraph three) and reaches no resolution. D captures this structure precisely.\n\nA claims non-cognitivism is more defensible -- the passage presents both as seriously problematic and does not rank them.\nB claims intuition variability proves cognitivism cannot be sustained -- the passage says this poses a serious problem of authority, not that it constitutes proof of failure. Poses a problem and proves falsity are different claims.\nC claims positions that cannot account for inference are fatally flawed -- this is the argument against non-cognitivism specifically. The passage does not generalise it into a criterion for all positions.`},
+
+{id:14,section:"RC -- Passage 4",passage:4,qtype:"Primary Purpose",
+stem:`The author's primary purpose in this passage is to --`,
+opts:["Resolve the debate between cognitivism and non-cognitivism by showing that a hybrid position is required","Expose the serious and symmetrical difficulties that face both cognitivism and non-cognitivism in metaethics","Present the case for non-cognitivism as the more rigorous of the two metaethical positions","Demonstrate that the question of moral truth conditions must be settled before ethical theory can make progress"],
+answer:"B",
+exp:`Correct Answer: B. Expose the serious and symmetrical difficulties that face both cognitivism and non-cognitivism in metaethics.\n\nB names the structure of the argument (symmetrical difficulties) and its subject (both positions). The passage devotes one paragraph to each difficulty and offers no resolution -- the purpose is diagnostic and even-handed.\n\nA claims the passage resolves the debate by pointing to a hybrid position. No hybrid position is mentioned; no resolution is offered.\nC claims the passage presents a case for non-cognitivism as more rigorous. The passage presents a serious objection to non-cognitivism in paragraph three -- the opposite of endorsing it.\nD claims the purpose is to show that a prior question must be settled. This is a meta-claim about the field that the passage does not make.`},
+
+{id:15,section:"RC -- Passage 4",passage:4,qtype:"Vocabulary",
+stem:`As used in the passage, the phrase <b>determinate truth conditions</b> most nearly means --`,
+opts:["The empirical evidence required to verify or falsify a claim about the natural world","The cultural and social agreements that determine which moral positions are accepted in a given community","Specific and identifiable criteria by which a statement can be assessed as either true or false","The logical consequences that follow necessarily from accepting a proposition as true"],
+answer:"C",
+exp:`Correct Answer: C. Specific and identifiable criteria by which a statement can be assessed as either true or false.\n\nThe passage uses the phrase to define what cognitivism holds about moral sentences: they express "statements with determinate truth conditions that are either satisfied or not." Truth conditions are the conditions under which a statement is true -- the criteria that determine its truth value.\n\nC captures this precisely.\nA describes empirical verification -- the method used to check truth conditions in empirical science, not the truth conditions themselves. The passage distinguishes moral truths from empirical ones; importing empirical verification here misreads the argument.\nB describes cultural and social agreement -- a coherentist or relativist reading that is precisely what cognitivism is trying to resist. The cognitivist holds that truth conditions are objective, not socially constructed.\nD describes logical consequences of accepting a proposition -- entailments, not truth conditions. These are related but distinct concepts.`},
+
+{id:16,section:"RC -- Passage 4",passage:4,qtype:"Vocabulary",
+stem:`When the author says that non-cognitivism "appears to render moral argument logically inert," the phrase implies that --`,
+opts:["If moral sentences express attitudes rather than propositions, the conclusion of a moral argument does not follow logically from its premises","Moral disagreements cannot be resolved through rational argument because they ultimately reflect differences in emotional responses","Non-cognitivism is self-refuting because the claim that moral sentences express attitudes is itself a moral claim","A person who accepts non-cognitivism is committed to the view that no moral position is rationally preferable to any other"],
+answer:"A",
+exp:`Correct Answer: A. If moral sentences express attitudes rather than propositions, the conclusion of a moral argument does not follow logically from its premises.\n\nTwo steps required. Step one: logical inference requires premises that express propositions with truth values. Step two: if moral sentences express attitudes (not propositions), they have no truth values. Therefore moral arguments cannot be logically valid -- the conclusion does not follow from the premises. This is precisely what logically inert means.\n\nA follows directly.\nB claims disagreements cannot be resolved through argument -- a related but different point. The passage is making a claim about logical structure (validity of inference), not about the possibility of resolution through persuasion.\nC claims non-cognitivism is self-refuting. This is a separate philosophical argument not made in the passage.\nD claims commitment to relativism follows. The passage does not make this inference -- it makes a structural claim about logical validity, not a normative claim about rational preference.`},
+
+{id:17,section:"RC -- Passage 5",passage:5,qtype:"Main Idea",
+stem:`The passage argues that --`,
+opts:["Writing in a language acquired late gives a writer structural awareness that transforms a perceived liability into a deliberate method","Conrad's tortuous syntax is the result of his imperfect acquisition of English and the persistent influence of his earlier languages","Late acquisition of any language produces a more deliberate and self-aware prose style than native acquisition consistently does","Conrad's difficulty as a writer stems from his refusal to adapt his style to the expectations of his English readership"],
+answer:"A",
+exp:`Correct Answer: A. Writing in a language acquired late gives a writer structural awareness that transforms a perceived liability into a deliberate method.\n\nPassage type: Argumentative. The passage takes a common reading (late acquisition = liability = tortuous syntax) and inverts it: the circumstance is not a liability but the source of a structural awareness that makes the difficulty intentional and purposive.\n\nA covers the full inversion: perceived liability becomes deliberate method.\nB restates the view the passage argues against. Conrad's syntax is tortuous not because he struggled but because he understood and chose. B describes the premise the passage refutes.\nC uses "consistently" and "any language" -- too strong and too general. The passage is about Conrad specifically and does not generalise to all late language learners.\nD introduces refusal to adapt to readership expectations -- not argued. The passage makes no claim about Conrad's relationship to his audience.`},
+
+{id:18,section:"RC -- Passage 5",passage:5,qtype:"Primary Purpose",
+stem:`The author's primary purpose in this passage is to --`,
+opts:["Describe the reading experience of Conrad's prose and explain why it resists rapid processing","Contrast Conrad's approach to English with that of native English writers of the same period","Explain why writers who work in languages acquired late tend to produce more structurally self-conscious prose","Argue that Conrad's syntactic difficulty is the deliberate product of a structural awareness of English that late acquisition made possible"],
+answer:"D",
+exp:`Correct Answer: D. Argue that Conrad's syntactic difficulty is the deliberate product of a structural awareness of English that late acquisition made possible.\n\nD names the argument precisely: the difficulty is deliberate (not incidental), its source is structural awareness, and that awareness was enabled by late acquisition. The passage makes all three of these claims explicitly.\n\nA describes the reading experience (paragraph three) but this is the consequence of the argument, not the purpose.\nB contrasts Conrad with native English writers -- no such comparison is made in the passage. Native speakers are mentioned only as a foil for the general point about late acquisition.\nC generalises to all late language learners -- the passage is specifically about Conrad and does not generalise. "Tend to produce" is not argued.`},
+
+{id:19,section:"RC -- Passage 5",passage:5,qtype:"Vocabulary",
+stem:`As used in the passage, the phrase <b>speed of recognition</b> most nearly means --`,
+opts:["The pace at which a reader identifies the genre and register of a literary work from its opening sentences","The unconscious processing rate at which familiar linguistic patterns are understood without deliberate attention","The speed at which a reader moves through a text when they find its subject matter engaging and its style accessible","The rate at which a reader consciously evaluates and judges the accuracy of the claims a text makes"],
+answer:"B",
+exp:`Correct Answer: B. The unconscious processing rate at which familiar linguistic patterns are understood without deliberate attention.\n\nThe passage defines the phrase in the same sentence: "the speed at which familiar idioms are processed without attention." B is a precise paraphrase: unconscious processing of familiar patterns without deliberate attention.\n\nA describes genre and register identification from opening sentences -- a different kind of reading speed with no basis in the passage's definition.\nC describes speed correlated with engagement and accessibility -- the passage is making the opposite point: Conrad's sentences resist the speed that comes with familiarity, not that they are inaccessible because they are dull.\nD describes conscious evaluation of accuracy -- the opposite of what the passage means. The speed of recognition is specifically unconscious and automatic.`},
+
+{id:20,section:"RC -- Passage 5",passage:5,qtype:"Vocabulary",
+stem:`When the author says readers are "forced to experience the sentence as a construction rather than a transparency," the phrase implies that --`,
+opts:["Conrad's sentences are poorly constructed and require readers to work harder than well-crafted prose should demand","Readers who lack sufficient literary training will misread Conrad's sentences as flawed rather than intentional","The difficulty of Conrad's sentences is the mechanism through which they produce their meaning -- the slowing is the point","Conrad's prose would be improved by editorial intervention that made his sentences more immediately accessible"],
+answer:"C",
+exp:`Correct Answer: C. The difficulty of Conrad's sentences is the mechanism through which they produce their meaning -- the slowing is the point.\n\nTwo steps required. Step one: a transparency is something you see through -- you access what is beyond it without noticing the medium. Step two: a construction is something you notice as a made thing. Experiencing the sentence as construction means being made aware of the sentence itself as a crafted object. Step three: the passage's final line confirms this -- "This is not a deficiency of style. It is its method." Therefore the difficulty is the mechanism of meaning, not an obstacle to it.\n\nC follows precisely.\nA claims the sentences are poorly constructed -- directly contradicted. The passage argues the difficulty is deliberate and structural, not a deficiency.\nB introduces literary training as a variable -- not argued. The passage implies all readers are slowed; it does not divide readers by training level.\nD proposes editorial intervention would improve the prose -- directly contradicted. The difficulty is the method; removing it would remove the meaning.`}
+]
+
+const timer_duration = 25;
+const Q_COUNT = 20;
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx5Ojm_zp4LfsMeelx5e06KNjVH1wfsXdV0keS4407m4FO1HU4EpVb7GKj-ibAsxnspeA/exec';
+const adminPins = ['IMS1111111111','IMS2222222222','IMS3333333333','IMS4444444444','IMS5555555555'];
+const LABELS = ['A','B','C','D'];
+
+// ── STATE ─────────────────────────────────────────────────────────────────
+let studentName='', studentPin='', studentBatch='';
+let currentQ=0, secondsLeft=timer_duration*60, timerInterval=null;
+let userAnswers=new Array(Q_COUNT).fill(null);
+let markedForReview=new Array(Q_COUNT).fill(false);
+let visitedQ=new Array(Q_COUNT).fill(false);
+let testSubmitted=false;
+let questionTimestamps=new Array(Q_COUNT).fill(null);
+let questionTimes=new Array(Q_COUNT).fill(null);
+
+// ── SECTIONS ──────────────────────────────────────────────────────────────
+const SECTIONS=[];
+QUESTIONS.forEach((q,i)=>{
+  const last=SECTIONS[SECTIONS.length-1];
+  if(!last||last.name!==q.section) SECTIONS.push({name:q.section,start:i});
+});
+
+function buildSectionTabs(){
+  const bar=document.getElementById('sectionTabs');
+  const jmp=document.getElementById('jumpBtns');
+  bar.innerHTML=''; jmp.innerHTML='';
+  SECTIONS.forEach((sec,si)=>{
+    const end=(SECTIONS[si+1]?SECTIONS[si+1].start-1:Q_COUNT-1);
+    const label='§'+(si+1)+' · Q'+(sec.start+1)+'–'+(end+1);
+    const t=document.createElement('button');
+    t.className='sec-tab'; t.textContent=label; t.id='sectab'+si;
+    t.onclick=()=>renderQuestion(sec.start);
+    bar.appendChild(t);
+    const j=document.createElement('button');
+    j.className='jump-btn'; j.textContent='§'+(si+1); j.id='jumpbtn'+si;
+    j.onclick=()=>renderQuestion(sec.start);
+    jmp.appendChild(j);
+  });
+}
+
+function updateSectionHighlight(){
+  let active=0;
+  SECTIONS.forEach((sec,si)=>{ if(currentQ>=sec.start) active=si; });
+  SECTIONS.forEach((_,si)=>{
+    const t=document.getElementById('sectab'+si);
+    const j=document.getElementById('jumpbtn'+si);
+    if(t) t.classList.toggle('active',si===active);
+    if(j) j.classList.toggle('active',si===active);
+  });
+}
+
+// ── LOGIN ─────────────────────────────────────────────────────────────────
+function startTest(){
+  const name=document.getElementById('inputName').value.trim();
+  const pin=document.getElementById('inputPin').value.trim().toUpperCase();
+  const batch=document.getElementById('inputBatch').value;
+  const err=document.getElementById('loginErr');
+  err.style.display='none';
+  if(!name||!pin||!batch){err.textContent='Please fill in all fields.';err.style.display='block';return;}
+  if(!/^(STU|IMS)\d{10}$/.test(pin)){err.textContent='PIN must be STU or IMS followed by 10 digits.';err.style.display='block';return;}
+  const isAdmin=adminPins.includes(pin);
+  if(isAdmin&&batch!=='Admin'){err.textContent='Admin PIN must be used with the Admin batch only.';err.style.display='block';return;}
+  if(!isAdmin&&batch==='Admin'){err.textContent='Only Admin PINs may select the Admin batch.';err.style.display='block';return;}
+  studentName=name; studentPin=pin; studentBatch=batch;
+  document.getElementById('tbStudentName').textContent=name;
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('testScreen').style.display='block';
+  if(window.innerWidth>768) document.getElementById('rightPanel').style.display='block';
+  buildSectionTabs(); buildPalette(); renderQuestion(0); startTimer();
+}
+
+// ── TIMER ─────────────────────────────────────────────────────────────────
+function startTimer(){
+  const disp=document.getElementById('timerDisplay');
+  timerInterval=setInterval(()=>{
+    secondsLeft--;
+    const m=Math.floor(secondsLeft/60),s=secondsLeft%60;
+    disp.textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+    if(secondsLeft<=300) disp.classList.add('urgent');
+    if(secondsLeft<=0){clearInterval(timerInterval);if(!testSubmitted)submitTest();}
+  },1000);
+}
+
+// ── RENDER ────────────────────────────────────────────────────────────────
+function renderQuestion(idx){
+  if(currentQ!==idx&&questionTimestamps[currentQ]!==null){
+    const elapsed=Math.round((Date.now()-questionTimestamps[currentQ])/1000);
+    questionTimes[currentQ]=(questionTimes[currentQ]||0)+elapsed;
+  }
+  currentQ=idx;
+  visitedQ[idx]=true;
+  questionTimestamps[idx]=Date.now();
+  const q=QUESTIONS[idx];
+  const p=PASSAGES[q.passage-1];
+
+  // passage pane
+  document.getElementById('passageTitle').textContent=p.title;
+  document.getElementById('passageSource').textContent='Source: '+p.source;
+  document.getElementById('passageText').innerHTML=p.text.split('\n').map(para=>para.trim()?'<p>'+para+'</p>':'').join('');
+
+  // question meta
+  document.getElementById('sectionTag').textContent=q.section+' — '+q.qtype;
+  document.getElementById('questionNumber').textContent='Question '+(idx+1)+' of '+Q_COUNT;
+  document.getElementById('tbQCount').textContent='Q '+(idx+1)+'/'+Q_COUNT;
+  document.getElementById('questionStem').innerHTML=q.stem;
+
+  // options
+  const ul=document.getElementById('optionsList');
+  ul.innerHTML='';
+  q.opts.forEach((opt,i)=>{
+    const li=document.createElement('li');
+    const btn=document.createElement('button');
+    btn.className='option-btn';
+    if(userAnswers[idx]===i) btn.classList.add('selected');
+    if(markedForReview[idx]) btn.classList.add('marked');
+    btn.innerHTML='<span class="opt-label">'+LABELS[i]+'</span><span class="opt-text">'+opt+'</span>';
+    btn.onclick=()=>selectAnswer(idx,i);
+    li.appendChild(btn); ul.appendChild(li);
+  });
+
+  // mark btn
+  document.getElementById('markBtn').classList.toggle('active-mark',markedForReview[idx]);
+
+  // progress
+  const answered=userAnswers.filter(a=>a!==null).length;
+  document.getElementById('progressFill').style.width=(answered/Q_COUNT*100)+'%';
+
+  updateSectionHighlight();
+  updatePalette();
+}
+
+function selectAnswer(idx,i){userAnswers[idx]=i;renderQuestion(idx);}
+function clearAnswer(){userAnswers[currentQ]=null;renderQuestion(currentQ);}
+function navigate(dir){const n=currentQ+dir;if(n>=0&&n<Q_COUNT)renderQuestion(n);}
+function markForReview(){markedForReview[currentQ]=!markedForReview[currentQ];renderQuestion(currentQ);}
+
+// ── PALETTE ───────────────────────────────────────────────────────────────
+function buildPalette(){
+  const grid=document.getElementById('paletteGrid');
+  grid.innerHTML='';
+  for(let i=0;i<Q_COUNT;i++){
+    const btn=document.createElement('button');
+    btn.className='pal-btn'; btn.id='pal-'+i; btn.textContent=i+1;
+    btn.onclick=(()=>{const idx=i;return()=>renderQuestion(idx);})();
+    grid.appendChild(btn);
+  }
+}
+
+function updatePalette(){
+  for(let i=0;i<Q_COUNT;i++){
+    const btn=document.getElementById('pal-'+i); if(!btn)continue;
+    btn.className='pal-btn';
+    if(markedForReview[i]) btn.classList.add('marked');
+    else if(userAnswers[i]!==null) btn.classList.add('answered');
+    else if(visitedQ[i]) btn.classList.add('unanswered');
+    if(i===currentQ) btn.classList.add('current');
+  }
+}
+
+// ── SUBMIT ────────────────────────────────────────────────────────────────
+function confirmSubmit(){
+  const u=userAnswers.filter(a=>a===null).length;
+  const msg=u>0?`You have ${u} unanswered question${u>1?'s':''}. Submit anyway?`:'Submit the test?';
+  if(confirm(msg)) submitTest();
+}
+
+function submitTest(){
+  if(testSubmitted)return;
+  testSubmitted=true; clearInterval(timerInterval);
+  if(questionTimestamps[currentQ]!==null){
+    const elapsed=Math.round((Date.now()-questionTimestamps[currentQ])/1000);
+    questionTimes[currentQ]=(questionTimes[currentQ]||0)+elapsed;
+  }
+  let correct=0,wrong=0,skipped=0;
+  const sectionErrors={}; const wrongQuestions=[];
+  QUESTIONS.forEach((q,i)=>{
+    const ua=userAnswers[i];
+    const correctIdx=LABELS.indexOf(q.answer);
+    if(ua===null){skipped++;}
+    else if(ua===correctIdx){correct++;}
+    else{
+      wrong++;
+      sectionErrors[q.section]=(sectionErrors[q.section]||0)+1;
+      wrongQuestions.push({q:i+1,section:q.section,chosen:LABELS[ua],correct:q.answer});
+    }
+  });
+  const score=correct*4-wrong;
+  showResults(score,correct,wrong,skipped);
+  saveToTracker(score,correct,wrong,skipped);
+  logToSheet(score,correct,wrong,skipped,sectionErrors,wrongQuestions);
+}
+
+// ── RESULTS ───────────────────────────────────────────────────────────────
+function showResults(score,correct,wrong,skipped){
+  document.getElementById('testScreen').style.display='none';
+  document.getElementById('resultsScreen').style.display='block';
+  const acc=(correct/((Q_COUNT-skipped)||1)*100).toFixed(1);
+  document.getElementById('scoreHero').innerHTML=
+    '<div class="score-num">'+score+'</div>'+
+    '<div class="score-sub">out of 80 &nbsp;·&nbsp; '+studentName+' &nbsp;·&nbsp; '+studentPin+' &nbsp;·&nbsp; '+studentBatch+'</div>';
+  document.getElementById('statsGrid').innerHTML=
+    '<div class="stat-box correct"><div class="val">'+correct+'</div><div class="lbl">Correct</div></div>'+
+    '<div class="stat-box wrong"><div class="val">'+wrong+'</div><div class="lbl">Wrong</div></div>'+
+    '<div class="stat-box"><div class="val" style="color:var(--grey)">'+skipped+'</div><div class="lbl">Skipped</div></div>'+
+    '<div class="stat-box accuracy"><div class="val">'+acc+'%</div><div class="lbl">Accuracy</div></div>';
+  buildReview(); buildMisses(); buildRetry();
+}
+
+function buildReview(){
+  const list=document.getElementById('review-list');
+  list.innerHTML='';
+  let lastPassage=-1;
+  QUESTIONS.forEach((q,i)=>{
+    const ua=userAnswers[i];
+    const correctIdx=LABELS.indexOf(q.answer);
+    const isCorrect=(ua===correctIdx), isSkipped=(ua===null);
+    if(q.passage!==lastPassage){
+      lastPassage=q.passage;
+      const ph=document.createElement('div');
+      ph.style.cssText='color:var(--gold);font-size:.8rem;font-weight:700;margin:20px 0 8px;letter-spacing:.06em;text-transform:uppercase;';
+      ph.textContent=PASSAGES[q.passage-1].title;
+      list.appendChild(ph);
+      const pt=document.createElement('div');
+      pt.className='review-passage';
+      pt.innerHTML=PASSAGES[q.passage-1].text.split('\n').map(para=>para.trim()?'<p>'+para+'</p>':'').join('');
+      list.appendChild(pt);
+    }
+    const card=document.createElement('div');
+    card.className='review-card '+(isSkipped?'':isCorrect?'correct':'wrong');
+    const bClass=isSkipped?'badge-skipped':isCorrect?'badge-correct':'badge-wrong';
+    const bText=isSkipped?'--':isCorrect?'&#10003;':'&#10007;';
+    const opts=q.opts.map((o,idx)=>{
+      let cls='review-opt';
+      if(idx===correctIdx) cls+=' correct-opt';
+      if(ua!==null&&ua===idx&&idx!==correctIdx) cls+=' your-wrong';
+      return '<div class="'+cls+'"><span class="opt-label">'+LABELS[idx]+'</span> '+o+'</div>';
+    }).join('');
+    card.innerHTML=
+      '<div class="review-card-header">'+
+      '<div class="review-badge '+bClass+'">'+bText+'</div>'+
+      '<div class="review-stem"><span style="color:var(--grey);font-size:.74rem">Q'+(i+1)+' &middot; '+q.section+' &middot; '+q.qtype+'</span><br>'+q.stem+'</div>'+
+      '</div><div class="review-opts">'+opts+'</div>'+
+      '<div class="review-exp">'+q.exp.replace(/\n/g,'<br>')+'</div>';
+    list.appendChild(card);
+  });
+}
+
+function buildMisses(){
+  const wrongQs=[];
+  QUESTIONS.forEach((q,i)=>{
+    const correctIdx=LABELS.indexOf(q.answer);
+    if(userAnswers[i]!==null&&userAnswers[i]!==correctIdx){
+      wrongQs.push('Q'+(i+1)+' ['+q.section+' — '+q.qtype+'] Correct: '+q.answer+'. '+q.opts[correctIdx]);
+    }
+  });
+  document.getElementById('missesText').value=wrongQs.length?wrongQs.join('\n'):'No misses — perfect score!';
+}
+
+function copyMisses(e){
+  e.preventDefault();
+  navigator.clipboard.writeText(document.getElementById('missesText').value)
+    .then(()=>{const b=e.target;b.textContent='Copied!';setTimeout(()=>b.textContent='Copy Misses',2000);});
+}
+
+function buildRetry(){
+  const rs=document.getElementById('retrySection'); rs.innerHTML='';
+  const wrong=[];
+  QUESTIONS.forEach((q,i)=>{
+    const correctIdx=LABELS.indexOf(q.answer);
+    if(userAnswers[i]!==null&&userAnswers[i]!==correctIdx) wrong.push(i);
+  });
+  if(!wrong.length)return;
+  rs.innerHTML='<h3 style="margin:24px 0 12px;color:var(--gold);">Retry Wrong Questions ('+wrong.length+')</h3>';
+  wrong.forEach(i=>{
+    const q=QUESTIONS[i];
+    const correctIdx=LABELS.indexOf(q.answer);
+    const card=document.createElement('div'); card.className='retry-card';
+    card.innerHTML='<div class="r-stem"><span style="color:var(--grey);font-size:.74rem">Q'+(i+1)+' &middot; '+q.section+' &middot; '+q.qtype+'</span><br>'+q.stem+'</div>';
+    q.opts.forEach((o,idx)=>{
+      const btn=document.createElement('button'); btn.className='retry-opt';
+      btn.innerHTML='<span class="opt-label">'+LABELS[idx]+'</span> '+o;
+      btn.onclick=()=>{
+        card.querySelectorAll('.retry-opt').forEach(b=>b.disabled=true);
+        if(idx===correctIdx) btn.classList.add('r-correct');
+        else{btn.classList.add('r-wrong');card.querySelectorAll('.retry-opt')[correctIdx].classList.add('r-correct');}
+      };
+      card.appendChild(btn);
+    });
+    rs.appendChild(card);
+  });
+}
+
+// ── SAVE / LOG ────────────────────────────────────────────────────────────
+function saveToTracker(score,correct,wrong,skipped){
+  const s=timer_duration*60-secondsLeft;
+  const mm=String(Math.floor(s/60)).padStart(2,'0');
+  const ss=String(s%60).padStart(2,'0');
+  const data={testName:'Road to IIM Test 24',name:studentName,pin:studentPin,batch:studentBatch,score:score,correct:correct,wrong:wrong,skipped:skipped,maxMarks:80,timeTaken:mm+':'+ss,timestamp:new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'})};
+  try{const ex=JSON.parse(localStorage.getItem('riim_results')||'[]');ex.unshift(data);localStorage.setItem('riim_results',JSON.stringify(ex.slice(0,200)));}catch(e){}
+}
+
+function logToSheet(score,correct,wrong,skipped,sectionErrors,wrongQuestions){
+  const notice=document.getElementById('sheet-notice');
+  notice.className='submitting'; notice.textContent='Submitting results to server...'; notice.style.display='block';
+  const s=timer_duration*60-secondsLeft;
+  const mm=String(Math.floor(s/60)).padStart(2,'0');
+  const ss=String(s%60).padStart(2,'0');
+  const payload={testName:'Road to IIM Test 24',name:studentName,pin:studentPin,batch:studentBatch,score:score,correct:correct,wrong:wrong,skipped:skipped,maxMarks:80,timeTaken:mm+':'+ss,timestamp:new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'}),sectionErrors:JSON.stringify(sectionErrors),wrongQuestions:JSON.stringify(wrongQuestions),studentAnswers:JSON.stringify(userAnswers.map(a=>a===null?null:a)),questionTimes:JSON.stringify(questionTimes)};
+  fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)})
+    .then(()=>{notice.className='success';notice.textContent='Results saved successfully.';})
+    .catch(()=>{notice.className='failure';notice.textContent='Could not reach server. Results saved locally.';});
+}
+
+function generatePDF(){
+  const el=document.getElementById('review-list');
+  html2pdf().set({margin:10,filename:'RoadToIIM_Test24_'+studentName.replace(/\s+/g,'_')+'.pdf',html2canvas:{scale:2},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}}).from(el).save();
+}
+
+document.addEventListener('contextmenu',e=>e.preventDefault());
+document.addEventListener('keydown',e=>{if(e.ctrlKey&&['c','a','u','s','p'].includes(e.key.toLowerCase()))e.preventDefault();});
+</script>
+</body>
+</html>
