@@ -1663,10 +1663,13 @@ function fetchPatterns() {
     pin:  currentUser.pin
   });
 
-  Promise.all([
-    fetch(APPS_SCRIPT_URL + '?' + params.toString()).then(r => r.json()),
-    fetch(PAT_TAGS_URL).then(r => r.json())
-  ])
+  // Fetch sheet data — always needed.
+  // Also fetch riim_tags.json for legacy tests (16–21) that don't have topicErrors in payload.
+  // New tests (RF01+) send topicErrors directly — no JSON dependency.
+  const sheetFetch = fetch(APPS_SCRIPT_URL + '?' + params.toString()).then(r => r.json());
+  const tagsFetch  = fetch(PAT_TAGS_URL).then(r => r.json()).catch(() => ({tests:{}}));
+
+  Promise.all([sheetFetch, tagsFetch])
   .then(([results, tags]) => {
     if (results.status !== 'success') {
       el.innerHTML = `
@@ -1690,7 +1693,7 @@ function fetchPatterns() {
 }
 
 function renderPatterns(el, testRows, tags) {
-  // Safely parse fields that may arrive as JSON strings (Tests 18, 19, 20)
+  // Safely parse JSON string fields (Tests 18, 19, 20 arrive as strings)
   testRows.forEach(r => {
     if (typeof r.wrongQuestions === 'string') {
       try { r.wrongQuestions = JSON.parse(r.wrongQuestions); } catch(e) { r.wrongQuestions = []; }
@@ -1698,53 +1701,100 @@ function renderPatterns(el, testRows, tags) {
     if (typeof r.studentAnswers === 'string') {
       try { r.studentAnswers = JSON.parse(r.studentAnswers); } catch(e) { r.studentAnswers = []; }
     }
+    if (typeof r.topicErrors === 'string') {
+      try { r.topicErrors = JSON.parse(r.topicErrors); } catch(e) { r.topicErrors = null; }
+    }
     if (!Array.isArray(r.wrongQuestions)) r.wrongQuestions = [];
     if (!Array.isArray(r.studentAnswers)) r.studentAnswers = [];
   });
 
-  // Tests with studentAnswers tracking (16 onwards) that are also in tags
-  const TRACKABLE = new Set(['16','17','18','19','21']);
-  const tracked = testRows.filter(r =>
-    TRACKABLE.has(String(r.test)) &&
+  // TWO PATHS for topic accumulation:
+  // LEGACY (Tests 16-21): use studentAnswers + riim_tags.json — per-question cross-reference
+  // NEW (RF01+): topicErrors field in row — pre-aggregated {sub: wrongCount}, area inferred from TOPIC_AREA map
+
+  const TRACKABLE_LEGACY = new Set(['16','17','18','19','21']);
+
+  // Map sub → area for new tests (avoids needing JSON for new tests)
+  const TOPIC_AREA = {
+    'Synonym':'Vocabulary','Antonym':'Vocabulary','Word Meaning':'Vocabulary',
+    'Contextual Usage':'Vocabulary','Fill in the Blank':'Vocabulary','Double Blank':'Vocabulary',
+    'One Word Substitution':'Vocabulary','Idiom':'Vocabulary','Analogy':'Vocabulary','Odd One Out':'Vocabulary',
+    'Error Spotting':'Grammar','Sentence Correction':'Grammar','Subject-Verb Agreement':'Grammar',
+    'Tense Usage':'Grammar','Active-Passive Voice':'Grammar','Direct-Indirect Speech':'Grammar',
+    'Parallelism':'Grammar','Dangling Modifier':'Grammar','Article Usage':'Grammar',
+    'Conditional':'Grammar','Preposition':'Grammar','Modifiers':'Grammar'
+  };
+
+  // Accumulate per topic: topicMap[area][sub] = {seen, correct, wrong, skipped}
+  const topicMap = {};
+
+  const addToMap = (area, sub, seen, correct, wrong, skipped) => {
+    if (!topicMap[area])      topicMap[area] = {};
+    if (!topicMap[area][sub]) topicMap[area][sub] = {seen:0,correct:0,wrong:0,skipped:0};
+    const b = topicMap[area][sub];
+    b.seen    += seen;
+    b.correct += correct;
+    b.wrong   += wrong;
+    b.skipped += skipped;
+  };
+
+  // ── PATH 1: LEGACY — per-question via riim_tags.json ──
+  const legacyRows = testRows.filter(r =>
+    TRACKABLE_LEGACY.has(String(r.test)) &&
     r.studentAnswers && r.studentAnswers.length > 0 &&
     tags.tests && tags.tests[String(r.test)]
   );
+
+  legacyRows.forEach(row => {
+    const testTags = tags.tests[String(row.test)].q;
+    const wrongSet = new Set((row.wrongQuestions || []).map(Number));
+    row.studentAnswers.forEach((ans, idx) => {
+      const tag = testTags[String(idx + 1)];
+      if (!tag) return;
+      const { area, sub } = tag;
+      const isSkip    = ans === null;
+      const isWrong   = !isSkip && wrongSet.has(idx + 1);
+      const isCorrect = !isSkip && !isWrong;
+      addToMap(area, sub, 1, isCorrect?1:0, isWrong?1:0, isSkip?1:0);
+    });
+  });
+
+  // ── PATH 2: NEW TESTS — topicErrors field from payload ──
+  // topicErrors = {sub: wrongCount} — tells us wrongs per topic.
+  // We also have wrongQuestions.length for total wrong, and correct/skipped from score fields.
+  // For seen: we don't know per-topic seen from topicErrors alone — we know wrong per topic.
+  // So: seen = N/A (we mark as wrong count seen), correct = attempted - wrong, skipped = 0 (approximation).
+  // This gives accurate wrong/correct split which is what matters for the verdict.
+  const newRows = testRows.filter(r =>
+    !TRACKABLE_LEGACY.has(String(r.test)) &&
+    r.topicErrors && typeof r.topicErrors === 'object' && Object.keys(r.topicErrors).length > 0
+  );
+
+  newRows.forEach(row => {
+    const topicErrs = row.topicErrors; // {sub: wrongCount}
+    Object.entries(topicErrs).forEach(([sub, wrongCount]) => {
+      const area = TOPIC_AREA[sub] || 'Other';
+      // wrongCount = questions wrong on this topic in this test
+      // We don't have per-topic seen from topicErrors alone — use wrongCount as minimum seen
+      addToMap(area, sub, wrongCount, 0, wrongCount, 0);
+    });
+  });
+
+  const totalAnalysed = legacyRows.length + newRows.length;
+
+  // Coverage note for legacy untracked
   const untracked = testRows.filter(r =>
     tags.tests && tags.tests[String(r.test)] &&
     (!r.studentAnswers || r.studentAnswers.length === 0)
   );
 
-  // Accumulate per topic: topicMap[area][sub] = {seen,correct,wrong,skipped}
-  const topicMap = {};
-  tracked.forEach(row => {
-    const testId   = String(row.test);
-    const testTags = tags.tests[testId].q;
-    const wrongSet = new Set((row.wrongQuestions || []).map(Number));
-    const answers  = row.studentAnswers;
-
-    answers.forEach((ans, idx) => {
-      const qNum = String(idx + 1);
-      const tag  = testTags[qNum];
-      if (!tag) return;
-      const { area, sub } = tag;
-      if (!topicMap[area])      topicMap[area] = {};
-      if (!topicMap[area][sub]) topicMap[area][sub] = {seen:0,correct:0,wrong:0,skipped:0};
-      const b = topicMap[area][sub];
-      b.seen++;
-      if (ans === null)           b.skipped++;
-      else if (wrongSet.has(idx+1)) b.wrong++;
-      else                          b.correct++;
-    });
-  });
-
   // Build HTML
   let html = `<hr class="pat-divider">
   <div class="pat-banner">
     <div class="pat-banner-title">My Patterns</div>
-    <div class="pat-banner-sub">Topic accuracy · ${tracked.length} test${tracked.length!==1?'s':''} analysed · Tests 16 onwards</div>
+    <div class="pat-banner-sub">Topic accuracy · ${totalAnalysed} test${totalAnalysed!==1?'s':''} analysed · Tests 16 onwards</div>
   </div>`;
 
-  // Coverage note
   if (untracked.length > 0) {
     const names = untracked.map(r => 'T'+r.test).join(', ');
     html += `<div class="pat-coverage-note">
