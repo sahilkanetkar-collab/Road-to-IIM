@@ -1,0 +1,53 @@
+{
+  "tests": {
+    "RF01": {
+      "q": {
+        "1":  {"area": "Vocabulary", "sub": "Idiom"},
+        "2":  {"area": "Vocabulary", "sub": "Synonym"},
+        "3":  {"area": "Grammar",    "sub": "Direct-Indirect Speech"},
+        "4":  {"area": "Vocabulary", "sub": "Word Meaning"},
+        "5":  {"area": "Grammar",    "sub": "Subject-Verb Agreement"},
+        "6":  {"area": "Vocabulary", "sub": "Fill in the Blank"},
+        "7":  {"area": "Grammar",    "sub": "Active-Passive Voice"},
+        "8":  {"area": "Grammar",    "sub": "Subject-Verb Agreement"},
+        "9":  {"area": "Vocabulary", "sub": "Contextual Usage"},
+        "10": {"area": "Vocabulary", "sub": "Contextual Usage"},
+        "11": {"area": "Grammar",    "sub": "Sentence Correction"},
+        "12": {"area": "Vocabulary", "sub": "Antonym"},
+        "13": {"area": "Grammar",    "sub": "Direct-Indirect Speech"},
+        "14": {"area": "Grammar",    "sub": "Error Spotting"},
+        "15": {"area": "Vocabulary", "sub": "Idiom"},
+        "16": {"area": "Grammar",    "sub": "Fill in the Blank"},
+        "17": {"area": "Grammar",    "sub": "Dangling Modifier"},
+        "18": {"area": "Grammar",    "sub": "Article Usage"},
+        "19": {"area": "Grammar",    "sub": "Error Spotting"},
+        "20": {"area": "Grammar",    "sub": "Subject-Verb Agreement"},
+        "21": {"area": "Vocabulary", "sub": "One Word Substitution"},
+        "22": {"area": "Grammar",    "sub": "Sentence Correction"},
+        "23": {"area": "Vocabulary", "sub": "Double Blank"},
+        "24": {"area": "Vocabulary", "sub": "Contextual Usage"},
+        "25": {"area": "Grammar",    "sub": "Parallelism"},
+        "26": {"area": "Grammar",    "sub": "Fill in the Blank"},
+        "27": {"area": "Vocabulary", "sub": "Word Meaning"},
+        "28": {"area": "Vocabulary", "sub": "Fill in the Blank"},
+        "29": {"area": "Vocabulary", "sub": "Analogy"},
+        "30": {"area": "Vocabulary", "sub": "Antonym"},
+        "31": {"area": "Grammar",    "sub": "Error Spotting"},
+        "32": {"area": "Grammar",    "sub": "Error Spotting"},
+        "33": {"area": "Grammar",    "sub": "Parallelism"},
+        "34": {"area": "Grammar",    "sub": "Sentence Correction"},
+        "35": {"area": "Vocabulary", "sub": "Synonym"},
+        "36": {"area": "Grammar",    "sub": "Tense Usage"},
+        "37": {"area": "Vocabulary", "sub": "One Word Substitution"},
+        "38": {"area": "Grammar",    "sub": "Tense Usage"},
+        "39": {"area": "Vocabulary", "sub": "Odd One Out"},
+        "40": {"area": "Vocabulary", "sub": "Analogy"},
+        "41": {"area": "Vocabulary", "sub": "Fill in the Blank"},
+        "42": {"area": "Vocabulary", "sub": "Synonym"},
+        "43": {"area": "Vocabulary", "sub": "Odd One Out"},
+        "44": {"area": "Vocabulary", "sub": "Double Blank"},
+        "45": {"area": "Grammar",    "sub": "Conditional"}
+      }
+    }
+  }
+}
