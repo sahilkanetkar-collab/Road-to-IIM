@@ -6,12 +6,25 @@
 <title>Road to IIM — Sahil Sir</title>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,700;1,9..144,400&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0f0e0c;--bg2:#181714;--bg3:#211f1b;--border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.14);--gold:#c9a84c;--gold2:#e8c97a;--gold-dim:rgba(201,168,76,0.12);--text:#f0ece3;--text2:#a09880;--text3:#5a5545;--green:#4caf82;--green-dim:rgba(76,175,130,0.1);--radius:10px;--radius-lg:16px;}
+:root{
+  --bg:#0f0e0c;--bg2:#181714;--bg3:#211f1b;
+  --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.14);
+  --gold:#c9a84c;--gold2:#e8c97a;--gold-dim:rgba(201,168,76,0.12);
+  --text:#f0ece3;--text2:#a09880;--text3:#5a5545;
+  --green:#4caf82;--green-dim:rgba(76,175,130,0.1);
+  --radius:10px;--radius-lg:16px;
+}
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh}
+
+/* HEADER */
 .header{border-bottom:0.5px solid var(--border);padding:1.25rem 2rem;display:flex;align-items:center;justify-content:space-between}
 .brand-main{font-family:'Fraunces',serif;font-size:20px;font-weight:500;color:var(--gold2);letter-spacing:-0.3px}
 .brand-sub{font-size:12px;color:var(--text3);font-family:'DM Mono',monospace;letter-spacing:.05em;margin-top:2px}
+.header-link{font-size:13px;color:var(--text2);text-decoration:none;font-weight:500;border:0.5px solid var(--border2);padding:8px 16px;border-radius:var(--radius);transition:color .2s,border-color .2s}
+.header-link:hover{color:var(--gold);border-color:var(--gold)}
+
+/* HERO */
 .hero{max-width:860px;margin:0 auto;padding:3.5rem 2rem 2rem}
 .hero-tag{font-size:11px;font-family:'DM Mono',monospace;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;margin-bottom:1rem}
 .hero-title{font-family:'Fraunces',serif;font-size:clamp(32px,5vw,52px);font-weight:300;line-height:1.15;color:var(--text);margin-bottom:1rem}
@@ -22,15 +35,30 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .hero-cta:hover{background:var(--gold2)}
 .hero-cta-ghost{display:inline-flex;align-items:center;gap:10px;background:transparent;border:0.5px solid var(--border2);color:var(--text2);padding:13px 24px;border-radius:var(--radius);font-size:14px;text-decoration:none;transition:background .2s}
 .hero-cta-ghost:hover{background:var(--bg3)}
+
+/* DIVIDER */
 .divider{max-width:860px;margin:0 auto;padding:0 2rem}
 .divider hr{border:none;border-top:0.5px solid var(--border)}
+
+/* TRACKER BANNER */
 .section{max-width:860px;margin:0 auto;padding:2rem}
-.section-label{font-size:11px;font-family:'DM Mono',monospace;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:1.25rem}
 .tracker-banner{background:var(--gold-dim);border:0.5px solid var(--gold);border-radius:var(--radius-lg);padding:1.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-bottom:2rem}
 .tracker-title{font-family:'Fraunces',serif;font-size:18px;font-weight:400;color:var(--gold2);margin-bottom:4px}
 .tracker-desc{font-size:13px;color:var(--text2);line-height:1.5}
 .tracker-btn{background:var(--gold);color:#0f0e0c;padding:10px 20px;border-radius:var(--radius);font-size:13px;font-weight:500;text-decoration:none;white-space:nowrap;transition:background .2s;flex-shrink:0}
 .tracker-btn:hover{background:var(--gold2)}
+
+/* TABS */
+.tab-bar{max-width:860px;margin:0 auto;padding:0 2rem;display:flex;gap:0;border-bottom:1px solid var(--border)}
+.tab-btn{padding:10px 22px;font-size:13px;font-family:'DM Sans',sans-serif;font-weight:500;color:var(--text3);background:var(--bg2);border:0.5px solid var(--border);border-bottom:none;cursor:pointer;transition:all .15s;position:relative;top:1px;border-radius:var(--radius) var(--radius) 0 0;margin-right:4px}
+.tab-btn:hover{color:var(--text2);background:var(--bg3)}
+.tab-btn.active{background:var(--bg3);color:var(--gold);border-color:var(--gold);border-bottom:1px solid var(--bg3)}
+
+/* TAB PANELS */
+.tab-panel{display:none;max-width:860px;margin:0 auto;padding:2rem}
+.tab-panel.active{display:block}
+
+/* TEST GRID & CARDS */
 .test-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px}
 .test-card{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem 1.5rem;text-decoration:none;display:block;transition:border-color .2s,background .2s;position:relative;overflow:hidden}
 .test-card:hover{border-color:var(--border2);background:var(--bg3)}
@@ -44,9 +72,24 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .tag.live{background:var(--green-dim);color:var(--green);border-color:rgba(76,175,130,0.2)}
 .test-arrow{position:absolute;bottom:1.25rem;right:1.25rem;font-size:18px;color:var(--text3);transition:color .2s,transform .2s}
 .test-card:hover .test-arrow{color:var(--gold);transform:translate(2px,-2px)}
+
+/* SECTION LABEL */
+.section-label{font-size:11px;font-family:'DM Mono',monospace;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:1.25rem}
+
+/* LOADING */
 .loading{text-align:center;padding:3rem;color:var(--text3);font-size:13px;font-family:'DM Mono',monospace}
 .spinner-sm{display:inline-block;width:16px;height:16px;border:2px solid var(--border2);border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:8px}
 @keyframes spin{to{transform:rotate(360deg)}}
+
+/* RAPID FIRE NOTE */
+.rf-note{background:rgba(201,168,76,0.05);border:0.5px solid rgba(201,168,76,0.15);border-radius:var(--radius-lg);padding:1.25rem 1.5rem;margin-bottom:1.5rem;font-size:13px;color:var(--text2);line-height:1.6}
+
+/* SELF STUDY */
+.iwp-banner{background:rgba(78,160,130,0.07);border:0.5px solid rgba(78,160,130,0.25);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:1.5rem}
+.iwp-title{font-family:'Fraunces',serif;font-size:18px;font-weight:400;color:#7de0b8;margin-bottom:6px}
+.iwp-desc{font-size:13px;color:var(--text2);line-height:1.6;max-width:580px}
+
+/* FOOTER */
 .footer{border-top:0.5px solid var(--border);padding:1.5rem 2rem;text-align:center;font-size:12px;color:var(--text3);font-family:'DM Mono',monospace;margin-top:2rem}
 </style>
 </head>
@@ -57,7 +100,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
     <div class="brand-main">Road to IIM</div>
     <div class="brand-sub">Verbal Ability Test Series · Sahil Sir</div>
   </div>
-  <a href="downloads.html" style="font-size:13px;color:var(--text2);text-decoration:none;font-family:'DM Sans',sans-serif;font-weight:500;border:0.5px solid var(--border2);padding:8px 16px;border-radius:var(--radius);transition:color .2s,border-color .2s" onmouseover="this.style.color='var(--gold)';this.style.borderColor='var(--gold)'" onmouseout="this.style.color='var(--text2)';this.style.borderColor='var(--border2)'">Resources →</a>
+  <a href="downloads.html" class="header-link">Resources →</a>
 </div>
 
 <div class="hero">
@@ -72,8 +115,8 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 
 <div class="divider"><hr></div>
 
+<!-- TRACKER BANNER -->
 <div class="section" id="tests">
-  <div class="section-label">Performance tracker</div>
   <div class="tracker-banner">
     <div>
       <div class="tracker-title">See your error patterns across all tests</div>
@@ -81,32 +124,27 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
     </div>
     <a href="road_to_iim_tracker_v2.html" class="tracker-btn">Open tracker →</a>
   </div>
+</div>
 
-  <div class="section-label">Live tests</div>
+<!-- TABS -->
+<div class="tab-bar">
+  <button class="tab-btn active" onclick="switchTab('standard',this)">Standard Tests</button>
+  <button class="tab-btn" onclick="switchTab('rapidfire',this)">Rapid Fire</button>
+  <button class="tab-btn" onclick="switchTab('rctests',this)">RC Tests</button>
+  <button class="tab-btn" onclick="switchTab('selfstudy',this)">Self Study</button>
+</div>
+
+<!-- STANDARD TESTS -->
+<div class="tab-panel active" id="panel-standard">
   <div class="test-grid" id="testGrid">
     <div class="loading"><span class="spinner-sm"></span>Loading tests...</div>
   </div>
+</div>
 
-  <div class="section-label" style="margin-top:2rem">JIPMAT Series</div>
-  <div class="test-grid">
-    <a href="road-to-jipmat-1.html" class="test-card">
-      <div class="test-num">JIPMAT · TEST 01</div>
-      <div class="test-title">Road to JIPMAT 1</div>
-      <div class="test-meta">34 Qs &middot; 40 min &middot; +4 / &minus;1</div>
-      <div class="test-tags">
-        <span class="tag live">Live</span>
-        <span class="tag">Grammar</span>
-        <span class="tag">Vocabulary</span>
-        <span class="tag">RC</span>
-      </div>
-      <div class="test-arrow">&#8599;</div>
-    </a>
-  </div>
-
-
-  <div class="section-label" style="margin-top:2rem">Rapid Fire Test Series</div>
-  <div style="background:rgba(201,168,76,0.05);border:0.5px solid rgba(201,168,76,0.15);border-radius:var(--radius-lg);padding:1.25rem 1.5rem;margin-bottom:1rem;font-size:13px;color:var(--text2);line-height:1.6;max-width:580px">
-    Pace training for IPMAT. Per-question countdown — 25 sec Vocabulary, 35 sec Grammar. Questions fully mixed. No going back.
+<!-- RAPID FIRE -->
+<div class="tab-panel" id="panel-rapidfire">
+  <div class="rf-note">
+    Pace training for IPMAT. Per-question countdown — 25 sec Vocabulary, 35 sec Grammar. Questions fully mixed. No going back. Your topic patterns update in the tracker automatically after you submit.
   </div>
   <div class="test-grid">
     <a href="RoadToIIM_SpeedTest01_VocabGrammar.html" class="test-card">
@@ -121,234 +159,132 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
       <div class="test-arrow">&#8599;</div>
     </a>
   </div>
-
 </div>
 
 
-<div class="divider"><hr></div>
 
-<div class="section" id="self-study">
-  <div class="section-label">Self Study</div>
-
-  <div style="background:rgba(78,160,130,0.07);border:0.5px solid rgba(78,160,130,0.25);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:1.5rem">
-    <div style="font-family:'Fraunces',serif;font-size:18px;font-weight:400;color:#7de0b8;margin-bottom:6px">Instant Word Power — 12-Week Programme</div>
-    <div style="font-size:13px;color:var(--text2);line-height:1.6;max-width:580px">Root-based vocabulary building from Norman Lewis. One session per week, done independently. Complete the session, submit your exit slip — your progress is logged automatically.</div>
+<!-- RC TESTS -->
+<div class="tab-panel" id="panel-rctests">
+  <div class="loading" style="padding:4rem;color:var(--text3);font-family:'DM Mono',monospace;font-size:13px">
+    RC Tests coming soon.
   </div>
+</div>
 
+<!-- SELF STUDY -->
+<div class="tab-panel" id="panel-selfstudy">
+  <div class="iwp-banner">
+    <div class="iwp-title">Instant Word Power — 12-Week Programme</div>
+    <div class="iwp-desc">Root-based vocabulary building from Norman Lewis. One session per week, done independently. Complete the session, submit your exit slip — your progress is logged automatically.</div>
+  </div>
   <div class="test-grid">
-
     <a href="iwp_week1_session.html" class="test-card" style="border-color:rgba(78,160,130,0.2)">
       <div class="test-num" style="color:rgba(78,160,130,0.7)">IWP · WEEK 01</div>
       <div class="test-title">Number Roots</div>
-      <div class="test-meta">bi · tri · quad · cent · Sessions 1–4</div>
-      <div class="test-tags">
-        <span class="tag live">Live</span>
-        <span class="tag">Etymology</span>
-        <span class="tag">Fill-in</span>
-        <span class="tag">Exit Slip</span>
-      </div>
+      <div class="test-meta">Session &middot; Exit Slip &middot; ~45 min</div>
+      <div class="test-tags"><span class="tag live">Live</span><span class="tag">Root Words</span><span class="tag">Vocabulary</span></div>
       <div class="test-arrow">&#8599;</div>
     </a>
-
     <a href="iwp_week2_session.html" class="test-card" style="border-color:rgba(78,160,130,0.2)">
       <div class="test-num" style="color:rgba(78,160,130,0.7)">IWP · WEEK 02</div>
-      <div class="test-title">Foot Roots</div>
-      <div class="test-meta">ped · pod · Sessions 5–8</div>
-      <div class="test-tags">
-        <span class="tag live">Live</span>
-        <span class="tag">Etymology</span>
-        <span class="tag">Fill-in</span>
-        <span class="tag">Exit Slip</span>
-      </div>
+      <div class="test-title">More Number Roots</div>
+      <div class="test-meta">Session &middot; Exit Slip &middot; ~45 min</div>
+      <div class="test-tags"><span class="tag live">Live</span><span class="tag">Root Words</span><span class="tag">Vocabulary</span></div>
       <div class="test-arrow">&#8599;</div>
     </a>
-
     <a href="iwp_week3_session.html" class="test-card" style="border-color:rgba(78,160,130,0.2)">
       <div class="test-num" style="color:rgba(78,160,130,0.7)">IWP · WEEK 03</div>
-      <div class="test-title">Age Roots</div>
-      <div class="test-meta">oct · dec · nona · septu · Sessions 9–11</div>
-      <div class="test-tags">
-        <span class="tag live">Live</span>
-        <span class="tag">Etymology</span>
-        <span class="tag">Fill-in</span>
-        <span class="tag">Exit Slip</span>
-      </div>
+      <div class="test-title">The Latin Roots</div>
+      <div class="test-meta">Session &middot; Exit Slip &middot; ~45 min</div>
+      <div class="test-tags"><span class="tag live">Live</span><span class="tag">Root Words</span><span class="tag">Vocabulary</span></div>
       <div class="test-arrow">&#8599;</div>
     </a>
-
-    <div class="test-card" style="opacity:0.4;cursor:default;pointer-events:none">
-      <div class="test-num" style="color:var(--text3)">IWP · WEEK 04</div>
-      <div class="test-title">Checkpoint 1</div>
-      <div class="test-meta">Session 12 Review · All roots so far</div>
-      <div class="test-tags">
-        <span class="tag">Coming soon</span>
-      </div>
-    </div>
-
-    <div class="test-card" style="opacity:0.4;cursor:default;pointer-events:none">
-      <div class="test-num" style="color:var(--text3)">IWP · WEEK 05</div>
-      <div class="test-title">Sit Roots</div>
-      <div class="test-meta">sed · sid · sess · Sessions 13–16</div>
-      <div class="test-tags">
-        <span class="tag">Coming soon</span>
-      </div>
-    </div>
-
-    <div class="test-card" style="opacity:0.4;cursor:default;pointer-events:none">
-      <div class="test-num" style="color:var(--text3)">IWP · WEEK 06</div>
-      <div class="test-title">Logic + Feeling</div>
-      <div class="test-meta">dis · in · sent · Sessions 17–20</div>
-      <div class="test-tags">
-        <span class="tag">Coming soon</span>
-      </div>
-    </div>
-
-    <div class="test-card" style="opacity:0.4;cursor:default;pointer-events:none">
-      <div class="test-num" style="color:var(--text3)">IWP · WEEK 07</div>
-      <div class="test-title">Skin + Senses</div>
-      <div class="test-meta">derm · sens · Sessions 21–23</div>
-      <div class="test-tags">
-        <span class="tag">Coming soon</span>
-      </div>
-    </div>
-
-    <div class="test-card" style="opacity:0.4;cursor:default;pointer-events:none">
-      <div class="test-num" style="color:var(--text3)">IWP · WEEK 08</div>
-      <div class="test-title">Checkpoint 2</div>
-      <div class="test-meta">Session 24 Review · Midpoint</div>
-      <div class="test-tags">
-        <span class="tag">Coming soon</span>
-      </div>
-    </div>
-
-    <div class="test-card" style="opacity:0.4;cursor:default;pointer-events:none">
-      <div class="test-num" style="color:var(--text3)">IWP · WEEK 09</div>
-      <div class="test-title">Flow + Richness</div>
-      <div class="test-meta">flu · opul · Sessions 25–28</div>
-      <div class="test-tags">
-        <span class="tag">Coming soon</span>
-      </div>
-    </div>
-
-    <div class="test-card" style="opacity:0.4;cursor:default;pointer-events:none">
-      <div class="test-num" style="color:var(--text3)">IWP · WEEK 10</div>
-      <div class="test-title">Love · Hate · Faith</div>
-      <div class="test-meta">mis · phil · fid · Sessions 29–32</div>
-      <div class="test-tags">
-        <span class="tag">Coming soon</span>
-      </div>
-    </div>
-
-    <div class="test-card" style="opacity:0.4;cursor:default;pointer-events:none">
-      <div class="test-num" style="color:var(--text3)">IWP · WEEK 11</div>
-      <div class="test-title">Language + Phobias</div>
-      <div class="test-meta">poly · phob · Sessions 33–36</div>
-      <div class="test-tags">
-        <span class="tag">Coming soon</span>
-      </div>
-    </div>
-
-    <div class="test-card" style="opacity:0.4;cursor:default;pointer-events:none">
-      <div class="test-num" style="color:var(--text3)">IWP · WEEK 12</div>
-      <div class="test-title">Final Test</div>
-      <div class="test-meta">Sessions 37–38 · All 500+ words</div>
-      <div class="test-tags">
-        <span class="tag">Coming soon</span>
-      </div>
-    </div>
-
+    <a href="iwp_week4_session.html" class="test-card" style="border-color:rgba(78,160,130,0.2)">
+      <div class="test-num" style="color:rgba(78,160,130,0.7)">IWP · WEEK 04</div>
+      <div class="test-title">More Latin Roots</div>
+      <div class="test-meta">Session &middot; Exit Slip &middot; ~45 min</div>
+      <div class="test-tags"><span class="tag live">Live</span><span class="tag">Root Words</span><span class="tag">Vocabulary</span></div>
+      <div class="test-arrow">&#8599;</div>
+    </a>
+    <a href="iwp_week5_session.html" class="test-card" style="border-color:rgba(78,160,130,0.2)">
+      <div class="test-num" style="color:rgba(78,160,130,0.7)">IWP · WEEK 05</div>
+      <div class="test-title">Greek &amp; More Roots</div>
+      <div class="test-meta">Session &middot; Exit Slip &middot; ~45 min</div>
+      <div class="test-tags"><span class="tag live">Live</span><span class="tag">Root Words</span><span class="tag">Vocabulary</span></div>
+      <div class="test-arrow">&#8599;</div>
+    </a>
+    <a href="iwp_week6_session.html" class="test-card" style="border-color:rgba(78,160,130,0.2)">
+      <div class="test-num" style="color:rgba(78,160,130,0.7)">IWP · WEEK 06</div>
+      <div class="test-title">People &amp; Personalities</div>
+      <div class="test-meta">Session &middot; Exit Slip &middot; ~45 min</div>
+      <div class="test-tags"><span class="tag live">Live</span><span class="tag">Vocabulary</span></div>
+      <div class="test-arrow">&#8599;</div>
+    </a>
   </div>
 
-  <div style="background:rgba(110,150,210,0.07);border:0.5px solid rgba(110,150,210,0.25);border-radius:var(--radius-lg);padding:1.5rem;margin:2.5rem 0 1.5rem">
-    <div style="font-family:'Fraunces',serif;font-size:18px;font-weight:400;color:#9cc0f2;margin-bottom:6px">Read Like a Scholar — 6-Week Active Reading Programme</div>
-    <div style="font-size:13px;color:var(--text2);line-height:1.6;max-width:580px">How to actually read an RC passage. One reading skill per week, each with a lesson, a worked example, and a timed drill. Your drill result and skeleton sentence are logged automatically.</div>
+  <div style="margin-top:2rem" class="section-label">Reading &amp; Logic Skills</div>
+  <div style="background:rgba(110,150,210,0.07);border:0.5px solid rgba(110,150,210,0.2);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:1.5rem">
+    <div style="font-family:'Fraunces',serif;font-size:18px;font-weight:400;color:rgba(140,180,255,0.9);margin-bottom:6px">Reading &amp; Logic Skills Programme</div>
+    <div style="font-size:13px;color:var(--text2);line-height:1.6;max-width:580px">Structured RC and critical reasoning training. Weekly sessions with worked examples, drills, and skill-building exercises.</div>
   </div>
-
   <div class="test-grid">
-
     <a href="RLS_Week1.html" class="test-card" style="border-color:rgba(110,150,210,0.2)">
       <div class="test-num" style="color:rgba(110,150,210,0.8)">RLS · WEEK 01</div>
       <div class="test-title">The Demanding Reader</div>
       <div class="test-meta">Lesson &middot; Worked Example &middot; Drill &middot; ~70 min</div>
-      <div class="test-tags">
-        <span class="tag live">Live</span>
-        <span class="tag">Active Reading</span>
-        <span class="tag">Drill</span>
-        <span class="tag">Skeleton Journal</span>
-      </div>
+      <div class="test-tags"><span class="tag live">Live</span><span class="tag">Active Reading</span><span class="tag">Drill</span></div>
       <div class="test-arrow">&#8599;</div>
     </a>
-
     <a href="RLS_Week2.html" class="test-card" style="border-color:rgba(110,150,210,0.2)">
       <div class="test-num" style="color:rgba(110,150,210,0.8)">RLS · WEEK 02</div>
       <div class="test-title">The First Pass</div>
       <div class="test-meta">Lesson &middot; Worked Example &middot; Drill &middot; ~70 min</div>
-      <div class="test-tags">
-        <span class="tag live">Live</span>
-        <span class="tag">Active Reading</span>
-        <span class="tag">Drill</span>
-        <span class="tag">Skeleton Journal</span>
-      </div>
+      <div class="test-tags"><span class="tag live">Live</span><span class="tag">Active Reading</span><span class="tag">Drill</span></div>
       <div class="test-arrow">&#8599;</div>
     </a>
-
     <a href="RLS_Week3.html" class="test-card" style="border-color:rgba(110,150,210,0.2)">
       <div class="test-num" style="color:rgba(110,150,210,0.8)">RLS · WEEK 03</div>
       <div class="test-title">Coming to Terms</div>
       <div class="test-meta">Unknown words from context</div>
-      <div class="test-tags">
-        <span class="tag live">Live</span>
-        <span class="tag">Vocab in Context</span>
-        <span class="tag">Red Alert</span>
-      </div>
+      <div class="test-tags"><span class="tag live">Live</span><span class="tag">Vocab in Context</span><span class="tag">Red Alert</span></div>
       <div class="test-arrow">&#8599;</div>
     </a>
-
     <a href="RLS_Week4.html" class="test-card" style="border-color:rgba(110,150,210,0.2)">
       <div class="test-num" style="color:rgba(110,150,210,0.8)">RLS · WEEK 04</div>
       <div class="test-title">Propositions &amp; Arguments</div>
       <div class="test-meta">The inference discipline</div>
-      <div class="test-tags">
-        <span class="tag live">Live</span>
-        <span class="tag">Inference</span>
-        <span class="tag">Logical Distance</span>
-      </div>
+      <div class="test-tags"><span class="tag live">Live</span><span class="tag">Inference</span><span class="tag">Logical Distance</span></div>
       <div class="test-arrow">&#8599;</div>
     </a>
-
     <div class="test-card" style="opacity:0.4;cursor:default;pointer-events:none">
       <div class="test-num" style="color:var(--text3)">RLS · WEEK 05</div>
       <div class="test-title">Judging the Author</div>
       <div class="test-meta">Tone &middot; attitude &middot; fair criticism</div>
-      <div class="test-tags">
-        <span class="tag">Coming soon</span>
-      </div>
+      <div class="test-tags"><span class="tag">Coming soon</span></div>
     </div>
-
     <div class="test-card" style="opacity:0.4;cursor:default;pointer-events:none">
       <div class="test-num" style="color:var(--text3)">RLS · WEEK 06</div>
       <div class="test-title">Two Voices, One Subject</div>
-      <div class="test-meta">Conversation-type RC &middot; the capstone</div>
-      <div class="test-tags">
-        <span class="tag">Coming soon</span>
-      </div>
+      <div class="test-meta">Conversation-type RC · the capstone</div>
+      <div class="test-tags"><span class="tag">Coming soon</span></div>
     </div>
-
   </div>
 </div>
 
 <div class="footer">Road to IIM · Sahil Sir · IMS Ahmedabad</div>
 
 <script>
+// ── TAB SWITCHING ──
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab-panel').forEach(function(p){ p.classList.remove('active'); });
+  document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
+  document.getElementById('panel-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ── AUTO-LOAD STANDARD TESTS ──
 var REPO = 'sahilkanetkar-collab/Road-to-IIM';
 var API  = 'https://api.github.com/repos/' + REPO + '/contents/';
 
-function parseTestNum(filename) {
-  var m = filename.match(/Test(\d+)/i);
-  return m ? parseInt(m[1]) : null;
-}
-
-// Per-test tags: update this whenever a new test is added
 var TEST_TAGS = {
   9:  ['FITB', 'Analogy', 'OWS'],
   10: ['FITB', 'Analogy', 'OWS'],
@@ -359,6 +295,11 @@ var TEST_TAGS = {
   15: ['Vocabulary', 'Idiom', 'Sentence Completion'],
   16: ['SVA', 'Pronouns', 'Nouns'],
 };
+
+function parseTestNum(filename) {
+  var m = filename.match(/Test(\d+)/i);
+  return m ? parseInt(m[1]) : null;
+}
 
 function buildCard(file) {
   var num = parseTestNum(file.name);
@@ -399,7 +340,6 @@ fetch(API)
     tests.forEach(function(t){ grid.appendChild(t.el); });
   })
   .catch(function() {
-    // Fallback: hardcode known tests if API fails
     var grid = document.getElementById('testGrid');
     grid.innerHTML =
       '<a href="RoadToIIM_Test9_OnlineTest.html" class="test-card"><div class="test-num">TEST 09</div><div class="test-title">Verbal Ability</div><div class="test-meta">45 Qs &middot; 40 min &middot; +4 / &minus;1</div><div class="test-tags"><span class="tag live">Live</span><span class="tag">FITB</span><span class="tag">Analogy</span><span class="tag">OWS</span></div><div class="test-arrow">&#8599;</div></a>' +
