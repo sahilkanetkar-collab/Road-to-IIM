@@ -132,6 +132,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
   <button class="tab-btn" onclick="switchTab('rapidfire',this)">Rapid Fire</button>
   <button class="tab-btn" onclick="switchTab('rctests',this)">RC Tests</button>
   <button class="tab-btn" onclick="switchTab('selfstudy',this)">Self Study</button>
+  <button class="tab-btn" onclick="switchTab('customtest',this)">Custom Test</button>
 </div>
 
 <!-- STANDARD TESTS -->
@@ -267,6 +268,31 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
       <div class="test-meta">Conversation-type RC · the capstone</div>
       <div class="test-tags"><span class="tag">Coming soon</span></div>
     </div>
+  </div>
+</div>
+
+<div class="tab-panel" id="panel-customtest">
+  <div style="margin-bottom:2rem">
+    <div style="font-family:'Fraunces',serif;font-size:22px;font-weight:600;color:var(--gold);margin-bottom:6px">Build Your Own Test</div>
+    <div style="font-size:13px;color:var(--text2);line-height:1.6;max-width:580px">Pick your question types, set your count, and generate a custom timed test from our pool of 2,000+ CR questions, 117 RC passages, and 501 sentence completions. Your results are logged to the tracker automatically.</div>
+  </div>
+  <div class="test-grid" style="grid-template-columns:1fr">
+    <a href="byot.html" target="_blank" class="test-card" style="border-color:rgba(201,168,76,0.4);background:rgba(201,168,76,0.04)">
+      <div class="test-num" style="color:var(--gold)">CUSTOM TEST</div>
+      <div class="test-title">Build Your Test</div>
+      <div class="test-meta">CR · RC · SC &middot; Up to 25 Qs + 2 RC Passages &middot; 30 min &middot; +4 / &minus;1</div>
+      <div class="test-tags">
+        <span class="tag live">Live</span>
+        <span class="tag">Critical Reasoning</span>
+        <span class="tag">Reading Comprehension</span>
+        <span class="tag">Sentence Completion</span>
+      </div>
+      <div class="test-arrow">&#8599;</div>
+    </a>
+  </div>
+  <div style="margin-top:2rem;padding:16px 20px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;font-size:12px;color:var(--text3);line-height:1.7">
+    <strong style="color:var(--text2)">Pool size:</strong> 2,056 CR questions (GMAT + LSAT) &nbsp;·&nbsp; 117 RC passages with 2,685 questions &nbsp;·&nbsp; 501 Sentence Completions with explanations.<br>
+    Questions are drawn randomly from the pool each time. Your performance by type is visible in the tracker under My Patterns.
   </div>
 </div>
 
