@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Build Your Test · Road to IIM</title>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
   /* ── TOKENS ── */
   :root {
@@ -1033,7 +1034,7 @@
     <div id="review-content"></div>
     <div class="review-actions">
       <button class="rev-btn" onclick="buildNewTest()">← Build Another Test</button>
-      <button class="rev-btn primary" onclick="window.print()">Save / Print</button>
+      <button class="rev-btn primary" id="pdf-btn" onclick="downloadPDF()">⬇ Download PDF</button>
     </div>
   </div>
 </div>
@@ -1714,6 +1715,325 @@ function hideLoading() {
 
 // Init
 updateTotal();
+
+// ══════════════════════════════════
+// PDF GENERATION
+// ══════════════════════════════════
+function downloadPDF() {
+  const btn = document.getElementById('pdf-btn');
+  btn.textContent = 'Generating…';
+  btn.disabled = true;
+
+  setTimeout(() => {
+    try {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
+
+      const PW = 210; // page width mm
+      const PH = 297; // page height mm
+      const ML = 15;  // margin left
+      const MR = 15;  // margin right
+      const MT = 18;  // margin top
+      const MB = 18;  // margin bottom
+      const CW = PW - ML - MR; // content width
+
+      // Colors
+      const C_BG      = [15, 17, 23];
+      const C_SURFACE = [26, 29, 39];
+      const C_ACCENT  = [78, 160, 130];
+      const C_GOLD    = [201, 168, 76];
+      const C_TEXT    = [232, 234, 240];
+      const C_MUTED   = [122, 130, 160];
+      const C_CORRECT = [78, 160, 130];
+      const C_WRONG   = [224, 92, 92];
+      const C_WARN    = [224, 154, 58];
+      const C_WHITE   = [255, 255, 255];
+
+      let y = MT;
+      let pageNum = 1;
+
+      function newPage() {
+        // Footer on current page
+        drawFooter();
+        doc.addPage();
+        pageNum++;
+        y = MT;
+        // Dark background
+        doc.setFillColor(...C_BG);
+        doc.rect(0, 0, PW, PH, 'F');
+      }
+
+      function drawFooter() {
+        doc.setFontSize(7);
+        doc.setTextColor(...C_MUTED);
+        doc.text('Road to IIM · Sahil Sir · IMS Ahmedabad', ML, PH - 8);
+        doc.text(`Page ${pageNum}`, PW - MR, PH - 8, { align: 'right' });
+        doc.setDrawColor(...C_MUTED);
+        doc.setLineWidth(0.2);
+        doc.line(ML, PH - 11, PW - MR, PH - 11);
+      }
+
+      function checkSpace(needed) {
+        if (y + needed > PH - MB - 14) { newPage(); }
+      }
+
+      function setFont(size, weight, color) {
+        doc.setFontSize(size);
+        doc.setTextColor(...(color || C_TEXT));
+        doc.setFont('helvetica', weight || 'normal');
+      }
+
+      function wrapText(text, maxW, fontSize) {
+        doc.setFontSize(fontSize || 9);
+        return doc.splitTextToSize(text, maxW);
+      }
+
+      // ── Dark background on page 1 ──
+      doc.setFillColor(...C_BG);
+      doc.rect(0, 0, PW, PH, 'F');
+
+      // ── COVER HEADER ──
+      // Accent bar
+      doc.setFillColor(...C_ACCENT);
+      doc.rect(0, 0, PW, 2, 'F');
+
+      // Road to IIM label
+      setFont(7, 'bold', C_ACCENT);
+      doc.text('ROAD TO IIM · SAHIL SIR · IMS AHMEDABAD', ML, y);
+      y += 6;
+
+      // Test name
+      setFont(16, 'bold', C_TEXT);
+      const testNameLines = wrapText(STATE.testName, CW, 16);
+      doc.text(testNameLines, ML, y);
+      y += testNameLines.length * 7 + 2;
+
+      // Student info row
+      setFont(8, 'normal', C_MUTED);
+      const d = new Date();
+      const dateStr = d.toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' });
+      doc.text(`${STATE.studentName}  ·  ${STATE.studentPin}  ·  ${STATE.studentBatch}  ·  ${dateStr}`, ML, y);
+      y += 10;
+
+      // ── SCORE BOX ──
+      const boxH = 28;
+      checkSpace(boxH + 4);
+      doc.setFillColor(...C_SURFACE);
+      doc.roundedRect(ML, y, CW, boxH, 3, 3, 'F');
+
+      // Score
+      let correct = 0, wrong = 0, skipped = 0;
+      STATE.questions.forEach((q, i) => {
+        const a = STATE.answers[i];
+        if (!a) skipped++;
+        else if (a === q.answer) correct++;
+        else wrong++;
+      });
+      const score = correct * CONFIG.MARKS_CORRECT + wrong * CONFIG.MARKS_WRONG;
+      const maxMarks = STATE.questions.length * CONFIG.MARKS_CORRECT;
+
+      // Big score
+      setFont(22, 'bold', C_ACCENT);
+      doc.text(`${score}`, ML + 8, y + 17);
+      setFont(10, 'normal', C_MUTED);
+      doc.text(`/ ${maxMarks}`, ML + 8 + doc.getTextWidth(`${score}`) + 1, y + 17);
+
+      // Pills
+      const pillData = [
+        { label: `✓ ${correct} Correct`, col: C_CORRECT },
+        { label: `✗ ${wrong} Wrong`, col: C_WRONG },
+        { label: `− ${skipped} Skipped`, col: C_MUTED },
+        { label: `${STATE.questions.length} Questions`, col: C_GOLD },
+      ];
+      let px = ML + 55;
+      pillData.forEach(p => {
+        setFont(8, 'bold', p.col);
+        doc.text(p.label, px, y + 11);
+        setFont(7, 'normal', C_MUTED);
+        px += doc.getTextWidth(p.label) + 10;
+      });
+
+      // Time info
+      const timeTaken = CONFIG.TIMER_DURATION - STATE.secondsLeft;
+      const tm = Math.floor(timeTaken / 60).toString().padStart(2,'0');
+      const ts = (timeTaken % 60).toString().padStart(2,'0');
+      setFont(7, 'normal', C_MUTED);
+      doc.text(`Time taken: ${tm}:${ts}`, ML + 55, y + 21);
+
+      y += boxH + 8;
+
+      // ── PERFORMANCE BY TYPE ──
+      checkSpace(10);
+      setFont(10, 'bold', C_GOLD);
+      doc.text('PERFORMANCE BY TYPE', ML, y);
+      doc.setDrawColor(...C_GOLD);
+      doc.setLineWidth(0.3);
+      doc.line(ML, y + 1.5, ML + 60, y + 1.5);
+      y += 7;
+
+      // Build tag map
+      const tagMap = {};
+      STATE.questions.forEach((q, i) => {
+        const key = `${q.category} · ${q.subtype || 'General'}`;
+        if (!tagMap[key]) tagMap[key] = { total: 0, correct: 0 };
+        tagMap[key].total++;
+        if (STATE.answers[i] === q.answer) tagMap[key].correct++;
+      });
+
+      const tagEntries = Object.entries(tagMap).sort((a, b) => (a[1].correct/a[1].total) - (b[1].correct/b[1].total));
+      const barW = CW - 60;
+
+      tagEntries.forEach(([key, data]) => {
+        checkSpace(7);
+        const pct = data.correct / data.total;
+        const barColor = pct < 0.4 ? C_WRONG : pct < 0.7 ? C_WARN : C_CORRECT;
+
+        setFont(7.5, 'normal', C_MUTED);
+        doc.text(key, ML, y);
+        // Bar background
+        doc.setFillColor(30, 35, 55);
+        doc.roundedRect(ML + 55, y - 3.5, barW, 4, 1, 1, 'F');
+        // Bar fill
+        doc.setFillColor(...barColor);
+        doc.roundedRect(ML + 55, y - 3.5, barW * pct, 4, 1, 1, 'F');
+        // Score
+        setFont(7.5, 'bold', C_TEXT);
+        doc.text(`${data.correct}/${data.total}`, ML + 55 + barW + 3, y);
+        y += 6;
+      });
+
+      y += 4;
+
+      // ── QUESTIONS ──
+      checkSpace(10);
+      setFont(10, 'bold', C_GOLD);
+      doc.text('FULL QUESTION REVIEW', ML, y);
+      doc.setDrawColor(...C_GOLD);
+      doc.setLineWidth(0.3);
+      doc.line(ML, y + 1.5, ML + 65, y + 1.5);
+      y += 8;
+
+      let lastPassageId = null;
+
+      STATE.questions.forEach((q, i) => {
+        const ans = STATE.answers[i];
+        const isCorrect = ans === q.answer;
+        const isSkipped = !ans;
+        const statusColor = isSkipped ? C_MUTED : isCorrect ? C_CORRECT : C_WRONG;
+        const statusLabel = isSkipped ? 'SKIPPED' : isCorrect ? '✓ CORRECT' : '✗ WRONG';
+
+        // RC passage block
+        if (q.category === 'RC' && q.passageId !== lastPassageId) {
+          lastPassageId = q.passageId;
+          const passageLines = wrapText(q.passageText.substring(0, 1200) + (q.passageText.length > 1200 ? '…' : ''), CW - 4, 7.5);
+          const passageH = passageLines.length * 3.8 + 14;
+          checkSpace(passageH);
+
+          doc.setFillColor(22, 26, 42);
+          doc.roundedRect(ML, y, CW, passageH, 2, 2, 'F');
+          doc.setDrawColor(...C_ACCENT);
+          doc.setLineWidth(0.5);
+          doc.line(ML, y, ML, y + passageH);
+
+          setFont(6.5, 'bold', C_ACCENT);
+          doc.text(`${q.passageLabel} · PASSAGE ${q.passageNum}`, ML + 4, y + 5);
+
+          doc.setFontSize(7.5);
+          doc.setTextColor(...C_MUTED);
+          doc.text(passageLines, ML + 4, y + 10);
+          y += passageH + 5;
+        }
+
+        // Question card
+        const stemLines = wrapText(`Q${i+1}. ${q.stem}`, CW - 4, 8.5);
+        const optLines = Object.entries(q.options).map(([l, t]) => wrapText(`${l}. ${t}`, CW - 10, 8));
+        const totalOptLines = optLines.reduce((s, ol) => s + ol.length, 0);
+        const expLines = q.explanation ? wrapText(`Explanation: ${q.explanation}`, CW - 8, 7.5) : [];
+
+        const cardH = stemLines.length * 4 + totalOptLines * 3.8 + expLines.length * 3.5 + 22;
+        checkSpace(cardH);
+
+        // Card background
+        const borderCol = isSkipped ? [46, 51, 80] : isCorrect ? [40, 90, 70] : [90, 40, 40];
+        doc.setFillColor(...C_SURFACE);
+        doc.roundedRect(ML, y, CW, cardH, 2, 2, 'F');
+        doc.setDrawColor(...borderCol);
+        doc.setLineWidth(0.4);
+        doc.roundedRect(ML, y, CW, cardH, 2, 2, 'S');
+
+        let cy = y + 5;
+
+        // Q number + tag + status
+        doc.setFillColor(30, 35, 55);
+        doc.roundedRect(ML + 3, cy - 2.5, 16, 5, 1, 1, 'F');
+        setFont(6.5, 'bold', C_MUTED);
+        doc.text(`Q${i+1}`, ML + 5, cy + 1);
+
+        setFont(6.5, 'normal', C_GOLD);
+        doc.text(`${q.category} · ${q.subtype || 'General'}`, ML + 22, cy + 1);
+
+        setFont(6.5, 'bold', statusColor);
+        doc.text(statusLabel, ML + CW - 5, cy + 1, { align: 'right' });
+
+        cy += 7;
+
+        // Stem
+        setFont(8.5, 'normal', C_TEXT);
+        doc.text(stemLines, ML + 3, cy);
+        cy += stemLines.length * 4 + 3;
+
+        // Options
+        Object.entries(q.options).forEach(([letter, text]) => {
+          const isCorrectOpt = letter === q.answer;
+          const isStudentWrong = letter === ans && !isCorrect;
+          const optBg = isCorrectOpt ? [30, 70, 55] : isStudentWrong ? [70, 25, 25] : null;
+          const optTextColor = isCorrectOpt ? C_CORRECT : isStudentWrong ? C_WRONG : C_MUTED;
+
+          const lines = wrapText(`${letter}. ${text}`, CW - 12, 8);
+          const optH = lines.length * 3.8 + 3;
+
+          if (optBg) {
+            doc.setFillColor(...optBg);
+            doc.roundedRect(ML + 3, cy - 2.5, CW - 6, optH, 1, 1, 'F');
+          }
+
+          setFont(8, 'normal', optTextColor);
+          doc.text(lines, ML + 6, cy);
+          cy += optH + 1;
+        });
+
+        // Explanation (SC only)
+        if (expLines.length > 0) {
+          cy += 2;
+          doc.setFillColor(35, 30, 20);
+          doc.roundedRect(ML + 3, cy - 2.5, CW - 6, expLines.length * 3.5 + 4, 1, 1, 'F');
+          doc.setDrawColor(...C_GOLD);
+          doc.setLineWidth(0.4);
+          doc.line(ML + 3, cy - 2.5, ML + 3, cy - 2.5 + expLines.length * 3.5 + 4);
+          setFont(7.5, 'normal', [197, 201, 216]);
+          doc.text(expLines, ML + 6, cy);
+          cy += expLines.length * 3.5 + 3;
+        }
+
+        y += cardH + 4;
+      });
+
+      // Footer on last page
+      drawFooter();
+
+      // Save
+      const filename = `${STATE.testName.replace(/[^a-z0-9·\s]/gi, '').replace(/\s+/g, '_')}_${STATE.studentName.replace(/\s+/g,'_')}.pdf`;
+      doc.save(filename);
+
+    } catch(err) {
+      alert('PDF generation failed: ' + err.message);
+    } finally {
+      btn.textContent = '⬇ Download PDF';
+      btn.disabled = false;
+    }
+  }, 100);
+}
+
 </script>
 </body>
 </html>
