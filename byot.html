@@ -956,6 +956,51 @@
       </div>
     </div>
 
+    <!-- Grammar Card -->
+    <div class="cat-card" id="gr-card">
+      <div class="cat-header" onclick="toggleCat('gr')">
+        <div class="cat-toggle">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+            <path d="M2 6L5 9L10 3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <span class="cat-label">Grammar</span>
+        <span class="cat-badge" id="gr-badge">Off</span>
+      </div>
+      <div class="cat-body">
+        <div class="subtype-label">Question Type</div>
+        <div class="subtype-grid" id="gr-subtypes">
+          <div class="subtype-chip selected" data-type="all" onclick="toggleSubtype(this,'gr')">All Types</div>
+          <div class="subtype-chip" data-type="Sentence Correction" onclick="toggleSubtype(this,'gr')">Sentence Correction</div>
+          <div class="subtype-chip" data-type="Conjunctions & Connectors" onclick="toggleSubtype(this,'gr')">Conjunctions</div>
+          <div class="subtype-chip" data-type="Sentence Combination" onclick="toggleSubtype(this,'gr')">Sentence Combination</div>
+          <div class="subtype-chip" data-type="Parallelism & Sentence Correction" onclick="toggleSubtype(this,'gr')">Parallelism</div>
+          <div class="subtype-chip" data-type="Parallelism & Verb Agreement" onclick="toggleSubtype(this,'gr')">Parallelism & SVA</div>
+          <div class="subtype-chip" data-type="Subject-Verb Agreement" onclick="toggleSubtype(this,'gr')">SVA</div>
+          <div class="subtype-chip" data-type="Verb Forms & Tense" onclick="toggleSubtype(this,'gr')">Verb Tense</div>
+          <div class="subtype-chip" data-type="Pronoun Agreement & Case" onclick="toggleSubtype(this,'gr')">Pronouns</div>
+          <div class="subtype-chip" data-type="Adjective vs Adverb" onclick="toggleSubtype(this,'gr')">Adj vs Adv</div>
+          <div class="subtype-chip" data-type="Comparatives & Superlatives" onclick="toggleSubtype(this,'gr')">Comparatives</div>
+          <div class="subtype-chip" data-type="Misplaced & Dangling Modifiers" onclick="toggleSubtype(this,'gr')">Modifiers</div>
+          <div class="subtype-chip" data-type="Fragment / Run-on / Error ID" onclick="toggleSubtype(this,'gr')">Fragments & Run-ons</div>
+          <div class="subtype-chip" data-type="Topic Sentence" onclick="toggleSubtype(this,'gr')">Topic Sentence</div>
+          <div class="subtype-chip" data-type="Best Supporting Sentence" onclick="toggleSubtype(this,'gr')">Supporting Sentence</div>
+          <div class="subtype-chip" data-type="Irrelevant Sentence" onclick="toggleSubtype(this,'gr')">Irrelevant Sentence</div>
+          <div class="subtype-chip" data-type="Sentence Sequence" onclick="toggleSubtype(this,'gr')">Sentence Sequence</div>
+          <div class="subtype-chip" data-type="Passage-based Questions" onclick="toggleSubtype(this,'gr')">Passage-based</div>
+        </div>
+        <div class="count-row">
+          <span class="count-label">Questions:</span>
+          <div class="count-ctrl">
+            <button class="count-btn" onclick="adjustCount('gr',-5)">−</button>
+            <span class="count-val" id="gr-count">10</span>
+            <button class="count-btn" onclick="adjustCount('gr',5)">+</button>
+          </div>
+          <span style="font-size:0.78rem;color:var(--muted)">max 25</span>
+        </div>
+      </div>
+    </div>
+
     <!-- Total bar -->
     <div class="total-bar">
       <div class="total-num" id="total-num">0</div>
@@ -1065,11 +1110,13 @@ const CONFIG = {
   POOL_CR_URL: 'https://raw.githubusercontent.com/sahilkanetkar-collab/Road-to-IIM/main/pool_cr.json',
   POOL_RC_URL: 'https://raw.githubusercontent.com/sahilkanetkar-collab/Road-to-IIM/main/pool_rc.json',
   POOL_SC_URL: 'https://raw.githubusercontent.com/sahilkanetkar-collab/Road-to-IIM/main/pool_sc.json',
+  POOL_GR_URL: 'https://raw.githubusercontent.com/sahilkanetkar-collab/Road-to-IIM/main/pool_gr.json',
   APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbx5Ojm_zp4LfsMeelx5e06KNjVH1wfsXdV0keS4407m4FO1HU4EpVb7GKj-ibAsxnspeA/exec',
   SHEET_NAME: 'CustomTests',
   TIMER_DURATION: 30 * 60, // 30 minutes in seconds
   MAX_CR: 25,
   MAX_SC: 25,
+  MAX_GR: 25,
   MAX_RC_PASSAGES: 2,
   MARKS_CORRECT: 4,
   MARKS_WRONG: -1,
@@ -1080,11 +1127,11 @@ const CONFIG = {
 // ══════════════════════════════════
 const STATE = {
   // Builder
-  pools: { cr: null, rc: null, sc: null },
+  pools: { cr: null, rc: null, sc: null, gr: null },
   poolsLoaded: false,
-  cats: { cr: false, rc: false, sc: false },
-  crCount: 10, scCount: 10, rcPassages: 1,
-  crSubtypes: ['all'], // 'all' means no filter
+  cats: { cr: false, rc: false, sc: false, gr: false },
+  crCount: 10, scCount: 10, grCount: 10, rcPassages: 1,
+  crSubtypes: ['all'], grSubtypes: ['all'], // 'all' means no filter
 
   // Test
   questions: [],      // flat array of question objects
@@ -1114,17 +1161,22 @@ function toggleCat(cat) {
 
 function toggleSubtype(el, cat) {
   if (el.dataset.type === 'all') {
-    document.querySelectorAll('#cr-subtypes .subtype-chip').forEach(c => c.classList.remove('selected'));
+    document.querySelectorAll(`#${cat}-subtypes .subtype-chip`).forEach(c => c.classList.remove('selected'));
     el.classList.add('selected');
-    STATE.crSubtypes = ['all'];
+    if (cat === 'cr') STATE.crSubtypes = ['all'];
+    if (cat === 'gr') STATE.grSubtypes = ['all'];
   } else {
-    const allChip = document.querySelector('#cr-subtypes [data-type="all"]');
+    const allChip = document.querySelector(`#${cat}-subtypes [data-type="all"]`);
     allChip.classList.remove('selected');
     el.classList.toggle('selected');
-    STATE.crSubtypes = Array.from(document.querySelectorAll('#cr-subtypes .subtype-chip.selected')).map(c => c.dataset.type);
-    if (STATE.crSubtypes.length === 0) {
+    const selected = Array.from(document.querySelectorAll(`#${cat}-subtypes .subtype-chip.selected`)).map(c => c.dataset.type);
+    if (selected.length === 0) {
       allChip.classList.add('selected');
-      STATE.crSubtypes = ['all'];
+      if (cat === 'cr') STATE.crSubtypes = ['all'];
+      if (cat === 'gr') STATE.grSubtypes = ['all'];
+    } else {
+      if (cat === 'cr') STATE.crSubtypes = selected;
+      if (cat === 'gr') STATE.grSubtypes = selected;
     }
   }
 }
@@ -1144,7 +1196,7 @@ function selectPassages(el) {
 }
 
 function updateBadges() {
-  ['cr','rc','sc'].forEach(cat => {
+  ['cr','rc','sc','gr'].forEach(cat => {
     const badge = document.getElementById(`${cat}-badge`);
     badge.textContent = STATE.cats[cat] ? 'On' : 'Off';
     badge.style.color = STATE.cats[cat] ? 'var(--accent2)' : '';
@@ -1155,12 +1207,13 @@ function updateTotal() {
   let total = 0;
   let desc = [];
   if (STATE.cats.cr) { total += STATE.crCount; desc.push(`CR×${STATE.crCount}`); }
-  if (STATE.cats.rc) { desc.push(`RC×${STATE.rcPassages}P`); } // questions come with passage
+  if (STATE.cats.rc) { desc.push(`RC×${STATE.rcPassages}P`); }
   if (STATE.cats.sc) { total += STATE.scCount; desc.push(`SC×${STATE.scCount}`); }
+  if (STATE.cats.gr) { total += STATE.grCount; desc.push(`GR×${STATE.grCount}`); }
 
   document.getElementById('total-num').textContent = total + (STATE.cats.rc ? '+RC' : '');
   const genBtn = document.getElementById('gen-btn');
-  const hasAny = STATE.cats.cr || STATE.cats.rc || STATE.cats.sc;
+  const hasAny = STATE.cats.cr || STATE.cats.rc || STATE.cats.sc || STATE.cats.gr;
   document.getElementById('total-desc-main').textContent = hasAny ? desc.join(' + ') : 'Select at least one category';
   genBtn.disabled = !hasAny;
 }
@@ -1176,6 +1229,7 @@ async function loadPools() {
     if (STATE.cats.cr) needed.push(['cr', CONFIG.POOL_CR_URL]);
     if (STATE.cats.rc) needed.push(['rc', CONFIG.POOL_RC_URL]);
     if (STATE.cats.sc) needed.push(['sc', CONFIG.POOL_SC_URL]);
+    if (STATE.cats.gr) needed.push(['gr', CONFIG.POOL_GR_URL]);
 
     for (const [cat, url] of needed) {
       if (!STATE.pools[cat]) {
@@ -1262,6 +1316,24 @@ function sampleSC() {
   }));
 }
 
+function sampleGR() {
+  let pool = STATE.pools.gr;
+  if (!STATE.grSubtypes.includes('all')) {
+    pool = pool.filter(q => STATE.grSubtypes.includes(q.type));
+  }
+  pool = shuffle(pool).slice(0, STATE.grCount);
+  return pool.map(q => ({
+    id: q.id,
+    category: 'GR',
+    subtype: q.type,
+    context: q.context || '',
+    stem: q.stem,
+    options: q.options,
+    answer: q.answer,
+    explanation: q.explanation || null,
+  }));
+}
+
 // ══════════════════════════════════
 // GENERATE TEST
 // ══════════════════════════════════
@@ -1309,6 +1381,13 @@ async function generateTest() {
     STATE.sections.push({ label: `SC (${scQ.length}Q)`, qIndices: scQ.map((_, i) => start + i) });
   }
 
+  if (STATE.cats.gr) {
+    const grQ = sampleGR();
+    const start = allQ.length;
+    allQ.push(...grQ);
+    STATE.sections.push({ label: `GR (${grQ.length}Q)`, qIndices: grQ.map((_, i) => start + i) });
+  }
+
   STATE.questions = allQ;
   STATE.answers = {};
   STATE.marked = {};
@@ -1324,6 +1403,7 @@ async function generateTest() {
   if (STATE.cats.cr) parts.push(`CR×${STATE.crCount}`);
   if (STATE.cats.rc) parts.push(`RC×${STATE.rcPassages}P`);
   if (STATE.cats.sc) parts.push(`SC×${STATE.scCount}`);
+  if (STATE.cats.gr) parts.push(`GR×${STATE.grCount}`);
   const d = new Date();
   const dateStr = `${d.getDate()}${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()]}`;
   STATE.testName = `Custom · ${parts.join(' + ')} · ${dateStr}`;
@@ -1411,6 +1491,14 @@ function renderCurrentQuestion() {
         ${q.passageText}
       </div>`;
     }
+  }
+
+  // If GR question with context, show context paragraph
+  if (q.category === 'GR' && q.context && q.context.length > 10) {
+    html += `<div class="passage-block">
+      <h3>PASSAGE CONTEXT</h3>
+      ${q.context}
+    </div>`;
   }
 
   // Question card
@@ -1697,7 +1785,7 @@ function showScreen(id) {
 }
 
 function buildNewTest() {
-  STATE.pools = { cr: STATE.pools.cr, rc: STATE.pools.rc, sc: STATE.pools.sc }; // keep pools
+  STATE.pools = { cr: STATE.pools.cr, rc: STATE.pools.rc, sc: STATE.pools.sc, gr: STATE.pools.gr }; // keep pools
   STATE.poolsLoaded = true;
   showScreen('builder-screen');
 }
