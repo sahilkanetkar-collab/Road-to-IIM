@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>IWP Week 9 — Flow and Wealth</title>
+<style>
+  :root {
+    --gold:#c9a027; --gold-dim:rgba(201,160,39,0.18); --bg:#0f1117; --card:#1c2230;
+    --card2:#222b3a; --text:#d4dae8; --muted:#8a95b0; --green:rgba(78,160,130,0.85);
+    --green-dim:rgba(78,160,130,0.15); --border:rgba(255,255,255,0.07); --radius:12px;
+    --correct:#3aaf7a; --wrong:#e05c5c;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;font-size:15px;line-height:1.65}
+  /* LOGIN */
+  #login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:24px}
+  .login-card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:40px 36px;width:100%;max-width:420px}
+  .login-eyebrow{font-size:11px;font-variant:small-caps;letter-spacing:1.5px;color:var(--gold);margin-bottom:8px}
+  .login-title{font-size:22px;font-weight:700;color:#fff;margin-bottom:4px}
+  .login-sub{font-size:13px;color:var(--muted);margin-bottom:28px}
+  .field-label{font-size:11px;font-weight:600;letter-spacing:1px;color:var(--muted);text-transform:uppercase;display:block;margin-bottom:6px}
+  .field-group{margin-bottom:18px}
+  .login-input,.login-select{width:100%;background:#141820;border:1px solid rgba(255,255,255,0.1);border-radius:8px;color:var(--text);font-size:14px;padding:10px 14px;outline:none;transition:border .2s}
+  .login-input:focus,.login-select:focus{border-color:var(--gold)}
+  .login-select{cursor:pointer}
+  .login-select option,.login-select optgroup{background:#1c2230}
+  .btn-begin{width:100%;background:var(--gold);color:#0f1117;border:none;border-radius:8px;font-size:15px;font-weight:700;padding:13px;cursor:pointer;margin-top:8px;transition:opacity .2s}
+  .btn-begin:hover{opacity:.88}
+  .login-error{color:#e05c5c;font-size:12px;margin-top:8px;display:none}
+  /* MAIN */
+  #main-screen{display:none}
+  .site-header{position:sticky;top:0;z-index:50;background:rgba(15,17,23,.96);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);padding:10px 20px;display:flex;align-items:center;justify-content:space-between}
+  .header-title{font-size:13px;font-weight:600;color:var(--gold)}
+  .timer-wrap{font-size:13px;color:var(--muted)}
+  #timer-display{color:var(--text);font-weight:700}
+  .progress-track{display:flex;gap:4px;padding:14px 20px;max-width:860px;margin:0 auto}
+  .prog-step{flex:1;height:4px;border-radius:2px;background:rgba(255,255,255,0.08);transition:background .3s}
+  .prog-step.active{background:var(--gold)}
+  .prog-step.done{background:var(--green)}
+  .main-wrap{max-width:860px;margin:0 auto;padding:0 20px 60px}
+  .section-card{display:none}
+  .section-card.active{display:block}
+  .sec-header{margin-bottom:22px}
+  .sec-tag{display:inline-block;font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;padding:3px 9px;border-radius:20px;margin-bottom:10px}
+  .tag-review{background:rgba(201,160,39,0.15);color:var(--gold)}
+  .tag-fillin{background:var(--green-dim);color:var(--green)}
+  .tag-context{background:rgba(100,130,220,0.15);color:#8ab4f8}
+  .tag-recall{background:rgba(180,100,220,0.15);color:#c084fc}
+  .tag-exit{background:rgba(230,80,80,0.15);color:#f87171}
+  .sec-title{font-size:22px;font-weight:700;color:#fff;margin-bottom:4px}
+  .sec-sub{font-size:14px;color:var(--muted)}
+  /* ROOT CARDS */
+  .roots-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin:20px 0}
+  .root-family{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px}
+  .root-family-title{font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+  .root-badge{display:inline-block;background:var(--gold-dim);color:var(--gold);font-weight:700;font-size:13px;padding:3px 10px;border-radius:6px;margin-bottom:10px}
+  .root-meaning{font-size:13px;color:var(--muted);margin-bottom:12px}
+  .word-chips{display:flex;flex-wrap:wrap;gap:6px}
+  .chip{font-size:12px;background:var(--card2);border:1px solid var(--border);color:var(--text);padding:3px 10px;border-radius:20px}
+  /* HOOK BOX */
+  .hook-box{background:linear-gradient(135deg,rgba(201,160,39,0.1),rgba(78,160,130,0.08));border:1px solid rgba(201,160,39,0.25);border-radius:var(--radius);padding:20px 22px;margin-bottom:24px}
+  .hook-title{font-size:17px;font-weight:700;color:var(--gold);margin-bottom:8px}
+  .hook-body{font-size:14px;color:var(--text);line-height:1.75}
+  /* FILL-IN */
+  .fill-item{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;margin-bottom:12px}
+  .fill-num{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+  .fill-sentence{font-size:15px;color:var(--text);margin-bottom:12px;line-height:1.7}
+  .fill-input{background:#141820;border:1px solid rgba(255,255,255,0.12);border-radius:8px;color:var(--text);font-size:14px;padding:9px 14px;outline:none;width:100%;max-width:320px;transition:border .2s}
+  .fill-input:focus{border-color:var(--gold)}
+  .fill-input.correct-input{border-color:var(--correct);background:rgba(58,175,122,0.07)}
+  .fill-input.wrong-input{border-color:var(--wrong);background:rgba(224,92,92,0.07)}
+  .fill-feedback{font-size:13px;margin-top:8px;display:none}
+  .feedback-ok{color:var(--correct)}
+  .feedback-no{color:var(--wrong)}
+  .check-fill-btn{font-size:13px;font-weight:600;background:var(--gold-dim);color:var(--gold);border:1px solid rgba(201,160,39,0.3);border-radius:8px;padding:7px 16px;cursor:pointer;margin-top:10px;transition:background .2s}
+  .check-fill-btn:hover{background:rgba(201,160,39,0.28)}
+  /* CONTEXT */
+  .ctx-item{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;margin-bottom:12px}
+  .ctx-num{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+  .ctx-sentence{font-size:15px;color:var(--text);margin-bottom:12px;line-height:1.7}
+  .ctx-options{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
+  .ctx-opt{font-size:13px;font-weight:500;background:var(--card2);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:7px 16px;cursor:pointer;transition:all .2s}
+  .ctx-opt:hover{border-color:var(--gold);color:var(--gold)}
+  .ctx-opt.selected{border-color:var(--gold);color:var(--gold);background:var(--gold-dim)}
+  .ctx-opt.opt-correct{border-color:var(--correct);color:var(--correct);background:rgba(58,175,122,0.1)}
+  .ctx-opt.opt-wrong{border-color:var(--wrong);color:var(--wrong);background:rgba(224,92,92,0.1)}
+  .ctx-feedback{font-size:13px;margin-top:8px;display:none}
+  /* RECALL */
+  .recall-item{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;margin-bottom:12px}
+  .recall-num{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+  .recall-def{font-size:15px;color:var(--text);margin-bottom:6px;line-height:1.7}
+  .recall-hint{font-size:12px;color:var(--muted);margin-bottom:10px;font-style:italic}
+  .recall-input{background:#141820;border:1px solid rgba(255,255,255,0.12);border-radius:8px;color:var(--text);font-size:14px;padding:9px 14px;outline:none;width:100%;max-width:320px;transition:border .2s}
+  .recall-input:focus{border-color:var(--gold)}
+  .recall-input.correct-input{border-color:var(--correct);background:rgba(58,175,122,0.07)}
+  .recall-input.wrong-input{border-color:var(--wrong);background:rgba(224,92,92,0.07)}
+  .recall-feedback{font-size:13px;margin-top:8px;display:none}
+  /* EXIT SLIP */
+  .exit-intro{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;margin-bottom:20px;font-size:14px;color:var(--muted);line-height:1.7}
+  .mcq-item{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;margin-bottom:12px}
+  .mcq-q{font-size:15px;color:var(--text);margin-bottom:14px;line-height:1.65;font-weight:500}
+  .mcq-num{color:var(--gold);font-weight:700;margin-right:6px}
+  .mcq-opts{display:flex;flex-direction:column;gap:8px}
+  .mcq-opt{display:flex;align-items:flex-start;gap:10px;background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;cursor:pointer;font-size:14px;color:var(--text);transition:all .2s;user-select:none}
+  .mcq-opt:hover{border-color:var(--gold)}
+  .mcq-opt.selected{border-color:var(--gold);background:var(--gold-dim);color:var(--gold)}
+  .mcq-opt.opt-correct{border-color:var(--correct);background:rgba(58,175,122,0.1);color:var(--correct)}
+  .mcq-opt.opt-wrong{border-color:var(--wrong);background:rgba(224,92,92,0.1);color:var(--wrong)}
+  .opt-letter{font-weight:700;min-width:18px}
+  .score-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px 24px;margin-top:24px;text-align:center;display:none}
+  .score-big{font-size:48px;font-weight:800;color:var(--gold)}
+  .score-label{font-size:14px;color:var(--muted);margin-top:6px}
+  .score-grade{font-size:20px;font-weight:700;color:#fff;margin-top:12px}
+  /* NAV */
+  .nav-row{display:flex;justify-content:flex-end;margin-top:24px;gap:10px}
+  .btn-next{background:var(--gold);color:#0f1117;font-weight:700;font-size:14px;border:none;border-radius:8px;padding:11px 28px;cursor:pointer;transition:opacity .2s}
+  .btn-next:hover{opacity:.88}
+  .btn-next:disabled{opacity:.35;cursor:default}
+  .btn-submit{background:var(--gold);color:#0f1117;font-weight:700;font-size:14px;border:none;border-radius:8px;padding:11px 28px;cursor:pointer;transition:opacity .2s}
+  .btn-submit:disabled{opacity:.35;cursor:default}
+  /* LOG BAR */
+  #log-bar{display:none;position:fixed;bottom:0;left:0;right:0;background:rgba(15,17,23,.97);border-top:1px solid var(--border);padding:14px 20px;text-align:center;z-index:100}
+  .btn-log{background:var(--green);color:#0f1117;font-weight:700;font-size:15px;border:none;border-radius:8px;padding:13px 40px;cursor:pointer;transition:opacity .2s}
+  .btn-log:hover{opacity:.88}
+  /* COMPLETE */
+  #complete-screen{display:none;min-height:60vh;align-items:center;justify-content:center;text-align:center;padding:40px 20px}
+  .complete-emoji{font-size:56px;margin-bottom:16px}
+  .complete-title{font-size:26px;font-weight:800;color:#fff;margin-bottom:8px}
+  .complete-sub{font-size:15px;color:var(--muted)}
+</style>
+</head>
+<body>
+
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-eyebrow">Camp Verbal × Road to IIM</div>
+    <div class="login-title">Week 9 — Flow and Wealth</div>
+    <div class="login-sub">flu- (flow) · opul- (rich)</div>
+    <div class="field-group">
+      <label class="field-label" for="inp-name">Full Name</label>
+      <input id="inp-name" class="login-input" type="text" placeholder="Your full name" autocomplete="off"/>
+    </div>
+    <div class="field-group">
+      <label class="field-label" for="inp-pin">IMS PIN</label>
+      <input id="inp-pin" class="login-input" type="text" placeholder="IMS0000000000 or STU0000000000" autocomplete="off" maxlength="13"/>
+    </div>
+    <div class="field-group">
+      <label class="field-label" for="inp-batch">Batch</label>
+      <select id="inp-batch" class="login-select">
+        <option value="">— Select your batch —</option>
+        <optgroup label="Classroom">
+          <option>A2701</option><option>A2702</option><option>A2703</option>
+          <option>A2704</option><option>A2705</option><option>A2706</option>
+          <option>A2707</option><option>A2708</option><option>A2709</option>
+          <option>A2710</option><option>A2711</option><option>A2712</option>
+        </optgroup>
+        <optgroup label="Online">
+          <option>27E101</option><option>27E102</option><option>27E103</option>
+          <option>27E104</option><option>27E105</option>
+        </optgroup>
+        <optgroup label="School">
+          <option>Zebar</option>
+        </optgroup>
+        <optgroup label="Admin">
+          <option>Admin</option>
+        </optgroup>
+      </select>
+    </div>
+    <button class="btn-begin" onclick="doLogin()">Begin Session ›</button>
+    <div class="login-error" id="login-err">Please check your name, PIN format (IMS/STU + 10 digits), and batch.</div>
+  </div>
+</div>
+
+<div id="main-screen">
+  <div class="site-header">
+    <div class="header-title">IWP — Week 9 — Flow and Wealth</div>
+    <div class="timer-wrap">⏱ <span id="timer-display">00:00</span></div>
+  </div>
+  <div class="progress-track">
+    <div class="prog-step active" id="ps1"></div>
+    <div class="prog-step" id="ps2"></div>
+    <div class="prog-step" id="ps3"></div>
+    <div class="prog-step" id="ps4"></div>
+    <div class="prog-step" id="ps5"></div>
+  </div>
+  <div class="main-wrap">
+
+    <div class="section-card active" id="sec1">
+      <div class="sec-header">
+        <span class="sec-tag tag-review">Roots</span>
+        <div class="sec-title">This Week&#x2019;s Roots</div>
+        <div class="sec-sub">Learn these root families before moving on.</div>
+      </div>
+      <div class="hook-box">
+        <div class="hook-title">🌊 When Money Flows In</div>
+        <div class="hook-body">Latin <em>fluo</em> (to flow) underlies a surprising number of English words. When money flows in, you are <strong>affluent</strong>. When something flows over what's needed, it's <strong>superfluous</strong>. Words with <strong>flu-</strong>, <strong>fluc-</strong>, or <strong>flux</strong> always carry the idea of flowing.</div>
+      </div>
+      <div class="roots-grid">
+        <div class="root-family">
+          <div class="root-family-title">Week 9 · Latin</div>
+          <div class="root-badge">fluo / flu-</div>
+          <div class="root-meaning">to flow</div>
+          <div class="word-chips"><span class="chip">fluent</span><span class="chip">fluid</span><span class="chip">superfluous</span><span class="chip">affluent</span><span class="chip">effluent</span><span class="chip">confluence</span><span class="chip">influx</span><span class="chip">fluctuate</span></div>
+        </div>
+        <div class="root-family">
+          <div class="root-family-title">Week 9 · Latin</div>
+          <div class="root-badge">opulentus / opul-</div>
+          <div class="root-meaning">rich, wealth</div>
+          <div class="word-chips"><span class="chip">opulent</span><span class="chip">opulence</span><span class="chip">opulently</span></div>
+        </div>
+      </div>
+
+      <div class="nav-row">
+        <button class="btn-next" id="next1" onclick="goSection(2)">Fill-in Exercises →</button>
+      </div>
+    </div>
+
+    <div class="section-card" id="sec2">
+      <div class="sec-header">
+        <span class="sec-tag tag-fillin">Fill-in</span>
+        <div class="sec-title">Complete the Sentence</div>
+        <div class="sec-sub">Six blanks. Type your answer and check each one.</div>
+      </div>
+            <div class="fill-item" id="fi1">
+        <div class="fill-num">Exercise 1</div>
+        <div class="fill-sentence">He speaks three languages __________ — words flow from him without hesitation or awkward pauses.</div>
+        <input class="fill-input" id="fa1" type="text" placeholder="Type the word…" autocomplete="off" oninput="this.value=this.value.toLowerCase()"/>
+        <br/>
+        <button class="check-fill-btn" onclick="checkFill(1)">Check ✓</button>
+        <div class="fill-feedback" id="ff1"></div>
+      </div>
+      <div class="fill-item" id="fi2">
+        <div class="fill-num">Exercise 2</div>
+        <div class="fill-sentence">The __________ district was home to gated mansions and luxury cars — wealth was visible everywhere.</div>
+        <input class="fill-input" id="fa2" type="text" placeholder="Type the word…" autocomplete="off" oninput="this.value=this.value.toLowerCase()"/>
+        <br/>
+        <button class="check-fill-btn" onclick="checkFill(2)">Check ✓</button>
+        <div class="fill-feedback" id="ff2"></div>
+      </div>
+      <div class="fill-item" id="fi3">
+        <div class="fill-num">Exercise 3</div>
+        <div class="fill-sentence">The politician's lengthy speech was full of __________ detail — much of it unnecessary and already covered.</div>
+        <input class="fill-input" id="fa3" type="text" placeholder="Type the word…" autocomplete="off" oninput="this.value=this.value.toLowerCase()"/>
+        <br/>
+        <button class="check-fill-btn" onclick="checkFill(3)">Check ✓</button>
+        <div class="fill-feedback" id="ff3"></div>
+      </div>
+      <div class="fill-item" id="fi4">
+        <div class="fill-num">Exercise 4</div>
+        <div class="fill-sentence">The rivers meet at a __________ — two currents merging before flowing into the sea together.</div>
+        <input class="fill-input" id="fa4" type="text" placeholder="Type the word…" autocomplete="off" oninput="this.value=this.value.toLowerCase()"/>
+        <br/>
+        <button class="check-fill-btn" onclick="checkFill(4)">Check ✓</button>
+        <div class="fill-feedback" id="ff4"></div>
+      </div>
+      <div class="fill-item" id="fi5">
+        <div class="fill-num">Exercise 5</div>
+        <div class="fill-sentence">Stock prices __________ wildly during the crisis — rising and falling unpredictably as new information arrived.</div>
+        <input class="fill-input" id="fa5" type="text" placeholder="Type the word…" autocomplete="off" oninput="this.value=this.value.toLowerCase()"/>
+        <br/>
+        <button class="check-fill-btn" onclick="checkFill(5)">Check ✓</button>
+        <div class="fill-feedback" id="ff5"></div>
+      </div>
+      <div class="fill-item" id="fi6">
+        <div class="fill-num">Exercise 6</div>
+        <div class="fill-sentence">The charity ball was a display of breathtaking __________ — crystal chandeliers, silk tablecloths, and rare vintage wine.</div>
+        <input class="fill-input" id="fa6" type="text" placeholder="Type the word…" autocomplete="off" oninput="this.value=this.value.toLowerCase()"/>
+        <br/>
+        <button class="check-fill-btn" onclick="checkFill(6)">Check ✓</button>
+        <div class="fill-feedback" id="ff6"></div>
+      </div>
+
+      <div class="nav-row">
+        <button class="btn-next" id="next2" onclick="goSection(3)" disabled>Think With Words →</button>
+      </div>
+    </div>
+
+    <div class="section-card" id="sec3">
+      <div class="sec-header">
+        <span class="sec-tag tag-context">Context</span>
+        <div class="sec-title">Think With Words</div>
+        <div class="sec-sub">Pick the word that best fits each sentence.</div>
+      </div>
+            <div class="ctx-item" id="ci1">
+        <div class="ctx-num">Context 1</div>
+        <div class="ctx-sentence">The neighbourhood had changed dramatically — once modest, it was now unmistakably __________, with boutiques and upscale cafes on every corner.</div>
+        <div class="ctx-options"><button class="ctx-opt" onclick="selectCtx(1,'A')">A. effluent</button><button class="ctx-opt" onclick="selectCtx(1,'B')">B. confluent</button><button class="ctx-opt" onclick="selectCtx(1,'C')">C. affluent</button><button class="ctx-opt" onclick="selectCtx(1,'D')">D. superfluous</button></div>
+        <div class="ctx-feedback" id="cf1"></div>
+      </div>
+      <div class="ctx-item" id="ci2">
+        <div class="ctx-num">Context 2</div>
+        <div class="ctx-sentence">She deleted the last two paragraphs — they were __________, repeating points the essay had already made clearly.</div>
+        <div class="ctx-options"><button class="ctx-opt" onclick="selectCtx(2,'A')">A. fluent</button><button class="ctx-opt" onclick="selectCtx(2,'B')">B. opulent</button><button class="ctx-opt" onclick="selectCtx(2,'C')">C. affluent</button><button class="ctx-opt" onclick="selectCtx(2,'D')">D. superfluous</button></div>
+        <div class="ctx-feedback" id="cf2"></div>
+      </div>
+      <div class="ctx-item" id="ci3">
+        <div class="ctx-num">Context 3</div>
+        <div class="ctx-sentence">The __________ of the two rivers created a wide, powerful body of water that powered the mills downstream.</div>
+        <div class="ctx-options"><button class="ctx-opt" onclick="selectCtx(3,'A')">A. superfluity</button><button class="ctx-opt" onclick="selectCtx(3,'B')">B. confluence</button><button class="ctx-opt" onclick="selectCtx(3,'C')">C. influx</button><button class="ctx-opt" onclick="selectCtx(3,'D')">D. effluence</button></div>
+        <div class="ctx-feedback" id="cf3"></div>
+      </div>
+      <div class="ctx-item" id="ci4">
+        <div class="ctx-num">Context 4</div>
+        <div class="ctx-sentence">The __________ display of jewellery — diamonds, rubies, and emeralds heaped on velvet trays — dazzled every visitor.</div>
+        <div class="ctx-options"><button class="ctx-opt" onclick="selectCtx(4,'A')">A. superfluous</button><button class="ctx-opt" onclick="selectCtx(4,'B')">B. affluent</button><button class="ctx-opt" onclick="selectCtx(4,'C')">C. opulent</button><button class="ctx-opt" onclick="selectCtx(4,'D')">D. fluent</button></div>
+        <div class="ctx-feedback" id="cf4"></div>
+      </div>
+
+      <div class="nav-row">
+        <button class="btn-next" id="next3" onclick="goSection(4)" disabled>Word Recall →</button>
+      </div>
+    </div>
+
+    <div class="section-card" id="sec4">
+      <div class="sec-header">
+        <span class="sec-tag tag-recall">Recall</span>
+        <div class="sec-title">Word Recall</div>
+        <div class="sec-sub">Match the definition to the word. The first letter is given as a hint.</div>
+      </div>
+            <div class="recall-item" id="ri1">
+        <div class="recall-num">Recall 1</div>
+        <div class="recall-def">Speaking or writing smoothly, without hesitation (adjective)</div>
+        <div class="recall-hint">Hint: starts with <strong>f</strong></div>
+        <input class="recall-input" id="ra1" type="text" placeholder="f…" autocomplete="off" oninput="this.value=this.value.toLowerCase()"/>
+        <button class="check-fill-btn" onclick="checkRecall(1)">Check ✓</button>
+        <div class="recall-feedback" id="rf1"></div>
+      </div>
+      <div class="recall-item" id="ri2">
+        <div class="recall-num">Recall 2</div>
+        <div class="recall-def">Having money flowing in abundantly; wealthy (adjective)</div>
+        <div class="recall-hint">Hint: starts with <strong>a</strong></div>
+        <input class="recall-input" id="ra2" type="text" placeholder="a…" autocomplete="off" oninput="this.value=this.value.toLowerCase()"/>
+        <button class="check-fill-btn" onclick="checkRecall(2)">Check ✓</button>
+        <div class="recall-feedback" id="rf2"></div>
+      </div>
+      <div class="recall-item" id="ri3">
+        <div class="recall-num">Recall 3</div>
+        <div class="recall-def">More than needed; going over what is necessary (adjective)</div>
+        <div class="recall-hint">Hint: starts with <strong>s</strong></div>
+        <input class="recall-input" id="ra3" type="text" placeholder="s…" autocomplete="off" oninput="this.value=this.value.toLowerCase()"/>
+        <button class="check-fill-btn" onclick="checkRecall(3)">Check ✓</button>
+        <div class="recall-feedback" id="rf3"></div>
+      </div>
+      <div class="recall-item" id="ri4">
+        <div class="recall-num">Recall 4</div>
+        <div class="recall-def">A flowing together; the point where two rivers meet (noun)</div>
+        <div class="recall-hint">Hint: starts with <strong>c</strong></div>
+        <input class="recall-input" id="ra4" type="text" placeholder="c…" autocomplete="off" oninput="this.value=this.value.toLowerCase()"/>
+        <button class="check-fill-btn" onclick="checkRecall(4)">Check ✓</button>
+        <div class="recall-feedback" id="rf4"></div>
+      </div>
+      <div class="recall-item" id="ri5">
+        <div class="recall-num">Recall 5</div>
+        <div class="recall-def">Lavish, luxurious wealth; a display of great richness (noun)</div>
+        <div class="recall-hint">Hint: starts with <strong>o</strong></div>
+        <input class="recall-input" id="ra5" type="text" placeholder="o…" autocomplete="off" oninput="this.value=this.value.toLowerCase()"/>
+        <button class="check-fill-btn" onclick="checkRecall(5)">Check ✓</button>
+        <div class="recall-feedback" id="rf5"></div>
+      </div>
+
+      <div class="nav-row">
+        <button class="btn-next" id="next4" onclick="goSection(5)" disabled>Exit Slip →</button>
+      </div>
+    </div>
+
+    <div class="section-card" id="sec5">
+      <div class="sec-header">
+        <span class="sec-tag tag-exit">Exit Slip</span>
+        <div class="sec-title">Exit Slip</div>
+        <div class="sec-sub">Five questions. Select one option per question, then submit.</div>
+      </div>
+      <div class="exit-intro">Five questions on this week&#x2019;s words. Answer all five to log your score.</div>
+            <div class="mcq-item" id="mcq1">
+        <div class="mcq-q"><span class="mcq-num">1.</span> Which word contains the root <em>flu-</em> (to flow) AND the prefix meaning 'over / above'?</div>
+        <div class="mcq-opts" id="mo1"><div class="mcq-opt" onclick="selectOpt(1,'A')"><span class="opt-letter">A</span> affluent</div><div class="mcq-opt" onclick="selectOpt(1,'B')"><span class="opt-letter">B</span> effluent</div><div class="mcq-opt" onclick="selectOpt(1,'C')"><span class="opt-letter">C</span> superfluous</div><div class="mcq-opt" onclick="selectOpt(1,'D')"><span class="opt-letter">D</span> confluent</div></div>
+      </div>
+      <div class="mcq-item" id="mcq2">
+        <div class="mcq-q"><span class="mcq-num">2.</span> "The sudden __________ of tourists into the hill station after the film released overwhelmed local infrastructure." The word is —</div>
+        <div class="mcq-opts" id="mo2"><div class="mcq-opt" onclick="selectOpt(2,'A')"><span class="opt-letter">A</span> confluence</div><div class="mcq-opt" onclick="selectOpt(2,'B')"><span class="opt-letter">B</span> efflux</div><div class="mcq-opt" onclick="selectOpt(2,'C')"><span class="opt-letter">C</span> influx</div><div class="mcq-opt" onclick="selectOpt(2,'D')"><span class="opt-letter">D</span> superfluity</div></div>
+      </div>
+      <div class="mcq-item" id="mcq3">
+        <div class="mcq-q"><span class="mcq-num">3.</span> The Latin root <em>opulentus</em> most closely relates to —</div>
+        <div class="mcq-opts" id="mo3"><div class="mcq-opt" onclick="selectOpt(3,'A')"><span class="opt-letter">A</span> flowing water</div><div class="mcq-opt" onclick="selectOpt(3,'B')"><span class="opt-letter">B</span> great wealth and luxury</div><div class="mcq-opt" onclick="selectOpt(3,'C')"><span class="opt-letter">C</span> physical strength</div><div class="mcq-opt" onclick="selectOpt(3,'D')"><span class="opt-letter">D</span> ancient learning</div></div>
+      </div>
+      <div class="mcq-item" id="mcq4">
+        <div class="mcq-q"><span class="mcq-num">4.</span> A stock price that rises and falls unpredictably is said to —</div>
+        <div class="mcq-opts" id="mo4"><div class="mcq-opt" onclick="selectOpt(4,'A')"><span class="opt-letter">A</span> conflate</div><div class="mcq-opt" onclick="selectOpt(4,'B')"><span class="opt-letter">B</span> fluctuate</div><div class="mcq-opt" onclick="selectOpt(4,'C')"><span class="opt-letter">C</span> efflux</div><div class="mcq-opt" onclick="selectOpt(4,'D')"><span class="opt-letter">D</span> supersede</div></div>
+      </div>
+      <div class="mcq-item" id="mcq5">
+        <div class="mcq-q"><span class="mcq-num">5.</span> Which sentence uses <em>affluent</em> correctly?</div>
+        <div class="mcq-opts" id="mo5"><div class="mcq-opt" onclick="selectOpt(5,'A')"><span class="opt-letter">A</span> The speech was too affluent and needed editing.</div><div class="mcq-opt" onclick="selectOpt(5,'B')"><span class="opt-letter">B</span> She grew up in an affluent household with every advantage.</div><div class="mcq-opt" onclick="selectOpt(5,'C')"><span class="opt-letter">C</span> The affluent of the drain made the air smell foul.</div><div class="mcq-opt" onclick="selectOpt(5,'D')"><span class="opt-letter">D</span> The river's affluent banks were lined with reeds.</div></div>
+      </div>
+
+      <div class="nav-row">
+        <button class="btn-submit" id="btn-submit" onclick="submitExit()" disabled>Submit →</button>
+      </div>
+      <div class="score-card" id="score-card">
+        <div class="score-big" id="score-big">0/5</div>
+        <div class="score-label">Week 9 · Exit Slip Score</div>
+        <div class="score-grade" id="score-grade"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div id="log-bar">
+  <button class="btn-log" onclick="logToTracker()">Log to Tracker ↗</button>
+</div>
+
+<div id="complete-screen">
+  <div>
+    <div class="complete-emoji">✅</div>
+    <div class="complete-title">Session Complete!</div>
+    <div class="complete-sub" id="complete-sub">Your score has been logged.</div>
+  </div>
+</div>
+
+<script>
+  const SESSION_NAME = "IWP Week 9 — Flow and Wealth";
+  const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx5Ojm_zp4LfsMeelx5e06KNjVH1wfsXdV0keS4407m4FO1HU4EpVb7GKj-ibAsxnspeA/exec";
+  const EX_ANSWERS = {1:"fluently",2:"affluent",3:"superfluous",4:"confluence",5:"fluctuate",6:"opulence"};
+  const CTX_ANSWERS = {1:"C",2:"D",3:"B",4:"C"};
+  const CTX_EXPLAIN = {1:"<em>Affluent</em>: af- (ad-, to) + flu- (flow) = money flowing in. Wealthy. <em>Effluent</em> = something flowing out (often waste). <em>Superfluous</em> = more than needed.",2:"<em>Superfluous</em>: super- (above/over) + flu- (flow) = overflowing, more than necessary. <em>Fluent</em> = smooth speech flow; not about excess content.",3:"<em>Confluence</em>: con- (together) + flu- (flow) = a flowing together. Where two rivers meet. <em>Influx</em> = a flowing in; <em>superfluity</em> = excess.",4:"<em>Opulent</em>: from Latin <em>opulentus</em> (rich, wealthy). Refers to a lavish, luxurious display of wealth. <em>Affluent</em> describes a person/area, not a lavish display."};
+  const RC_ANSWERS = {1:"fluent",2:"affluent",3:"superfluous",4:"confluence",5:"opulence"};
+  const CORRECT_ANSWERS = {1:"C",2:"C",3:"B",4:"B",5:"B"};
+
+  let studentName='',studentPin='',studentBatch='';
+  let secondsElapsed=0,timerInterval=null;
+  let fillAttempted={1:false,2:false,3:false,4:false,5:false,6:false};
+  let ctxAttempted={1:false,2:false,3:false,4:false};
+  let recallAttempted={1:false,2:false,3:false,4:false,5:false};
+  let exitSelected={};
+  let exitScore=0,exitCorrect=0,logged=false,answerString='';
+
+  function startTimer(){timerInterval=setInterval(()=>{secondsElapsed++;document.getElementById('timer-display').textContent=getTimeTaken();},1000);}
+  function getTimeTaken(){const m=Math.floor(secondsElapsed/60).toString().padStart(2,'0');const s=(secondsElapsed%60).toString().padStart(2,'0');return m+':'+s;}
+
+  function doLogin(){
+    const name=document.getElementById('inp-name').value.trim();
+    const pin=document.getElementById('inp-pin').value.trim().toUpperCase();
+    const batch=document.getElementById('inp-batch').value;
+    const err=document.getElementById('login-err');
+    if(name.length<3||!/^(STU|IMS)\d{10}$/.test(pin)||!batch){err.style.display='block';return;}
+    err.style.display='none';
+    studentName=name;studentPin=pin;studentBatch=batch;
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('main-screen').style.display='block';
+    startTimer();
+  }
+
+  function goSection(n){
+    [1,2,3,4,5].forEach(i=>{document.getElementById('sec'+i).classList.remove('active');});
+    document.getElementById('sec'+n).classList.add('active');
+    [1,2,3,4,5].forEach(i=>{
+      const el=document.getElementById('ps'+i);
+      if(i<n)el.className='prog-step done';
+      else if(i===n)el.className='prog-step active';
+      else el.className='prog-step';
+    });
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+
+  function checkFill(n){
+    const inp=document.getElementById('fa'+n);
+    const fb=document.getElementById('ff'+n);
+    const val=inp.value.trim().toLowerCase();
+    const ans=EX_ANSWERS[n].toLowerCase();
+    fillAttempted[n]=true;
+    fb.style.display='block';
+    if(val===ans){inp.className='fill-input correct-input';fb.innerHTML='<span class="feedback-ok">✓ Correct! <em>'+EX_ANSWERS[n]+'</em></span>';}
+    else{inp.className='fill-input wrong-input';fb.innerHTML='<span class="feedback-no">✗ The answer is <em>'+EX_ANSWERS[n]+'</em>.</span>';}
+    if(Object.values(fillAttempted).every(Boolean)){document.getElementById('next2').disabled=false;}
+  }
+
+  function selectCtx(n,letter){
+    if(ctxAttempted[n])return;
+    ctxAttempted[n]=true;
+    const opts=document.querySelectorAll('#ci'+n+' .ctx-opt');
+    const correct=CTX_ANSWERS[n];
+    const letters=['A','B','C','D'];
+    opts.forEach((opt,i)=>{
+      if(letters[i]===correct)opt.className='ctx-opt opt-correct';
+      else if(letters[i]===letter)opt.className='ctx-opt opt-wrong';
+      opt.onclick=null;
+    });
+    const fb=document.getElementById('cf'+n);
+    fb.style.display='block';
+    if(letter===correct)fb.innerHTML='<span class="feedback-ok">✓ Correct! '+CTX_EXPLAIN[n]+'</span>';
+    else fb.innerHTML='<span class="feedback-no">✗ The answer is <strong>'+correct+'</strong>. '+CTX_EXPLAIN[n]+'</span>';
+    if(Object.values(ctxAttempted).every(Boolean)){document.getElementById('next3').disabled=false;}
+  }
+
+  function checkRecall(n){
+    const inp=document.getElementById('ra'+n);
+    const fb=document.getElementById('rf'+n);
+    const val=inp.value.trim().toLowerCase();
+    const ans=RC_ANSWERS[n].toLowerCase();
+    recallAttempted[n]=true;
+    fb.style.display='block';
+    if(val===ans){inp.className='recall-input correct-input';fb.innerHTML='<span class="feedback-ok">✓ Correct! <em>'+RC_ANSWERS[n]+'</em></span>';}
+    else{inp.className='recall-input wrong-input';fb.innerHTML='<span class="feedback-no">✗ The answer is <em>'+RC_ANSWERS[n]+'</em>.</span>';}
+    if(Object.values(recallAttempted).every(Boolean)){document.getElementById('next4').disabled=false;}
+  }
+
+  function selectOpt(qn,letter){
+    if(document.getElementById('btn-submit').style.display==='none')return;
+    exitSelected[qn]=letter;
+    const opts=document.querySelectorAll('#mo'+qn+' .mcq-opt');
+    const letters=['A','B','C','D'];
+    opts.forEach((opt,i)=>{opt.className=letters[i]===letter?'mcq-opt selected':'mcq-opt';});
+    if(Object.keys(exitSelected).length===5){document.getElementById('btn-submit').disabled=false;}
+  }
+
+  function submitExit(){
+    exitCorrect=0;
+    const lines=[];
+    [1,2,3,4,5].forEach(qn=>{
+      const chosen=exitSelected[qn];
+      const correct=CORRECT_ANSWERS[qn];
+      const opts=document.querySelectorAll('#mo'+qn+' .mcq-opt');
+      const letters=['A','B','C','D'];
+      opts.forEach((opt,i)=>{
+        if(letters[i]===correct)opt.className='mcq-opt opt-correct';
+        else if(letters[i]===chosen&&chosen!==correct)opt.className='mcq-opt opt-wrong';
+        opt.onclick=null;
+      });
+      if(chosen===correct)exitCorrect++;
+      lines.push(qn+':'+chosen);
+    });
+    answerString=lines.join('|');
+    exitScore=exitCorrect*20;
+    const gradeMap={0:'Needs Review',1:'Needs Review',2:'Needs Review',3:'Good',4:'Excellent',5:'Superb'};
+    document.getElementById('score-big').textContent=exitCorrect+'/5';
+    document.getElementById('score-grade').textContent=gradeMap[exitCorrect];
+    document.getElementById('score-card').style.display='block';
+    document.getElementById('btn-submit').style.display='none';
+    document.getElementById('log-bar').style.display='block';
+  }
+
+  function logToTracker(){
+    if(logged)return;
+    logged=true;
+    const payload={
+      type:'selfStudy',sessionName:SESSION_NAME,name:studentName,pin:studentPin,
+      batch:studentBatch,timeTaken:getTimeTaken(),exitScore:exitScore,
+      exitCorrect:exitCorrect,exitTotal:5,answers:answerString,
+      timestamp:new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'})
+    };
+    fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)});
+    document.getElementById('main-screen').style.display='none';
+    document.getElementById('log-bar').style.display='none';
+    const cs=document.getElementById('complete-screen');
+    cs.style.display='flex';
+    document.getElementById('complete-sub').textContent='Score: '+exitCorrect+'/5 · Time: '+getTimeTaken()+' · Great work!';
+  }
+
+</script>
+</body>
+</html>
