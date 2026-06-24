@@ -825,7 +825,7 @@
     "context": "",
     "stem": "Although she was not supposed to, Megan went to the party.",
     "options": {
-      "A": "Although she was not supposed to, Megan went to the party.",
+      "A": "No change (original sentence is correct as written)",
       "B": "Although Megan went to the party, she was not supposed to.",
       "C": "Megan went to the party, even though she was not supposed to.",
       "D": "When Megan was not supposed to, she went to the party.",
@@ -987,7 +987,7 @@
     "context": "",
     "stem": "Yelling after it as the taxi drove away, leaving Austin and me standing helplessly on the sidewalk.",
     "options": {
-      "A": "Yelling after it as the taxi drove away, leaving Austin and me standing helplessly on the sidewalk.",
+      "A": "No change (original sentence is correct as written)",
       "B": "While yelling after it and watching the taxi drive away, which left Austin and me standing helplessly on the sidewalk.",
       "C": "Left helplessly standing on the sidewalk after Austin and me yelled after the taxi and watched as it drove away.",
       "D": "The taxi drove away as we yelled after it, leaving Austin and me standing helplessly on the sidewalk.",
@@ -1221,7 +1221,7 @@
     "context": "",
     "stem": "While they may be colorful, many snakes are very dangerous.",
     "options": {
-      "A": "While they may be colorful, many snakes are very dangerous.",
+      "A": "No change (original sentence is correct as written)",
       "B": "Many snakes are very dangerous, even if they are colorful.",
       "C": "While they are very dangerous, many snakes are colorful.",
       "D": "While they may be colorful; many snakes are very dangerous.",
@@ -1273,8 +1273,9 @@
     "set_number": 12,
     "type": "Fragment / Run-on / Error ID",
     "context": "",
-    "stem": "a. We asked him to pick us up in the morning.",
+    "stem": "Which of the following sentences contains an error (fragment, run-on, or comma splice)?",
     "options": {
+      "A": "We asked him to pick us up in the morning.",
       "B": "Mrs. Jacobs needed a ride to the airport.",
       "C": "The car racing up the street.",
       "D": "No mistakes."
@@ -1289,8 +1290,9 @@
     "set_number": 12,
     "type": "Fragment / Run-on / Error ID",
     "context": "",
-    "stem": "a. Our neighbors went on vacation; going to the Grand Canyon.",
+    "stem": "Which of the following sentences contains an error (fragment, run-on, or comma splice)?",
     "options": {
+      "A": "Our neighbors went on vacation; going to the Grand Canyon.",
       "B": "There are yellow and red tulips in my garden.",
       "C": "We invited Molly to our house for dinner.",
       "D": "No mistakes."
@@ -1305,8 +1307,9 @@
     "set_number": 12,
     "type": "Fragment / Run-on / Error ID",
     "context": "",
-    "stem": "a. We are planning to build a new fence in our backyard.",
+    "stem": "Which of the following sentences contains an error (fragment, run-on, or comma splice)?",
     "options": {
+      "A": "We are planning to build a new fence in our backyard.",
       "B": "Where is the new diner that everyone is talking about?",
       "C": "There\u2019s nothing I can do to help.",
       "D": "No mistakes."
@@ -1321,8 +1324,9 @@
     "set_number": 12,
     "type": "Fragment / Run-on / Error ID",
     "context": "",
-    "stem": "a. Make sure the door is locked.",
+    "stem": "Which of the following sentences contains an error (fragment, run-on, or comma splice)?",
     "options": {
+      "A": "Make sure the door is locked.",
       "B": "I love pumpkin pie Pearl does too.",
       "C": "Yes, I will bring the dessert.",
       "D": "No mistakes."
@@ -1337,8 +1341,9 @@
     "set_number": 12,
     "type": "Fragment / Run-on / Error ID",
     "context": "",
-    "stem": "a. After he left, I went straight to bed.",
+    "stem": "Which of the following sentences contains an error (fragment, run-on, or comma splice)?",
     "options": {
+      "A": "After he left, I went straight to bed.",
       "B": "For the first time, I understood what she was talking about.",
       "C": "We visited the town where my father grew up last summer.",
       "D": "No mistakes."
@@ -1353,8 +1358,9 @@
     "set_number": 12,
     "type": "Fragment / Run-on / Error ID",
     "context": "",
-    "stem": "a. Kate was allergic to all dairy products.",
+    "stem": "Which of the following sentences contains an error (fragment, run-on, or comma splice)?",
     "options": {
+      "A": "Kate was allergic to all dairy products.",
       "B": "Which of the Beatles\u2019 songs is your favorite?",
       "C": "The company newsletter explained the new vacation policy.",
       "D": "No mistakes."
@@ -1369,8 +1375,9 @@
     "set_number": 12,
     "type": "Fragment / Run-on / Error ID",
     "context": "",
-    "stem": "a. They went to the park and flew a kite.",
+    "stem": "Which of the following sentences contains an error (fragment, run-on, or comma splice)?",
     "options": {
+      "A": "They went to the park and flew a kite.",
       "B": "\u201cDon\u2019t tell me what to do,\u201d she shouted.",
       "C": "Liam loves the warm weather, unless he knows it won\u2019t last much longer.",
       "D": "No mistakes."
@@ -1385,8 +1392,9 @@
     "set_number": 12,
     "type": "Fragment / Run-on / Error ID",
     "context": "",
-    "stem": "a. Bring your umbrella tomorrow it\u2019s supposed to rain.",
+    "stem": "Which of the following sentences contains an error (fragment, run-on, or comma splice)?",
     "options": {
+      "A": "Bring your umbrella tomorrow it\u2019s supposed to rain.",
       "B": "The dancers\u2019 costumes were being delivered on Saturday.",
       "C": "Would you consider taking me as your guest?",
       "D": "No mistakes."
@@ -1401,8 +1409,9 @@
     "set_number": 12,
     "type": "Fragment / Run-on / Error ID",
     "context": "",
-    "stem": "a. Marlene likes my apple crisp better than Aunt Kate\u2019s.",
+    "stem": "Which of the following sentences contains an error (fragment, run-on, or comma splice)?",
     "options": {
+      "A": "Marlene likes my apple crisp better than Aunt Kate\u2019s.",
       "B": "The people in the auditorium, whether they were seated or standing.",
       "C": "I registered for a class in West Indian literature.",
       "D": "No mistakes."
@@ -1417,8 +1426,9 @@
     "set_number": 12,
     "type": "Fragment / Run-on / Error ID",
     "context": "",
-    "stem": "a. The free passes were given to Lena and me.",
+    "stem": "Which of the following sentences contains an error (fragment, run-on, or comma splice)?",
     "options": {
+      "A": "The free passes were given to Lena and me.",
       "B": "Where\u2019s my purple umbrella?",
       "C": "After midnight, the light on the front porch goes off.",
       "D": "No mistakes."
@@ -1433,8 +1443,9 @@
     "set_number": 12,
     "type": "Fragment / Run-on / Error ID",
     "context": "",
-    "stem": "a. Katya and I were in the same pottery class.",
+    "stem": "Which of the following sentences contains an error (fragment, run-on, or comma splice)?",
     "options": {
+      "A": "Katya and I were in the same pottery class.",
       "B": "The weather was nicer today than it was yesterday.",
       "C": "The grapes cost more than the melon does.",
       "D": "No mistakes."
@@ -1449,8 +1460,9 @@
     "set_number": 12,
     "type": "Fragment / Run-on / Error ID",
     "context": "",
-    "stem": "a. His jacket is just like mine.",
+    "stem": "Which of the following sentences contains an error (fragment, run-on, or comma splice)?",
     "options": {
+      "A": "His jacket is just like mine.",
       "B": "Talia went to yoga class, and that she forgot her mat.",
       "C": "Indira visits her relatives frequently.",
       "D": "No mistakes."
@@ -1465,8 +1477,9 @@
     "set_number": 13,
     "type": "Parallelism & Sentence Correction",
     "context": "",
-    "stem": "a. For three weeks, the Merryville Fire Chief received taunting calls from an arsonist, who would not say where he intended to set the next fire.",
+    "stem": "Choose the option that best rewrites the sentence correctly.",
     "options": {
+      "A": "For three weeks, the Merryville Fire Chief received taunting calls from an arsonist, who would not say where he intended to set the next fire.",
       "B": "The Merryville Fire Chief received taunting calls from an arsonist, but he would not say where he intended to set the next fire, for three weeks.",
       "C": "He would not say where he intended to set the next fire, but for three weeks the Merryville Fire Chief received taunting calls from an arsonist.",
       "D": "The Merryville Fire Chief received taunting calls from an arsonist for three weeks, not saying where he intended to set the next fire."
@@ -1481,8 +1494,9 @@
     "set_number": 13,
     "type": "Parallelism & Sentence Correction",
     "context": "",
-    "stem": "a. There is no true relationship between ethics and the law.",
+    "stem": "Choose the option that best rewrites the sentence correctly.",
     "options": {
+      "A": "There is no true relationship between ethics and the law.",
       "B": "Ethics and the law having no true relationship.",
       "C": "Between ethics and the law, no true relationship.",
       "D": "Ethics and the law is no true relationship."
@@ -1497,8 +1511,9 @@
     "set_number": 13,
     "type": "Parallelism & Sentence Correction",
     "context": "",
-    "stem": "a. Some people say jury duty is a nuisance that just takes up their precious time and that we don\u2019t get paid enough.",
+    "stem": "Choose the option that best rewrites the sentence correctly.",
     "options": {
+      "A": "Some people say jury duty is a nuisance that just takes up their precious time and that we don\u2019t get paid enough.",
       "B": "Some people say jury duty is a nuisance that just takes up your precious time and that one doesn\u2019t get paid enough.",
       "C": "Some people say jury duty is a nuisance that just takes up precious time and that doesn\u2019t pay enough.",
       "D": "Some people say jury duty is a nuisance that just takes up our precious time and that they don\u2019t get paid enough."
@@ -1513,8 +1528,9 @@
     "set_number": 13,
     "type": "Parallelism & Sentence Correction",
     "context": "",
-    "stem": "a. The mayor told the residents to evacuate the city as soon as possible.",
+    "stem": "Choose the option that best rewrites the sentence correctly.",
     "options": {
+      "A": "The mayor told the residents to evacuate the city as soon as possible.",
       "B": "As soon as possible, the mayor told the residents to evacuate the city.",
       "C": "To evacuate the city as soon as possible, the mayor told the residents.",
       "D": "\u201cEvacuate the city,\u201d the mayor told the residents as soon as possible."
@@ -1529,8 +1545,9 @@
     "set_number": 13,
     "type": "Parallelism & Sentence Correction",
     "context": "",
-    "stem": "a. A sharpshooter for many years, Miles Johnson could hit the bull\u2019s-eye every time.",
+    "stem": "Choose the option that best rewrites the sentence correctly.",
     "options": {
+      "A": "A sharpshooter for many years, Miles Johnson could hit the bull\u2019s-eye every time.",
       "B": "Miles Johnson had been a sharpshooter for many years, and he could hit the bull\u2019s-eye every time.",
       "C": "Hitting the bull\u2019s-eye every time, Miles Johnson had been a sharpshooter for many years.",
       "D": "Because he could hit the bull\u2019s-eye every time, he had been a sharpshooter for many years."
@@ -1545,8 +1562,9 @@
     "set_number": 13,
     "type": "Parallelism & Sentence Correction",
     "context": "",
-    "stem": "a. By the time they are in the third or fourth grade, the eyes of most children in the United States are tested.",
+    "stem": "Choose the option that best rewrites the sentence correctly.",
     "options": {
+      "A": "By the time they are in the third or fourth grade, the eyes of most children in the United States are tested.",
       "B": "Most children by the time they are in the United States have their eyes tested in the third or fourth grade.",
       "C": "Most children in the United States have their eyes tested by the time they are in the third or fourth grade.",
       "D": "In the United States by the time of third or fourth grade, there is testing of the eyes of most children."
@@ -1561,8 +1579,9 @@
     "set_number": 13,
     "type": "Parallelism & Sentence Correction",
     "context": "",
-    "stem": "a. Ultraviolet radiation levels are 60% higher at 8,500 feet from the Sun than they are at sea level, according to researchers.",
+    "stem": "Choose the option that best rewrites the sentence correctly.",
     "options": {
+      "A": "Ultraviolet radiation levels are 60% higher at 8,500 feet from the Sun than they are at sea level, according to researchers.",
       "B": "Researchers have found from the Sun ultraviolet radiation levels 60% higher, they say, at 8,500 feet than at sea level.",
       "C": "Researchers have found that ultraviolet radiation levels from the Sun are 60% higher at 8,500 feet than they are at sea level.",
       "D": "At 8,500 feet researchers have found that ultraviolet radiation levels are 60% higher from sea level with the Sun\u2019s rays. DEPENDENT CLAUSE A portion of a sentence that cannot stand on its own as a complete sentence; it is dependent on the rest of the sentence to make sense. Example: It\u2019s supposed to rain today, | unlike yesterday. independent clause | dependent clause Agreement Agreement is a very important step in constructing a coherent sentence. There are three basic agreements in a sentence: subject-verb agreement, tense agreement, and antecedent-pronoun agreement. First, you have to know the definition of a verb: \u2713 Verb: a word or group of words describing the action or the state of being of a subject. Subject-Verb Agreement \u2713 If the subject is singular, the verb is singular; if the subject is plural, the verb is plural\u279eMrs. Hendrickson feeds the birds every day. Or: The Hendricksons feed the birds every day. \u2713 Subjects joined by and are plural and receive a plural verb\u279eJolie and Lara swim together every Thursday. \u2713 Subjects joined by or or nor adopt the singularity or plurality of the last subject; accordingly, the verb matches it\u279eEither that cat or those dogs have been eating my snacks! Pronoun-Antecedent Agreement \u2713 Each, either, neither, anybody, anyone, everybody, everyone, no one, nobody, one, somebody, and someone are singular pronouns and receive singular verbs.\u279eEach of us is accountable for his own actions. \u2713 Both, few, many, and several are plural pronouns and receive plural verbs. \u279eBoth of us are accountable. \u2713 All, any, most, none, and some can be singular or plural pronouns, depending on their use. These pronouns can receive plural or singular verbs. \u2713 Sometimes a specific member (singular) of a larger group (plural) is the subject of a sentence. In that case, the verb would be singular rather than plural.\u279eOne of the chairs is broken. (The group of chairs is actually not broken, only one of them is\u2014so the verb is singular.) \u279eThe greatest of all the generals was George Washington. (There were many generals, but the sentence specifically refers to George Washington.) \u2713 Do not use they, them, or their in place of the pronouns, he, him, or his.\u279eIncorrect: Each student should check their own work. Correct: Each student should check his or her own work. Tense Agreement \u2713 Maintain one tense in a complete thought: past tense or present tense.\u279e Incorrect: In the game of hide and seek, Bobby chased Mary and tag her from behind. Correct: In the game of hide and seek, Bobby chased Mary and tagged her from behind. Incorrect: Dusk had just settled when I see a fawn timidly step onto the beach. Correct: Dusk had just settled when I saw a fawn timidly step onto the beach. Do not use of in place of have. You cannot avoid pronouns. Pronouns substitute for nouns. Instead of saying, \u201cBecause Janie was late, Janie hopped on Janie\u2019s moped, and Janie raced to the wedding,\u201d you would say, \u201cBecause Janie was late, she hopped on her moped, and she raced to the wedding.\u201d In this section, you will clarify ambiguous pronouns and assure pronoun-antecedent agreement, and you will also grapple with contractions. All too often, certain pronouns and contractions are confused. \u201cThe file cabinet drawer snagged on an overstuffed folder; it\u2019s now stuck just before its halfway point.\u201d It\u2019s is a contraction meaning it is, while its is a possessive pronoun meaning the drawer\u2019s halfway point. The only visual difference between the two is an apostrophe neatly inserted between the t and the s in the contraction. Do You Know These Terms? \u2713 Antecedent: In the last example, Janie is the specific noun that she and her replace; so Janie is the antecedent. The presence of the antecedent in a sentence is as important as which pronouns substitute for it. \u2713 Contractions: Two words made into one by omitting letters and using an apostrophe to highlight the omission creates a contraction. \u2713 Subjective, Objective, and Possessive Cases: Persons or things (nouns) acting on other things are subjects. Pronouns that refer to these subjects are in the subjective case (I, you, he, she, we, they, who). Persons or things acted upon (in other words, they are not performing the action) are objects. Pronouns that refer to these objects are in the objective case (me, you, him, her, us, them, whom). Subjects or objects that claim ownership of something are possessors. Pronouns that claim their possessions are in the possessive case (my, your, his, her, our, your, whose). \u2713 Avoid Ambiguous Pronoun References. The antecedent that a pronoun refers to must be clearly stated and in close proximity to its pronoun. If more subjects than one are present, indicate which subject is the antecedent.\u279eWhen Katherine and Melissa left for England, she promised to write me about all their adventures. Who is she? Katherine or Melissa? Pronouns should \u2713 Agree in number with their antecedent: Singular antecedents use singular pronouns, and plural antecedents use plural pronouns. \u2713 Compound antecedents joined by and use plural pronouns.\u279eA horse and a donkey make a mule. The horse and the donkey are singular subjects, but together they create one plural subject. \u2713 Compound antecedents joined by or or nor use pronouns that agree with the nearest antecedent.\u279eNeither my one cat nor my four dogs are as difficult to maintain as my one pet fish. \u2713 Collective nouns use singular pronouns unless it is obvious that each person or thing in the group acts individually.\u279eThe company mandated a universal naptime for all its employees. The company is a group of many people, but in the first sentence the group is acting as a single entity, so the pronoun (its) is singular. \u2713 Persons receive the pronouns who, whom, or whose, not that or which. \u2713 After is, are, was, or were, use the subjective case. \u2713 Pronouns preceding or following infinitive verbs (the plain form of a verb preceded by to) take the objective case.\u279eBilly Jean begged him to play catch, but he did not want to play ball with her at that moment. In the first clause, him is the subject; in the second clause, her is an object. Despite their difference, both take the objective case because of the infinitive to play."
@@ -1801,7 +1820,7 @@
     "context": "",
     "stem": "My family is originally from Nova Scotia.",
     "options": {
-      "A": "My family is originally from Nova Scotia.",
+      "A": "No change (original sentence is correct as written)",
       "B": "My family are originally from Nova Scotia.",
       "C": "Originally from Nova Scotia are my family.",
       "D": "Nova Scotia is where my family are from.",
@@ -1873,7 +1892,7 @@
     "context": "",
     "stem": "To determine the speed of automobiles, radar is often used by the state police.",
     "options": {
-      "A": "To determine the speed of automobiles, radar is often used by the state police.",
+      "A": "No change (original sentence is correct as written)",
       "B": "To determine the speed of automobiles, it is often necessary for the state police to use radar.",
       "C": "In determining the speed of automobiles, the use of radar by state police is often employed.",
       "D": "The state police often use radar to determine the speed of automobiles.",
@@ -1979,8 +1998,9 @@
     "set_number": 17,
     "type": "Verb Forms & Tense",
     "context": "",
-    "stem": "a. No, it\u2019s not true.",
+    "stem": "Which of the following sentences contains an error in verb form or tense?",
     "options": {
+      "A": "No, it\u2019s not true.",
       "B": "The curtain closed, and the people will applaud.",
       "C": "My sister is a nurse practitioner.",
       "D": "No mistakes."
@@ -1995,8 +2015,9 @@
     "set_number": 17,
     "type": "Verb Forms & Tense",
     "context": "",
-    "stem": "a. They talked through the entire movie.",
+    "stem": "Which of the following sentences contains an error in verb form or tense?",
     "options": {
+      "A": "They talked through the entire movie.",
       "B": "The plants in this garden does not require much water.",
       "C": "She always brings turkey sandwiches for lunch.",
       "D": "No mistakes."
@@ -2011,8 +2032,9 @@
     "set_number": 17,
     "type": "Verb Forms & Tense",
     "context": "",
-    "stem": "a. What time is it?",
+    "stem": "Which of the following sentences contains an error in verb form or tense?",
     "options": {
+      "A": "What time is it?",
       "B": "The dog lost it\u2019s collar.",
       "C": "Shut the door!",
       "D": "No mistakes."
@@ -2027,8 +2049,9 @@
     "set_number": 17,
     "type": "Verb Forms & Tense",
     "context": "",
-    "stem": "a. The cow ate corn.",
+    "stem": "Which of the following sentences contains an error in verb form or tense?",
     "options": {
+      "A": "The cow ate corn.",
       "B": "Joanne loves dessert.",
       "C": "When I get there.",
       "D": "No mistakes."
@@ -2043,8 +2066,9 @@
     "set_number": 17,
     "type": "Verb Forms & Tense",
     "context": "",
-    "stem": "a. The kettle is boiling.",
+    "stem": "Which of the following sentences contains an error in verb form or tense?",
     "options": {
+      "A": "The kettle is boiling.",
       "B": "He should of read the directions.",
       "C": "Why is he always so rude?",
       "D": "No mistakes."
@@ -2059,8 +2083,9 @@
     "set_number": 17,
     "type": "Verb Forms & Tense",
     "context": "",
-    "stem": "a. Tomorrow is a Holiday.",
+    "stem": "Which of the following sentences contains an error in verb form or tense?",
     "options": {
+      "A": "Tomorrow is a Holiday.",
       "B": "Katherine started her new job today.",
       "C": "Politics is boring.",
       "D": "No mistakes."
@@ -2075,8 +2100,9 @@
     "set_number": 17,
     "type": "Verb Forms & Tense",
     "context": "",
-    "stem": "a. David and Mickey danced in the street.",
+    "stem": "Which of the following sentences contains an error in verb form or tense?",
     "options": {
+      "A": "David and Mickey danced in the street.",
       "B": "Here is the photographs I wanted to show you.",
       "C": "My grandfather owns a 1967 Mustang.",
       "D": "No mistakes."
@@ -2091,8 +2117,9 @@
     "set_number": 17,
     "type": "Verb Forms & Tense",
     "context": "",
-    "stem": "a. It has not rained since last April.",
+    "stem": "Which of the following sentences contains an error in verb form or tense?",
     "options": {
+      "A": "It has not rained since last April.",
       "B": "The jurors walked solemnly into the room.",
       "C": "Had we known, we would not have come.",
       "D": "No mistakes."
@@ -2107,8 +2134,9 @@
     "set_number": 17,
     "type": "Verb Forms & Tense",
     "context": "",
-    "stem": "a. The dog\u2019s barking woke us.",
+    "stem": "Which of the following sentences contains an error in verb form or tense?",
     "options": {
+      "A": "The dog\u2019s barking woke us.",
       "B": "Ursula has broke one of your plates.",
       "C": "The sun rose from behind the mountain.",
       "D": "No mistakes."
@@ -2123,8 +2151,9 @@
     "set_number": 17,
     "type": "Verb Forms & Tense",
     "context": "",
-    "stem": "a. After we sat down to eat dinner, the phone rung.",
+    "stem": "Which of the following sentences contains an error in verb form or tense?",
     "options": {
+      "A": "After we sat down to eat dinner, the phone rung.",
       "B": "\u201cKeep a positive attitude,\u201d he always says.",
       "C": "Sign here.",
       "D": "No mistakes."
@@ -2139,8 +2168,9 @@
     "set_number": 17,
     "type": "Verb Forms & Tense",
     "context": "",
-    "stem": "a. The children\u2019s books are over there.",
+    "stem": "Which of the following sentences contains an error in verb form or tense?",
     "options": {
+      "A": "The children\u2019s books are over there.",
       "B": "She missed the bus and arrives late.",
       "C": "There is hardly enough food for a mouse.",
       "D": "No mistakes."
@@ -2155,8 +2185,9 @@
     "set_number": 17,
     "type": "Verb Forms & Tense",
     "context": "",
-    "stem": "a. The winners were announced yesterday.",
+    "stem": "Which of the following sentences contains an error in verb form or tense?",
     "options": {
+      "A": "The winners were announced yesterday.",
       "B": "Liam is the only one of the boys who were chosen.",
       "C": "Although Nick was not selected, he was happy for the others.",
       "D": "No mistakes."
@@ -2171,8 +2202,9 @@
     "set_number": 17,
     "type": "Verb Forms & Tense",
     "context": "",
-    "stem": "a. He shook the crumbs from the tablecloth.",
+    "stem": "Which of the following sentences contains an error in verb form or tense?",
     "options": {
+      "A": "He shook the crumbs from the tablecloth.",
       "B": "We will strive to do our best.",
       "C": "I see that Fred has wore his old shoes.",
       "D": "No mistakes."
@@ -2187,8 +2219,9 @@
     "set_number": 17,
     "type": "Verb Forms & Tense",
     "context": "",
-    "stem": "a. When I heard the alarm, I jump out of bed.",
+    "stem": "Which of the following sentences contains an error in verb form or tense?",
     "options": {
+      "A": "When I heard the alarm, I jump out of bed.",
       "B": "Mr. Fox is the president of his own company.",
       "C": "At night, I listened to jazz on the radio.",
       "D": "No mistakes."
@@ -2203,8 +2236,9 @@
     "set_number": 18,
     "type": "Verb Forms & Tense",
     "context": "",
-    "stem": "a. All the children got out their rugs and took a nap.",
+    "stem": "Which of the following sentences contains an error in verb form or tense?",
     "options": {
+      "A": "All the children got out their rugs and took a nap.",
       "B": "All the children have gotten out their rugs and took a nap.",
       "C": "All the children got out their rugs and have taken a nap.",
       "D": "All the children gotten out their rugs and taken a nap."
@@ -2219,8 +2253,9 @@
     "set_number": 18,
     "type": "Verb Forms & Tense",
     "context": "",
-    "stem": "a. At first I was liking the sound of the wind, but later it got on my nerves.",
+    "stem": "Which of the following sentences contains an error in verb form or tense?",
     "options": {
+      "A": "At first I was liking the sound of the wind, but later it got on my nerves.",
       "B": "At first I liked the sound of the wind, but later it has gotten on my nerves.",
       "C": "At first I like the sound of the wind, but later it got on my nerves.",
       "D": "At first I liked the sound of the wind, but later it got on my nerves."
@@ -2235,8 +2270,9 @@
     "set_number": 18,
     "type": "Verb Forms & Tense",
     "context": "",
-    "stem": "a. I became ill from eating too many fried clams.",
+    "stem": "Which of the following sentences contains an error in verb form or tense?",
     "options": {
+      "A": "I became ill from eating too many fried clams.",
       "B": "I became ill from eaten too many fried clams.",
       "C": "I ate too many fried clams and becoming ill.",
       "D": "I ate too many fried clams and become ill."
@@ -2251,8 +2287,9 @@
     "set_number": 18,
     "type": "Verb Forms & Tense",
     "context": "",
-    "stem": "a. As the old saying goes, a cat may look at a king.",
+    "stem": "Which of the following sentences contains an error in verb form or tense?",
     "options": {
+      "A": "As the old saying goes, a cat may look at a king.",
       "B": "A cat looking at a king, according to the old saying.",
       "C": "The old saying being, a cat may look at a king.",
       "D": "A cat looking at a king, in the old saying."
@@ -2267,8 +2304,9 @@
     "set_number": 18,
     "type": "Verb Forms & Tense",
     "context": "",
-    "stem": "a. A longer happier life, caused by one\u2019s owning a pet.",
+    "stem": "Which of the following sentences contains an error in verb form or tense?",
     "options": {
+      "A": "A longer happier life, caused by one\u2019s owning a pet.",
       "B": "Owning a pet, for one to live a longer, happier life.",
       "C": "To live a longer, happier life by one\u2019s owning a pet.",
       "D": "Owning a pet can help one live a longer, happier life."
@@ -2283,8 +2321,9 @@
     "set_number": 18,
     "type": "Verb Forms & Tense",
     "context": "",
-    "stem": "a. One of the first modern detectives in literature were created by Edgar Allan Poe.",
+    "stem": "Which of the following sentences contains an error in verb form or tense?",
     "options": {
+      "A": "One of the first modern detectives in literature were created by Edgar Allan Poe.",
       "B": "One of the first modern detectives in literature was created by Edgar Allan Poe.",
       "C": "Edgar Allan Poe having created one of the first modern detectives in literature.",
       "D": "In literature, one of the first modern detectives, created by Edgar Allan Poe."
@@ -2299,8 +2338,9 @@
     "set_number": 18,
     "type": "Verb Forms & Tense",
     "context": "",
-    "stem": "a. My brother and I going to see the ball game.",
+    "stem": "Which of the following sentences contains an error in verb form or tense?",
     "options": {
+      "A": "My brother and I going to see the ball game.",
       "B": "My brother and I are going to see the ball game.",
       "C": "My brother and I seeing the ball game.",
       "D": "My brother and I to the ball game."
@@ -2315,8 +2355,9 @@
     "set_number": 18,
     "type": "Verb Forms & Tense",
     "context": "",
-    "stem": "a. I\u2019m not as tall as Ted.",
+    "stem": "Which of the following sentences contains an error in verb form or tense?",
     "options": {
+      "A": "I\u2019m not as tall as Ted.",
       "B": "Ted, being taller than me.",
       "C": "I\u2019m as tall, but not like Ted.",
       "D": "Ted is tall, but not me."
@@ -2331,8 +2372,9 @@
     "set_number": 18,
     "type": "Verb Forms & Tense",
     "context": "",
-    "stem": "a. Please go to the movies with Mike and me.",
+    "stem": "Which of the following sentences contains an error in verb form or tense?",
     "options": {
+      "A": "Please go to the movies with Mike and me.",
       "B": "Please go to the movies with me and Mike.",
       "C": "Please go to the movies with Mike and I.",
       "D": "Mike and me are going to the movies."
@@ -2347,8 +2389,9 @@
     "set_number": 18,
     "type": "Verb Forms & Tense",
     "context": "",
-    "stem": "a. We ate the popcorn and watch the movie.",
+    "stem": "Which of the following sentences contains an error in verb form or tense?",
     "options": {
+      "A": "We ate the popcorn and watch the movie.",
       "B": "While watching the movie, the popcorn was eaten.",
       "C": "Popcorn, while watching the movie, was eaten.",
       "D": "We ate the popcorn while we watched the movie."
@@ -2555,7 +2598,7 @@
     "context": "",
     "stem": "Two angles with the same degree measurement is said to be congruent.",
     "options": {
-      "A": "Two angles with the same degree measurement is said to be congruent.",
+      "A": "No change (original sentence is correct as written)",
       "B": "With two angles of the same degree measurement, they are said to be congruent.",
       "C": "When two angles have the same degree measurement, they are said to be congruent.",
       "D": "They are congruent when the two angles are said to have the same degree measurement.",
@@ -2589,8 +2632,9 @@
     "set_number": 22,
     "type": "Pronoun Agreement & Case",
     "context": "",
-    "stem": "a. The weather forecast looks good for Tuesday.",
+    "stem": "Which of the following sentences contains an error in pronoun usage?",
     "options": {
+      "A": "The weather forecast looks good for Tuesday.",
       "B": "Her hair is a terrible mess!",
       "C": "My mother will take Dan and I to school tomorrow.",
       "D": "No mistakes."
@@ -2605,8 +2649,9 @@
     "set_number": 22,
     "type": "Pronoun Agreement & Case",
     "context": "",
-    "stem": "a. My favorite subject is English.",
+    "stem": "Which of the following sentences contains an error in pronoun usage?",
     "options": {
+      "A": "My favorite subject is English.",
       "B": "The band is playing its best today.",
       "C": "I saw Fred\u2019s sister at the mall.",
       "D": "No mistakes."
@@ -2621,8 +2666,9 @@
     "set_number": 22,
     "type": "Pronoun Agreement & Case",
     "context": "",
-    "stem": "a. They\u2019re not going to join us.",
+    "stem": "Which of the following sentences contains an error in pronoun usage?",
     "options": {
+      "A": "They\u2019re not going to join us.",
       "B": "Don\u2019t eat too much jam!",
       "C": "Wear the plaid shirt with that tie.",
       "D": "No mistakes."
@@ -2637,8 +2683,9 @@
     "set_number": 22,
     "type": "Pronoun Agreement & Case",
     "context": "",
-    "stem": "a. Their ship came in.",
+    "stem": "Which of the following sentences contains an error in pronoun usage?",
     "options": {
+      "A": "Their ship came in.",
       "B": "Which glass is yours?",
       "C": "\u201cBetty and me will be there tomorrow,\u201d she said.",
       "D": "No mistakes."
@@ -2653,8 +2700,9 @@
     "set_number": 22,
     "type": "Pronoun Agreement & Case",
     "context": "",
-    "stem": "a. Sheila\u2019s sister wanted to accompany us to the party.",
+    "stem": "Which of the following sentences contains an error in pronoun usage?",
     "options": {
+      "A": "Sheila\u2019s sister wanted to accompany us to the party.",
       "B": "Who\u2019s scarf is this?",
       "C": "\u201cBe sure to wear something comfortable,\u201d she said.",
       "D": "No mistakes."
@@ -2669,8 +2717,9 @@
     "set_number": 22,
     "type": "Pronoun Agreement & Case",
     "context": "",
-    "stem": "a. The main problem Jim had was too many parking tickets.",
+    "stem": "Which of the following sentences contains an error in pronoun usage?",
     "options": {
+      "A": "The main problem Jim had was too many parking tickets.",
       "B": "As the bears ran toward us, it was growling.",
       "C": "Try using less butter next time.",
       "D": "No mistakes."
@@ -2685,8 +2734,9 @@
     "set_number": 22,
     "type": "Pronoun Agreement & Case",
     "context": "",
-    "stem": "a. Kamala was the most intelligent person in the group.",
+    "stem": "Which of the following sentences contains an error in pronoun usage?",
     "options": {
+      "A": "Kamala was the most intelligent person in the group.",
       "B": "The Eiffel Tower is in Paris, France.",
       "C": "Nick Carraway is a character in The Great Gatsby.",
       "D": "No mistakes."
@@ -2701,8 +2751,9 @@
     "set_number": 22,
     "type": "Pronoun Agreement & Case",
     "context": "",
-    "stem": "a. They weren\u2019t the only ones who didn\u2019t like the movie.",
+    "stem": "Which of the following sentences contains an error in pronoun usage?",
     "options": {
+      "A": "They weren\u2019t the only ones who didn\u2019t like the movie.",
       "B": "\u201cPlease come back another time,\u201d Aunt Julie begged.",
       "C": "\u201cThrees a crowd,\u201d he always says.",
       "D": "No mistakes."
@@ -2717,8 +2768,9 @@
     "set_number": 22,
     "type": "Pronoun Agreement & Case",
     "context": "",
-    "stem": "a. The first house on the street is there\u2019s.",
+    "stem": "Which of the following sentences contains an error in pronoun usage?",
     "options": {
+      "A": "The first house on the street is there\u2019s.",
       "B": "I love the fireworks on the Fourth of July.",
       "C": "My grandparents live in San Juan, Puerto Rico.",
       "D": "No mistakes."
@@ -2733,8 +2785,9 @@
     "set_number": 22,
     "type": "Pronoun Agreement & Case",
     "context": "",
-    "stem": "a. Either Cassie nor I heard the door open.",
+    "stem": "Which of the following sentences contains an error in pronoun usage?",
     "options": {
+      "A": "Either Cassie nor I heard the door open.",
       "B": "How many people signed the Declaration of Independence?",
       "C": "Draw up a plan before you make your decision.",
       "D": "No mistakes."
@@ -2749,8 +2802,9 @@
     "set_number": 22,
     "type": "Pronoun Agreement & Case",
     "context": "",
-    "stem": "a. It\u2019s not my fault that you and him got caught.",
+    "stem": "Which of the following sentences contains an error in pronoun usage?",
     "options": {
+      "A": "It\u2019s not my fault that you and him got caught.",
       "B": "\u201cDo you brush twice a day?\u201d Dr. Evans asked.",
       "C": "What\u2019s the weather report?",
       "D": "No mistakes."
@@ -2765,8 +2819,9 @@
     "set_number": 22,
     "type": "Pronoun Agreement & Case",
     "context": "",
-    "stem": "a. Couldn\u2019t you arrive fashionably late?",
+    "stem": "Which of the following sentences contains an error in pronoun usage?",
     "options": {
+      "A": "Couldn\u2019t you arrive fashionably late?",
       "B": "You\u2019re assumption is correct.",
       "C": "I know that Bowser will be well treated.",
       "D": "No mistakes."
@@ -2781,8 +2836,9 @@
     "set_number": 22,
     "type": "Pronoun Agreement & Case",
     "context": "",
-    "stem": "a. We invited Mayor Chen to speak at our school.",
+    "stem": "Which of the following sentences contains an error in pronoun usage?",
     "options": {
+      "A": "We invited Mayor Chen to speak at our school.",
       "B": "The alarm sounded, and the firefighters jumped into the truck.",
       "C": "The committee members should work as hard as one can.",
       "D": "No mistakes."
@@ -2797,8 +2853,9 @@
     "set_number": 22,
     "type": "Pronoun Agreement & Case",
     "context": "",
-    "stem": "a. He wore two different shoes to class.",
+    "stem": "Which of the following sentences contains an error in pronoun usage?",
     "options": {
+      "A": "He wore two different shoes to class.",
       "B": "Rhonda\u2019s sister bought a new Pontiac.",
       "C": "Lake Superior is the largest of the Great Lakes.",
       "D": "No mistakes."
@@ -2813,8 +2870,9 @@
     "set_number": 22,
     "type": "Pronoun Agreement & Case",
     "context": "",
-    "stem": "a. She and I have been friends for more than ten years.",
+    "stem": "Which of the following sentences contains an error in pronoun usage?",
     "options": {
+      "A": "She and I have been friends for more than ten years.",
       "B": "Is that one of the O\u2019Farrell children?",
       "C": "They took too much time to answer.",
       "D": "No mistakes."
@@ -2829,8 +2887,9 @@
     "set_number": 23,
     "type": "Parallelism & Sentence Correction",
     "context": "",
-    "stem": "a. Although I\u2019m old enough, I don\u2019t drink.",
+    "stem": "Choose the option that best rewrites the sentence correctly.",
     "options": {
+      "A": "Although I\u2019m old enough, I don\u2019t drink.",
       "B": "I don\u2019t drink, even though I\u2019m old enough.",
       "C": "I\u2019m old enough, although I don\u2019t drink.",
       "D": "Being old enough, I don\u2019t drink."
@@ -2845,8 +2904,9 @@
     "set_number": 23,
     "type": "Parallelism & Sentence Correction",
     "context": "",
-    "stem": "a. When it won\u2019t rain, the sky was full of clouds.",
+    "stem": "Choose the option that best rewrites the sentence correctly.",
     "options": {
+      "A": "When it won\u2019t rain, the sky was full of clouds.",
       "B": "Since the sky was full of clouds, it wouldn\u2019t rain.",
       "C": "It won\u2019t rain because the sky is full of clouds.",
       "D": "The sky is full of clouds, yet it won\u2019t rain."
@@ -2861,8 +2921,9 @@
     "set_number": 23,
     "type": "Parallelism & Sentence Correction",
     "context": "",
-    "stem": "a. In search of the missing teenagers, who still had not been found through snake-ridden underbrush all day, the exhausted volunteers had struggled.",
+    "stem": "Choose the option that best rewrites the sentence correctly.",
     "options": {
+      "A": "In search of the missing teenagers, who still had not been found through snake-ridden underbrush all day, the exhausted volunteers had struggled.",
       "B": "All day the exhausted volunteers had struggled through snakeridden underbrush in search of the missing teenagers, who still had not been found.",
       "C": "All day the exhausted volunteers had struggled through snakeridden underbrush who still had not been found in searching for the missing teenagers.",
       "D": "The exhausted volunteers who still had not found in search of the missing teenagers when they had struggled through snakeridden underbrush."
@@ -2877,8 +2938,9 @@
     "set_number": 23,
     "type": "Parallelism & Sentence Correction",
     "context": "",
-    "stem": "a. One New York publisher have estimated that 50,000 to 60,000 people in the United States want an anthology that includes the complete works of William Shakespeare.",
+    "stem": "Choose the option that best rewrites the sentence correctly.",
     "options": {
+      "A": "One New York publisher have estimated that 50,000 to 60,000 people in the United States want an anthology that includes the complete works of William Shakespeare.",
       "B": "One New York publisher has estimated that 50,000 to 60,000 people in the United States want a anthology that includes the complete works of William Shakespeare.",
       "C": "One New York publisher has estimated that 50,000 to 60,000 people in the United States want an anthology that includes the complete works of William Shakespeare.",
       "D": "One New York publisher has estimated that 50,000 to 60,000 people in the United States want an anthology that included the complete works of William Shakespeare. Modifiers Adjectives and adverbs modify subjects or their actions in a sentence. In the sentence, \u201cThe orange and striped cat leapt nimbly across the dresser,\u201d adjectives and adverbs specify what kind of cat (an \u201corange and striped cat\u201d) and how that cat leapt (\u201cnimbly\u201d). All too often, adjectives and adverbs are confused for one another. However, in this section, you will put each in its proper place and in its proper form. First, you have to know the definition of a modifier: \u2713 A modifier describes or limits another word.\u279eLily is a subject. Add the word tiger before lily and the subject is modified: It is now a specific type of lily. Pushed is an action word. Add gently and the action is limited: It is now a softer action. Put the subject, its action, and the modifiers all together and the sentence reads: Unlike its fierce namesake, the tiger lily pushed its head gently through the soil. Types of Modifiers \u2713 Adjectives modify nouns or pronouns. (Hint: An adjective answers one of three questions: which one, what kind, or how many?) \u2713 Adverbs modify verbs, adjectives, other adverbs, or whole groups of words. (Hint: An adverb answers one of four questions: where, when, how, or to what extent?) \u2713 Comparatives are adjectives and adverbs used to compare two things.\u279eHe\u2019s the better of the two. \u2713 Superlatives are adjectives and adverbs used to compare more than two things.\u279eHe\u2019s the best of the three. BEGINNING SENTENCES WITH DEPENDENT CLAUSES Do not, as a general rule, place a dependent clause at the beginning of a sentence. Words that should not begin a sentence include: because while wherea. unless although when after since Follow these guidelines and you will do well (well describes the verb to do; therefore, it is an adverb!): \u2713 Always identify whether a modifier describes or limits a sentence\u2019s subject or its action. \u2713 Use good and bad to describe nouns. \u2713 Use well and badly to describe verbs, except when well means \u201cfit\u201d or \u201chealthy.\u201d When well describes a state of being, it is an adjective.\u279eWith repetition, you will soon write well. Well describes how the subject writes; it is an adverb. After two months of physical therapy, Bob was well. Well describes Bob\u2019s state of being; it is an adjective. \u2713 Use an adjective after a linking verb. The following words are linking verbs when they express a state of being: look, sound, smell, feel, taste, appear, seem, become, grow, turn, prove, remain, and stay.\u279eHoward leaned over and surreptitiously smelled Lee; she smelled sweet. Surreptitiously describes how Howard sniffed at the other person; in this case, it is an adverb because it describes the act of smelling. Sweet describes Lee; the word smell links the adjective back to the subject. \u2713 Use the adjective fewer to describe plural nouns and the adjective less to describe singular nouns. \u2713 Use the word number to describe plural nouns and the word amount to describe singular nouns. \u2713 Add -er to a modifier or place the word more or less before the modifier to compare two things. This creates a comparison. (Hint: One to two syllable modifiers usually receive the suffix -er; modifiers with more than two syllables use more or less before them.) \u2713 Add -est to a modifier or place the word most or least before the modifier to indicate the extreme degree of a thing (Hint: One to two syllable modifiers receive -est; modifiers with more than two syllables use most or least before them.) \u2713 Avoid double comparatives or double superlatives. Adding the suffix -er or -est to a modifier and preceding the modifier with more or most is redundant.\u279eLindsey amazed the class with her grammatical skills; she was the most smartest person they had ever seen. Lindsey is already the smartest. Most also means smartest\u2014the phrase most smartest is redundant. \u2713 Avoid double negatives unless you mean to express the positive.\u279eTom hardly did not feel tense whenever he approached grammar. Hardly and did not cancel each other out. The sentence really reads: Tom felt tense whenever approaching grammar. \u2713 Avoid illogical comparisons. Some words already indicate an extreme degree; like double comparatives and double superlatives, adding the word more or most before such words is redundant.\u279eSome women believe Brad Pitt is more perfect than Matt Damon. There are not degrees of perfection; one is either perfect or not perfect. However, one can more nearly approach perfection than someone else."
@@ -3051,7 +3113,7 @@
     "context": "",
     "stem": "There wasn\u2019t nothing that could have been easier.",
     "options": {
-      "A": "There wasn\u2019t nothing that could have been easier.",
+      "A": "No change (original sentence is correct as written)",
       "B": "There was nothing that could have been more easier.",
       "C": "Nothing could have been more easier.",
       "D": "Nothing couldn\u2019t have been more easy.",
@@ -3069,7 +3131,7 @@
     "context": "",
     "stem": "I was clearly the happiest person in the crowd.",
     "options": {
-      "A": "I was clearly the happiest person in the crowd.",
+      "A": "No change (original sentence is correct as written)",
       "B": "It was clear that I was the happier person in the crowd.",
       "C": "Of all the people in the crowd, I was clearly the happier.",
       "D": "In the crowd, clearly, I was the happier person.",
@@ -3121,8 +3183,9 @@
     "set_number": 27,
     "type": "Misplaced & Dangling Modifiers",
     "context": "",
-    "stem": "a. The steam rose up from the hot pavement.",
+    "stem": "Which of the following sentences contains an error in modifier placement?",
     "options": {
+      "A": "The steam rose up from the hot pavement.",
       "B": "She put the kitten down carefully beside its mom.",
       "C": "Neither of us is going to the party.",
       "D": "No mistakes."
@@ -3137,8 +3200,9 @@
     "set_number": 27,
     "type": "Misplaced & Dangling Modifiers",
     "context": "",
-    "stem": "a. The lost dog wandered sad through the streets.",
+    "stem": "Which of the following sentences contains an error in modifier placement?",
     "options": {
+      "A": "The lost dog wandered sad through the streets.",
       "B": "Frustrated, Boris threw his pencil across the room.",
       "C": "We\u2019ll stop at their house first.",
       "D": "No mistakes."
@@ -3153,8 +3217,9 @@
     "set_number": 27,
     "type": "Misplaced & Dangling Modifiers",
     "context": "",
-    "stem": "a. I don\u2019t want to participate no longer.",
+    "stem": "Which of the following sentences contains an error in modifier placement?",
     "options": {
+      "A": "I don\u2019t want to participate no longer.",
       "B": "If you\u2019re not sure, look in the dictionary.",
       "C": "\u201cI will try to do better,\u201d Lauren promised.",
       "D": "No mistakes."
@@ -3169,8 +3234,9 @@
     "set_number": 27,
     "type": "Misplaced & Dangling Modifiers",
     "context": "",
-    "stem": "a. The boy wasn\u2019t feeling well.",
+    "stem": "Which of the following sentences contains an error in modifier placement?",
     "options": {
+      "A": "The boy wasn\u2019t feeling well.",
       "B": "I am the best player on the team.",
       "C": "That is the brightest tie I\u2019ve ever seen!",
       "D": "No mistakes."
@@ -3185,8 +3251,9 @@
     "set_number": 27,
     "type": "Misplaced & Dangling Modifiers",
     "context": "",
-    "stem": "a. This is the stronger of the two.",
+    "stem": "Which of the following sentences contains an error in modifier placement?",
     "options": {
+      "A": "This is the stronger of the two.",
       "B": "Pearl ran as quickly as possible.",
       "C": "There are more people here today than there were yesterday.",
       "D": "No mistakes."
@@ -3201,8 +3268,9 @@
     "set_number": 27,
     "type": "Misplaced & Dangling Modifiers",
     "context": "",
-    "stem": "a. This paper has less mistakes than your last one.",
+    "stem": "Which of the following sentences contains an error in modifier placement?",
     "options": {
+      "A": "This paper has less mistakes than your last one.",
       "B": "His efforts were frenzied.",
       "C": "That is the most audacious comment I\u2019ve heard yet.",
       "D": "No mistakes."
@@ -3217,8 +3285,9 @@
     "set_number": 27,
     "type": "Misplaced & Dangling Modifiers",
     "context": "",
-    "stem": "a. One car is quicker than the other.",
+    "stem": "Which of the following sentences contains an error in modifier placement?",
     "options": {
+      "A": "One car is quicker than the other.",
       "B": "I\u2019m feeling sleepy.",
       "C": "Don\u2019t chew so loudly!",
       "D": "No mistakes. ADJECTIVES Words that modify nouns, adding information. Some examples: a pretty picture a religious holiday a hot da. a funny song"
@@ -3233,8 +3302,9 @@
     "set_number": 27,
     "type": "Misplaced & Dangling Modifiers",
     "context": "",
-    "stem": "a. Between the three of us, we should find the answer.",
+    "stem": "Which of the following sentences contains an error in modifier placement?",
     "options": {
+      "A": "Between the three of us, we should find the answer.",
       "B": "Alberto laughed loudly when he saw us.",
       "C": "They\u2019re looking for another apartment.",
       "D": "No mistakes."
@@ -3249,8 +3319,9 @@
     "set_number": 27,
     "type": "Misplaced & Dangling Modifiers",
     "context": "",
-    "stem": "a. The Adirondacks are mountains in New York.",
+    "stem": "Which of the following sentences contains an error in modifier placement?",
     "options": {
+      "A": "The Adirondacks are mountains in New York.",
       "B": "President Carter gave the Panama Canal back to Panama.",
       "C": "That river is terribly polluted.",
       "D": "No mistakes."
@@ -3265,8 +3336,9 @@
     "set_number": 27,
     "type": "Misplaced & Dangling Modifiers",
     "context": "",
-    "stem": "a. Trading Spaces is probably the most daring show on television.",
+    "stem": "Which of the following sentences contains an error in modifier placement?",
     "options": {
+      "A": "Trading Spaces is probably the most daring show on television.",
       "B": "Which color do you like better, the teal or the flamingo pink?",
       "C": "Mango-peach berry juice is the most awfulest drink.",
       "D": "No mistakes. ADVERBS Words that modify verbs, adding information. Some examples: drive fast sleep well jump high play hard Paragraph Development Paragraphs are groups of related sentences that form complete units. They usually support the main ideas of an essay, article, or story; however, every paragraph has an identity and an idea of its own. A paragraph is like a miniature essay. For practice in paragraph development and unity, Section 5 will ask you to identify the best topic sentence for a particular paragraph, find the sentence that best develops a topic, and eliminate the sentence that does not belong. You will also choose the best order for a group of sentences. The guideline below will help you to organize your paragraphs. Paragraphs and essays are similar in structure, so these guidelines can be applied to the organization of an entire essay. \u2713 Write a paragraph to explore a single idea using a topic sentence near the beginning of the paragraph. \u2713 Maintain paragraph unity, the logical development of a single idea in a group of related sentences, by using: \u2022 a consistent organizing strategy. Paragraphs present ideas and group detailed information necessary to develop ideas. Organizing strategies arrange that information into logical and easy-to-anticipate patterns. These patterns can be top to bottom, left to right, near to far, then to now, beginning to ending, general to specific, least important to most important, least familiar to most familiar, or simplest to most complex. Other strategies use stories, descriptions, examples, definitions, categorizations, comparisons and contrasts, or causes and effects to logically organize information. As you become more proficient at writing, you will probably incorporate more than one strategy in a paragraph. \u2022 parallelisms. By arranging sentences in identical patterns, a writer can convey that two different things are equally important. Patterning sentence structure is called parallelism.\u279eBob quickly ran to the store; Alex also quickly ran to the store. It was a race to see who was faster. \u2022 repeated words or word groups. Repeating words is a tactic similar to parallelism, except that repetition can occur anywhere in a sentence.\u279eMark persevered in practice. The work was hard\u2014but he persevered. The pain grew intense, but still, he persevered. \u2022 transitional phrases or words to connect sentences and ideas\u279e First, Katie gathered the ingredients. Then she assembled the meal. \u2713 Important: Try not to shift a pronoun\u2019s case or a verb\u2019s tense in a paragraph unless your organizing strategy requires it."
@@ -3281,8 +3353,9 @@
     "set_number": 28,
     "type": "Topic Sentence",
     "context": "________. Residents have been directed to use the new plastic bins as their primary recycling containers. These new containers will make picking up recyclables faster and easier.",
-    "stem": "a. The city has distributed standardized recycling containers to all households.",
+    "stem": "Choose the topic sentence that best fits the rest of the paragraph.",
     "options": {
+      "A": "The city has distributed standardized recycling containers to all households.",
       "B": "Recycling has become a way of life for most people.",
       "C": "While most Americans recycle, they also use more resources than residents of other countries.",
       "D": "Even small cities have begun recycling to pick up used glass, plastic, and paper. ________. Telecommuters produce, on average, 20% more than if they were to work in an office. Their flexible schedule allows them to balance both their family and work responsibilities."
@@ -3297,8 +3370,9 @@
     "set_number": 28,
     "type": "Topic Sentence",
     "context": "________. Residents have been directed to use the new plastic bins as their primary recycling containers. These new containers will make picking up recyclables faster and easier.",
-    "stem": "a. People who work in offices make up a large part of the U.S. workforce.",
+    "stem": "Choose the topic sentence that best fits the rest of the paragraph.",
     "options": {
+      "A": "People who work in offices make up a large part of the U.S. workforce.",
       "B": "Office workers who telecommute from their own homes are more productive and have greater flexibility.",
       "C": "Many companies now offer their employees benefits that were not available just a few years ago.",
       "D": "One of the biggest problems in corporate America is the lack of skilled office workers. ________. No search of a person\u2019s home or personal effects may be conducted without a written search warrant. This means that a judge must justify a search before it can be conducted."
@@ -3313,8 +3387,9 @@
     "set_number": 28,
     "type": "Topic Sentence",
     "context": "________. Residents have been directed to use the new plastic bins as their primary recycling containers. These new containers will make picking up recyclables faster and easier.",
-    "stem": "a. There is an old saying that a person\u2019s home is his or her castle.",
+    "stem": "Choose the topic sentence that best fits the rest of the paragraph.",
     "options": {
+      "A": "There is an old saying that a person\u2019s home is his or her castle.",
       "B": "Much of the U.S. legal system was based on the old British system.",
       "C": "The Fourth Amendment to the Constitution protects citizens against unreasonable searches.",
       "D": "\u201cPersonal effects\u201d is a term that refers to the belongings of a person. ________. You must imitate as closely as possible the parents\u2019 methods of feeding. First, hold the beak open using thumb and forefinger. Then, introduce food into the beak with tweezers or an eyedropper."
@@ -3329,8 +3404,9 @@
     "set_number": 28,
     "type": "Topic Sentence",
     "context": "________. Residents have been directed to use the new plastic bins as their primary recycling containers. These new containers will make picking up recyclables faster and easier.",
-    "stem": "a. Recently, I read an article about baby birds.",
+    "stem": "Choose the topic sentence that best fits the rest of the paragraph.",
     "options": {
+      "A": "Recently, I read an article about baby birds.",
       "B": "Hand-rearing wounded or orphaned baby birds requires skill.",
       "C": "Baby birds are very special creatures, and they are also very small.",
       "D": "I have been told that you should not touch a baby bird that has fallen out of its nest. ________. All waves, though, have common characteristics that govern their height. The height of a wave is determined by its speed, the distance it travels, and the length of time the wind blows."
@@ -3345,8 +3421,9 @@
     "set_number": 28,
     "type": "Topic Sentence",
     "context": "________. Residents have been directed to use the new plastic bins as their primary recycling containers. These new containers will make picking up recyclables faster and easier.",
-    "stem": "a. Currents, unlike waves, are caused by steady winds or temperature fluctuations.",
+    "stem": "Choose the topic sentence that best fits the rest of the paragraph.",
     "options": {
+      "A": "Currents, unlike waves, are caused by steady winds or temperature fluctuations.",
       "B": "Tsunamis used to be called tidal waves.",
       "C": "Ocean waves can vary from tiny ripples to powerful, raging swells.",
       "D": "A breaker is when a wave gets top-heavy and tips over. ________. When people respect the law too much, they will follow it blindly. They will say that the majority has decided on this law and therefore I must obey it. They will not stop to consider whether or not the law is fair."
@@ -3361,8 +3438,9 @@
     "set_number": 28,
     "type": "Topic Sentence",
     "context": "________. Residents have been directed to use the new plastic bins as their primary recycling containers. These new containers will make picking up recyclables faster and easier.",
-    "stem": "a. Some people say there is too little respect for the law, but I say there is too much respect for it.",
+    "stem": "Choose the topic sentence that best fits the rest of the paragraph.",
     "options": {
+      "A": "Some people say there is too little respect for the law, but I say there is too much respect for it.",
       "B": "Sometimes, a judge will decide that a law is unfair.",
       "C": "I believe that the majority of the people in this country do not understand what it means to have respect for other people.",
       "D": "Most of the laws passed at the end of the twentieth century are fair laws. Gary was a very distinguished looking man with a touch of gray at the temples. Even in his early fifties, he was still the one to turn heads. He enjoyed spending most of his time admiring his profile in the mirror. In fact, he considered his good looks to be his second most important asset in the world. The first, however, was money. He was lucky in this area, too, having been born into a wealthy family. ________. He loved the power his wealth had given him. He could buy whatever he desired, be that people, places, or things. Gary checked that mirror often and felt great delight with what he saw."
@@ -3377,8 +3455,9 @@
     "set_number": 28,
     "type": "Topic Sentence",
     "context": "________. Residents have been directed to use the new plastic bins as their primary recycling containers. These new containers will make picking up recyclables faster and easier.",
-    "stem": "a. Gary\u2019s gray hair was his worst characteristic.",
+    "stem": "Choose the topic sentence that best fits the rest of the paragraph.",
     "options": {
+      "A": "Gary\u2019s gray hair was his worst characteristic.",
       "B": "Conceit was the beginning and the end of Gary\u2019s character\u2014 conceit of person and situation.",
       "C": "Gary felt blessed to be wealthy and the joy consumed his every thought.",
       "D": "The only objects of Gary\u2019s respect were others who held positions in society. The term spices is a pleasant one, whether it connotes fine French cuisine or a down-home, cinnamon-flavored apple pie. ________. Individuals have traveled the world seeking exotic spices for profit and, in searching, have changed the course of history. Indeed, to gain control of lands harboring new spices, nations have actually gone to war."
@@ -3393,8 +3472,9 @@
     "set_number": 28,
     "type": "Topic Sentence",
     "context": "________. Residents have been directed to use the new plastic bins as their primary recycling containers. These new containers will make picking up recyclables faster and easier.",
-    "stem": "a. The taste and aroma of spices are the main elements that make food such a source of fascination and pleasure.",
+    "stem": "Choose the topic sentence that best fits the rest of the paragraph.",
     "options": {
+      "A": "The taste and aroma of spices are the main elements that make food such a source of fascination and pleasure.",
       "B": "The term might equally bring to mind Indian curry made thousands of miles away and those delicious barbecued ribs sold around the corner.",
       "C": "It is exciting to find a good cookbook and experiment with spices from other lands\u2014indeed, it is one way to travel around the globe!",
       "D": "The history of spices, however, is another matter altogether, often exciting and filled with danger and intrigue. __________. The best way to begin is by selecting a working space with good lighting. Proper tools are also important, and you will want to purchase some quality paint brushes and a selection of quality paints."
@@ -3409,8 +3489,9 @@
     "set_number": 28,
     "type": "Topic Sentence",
     "context": "________. Residents have been directed to use the new plastic bins as their primary recycling containers. These new containers will make picking up recyclables faster and easier.",
-    "stem": "a. Painting models and miniatures is a satisfying hobby.",
+    "stem": "Choose the topic sentence that best fits the rest of the paragraph.",
     "options": {
+      "A": "Painting models and miniatures is a satisfying hobby.",
       "B": "Low quality painting tools can be frustrating.",
       "C": "Good lighting is important when painting.",
       "D": "Don\u2019t buy paintbrushes on sale. _______. The farm dates back to the Revolutionary War, when it was owned by Silas Wheeler. Wheeler himself fought in several early battles of the war, but his farm is best remembered as the site of an important battle, when the Colonial forces won a decisive victory against the British."
@@ -3425,8 +3506,9 @@
     "set_number": 28,
     "type": "Topic Sentence",
     "context": "________. Residents have been directed to use the new plastic bins as their primary recycling containers. These new containers will make picking up recyclables faster and easier.",
-    "stem": "a. Farms are places where we can learn many things.",
+    "stem": "Choose the topic sentence that best fits the rest of the paragraph.",
     "options": {
+      "A": "Farms are places where we can learn many things.",
       "B": "Wheeler Farm is an important historical landmark.",
       "C": "Silas Wheeler was an American patriot.",
       "D": "The Revolutionary War made many people famous. _________. They are certainly useful for keeping the grass short, yet the spinning blade of any power mower can sever fingers, toes, and even a hand. Proper safety measures must be followed at all times when using a power lawn mower."
@@ -3441,8 +3523,9 @@
     "set_number": 28,
     "type": "Topic Sentence",
     "context": "________. Residents have been directed to use the new plastic bins as their primary recycling containers. These new containers will make picking up recyclables faster and easier.",
-    "stem": "a. Wear safety shoes when cutting the lawn.",
+    "stem": "Choose the topic sentence that best fits the rest of the paragraph.",
     "options": {
+      "A": "Wear safety shoes when cutting the lawn.",
       "B": "Power lawn mowers are useful tools, but they can also be very dangerous.",
       "C": "The history of lawn mowers is very interesting.",
       "D": "Short grass is important for the environment. ________. Effective immediately, all vacation time must be preapproved by an employee\u2019s immediate supervisor. No vacations will be approved unless the employee has completed his or her probationary period, and employees can no longer borrow against future vacation days."
@@ -3457,8 +3540,9 @@
     "set_number": 28,
     "type": "Topic Sentence",
     "context": "________. Residents have been directed to use the new plastic bins as their primary recycling containers. These new containers will make picking up recyclables faster and easier.",
-    "stem": "a. The company\u2019s vacation policy has been changed.",
+    "stem": "Choose the topic sentence that best fits the rest of the paragraph.",
     "options": {
+      "A": "The company\u2019s vacation policy has been changed.",
       "B": "Employees on probation must not take vacations.",
       "C": "Borrowing from future vacations is not allowed.",
       "D": "We used to do things differently, but now we don\u2019t. ________. Hearsay that depends on the statement\u2019s truthfulness is inadmissible because the witness does not appear in court and swear an oath to tell the truth. This means that his or her demeanor when making the statement is not visible to the jury, the accuracy of the statement cannot be tested under cross-examination, and to introduce it would be to deprive the accused of the constitutional right to confront the accuser."
@@ -3473,8 +3557,9 @@
     "set_number": 28,
     "type": "Topic Sentence",
     "context": "________. Residents have been directed to use the new plastic bins as their primary recycling containers. These new containers will make picking up recyclables faster and easier.",
-    "stem": "a. Hearsay evidence is not acceptable in a criminal trial because the witness cannot be cross-examined.",
+    "stem": "Choose the topic sentence that best fits the rest of the paragraph.",
     "options": {
+      "A": "Hearsay evidence is not acceptable in a criminal trial because the witness cannot be cross-examined.",
       "B": "Hearsay evidence in a trial is inadmissible because there is too great a chance that it will be false.",
       "C": "The definition of hearsay evidence is the \u201csecondhand reporting of a statement\u201d and is sometimes allowable.",
       "D": "Hearsay evidence, which is the secondhand reporting of a statement, is allowed in court only when the truth of the statement is irrelevant. ________. Any truck that finishes its assigned route before the end of the workers\u2019 shift will return to the sanitation lot, where supervisors will provide materials for workers to use in cleaning off the graffiti. Because the length of time it takes to complete different routes varies, trucks will no longer be assigned to a specific route but will be rotated among the routes. Therefore, workers should no longer leave personal items in the trucks, as they will not necessarily be using the same truck each day as they did in the past."
@@ -3489,8 +3574,9 @@
     "set_number": 28,
     "type": "Topic Sentence",
     "context": "________. Residents have been directed to use the new plastic bins as their primary recycling containers. These new containers will make picking up recyclables faster and easier.",
-    "stem": "a. Graffiti on city trucks is unsightly and gives city residents a poor impression of the Sanitation Department.",
+    "stem": "Choose the topic sentence that best fits the rest of the paragraph.",
     "options": {
+      "A": "Graffiti on city trucks is unsightly and gives city residents a poor impression of the Sanitation Department.",
       "B": "The Sanitation Department greatly appreciates city workers\u2019 extra efforts in cleaning graffiti off the city trucks.",
       "C": "Beginning next month, the Sanitation Department will institute a program intended to remove the graffiti from sanitation trucks.",
       "D": "City workers should keep a sharp lookout for persons spraypainting graffiti on Sanitation Department trucks. ________. One type of tickler system is the index-card file with 12 large dividers, one for each month, and 31 small dividers, one for each day. Whenever secretaries need to schedule a reminder, they jot it down on a card and place it behind the appropriate divider. Each morning, they review the reminders for that particular day."
@@ -3505,8 +3591,9 @@
     "set_number": 28,
     "type": "Topic Sentence",
     "context": "________. Residents have been directed to use the new plastic bins as their primary recycling containers. These new containers will make picking up recyclables faster and easier.",
-    "stem": "a. As busy secretaries, we cannot expect to remember all the details of our daily responsibilities without some help.",
+    "stem": "Choose the topic sentence that best fits the rest of the paragraph.",
     "options": {
+      "A": "As busy secretaries, we cannot expect to remember all the details of our daily responsibilities without some help.",
       "B": "At the beginning of the day, good secretaries review and organize the tasks they must attend to during that day.",
       "C": "The word tickler perfectly describes the organizational system to which it refers.",
       "D": "All secretaries need a good reminder system, sometimes known as a tickler system because it tickles the memory. ________. Space shuttle astronauts, because they spend only about a week in space, undergo minimal wasting of bone and muscle. But when longer stays in microgravity or zero gravity are contemplated, as in the proposed space station or a two-year roundtrip voyage to Mars, these problems are of particular concern because they could become acute. Fortunately, studies show that muscle atrophy can be kept largely at bay with appropriate exercise. Unfortunately, bone loss caused by reduced gravity cannot."
@@ -3521,8 +3608,9 @@
     "set_number": 28,
     "type": "Topic Sentence",
     "context": "________. Residents have been directed to use the new plastic bins as their primary recycling containers. These new containers will make picking up recyclables faster and easier.",
-    "stem": "a. Space flight, especially if it is prolonged, can be hazardous to the health of the astronauts.",
+    "stem": "Choose the topic sentence that best fits the rest of the paragraph.",
     "options": {
+      "A": "Space flight, especially if it is prolonged, can be hazardous to the health of the astronauts.",
       "B": "The tissues of human beings are ill-prepared for the stresses placed upon them by space flight.",
       "C": "In space flight, astronauts must deal with two vexing physiological foes\u2014muscle atrophy and bone loss.",
       "D": "Travel on the space shuttle does less damage to an astronaut\u2019s bones and muscles than an extended stay on a space station. ________. Rather, asthma is now understood to be a chronic inflammatory disorder of the airways\u2014that is, inflammation makes the airways chronically sensitive. When these hyper-responsive airways are irritated, air flow is limited, and attacks of coughing, wheezing, chest tightness, and difficulty breathing occur."
@@ -3537,8 +3625,9 @@
     "set_number": 28,
     "type": "Topic Sentence",
     "context": "________. Residents have been directed to use the new plastic bins as their primary recycling containers. These new containers will make picking up recyclables faster and easier.",
-    "stem": "a. No longer is asthma considered a condition with isolated, acute episodes of bronchospasm.",
+    "stem": "Choose the topic sentence that best fits the rest of the paragraph.",
     "options": {
+      "A": "No longer is asthma considered a condition with isolated, acute episodes of bronchospasm.",
       "B": "The true nature of asthma has only recently been understood.",
       "C": "The true character of asthma is now understood, so there is more hope for a cure than there was in earlier times.",
       "D": "No age is exempt from asthma, although it occurs most often in childhood and early adulthood. ________. Many experts, including those in the American Diabetes Association, recommend that 50 to 60% of daily calories of patients suffering from non-insulin-dependent diabetes come from carbohydrates, 12 to 20% from protein, and no more than 30% from fat. Foods that are rich in carbohydrates, like breads, cereals, fruits, and vegetables, break down into glucose during digestion, causing blood glucose to rise. Additionally, studies have shown that cooked foods raise blood glucose higher than raw, unpeeled foods."
@@ -3553,8 +3642,9 @@
     "set_number": 28,
     "type": "Topic Sentence",
     "context": "________. Residents have been directed to use the new plastic bins as their primary recycling containers. These new containers will make picking up recyclables faster and easier.",
-    "stem": "a. In 1986, a National Institute of Health panel gave broad recommendations as to the type of diet that is best for non-insulin-dependent diabetics.",
+    "stem": "Choose the topic sentence that best fits the rest of the paragraph.",
     "options": {
+      "A": "In 1986, a National Institute of Health panel gave broad recommendations as to the type of diet that is best for non-insulin-dependent diabetics.",
       "B": "It is extremely important for certain medical patients to watch what they eat.",
       "C": "A good cookbook is the best friend a non-insulin-dependent diabetes patient can have!",
       "D": "Non-insulin-dependent diabetes patients can lead long, healthy lives if only they pay attention to their diets."
@@ -3807,11 +3897,12 @@
     "set_number": 30,
     "type": "Irrelevant Sentence",
     "context": "(1) The cassowary, a solitary, meat-eating creature who makes its home deep in the jungles of New Guinea, hardly seems like a bird at all. (2) It is enormous, weighing up to 190 pounds. (3) Its plumage is more like hair than feathers; its song is a deep, menacing rumble; and it has lost the capability of flight. (4) Human beings have long been fascinated by birds, particularly by their ability to fly.",
-    "stem": "a. Sentence 1",
+    "stem": "Which sentence does NOT belong in the paragraph?",
     "options": {
+      "A": "Sentence 1",
       "B": "Sentence 2",
       "C": "Sentence 3",
-      "D": "Sentence 4 (1) Storytelling should speak first to the heart and only second to the intellect. (2) It should, in Isaac Bashevis Singer\u2019s words, \u201cbe both clear and profound,\u201d and it should also entertain. (3) Many fine writing programs have sprung up across the United States. (4) The new writer should avoid creating pieces that are deliberately obscure and impossible to understand except by a small, elite group of other writers."
+      "D": "Sentence 4"
     },
     "answer": "D",
     "explanation": "The passage is about the cassowary bird, not about human beings. Sentence 4 is irrelevant to the topic."
@@ -3823,11 +3914,12 @@
     "set_number": 30,
     "type": "Irrelevant Sentence",
     "context": "(1) The cassowary, a solitary, meat-eating creature who makes its home deep in the jungles of New Guinea, hardly seems like a bird at all. (2) It is enormous, weighing up to 190 pounds. (3) Its plumage is more like hair than feathers; its song is a deep, menacing rumble; and it has lost the capability of flight. (4) Human beings have long been fascinated by birds, particularly by their ability to fly.",
-    "stem": "a. Sentence 1",
+    "stem": "Which sentence does NOT belong in the paragraph?",
     "options": {
+      "A": "Sentence 1",
       "B": "Sentence 2",
       "C": "Sentence 3",
-      "D": "Sentence 4 (1) Caribbean cuisine is a fusion of Spanish, French, African, Amerindian, and Indian cuisine. (2) Many people travel to the Caribbean to enjoy the beautiful beaches and warm weather. (3) A typical dish and one increasingly common outside of the area is \u201cjerk\u201d seasoned meats, commonly chicken. (4) Other popular dishes include curried goat and a soup-like dish called callaloo."
+      "D": "Sentence 4"
     },
     "answer": "C",
     "explanation": "The passage is about the nature of storytelling and has nothing to do with writing programs."
@@ -3839,11 +3931,12 @@
     "set_number": 30,
     "type": "Irrelevant Sentence",
     "context": "(1) The cassowary, a solitary, meat-eating creature who makes its home deep in the jungles of New Guinea, hardly seems like a bird at all. (2) It is enormous, weighing up to 190 pounds. (3) Its plumage is more like hair than feathers; its song is a deep, menacing rumble; and it has lost the capability of flight. (4) Human beings have long been fascinated by birds, particularly by their ability to fly.",
-    "stem": "a. Sentence 1",
+    "stem": "Which sentence does NOT belong in the paragraph?",
     "options": {
+      "A": "Sentence 1",
       "B": "Sentence 2",
       "C": "Sentence 3",
-      "D": "Sentence 4 (1) Ratatouille is a dish that has grown in popularity over the last few years. (2) It features eggplant, zucchini, tomato, peppers, and garlic, chopped, mixed together, and cooked slowly over low heat. (3) Zucchini is a summer squash and has a smooth, dark green skin. (4) As the vegetables cook slowly, they make their own broth, which may be extended with a little tomato paste."
+      "D": "Sentence 4"
     },
     "answer": "B",
     "explanation": "The passage has to do with Caribbean cuisine. People traveling to the Caribbean for vacation is irrelevant to the main topic."
@@ -3855,11 +3948,12 @@
     "set_number": 30,
     "type": "Irrelevant Sentence",
     "context": "(1) The cassowary, a solitary, meat-eating creature who makes its home deep in the jungles of New Guinea, hardly seems like a bird at all. (2) It is enormous, weighing up to 190 pounds. (3) Its plumage is more like hair than feathers; its song is a deep, menacing rumble; and it has lost the capability of flight. (4) Human beings have long been fascinated by birds, particularly by their ability to fly.",
-    "stem": "a. Sentence 1",
+    "stem": "Which sentence does NOT belong in the paragraph?",
     "options": {
+      "A": "Sentence 1",
       "B": "Sentence 2",
       "C": "Sentence 3",
-      "D": "Sentence 4 (1) An odd behavior associated with sleep and dreaming is somnambulism, commonly known as sleepwalking. (2) Sleepwalkers suffer from a malfunction in a brain mechanism that monitors the transition from REM to non-REM sleep. (3) REM sleep is vitally important to psychological well-being. (4) Sleepwalking episodes diminish with age and usually cause no serious harm\u2014the worst thing that could happen would be a fall down the stairs."
+      "D": "Sentence 4"
     },
     "answer": "C",
     "explanation": "The focus of the paragraph is ratatouille, not zucchini."
@@ -3871,11 +3965,12 @@
     "set_number": 30,
     "type": "Irrelevant Sentence",
     "context": "(1) The cassowary, a solitary, meat-eating creature who makes its home deep in the jungles of New Guinea, hardly seems like a bird at all. (2) It is enormous, weighing up to 190 pounds. (3) Its plumage is more like hair than feathers; its song is a deep, menacing rumble; and it has lost the capability of flight. (4) Human beings have long been fascinated by birds, particularly by their ability to fly.",
-    "stem": "a. Sentence 1",
+    "stem": "Which sentence does NOT belong in the paragraph?",
     "options": {
+      "A": "Sentence 1",
       "B": "Sentence 2",
       "C": "Sentence 3",
-      "D": "Sentence 4 (1) Lyme disease is sometimes called the great imitator because its many symptoms mimic those of other illnesses. (2) When treated, this disease usually presents few or no lingering effects. (3) Left untreated, it can be extremely debilitating and sometimes fatal. (4) One should be very careful when returning from a trek in the woods to check for deer ticks."
+      "D": "Sentence 4"
     },
     "answer": "C",
     "explanation": "This is the only sentence that does not mention sleepwalking, which is the subject of the passage."
@@ -3887,11 +3982,12 @@
     "set_number": 30,
     "type": "Irrelevant Sentence",
     "context": "(1) The cassowary, a solitary, meat-eating creature who makes its home deep in the jungles of New Guinea, hardly seems like a bird at all. (2) It is enormous, weighing up to 190 pounds. (3) Its plumage is more like hair than feathers; its song is a deep, menacing rumble; and it has lost the capability of flight. (4) Human beings have long been fascinated by birds, particularly by their ability to fly.",
-    "stem": "a. Sentence 1",
+    "stem": "Which sentence does NOT belong in the paragraph?",
     "options": {
+      "A": "Sentence 1",
       "B": "Sentence 2",
       "C": "Sentence 3",
-      "D": "Sentence 4 (1) The harp is a musical instrument that has an upright triangular frame. (2) Its strings are positioned perpendicular to the sounding board. (3) Harps are found in Africa, Europe, North and South America, and a few parts of Asia. (4) Its beautiful sound, which is capable of stirring great emotion, might bring tears to your eyes."
+      "D": "Sentence 4"
     },
     "answer": "D",
     "explanation": "Although there is a connection between Lyme disease and deer ticks, this connection is not made in the paragraph."
@@ -3903,11 +3999,12 @@
     "set_number": 30,
     "type": "Irrelevant Sentence",
     "context": "(1) The cassowary, a solitary, meat-eating creature who makes its home deep in the jungles of New Guinea, hardly seems like a bird at all. (2) It is enormous, weighing up to 190 pounds. (3) Its plumage is more like hair than feathers; its song is a deep, menacing rumble; and it has lost the capability of flight. (4) Human beings have long been fascinated by birds, particularly by their ability to fly.",
-    "stem": "a. Sentence 1",
+    "stem": "Which sentence does NOT belong in the paragraph?",
     "options": {
+      "A": "Sentence 1",
       "B": "Sentence 2",
       "C": "Sentence 3",
-      "D": "Sentence 4 (1) In the summer, the northern hemisphere is slanted toward the sun, making the days longer and warmer than in winter. (2) Many religions make use of the solstices in their rites. (3) The first day of summer is called the summer solstice and is also the longest day of the year. (4) However, June 21 marks the beginning of winter in the southern hemisphere, when that hemisphere is tilted away from the sun."
+      "D": "Sentence 4"
     },
     "answer": "D",
     "explanation": "The first three sentences are written in an objective, professional tone. The tone of Sentence 4 is much more personal and subjective so even though it says something about a harp, it is quite out of character in this paragraph."
@@ -3919,11 +4016,12 @@
     "set_number": 30,
     "type": "Irrelevant Sentence",
     "context": "(1) The cassowary, a solitary, meat-eating creature who makes its home deep in the jungles of New Guinea, hardly seems like a bird at all. (2) It is enormous, weighing up to 190 pounds. (3) Its plumage is more like hair than feathers; its song is a deep, menacing rumble; and it has lost the capability of flight. (4) Human beings have long been fascinated by birds, particularly by their ability to fly.",
-    "stem": "a. Sentence 1",
+    "stem": "Which sentence does NOT belong in the paragraph?",
     "options": {
+      "A": "Sentence 1",
       "B": "Sentence 2",
       "C": "Sentence 3",
-      "D": "Sentence 4 (1) People are quick to blame the weatherman if it rains on their parade! (2) The American Meteorological Society defines a meteorologist as a person \u201cwho uses scientific principles to explain, understand, observe, or forecast the earth\u2019s atmospheric phenomena and/or how the atmosphere affects the earth and life on the planet.\u201d (3) Many meteorologists have degrees in physics, chemistry, and other fields. (4) Their work often involves teaching, weather forecasting, atmospheric research, and other kinds of applied meteorology."
+      "D": "Sentence 4"
     },
     "answer": "B",
     "explanation": "This is the only sentence that mentions religion or any human activity at all. The other sentences define the solstices in lay science terms."
@@ -3935,11 +4033,12 @@
     "set_number": 30,
     "type": "Irrelevant Sentence",
     "context": "(1) The cassowary, a solitary, meat-eating creature who makes its home deep in the jungles of New Guinea, hardly seems like a bird at all. (2) It is enormous, weighing up to 190 pounds. (3) Its plumage is more like hair than feathers; its song is a deep, menacing rumble; and it has lost the capability of flight. (4) Human beings have long been fascinated by birds, particularly by their ability to fly.",
-    "stem": "a. Sentence 1",
+    "stem": "Which sentence does NOT belong in the paragraph?",
     "options": {
+      "A": "Sentence 1",
       "B": "Sentence 2",
       "C": "Sentence 3",
-      "D": "Sentence 4 (1) The park was empty, except for a child who stood just on the other side of the fence, a little girl about seven years old, thin and pale, with dark eyes and dark hair cut short and ragged. (2) The statistics on neglected children in our country probably fall short of the actual numbers. (3) The child wore no coat, only a brown, cotton skirt that was too big for her\u2014pinned at the waist with a safety pin\u2014and a soiled, long-sleeved yellow blouse with rhinestone buttons. (4) Her fingernails were dirty and broken, the tips of her fingers bluish with cold."
+      "D": "Sentence 4"
     },
     "answer": "A",
     "explanation": "The other three sentences objectively discuss the role and qualifications of a meteorologist. Sentence 1 tells us what people think of weather forecasters. Its tone is also much more casual than the rest of the paragraph."
@@ -3951,11 +4050,12 @@
     "set_number": 30,
     "type": "Irrelevant Sentence",
     "context": "(1) The cassowary, a solitary, meat-eating creature who makes its home deep in the jungles of New Guinea, hardly seems like a bird at all. (2) It is enormous, weighing up to 190 pounds. (3) Its plumage is more like hair than feathers; its song is a deep, menacing rumble; and it has lost the capability of flight. (4) Human beings have long been fascinated by birds, particularly by their ability to fly.",
-    "stem": "a. Sentence 1",
+    "stem": "Which sentence does NOT belong in the paragraph?",
     "options": {
+      "A": "Sentence 1",
       "B": "Sentence 2",
       "C": "Sentence 3",
-      "D": "Sentence 4 (1) Ghosts can be either benevolent or malevolent. (2) As someone once said, \u201cI don\u2019t believe in ghosts, but I\u2019m afraid of them.\u201d (3) They can be comic and comfortable, like the old sea captain in The Ghost and Mrs. Muir, or horrific beyond belief, like the ghosts of the revelers at the party in the Overlook Hotel in Stephen King\u2019s The Shining. (4) They can emerge from the afterlife to teach us lessons, like old Marley in A Christmas Carol, or come back moaning to be avenged, like the ghost in Hamlet."
+      "D": "Sentence 4"
     },
     "answer": "B",
     "explanation": "This choice has the objective tone of a textbook and is a general statement. The other choices describe a particular child and are written in a fictional style."
@@ -3967,11 +4067,12 @@
     "set_number": 30,
     "type": "Irrelevant Sentence",
     "context": "(1) The cassowary, a solitary, meat-eating creature who makes its home deep in the jungles of New Guinea, hardly seems like a bird at all. (2) It is enormous, weighing up to 190 pounds. (3) Its plumage is more like hair than feathers; its song is a deep, menacing rumble; and it has lost the capability of flight. (4) Human beings have long been fascinated by birds, particularly by their ability to fly.",
-    "stem": "a. Sentence 1",
+    "stem": "Which sentence does NOT belong in the paragraph?",
     "options": {
+      "A": "Sentence 1",
       "B": "Sentence 2",
       "C": "Sentence 3",
-      "D": "Sentence 4 (1) There are many ways to benefit from a weight-lifting program. (2) Using light weights for many repetitions builds muscle tone and protects against injuries. (3) Using heavy weights for just a few repetitions builds muscle mass and makes the body stronger. (4) There are many gyms that provide personal trainers."
+      "D": "Sentence 4"
     },
     "answer": "B",
     "explanation": "Choices a, c, and d list specific characteristics of the two different types of ghosts, benevolent (good) and malevolent (bad). Choice b is just an ironic observation on the general subject of ghosts."
@@ -3983,11 +4084,12 @@
     "set_number": 30,
     "type": "Irrelevant Sentence",
     "context": "(1) The cassowary, a solitary, meat-eating creature who makes its home deep in the jungles of New Guinea, hardly seems like a bird at all. (2) It is enormous, weighing up to 190 pounds. (3) Its plumage is more like hair than feathers; its song is a deep, menacing rumble; and it has lost the capability of flight. (4) Human beings have long been fascinated by birds, particularly by their ability to fly.",
-    "stem": "a. Sentence 1",
+    "stem": "Which sentence does NOT belong in the paragraph?",
     "options": {
+      "A": "Sentence 1",
       "B": "Sentence 2",
       "C": "Sentence 3",
-      "D": "Sentence 4 (1) C. S. Lewis is best known for his fantasy stories called The Chronicles of Narnia. (2) Lewis lived in Cambridge, England. (3) He was actually a prolific author, however, and wrote a great many books. (4) He was not limited to fantasy, but also wrote science fiction, satire, and many other types of literature."
+      "D": "Sentence 4"
     },
     "answer": "D",
     "explanation": "The first three sentences address different types of weightlifting exercises, while the fourth sentence addresses the topic of trainers at local gyms."
@@ -3999,11 +4101,12 @@
     "set_number": 30,
     "type": "Irrelevant Sentence",
     "context": "(1) The cassowary, a solitary, meat-eating creature who makes its home deep in the jungles of New Guinea, hardly seems like a bird at all. (2) It is enormous, weighing up to 190 pounds. (3) Its plumage is more like hair than feathers; its song is a deep, menacing rumble; and it has lost the capability of flight. (4) Human beings have long been fascinated by birds, particularly by their ability to fly.",
-    "stem": "a. Sentence 1",
+    "stem": "Which sentence does NOT belong in the paragraph?",
     "options": {
+      "A": "Sentence 1",
       "B": "Sentence 2",
       "C": "Sentence 3",
-      "D": "Sentence 4 (1) Ladders come in many shapes and sizes. (2) Aluminum ladders can conduct electricity, and should never be used near power lines. (3) Even wooden ladders, however, will conduct electricity. (4) The safest approach is to keep all ladders safely away from power lines."
+      "D": "Sentence 4"
     },
     "answer": "B",
     "explanation": "The topic of this paragraph is the writings of C. S. Lewis, not his life story. Where he lived is not specifically related to the types of books that he wrote."
@@ -4015,11 +4118,12 @@
     "set_number": 30,
     "type": "Irrelevant Sentence",
     "context": "(1) The cassowary, a solitary, meat-eating creature who makes its home deep in the jungles of New Guinea, hardly seems like a bird at all. (2) It is enormous, weighing up to 190 pounds. (3) Its plumage is more like hair than feathers; its song is a deep, menacing rumble; and it has lost the capability of flight. (4) Human beings have long been fascinated by birds, particularly by their ability to fly.",
-    "stem": "a. Sentence 1",
+    "stem": "Which sentence does NOT belong in the paragraph?",
     "options": {
+      "A": "Sentence 1",
       "B": "Sentence 2",
       "C": "Sentence 3",
-      "D": "Sentence 4 (1) A book is actually a complicated item, composed of many parts. (2) The spine is what holds the book together, just as your spine enables you to stand upright. (3) Many people also enjoy buying used books. (4) The pages are like tongues, speaking words to the reader and communicating ideas."
+      "D": "Sentence 4"
     },
     "answer": "A",
     "explanation": "Choice a addresses different sizes and shapes of ladders, while the rest of the paragraph deals with the dangers of ladders being placed near power lines."
@@ -4031,11 +4135,12 @@
     "set_number": 30,
     "type": "Irrelevant Sentence",
     "context": "(1) The cassowary, a solitary, meat-eating creature who makes its home deep in the jungles of New Guinea, hardly seems like a bird at all. (2) It is enormous, weighing up to 190 pounds. (3) Its plumage is more like hair than feathers; its song is a deep, menacing rumble; and it has lost the capability of flight. (4) Human beings have long been fascinated by birds, particularly by their ability to fly.",
-    "stem": "a. Sentence 1",
+    "stem": "Which sentence does NOT belong in the paragraph?",
     "options": {
+      "A": "Sentence 1",
       "B": "Sentence 2",
       "C": "Sentence 3",
-      "D": "Sentence 4 (1) Firefighters must learn the proper procedures for responding to residential carbon monoxide (CO) emergencies. (2) Upon arriving at the scene of the alarm, personnel shall put on protective clothing and then bring an operational, calibrated CO meter onto the premises. (3) CO poisoning can be lethal, both to firefighters and to ordinary citizens. (4) Occupants of the premises shall then be examined, and if they are experiencing CO poisoning symptoms\u2014i.e., headaches, nausea, confusion, dizziness, and other flu-like symptoms\u2014an Emergency Medical Services (EMS) crew shall be sent immediately to evacuate and administer oxygen to the occupants."
+      "D": "Sentence 4"
     },
     "answer": "C",
     "explanation": "The paragraph as a whole discusses the various parts of a book, but Sentence 3 addresses the topic of bookstores."
@@ -4047,8 +4152,9 @@
     "set_number": 30,
     "type": "Irrelevant Sentence",
     "context": "(1) The cassowary, a solitary, meat-eating creature who makes its home deep in the jungles of New Guinea, hardly seems like a bird at all. (2) It is enormous, weighing up to 190 pounds. (3) Its plumage is more like hair than feathers; its song is a deep, menacing rumble; and it has lost the capability of flight. (4) Human beings have long been fascinated by birds, particularly by their ability to fly.",
-    "stem": "a. Sentence 1",
+    "stem": "Which sentence does NOT belong in the paragraph?",
     "options": {
+      "A": "Sentence 1",
       "B": "Sentence 2",
       "C": "Sentence 3",
       "D": "Sentence 4"
@@ -4063,11 +4169,12 @@
     "set_number": 31,
     "type": "Irrelevant Sentence",
     "context": "(1) Figures have the power to mislead people. (2) Mathematics tells us about economic trends, patterns of disease, and the growth of populations. (3) Math is good at exposing the truth, but it can also perpetuate misunderstandings and untruths.",
-    "stem": "a. 1, 2, 3",
+    "stem": "Which sentence does NOT belong in the paragraph?",
     "options": {
+      "A": "1, 2, 3",
       "B": "2, 3, 1",
       "C": "3, 1, 2",
-      "D": "3, 2, 1 (1) The reason for so many injuries and fatalities is that a vehicle can generate heat of up to 1,500\u00b0F. (2) Firefighters know that the dangers of motor-vehicle fires are too often overlooked. (3) In the United States, 1 out of 5 fires involves motor vehicles, resulting each year in 600 deaths, 2,600 civilian injuries, and 1,200 injuries to firefighters."
+      "D": "3, 2, 1"
     },
     "answer": "D",
     "explanation": "This is the correct order of the events described in the paragraph."
@@ -4079,11 +4186,12 @@
     "set_number": 31,
     "type": "Irrelevant Sentence",
     "context": "(1) Figures have the power to mislead people. (2) Mathematics tells us about economic trends, patterns of disease, and the growth of populations. (3) Math is good at exposing the truth, but it can also perpetuate misunderstandings and untruths.",
-    "stem": "a. 1, 2, 3",
+    "stem": "Which sentence does NOT belong in the paragraph?",
     "options": {
+      "A": "1, 2, 3",
       "B": "1, 3, 2",
       "C": "2, 3, 1",
-      "D": "3, 2, 1 (1) There is no harm in putting a special treat in your child\u2019s lunchbox from time to time. (2) Usually, healthy snacks are defined as foods with low sugar and fat content. (3) Some examples include carrot and celery sticks, granola bars, yogurt drinks, and string cheese. (4) However, in general, it is a much better idea to provide healthy snacks."
+      "D": "3, 2, 1"
     },
     "answer": "C",
     "explanation": "Sentence 2 gives an overview of what the paragraph is about. Sentence 3 gives specific reasons why Sentence 2 is correct. Sentence 1 gives the reason why Sentence 3 is correct."
@@ -4095,11 +4203,12 @@
     "set_number": 31,
     "type": "Irrelevant Sentence",
     "context": "(1) Figures have the power to mislead people. (2) Mathematics tells us about economic trends, patterns of disease, and the growth of populations. (3) Math is good at exposing the truth, but it can also perpetuate misunderstandings and untruths.",
-    "stem": "a. 2, 4, 1, 3",
+    "stem": "Which sentence does NOT belong in the paragraph?",
     "options": {
+      "A": "2, 4, 1, 3",
       "B": "1, 4, 2, 3",
       "C": "1, 2, 3, 4",
-      "D": "3, 1, 2, 4 (1) Additionally, once a year, the association hosts a block party with food, music, and games. (2) The association organizes neighborhood watch teams and liaises with the police department on issues of crime and safety. (3) The main goal of the neighborhood association is to help make the community a safer place."
+      "D": "3, 1, 2, 4"
     },
     "answer": "B",
     "explanation": "Sentence 1 provides a statement about adding a treat to a child\u2019s lunchbox periodically and gives no indication, by its tone or its wording, that it is based upon any other sentence. Sentence 4 tells us that in spite of the truth in that statement, it is best, as a general rule, to provide healthy snacks and it uses the word however, which indicates that it is responding to another idea which we\u2019ve already heard. Sentence 2 with the word usually, gives a definition of what is considered a healthy snack. Sentence 3 goes on to provide specific examples of healthy snacks."
@@ -4111,11 +4220,12 @@
     "set_number": 31,
     "type": "Irrelevant Sentence",
     "context": "(1) Figures have the power to mislead people. (2) Mathematics tells us about economic trends, patterns of disease, and the growth of populations. (3) Math is good at exposing the truth, but it can also perpetuate misunderstandings and untruths.",
-    "stem": "a. 1, 2, 3",
+    "stem": "Which sentence does NOT belong in the paragraph?",
     "options": {
+      "A": "1, 2, 3",
       "B": "3, 2, 1",
       "C": "2, 3, 1",
-      "D": "3, 1, 2 (1) Leaving us behind in a bitter cloud of exhaust, the bus would cough and jolt down the narrow main street of Crossland. (2) Then, even before the bus got moving, she\u2019d look away, ahead toward her real life. (3) But I could always imagine the way it would be once it got out on the open highway, gathered speed, and took Grandma back to a life as exotic to me as the deserts of Egypt. (4) When Grandma\u2019s visit was over, we\u2019d take her down to the Greyhound station, watch her hand her ticket to the uniformed driver, disappear inside, and reappear to wave goodbye\u2014her expression obscured by the bus\u2019s grimy window."
+      "D": "3, 1, 2"
     },
     "answer": "B",
     "explanation": "Sentence 3 is the topic sentence and states the main goal of the neighborhood association. Sentence 2 goes on to cite specific tasks that help the association achieve that goal. Sentence 1, with the word Additionally, tells us that there is one more thing the association does, even though it is a less frequent and less primary responsibility."
@@ -4127,11 +4237,12 @@
     "set_number": 31,
     "type": "Irrelevant Sentence",
     "context": "(1) Figures have the power to mislead people. (2) Mathematics tells us about economic trends, patterns of disease, and the growth of populations. (3) Math is good at exposing the truth, but it can also perpetuate misunderstandings and untruths.",
-    "stem": "a. 4, 2, 1, 3",
+    "stem": "Which sentence does NOT belong in the paragraph?",
     "options": {
+      "A": "4, 2, 1, 3",
       "B": "4, 1, 3, 2",
       "C": "1, 3, 4, 2",
-      "D": "1, 2, 3, 4 (1) The Fifth Amendment of the U.S. Constitution guarantees citizens freedom from double jeopardy in criminal proceedings. (2) It also means a person cannot be tried for a crime for which he has already been convicted; that is to say, a person convicted by a state court cannot be tried for the same offense in, for example, federal court. (3) Finally, a person cannot be punished more than once for the same crime. (4) This means that a person cannot be tried for a crime for which he has already been acquitted."
+      "D": "1, 2, 3, 4"
     },
     "answer": "A",
     "explanation": "In this choice, the order is chronological. In Sentence 4, they take Grandma to the Greyhound station. In Sentence 2, the bus has not yet moved away from the station. In Sentence 1, the bus jolts away but is still in town. In Sentence 3, the bus (at least in the narrator\u2019s mind) is out on the open highway."
@@ -4143,11 +4254,12 @@
     "set_number": 31,
     "type": "Irrelevant Sentence",
     "context": "(1) Figures have the power to mislead people. (2) Mathematics tells us about economic trends, patterns of disease, and the growth of populations. (3) Math is good at exposing the truth, but it can also perpetuate misunderstandings and untruths.",
-    "stem": "a. 1, 4, 2, 3",
+    "stem": "Which sentence does NOT belong in the paragraph?",
     "options": {
+      "A": "1, 4, 2, 3",
       "B": "1, 2, 4, 3",
       "C": "3, 2, 1, 4",
-      "D": "3, 4, 2, 1 (1) If these new policies are any indication, employees will have much less freedom than they did before. (2) The handbook also states that employees must give at least three weeks notice before taking a personal day. (3) The new employee handbook states that anyone who is out sick for more than three days must provide a doctor\u2019s note."
+      "D": "3, 4, 2, 1"
     },
     "answer": "A",
     "explanation": "Sentence 1 is the topic sentence. Sentence 4 defines the term double jeopardy used in Sentence 1; Sentence 2 gives another definition, signaled by also; Sentence 3 begins with the word Finally and gives the last definition."
@@ -4159,11 +4271,12 @@
     "set_number": 31,
     "type": "Irrelevant Sentence",
     "context": "(1) Figures have the power to mislead people. (2) Mathematics tells us about economic trends, patterns of disease, and the growth of populations. (3) Math is good at exposing the truth, but it can also perpetuate misunderstandings and untruths.",
-    "stem": "a. 2, 3, 1",
+    "stem": "Which sentence does NOT belong in the paragraph?",
     "options": {
+      "A": "2, 3, 1",
       "B": "3, 1, 2",
       "C": "3, 2, 1",
-      "D": "1, 3, 2 (1) Every spring the softball field became his favorite destination; he had taken his son, Arnie, there when he was small to teach him how to pitch. (2) He walked home, as usual, through the park and, as usual, passed by the softball field. (3) This memory made him feel sad and guilty. (4) Arnie hadn\u2019t been in the least interested in softball, and so after two or three lessons, he had given up the idea."
+      "D": "1, 3, 2"
     },
     "answer": "C",
     "explanation": "Sentence 3 is clearly the lead sentence as it tells us something about the new employee handbook and is in no way based on information provided in the other two sentences. Sentence 2 uses the word also to indicate that it is telling us something else about the handbook, something that adds to a fact we\u2019ve already been told. Sentence 1, which is making a generalization about the new policies, is based on information we already know from Sentences 3 and 2. Because of this, it can only follow these sentences and not precede them."
@@ -4175,11 +4288,12 @@
     "set_number": 31,
     "type": "Irrelevant Sentence",
     "context": "(1) Figures have the power to mislead people. (2) Mathematics tells us about economic trends, patterns of disease, and the growth of populations. (3) Math is good at exposing the truth, but it can also perpetuate misunderstandings and untruths.",
-    "stem": "a. 2, 1, 4, 3",
+    "stem": "Which sentence does NOT belong in the paragraph?",
     "options": {
+      "A": "2, 1, 4, 3",
       "B": "3, 2, 1, 4",
       "C": "4, 3, 1, 2",
-      "D": "2, 3, 4, 1 (1) If there are expenses incurred, complete report form 103; if there was damage to equipment, complete form 107. (2) If form 107 and form 103 are required, complete form 122 also. (3) Log on to the computer and go to the directory that contains the report forms. (4) As an employee, you must complete all paperwork."
+      "D": "2, 3, 4, 1"
     },
     "answer": "A",
     "explanation": "Sentence 2 sets the stage\u2014this is a memory. After that, the order is chronological: In Sentence 1, the man tries to teach his son how to pitch. In Sentence 4, he wasn\u2019t interested, so he gave up. Sentence 3 logically follows\u2014the memory of giving up makes him feel sad and guilty."
@@ -4191,11 +4305,12 @@
     "set_number": 31,
     "type": "Irrelevant Sentence",
     "context": "(1) Figures have the power to mislead people. (2) Mathematics tells us about economic trends, patterns of disease, and the growth of populations. (3) Math is good at exposing the truth, but it can also perpetuate misunderstandings and untruths.",
-    "stem": "a. 3, 2, 1, 4",
+    "stem": "Which sentence does NOT belong in the paragraph?",
     "options": {
+      "A": "3, 2, 1, 4",
       "B": "1, 3, 4, 2",
       "C": "2, 1, 4, 3",
-      "D": "4, 3, 1, 2 (1) In some areas, the salt is combined with calcium chloride, which is more effective in below-zero temperatures and which melts ice better. (2) After a snow or icefall, city streets are treated with ordinary rock salt. (3) This combination of salt and calcium chloride is also less damaging to foliage along the roadways."
+      "D": "4, 3, 1, 2"
     },
     "answer": "D",
     "explanation": "Sentence 4 sets the reader up to expect a discussion of a procedure. Sentence 3 tells how you can find the right report forms. Sentence 1 leads logically into Sentence 2."
@@ -4207,11 +4322,12 @@
     "set_number": 31,
     "type": "Irrelevant Sentence",
     "context": "(1) Figures have the power to mislead people. (2) Mathematics tells us about economic trends, patterns of disease, and the growth of populations. (3) Math is good at exposing the truth, but it can also perpetuate misunderstandings and untruths.",
-    "stem": "a. 2, 1, 3",
+    "stem": "Which sentence does NOT belong in the paragraph?",
     "options": {
+      "A": "2, 1, 3",
       "B": "1, 3, 2",
       "C": "3, 2, 1",
-      "D": "2, 3, 1 (1) Yet the human brain is the most mysterious and complex object on Earth. (2) It has created poetry and music, planned and executed horrific wars, and devised intricate scientific theories. (3) It thinks and dreams, plots and schemes, and easily holds more information than all the libraries on Earth. (4) It weighs less than three pounds and is hardly more interesting to look at than an overly ripe cauliflower."
+      "D": "2, 3, 1"
     },
     "answer": "A",
     "explanation": "Sentence 2 is the topic sentence. Sentence 1 provides reasons for the procedure described in the topic sentence. Sentence 3 gives further definition as a conclusion."
@@ -4223,11 +4339,12 @@
     "set_number": 31,
     "type": "Irrelevant Sentence",
     "context": "(1) Figures have the power to mislead people. (2) Mathematics tells us about economic trends, patterns of disease, and the growth of populations. (3) Math is good at exposing the truth, but it can also perpetuate misunderstandings and untruths.",
-    "stem": "a. 1, 3, 4, 2",
+    "stem": "Which sentence does NOT belong in the paragraph?",
     "options": {
+      "A": "1, 3, 4, 2",
       "B": "2, 1, 4, 3",
       "C": "3, 1, 2, 4",
-      "D": "4, 1, 2, 3 (1) Internal combustion engines traditionally required a carburetor to function correctly. (2) The carburetor was a small chamber where the gasoline vapors mixed with air. (3) Nowadays, however, fuel injection has made the carburetor obsolete. (4) Gasoline requires oxygen to burn, and without this mixture, the engine could not run."
+      "D": "4, 1, 2, 3"
     },
     "answer": "D",
     "explanation": "The word Yet at the beginning of Sentence 1 is a clue that this is not the beginning sentence. Sentences 4 and 1 are the only ones that logically follow each other, so the other choices can be ruled out."
@@ -4239,11 +4356,12 @@
     "set_number": 31,
     "type": "Irrelevant Sentence",
     "context": "(1) Figures have the power to mislead people. (2) Mathematics tells us about economic trends, patterns of disease, and the growth of populations. (3) Math is good at exposing the truth, but it can also perpetuate misunderstandings and untruths.",
-    "stem": "a. 4, 3, 2, 1",
+    "stem": "Which sentence does NOT belong in the paragraph?",
     "options": {
+      "A": "4, 3, 2, 1",
       "B": "2, 4, 3, 1",
       "C": "1, 2, 4, 3",
-      "D": "3, 2, 1, 4 (1) They are easy to plant and delightful to look at. (2) Irises, also called flags, are a colorful flower that grows in moist soil. (3) They are common all over the United States, and make a wonderful choice for any yard."
+      "D": "3, 2, 1, 4"
     },
     "answer": "C",
     "explanation": "Sentence 1 introduces the topic of carburetors. Sentence 2 defines what a carburetor is, while Sentence 4 explains its importance. Sentence 3 provides a conclusion to the paragraph."
@@ -4255,11 +4373,12 @@
     "set_number": 31,
     "type": "Irrelevant Sentence",
     "context": "(1) Figures have the power to mislead people. (2) Mathematics tells us about economic trends, patterns of disease, and the growth of populations. (3) Math is good at exposing the truth, but it can also perpetuate misunderstandings and untruths.",
-    "stem": "a. 3, 1, 2",
+    "stem": "Which sentence does NOT belong in the paragraph?",
     "options": {
+      "A": "3, 1, 2",
       "B": "2, 3, 1",
       "C": "2, 1, 3",
-      "D": "1, 3, 2 (1) My friend Paul is an excellent example of reliability. (2) He always keeps his word, even when it becomes inconvenient or costly to him. (3) This is the secret of being reliable: do what you say you\u2019ll do, no matter what."
+      "D": "1, 3, 2"
     },
     "answer": "B",
     "explanation": "Sentence 2 is the topic sentence, introducing the subject. Sentence 3 expands the topic, and Sentence 1 concludes with a general observation on the use of irises."
@@ -4271,8 +4390,9 @@
     "set_number": 31,
     "type": "Irrelevant Sentence",
     "context": "(1) Figures have the power to mislead people. (2) Mathematics tells us about economic trends, patterns of disease, and the growth of populations. (3) Math is good at exposing the truth, but it can also perpetuate misunderstandings and untruths.",
-    "stem": "a. 1, 2, 3",
+    "stem": "Which sentence does NOT belong in the paragraph?",
     "options": {
+      "A": "1, 2, 3",
       "B": "2, 1, 3",
       "C": "2, 3, 1",
       "D": "3, 1, 2"
@@ -6506,7 +6626,7 @@
     "type": "Sentence Correction",
     "stem": "Like trees have rings to determine their age, so do growth rings on the scales of some \ufb01sh.",
     "options": {
-      "A": "Like trees have rings to determine their age, so do growth rings on the scales of some \ufb01sh.",
+      "A": "No change (original sentence is correct as written)",
       "B": "Like trees have rings to determine their age, some \ufb01sh have growth rings on their scales.",
       "C": "Trees, as some \ufb01sh, have growth rings that determine their age.",
       "D": "As trees have rings, growth rings also appear on some \ufb01sh to determine their age.",
@@ -6758,7 +6878,7 @@
     "type": "Sentence Correction",
     "stem": "Rather than waiting to die, Oregon\u2019s right-to-die law permits mentally stable people, which have less than six months to live, access to medication to accelerate their demise.",
     "options": {
-      "A": "Rather than waiting to die, Oregon\u2019s right-to-die law permits mentally stable people, which have less than six months to live, access to medication to accelerate their demise.",
+      "A": "No change (original sentence is correct as written)",
       "B": "Rather than waiting to die, Oregon\u2019s right-to-die law permits mentally stable people that have less than six months to live to access medication to accelerate their demise.",
       "C": "Rather than waiting to die, the demise of mentally stable people who have less than six months to live can be accelerated by Oregon\u2019s right-to-die law who permits them access to medication.",
       "D": "Rather than waiting to die, mentally stable people who have less than six months to live are permitted access to medication by Oregon\u2019s right-to-die law to accelerate their demise.",
@@ -6848,7 +6968,7 @@
     "type": "Sentence Correction",
     "stem": "Resigned to accept his disquali\ufb01cation from the Olympic trials, there was only silence in the locker room.",
     "options": {
-      "A": "Resigned to accept his disquali\ufb01cation from the Olympic trials, there was only silence in the locker room.",
+      "A": "No change (original sentence is correct as written)",
       "B": "There was only silence in the locker room, resigned to accept his disquali\ufb01cation from the Olympic trials.",
       "C": "Silent in the locker room, resigned to accept his disquali\ufb01cation from the Olympic trials.",
       "D": "Resigned to accept his disquali\ufb01cation from the Olympic trials, silence permeated the locker room.",
@@ -7082,7 +7202,7 @@
     "type": "Sentence Correction",
     "stem": "Inspired by the success of Disneyland Paris, one French politician wants to create France\u2019s very own theme park devoted to Napoleon Bonaparte, with construction slated to begin in 2014 provided enough funds are raised.",
     "options": {
-      "A": "Inspired by the success of Disneyland Paris, one French politician wants to create France\u2019s very own theme park devoted to Napoleon Bonaparte, with construction slated to begin in 2014 provided enough funds are raised.",
+      "A": "No change (original sentence is correct as written)",
       "B": "Inspired by the success of Disneyland Paris with construction slated to begin in 2014, one French politician wants to create France\u2019s very own theme park devoted to Napoleon Bonaparte, provided enough funds are raised.",
       "C": "One French politician wants to create France\u2019s very own theme park devoted to Napoleon Bonaparte, inspired by the success of Disneyland Paris with construction slated to begin in 2014 provided enough funds are raised.",
       "D": "One French politician, inspired by the success of Disneyland Paris, wants to create France\u2019s very own theme park devoted to Napoleon Bonaparte, with construction slated to begin, provided enough funds are raised, in 2014.",
@@ -7100,7 +7220,7 @@
     "type": "Sentence Correction",
     "stem": "Yellow saddle goat\ufb01sh in the Red Sea have the capability to hunt in groups, groups with designated members who spread out to cut off the escape routes of the prey.",
     "options": {
-      "A": "Yellow saddle goat\ufb01sh in the Red Sea have the capability to hunt in groups, groups with designated members who spread out to cut off the escape routes of the prey.",
+      "A": "No change (original sentence is correct as written)",
       "B": "Red Sea yellow saddle goat\ufb01sh are capable of hunting in groups, groups with designated members who spread out to cut off the prey\u2019s escape routes.",
       "C": "Red Sea yellow saddle goat\ufb01sh have the capability to hunt in groups with designated chosen members who spread out to cut off the prey\u2019s escape routes.",
       "D": "Yellow saddle goat\ufb01sh in the Red Sea are capable of hunting in groups with designated members who spread out to cut off the prey\u2019s escape routes.",
@@ -7118,7 +7238,7 @@
     "type": "Sentence Correction",
     "stem": "The hypothesis about the coevolution of species, such as a predator and prey, adapting to each other\u2019s evolutionary changes, is fascinating.",
     "options": {
-      "A": "The hypothesis about the coevolution of species, such as a predator and prey, adapting to each other\u2019s evolutionary changes, is fascinating.",
+      "A": "No change (original sentence is correct as written)",
       "B": "The hypothesis that species, such as a predator and prey, coevolve to adapt to each other\u2019s evolutionary changes is fascinating.",
       "C": "Coevolution, where species like a predator and prey adapt to each other\u2019s evolutionary changes, is a hypothesis that is fascinating.",
       "D": "The hypothesis regarding coevolution, like a predator and prey adapting to each other\u2019s evolutionary changes, fascinates.",
@@ -7136,7 +7256,7 @@
     "type": "Sentence Correction",
     "stem": "The belief that whales were terrestrial mammals that transitioned into the ocean is supported by evidence of whale fossils with legs and knees.",
     "options": {
-      "A": "The belief that whales were terrestrial mammals that transitioned into the ocean is supported by evidence of whale fossils with legs and knees.",
+      "A": "No change (original sentence is correct as written)",
       "B": "The belief about whales being terrestrial mammals which transitioned into the ocean was supported by whale fossils having legs and knees.",
       "C": "The belief about whales as terrestrial mammals transitioning into the ocean have been supported by evidence of whale fossils with legs and knees.",
       "D": "The belief that whales were terrestrial mammals that made the transition into the ocean is supported by evidence of whale fossils with legs and knees.",
@@ -7172,7 +7292,7 @@
     "type": "Sentence Correction",
     "stem": "New workforce trends suggest that a large number of working wives will outearn their husbands within a generation.",
     "options": {
-      "A": "New workforce trends suggest that a large number of working wives will outearn their husbands within a generation.",
+      "A": "No change (original sentence is correct as written)",
       "B": "According to new workforce trends, a majority of working wives will be outearning their husbands with greater wages within the next generation.",
       "C": "New workforce trends within a generation suggest an outearning of a large number of working wives by their husbands.",
       "D": "Within a generation, a large number of husbands will be outearned by their working wives, according to new workforce trends.",
@@ -7370,7 +7490,7 @@
     "type": "Sentence Correction",
     "stem": "Revolutionary 3-D printers are evidence that far-fetched Star Trek ideas have become a reality, as users are allowed to create physical items from digital blueprints.",
     "options": {
-      "A": "Revolutionary 3-D printers are evidence that far-fetched Star Trek ideas have become a reality, as users are allowed to create physical items from digital blueprints.",
+      "A": "No change (original sentence is correct as written)",
       "B": "Revolutionary 3-D printers, which allow users to create physical items from digital blueprints, are evidence of far-fetched Star Trek ideas being a modern reality.",
       "C": "The idea that far-fetched Star Trek ideas have become a reality is supported by the invention of revolutionary 3-D printers, which allow users to create physical items from digital blueprints.",
       "D": "Proving that far-fetched Star Trek ideas have become a reality, revolutionary 3-D printers allow users to create physical items from digital blueprints.",
@@ -7460,7 +7580,7 @@
     "type": "Sentence Correction",
     "stem": "Instead of viewing their money as a way to alleviate poverty, micro\ufb01nance is now seen by some donors as primarily an investment opportunity.",
     "options": {
-      "A": "Instead of viewing their money as a way to alleviate poverty, micro\ufb01nance is now seen by some donors as primarily an investment opportunity.",
+      "A": "No change (original sentence is correct as written)",
       "B": "Instead of viewing their money as a way to alleviate poverty, micro\ufb01nance is now currently being seen by some donors as primarily an investment opportunity.",
       "C": "Rather than view their money as a way to alleviate poverty, some donors are now primarily seeing micro\ufb01nance as an investment opportunity in today\u2019s world.",
       "D": "Rather than view their money as a way to alleviate poverty, some donors now see micro\ufb01nance as primarily an investment opportunity.",
@@ -7748,7 +7868,7 @@
     "type": "Sentence Correction",
     "stem": "Certain \ufb02ea control methods can become ineffective if used repeatedly on an animal; one reason is suggested by evidence that \ufb02eas, like cockroaches, adapt to their environment and become increasingly immune to popular \ufb02ea medicine with each generation.",
     "options": {
-      "A": "Certain \ufb02ea control methods can become ineffective if used repeatedly on an animal; one reason is suggested by evidence that \ufb02eas, like cockroaches, adapt to their environment and become increasingly immune to popular \ufb02ea medicine with each generation.",
+      "A": "No change (original sentence is correct as written)",
       "B": "If used repeatedly on an animal, one reason that certain \ufb02ea control methods can become ineffective is suggested by evidence that \ufb02eas, like cockroaches, increasingly adapt to their environment and become more immune to popular \ufb02ea medicine with each generation.",
       "C": "If used repeatedly on an animal, one reason certain \ufb02ea control methods can become ineffective is suggested by evidence that there are \ufb02eas, like cockroaches, that increasingly adapt to their environment and become more immune to popular \ufb02ea medicine with each generation.",
       "D": "Certain \ufb02ea control methods can become ineffective if they are used repeatedly on an animal; one reason, which derives from evidence, suggests that \ufb02eas, like cockroaches, adapt to their environment and become immune to increasingly popular \ufb02ea medicine with each generation.",
@@ -7766,7 +7886,7 @@
     "type": "Sentence Correction",
     "stem": "Oscar Arias, who won the Nobel Peace Prize for these efforts in 1987, submitted a peace plan for a series of disputes which led to the Esquipulas Peace Agreement among multiple nations of Central America, namely El Salvador, Guatemala, Nicaragua, Honduras, and Panama, at a time when various armed con\ufb02icts were threatening the stability of the Central American region.",
     "options": {
-      "A": "Oscar Arias, who won the Nobel Peace Prize for these efforts in 1987, submitted a peace plan for a series of disputes which led to the Esquipulas Peace Agreement among multiple nations of Central America, namely El Salvador, Guatemala, Nicaragua, Honduras, and Panama, at a time when various armed con\ufb02icts were threatening the stability of the Central American region.",
+      "A": "No change (original sentence is correct as written)",
       "B": "Oscar Arias submitted a peace plan, which was for a series of disputes leading to the Esquipulas Peace Agreement among multiple nations of Central America, namely El Salvador, Guatemala, Nicaragua, Honduras, and Panama, at a time when various armed con\ufb02icts were threatening the stability of the Central American region, earning him the Nobel Peace Prize in 1987.",
       "C": "Being the receptor of the Nobel Peace Prize for his efforts in 1987, Oscar Arias submitted a peace plan for a series of various armed con\ufb02icts that were threatening the stability of the Central American region which led to the Esquipulas Peace Agreement between El Salvador, Guatemala, Nicaragua, Honduras, and Panama.",
       "D": "At a time when various armed con\ufb02icts were threatening the stability of the Central American region, Oscar Arias submitted a peace plan which led to the Esquipulas Peace Agreement being signed between El Salvador, Guatemala, Nicaragua, Honduras, and Panama; his contribution earned him the Nobel Peace Prize in 1987.",
