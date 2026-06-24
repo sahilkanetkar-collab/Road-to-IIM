@@ -795,7 +795,12 @@
 //  CONSTANTS
 // ══════════════════════════════════════════════════════════════
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx5Ojm_zp4LfsMeelx5e06KNjVH1wfsXdV0keS4407m4FO1HU4EpVb7GKj-ibAsxnspeA/exec';
-const MAX_MARKS = 180;
+const MAX_MARKS    = 180;
+const RC_MAX_MARKS = 80;
+
+function isRCTest(testName) {
+  return testName && /^RC Series/i.test(testName);
+}
 
 const ADMIN_PINS = [
   'IMS1111111111','IMS2222222222','IMS3333333333',
@@ -901,8 +906,8 @@ function fetchAndRender() {
 // ══════════════════════════════════════════════════════════════
 //  HELPERS
 // ══════════════════════════════════════════════════════════════
-function scoreClass(score) {
-  const pct = (score / MAX_MARKS) * 100;
+function scoreClass(score, max) {
+  const pct = (score / (max || MAX_MARKS)) * 100;
   if (pct >= 70) return 'score-high';
   if (pct >= 40) return 'score-mid';
   return 'score-low';
@@ -925,9 +930,9 @@ function timeTaken(t) {
 //  STUDENT VIEW
 // ══════════════════════════════════════════════════════════════
 function renderStudent(data) {
-  const rows = data.rows || data.data || [];
+  const allRows = data.rows || data.data || [];
 
-  if (!rows.length) {
+  if (!allRows.length) {
     document.getElementById('dashContent').innerHTML = `
       <div class="empty-state">
         <div style="font-size:32px;margin-bottom:12px;">📋</div>
@@ -937,15 +942,19 @@ function renderStudent(data) {
     return;
   }
 
-  // Sort by test number
+  // Split VA vs RC
+  const rows   = allRows.filter(r => !isRCTest(r.testName));
+  const rcRows = allRows.filter(r =>  isRCTest(r.testName));
+
+  // ── VA SECTION ──
   rows.sort((a, b) => extractTestNum(a.testName) - extractTestNum(b.testName));
 
-  const best    = Math.max(...rows.map(r => r.score));
-  const avg     = Math.round(rows.reduce((s,r) => s + r.score, 0) / rows.length);
-  const latest  = rows[rows.length - 1];
+  const best    = rows.length ? Math.max(...rows.map(r => r.score)) : 0;
+  const avg     = rows.length ? Math.round(rows.reduce((s,r) => s + r.score, 0) / rows.length) : 0;
+  const latest  = rows.length ? rows[rows.length - 1] : null;
   const tests   = rows.length;
 
-  // Participation chips: Tests 1–20 (expand as needed)
+  // Participation chips
   const takenSet = new Set(rows.map(r => extractTestNum(r.testName)));
   const maxTest  = Math.max(20, ...takenSet);
   let chips = '';
@@ -953,7 +962,7 @@ function renderStudent(data) {
     chips += `<div class="chip ${takenSet.has(i) ? 'taken' : ''}">T${i}</div>`;
   }
 
-  // Section weakness (from sectionErrors, Tests 14+)
+  // Section weakness
   const sectionTotals = {};
   const sectionCounts = {};
   rows.forEach(r => {
@@ -992,14 +1001,12 @@ function renderStudent(data) {
   // Behaviour flags
   const flags = buildBehaviourFlags(rows);
 
-  // All tests table
+  // VA table rows
   let tableRows = '';
   rows.forEach((r, i) => {
     const prev = i > 0 ? rows[i-1].score : null;
-    const sc   = scoreClass(r.score);
-    const hasSA = r.studentAnswers && r.studentAnswers.length > 0;
+    const sc   = scoreClass(r.score, MAX_MARKS);
     const testNum = extractTestNum(r.testName);
-
     tableRows += `
       <tr>
         <td>${r.testName}</td>
@@ -1017,13 +1024,66 @@ function renderStudent(data) {
       </tr>`;
   });
 
+  // ── RC SECTION ──
+  rcRows.sort((a, b) => extractTestNum(a.testName) - extractTestNum(b.testName));
+
+  let rcHtml = '';
+  if (rcRows.length) {
+    const rcBest = Math.max(...rcRows.map(r => r.score));
+    const rcAvg  = Math.round(rcRows.reduce((s,r) => s + r.score, 0) / rcRows.length);
+    let rcTableRows = '';
+    rcRows.forEach((r, i) => {
+      const prev = i > 0 ? rcRows[i-1].score : null;
+      const sc   = scoreClass(r.score, RC_MAX_MARKS);
+      const testNum = extractTestNum(r.testName);
+      rcTableRows += `
+        <tr>
+          <td>${r.testName}</td>
+          <td><span class="score-pill ${sc}">${r.score} / ${RC_MAX_MARKS}</span></td>
+          <td>${r.correct}</td>
+          <td>${r.wrong}</td>
+          <td>${r.skipped}</td>
+          <td>${timeTaken(r.timeTaken)}</td>
+          <td>${deltaHTML(r.score, prev)}</td>
+          <td>
+            <button class="review-btn" onclick='openReview(${JSON.stringify(r)}, ${testNum})'>
+              Review
+            </button>
+          </td>
+        </tr>`;
+    });
+
+    rcHtml = `
+      <div class="section-header" style="margin-top:8px;">
+        RC Series
+        <span style="font-size:12px;color:var(--text-dim)">Best: ${rcBest} / ${RC_MAX_MARKS} &nbsp;·&nbsp; Avg: ${rcAvg}</span>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Test</th>
+              <th>Score</th>
+              <th>Correct</th>
+              <th>Wrong</th>
+              <th>Skipped</th>
+              <th>Time</th>
+              <th>Change</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>${rcTableRows}</tbody>
+        </table>
+      </div>`;
+  }
+
   document.getElementById('dashContent').innerHTML = `
     <!-- Stats -->
     <div class="stats-grid">
       <div class="stat-card">
         <div class="stat-label">Tests Taken</div>
         <div class="stat-value">${tests}</div>
-        <div class="stat-sub">out of all tests</div>
+        <div class="stat-sub">VA tests</div>
       </div>
       <div class="stat-card">
         <div class="stat-label">Best Score</div>
@@ -1033,12 +1093,12 @@ function renderStudent(data) {
       <div class="stat-card">
         <div class="stat-label">Average</div>
         <div class="stat-value">${avg}</div>
-        <div class="stat-sub">across all tests</div>
+        <div class="stat-sub">across VA tests</div>
       </div>
       <div class="stat-card">
         <div class="stat-label">Latest Score</div>
-        <div class="stat-value">${latest.score}</div>
-        <div class="stat-sub">${latest.testName}</div>
+        <div class="stat-value">${latest ? latest.score : '–'}</div>
+        <div class="stat-sub">${latest ? latest.testName : 'No tests yet'}</div>
       </div>
     </div>
 
@@ -1061,8 +1121,8 @@ function renderStudent(data) {
         </div>`).join('')}
       </div>` : ''}
 
-    <!-- All tests table -->
-    <div class="section-header">All Tests</div>
+    <!-- VA tests table -->
+    <div class="section-header">Verbal Ability Tests</div>
     <div class="table-wrap">
       <table>
         <thead>
@@ -1079,7 +1139,9 @@ function renderStudent(data) {
         </thead>
         <tbody>${tableRows}</tbody>
       </table>
-    </div>`;
+    </div>
+
+    ${rcHtml}`;
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -1223,7 +1285,7 @@ function renderAdminView(batchFilter, testFilter) {
 
   let lbRows = '';
   leaderboard.forEach((r, i) => {
-    const sc = scoreClass(r.score);
+    const sc = scoreClass(r.score, isRCTest(r.testName) ? RC_MAX_MARKS : MAX_MARKS);
     lbRows += `
       <tr class="student-row" onclick="openStudentDrill('${r.pin||''}','${r.name}','${r.batch}')">
         <td style="color:var(--text-dim);font-family:'DM Mono',monospace">${i+1}</td>
@@ -1351,7 +1413,7 @@ function openStudentDrill(pin, name, batch) {
           ${stuRows.map(r => `
             <tr>
               <td>${r.testName}</td>
-              <td><span class="score-pill ${scoreClass(r.score)}">${r.score}</span></td>
+              <td><span class="score-pill ${scoreClass(r.score, isRCTest(r.testName) ? RC_MAX_MARKS : MAX_MARKS)}">${r.score}</span></td>
               <td>${r.correct}</td>
               <td>${r.wrong}</td>
               <td>${r.skipped}</td>
@@ -1369,9 +1431,10 @@ function openStudentDrill(pin, name, batch) {
 //  REVIEW MODAL (student)
 // ══════════════════════════════════════════════════════════════
 function openReview(rowData, testNum) {
+  const mx = isRCTest(rowData.testName) ? RC_MAX_MARKS : MAX_MARKS;
   document.getElementById('modalTitle').textContent = rowData.testName + ' — Review';
   document.getElementById('modalSubtitle').textContent =
-    `Score: ${rowData.score} / ${MAX_MARKS}  ·  Correct: ${rowData.correct}  ·  Wrong: ${rowData.wrong}  ·  Skipped: ${rowData.skipped}`;
+    `Score: ${rowData.score} / ${mx}  ·  Correct: ${rowData.correct}  ·  Wrong: ${rowData.wrong}  ·  Skipped: ${rowData.skipped}`;
 
   const sa = rowData.studentAnswers;
 

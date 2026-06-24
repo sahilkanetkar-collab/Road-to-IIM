@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Road to IIM — RC Series 02</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;}
+:root{--navy:#0d1b2a;--navy2:#1a2e45;--gold:#c9a84c;--gold2:#e8c76a;--green:#2ecc71;--red:#e74c3c;--grey:#8899aa;--white:#f0f4f8;--purple:#9b59b6;--panel:280px;}
+body{background:var(--navy);color:var(--white);font-family:'Segoe UI',sans-serif;min-height:100vh;overflow-x:hidden;}
+#loginScreen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:20px;}
+.login-box{background:var(--navy2);border:1px solid var(--gold);border-radius:12px;padding:40px 36px;width:100%;max-width:440px;}
+.login-box h1{color:var(--gold);font-size:1.5rem;text-align:center;margin-bottom:6px;}
+.login-box p{color:var(--grey);font-size:.85rem;text-align:center;margin-bottom:28px;}
+.login-box label{display:block;font-size:.8rem;color:var(--grey);margin-bottom:4px;margin-top:14px;}
+.login-box input,.login-box select{width:100%;background:#0d1b2a;border:1px solid #2a4060;border-radius:6px;padding:10px 12px;color:var(--white);font-size:.95rem;}
+#startBtn{width:100%;margin-top:24px;padding:12px;background:var(--gold);color:var(--navy);font-size:1rem;font-weight:700;border:none;border-radius:8px;cursor:pointer;}
+#topBar{background:var(--navy2);border-bottom:1px solid #1e3a5a;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;padding-right:calc(var(--panel) + 20px);}
+#topBar .logo{color:var(--gold);font-weight:700;font-size:1rem;}
+#timerDisplay{font-size:1.1rem;font-weight:700;color:var(--green);background:#0a2a1a;padding:6px 16px;border-radius:20px;border:1px solid var(--green);}
+#timerDisplay.urgent{color:var(--red);background:#2a0a0a;border-color:var(--red);}
+#progressBar{height:3px;background:#1e3a5a;margin-right:var(--panel);}
+#progressFill{height:100%;background:var(--gold);transition:width .3s;}
+#mainLayout{display:flex;min-height:calc(100vh - 54px);}
+#rcSplit{display:flex;flex:1;max-width:calc(100% - var(--panel));}
+#passagePane{width:48%;padding:24px 20px 80px 28px;border-right:1px solid #1e3a5a;overflow-y:auto;max-height:calc(100vh - 54px);position:sticky;top:54px;}
+#passageTitle{color:var(--gold);font-size:.8rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px;}
+#passageSource{color:var(--grey);font-size:.75rem;margin-bottom:14px;}
+#passageText{font-size:.95rem;line-height:1.85;color:var(--white);}
+#questionArea{flex:1;padding:28px 24px 80px 24px;}
+#sectionTag{display:inline-block;background:#1e3a5a;color:var(--gold);font-size:.72rem;font-weight:700;letter-spacing:.08em;padding:3px 10px;border-radius:4px;margin-bottom:10px;text-transform:uppercase;}
+#questionNumber{color:var(--grey);font-size:.85rem;margin-bottom:8px;}
+#questionStem{font-size:1.02rem;line-height:1.7;color:var(--white);margin-bottom:22px;word-break:break-word;overflow-wrap:break-word;}
+.options-list{list-style:none;display:flex;flex-direction:column;gap:10px;}
+.option-btn{background:#0d1b2a;border:1px solid #1e3a5a;border-radius:8px;padding:12px 16px;cursor:pointer;text-align:left;font-size:.93rem;color:var(--white);transition:all .2s;width:100%;}
+.option-btn:hover{border-color:var(--gold);background:#162030;}
+.option-btn.selected{border-color:var(--gold);background:#1e2e10;color:var(--gold2);}
+.option-btn.marked{border-color:var(--purple);}
+.opt-label{display:inline-block;width:24px;font-weight:700;color:var(--gold);}
+#paletteOverlay{position:fixed;top:0;right:0;width:100%;height:100%;z-index:200;pointer-events:none;display:flex;justify-content:flex-end;}
+#palettePanel{width:280px;height:100%;background:var(--navy2);border-left:1px solid #1e3a5a;padding:16px 12px;overflow-y:auto;pointer-events:all;}
+#paletteGrid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:16px;}
+.pal-btn{width:100%;aspect-ratio:1;border-radius:6px;border:1px solid #1e3a5a;background:#0d1b2a;color:var(--grey);font-size:.78rem;font-weight:600;cursor:pointer;}
+.pal-btn.answered{background:var(--green);color:#fff;border-color:var(--green);}
+.pal-btn.marked{background:var(--purple);color:#fff;border-color:var(--purple);}
+.pal-btn.current{border:2px solid var(--gold);color:var(--gold);}
+#navBar{position:fixed;bottom:0;left:0;right:var(--panel);background:var(--navy2);border-top:1px solid #1e3a5a;display:flex;align-items:center;justify-content:space-between;padding:10px 20px;z-index:150;}
+.nav-btn{background:#1e3a5a;color:var(--white);border:none;border-radius:6px;padding:8px 18px;cursor:pointer;font-size:.9rem;font-weight:600;}
+#submitBtn{background:var(--gold);color:var(--navy);font-weight:700;display:none;}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
+.stat-box{background:var(--navy2);border-radius:8px;padding:16px;text-align:center;border:1px solid #1e3a5a;}
+.stat-box .val{font-size:1.6rem;font-weight:800;}
+.stat-box .lbl{font-size:.75rem;color:var(--grey);margin-top:4px;}
+.stat-box.correct .val{color:var(--green);}
+.stat-box.wrong .val{color:var(--red);}
+.stat-box.accuracy .val{color:var(--gold);}
+.review-card{background:var(--navy2);border-radius:10px;margin-bottom:14px;overflow:hidden;border-left:4px solid var(--grey);word-break:break-word;overflow-wrap:break-word;}
+.review-card.correct{border-left-color:var(--green);}
+.review-card.wrong{border-left-color:var(--red);}
+.review-exp{background:#0a2a15;border-left:3px solid var(--green);padding:10px 14px;font-size:.83rem;line-height:1.6;color:#a8e6c0;margin-top:8px;}
+#testScreen{display:none;}
+#resultsScreen{display:none;padding:28px 32px;max-width:calc(100% - var(--panel));}
+.score-hero{text-align:center;margin-bottom:28px;}
+.score-hero .score-num{font-size:3.5rem;font-weight:900;color:var(--gold);}
+.score-hero .score-sub{font-size:1rem;color:var(--grey);margin-top:4px;}
+.result-btn{padding:10px 24px;border-radius:8px;border:none;cursor:pointer;font-size:.95rem;font-weight:700;margin:0 6px;}
+.result-btn.gold{background:var(--gold);color:var(--navy);}
+.result-btn.ghost{background:transparent;border:1px solid var(--gold);color:var(--gold);}
+#sheet-notice{padding:10px 14px;border-radius:6px;font-size:.85rem;margin-bottom:16px;display:none;}
+#sheet-notice.submitting{background:#1a2e10;color:#c9e88a;border:1px solid #4a7a20;}
+#sheet-notice.success{background:#0a2a15;color:#2ecc71;border:1px solid #2ecc71;}
+#sheet-notice.failure{background:#2a0a0a;color:#e74c3c;border:1px solid #e74c3c;}
+.review-card-header{padding:14px 16px;display:flex;align-items:flex-start;gap:10px;}
+.review-badge{min-width:32px;height:32px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.85rem;}
+.badge-correct{background:var(--green);color:#fff;}
+.badge-wrong{background:var(--red);color:#fff;}
+.badge-skipped{background:var(--grey);color:#fff;}
+.review-stem{font-size:.9rem;line-height:1.6;flex:1;}
+.review-opts{padding:0 16px 8px;}
+.review-opt{font-size:.83rem;padding:4px 0;color:var(--grey);}
+.review-opt.correct-opt{color:var(--green);font-weight:700;}
+.review-opt.your-wrong{color:var(--red);}
+.misses-box{background:#0d1b2a;border:1px solid #2a4060;border-radius:8px;padding:14px;margin-top:20px;}
+.misses-box h3{color:var(--gold);font-size:.9rem;margin-bottom:8px;}
+.misses-box textarea{width:100%;background:#0a1520;border:1px solid #1e3a5a;border-radius:6px;padding:10px;color:var(--white);font-size:.83rem;font-family:'Segoe UI',sans-serif;resize:vertical;min-height:80px;}
+.copy-btn{margin-top:8px;padding:6px 14px;background:var(--navy2);border:1px solid var(--gold);color:var(--gold);border-radius:6px;font-size:.8rem;cursor:pointer;}
+.pal-legend{font-size:.72rem;color:var(--grey);margin-top:8px;}
+.pal-legend span{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px;vertical-align:middle;}
+@media (max-width:768px){
+#paletteOverlay{display:none;}
+#palettePanel{width:280px;}
+#rcSplit{flex-direction:column;}
+#passagePane{width:100%;max-height:40vh;position:relative;top:0;border-right:none;border-bottom:1px solid #1e3a5a;padding:16px;}
+#questionArea{padding:16px 16px 80px 16px;}
+#topBar{padding-right:16px;}
+#progressBar{margin-right:0;}
+#navBar{right:0;padding:8px 12px;}
+.nav-btn{padding:7px 10px;font-size:.8rem;}
+.stats-grid{grid-template-columns:repeat(2,1fr);}
+.login-box input,.login-box select{font-size:1rem;}
+.score-hero .score-num{font-size:2.4rem;}
+#resultsScreen{max-width:100%;padding:16px;}
+}
+@media (max-width:768px){#paletteOverlay.mobile-open{display:flex;}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+<div class="login-box">
+  <h1>Road to IIM</h1>
+  <p>RC Series 02 &nbsp;&middot;&nbsp; RC Drill &nbsp;&middot;&nbsp; 20 Questions &nbsp;&middot;&nbsp; 25 Minutes</p>
+  <label>Full Name</label>
+  <input type="text" id="inputName" placeholder="Your full name" autocomplete="off">
+  <label>IMS PIN</label>
+  <input type="text" id="inputPin" placeholder="STU or IMS + 10 digits" autocomplete="off">
+  <label>Batch</label>
+  <select id="inputBatch">
+    <option value="">-- Select batch --</option>
+    <optgroup label="Classroom">
+      <option>A2701</option><option>A2702</option><option>A2703</option>
+      <option>A2704</option><option>A2705</option><option>A2706</option>
+      <option>A2707</option><option>A2708</option><option>A2709</option>
+      <option>A2710</option><option>A2711</option><option>A2712</option>
+    </optgroup>
+    <optgroup label="School"><option>Zebar</option></optgroup>
+    <optgroup label="Online">
+      <option>27E101</option><option>27E102</option><option>27E103</option>
+      <option>27E104</option><option>27E105</option>
+    </optgroup>
+    <optgroup label="Admin"><option>Admin</option></optgroup>
+  </select>
+  <div id="loginErr" style="display:none;margin-top:10px;color:var(--red);font-size:.83rem;"></div>
+  <button id="startBtn" onclick="startTest()">Begin Test &rarr;</button>
+</div>
+</div>
+
+<!-- TEST -->
+<div id="testScreen">
+  <div id="topBar">
+    <span class="logo">Road to IIM &middot; RC Series 02</span>
+    <div id="timerDisplay">25:00</div>
+  </div>
+  <div id="progressBar"><div id="progressFill" style="width:0%"></div></div>
+  <div id="mainLayout">
+    <div id="rcSplit">
+      <div id="passagePane">
+        <div id="passageTitle"></div>
+        <div id="passageSource"></div>
+        <div id="passageText"></div>
+      </div>
+      <div id="questionArea">
+        <div id="sectionTag"></div>
+        <div id="questionNumber"></div>
+        <div id="questionStem"></div>
+        <ul class="options-list" id="optionsList"></ul>
+      </div>
+    </div>
+  </div>
+  <div id="paletteOverlay">
+    <div id="palettePanel">
+      <div style="color:var(--gold);font-weight:700;font-size:.85rem;margin-bottom:10px;">Questions</div>
+      <div id="paletteGrid"></div>
+      <div class="pal-legend">
+        <span style="background:var(--green)"></span>Answered &nbsp;
+        <span style="background:var(--purple)"></span>Marked &nbsp;
+        <span style="background:#0d1b2a;border:1px solid #1e3a5a"></span>Unvisited
+      </div>
+    </div>
+  </div>
+  <div id="navBar">
+    <button class="nav-btn" onclick="navigate(-1)">&larr; Prev</button>
+    <button class="nav-btn" onclick="togglePalette()">Questions</button>
+    <button class="nav-btn" onclick="markForReview()">&#9733; Mark</button>
+    <button class="nav-btn" onclick="clearAnswer()">Clear</button>
+    <button class="nav-btn" onclick="navigate(1)">Next &rarr;</button>
+    <button class="nav-btn" id="submitBtn" onclick="confirmSubmit()">Submit Test</button>
+  </div>
+</div>
+
+<!-- RESULTS -->
+<div id="resultsScreen">
+  <div style="background:var(--navy2);border-bottom:1px solid #1e3a5a;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;">
+    <span style="color:var(--gold);font-weight:700;">Road to IIM &middot; RC Series 02 — Results</span>
+  </div>
+  <div style="padding:28px 32px;">
+    <div class="score-hero" id="scoreHero"></div>
+    <div id="sheet-notice"></div>
+    <div class="stats-grid" id="statsGrid"></div>
+    <div style="text-align:center;margin-bottom:24px;">
+      <button class="result-btn gold" onclick="location.href='road_to_iim_tracker_v2.html'">Go to Tracker</button>
+      <button class="result-btn ghost" onclick="location.href='https://sahilkanetkar-collab.github.io/Road-to-IIM/'">All Tests</button>
+      <button class="result-btn ghost" onclick="generatePDF()">Download PDF</button>
+    </div>
+    <div class="misses-box">
+      <h3>RC Misses</h3>
+      <textarea id="missesText" readonly></textarea>
+      <button class="copy-btn" onclick="copyMisses(event)">Copy Misses</button>
+    </div>
+    <h3 style="color:var(--gold);margin:24px 0 12px;">Review All Questions</h3>
+    <div id="review-list"></div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script>
+const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbx5Ojm_zp4LfsMeelx5e06KNjVH1wfsXdV0keS4407m4FO1HU4EpVb7GKj-ibAsxnspeA/exec';
+const timer_duration=25;
+const ADMIN_PINS=['IMS1111111111','IMS2222222222','IMS3333333333','IMS4444444444','IMS5555555555'];
+
+const PASSAGES=[
+{
+id:1,
+title:"Passage 1 -- Economics / Social Mobility",
+source:"Original. Based on the ideas of Raj Chetty and mobility economics literature.",
+text:`The intuition that hard work produces upward mobility is not simply a cultural narrative -- it was, for much of the twentieth century, an approximation of a measurable reality. Studies of birth cohorts born in the United States in the 1940s showed that roughly ninety per cent of children ended up earning more than their parents. The American Dream, as an empirical claim, was not entirely wrong.
+
+The same studies, applied to cohorts born in the 1980s, produced a number closer to fifty per cent. This is not a story about individuals becoming less industrious or less ambitious. The structural conditions that made upward mobility probable have eroded: geographic concentration of opportunity, the declining wage premium for mid-skill work, and the increasing role of parental wealth in determining access to quality education. In this environment, hard work remains necessary -- but it has ceased to be sufficient.
+
+What is most striking about recent mobility research is not the decline itself but the geographic specificity of it. Mobility has not declined uniformly. Children born in certain counties -- broadly, those with lower residential segregation, stronger public school systems, and denser civic networks -- continue to show mobility rates close to those of the 1940s. This finding cuts in two directions. It suggests that decline is not inevitable -- that something about local conditions makes the difference. But it also suggests that where you are born is now nearly as determinative of your economic future as who your parents are. The accident of geography has become, in effect, a second inheritance.`
+},
+{
+id:2,
+title:"Passage 2 -- Current Affairs / Semiconductor Geopolitics",
+source:"Original.",
+text:`The semiconductor industry presents a paradox that most discussions of globalisation were not equipped to address: the most economically interconnected supply chain in history has become, in the span of a decade, the central terrain of a geopolitical competition. A chip manufactured in Taiwan contains materials mined in the Democratic Republic of Congo, processed in Japan, and designed using software from American firms -- and that same chip powers the military systems, artificial intelligence infrastructure, and consumer electronics of every major power simultaneously.
+
+The response of the United States government to this recognition was swift and, by historical standards, radical. The CHIPS and Science Act of 2022 committed over fifty billion dollars to domestic semiconductor manufacturing -- not because American firms could not access chips on the open market, but because policymakers had concluded that dependency on foreign production of a critical technology was itself a national security vulnerability, regardless of current access. The logic was explicitly precautionary: the risk being hedged against was not a present shortage but a future disruption.
+
+What this marks is a genuine shift in how governments conceive of industrial policy. For thirty years, the dominant framework held that efficiency -- achieved through global specialisation -- was the primary criterion for evaluating supply chains. Security considerations were acknowledged but treated as secondary, manageable through diplomacy and stockpiles. The CHIPS Act signals that this hierarchy has inverted. Resilience, not efficiency, is now the governing criterion. The costs of this inversion -- in taxpayer expenditure, in trade friction, in slower diffusion of technology -- are real. Whether they are worth bearing is the question that the next decade will answer.`
+},
+{
+id:3,
+title:"Passage 3 -- Pop Culture / Celebrity Culture",
+source:"Original.",
+text:`There is a peculiar contract at the heart of contemporary celebrity culture. The audience demands authenticity -- behind-the-scenes footage, unfiltered social media posts, candid interviews in which the celebrity admits to anxiety, self-doubt, or ordinary human failure. The celebrity supplies it. And both parties understand, without saying so, that the authenticity being supplied is itself a performance -- carefully calibrated, professionally managed, and designed to produce the sensation of intimacy without its substance.
+
+This is not hypocrisy. It is a more interesting thing: a shared fiction that both parties enter willingly, knowing it is fiction, and which produces real emotional experiences for both. The fan who feels genuine warmth for a celebrity they have never met is not deluded. They have engaged with a persona that was constructed to produce exactly that warmth, and it worked. The fact that the warmth is a product of craft rather than of actual relationship does not make it less warmly felt.
+
+What has changed in the social media era is the speed at which the fiction must be renewed. A celebrity whose persona goes unrefreshed for more than a few weeks risks appearing either curated or irrelevant -- both of which break the illusion. The result is an industrial production of apparent spontaneity: teams of writers producing posts that appear unconsidered, stylists designing outfits that appear thrown-together, and PR strategies built around what are presented as unguarded moments. The effort required to appear effortless has become one of the defining labour conditions of modern fame.`
+},
+{
+id:4,
+title:"Passage 4 -- Science / Climate Modelling",
+source:"Original. Based on ideas in IPCC literature and climate science communication.",
+text:`Climate models are simultaneously the most scrutinised and the most misunderstood tools in contemporary science. They are scrutinised because the stakes of their projections are enormous and because their outputs shape policy decisions affecting trillions of dollars and billions of lives. They are misunderstood because the nature of what they do is routinely confused with the nature of what they claim.
+
+A climate model does not predict the future. It simulates the future under specified conditions. Feed it one set of assumptions about greenhouse gas concentrations, land use changes, and solar forcing, and it produces one trajectory. Feed it a different set, and it produces a different one. The spread of outcomes across these trajectories -- what scientists call the ensemble -- is not a measure of the models' uncertainty about the future; it is a representation of the uncertainty in the inputs. The models themselves are, within their domains, remarkably consistent.
+
+The conflation of input uncertainty with model failure has been particularly damaging in public discourse. When a journalist reports that "climate models disagree" about how much warming will occur by 2100, they are almost always describing the spread of the ensemble -- different scenarios, different inputs, different outcomes. The models are not contradicting each other. They are doing exactly what they are designed to do. But this conflation provides rhetorical cover for those who wish to dismiss climate science wholesale -- allowing them to cite the spread of projections as evidence of unreliability, when it is, in fact, evidence of intellectual honesty.`
+},
+{
+id:5,
+title:"Passage 5 -- Current Affairs / Housing Policy",
+source:"Original.",
+text:`The housing crisis in most major cities is presented, in popular discourse, as a problem of supply: there are not enough homes, so prices rise. Build more homes, and prices will fall. This framing has the virtue of simplicity and the defect of partiality. Supply constraints are real. But they explain only part of what has happened to urban housing markets over the past three decades, and the part they do not explain is the part that is hardest to fix.
+
+What supply arguments often underestimate is the role of housing as a financial asset. In a world where residential property has outperformed most other investment categories for two consecutive generations, housing is no longer merely where people live -- it is where wealth is stored, leveraged, and transmitted across generations. This changes the demand structure fundamentally. Demand for housing as shelter responds to population growth and income levels. Demand for housing as an asset responds to interest rates, expected capital gains, and the relative attractiveness of other investments. These two demand structures are partially independent of each other -- and supply increases, while they may reduce shelter demand pressure, do not necessarily deflate asset demand.
+
+The implication is uncomfortable for both sides of the political debate. The left's preferred solution -- public housing at scale -- addresses shelter demand but largely ignores asset dynamics. The right's preferred solution -- planning deregulation and private construction -- addresses supply but assumes that asset demand will respond to the same signals as shelter demand. Both are operating with an incomplete model of what the market they are trying to fix actually is.`
+}
+];
+
+const QUESTIONS=[
+{id:1,section:"RC",passage:1,qtype:"inference",
+stem:`The passage suggests that the relationship between individual effort and economic mobility is best understood as`,
+opts:["transformed -- effort that was previously sufficient to produce mobility now operates within structural constraints that limit its effect","unchanged across generations -- effort has always been necessary but never sufficient for upward mobility","irrelevant to mobility outcomes, which are determined almost entirely by geography and parental wealth","cyclical -- effort produces mobility in some decades and fails to in others, depending on macroeconomic conditions"],
+answer:"A",
+exp:`Correct Answer: A. The passage says hard work "remains necessary -- but has ceased to be sufficient." This is a change from an earlier state -- not that effort was always insufficient (eliminates Option A), and not that it is now irrelevant (eliminates Option C). Option D introduces a cyclical claim not in the passage.`},
+
+{id:2,section:"RC",passage:1,qtype:"vocabulary",
+stem:`The author's description of geography as "a second inheritance" is best understood as implying that`,
+opts:["children in high-mobility counties receive financial transfers from local government that function like family wealth","geographic mobility -- the ability to move to high-opportunity areas -- is the most reliable path to upward economic mobility","the county of birth now confers or denies economic advantages with a degree of determinism previously associated only with family background","inherited wealth and inherited geography are equally distributed across the American population"],
+answer:"C",
+exp:`Correct Answer: C. "Second inheritance" uses the logic of the first -- inheritance (family wealth) is something you receive by accident of birth with lasting economic consequences. The author is saying geography now operates the same way: you receive it at birth, you did not choose it, and it shapes your economic future profoundly. Option A misreads "inheritance" as a literal transfer. Option C conflates geographic mobility with the metaphor. Option D makes a distributional claim not in the passage.`},
+
+{id:3,section:"RC",passage:1,qtype:"assumption",
+stem:`Which of the following, if true, would most seriously undermine the author's claim that the decline in mobility is structural rather than individual?`,
+opts:["Survey data show that individuals in low-mobility counties report lower levels of personal ambition than those in high-mobility counties","The wage premium for college education has increased significantly over the same period that mobility has declined","High-mobility counties tend to have higher average incomes than low-mobility counties","The children of immigrants, who tend to cluster in specific geographic areas, show higher mobility rates than native-born children with similar parental incomes"],
+answer:"A",
+exp:`Correct Answer: A. The author explicitly rules out individual explanation: "This is not a story about individuals becoming less industrious or less ambitious." If survey data showed that individuals in low-mobility areas actually are less ambitious, the structural explanation would need to contend with an individual-level variable. Option B is compatible with structural explanations. Option C is consistent with the geography argument. Option D introduces a subgroup finding that does not directly challenge the structural claim.`},
+
+{id:4,section:"RC",passage:1,qtype:"tone",
+stem:`The author's tone when presenting the finding that some counties retain high mobility rates is best described as`,
+opts:["celebratory, suggesting that high-mobility counties offer a model that can be easily replicated nationally","sceptical, implying the finding is a statistical anomaly that does not challenge the overall trend","cautiously optimistic but qualified, noting the finding offers hope while simultaneously deepening the problem of geographic determinism","neutral and descriptive, presenting the data without drawing any evaluative conclusions"],
+answer:"C",
+exp:`Correct Answer: C. "This finding cuts in two directions" is the author's own signal that the finding is double-edged. The first direction (decline is not inevitable) is the hopeful reading; the second (geography is now as determinative as parentage) deepens the concern. The author notes both. Option A ignores the second cut. Option B is wrong -- the author does not dismiss the finding. Option D is wrong -- "cuts in two directions" is explicitly evaluative.`},
+
+{id:5,section:"RC",passage:2,qtype:"inference",
+stem:`The author implies that the primary reason the US government passed the CHIPS Act was`,
+opts:["that American semiconductor firms had lost their technological lead to Asian competitors and required subsidies to recover it","that policymakers had decided that strategic dependence on foreign suppliers was unacceptable regardless of whether supply was currently secure","that a recent supply disruption had demonstrated the vulnerability of existing semiconductor supply chains to geopolitical pressure","that the European Union's investment in domestic chip manufacturing had created a competitive disadvantage for American firms"],
+answer:"B",
+exp:`Correct Answer: B. The passage states explicitly: "not because American firms could not access chips on the open market, but because policymakers had concluded that dependency on foreign production... was itself a national security vulnerability." The trigger was not a current disruption (eliminates Option C) but a precautionary judgement about dependency. Option A is not in the passage. Option D is not mentioned.`},
+
+{id:6,section:"RC",passage:2,qtype:"vocabulary",
+stem:`The passage's description of the semiconductor supply chain as a "paradox" most nearly implies that`,
+opts:["the very interdependence that made the supply chain efficient is what made it a source of strategic vulnerability","the supply chain is technologically complex in ways that make it difficult to replicate domestically","semiconductor manufacturers failed to anticipate that their products would become militarily significant","the global distribution of semiconductor production was always politically unstable, despite appearing otherwise"],
+answer:"A",
+exp:`Correct Answer: A. The paradox is that the most interconnected supply chain became a geopolitical battleground -- the interconnection that was the source of efficiency is simultaneously the source of vulnerability. Option A is about replication difficulty, not the paradox. Option C imports manufacturer intent not in the passage. Option D makes a historical stability claim ("always politically unstable") that goes beyond the passage.`},
+
+{id:7,section:"RC",passage:2,qtype:"tone",
+stem:`The author's rhetorical strategy in the final paragraph is best described as`,
+opts:["arguing that the inversion of efficiency and resilience as policy criteria is economically unjustifiable","questioning whether national security concerns are sufficient to justify the abandonment of global trade principles","endorsing the CHIPS Act as a necessary response to a genuine threat while warning against overreach","acknowledging the real costs of the policy shift while declining to render a final verdict on whether it is correct"],
+answer:"D",
+exp:`Correct Answer: D. "The costs... are real. Whether they are worth bearing is the question that the next decade will answer" -- the author catalogues the costs honestly and then explicitly defers judgement to the future. This is a deliberate suspension of verdict, not an endorsement or a rejection. Options A and D suggest the author has taken a position against the policy; the passage does not. Option C suggests endorsement with caveats; the passage is more agnostic than that.`},
+
+{id:8,section:"RC",passage:2,qtype:"assumption",
+stem:`The argument in the passage depends on which of the following assumptions?`,
+opts:["Taiwan is the only country currently capable of manufacturing the most advanced semiconductor chips","A government's decision to prioritise resilience over efficiency in supply chains will necessarily increase domestic manufacturing capacity","Geopolitical risk to semiconductor supply is real and not merely a perception manufactured by domestic industry lobbying","The CHIPS Act will be sufficient on its own to reduce American strategic dependence on foreign chip production"],
+answer:"C",
+exp:`Correct Answer: C. The entire argument for the policy shift rests on the premise that the risk is genuine -- that geopolitical disruption to semiconductor supply is a real possibility. If the risk were a lobbying fiction, the precautionary logic collapses. Option A is a strong factual claim not required by the argument. Option B confuses intent with outcome. Option D makes a sufficiency claim the passage does not make.`},
+
+{id:9,section:"RC",passage:3,qtype:"inference",
+stem:`The author would most likely agree that the audience's demand for celebrity authenticity is`,
+opts:["misguided, because it prevents celebrities from presenting a professionally polished public image","self-defeating, because the supply of performed authenticity makes genuine intimacy between celebrity and fan impossible","best understood as a demand for the experience of intimacy rather than its literal reality","a recent development driven entirely by the affordances of social media platforms"],
+answer:"C",
+exp:`Correct Answer: C. The author says the performance "produce[s] the sensation of intimacy without its substance" -- and then adds that the fan who feels warmth is not deluded because the warmth is real even if the relationship is not. The audience is, on this account, seeking and receiving the experience rather than the fact. Options A and B are more negative than the author's position. Option D is partially right (social media changed the pace) but the demand for authenticity is described as pre-existing the social media era.`},
+
+{id:10,section:"RC",passage:3,qtype:"assumption",
+stem:`The author's claim that the audience's emotional response to celebrity is genuine, even though the persona is constructed, depends on which of the following assumptions?`,
+opts:["Celebrities who perform authenticity are more commercially successful than those who do not","Audiences are fully aware of the constructed nature of celebrity personas at all times","The distinction between authentic emotion and performed emotion is impossible to draw in practice","The emotional experiences produced by fictional or constructed relationships are as valid as those produced by real ones"],
+answer:"D",
+exp:`Correct Answer: D. The author says the warmth "is not less warmly felt" because it was produced by craft. This only holds if we accept that the origin of an emotion does not determine its validity -- that a real feeling produced by a constructed stimulus is still a real feeling. Option B overstates -- the passage says both parties understand without saying so, not that audiences are consciously analytical. Option C is a philosophical claim the passage does not need. Option D is commercial, not relevant to the emotional validity argument.`},
+
+{id:11,section:"RC",passage:3,qtype:"vocabulary",
+stem:`The phrase "industrial production of apparent spontaneity" is best understood in context as suggesting that`,
+opts:["the appearance of unscripted behaviour in celebrity culture is now systematically engineered at scale","celebrities have outsourced their personal brand management to large media corporations","modern social media platforms algorithmically amplify content that appears spontaneous over content that appears planned","spontaneity has become so commercially valuable that it is now treated as a product category in the entertainment industry"],
+answer:"A",
+exp:`Correct Answer: A. "Industrial production" signals scale and systematisation; "apparent spontaneity" signals that what is produced looks unplanned but is not. The phrase means: the manufacturing of the look of spontaneity, at scale. Option B captures this. Option A is about outsourcing ownership, which the passage does not claim. Option C introduces algorithmic amplification not in the passage. Option D makes a product category claim that is too literal.`},
+
+{id:12,section:"RC",passage:3,qtype:"tone",
+stem:`Compared to the opening paragraph, the author's tone in the final paragraph is best described as shifting from`,
+opts:["analytical detachment to open moral criticism of the celebrity industry","sociological observation to a more pointed focus on the labour conditions that the dynamic creates","sympathy for celebrity audiences to sympathy for the celebrities themselves","ironic distance to earnest engagement with the psychological costs of modern fame"],
+answer:"B",
+exp:`Correct Answer: B. The opening paragraph is observational -- it describes the contract and the fiction. The final paragraph zooms in on the effort required to sustain the fiction: writers, stylists, PR teams, "the effort required to appear effortless." This is a shift toward examining the structural and labour implications of the phenomenon. Option A is wrong -- the author never becomes morally critical. Option C is a reading not supported by the text. Option D imports earnestness and psychological cost language not in the passage.`},
+
+{id:13,section:"RC",passage:4,qtype:"inference",
+stem:`The passage most strongly implies that reports of climate models "disagreeing" are misleading because`,
+opts:["the journalists reporting them do not have sufficient scientific training to understand the outputs","they describe variation across scenarios with different inputs as if it were inconsistency within the models themselves","the models in question were developed by research teams with competing institutional interests","climate model outputs are too technical to be accurately represented in non-specialist media"],
+answer:"B",
+exp:`Correct Answer: B. The passage explains the conflation precisely: ensemble spread reflects input variation across scenarios, not model inconsistency. When reported as "models disagree," the source of variation is misattributed to the models rather than to the input assumptions. Options A and D may or may not be true but are not the passage's claim. Option C introduces institutional competition not in the passage.`},
+
+{id:14,section:"RC",passage:4,qtype:"tone",
+stem:`The author's description of ensemble spread as "evidence of intellectual honesty" rather than unreliability suggests that the author views the practice of running multiple scenarios as`,
+opts:["a concession scientists make to non-specialist audiences who cannot process single-point predictions","a sign that climate scientists lack confidence in their own models' predictive accuracy","a political strategy to protect climate science from criticism by anticipating objections in advance","a methodologically rigorous response to genuine uncertainty about future human decisions"],
+answer:"D",
+exp:`Correct Answer: D. "Intellectual honesty" means the scientists are representing the genuine uncertainty about inputs -- specifically, about what humans will actually do regarding emissions, land use, and so on. Running multiple scenarios reflects this honestly rather than hiding it. Option A suggests it is audience-facing rather than methodologically driven. Option C imports strategic intent not in the passage. Option D contradicts the passage, which argues the models are "remarkably consistent."`},
+
+{id:15,section:"RC",passage:4,qtype:"assumption",
+stem:`The argument in the final paragraph depends on which of the following assumptions?`,
+opts:["Those who wish to dismiss climate science are aware that ensemble spread reflects input variation, not model inconsistency","Public discourse about climate change would improve if journalists were required to have scientific qualifications","The distinction between input uncertainty and model failure is one that general audiences can, in principle, understand","Climate models have been accurate enough in their past projections to deserve significant public credibility"],
+answer:"C",
+exp:`Correct Answer: C. The author argues that the conflation "provides rhetorical cover" for dismissers -- implying that if the distinction were properly understood, the cover would be removed. This only works if the author believes the distinction is, in principle, communicable and understandable. Option A is possible but not required -- the passage focuses on the effect, not the intent. Option B is policy prescription not required by the argument. Option D addresses past accuracy, not input uncertainty.`},
+
+{id:16,section:"RC",passage:4,qtype:"tone",
+stem:`Which of the following best describes the function of the second paragraph in relation to the first?`,
+opts:["It provides the technical distinction that the first paragraph identified as missing from public understanding","It qualifies the claim made in the first paragraph by introducing evidence that climate models are less reliable than stated","It shifts the passage's focus from the scientific community's practices to the media's misrepresentation of them","It argues against the proposition that climate models should be used as the basis for policy decisions"],
+answer:"A",
+exp:`Correct Answer: A. The first paragraph says models are "misunderstood because the nature of what they do is routinely confused with the nature of what they claim." The second paragraph then explains exactly what models do (simulate, not predict) and what ensemble spread actually means -- providing the clarification that the first paragraph said was missing. Option A inverts the direction. Option C is what the third paragraph does. Option D is not in the passage.`},
+
+{id:17,section:"RC",passage:5,qtype:"inference",
+stem:`The passage suggests that supply-focused solutions to housing affordability are insufficient primarily because`,
+opts:["planning regulations make it physically impossible to build homes quickly enough to meet population growth","increased supply reduces shelter demand pressure but may leave asset-driven demand largely unaffected","private developers have insufficient incentive to build affordable homes without government subsidy","the supply of land in major cities is too constrained to permit the scale of construction required"],
+answer:"B",
+exp:`Correct Answer: B. The passage makes this distinction explicitly -- shelter demand and asset demand are "partially independent," and supply increases "do not necessarily deflate asset demand." Options A, C, and D introduce supply-side factors (planning constraints, developer incentives, land availability) not raised in the passage.`},
+
+{id:18,section:"RC",passage:5,qtype:"vocabulary",
+stem:`The author's claim that the supply argument has "the virtue of simplicity and the defect of partiality" most nearly implies that`,
+opts:["the supply argument is technically correct but politically inconvenient to implement","the supply argument is easy to understand but has been deliberately simplified by those with a political agenda","the supply argument captures a real causal factor but omits others that are equally or more important","the supply argument is internally consistent but rests on empirical assumptions that are contested"],
+answer:"C",
+exp:`Correct Answer: C. "Partiality" means it is only part of the picture -- a partial, not a complete, explanation. "Simplicity" is credited genuinely. The author is saying: this is a real but incomplete account. Option A introduces political inconvenience not in the passage. Option C imports deliberate manipulation. Option D introduces contested empirics not raised.`},
+
+{id:19,section:"RC",passage:5,qtype:"tone",
+stem:`The author's tone when describing the political left's and right's preferred housing solutions is best described as`,
+opts:["partisan, implicitly favouring the right's market-based approach as more practically viable","provocative, using the housing debate to argue for a wholesale rejection of ideological thinking in policy","resigned, suggesting that no politically viable solution exists to the housing crisis","evenhandedly critical, finding both positions deficient for the same underlying reason"],
+answer:"D",
+exp:`Correct Answer: D. The author says both "are operating with an incomplete model" -- both are faulted for the same thing: working with a partial understanding of housing demand. The critique is symmetric and structural, not partisan. Option A picks a side the author does not. Option C imports resignation not in the passage. Option D overreaches; the author does not call for rejection of ideology, only identifies a shared analytical gap.`},
+
+{id:20,section:"RC",passage:5,qtype:"assumption",
+stem:`Which of the following, if true, would most seriously undermine the author's distinction between shelter demand and asset demand?`,
+opts:["In cities where large-scale public housing programmes were implemented, private rents fell significantly","Empirical studies show that increases in housing supply consistently reduce both rents and house price growth in the medium term","The proportion of residential properties held as investment assets rather than primary residences has increased in most major cities","Interest rate increases in 2022 and 2023 produced significant falls in house prices in several major markets"],
+answer:"B",
+exp:`Correct Answer: B. The author's argument rests on the claim that supply increases do not necessarily deflate asset demand. If empirical studies show that supply increases do reduce both rents (shelter demand) and price growth (asset demand) consistently, the distinction between the two demand structures loses its practical force. Option A supports the public housing position but does not address the demand-structure distinction. Option C supports the author's characterisation of the market. Option D is consistent with the author's point about interest rate sensitivity of asset demand.`}
+];
+
+// ── STATE ────────────────────────────────────────────────────────────────────
+let studentName="",studentPin="",studentBatch="";
+let currentQ=0,secondsLeft=timer_duration*60,timerInterval=null;
+let userAnswers=new Array(20).fill(null);
+let markedForReview=new Array(20).fill(false);
+let questionTimes=new Array(20).fill(0);
+let qStartTime=Date.now();
+let testSubmitted=false;
+
+function startTest(){
+  const name=document.getElementById('inputName').value.trim();
+  const pin=document.getElementById('inputPin').value.trim().toUpperCase();
+  const batch=document.getElementById('inputBatch').value;
+  const err=document.getElementById('loginErr');
+  if(!name||!pin||!batch){err.textContent='Please fill in all fields.';err.style.display='block';return;}
+  if(!/^(STU|IMS)\d{10}$/.test(pin)){err.textContent='PIN must be STU or IMS followed by exactly 10 digits.';err.style.display='block';return;}
+  const isAdmin=ADMIN_PINS.includes(pin);
+  if(isAdmin&&batch!=='Admin'){err.textContent='Admin PIN must be used with the Admin batch only.';err.style.display='block';return;}
+  if(!isAdmin&&batch==='Admin'){err.textContent='Only Admin PINs may select the Admin batch.';err.style.display='block';return;}
+  studentName=name;studentPin=pin;studentBatch=batch;
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('testScreen').style.display='block';
+  if(window.innerWidth>768){document.getElementById('paletteOverlay').style.display='flex';}
+  else{document.getElementById('paletteOverlay').style.display='none';}
+  buildPalette();renderQuestion();startTimer();
+}
+
+function startTimer(){
+  timerInterval=setInterval(()=>{
+    secondsLeft--;
+    const m=String(Math.floor(secondsLeft/60)).padStart(2,'0');
+    const s=String(secondsLeft%60).padStart(2,'0');
+    const el=document.getElementById('timerDisplay');
+    el.textContent=m+':'+s;
+    if(secondsLeft<=300)el.classList.add('urgent');
+    if(secondsLeft<=0){clearInterval(timerInterval);submitTest();}
+  },1000);
+}
+
+function renderQuestion(){
+  const q=QUESTIONS[currentQ];
+  const p=PASSAGES[q.passage-1];
+  document.getElementById('passageTitle').textContent=p.title;
+  document.getElementById('passageSource').textContent=p.source;
+  document.getElementById('passageText').innerHTML=p.text.replace(/\n\n/g,'</p><p style="margin-top:1em">').replace(/^/,'<p>').replace(/$/,'</p>');
+  document.getElementById('sectionTag').textContent='RC -- '+q.qtype;
+  document.getElementById('questionNumber').textContent='Question '+(currentQ+1)+' of 20';
+  document.getElementById('questionStem').textContent=q.stem;
+  const ol=document.getElementById('optionsList');
+  ol.innerHTML='';
+  q.opts.forEach((opt,i)=>{
+    const li=document.createElement('li');
+    const btn=document.createElement('button');
+    btn.className='option-btn';
+    if(userAnswers[currentQ]===i)btn.classList.add('selected');
+    if(markedForReview[currentQ])btn.classList.add('marked');
+    btn.innerHTML='<span class="opt-label">'+['A','B','C','D'][i]+'</span> '+opt;
+    btn.onclick=()=>selectAnswer(i);
+    li.appendChild(btn);ol.appendChild(li);
+  });
+  document.getElementById('submitBtn').style.display=(currentQ===19)?'block':'none';
+  updatePalette();updateProgress();
+  qStartTime=Date.now();
+}
+
+function selectAnswer(idx){recordTime();userAnswers[currentQ]=idx;renderQuestion();}
+function clearAnswer(){recordTime();userAnswers[currentQ]=null;markedForReview[currentQ]=false;renderQuestion();}
+function navigate(dir){recordTime();const next=currentQ+dir;if(next>=0&&next<20){currentQ=next;renderQuestion();}}
+function recordTime(){questionTimes[currentQ]+=(Date.now()-qStartTime);qStartTime=Date.now();}
+
+let paletteOpen=window.innerWidth>768;
+function togglePalette(){
+  paletteOpen=!paletteOpen;
+  const isMobile=window.innerWidth<=768;
+  const overlay=document.getElementById('paletteOverlay');
+  const navBar=document.getElementById('navBar');
+  const rcSplit=document.getElementById('rcSplit');
+  if(isMobile){overlay.classList.toggle('mobile-open',paletteOpen);}
+  else{overlay.style.display=paletteOpen?'flex':'none';navBar.style.right=paletteOpen?'var(--panel)':'0';rcSplit.style.maxWidth=paletteOpen?'calc(100% - var(--panel))':'100%';}
+}
+
+function markForReview(){markedForReview[currentQ]=!markedForReview[currentQ];renderQuestion();}
+
+function buildPalette(){
+  const grid=document.getElementById('paletteGrid');grid.innerHTML='';
+  for(let i=0;i<20;i++){
+    const btn=document.createElement('button');btn.className='pal-btn';btn.id='pb'+(i+1);btn.textContent=i+1;
+    btn.onclick=(()=>{const idx=i;return()=>{recordTime();currentQ=idx;renderQuestion();}})();
+    grid.appendChild(btn);
+  }
+}
+
+function updatePalette(){
+  for(let i=0;i<20;i++){
+    const btn=document.getElementById('pb'+(i+1));if(!btn)continue;
+    btn.className='pal-btn';
+    if(markedForReview[i])btn.classList.add('marked');
+    else if(userAnswers[i]!==null)btn.classList.add('answered');
+    if(i===currentQ)btn.classList.add('current');
+  }
+}
+
+function updateProgress(){
+  const answered=userAnswers.filter(a=>a!==null).length;
+  document.getElementById('progressFill').style.width=(answered/20*100)+'%';
+}
+
+function confirmSubmit(){
+  const unanswered=userAnswers.filter(a=>a===null).length;
+  let msg='Submit the test?';
+  if(unanswered>0)msg='You have '+unanswered+' unanswered question'+(unanswered>1?'s':'')+'. Submit anyway?';
+  if(confirm(msg))submitTest();
+}
+
+function submitTest(){
+  if(testSubmitted)return;testSubmitted=true;recordTime();clearInterval(timerInterval);
+  let correct=0,wrong=0,skipped=0;
+  const sectionErrors={};const wrongQuestions=[];
+  const LETTERS=['A','B','C','D'];
+  QUESTIONS.forEach((q,i)=>{
+    const ua=userAnswers[i];
+    if(ua===null){skipped++;}
+    else if(LETTERS[ua]===q.answer){correct++;}
+    else{wrong++;wrongQuestions.push(i+1);const sec=q.section;sectionErrors[sec]=(sectionErrors[sec]||0)+1;}
+  });
+  const score=correct*4-wrong*1;
+  showResults(score,correct,wrong,skipped);
+  saveToTracker(score,correct,wrong,skipped);
+  logToSheet(score,correct,wrong,skipped,sectionErrors,wrongQuestions);
+}
+
+function showResults(score,correct,wrong,skipped){
+  document.getElementById('testScreen').style.display='none';
+  document.getElementById('resultsScreen').style.display='block';
+  const attempted=correct+wrong;const acc=attempted>0?((correct/attempted)*100).toFixed(1):'0.0';
+  document.getElementById('scoreHero').innerHTML='<div class="score-num">'+score+'</div><div class="score-sub">out of 80 &nbsp;&middot;&nbsp; '+studentName+' &nbsp;&middot;&nbsp; '+studentPin+' &nbsp;&middot;&nbsp; '+studentBatch+'</div>';
+  document.getElementById('statsGrid').innerHTML='<div class="stat-box correct"><div class="val">'+correct+'</div><div class="lbl">Correct</div></div><div class="stat-box wrong"><div class="val">'+wrong+'</div><div class="lbl">Wrong</div></div><div class="stat-box"><div class="val" style="color:var(--grey)">'+skipped+'</div><div class="lbl">Skipped</div></div><div class="stat-box accuracy"><div class="val">'+acc+'%</div><div class="lbl">Accuracy</div></div>';
+  buildReview();buildMisses();
+}
+
+function buildReview(){
+  const list=document.getElementById('review-list');list.innerHTML='';
+  const LETTERS=['A','B','C','D'];
+  QUESTIONS.forEach((q,i)=>{
+    const ua=userAnswers[i];const isCorrect=(ua!==null&&LETTERS[ua]===q.answer);const isSkipped=(ua===null);
+    const card=document.createElement('div');card.className='review-card '+(isSkipped?'':isCorrect?'correct':'wrong');
+    let badgeClass=isSkipped?'badge-skipped':isCorrect?'badge-correct':'badge-wrong';
+    let badgeText=isSkipped?'--':isCorrect?'&#10003;':'&#10007;';
+    const opts=q.opts.map((o,idx)=>{
+      let cls='review-opt';
+      if(LETTERS[idx]===q.answer)cls+=' correct-opt';
+      if(ua!==null&&ua===idx&&LETTERS[idx]!==q.answer)cls+=' your-wrong';
+      return '<div class="'+cls+'"><span class="opt-label">'+LETTERS[idx]+'</span> '+o+'</div>';
+    }).join('');
+    card.innerHTML='<div class="review-card-header"><div class="review-badge '+badgeClass+'">'+badgeText+'</div><div class="review-stem"><span style="color:var(--grey);font-size:.75rem">Q'+(i+1)+' &middot; P'+q.passage+' &middot; '+q.qtype+'</span><br>'+q.stem+'</div></div><div class="review-opts">'+opts+'</div><div class="review-exp">'+q.exp+'</div>';
+    list.appendChild(card);
+  });
+}
+
+function buildMisses(){
+  const LETTERS=['A','B','C','D'];const wrongQs=[];
+  QUESTIONS.forEach((q,i)=>{
+    if(userAnswers[i]!==null&&LETTERS[userAnswers[i]]!==q.answer){
+      wrongQs.push('Q'+(i+1)+' [P'+q.passage+' '+q.qtype+'] -> '+q.answer+'. '+q.opts[LETTERS.indexOf(q.answer)]);
+    }
+  });
+  document.getElementById('missesText').value=wrongQs.length?wrongQs.join('\n'):'No misses -- perfect score!';
+}
+
+function copyMisses(e){
+  e.preventDefault();const txt=document.getElementById('missesText').value;
+  navigator.clipboard.writeText(txt).then(()=>{const btn=e.target;btn.textContent='Copied!';setTimeout(()=>{btn.textContent='Copy Misses';},2000);});
+}
+
+function saveToTracker(score,correct,wrong,skipped){
+  const elapsed=timer_duration*60-secondsLeft;
+  const mm=String(Math.floor(elapsed/60)).padStart(2,'0');const ss=String(elapsed%60).padStart(2,'0');
+  const data={testName:'RC Series 02',name:studentName,pin:studentPin,batch:studentBatch,score:score,correct:correct,wrong:wrong,skipped:skipped,maxMarks:80,timeTaken:mm+':'+ss,timestamp:new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'})};
+  try{const existing=JSON.parse(localStorage.getItem('riim_results')||'[]');existing.unshift(data);localStorage.setItem('riim_results',JSON.stringify(existing.slice(0,200)));}catch(e){}
+}
+
+function logToSheet(score,correct,wrong,skipped,sectionErrors,wrongQuestions){
+  const notice=document.getElementById('sheet-notice');notice.className='submitting';notice.textContent='Submitting results to server...';notice.style.display='block';
+  const elapsed=timer_duration*60-secondsLeft;
+  const mm=String(Math.floor(elapsed/60)).padStart(2,'0');const ss=String(elapsed%60).padStart(2,'0');
+  const LETTERS=['A','B','C','D'];
+  const payload={testName:'RC Series 02',name:studentName,pin:studentPin,batch:studentBatch,score:score,correct:correct,wrong:wrong,skipped:skipped,maxMarks:80,timeTaken:mm+':'+ss,timestamp:new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'}),sectionErrors:JSON.stringify(sectionErrors),wrongQuestions:JSON.stringify(wrongQuestions),studentAnswers:JSON.stringify(userAnswers.map(a=>a===null?null:LETTERS[a])),questionTimes:JSON.stringify(questionTimes.map(t=>Math.round(t/1000)))};
+  fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)})
+    .then(()=>{notice.className='success';notice.textContent='Results saved successfully.';})
+    .catch(()=>{notice.className='failure';notice.textContent='Could not reach server. Results saved locally.';});
+}
+
+function generatePDF(){
+  const el=document.getElementById('review-list');
+  html2pdf().set({margin:10,filename:'RoadToIIM_Test26_'+studentName.replace(/\s+/g,'_')+'.pdf',html2canvas:{scale:2},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}}).from(el).save();
+}
+
+document.addEventListener('contextmenu',e=>e.preventDefault());
+document.addEventListener('keydown',e=>{if(e.ctrlKey&&['c','a','u','s','p'].includes(e.key.toLowerCase()))e.preventDefault();});
+</script>
+</body>
+</html>

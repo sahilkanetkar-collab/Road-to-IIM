@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Road to IIM — RC Series 01</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;}
+:root{--navy:#0d1b2a;--navy2:#1a2e45;--gold:#c9a84c;--gold2:#e8c76a;--green:#2ecc71;--red:#e74c3c;--grey:#8899aa;--white:#f0f4f8;--purple:#9b59b6;--panel:280px;}
+body{background:var(--navy);color:var(--white);font-family:'Segoe UI',sans-serif;min-height:100vh;overflow-x:hidden;}
+#loginScreen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:20px;}
+.login-box{background:var(--navy2);border:1px solid var(--gold);border-radius:12px;padding:40px 36px;width:100%;max-width:440px;}
+.login-box h1{color:var(--gold);font-size:1.5rem;text-align:center;margin-bottom:6px;}
+.login-box p{color:var(--grey);font-size:.85rem;text-align:center;margin-bottom:28px;}
+.login-box label{display:block;font-size:.8rem;color:var(--grey);margin-bottom:4px;margin-top:14px;}
+.login-box input,.login-box select{width:100%;background:#0d1b2a;border:1px solid #2a4060;border-radius:6px;padding:10px 12px;color:var(--white);font-size:.95rem;}
+#startBtn{width:100%;margin-top:24px;padding:12px;background:var(--gold);color:var(--navy);font-size:1rem;font-weight:700;border:none;border-radius:8px;cursor:pointer;}
+#topBar{background:var(--navy2);border-bottom:1px solid #1e3a5a;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;padding-right:calc(var(--panel) + 20px);}
+#topBar .logo{color:var(--gold);font-weight:700;font-size:1rem;}
+#timerDisplay{font-size:1.1rem;font-weight:700;color:var(--green);background:#0a2a1a;padding:6px 16px;border-radius:20px;border:1px solid var(--green);}
+#timerDisplay.urgent{color:var(--red);background:#2a0a0a;border-color:var(--red);}
+#progressBar{height:3px;background:#1e3a5a;margin-right:var(--panel);}
+#progressFill{height:100%;background:var(--gold);transition:width .3s;}
+#mainLayout{display:flex;min-height:calc(100vh - 54px);}
+#rcSplit{display:flex;flex:1;max-width:calc(100% - var(--panel));}
+#passagePane{width:48%;padding:24px 20px 80px 28px;border-right:1px solid #1e3a5a;overflow-y:auto;max-height:calc(100vh - 54px);position:sticky;top:54px;}
+#passageTitle{color:var(--gold);font-size:.8rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px;}
+#passageSource{color:var(--grey);font-size:.75rem;margin-bottom:14px;}
+#passageText{font-size:.95rem;line-height:1.85;color:var(--white);}
+#questionArea{flex:1;padding:28px 24px 80px 24px;}
+#sectionTag{display:inline-block;background:#1e3a5a;color:var(--gold);font-size:.72rem;font-weight:700;letter-spacing:.08em;padding:3px 10px;border-radius:4px;margin-bottom:10px;text-transform:uppercase;}
+#questionNumber{color:var(--grey);font-size:.85rem;margin-bottom:8px;}
+#questionStem{font-size:1.02rem;line-height:1.7;color:var(--white);margin-bottom:22px;word-break:break-word;overflow-wrap:break-word;}
+.options-list{list-style:none;display:flex;flex-direction:column;gap:10px;}
+.option-btn{background:#0d1b2a;border:1px solid #1e3a5a;border-radius:8px;padding:12px 16px;cursor:pointer;text-align:left;font-size:.93rem;color:var(--white);transition:all .2s;width:100%;}
+.option-btn:hover{border-color:var(--gold);background:#162030;}
+.option-btn.selected{border-color:var(--gold);background:#1e2e10;color:var(--gold2);}
+.option-btn.marked{border-color:var(--purple);}
+.opt-label{display:inline-block;width:24px;font-weight:700;color:var(--gold);}
+#paletteOverlay{position:fixed;top:0;right:0;width:100%;height:100%;z-index:200;pointer-events:none;display:flex;justify-content:flex-end;}
+#palettePanel{width:280px;height:100%;background:var(--navy2);border-left:1px solid #1e3a5a;padding:16px 12px;overflow-y:auto;pointer-events:all;}
+#paletteGrid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:16px;}
+.pal-btn{width:100%;aspect-ratio:1;border-radius:6px;border:1px solid #1e3a5a;background:#0d1b2a;color:var(--grey);font-size:.78rem;font-weight:600;cursor:pointer;}
+.pal-btn.answered{background:var(--green);color:#fff;border-color:var(--green);}
+.pal-btn.marked{background:var(--purple);color:#fff;border-color:var(--purple);}
+.pal-btn.current{border:2px solid var(--gold);color:var(--gold);}
+#navBar{position:fixed;bottom:0;left:0;right:var(--panel);background:var(--navy2);border-top:1px solid #1e3a5a;display:flex;align-items:center;justify-content:space-between;padding:10px 20px;z-index:150;}
+.nav-btn{background:#1e3a5a;color:var(--white);border:none;border-radius:6px;padding:8px 18px;cursor:pointer;font-size:.9rem;font-weight:600;}
+#submitBtn{background:var(--gold);color:var(--navy);font-weight:700;display:none;}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
+.stat-box{background:var(--navy2);border-radius:8px;padding:16px;text-align:center;border:1px solid #1e3a5a;}
+.stat-box .val{font-size:1.6rem;font-weight:800;}
+.stat-box .lbl{font-size:.75rem;color:var(--grey);margin-top:4px;}
+.stat-box.correct .val{color:var(--green);}
+.stat-box.wrong .val{color:var(--red);}
+.stat-box.accuracy .val{color:var(--gold);}
+.review-card{background:var(--navy2);border-radius:10px;margin-bottom:14px;overflow:hidden;border-left:4px solid var(--grey);word-break:break-word;overflow-wrap:break-word;}
+.review-card.correct{border-left-color:var(--green);}
+.review-card.wrong{border-left-color:var(--red);}
+.review-exp{background:#0a2a15;border-left:3px solid var(--green);padding:10px 14px;font-size:.83rem;line-height:1.6;color:#a8e6c0;margin-top:8px;}
+#testScreen{display:none;}
+#resultsScreen{display:none;padding:28px 32px;max-width:calc(100% - var(--panel));}
+.score-hero{text-align:center;margin-bottom:28px;}
+.score-hero .score-num{font-size:3.5rem;font-weight:900;color:var(--gold);}
+.score-hero .score-sub{font-size:1rem;color:var(--grey);margin-top:4px;}
+.result-btn{padding:10px 24px;border-radius:8px;border:none;cursor:pointer;font-size:.95rem;font-weight:700;margin:0 6px;}
+.result-btn.gold{background:var(--gold);color:var(--navy);}
+.result-btn.ghost{background:transparent;border:1px solid var(--gold);color:var(--gold);}
+#sheet-notice{padding:10px 14px;border-radius:6px;font-size:.85rem;margin-bottom:16px;display:none;}
+#sheet-notice.submitting{background:#1a2e10;color:#c9e88a;border:1px solid #4a7a20;}
+#sheet-notice.success{background:#0a2a15;color:#2ecc71;border:1px solid #2ecc71;}
+#sheet-notice.failure{background:#2a0a0a;color:#e74c3c;border:1px solid #e74c3c;}
+.review-card-header{padding:14px 16px;display:flex;align-items:flex-start;gap:10px;}
+.review-badge{min-width:32px;height:32px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.85rem;}
+.badge-correct{background:var(--green);color:#fff;}
+.badge-wrong{background:var(--red);color:#fff;}
+.badge-skipped{background:var(--grey);color:#fff;}
+.review-stem{font-size:.9rem;line-height:1.6;flex:1;}
+.review-opts{padding:0 16px 8px;}
+.review-opt{font-size:.83rem;padding:4px 0;color:var(--grey);}
+.review-opt.correct-opt{color:var(--green);font-weight:700;}
+.review-opt.your-wrong{color:var(--red);}
+.misses-box{background:#0d1b2a;border:1px solid #2a4060;border-radius:8px;padding:14px;margin-top:20px;}
+.misses-box h3{color:var(--gold);font-size:.9rem;margin-bottom:8px;}
+.misses-box textarea{width:100%;background:#0a1520;border:1px solid #1e3a5a;border-radius:6px;padding:10px;color:var(--white);font-size:.83rem;font-family:'Segoe UI',sans-serif;resize:vertical;min-height:80px;}
+.copy-btn{margin-top:8px;padding:6px 14px;background:var(--navy2);border:1px solid var(--gold);color:var(--gold);border-radius:6px;font-size:.8rem;cursor:pointer;}
+.pal-legend{font-size:.72rem;color:var(--grey);margin-top:8px;}
+.pal-legend span{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px;vertical-align:middle;}
+@media (max-width:768px){
+#paletteOverlay{display:none;}
+#palettePanel{width:280px;}
+#rcSplit{flex-direction:column;}
+#passagePane{width:100%;max-height:40vh;position:relative;top:0;border-right:none;border-bottom:1px solid #1e3a5a;padding:16px;}
+#questionArea{padding:16px 16px 80px 16px;}
+#topBar{padding-right:16px;}
+#progressBar{margin-right:0;}
+#navBar{right:0;padding:8px 12px;}
+.nav-btn{padding:7px 10px;font-size:.8rem;}
+.stats-grid{grid-template-columns:repeat(2,1fr);}
+.login-box input,.login-box select{font-size:1rem;}
+.score-hero .score-num{font-size:2.4rem;}
+#resultsScreen{max-width:100%;padding:16px;}
+}
+@media (max-width:768px){#paletteOverlay.mobile-open{display:flex;}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+<div class="login-box">
+  <h1>Road to IIM</h1>
+  <p>RC Series 01 &nbsp;&middot;&nbsp; RC Drill &nbsp;&middot;&nbsp; 20 Questions &nbsp;&middot;&nbsp; 25 Minutes</p>
+  <label>Full Name</label>
+  <input type="text" id="inputName" placeholder="Your full name" autocomplete="off">
+  <label>IMS PIN</label>
+  <input type="text" id="inputPin" placeholder="STU or IMS + 10 digits" autocomplete="off">
+  <label>Batch</label>
+  <select id="inputBatch">
+    <option value="">-- Select batch --</option>
+    <optgroup label="Classroom">
+      <option>A2701</option><option>A2702</option><option>A2703</option>
+      <option>A2704</option><option>A2705</option><option>A2706</option>
+      <option>A2707</option><option>A2708</option><option>A2709</option>
+      <option>A2710</option><option>A2711</option><option>A2712</option>
+    </optgroup>
+    <optgroup label="School"><option>Zebar</option></optgroup>
+    <optgroup label="Online">
+      <option>27E101</option><option>27E102</option><option>27E103</option>
+      <option>27E104</option><option>27E105</option>
+    </optgroup>
+    <optgroup label="Admin"><option>Admin</option></optgroup>
+  </select>
+  <div id="loginErr" style="display:none;margin-top:10px;color:var(--red);font-size:.83rem;"></div>
+  <button id="startBtn" onclick="startTest()">Begin Test &rarr;</button>
+</div>
+</div>
+
+<!-- TEST -->
+<div id="testScreen">
+  <div id="topBar">
+    <span class="logo">Road to IIM &middot; RC Series 01</span>
+    <div id="timerDisplay">25:00</div>
+  </div>
+  <div id="progressBar"><div id="progressFill" style="width:0%"></div></div>
+  <div id="mainLayout">
+    <div id="rcSplit">
+      <div id="passagePane">
+        <div id="passageTitle"></div>
+        <div id="passageSource"></div>
+        <div id="passageText"></div>
+      </div>
+      <div id="questionArea">
+        <div id="sectionTag"></div>
+        <div id="questionNumber"></div>
+        <div id="questionStem"></div>
+        <ul class="options-list" id="optionsList"></ul>
+      </div>
+    </div>
+  </div>
+  <div id="paletteOverlay">
+    <div id="palettePanel">
+      <div style="color:var(--gold);font-weight:700;font-size:.85rem;margin-bottom:10px;">Questions</div>
+      <div id="paletteGrid"></div>
+      <div class="pal-legend">
+        <span style="background:var(--green)"></span>Answered &nbsp;
+        <span style="background:var(--purple)"></span>Marked &nbsp;
+        <span style="background:#0d1b2a;border:1px solid #1e3a5a"></span>Unvisited
+      </div>
+    </div>
+  </div>
+  <div id="navBar">
+    <button class="nav-btn" onclick="navigate(-1)">&larr; Prev</button>
+    <button class="nav-btn" onclick="togglePalette()">Questions</button>
+    <button class="nav-btn" onclick="markForReview()">&#9733; Mark</button>
+    <button class="nav-btn" onclick="clearAnswer()">Clear</button>
+    <button class="nav-btn" onclick="navigate(1)">Next &rarr;</button>
+    <button class="nav-btn" id="submitBtn" onclick="confirmSubmit()">Submit Test</button>
+  </div>
+</div>
+
+<!-- RESULTS -->
+<div id="resultsScreen">
+  <div style="background:var(--navy2);border-bottom:1px solid #1e3a5a;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;">
+    <span style="color:var(--gold);font-weight:700;">Road to IIM &middot; RC Series 01 — Results</span>
+  </div>
+  <div style="padding:28px 32px;">
+    <div class="score-hero" id="scoreHero"></div>
+    <div id="sheet-notice"></div>
+    <div class="stats-grid" id="statsGrid"></div>
+    <div style="text-align:center;margin-bottom:24px;">
+      <button class="result-btn gold" onclick="location.href='road_to_iim_tracker_v2.html'">Go to Tracker</button>
+      <button class="result-btn ghost" onclick="location.href='https://sahilkanetkar-collab.github.io/Road-to-IIM/'">All Tests</button>
+      <button class="result-btn ghost" onclick="generatePDF()">Download PDF</button>
+    </div>
+    <div class="misses-box">
+      <h3>RC Misses</h3>
+      <textarea id="missesText" readonly></textarea>
+      <button class="copy-btn" onclick="copyMisses(event)">Copy Misses</button>
+    </div>
+    <h3 style="color:var(--gold);margin:24px 0 12px;">Review All Questions</h3>
+    <div id="review-list"></div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script>
+const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbx5Ojm_zp4LfsMeelx5e06KNjVH1wfsXdV0keS4407m4FO1HU4EpVb7GKj-ibAsxnspeA/exec';
+const timer_duration=25;
+const ADMIN_PINS=['IMS1111111111','IMS2222222222','IMS3333333333','IMS4444444444','IMS5555555555'];
+
+const PASSAGES=[
+{
+id:1,
+title:"Passage 1 -- Science / Cognitive Bias",
+source:"Original. Based on the ideas of Daniel Kahneman.",
+text:`The brain, it turns out, is not built for accuracy. It is built for speed. When we encounter a problem that requires careful reasoning, our cognitive architecture does something quietly destructive: it substitutes an easier question for the harder one. Asked whether a particular investment is sound, we answer instead whether it feels familiar. Asked whether a policy will reduce crime, we answer whether it sounds like something that should reduce crime. This substitution happens below conscious awareness, which is precisely what makes it so dangerous.
+
+Kahneman called this tendency attribute substitution, and it is not a flaw unique to the lazy or the uneducated. Studies consistently show that statistically literate individuals, including trained economists and experienced physicians, are as susceptible to this substitution as anyone else. The difference is not in whether the substitution occurs but in whether the person notices and corrects it afterwards. Most do not.
+
+What makes attribute substitution particularly pernicious in professional contexts is that the easier question often produces an answer that sounds authoritative. A physician who relies on pattern recognition rather than systematic diagnosis may be faster and may even be right more often than chance -- but when they are wrong, the error will be of a kind that careful reasoning would have caught. The problem is not ignorance. It is the confidence that comes from fluency, which is mistaken, repeatedly and catastrophically, for the confidence that should come from evidence.`
+},
+{
+id:2,
+title:"Passage 2 -- Economics / Inflation Expectations",
+source:"Original. Based on the ideas of Milton Friedman and later central banking literature.",
+text:`Inflation, economists have long argued, is not simply a monetary phenomenon -- it is also an expectations phenomenon. If workers expect prices to rise by five per cent next year, they will demand wages that reflect that expectation. If firms expect their input costs to rise, they will raise output prices pre-emptively. The result is that the expectation of inflation can generate the very inflation that was expected, entirely independent of whether the underlying monetary conditions justified it.
+
+This is the insight that transformed central banking in the 1990s. Rather than simply controlling money supply, central banks began to manage expectations directly -- through public communication, inflation targets, and forward guidance. The logic was elegant: if you could anchor expectations firmly enough, you could prevent the wage-price spiral before it started. Credibility, in this framework, became more valuable than any single interest rate decision.
+
+The difficulty, which became apparent after the supply shocks of 2021 and 2022, is that credibility is asymmetric. It takes decades to build and can be lost in a matter of quarters. When observed inflation diverges sharply from target for long enough, expectations de-anchor -- and once they do, the central bank faces a brutal choice: accept a prolonged period of above-target inflation, or impose the kind of aggressive rate increases that reliably produce recessions. There is no painless third option. The models that celebrated credibility as a policy tool had quietly assumed it would never be seriously tested.`
+},
+{
+id:3,
+title:"Passage 3 -- Current Affairs / AI Governance",
+source:"Original.",
+text:`The regulation of artificial intelligence presents a problem that most regulatory frameworks were not designed to solve: how do you govern a technology whose most consequential capabilities are not yet known? Traditional product regulation works backwards from a defined harm. You identify what went wrong, you establish a standard, and you require manufacturers to meet it. This logic works tolerably well for automobiles, pharmaceuticals, and food. It works very poorly for a system whose outputs are open-ended, whose failure modes are emergent, and whose most dangerous applications may not exist at the time the regulation is written.
+
+The European Union's AI Act, adopted in 2024, attempted a different approach -- classifying AI systems by risk level and imposing obligations proportionate to that risk. The ambition was sensible. The execution revealed the difficulty. Categories defined today may be obsolete within eighteen months. A system classified as limited risk in 2024 may, through incremental capability improvements, become a high-risk system by 2026 without any formal reclassification. The regulation, in effect, assumed that the technology would stay still long enough to be governed.
+
+What is needed, though rarely discussed, is not a static rulebook but a regulatory posture -- a set of institutions, obligations, and review mechanisms capable of keeping pace with capability development. The problem is not that regulators lack intelligence or goodwill. It is that the tools of governance were built for a slower world, and nobody has yet agreed on what it would mean to rebuild them for a faster one.`
+},
+{
+id:4,
+title:"Passage 4 -- Pop Culture / Streaming Economics",
+source:"Original.",
+text:`The logic of the streaming era was, for a decade, impeccably simple: more content means more subscribers, more subscribers means more revenue, more revenue means more content. Netflix, Disney+, and their rivals operated on this flywheel assumption with something close to religious conviction. Cancellation was a last resort. A show with even a modest audience was worth keeping, because every piece of content was a potential hook for a subscriber who might otherwise leave.
+
+That logic has quietly collapsed. The streaming services that spent the 2010s accumulating content libraries are now, with notable urgency, reducing them. Shows are being cancelled after a single season. Back-catalogues are being licensed out or quietly deleted. The economics have inverted: a large library is no longer an asset -- it is a liability, because every title in it must be licensed, maintained, and made available through infrastructure that costs money whether the title is watched or not.
+
+What this reveals is that the flywheel was never as self-sustaining as it appeared. Subscriber growth was always partly a function of novelty -- the sense that there was always something new to watch. As growth slowed and the market saturated, the content that had been a recruitment tool became simply an overhead cost. The services most likely to survive this contraction are not those with the largest libraries but those that have managed to make a small number of titles feel indispensable. Cultural weight, it turns out, matters more than catalogue size. And cultural weight cannot be manufactured at scale.`
+},
+{
+id:5,
+title:"Passage 5 -- Science / Ecology and Redundancy",
+source:"Original. Based on the ideas of E.O. Wilson and later ecosystem ecology literature.",
+text:`For most of the twentieth century, the conservation case for biodiversity rested on a kind of moral arithmetic. Each species had intrinsic value; its extinction was a loss that could not be replaced; therefore, preventing extinction was an obligation. This argument had genuine force, but it also had a structural weakness: it asked people to care about loss in the abstract, without specifying what, concretely, would be different if the species were gone.
+
+The ecosystem services framework, which gained traction from the 1990s onwards, offered a different foundation. Biodiversity, on this account, is not merely valuable because species have intrinsic worth -- it is valuable because diverse ecosystems are more stable, more productive, and more resilient to disruption than simplified ones. The loss of a species is not just a moral subtraction; it is a functional degradation. Remove enough redundancy from a system, and the system itself begins to fail at tasks that it previously performed reliably: filtering water, fixing nitrogen, pollinating crops.
+
+The difficulty with the ecosystem services argument is not that it is wrong -- the evidence is robust -- but that it inadvertently narrows the case for conservation. If biodiversity is valuable primarily because it supports human welfare, then it follows, logically if uncomfortably, that species which contribute nothing measurable to ecosystem function are less worth protecting. This was not the intent of the framework's architects, but it is the conclusion that critics -- and some policy makers -- have been willing to draw. The argument that was designed to strengthen conservation has, in certain hands, been used to triage it.`
+}
+];
+
+const QUESTIONS=[
+{id:1,section:"RC",passage:1,qtype:"inference",
+stem:`The passage most strongly implies that attribute substitution is especially difficult to counteract because`,
+opts:["the person committing it typically experiences no internal signal that a substitution has occurred","it is a behaviour pattern found only in high-stakes professional environments","statistical training actively reinforces the tendency to substitute easier questions","the correct answer to the harder question is usually unavailable at the time of decision"],
+answer:"A",
+exp:`Correct Answer: A. The passage states the substitution "happens below conscious awareness" -- the person feels nothing unusual. Option B is wrong because the passage explicitly says it affects everyone, not just professionals. Option C inverts the passage -- training does not reinforce it, it just fails to eliminate it. Option D is not supported; the passage does not claim the harder question is unanswerable.`},
+
+{id:2,section:"RC",passage:1,qtype:"vocabulary",
+stem:`The author's use of "quietly destructive" rather than simply "destructive" most likely reflects`,
+opts:["a desire to soften the criticism of human cognitive architecture","an emphasis on the invisibility of the process as central to its harm","the author's uncertainty about whether the outcome is always negative","a rhetorical strategy of understatement intended to be ironic"],
+answer:"B",
+exp:`Correct Answer: B. "Quietly" signals that the destruction is undetected, which is the exact argument the passage builds -- that the danger lies in the substitution occurring without awareness. Option A misreads the tone; the author is not softening anything. Option C imports uncertainty that is not in the passage. Option D overreaches; there is no irony established in the surrounding prose.`},
+
+{id:3,section:"RC",passage:1,qtype:"assumption",
+stem:`The author's argument would be most seriously undermined if which of the following were true?`,
+opts:["Attribute substitution is more common in unfamiliar domains than in familiar ones","People who are aware of attribute substitution still commit it at the same rate as those who are not","Trained professionals who notice the substitution rarely manage to correct it in time","Statistical literacy correlates with a measurably higher rate of post-hoc correction"],
+answer:"D",
+exp:`Correct Answer: D. The passage claims that the difference between experts and non-experts is not in whether substitution occurs but in whether they correct it -- and then adds "most do not." If statistically literate people correct the error at a significantly higher rate, the author's pessimistic universality collapses. Option C would actually strengthen the argument. Option A is compatible with the passage's claims. Option B strengthens, not undermines, the argument.`},
+
+{id:4,section:"RC",passage:1,qtype:"tone",
+stem:`The shift in the author's argument between the second and third paragraphs is best described as`,
+opts:["from empirical observation to philosophical speculation","from describing the mechanism of substitution to questioning whether it can be corrected","from establishing the universality of the problem to identifying what makes it professionally consequential","from critiquing cognitive science to endorsing a particular remedial approach"],
+answer:"C",
+exp:`Correct Answer: C. Paragraph 2 establishes that the problem is universal across ability levels. Paragraph 3 then pivots to why it is specifically dangerous in professional settings -- the authoritative sound of wrong answers produced by fluency. Option A is wrong; neither paragraph is speculative. Option C mischaracterises the second paragraph. Option D is not supported; no remedial approach is endorsed anywhere.`},
+
+{id:5,section:"RC",passage:2,qtype:"inference",
+stem:`The passage suggests that the relationship between inflation expectations and actual inflation is best understood as`,
+opts:["causal in one direction only -- expectations cause inflation but inflation does not reinforce expectations","mutually reinforcing under certain conditions, making the cycle self-sustaining","dependent entirely on the accuracy of the central bank's interest rate forecasts","relevant only when monetary conditions are already loose enough to permit price rises"],
+answer:"B",
+exp:`Correct Answer: B. The passage describes a wage-price spiral in which expectations generate inflation which, by implication, reinforces the original expectations -- a self-sustaining loop. Option A is directly contradicted by the spiral logic. Options C and D introduce conditions not present in the passage's argument.`},
+
+{id:6,section:"RC",passage:2,qtype:"assumption",
+stem:`Which of the following is an unstated premise that the author's argument about central bank credibility relies on?`,
+opts:["Workers and firms update their expectations based on what they observe central banks saying and doing","Central banks have always had the legal authority to set binding inflation targets","Monetary policy is more effective at controlling demand-pull inflation than cost-push inflation","Supply shocks of the kind seen in 2021 and 2022 are historically unprecedented"],
+answer:"A",
+exp:`Correct Answer: A. The entire credibility argument depends on the premise that economic agents actually respond to central bank communication -- that anchoring expectations through words and targets works because people listen and update. If they did not, credibility would be irrelevant. Option A is not required by the argument. Option C is a monetary theory distinction not invoked in the passage. Option D is unsupported and unnecessary -- the argument works even if such shocks have occurred before.`},
+
+{id:7,section:"RC",passage:2,qtype:"tone",
+stem:`The author's tone when describing the models that "celebrated credibility as a policy tool" is best described as`,
+opts:["admiring, because the models produced an elegant and workable solution","detached and clinical, offering no evaluative judgement of the models","subtly sardonic, implying the models failed to account for the very conditions they were designed to handle","openly contemptuous, rejecting the credibility framework as fundamentally misguided"],
+answer:"C",
+exp:`Correct Answer: C. "Had quietly assumed it would never be seriously tested" is a pointed, retrospective observation -- the models built an assumption of stability into their core, which is exactly the kind of assumption a stress test would expose. "Quietly" echoes the passage's earlier usage and signals something operating below explicit scrutiny. Option A is too warm. Option B misses the evaluative edge in "quietly assumed." Option D overstates; the author does not reject the framework, only identifies its blind spot.`},
+
+{id:8,section:"RC",passage:2,qtype:"inference",
+stem:`The author implies that the primary reason central banks found themselves in a "brutal choice" after 2021 is`,
+opts:["that credibility, once lost, cannot be restored through communication alone and requires demonstrated action","that they had raised interest rates too aggressively in the years before the supply shocks","that the supply shocks were so large that no monetary policy framework could have contained them","that their credibility had eroded before the shocks arrived, leaving them without effective tools"],
+answer:"A",
+exp:`Correct Answer: A. The passage says once expectations de-anchor, the central bank must choose between tolerating above-target inflation or imposing recession-inducing rate increases -- precisely because words alone no longer work; demonstrated action at painful cost is the only remaining option. Option A is not in the passage. Option C is a possible reading but the passage attributes the problem to credibility loss, not the scale of the shock. Option D reverses the timeline -- the passage implies credibility was lost because of the shocks, not before them.`},
+
+{id:9,section:"RC",passage:3,qtype:"inference",
+stem:`Which of the following distinctions does the passage implicitly draw?`,
+opts:["Between regulation that targets outputs and regulation that targets inputs","Between the European approach to AI governance and the American approach","Between static regulatory frameworks and adaptive regulatory postures","Between high-risk AI systems and general-purpose AI systems"],
+answer:"C",
+exp:`Correct Answer: C. The passage explicitly contrasts "a static rulebook" with "a regulatory posture" -- the implicit distinction runs through the entire argument: traditional regulation assumes fixed targets; AI governance requires something that moves with the technology. Option A is not a distinction the passage draws. Option C is not in the passage; the US is never mentioned. Option D appears briefly in the EU Act description but is not the organising distinction of the passage.`},
+
+{id:10,section:"RC",passage:3,qtype:"tone",
+stem:`The author's claim that the EU AI Act "assumed that the technology would stay still long enough to be governed" is best understood as`,
+opts:["a factual summary of an explicit assumption stated in the text of the Act","a charitable reading of the Act's ambitions, acknowledging the difficulty of the problem","a pointed criticism delivered through implication rather than direct accusation","an overstatement intended to illustrate the limits of any risk-classification approach"],
+answer:"C",
+exp:`Correct Answer: C. The author never says the Act was badly intentioned -- "the ambition was sensible" gives it credit. But "assumed the technology would stay still" is a forensic observation: the regulation contains an assumption it never declared, and that assumption is what makes it vulnerable. This is criticism by implication. Option A is wrong -- the author is inferring an assumption, not quoting one. Option B mischaracterises the sentence's function; it is not charitable. Option D imports a rhetorical intent not evidenced in the prose.`},
+
+{id:11,section:"RC",passage:3,qtype:"assumption",
+stem:`The argument in the passage depends on which of the following assumptions?`,
+opts:["AI capabilities will continue to develop faster than any legislative process can formally accommodate","The European Union has more influence over global AI development than any other regulatory body","Risk-classification systems are inherently unsuited to governing technology of any kind","The most dangerous AI applications are those that are deliberately concealed from regulators"],
+answer:"A",
+exp:`Correct Answer: A. The entire case for a "regulatory posture" over a "static rulebook" rests on the assumption that the technology will keep moving -- fast enough to outpace written rules. If capability development slowed to a pace legislatures could track, the traditional backwards-from-harm approach might work adequately. Option B is not required; the passage does not depend on EU primacy. Option C overstates -- the passage does not reject risk classification categorically, only notes its limitations here. Option D is not in the passage at all.`},
+
+{id:12,section:"RC",passage:3,qtype:"vocabulary",
+stem:`As used in the passage, "regulatory posture" most nearly refers to`,
+opts:["the official position a government adopts when negotiating international AI treaties","a flexible institutional orientation capable of evolving as the technology it governs evolves","the degree of strictness with which existing AI regulations are enforced","a temporary holding framework used until permanent legislation can be agreed upon"],
+answer:"B",
+exp:`Correct Answer: B. The passage defines it explicitly in context: "a set of institutions, obligations, and review mechanisms capable of keeping pace with capability development." This is not a fixed law but an orientation -- flexible, iterative, institutional. Option A imports a diplomatic meaning not in the passage. Option C conflates posture with enforcement intensity. Option D makes it temporary, which contradicts the passage's intent to replace, not defer, the static approach.`},
+
+{id:13,section:"RC",passage:4,qtype:"inference",
+stem:`The passage suggests that the relationship between content volume and subscriber retention is best understood as`,
+opts:["consistently positive -- more content reliably reduces the likelihood that a subscriber will cancel","irrelevant -- the research shows subscribers base cancellation decisions on price, not content availability","conditional -- content volume supports growth primarily during the novelty-driven phase of market expansion","negative -- large libraries have always reduced subscriber satisfaction by overwhelming users with choice"],
+answer:"C",
+exp:`Correct Answer: C. The passage argues the flywheel worked during a phase when novelty mattered, but as the market saturated, the same content became overhead rather than a growth driver. The relationship is not permanent or universal -- it was conditional on the market still being in a growth phase. Option A states the original assumption the passage debunks. Option C introduces price data not in the passage. Option D makes a permanent claim that contradicts the passage's historical arc.`},
+
+{id:14,section:"RC",passage:4,qtype:"tone",
+stem:`The author's use of "with something close to religious conviction" to describe streaming services' belief in their model most likely serves to`,
+opts:["praise the industry for the discipline with which it pursued a coherent strategy","draw a parallel between media companies and organised religion to critique their institutional cultures","imply that the executives involved were ideologically motivated rather than commercially rational","suggest that the belief was held without adequate empirical scrutiny, making it vulnerable to reversal"],
+answer:"D",
+exp:`Correct Answer: D. "Religious conviction" implies belief held on faith rather than evidence -- which is exactly the setup the passage delivers in paragraph two, where that conviction "quietly collapsed." The phrase anticipates the debunking. Option A is wrong; religious conviction is not praise in this context. Option C imports ideology where the passage implies only unexamined commercial assumption. Option D is too literal; this is a rhetorical flourish, not a structural parallel.`},
+
+{id:15,section:"RC",passage:4,qtype:"assumption",
+stem:`Which of the following, if true, would most seriously undermine the author's conclusion that "cultural weight cannot be manufactured at scale"?`,
+opts:["Several streaming services have announced plans to reduce their content libraries by more than forty per cent","A streaming service that released fifty original series in a single year produced three titles that became genuine cultural phenomena","Subscribers consistently report that they remain on a platform primarily because of one or two specific shows","The most-watched titles on major streaming platforms are almost exclusively acquired content rather than original productions"],
+answer:"B",
+exp:`Correct Answer: B. If a service producing fifty originals at scale generated multiple culturally significant titles, it suggests that scale can, in fact, produce cultural weight -- undermining the author's conclusion. The author's claim is that cultural weight is incompatible with mass production; Option B provides a counter-example. Option A supports the passage's argument about contraction. Option C supports the passage's argument about indispensability. Option D is about origin of content, not relevance to the cultural weight claim.`},
+
+{id:16,section:"RC",passage:4,qtype:"inference",
+stem:`The author implies that the streaming services most likely to survive the current contraction are those that`,
+opts:["invested early in proprietary technology infrastructure to reduce per-title maintenance costs","diversified into live sports and news to reduce dependence on scripted content libraries","built audiences around a concentrated set of titles that viewers feel unable to cancel their subscription without losing access to","maintained the flywheel model while reducing cancellation rates through improved recommendation algorithms"],
+answer:"C",
+exp:`Correct Answer: C. The passage says survivors will be those that "made a small number of titles feel indispensable" -- indispensable means the subscriber will not leave because losing access to those titles is too costly. Option C paraphrases this precisely. Options A and B introduce strategies not mentioned in the passage. Option D describes maintaining the old model, which the passage argues has failed.`},
+
+{id:17,section:"RC",passage:5,qtype:"inference",
+stem:`The passage most strongly implies that the ecosystem services framework, despite its evidential strength, created a problem its architects did not anticipate because`,
+opts:["it failed to generate sufficient political support for biodiversity protection in the 1990s","it was too technically complex for non-specialist policy makers to apply correctly","it provided a logical basis for deprioritising species that lack measurable functional value","it replaced a moral argument with an economic one, and economic arguments are inherently less stable"],
+answer:"C",
+exp:`Correct Answer: C. The passage states this directly: "species which contribute nothing measurable to ecosystem function are less worth protecting" -- a conclusion the framework's architects did not intend but which critics and policy makers have drawn. Option A is not in the passage. Option C introduces a complexity argument not raised. Option D is a plausible-sounding generalisation not supported by the text.`},
+
+{id:18,section:"RC",passage:5,qtype:"vocabulary",
+stem:`The author's choice of the word "triage" in the final sentence rather than "weaken" or "reduce" most likely reflects`,
+opts:["a deliberate invocation of medical emergency to imply that conservation is being reduced to a crisis-management exercise","a clinical detachment, suggesting the author approves of prioritising conservation resources efficiently","an attempt to align conservation language with that used in public health policy","an acknowledgement that some degree of species prioritisation is biologically necessary"],
+answer:"A",
+exp:`Correct Answer: A. "Triage" is a medical term for sorting casualties into those worth treating and those left to die -- its use here is precise and charged. The author is implying that the ecosystem services framework, in the wrong hands, reduces conservation to emergency prioritisation rather than principled protection. The tone is critical, not approving (eliminates Option A). Option C is too literal. Option D suggests the author endorses triage, which contradicts "this was not the intent" and the overall critical arc.`},
+
+{id:19,section:"RC",passage:5,qtype:"assumption",
+stem:`Which of the following best identifies a vulnerability in the author's argument about the moral arithmetic approach to biodiversity conservation?`,
+opts:["The author assumes that the moral argument was the dominant basis for conservation policy before the 1990s, without demonstrating this","The author concedes that the moral argument had genuine force while simultaneously claiming it had a structural weakness, which is internally inconsistent","The author does not address whether intrinsic value arguments are more or less persuasive than ecosystem services arguments to general audiences","The author's claim that the moral argument failed to specify concrete consequences assumes that policy makers require such specification to act"],
+answer:"D",
+exp:`Correct Answer: D. The author says the moral argument's weakness was that it asked people to "care about loss in the abstract, without specifying what, concretely, would be different." This critique assumes that concreteness is necessary for the argument to work -- that policy makers or publics will not act without it. If people can and do act on abstract moral obligations, the weakness disappears. Option A is a fair observation but does not make the argument collapse. Option B misreads -- having genuine force and having a structural weakness are not contradictory. Option C is irrelevant to the passage's argument.`},
+
+{id:20,section:"RC",passage:5,qtype:"tone",
+stem:`The author's overall rhetorical strategy in the passage is best described as`,
+opts:["presenting two competing frameworks for conservation and recommending the second as superior","tracing how an argument designed to strengthen a cause inadvertently introduced a logic that could be used against it","criticising the scientific community for abandoning intrinsic value arguments in favour of utilitarian ones","building a case that biodiversity conservation cannot be justified on purely instrumental grounds"],
+answer:"B",
+exp:`Correct Answer: B. The passage does not recommend one framework over another -- it traces a trajectory: moral argument (limited but sincere), ecosystem services argument (stronger evidentially but with an unintended vulnerability), and then shows how that vulnerability was exploited. Option A implies a recommendation; none is made. Option C imports blame onto scientists; the passage is descriptive. Option D is a conclusion the passage gestures at but does not itself argue -- the author presents the problem, not a resolution.`}
+];
+
+// ── STATE ────────────────────────────────────────────────────────────────────
+let studentName="",studentPin="",studentBatch="";
+let currentQ=0,secondsLeft=timer_duration*60,timerInterval=null;
+let userAnswers=new Array(20).fill(null);
+let markedForReview=new Array(20).fill(false);
+let questionTimes=new Array(20).fill(0);
+let qStartTime=Date.now();
+let testSubmitted=false;
+
+// ── LOGIN ────────────────────────────────────────────────────────────────────
+function startTest(){
+  const name=document.getElementById('inputName').value.trim();
+  const pin=document.getElementById('inputPin').value.trim().toUpperCase();
+  const batch=document.getElementById('inputBatch').value;
+  const err=document.getElementById('loginErr');
+  if(!name||!pin||!batch){err.textContent='Please fill in all fields.';err.style.display='block';return;}
+  if(!/^(STU|IMS)\d{10}$/.test(pin)){err.textContent='PIN must be STU or IMS followed by exactly 10 digits.';err.style.display='block';return;}
+  const isAdmin=ADMIN_PINS.includes(pin);
+  if(isAdmin&&batch!=='Admin'){err.textContent='Admin PIN must be used with the Admin batch only.';err.style.display='block';return;}
+  if(!isAdmin&&batch==='Admin'){err.textContent='Only Admin PINs may select the Admin batch.';err.style.display='block';return;}
+  studentName=name;studentPin=pin;studentBatch=batch;
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('testScreen').style.display='block';
+  if(window.innerWidth>768){document.getElementById('paletteOverlay').style.display='flex';}
+  else{document.getElementById('paletteOverlay').style.display='none';}
+  buildPalette();
+  renderQuestion();
+  startTimer();
+}
+
+// ── TIMER ────────────────────────────────────────────────────────────────────
+function startTimer(){
+  timerInterval=setInterval(()=>{
+    secondsLeft--;
+    const m=String(Math.floor(secondsLeft/60)).padStart(2,'0');
+    const s=String(secondsLeft%60).padStart(2,'0');
+    const el=document.getElementById('timerDisplay');
+    el.textContent=m+':'+s;
+    if(secondsLeft<=300)el.classList.add('urgent');
+    if(secondsLeft<=0){clearInterval(timerInterval);submitTest();}
+  },1000);
+}
+
+// ── RENDER ───────────────────────────────────────────────────────────────────
+function renderQuestion(){
+  const q=QUESTIONS[currentQ];
+  const p=PASSAGES[q.passage-1];
+  document.getElementById('passageTitle').textContent=p.title;
+  document.getElementById('passageSource').textContent=p.source;
+  document.getElementById('passageText').innerHTML=p.text.replace(/\n\n/g,'</p><p style="margin-top:1em">').replace(/^/,'<p>').replace(/$/,'</p>');
+  document.getElementById('sectionTag').textContent='RC -- '+q.qtype;
+  document.getElementById('questionNumber').textContent='Question '+(currentQ+1)+' of 20';
+  document.getElementById('questionStem').textContent=q.stem;
+  const ol=document.getElementById('optionsList');
+  ol.innerHTML='';
+  q.opts.forEach((opt,i)=>{
+    const li=document.createElement('li');
+    const btn=document.createElement('button');
+    btn.className='option-btn';
+    if(userAnswers[currentQ]===i)btn.classList.add('selected');
+    if(markedForReview[currentQ])btn.classList.add('marked');
+    btn.innerHTML='<span class="opt-label">'+['A','B','C','D'][i]+'</span> '+opt;
+    btn.onclick=()=>selectAnswer(i);
+    li.appendChild(btn);ol.appendChild(li);
+  });
+  document.getElementById('submitBtn').style.display=(currentQ===19)?'block':'none';
+  updatePalette();
+  updateProgress();
+  qStartTime=Date.now();
+}
+
+function selectAnswer(idx){
+  recordTime();
+  userAnswers[currentQ]=idx;
+  renderQuestion();
+}
+
+function clearAnswer(){
+  recordTime();
+  userAnswers[currentQ]=null;
+  markedForReview[currentQ]=false;
+  renderQuestion();
+}
+
+function navigate(dir){
+  recordTime();
+  const next=currentQ+dir;
+  if(next>=0&&next<20){currentQ=next;renderQuestion();}
+}
+
+function recordTime(){
+  questionTimes[currentQ]+=(Date.now()-qStartTime);
+  qStartTime=Date.now();
+}
+
+let paletteOpen=window.innerWidth>768;
+function togglePalette(){
+  paletteOpen=!paletteOpen;
+  const isMobile=window.innerWidth<=768;
+  const overlay=document.getElementById('paletteOverlay');
+  const navBar=document.getElementById('navBar');
+  const rcSplit=document.getElementById('rcSplit');
+  if(isMobile){overlay.classList.toggle('mobile-open',paletteOpen);}
+  else{
+    overlay.style.display=paletteOpen?'flex':'none';
+    navBar.style.right=paletteOpen?'var(--panel)':'0';
+    rcSplit.style.maxWidth=paletteOpen?'calc(100% - var(--panel))':'100%';
+  }
+}
+
+function markForReview(){
+  markedForReview[currentQ]=!markedForReview[currentQ];
+  renderQuestion();
+}
+
+function buildPalette(){
+  const grid=document.getElementById('paletteGrid');
+  grid.innerHTML='';
+  for(let i=0;i<20;i++){
+    const btn=document.createElement('button');
+    btn.className='pal-btn';
+    btn.id='pb'+(i+1);
+    btn.textContent=i+1;
+    btn.onclick=(()=>{const idx=i;return()=>{recordTime();currentQ=idx;renderQuestion();}})();
+    grid.appendChild(btn);
+  }
+}
+
+function updatePalette(){
+  for(let i=0;i<20;i++){
+    const btn=document.getElementById('pb'+(i+1));
+    if(!btn)continue;
+    btn.className='pal-btn';
+    if(markedForReview[i])btn.classList.add('marked');
+    else if(userAnswers[i]!==null)btn.classList.add('answered');
+    if(i===currentQ)btn.classList.add('current');
+  }
+}
+
+function updateProgress(){
+  const answered=userAnswers.filter(a=>a!==null).length;
+  document.getElementById('progressFill').style.width=(answered/20*100)+'%';
+}
+
+function confirmSubmit(){
+  const unanswered=userAnswers.filter(a=>a===null).length;
+  let msg='Submit the test?';
+  if(unanswered>0)msg='You have '+unanswered+' unanswered question'+(unanswered>1?'s':'')+'. Submit anyway?';
+  if(confirm(msg))submitTest();
+}
+
+// ── SUBMIT ───────────────────────────────────────────────────────────────────
+function submitTest(){
+  if(testSubmitted)return;
+  testSubmitted=true;
+  recordTime();
+  clearInterval(timerInterval);
+  let correct=0,wrong=0,skipped=0;
+  const sectionErrors={};
+  const wrongQuestions=[];
+  const LETTERS=['A','B','C','D'];
+  QUESTIONS.forEach((q,i)=>{
+    const ua=userAnswers[i];
+    if(ua===null){skipped++;}
+    else if(LETTERS[ua]===q.answer){correct++;}
+    else{
+      wrong++;
+      wrongQuestions.push(i+1);
+      const sec=q.section;
+      sectionErrors[sec]=(sectionErrors[sec]||0)+1;
+    }
+  });
+  const score=correct*4-wrong*1;
+  showResults(score,correct,wrong,skipped);
+  saveToTracker(score,correct,wrong,skipped);
+  logToSheet(score,correct,wrong,skipped,sectionErrors,wrongQuestions);
+}
+
+function showResults(score,correct,wrong,skipped){
+  document.getElementById('testScreen').style.display='none';
+  document.getElementById('resultsScreen').style.display='block';
+  const attempted=correct+wrong;
+  const acc=attempted>0?((correct/attempted)*100).toFixed(1):'0.0';
+  document.getElementById('scoreHero').innerHTML=
+    '<div class="score-num">'+score+'</div>'+
+    '<div class="score-sub">out of 80 &nbsp;&middot;&nbsp; '+studentName+' &nbsp;&middot;&nbsp; '+studentPin+' &nbsp;&middot;&nbsp; '+studentBatch+'</div>';
+  document.getElementById('statsGrid').innerHTML=
+    '<div class="stat-box correct"><div class="val">'+correct+'</div><div class="lbl">Correct</div></div>'+
+    '<div class="stat-box wrong"><div class="val">'+wrong+'</div><div class="lbl">Wrong</div></div>'+
+    '<div class="stat-box"><div class="val" style="color:var(--grey)">'+skipped+'</div><div class="lbl">Skipped</div></div>'+
+    '<div class="stat-box accuracy"><div class="val">'+acc+'%</div><div class="lbl">Accuracy</div></div>';
+  buildReview();
+  buildMisses();
+}
+
+function buildReview(){
+  const list=document.getElementById('review-list');
+  list.innerHTML='';
+  const LETTERS=['A','B','C','D'];
+  QUESTIONS.forEach((q,i)=>{
+    const ua=userAnswers[i];
+    const isCorrect=(ua!==null&&LETTERS[ua]===q.answer);
+    const isSkipped=(ua===null);
+    const card=document.createElement('div');
+    card.className='review-card '+(isSkipped?'':isCorrect?'correct':'wrong');
+    let badgeClass=isSkipped?'badge-skipped':isCorrect?'badge-correct':'badge-wrong';
+    let badgeText=isSkipped?'--':isCorrect?'&#10003;':'&#10007;';
+    const opts=q.opts.map((o,idx)=>{
+      let cls='review-opt';
+      if(LETTERS[idx]===q.answer)cls+=' correct-opt';
+      if(ua!==null&&ua===idx&&LETTERS[idx]!==q.answer)cls+=' your-wrong';
+      return '<div class="'+cls+'"><span class="opt-label">'+LETTERS[idx]+'</span> '+o+'</div>';
+    }).join('');
+    card.innerHTML=
+      '<div class="review-card-header">'+
+      '<div class="review-badge '+badgeClass+'">'+badgeText+'</div>'+
+      '<div class="review-stem"><span style="color:var(--grey);font-size:.75rem">Q'+(i+1)+' &middot; P'+q.passage+' &middot; '+q.qtype+'</span><br>'+q.stem+'</div>'+
+      '</div>'+
+      '<div class="review-opts">'+opts+'</div>'+
+      '<div class="review-exp">'+q.exp+'</div>';
+    list.appendChild(card);
+  });
+}
+
+function buildMisses(){
+  const LETTERS=['A','B','C','D'];
+  const wrongQs=[];
+  QUESTIONS.forEach((q,i)=>{
+    if(userAnswers[i]!==null&&LETTERS[userAnswers[i]]!==q.answer){
+      wrongQs.push('Q'+(i+1)+' [P'+q.passage+' '+q.qtype+'] -> '+q.answer+'. '+q.opts[LETTERS.indexOf(q.answer)]);
+    }
+  });
+  document.getElementById('missesText').value=wrongQs.length?wrongQs.join('\n'):'No misses -- perfect score!';
+}
+
+function copyMisses(e){
+  e.preventDefault();
+  const txt=document.getElementById('missesText').value;
+  navigator.clipboard.writeText(txt).then(()=>{
+    const btn=e.target;btn.textContent='Copied!';
+    setTimeout(()=>{btn.textContent='Copy Misses';},2000);
+  });
+}
+
+// ── SAVE / LOG ────────────────────────────────────────────────────────────────
+function saveToTracker(score,correct,wrong,skipped){
+  const elapsed=timer_duration*60-secondsLeft;
+  const mm=String(Math.floor(elapsed/60)).padStart(2,'0');
+  const ss=String(elapsed%60).padStart(2,'0');
+  const data={
+    testName:'RC Series 01',name:studentName,pin:studentPin,batch:studentBatch,
+    score:score,correct:correct,wrong:wrong,skipped:skipped,maxMarks:80,
+    timeTaken:mm+':'+ss,timestamp:new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'})
+  };
+  try{
+    const existing=JSON.parse(localStorage.getItem('riim_results')||'[]');
+    existing.unshift(data);
+    localStorage.setItem('riim_results',JSON.stringify(existing.slice(0,200)));
+  }catch(e){}
+}
+
+function logToSheet(score,correct,wrong,skipped,sectionErrors,wrongQuestions){
+  const notice=document.getElementById('sheet-notice');
+  notice.className='submitting';
+  notice.textContent='Submitting results to server...';
+  notice.style.display='block';
+  const elapsed=timer_duration*60-secondsLeft;
+  const mm=String(Math.floor(elapsed/60)).padStart(2,'0');
+  const ss=String(elapsed%60).padStart(2,'0');
+  const LETTERS=['A','B','C','D'];
+  const payload={
+    testName:'RC Series 01',
+    name:studentName,
+    pin:studentPin,
+    batch:studentBatch,
+    score:score,
+    correct:correct,
+    wrong:wrong,
+    skipped:skipped,
+    maxMarks:80,
+    timeTaken:mm+':'+ss,
+    timestamp:new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'}),
+    sectionErrors:JSON.stringify(sectionErrors),
+    wrongQuestions:JSON.stringify(wrongQuestions),
+    studentAnswers:JSON.stringify(userAnswers.map(a=>a===null?null:LETTERS[a])),
+    questionTimes:JSON.stringify(questionTimes.map(t=>Math.round(t/1000)))
+  };
+  fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)})
+    .then(()=>{notice.className='success';notice.textContent='Results saved successfully.';})
+    .catch(()=>{notice.className='failure';notice.textContent='Could not reach server. Results saved locally.';});
+}
+
+function generatePDF(){
+  const el=document.getElementById('review-list');
+  html2pdf().set({
+    margin:10,filename:'RoadToIIM_Test25_'+studentName.replace(/\s+/g,'_')+'.pdf',
+    html2canvas:{scale:2},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}
+  }).from(el).save();
+}
+
+document.addEventListener('contextmenu',e=>e.preventDefault());
+document.addEventListener('keydown',e=>{
+  if(e.ctrlKey&&['c','a','u','s','p'].includes(e.key.toLowerCase()))e.preventDefault();
+});
+</script>
+</body>
+</html>

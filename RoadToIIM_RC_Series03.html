@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Road to IIM — RC Series 03</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;}
+:root{--navy:#0d1b2a;--navy2:#1a2e45;--gold:#c9a84c;--gold2:#e8c76a;--green:#2ecc71;--red:#e74c3c;--grey:#8899aa;--white:#f0f4f8;--purple:#9b59b6;--panel:280px;}
+body{background:var(--navy);color:var(--white);font-family:'Segoe UI',sans-serif;min-height:100vh;overflow-x:hidden;}
+#loginScreen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:20px;}
+.login-box{background:var(--navy2);border:1px solid var(--gold);border-radius:12px;padding:40px 36px;width:100%;max-width:440px;}
+.login-box h1{color:var(--gold);font-size:1.5rem;text-align:center;margin-bottom:6px;}
+.login-box p{color:var(--grey);font-size:.85rem;text-align:center;margin-bottom:28px;}
+.login-box label{display:block;font-size:.8rem;color:var(--grey);margin-bottom:4px;margin-top:14px;}
+.login-box input,.login-box select{width:100%;background:#0d1b2a;border:1px solid #2a4060;border-radius:6px;padding:10px 12px;color:var(--white);font-size:.95rem;}
+#startBtn{width:100%;margin-top:24px;padding:12px;background:var(--gold);color:var(--navy);font-size:1rem;font-weight:700;border:none;border-radius:8px;cursor:pointer;}
+#topBar{background:var(--navy2);border-bottom:1px solid #1e3a5a;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;padding-right:calc(var(--panel) + 20px);}
+#topBar .logo{color:var(--gold);font-weight:700;font-size:1rem;}
+#timerDisplay{font-size:1.1rem;font-weight:700;color:var(--green);background:#0a2a1a;padding:6px 16px;border-radius:20px;border:1px solid var(--green);}
+#timerDisplay.urgent{color:var(--red);background:#2a0a0a;border-color:var(--red);}
+#progressBar{height:3px;background:#1e3a5a;margin-right:var(--panel);}
+#progressFill{height:100%;background:var(--gold);transition:width .3s;}
+#mainLayout{display:flex;min-height:calc(100vh - 54px);}
+#rcSplit{display:flex;flex:1;max-width:calc(100% - var(--panel));}
+#passagePane{width:48%;padding:24px 20px 80px 28px;border-right:1px solid #1e3a5a;overflow-y:auto;max-height:calc(100vh - 54px);position:sticky;top:54px;}
+#passageTitle{color:var(--gold);font-size:.8rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px;}
+#passageSource{color:var(--grey);font-size:.75rem;margin-bottom:14px;}
+#passageText{font-size:.95rem;line-height:1.85;color:var(--white);}
+#questionArea{flex:1;padding:28px 24px 80px 24px;}
+#sectionTag{display:inline-block;background:#1e3a5a;color:var(--gold);font-size:.72rem;font-weight:700;letter-spacing:.08em;padding:3px 10px;border-radius:4px;margin-bottom:10px;text-transform:uppercase;}
+#questionNumber{color:var(--grey);font-size:.85rem;margin-bottom:8px;}
+#questionStem{font-size:1.02rem;line-height:1.7;color:var(--white);margin-bottom:22px;word-break:break-word;overflow-wrap:break-word;}
+.options-list{list-style:none;display:flex;flex-direction:column;gap:10px;}
+.option-btn{background:#0d1b2a;border:1px solid #1e3a5a;border-radius:8px;padding:12px 16px;cursor:pointer;text-align:left;font-size:.93rem;color:var(--white);transition:all .2s;width:100%;}
+.option-btn:hover{border-color:var(--gold);background:#162030;}
+.option-btn.selected{border-color:var(--gold);background:#1e2e10;color:var(--gold2);}
+.option-btn.marked{border-color:var(--purple);}
+.opt-label{display:inline-block;width:24px;font-weight:700;color:var(--gold);}
+#paletteOverlay{position:fixed;top:0;right:0;width:100%;height:100%;z-index:200;pointer-events:none;display:flex;justify-content:flex-end;}
+#palettePanel{width:280px;height:100%;background:var(--navy2);border-left:1px solid #1e3a5a;padding:16px 12px;overflow-y:auto;pointer-events:all;}
+#paletteGrid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:16px;}
+.pal-btn{width:100%;aspect-ratio:1;border-radius:6px;border:1px solid #1e3a5a;background:#0d1b2a;color:var(--grey);font-size:.78rem;font-weight:600;cursor:pointer;}
+.pal-btn.answered{background:var(--green);color:#fff;border-color:var(--green);}
+.pal-btn.marked{background:var(--purple);color:#fff;border-color:var(--purple);}
+.pal-btn.current{border:2px solid var(--gold);color:var(--gold);}
+#navBar{position:fixed;bottom:0;left:0;right:var(--panel);background:var(--navy2);border-top:1px solid #1e3a5a;display:flex;align-items:center;justify-content:space-between;padding:10px 20px;z-index:150;}
+.nav-btn{background:#1e3a5a;color:var(--white);border:none;border-radius:6px;padding:8px 18px;cursor:pointer;font-size:.9rem;font-weight:600;}
+#submitBtn{background:var(--gold);color:var(--navy);font-weight:700;display:none;}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
+.stat-box{background:var(--navy2);border-radius:8px;padding:16px;text-align:center;border:1px solid #1e3a5a;}
+.stat-box .val{font-size:1.6rem;font-weight:800;}
+.stat-box .lbl{font-size:.75rem;color:var(--grey);margin-top:4px;}
+.stat-box.correct .val{color:var(--green);}
+.stat-box.wrong .val{color:var(--red);}
+.stat-box.accuracy .val{color:var(--gold);}
+.review-card{background:var(--navy2);border-radius:10px;margin-bottom:14px;overflow:hidden;border-left:4px solid var(--grey);word-break:break-word;overflow-wrap:break-word;}
+.review-card.correct{border-left-color:var(--green);}
+.review-card.wrong{border-left-color:var(--red);}
+.review-exp{background:#0a2a15;border-left:3px solid var(--green);padding:10px 14px;font-size:.83rem;line-height:1.6;color:#a8e6c0;margin-top:8px;}
+#testScreen{display:none;}
+#resultsScreen{display:none;padding:28px 32px;max-width:calc(100% - var(--panel));}
+.score-hero{text-align:center;margin-bottom:28px;}
+.score-hero .score-num{font-size:3.5rem;font-weight:900;color:var(--gold);}
+.score-hero .score-sub{font-size:1rem;color:var(--grey);margin-top:4px;}
+.result-btn{padding:10px 24px;border-radius:8px;border:none;cursor:pointer;font-size:.95rem;font-weight:700;margin:0 6px;}
+.result-btn.gold{background:var(--gold);color:var(--navy);}
+.result-btn.ghost{background:transparent;border:1px solid var(--gold);color:var(--gold);}
+#sheet-notice{padding:10px 14px;border-radius:6px;font-size:.85rem;margin-bottom:16px;display:none;}
+#sheet-notice.submitting{background:#1a2e10;color:#c9e88a;border:1px solid #4a7a20;}
+#sheet-notice.success{background:#0a2a15;color:#2ecc71;border:1px solid #2ecc71;}
+#sheet-notice.failure{background:#2a0a0a;color:#e74c3c;border:1px solid #e74c3c;}
+.review-card-header{padding:14px 16px;display:flex;align-items:flex-start;gap:10px;}
+.review-badge{min-width:32px;height:32px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.85rem;}
+.badge-correct{background:var(--green);color:#fff;}
+.badge-wrong{background:var(--red);color:#fff;}
+.badge-skipped{background:var(--grey);color:#fff;}
+.review-stem{font-size:.9rem;line-height:1.6;flex:1;}
+.review-opts{padding:0 16px 8px;}
+.review-opt{font-size:.83rem;padding:4px 0;color:var(--grey);}
+.review-opt.correct-opt{color:var(--green);font-weight:700;}
+.review-opt.your-wrong{color:var(--red);}
+.misses-box{background:#0d1b2a;border:1px solid #2a4060;border-radius:8px;padding:14px;margin-top:20px;}
+.misses-box h3{color:var(--gold);font-size:.9rem;margin-bottom:8px;}
+.misses-box textarea{width:100%;background:#0a1520;border:1px solid #1e3a5a;border-radius:6px;padding:10px;color:var(--white);font-size:.83rem;font-family:'Segoe UI',sans-serif;resize:vertical;min-height:80px;}
+.copy-btn{margin-top:8px;padding:6px 14px;background:var(--navy2);border:1px solid var(--gold);color:var(--gold);border-radius:6px;font-size:.8rem;cursor:pointer;}
+.pal-legend{font-size:.72rem;color:var(--grey);margin-top:8px;}
+.pal-legend span{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px;vertical-align:middle;}
+@media (max-width:768px){
+#paletteOverlay{display:none;}
+#palettePanel{width:280px;}
+#rcSplit{flex-direction:column;}
+#passagePane{width:100%;max-height:40vh;position:relative;top:0;border-right:none;border-bottom:1px solid #1e3a5a;padding:16px;}
+#questionArea{padding:16px 16px 80px 16px;}
+#topBar{padding-right:16px;}
+#progressBar{margin-right:0;}
+#navBar{right:0;padding:8px 12px;}
+.nav-btn{padding:7px 10px;font-size:.8rem;}
+.stats-grid{grid-template-columns:repeat(2,1fr);}
+.login-box input,.login-box select{font-size:1rem;}
+.score-hero .score-num{font-size:2.4rem;}
+#resultsScreen{max-width:100%;padding:16px;}
+}
+@media (max-width:768px){#paletteOverlay.mobile-open{display:flex;}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+<div class="login-box">
+  <h1>Road to IIM</h1>
+  <p>RC Series 03 &nbsp;&middot;&nbsp; RC Drill &nbsp;&middot;&nbsp; 20 Questions &nbsp;&middot;&nbsp; 25 Minutes</p>
+  <label>Full Name</label>
+  <input type="text" id="inputName" placeholder="Your full name" autocomplete="off">
+  <label>IMS PIN</label>
+  <input type="text" id="inputPin" placeholder="STU or IMS + 10 digits" autocomplete="off">
+  <label>Batch</label>
+  <select id="inputBatch">
+    <option value="">-- Select batch --</option>
+    <optgroup label="Classroom">
+      <option>A2701</option><option>A2702</option><option>A2703</option>
+      <option>A2704</option><option>A2705</option><option>A2706</option>
+      <option>A2707</option><option>A2708</option><option>A2709</option>
+      <option>A2710</option><option>A2711</option><option>A2712</option>
+    </optgroup>
+    <optgroup label="School"><option>Zebar</option></optgroup>
+    <optgroup label="Online">
+      <option>27E101</option><option>27E102</option><option>27E103</option>
+      <option>27E104</option><option>27E105</option>
+    </optgroup>
+    <optgroup label="Admin"><option>Admin</option></optgroup>
+  </select>
+  <div id="loginErr" style="display:none;margin-top:10px;color:var(--red);font-size:.83rem;"></div>
+  <button id="startBtn" onclick="startTest()">Begin Test &rarr;</button>
+</div>
+</div>
+
+<!-- TEST -->
+<div id="testScreen">
+  <div id="topBar">
+    <span class="logo">Road to IIM &middot; RC Series 03</span>
+    <div id="timerDisplay">25:00</div>
+  </div>
+  <div id="progressBar"><div id="progressFill" style="width:0%"></div></div>
+  <div id="mainLayout">
+    <div id="rcSplit">
+      <div id="passagePane">
+        <div id="passageTitle"></div>
+        <div id="passageSource"></div>
+        <div id="passageText"></div>
+      </div>
+      <div id="questionArea">
+        <div id="sectionTag"></div>
+        <div id="questionNumber"></div>
+        <div id="questionStem"></div>
+        <ul class="options-list" id="optionsList"></ul>
+      </div>
+    </div>
+  </div>
+  <div id="paletteOverlay">
+    <div id="palettePanel">
+      <div style="color:var(--gold);font-weight:700;font-size:.85rem;margin-bottom:10px;">Questions</div>
+      <div id="paletteGrid"></div>
+      <div class="pal-legend">
+        <span style="background:var(--green)"></span>Answered &nbsp;
+        <span style="background:var(--purple)"></span>Marked &nbsp;
+        <span style="background:#0d1b2a;border:1px solid #1e3a5a"></span>Unvisited
+      </div>
+    </div>
+  </div>
+  <div id="navBar">
+    <button class="nav-btn" onclick="navigate(-1)">&larr; Prev</button>
+    <button class="nav-btn" onclick="togglePalette()">Questions</button>
+    <button class="nav-btn" onclick="markForReview()">&#9733; Mark</button>
+    <button class="nav-btn" onclick="clearAnswer()">Clear</button>
+    <button class="nav-btn" onclick="navigate(1)">Next &rarr;</button>
+    <button class="nav-btn" id="submitBtn" onclick="confirmSubmit()">Submit Test</button>
+  </div>
+</div>
+
+<!-- RESULTS -->
+<div id="resultsScreen">
+  <div style="background:var(--navy2);border-bottom:1px solid #1e3a5a;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;">
+    <span style="color:var(--gold);font-weight:700;">Road to IIM &middot; RC Series 03 — Results</span>
+  </div>
+  <div style="padding:28px 32px;">
+    <div class="score-hero" id="scoreHero"></div>
+    <div id="sheet-notice"></div>
+    <div class="stats-grid" id="statsGrid"></div>
+    <div style="text-align:center;margin-bottom:24px;">
+      <button class="result-btn gold" onclick="location.href='road_to_iim_tracker_v2.html'">Go to Tracker</button>
+      <button class="result-btn ghost" onclick="location.href='https://sahilkanetkar-collab.github.io/Road-to-IIM/'">All Tests</button>
+      <button class="result-btn ghost" onclick="generatePDF()">Download PDF</button>
+    </div>
+    <div class="misses-box">
+      <h3>RC Misses</h3>
+      <textarea id="missesText" readonly></textarea>
+      <button class="copy-btn" onclick="copyMisses(event)">Copy Misses</button>
+    </div>
+    <h3 style="color:var(--gold);margin:24px 0 12px;">Review All Questions</h3>
+    <div id="review-list"></div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script>
+const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbx5Ojm_zp4LfsMeelx5e06KNjVH1wfsXdV0keS4407m4FO1HU4EpVb7GKj-ibAsxnspeA/exec';
+const timer_duration=25;
+const ADMIN_PINS=['IMS1111111111','IMS2222222222','IMS3333333333','IMS4444444444','IMS5555555555'];
+
+const PASSAGES=[
+{
+id:1,
+title:"Passage 1 -- Pop Culture / Music and Memory",
+source:"Original.",
+text:`There is something neurologically specific about the music we first encounter between the ages of twelve and twenty-five. Research in music cognition suggests that this period -- roughly aligned with adolescence and early adulthood -- is when the brain is most plastic in its encoding of emotional associations with sound. The result is that music heard during this window tends to be remembered with unusual intensity, retrieved more quickly, and experienced as more emotionally resonant than music encountered at any other point in life. This is not sentiment. It is structure.
+
+The music industry has understood this, if not always in neurological terms, for longer than the research has formalised it. Reunion tours, greatest hits compilations, and nostalgia-format radio exist in part because an audience that formed its deepest musical attachments in the 1980s or 1990s will respond to that music in ways that newer releases cannot reliably replicate. The emotional infrastructure is already in place. The industry is not selling music; it is selling access to a self that no longer exists except in the moment of listening.
+
+What is less often observed is the cultural cost of this architecture. A market structured around nostalgia has limited incentive to build the emotional infrastructure for the next generation. The reunion tour displaces the emerging act. The greatest hits compilation crowds out the new release in streaming playlists. Not because gatekeepers are deliberately suppressive, but because the economics of emotional recall are simply more reliable than the economics of emotional discovery. Discovery is a gamble. Recall is almost guaranteed.`
+},
+{
+id:2,
+title:"Passage 2 -- Science / Antimicrobial Resistance",
+source:"Original. Based on ideas in WHO literature and AMR research.",
+text:`Antibiotic resistance is, at its core, a collective action problem dressed in the language of medicine. Each individual prescription of antibiotics where none is strictly necessary represents a rational decision at the point of treatment -- the marginal risk of contributing to resistance is diffuse, distributed across billions of future patients, while the marginal benefit of symptom relief is immediate and personal. The structure is precisely that of a tragedy of the commons, and it produces the same outcome: individually reasonable behaviour that is collectively catastrophic.
+
+What makes the resistance problem particularly intractable is that the commons being depleted is invisible. The overfished lake can be seen. The eroding pasture can be measured. Resistance develops silently, in microbial populations that are inaccessible to ordinary observation, on a timeline that disconnects cause from effect in ways that are cognitively difficult to track. A physician who prescribed antibiotics unnecessarily in 2010 will never know whether the resistant strain that killed a patient in 2025 owes anything to that decision. The causal chain is real but untraceable.
+
+This untraceability has two consequences that policy has struggled to address. First, it makes attribution impossible -- and without attribution, the normal mechanisms of accountability do not operate. Second, it makes the problem feel abstract to those most positioned to address it, namely prescribing physicians and patients. Campaigns that attempt to address resistance through individual behaviour change have shown modest and inconsistent results. The implication is that resistance cannot be solved at the level of individual decision-making, because the problem is not located at that level. It is a systemic failure that requires systemic intervention.`
+},
+{
+id:3,
+title:"Passage 3 -- Economics / Gig Economy and Labour",
+source:"Original.",
+text:`The gig economy was presented, in its first decade, as a liberation. Workers would escape the rigidity of the nine-to-five, set their own hours, build portfolio careers, and translate personal autonomy into economic advantage. The platforms that made this possible -- Uber, Deliveroo, Upwork, and their successors -- were positioned not as employers but as technology intermediaries, connecting supply with demand in markets that had previously been too fragmented to serve efficiently.
+
+The reframing of employment as platform participation was not merely semantic. It had immediate and substantial legal consequences. Workers classified as independent contractors rather than employees were ineligible for minimum wage protections, sick pay, redundancy rights, and employer pension contributions. The platforms argued that this was the price of flexibility -- that workers who wanted the benefits of employment could simply seek employment. The workers, in practice, often could not: the platform had captured enough of the market that alternatives were severely limited.
+
+Courts in the United Kingdom, the European Union, and several American states have progressively rejected this classification for at least some gig workers, finding that the control exercised by the platform over rates, working conditions, and access to the market constituted a form of de facto employment regardless of the contractual label applied. The legal development reflects a broader recognition: that the categories of employment law were designed for a world in which the relationship between capital and labour was visibly direct, and that platform intermediation -- by making that relationship indirect -- had found a legal gap that was never deliberately created.`
+},
+{
+id:4,
+title:"Passage 4 -- Current Affairs / Democratic Institutions",
+source:"Original. Based on ideas in Steven Levitsky and Lucan Way's comparative politics literature.",
+text:`Democratic erosion, in the twenty-first century, rarely looks like a coup. The generals do not arrive. The parliament is not shuttered. The constitution is not torn up. Instead, the process is incremental, procedural, and -- this is the part that makes it so difficult to resist -- often formally legal. Incumbent governments modify electoral laws to favour themselves. They pack courts with loyalists. They use regulatory agencies to harass opposition media. Each individual step, when challenged, can be defended within the existing legal framework. The cumulative effect is the hollowing out of the institutions that give that framework meaning.
+
+Political scientists have called this process democratic backsliding, and one of its defining features is the problem it poses for constitutional guardrails. Constitutions are designed to prevent the abuse of power by those who are already inside the system. They assume that the actors seeking to abuse power will be clearly identifiable as such -- that the threat will come from outside the rules, so the rules can stop it. Backsliding exploits the gap between the letter of the constitution and the spirit of the institutions it was meant to protect. The guardrails hold. The vehicle they were meant to protect simply drives around them.
+
+What sustains backsliding where it takes hold is not, typically, popular indifference to democracy. Surveys in countries experiencing erosion consistently show majority support for democratic principles. What erodes first is not preference but institutional capacity -- the ability of courts, media, civil society, and electoral commissions to function independently when the government of the day finds their independence inconvenient.`
+},
+{
+id:5,
+title:"Passage 5 -- Science / Sleep Science",
+source:"Original. Based on ideas in Matthew Walker's sleep research and related literature.",
+text:`Sleep research has undergone something of a revolution in the past three decades, and one of its more unsettling findings is that the cost of insufficient sleep is almost never felt as such. People who sleep five or six hours a night consistently rate their own cognitive functioning as adequate or better. Objective tests -- measuring reaction time, working memory, and decision quality -- tell a different story. The impairment is measurable and, in studies where it accumulates over days of restricted sleep, substantial. But the subjective sense of impairment fades within a day or two of the deprivation beginning. The brain, deprived of sleep, loses the ability to accurately assess how impaired it is.
+
+This creates a particularly intractable form of Dunning-Kruger problem. The less sleep a person gets, the less accurately they can evaluate their own cognitive state -- and therefore the more confidently they tend to assert that they are fine. The people most likely to insist that they function well on little sleep are, for structural reasons, the people least equipped to make that judgement.
+
+The implications for institutional settings are significant. Professions that routinely require extended working hours -- medicine, law, finance, and the military -- are also professions where the consequences of cognitive error are severe and where a culture of demonstrated endurance persists. The argument that experienced practitioners can manage on less sleep because they are accustomed to it is not supported by the research. Acclimatisation reduces the felt discomfort of sleep deprivation. It does not reduce the measurable cognitive impairment.`
+}
+];
+
+const QUESTIONS=[
+{id:1,section:"RC",passage:1,qtype:"inference",
+stem:`The passage most strongly implies that the commercial dominance of nostalgia formats in the music industry is`,
+opts:["an economically rational response to the greater reliability of emotional recall over emotional discovery as a revenue driver","a deliberate strategy by major labels to suppress emerging artists who would otherwise compete with their established catalogues","a consequence of an ageing population whose purchasing power exceeds that of younger music consumers","driven primarily by the neurological research into music cognition that became available in the late twentieth century"],
+answer:"A",
+exp:`Correct Answer: A. The passage says "the economics of emotional recall are simply more reliable than the economics of emotional discovery. Discovery is a gamble. Recall is almost guaranteed." This is a structural economic explanation, not a conspiratorial one (eliminates Option A). Option C introduces demographics and purchasing power not in the passage. Option D inverts the causal direction -- the industry understood this before the research formalised it.`},
+
+{id:2,section:"RC",passage:1,qtype:"assumption",
+stem:`The author's claim that the industry "is not selling music; it is selling access to a self that no longer exists except in the moment of listening" depends on which of the following assumptions?`,
+opts:["Recorded music is capable of reproducing the exact emotional state that the listener experienced when they first heard it","The commercial music industry has a responsibility to prioritise emotional authenticity over profit maximisation","The pleasure audiences take in nostalgic music is primarily a pleasure of self-recognition rather than of musical appreciation","Audiences are aware that their response to nostalgic music is neurologically mediated rather than spontaneous"],
+answer:"C",
+exp:`Correct Answer: C. For the "self that no longer exists" framing to hold, the purchase must be primarily about accessing a past identity -- which means the experience is fundamentally about self-recognition and memory rather than about the music as music. Option A is too strong -- "exact emotional state" is not what the passage claims. Option C is moral prescription not required by the descriptive argument. Option D asks about self-awareness that the passage does not claim.`},
+
+{id:3,section:"RC",passage:1,qtype:"vocabulary",
+stem:`As used in the passage, "emotional infrastructure" most nearly refers to`,
+opts:["the neurological and associative framework through which an individual responds to specific music with intensity and recall","the commercial systems that music industry companies use to monetise emotional responses to their catalogues","the social context -- shared memories, collective experiences -- that makes certain music culturally significant","the formal structures within music -- harmony, rhythm, dynamics -- that produce emotional responses in listeners"],
+answer:"A",
+exp:`Correct Answer: A. The passage uses "emotional infrastructure" in the context of an audience's pre-existing deep attachments: "The emotional infrastructure is already in place." This refers to the internal, individual architecture of encoded emotional associations built during the adolescent window -- the neurological and associative system. Option B makes it commercial. Option C makes it social/collective. Option D makes it formal/musical. All are plausible distractors; the context anchors the meaning to the individual neurological encoding.`},
+
+{id:4,section:"RC",passage:1,qtype:"tone",
+stem:`The author's overall rhetorical strategy in the passage is best described as`,
+opts:["celebrating the power of music to preserve emotional access to formative periods of life","presenting the nostalgic appeal of music as a psychological illusion that audiences mistake for genuine feeling","arguing that the music industry's commercial interests are fundamentally incompatible with cultural health","building from a neurological foundation to a structural critique of an industry shaped by that neurology"],
+answer:"D",
+exp:`Correct Answer: D. The passage moves deliberately: paragraph one establishes the neuroscience (structure, not sentiment), paragraph two shows how the industry has built around it, paragraph three identifies the cultural cost of that architecture. It is a bottom-up argument from biology to industry to cultural consequence. Option A is too celebratory -- the author identifies a cost. Option C overstates; the author does not call them incompatible, only notes the structural pressure. Option D mischaracterises -- the author explicitly says this is not sentiment.`},
+
+{id:5,section:"RC",passage:2,qtype:"inference",
+stem:`The author's comparison of antibiotic resistance to a tragedy of the commons implies that`,
+opts:["the solution to resistance, like the solution to commons problems, lies in privatising access to antibiotics","antibiotic resistance is likely to be resolved through international treaty, as most commons problems ultimately are","the incentive structure facing individual prescribers will not, on its own, generate the behaviour change needed to address the collective problem","the medical profession has failed to acknowledge that antibiotic prescribing is governed by the same economic logic as resource consumption"],
+answer:"C",
+exp:`Correct Answer: C. The tragedy of the commons framework explains why individually rational behaviour produces collective catastrophe -- the implication is that individual incentives are misaligned with collective outcomes, and therefore cannot be relied upon to solve the problem. This is precisely the conclusion the final paragraph draws. Option A imports a privatisation solution not in the passage. Option B is one resolution of commons problems not supported by the passage. Option D is about professional acknowledgement, not the structural argument.`},
+
+{id:6,section:"RC",passage:2,qtype:"inference",
+stem:`The author implies that the "untraceability" of antibiotic resistance is particularly consequential because`,
+opts:["it removes the possibility of holding individual prescribers accountable, which eliminates a mechanism that might otherwise correct the behaviour","it prevents medical researchers from identifying which bacterial strains are developing resistance most rapidly","it means that patients cannot be informed of the risks associated with unnecessary antibiotic prescriptions","it makes it impossible for health systems to calculate the economic cost of resistance accurately"],
+answer:"A",
+exp:`Correct Answer: A. The passage states untraceability "makes attribution impossible -- and without attribution, the normal mechanisms of accountability do not operate." The consequence is the failure of accountability as a corrective mechanism. Option A is about research identification, not accountability. Option C conflates patient information with causal traceability. Option D introduces economic calculation not in the passage.`},
+
+{id:7,section:"RC",passage:2,qtype:"tone",
+stem:`The author's description of the overfished lake and the eroding pasture as comparisons to antibiotic resistance serves primarily to`,
+opts:["suggest that antibiotic resistance is less serious than other commons problems because it operates at a microscopic scale","provide reassurance that resistance, like fishery depletion, can be reversed if corrective action is taken promptly","argue that the regulatory approaches used for fisheries and land management should be directly applied to antibiotic prescribing","establish the visibility of other commons problems as a contrast that highlights what makes resistance uniquely difficult to address through awareness campaigns"],
+answer:"D",
+exp:`Correct Answer: D. The author introduces the lake and pasture specifically to say the resistance commons is invisible by contrast -- "resistance develops silently." The function is contrastive: other commons depletions are observable; this one is not, which is what makes awareness-based interventions weak. Option A inverts the comparison. Option C imports a regulatory prescription not in the passage. Option D introduces reversibility not claimed.`},
+
+{id:8,section:"RC",passage:2,qtype:"assumption",
+stem:`The argument in the final paragraph depends on which of the following assumptions?`,
+opts:["Individual behaviour change campaigns have never succeeded in altering public health outcomes at scale","The systemic interventions required to address resistance are politically feasible in most countries","Problems that arise from collective action failures cannot be meaningfully addressed through appeals to individual behaviour alone","Physicians are the primary drivers of antibiotic resistance and patients play a negligible role"],
+answer:"C",
+exp:`Correct Answer: C. The conclusion -- "resistance cannot be solved at the level of individual decision-making, because the problem is not located at that level" -- assumes that collective action failures require structural solutions. Option A overstates -- the passage says campaigns showed "modest and inconsistent results," not that individual campaigns never work anywhere. Option B is a feasibility claim the passage does not address. Option D is a distributional claim not in the passage.`},
+
+{id:9,section:"RC",passage:3,qtype:"inference",
+stem:`The passage suggests that the legal gap exploited by platform companies was`,
+opts:["deliberately designed by legislators who were sympathetic to the interests of technology companies","a consequence of employment law categories that assumed labour relationships would be directly structured rather than mediated by a platform","specific to the gig economy and without precedent in earlier debates about employment classification","the result of regulatory capture, in which platform companies influenced the drafting of labour law in their favour"],
+answer:"B",
+exp:`Correct Answer: B. The passage says "the categories of employment law were designed for a world in which the relationship between capital and labour was visibly direct, and that platform intermediation... had found a legal gap that was never deliberately created." Option B captures this. Options A and D import deliberate design or regulatory capture -- the passage explicitly says the gap was "never deliberately created." Option C makes a precedent claim the passage does not address.`},
+
+{id:10,section:"RC",passage:3,qtype:"vocabulary",
+stem:`The author's use of "de facto employment" rather than simply "employment" most nearly implies that`,
+opts:["the employment relationship existed in practice, regardless of how the contractual arrangement was labelled","courts were unwilling to grant gig workers the full range of employment rights available to regular employees","the platforms had deliberately structured their contracts to avoid the legal definition of employment while replicating its substance","workers in gig platforms earn less, on average, than workers classified as employees in equivalent roles"],
+answer:"A",
+exp:`Correct Answer: A. "De facto" means "in practice, regardless of the formal label" -- the courts found that the functional reality was employment even if the contract said otherwise. Option B captures this. Option A is about the scope of rights granted, not the meaning of de facto. Option C is about deliberate structuring -- possible but not what de facto means. Option D introduces wage comparisons not in the passage.`},
+
+{id:11,section:"RC",passage:3,qtype:"tone",
+stem:`The author's tone in the second paragraph when describing the platforms' argument about flexibility is best described as`,
+opts:["neutral, presenting the platforms' position as a reasonable commercial argument without implicit criticism","admiring, suggesting that the flexibility offered was a genuine benefit to workers who valued autonomy","sceptical, allowing the argument's internal logic to be undercut by the market conditions it ignores","openly hostile, characterising the platforms' position as a deliberate misrepresentation of their workers' situation"],
+answer:"C",
+exp:`Correct Answer: C. The author presents the platform argument ("workers who wanted the benefits of employment could simply seek employment") and then immediately undercuts it: "The workers, in practice, often could not: the platform had captured enough of the market that alternatives were severely limited." The critique is delivered by facts, not by editorial hostility. Option A misses the undercut. Option B is wrong -- the author is not admiring. Option D overstates -- the tone is pointed but not openly hostile.`},
+
+{id:12,section:"RC",passage:3,qtype:"assumption",
+stem:`The argument in the passage depends on which of the following assumptions?`,
+opts:["Workers who were classified as independent contractors would have preferred to be classified as employees in all cases","The control exercised by platforms over rates and access is sufficient to constitute a meaningful employment relationship, regardless of contractual form","The legal definition of employment should prioritise economic dependence over the formal structure of the contractual relationship","Platform companies were aware, when designing their business models, that they were exploiting a gap in employment law"],
+answer:"B",
+exp:`Correct Answer: B. The courts' findings -- and the passage's endorsement of them -- rest on the premise that control over rates, conditions, and market access is substantively equivalent to the control that defines employment, regardless of what the contract says. Option A overstates -- some workers do value flexibility. Option C is a normative legal claim that goes beyond what the passage argues. Option D imports intentionality the passage does not claim.`},
+
+{id:13,section:"RC",passage:4,qtype:"vocabulary",
+stem:`The author's metaphor of the vehicle driving around guardrails most nearly implies that`,
+opts:["constitutions are ineffective at preventing democratic erosion because they were not designed with authoritarian actors in mind","incumbent governments circumvent constitutional constraints by exploiting the gap between formal legal compliance and the substantive purpose of those constraints","the constitutional order is so rigid that it forces would-be authoritarians to seek power through extra-legal channels","democratic guardrails function effectively against obvious constitutional violations but fail against subtler forms of institutional manipulation"],
+answer:"B",
+exp:`Correct Answer: B. The guardrails (constitutional rules) remain in place -- the vehicle (the government) does not break them but instead goes around them. This maps to the passage's argument: backsliding is formally legal, exploiting the gap between letter and spirit. Option B makes constitutions sound generally ineffective, which is not the author's claim. Option C inverts -- the passage says backsliding is legal, not extra-legal. Option D is close but "subtler" misses the passage's specific point about the letter-spirit gap.`},
+
+{id:14,section:"RC",passage:4,qtype:"inference",
+stem:`The passage most strongly implies that democratic backsliding is particularly difficult to resist because`,
+opts:["opposition parties in affected countries typically fail to coordinate effectively against incumbent governments","international institutions lack the enforcement mechanisms to intervene when democratic erosion is gradual","citizens in countries experiencing backsliding are generally unaware of the erosion until its effects are irreversible","each individual step in the process can be legally defended, making collective resistance harder to organise around a clear violation"],
+answer:"D",
+exp:`Correct Answer: D. The passage says each individual step "can be defended within the existing legal framework" -- there is no single obvious violation to rally against. The erosion is cumulative, and cumulative processes are harder to resist than discrete events. Options A and B are possible but not what the passage identifies as the source of difficulty. Option D is explicitly contradicted -- the passage says people continue to support democratic principles; the problem is institutional capacity, not citizen awareness.`},
+
+{id:15,section:"RC",passage:4,qtype:"tone",
+stem:`The author's rhetorical strategy in the opening paragraph is best described as`,
+opts:["using legal jargon to establish the author's credentials as an expert in constitutional law","building tension through a list of events that do not happen, before pivoting to describe what does","appealing to the reader's fear of authoritarian government in order to generate emotional engagement","establishing a neutral baseline description of democratic governance before introducing the problem of backsliding"],
+answer:"B",
+exp:`Correct Answer: B. "The generals do not arrive. The parliament is not shuttered. The constitution is not torn up." -- three negations in sequence, each denying the expected coup-style scenario, before the pivot: "Instead, the process is incremental, procedural, and... formally legal." The rhetorical effect is to subvert expectations. Option A is wrong -- no jargon and no credentialing. Option C imports fear-appeal intent not evidenced in the tone. Option D mischaracterises -- there is no neutral baseline; the passage opens with the problem immediately.`},
+
+{id:16,section:"RC",passage:4,qtype:"assumption",
+stem:`The author's claim that what "erodes first is not preference but institutional capacity" depends on which of the following assumptions?`,
+opts:["Citizens in countries experiencing backsliding actively support the institutional changes being made","Survey evidence of support for democratic principles is a reliable indicator of how citizens will behave when those principles are under threat","Democratic institutions can be dismantled even when the public continues to hold democratic values, if the institutions themselves are deprived of operational independence","Institutional capacity and popular support for democracy are always inversely correlated in countries experiencing backsliding"],
+answer:"C",
+exp:`Correct Answer: C. The passage distinguishes between preference (what people want) and institutional capacity (what institutions can actually do). The claim that erosion targets capacity rather than preference requires the assumption that these two things can come apart -- that you can have a public that wants democracy while the mechanisms that deliver it are being dismantled. Option A contradicts the passage. Option C is an epistemological claim about survey reliability the argument does not require. Option D makes an "always inversely correlated" claim that is not asserted.`},
+
+{id:17,section:"RC",passage:5,qtype:"inference",
+stem:`The passage most strongly implies that the cultural valorisation of endurance in high-stakes professions is`,
+opts:["incompatible with research evidence, because acclimatisation affects subjective experience but not objective cognitive performance","a conscious strategy by institutions to reduce staffing costs by normalising long working hours","partially justified because experienced practitioners have developed compensatory skills that offset sleep-related impairment","a problem that can be addressed through better self-monitoring tools that provide objective cognitive feedback"],
+answer:"A",
+exp:`Correct Answer: A. The passage's final two sentences make this explicit: the acclimatisation argument "is not supported by the research. Acclimatisation reduces the felt discomfort of sleep deprivation. It does not reduce the measurable cognitive impairment." Option A imports a motive (cost reduction) not in the passage. Option C contradicts the passage -- no compensatory skills are mentioned. Option D introduces a technological solution not raised.`},
+
+{id:18,section:"RC",passage:5,qtype:"vocabulary",
+stem:`The author's reference to the Dunning-Kruger problem is best understood as implying that sleep deprivation`,
+opts:["is a form of cognitive incompetence that shares the same neurological mechanisms as the Dunning-Kruger effect","produces overconfidence in the same way that incompetence produces overconfidence -- by degrading the very faculties needed to detect the deficit","is most damaging in people who already exhibit low metacognitive ability independent of sleep status","produces a temporary but reversible loss of self-awareness that resolves as soon as normal sleep is restored"],
+answer:"B",
+exp:`Correct Answer: B. The Dunning-Kruger effect is that incompetence impairs the ability to recognise incompetence -- the same faculty (metacognition) is both degraded and required for self-assessment. The author is using it as an analogy: sleep deprivation degrades the brain's ability to assess its own impairment, just as incompetence degrades the ability to recognise incompetence. Option B makes a neurological equivalence claim not in the passage. Option C introduces a pre-existing low metacognition group not discussed. Option D adds a reversibility claim not supported.`},
+
+{id:19,section:"RC",passage:5,qtype:"assumption",
+stem:`Which of the following, if true, would most seriously undermine the author's argument about the reliability of self-reported sleep sufficiency?`,
+opts:["Studies show that individuals who sleep fewer than six hours report higher levels of job satisfaction than those who sleep eight hours","Some individuals, due to a rare genetic variant, genuinely function at normal cognitive levels on six hours of sleep per night","The Dunning-Kruger effect has been criticised by some researchers as an artefact of statistical methodology rather than a genuine cognitive phenomenon","A longitudinal study finds that after three weeks of restricted sleep, individuals' subjective ratings of their own performance begin to converge with objective measures of impairment"],
+answer:"D",
+exp:`Correct Answer: D. The author's argument depends on the claim that subjective self-assessment of sleep adequacy remains detached from objective impairment. If self-reports eventually converge with objective measures (after extended deprivation), the claim that the brain permanently loses the ability to assess its own impairment would need to be qualified. Option C attacks the Dunning-Kruger analogy but not the core sleep argument. Option D introduces a genetic exception that would narrow but not undermine the general claim. Option A is about job satisfaction, not cognitive self-assessment.`},
+
+{id:20,section:"RC",passage:5,qtype:"tone",
+stem:`The author's tone across the passage is best described as`,
+opts:["alarmist, using dramatic examples to persuade the reader that sleep deprivation is a public health emergency","measured and evidence-anchored, building an uncomfortable argument without rhetorical overstatement","polemical, directing pointed criticism at specific institutions and professions for their sleep cultures","cautiously optimistic, suggesting that greater awareness of sleep research will produce meaningful behavioural change"],
+answer:"B",
+exp:`Correct Answer: B. The author cites research, distinguishes between subjective and objective measures, qualifies claims carefully ("almost never," "consistently"), and ends on a precise distinction (felt discomfort vs. measurable impairment) rather than a call to action. There is no alarm, no polemic, no optimism -- just a carefully built, uncomfortable finding. Option A overreads the tone. Option C is too pointed -- the professions are cited as examples, not targets of blame. Option D imports an optimistic outlook that is not in the text.`}
+];
+
+// ── STATE ────────────────────────────────────────────────────────────────────
+let studentName="",studentPin="",studentBatch="";
+let currentQ=0,secondsLeft=timer_duration*60,timerInterval=null;
+let userAnswers=new Array(20).fill(null);
+let markedForReview=new Array(20).fill(false);
+let questionTimes=new Array(20).fill(0);
+let qStartTime=Date.now();
+let testSubmitted=false;
+
+function startTest(){
+  const name=document.getElementById('inputName').value.trim();
+  const pin=document.getElementById('inputPin').value.trim().toUpperCase();
+  const batch=document.getElementById('inputBatch').value;
+  const err=document.getElementById('loginErr');
+  if(!name||!pin||!batch){err.textContent='Please fill in all fields.';err.style.display='block';return;}
+  if(!/^(STU|IMS)\d{10}$/.test(pin)){err.textContent='PIN must be STU or IMS followed by exactly 10 digits.';err.style.display='block';return;}
+  const isAdmin=ADMIN_PINS.includes(pin);
+  if(isAdmin&&batch!=='Admin'){err.textContent='Admin PIN must be used with the Admin batch only.';err.style.display='block';return;}
+  if(!isAdmin&&batch==='Admin'){err.textContent='Only Admin PINs may select the Admin batch.';err.style.display='block';return;}
+  studentName=name;studentPin=pin;studentBatch=batch;
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('testScreen').style.display='block';
+  if(window.innerWidth>768){document.getElementById('paletteOverlay').style.display='flex';}
+  else{document.getElementById('paletteOverlay').style.display='none';}
+  buildPalette();renderQuestion();startTimer();
+}
+
+function startTimer(){
+  timerInterval=setInterval(()=>{
+    secondsLeft--;
+    const m=String(Math.floor(secondsLeft/60)).padStart(2,'0');
+    const s=String(secondsLeft%60).padStart(2,'0');
+    const el=document.getElementById('timerDisplay');
+    el.textContent=m+':'+s;
+    if(secondsLeft<=300)el.classList.add('urgent');
+    if(secondsLeft<=0){clearInterval(timerInterval);submitTest();}
+  },1000);
+}
+
+function renderQuestion(){
+  const q=QUESTIONS[currentQ];
+  const p=PASSAGES[q.passage-1];
+  document.getElementById('passageTitle').textContent=p.title;
+  document.getElementById('passageSource').textContent=p.source;
+  document.getElementById('passageText').innerHTML=p.text.replace(/\n\n/g,'</p><p style="margin-top:1em">').replace(/^/,'<p>').replace(/$/,'</p>');
+  document.getElementById('sectionTag').textContent='RC -- '+q.qtype;
+  document.getElementById('questionNumber').textContent='Question '+(currentQ+1)+' of 20';
+  document.getElementById('questionStem').textContent=q.stem;
+  const ol=document.getElementById('optionsList');ol.innerHTML='';
+  q.opts.forEach((opt,i)=>{
+    const li=document.createElement('li');const btn=document.createElement('button');
+    btn.className='option-btn';
+    if(userAnswers[currentQ]===i)btn.classList.add('selected');
+    if(markedForReview[currentQ])btn.classList.add('marked');
+    btn.innerHTML='<span class="opt-label">'+['A','B','C','D'][i]+'</span> '+opt;
+    btn.onclick=()=>selectAnswer(i);
+    li.appendChild(btn);ol.appendChild(li);
+  });
+  document.getElementById('submitBtn').style.display=(currentQ===19)?'block':'none';
+  updatePalette();updateProgress();qStartTime=Date.now();
+}
+
+function selectAnswer(idx){recordTime();userAnswers[currentQ]=idx;renderQuestion();}
+function clearAnswer(){recordTime();userAnswers[currentQ]=null;markedForReview[currentQ]=false;renderQuestion();}
+function navigate(dir){recordTime();const next=currentQ+dir;if(next>=0&&next<20){currentQ=next;renderQuestion();}}
+function recordTime(){questionTimes[currentQ]+=(Date.now()-qStartTime);qStartTime=Date.now();}
+
+let paletteOpen=window.innerWidth>768;
+function togglePalette(){
+  paletteOpen=!paletteOpen;const isMobile=window.innerWidth<=768;
+  const overlay=document.getElementById('paletteOverlay');const navBar=document.getElementById('navBar');const rcSplit=document.getElementById('rcSplit');
+  if(isMobile){overlay.classList.toggle('mobile-open',paletteOpen);}
+  else{overlay.style.display=paletteOpen?'flex':'none';navBar.style.right=paletteOpen?'var(--panel)':'0';rcSplit.style.maxWidth=paletteOpen?'calc(100% - var(--panel))':'100%';}
+}
+
+function markForReview(){markedForReview[currentQ]=!markedForReview[currentQ];renderQuestion();}
+
+function buildPalette(){
+  const grid=document.getElementById('paletteGrid');grid.innerHTML='';
+  for(let i=0;i<20;i++){
+    const btn=document.createElement('button');btn.className='pal-btn';btn.id='pb'+(i+1);btn.textContent=i+1;
+    btn.onclick=(()=>{const idx=i;return()=>{recordTime();currentQ=idx;renderQuestion();}})();
+    grid.appendChild(btn);
+  }
+}
+
+function updatePalette(){
+  for(let i=0;i<20;i++){
+    const btn=document.getElementById('pb'+(i+1));if(!btn)continue;
+    btn.className='pal-btn';
+    if(markedForReview[i])btn.classList.add('marked');
+    else if(userAnswers[i]!==null)btn.classList.add('answered');
+    if(i===currentQ)btn.classList.add('current');
+  }
+}
+
+function updateProgress(){
+  const answered=userAnswers.filter(a=>a!==null).length;
+  document.getElementById('progressFill').style.width=(answered/20*100)+'%';
+}
+
+function confirmSubmit(){
+  const unanswered=userAnswers.filter(a=>a===null).length;let msg='Submit the test?';
+  if(unanswered>0)msg='You have '+unanswered+' unanswered question'+(unanswered>1?'s':'')+'. Submit anyway?';
+  if(confirm(msg))submitTest();
+}
+
+function submitTest(){
+  if(testSubmitted)return;testSubmitted=true;recordTime();clearInterval(timerInterval);
+  let correct=0,wrong=0,skipped=0;const sectionErrors={};const wrongQuestions=[];
+  const LETTERS=['A','B','C','D'];
+  QUESTIONS.forEach((q,i)=>{
+    const ua=userAnswers[i];
+    if(ua===null){skipped++;}else if(LETTERS[ua]===q.answer){correct++;}
+    else{wrong++;wrongQuestions.push(i+1);const sec=q.section;sectionErrors[sec]=(sectionErrors[sec]||0)+1;}
+  });
+  const score=correct*4-wrong*1;
+  showResults(score,correct,wrong,skipped);saveToTracker(score,correct,wrong,skipped);logToSheet(score,correct,wrong,skipped,sectionErrors,wrongQuestions);
+}
+
+function showResults(score,correct,wrong,skipped){
+  document.getElementById('testScreen').style.display='none';document.getElementById('resultsScreen').style.display='block';
+  const attempted=correct+wrong;const acc=attempted>0?((correct/attempted)*100).toFixed(1):'0.0';
+  document.getElementById('scoreHero').innerHTML='<div class="score-num">'+score+'</div><div class="score-sub">out of 80 &nbsp;&middot;&nbsp; '+studentName+' &nbsp;&middot;&nbsp; '+studentPin+' &nbsp;&middot;&nbsp; '+studentBatch+'</div>';
+  document.getElementById('statsGrid').innerHTML='<div class="stat-box correct"><div class="val">'+correct+'</div><div class="lbl">Correct</div></div><div class="stat-box wrong"><div class="val">'+wrong+'</div><div class="lbl">Wrong</div></div><div class="stat-box"><div class="val" style="color:var(--grey)">'+skipped+'</div><div class="lbl">Skipped</div></div><div class="stat-box accuracy"><div class="val">'+acc+'%</div><div class="lbl">Accuracy</div></div>';
+  buildReview();buildMisses();
+}
+
+function buildReview(){
+  const list=document.getElementById('review-list');list.innerHTML='';const LETTERS=['A','B','C','D'];
+  QUESTIONS.forEach((q,i)=>{
+    const ua=userAnswers[i];const isCorrect=(ua!==null&&LETTERS[ua]===q.answer);const isSkipped=(ua===null);
+    const card=document.createElement('div');card.className='review-card '+(isSkipped?'':isCorrect?'correct':'wrong');
+    let badgeClass=isSkipped?'badge-skipped':isCorrect?'badge-correct':'badge-wrong';
+    let badgeText=isSkipped?'--':isCorrect?'&#10003;':'&#10007;';
+    const opts=q.opts.map((o,idx)=>{
+      let cls='review-opt';if(LETTERS[idx]===q.answer)cls+=' correct-opt';
+      if(ua!==null&&ua===idx&&LETTERS[idx]!==q.answer)cls+=' your-wrong';
+      return '<div class="'+cls+'"><span class="opt-label">'+LETTERS[idx]+'</span> '+o+'</div>';
+    }).join('');
+    card.innerHTML='<div class="review-card-header"><div class="review-badge '+badgeClass+'">'+badgeText+'</div><div class="review-stem"><span style="color:var(--grey);font-size:.75rem">Q'+(i+1)+' &middot; P'+q.passage+' &middot; '+q.qtype+'</span><br>'+q.stem+'</div></div><div class="review-opts">'+opts+'</div><div class="review-exp">'+q.exp+'</div>';
+    list.appendChild(card);
+  });
+}
+
+function buildMisses(){
+  const LETTERS=['A','B','C','D'];const wrongQs=[];
+  QUESTIONS.forEach((q,i)=>{
+    if(userAnswers[i]!==null&&LETTERS[userAnswers[i]]!==q.answer){
+      wrongQs.push('Q'+(i+1)+' [P'+q.passage+' '+q.qtype+'] -> '+q.answer+'. '+q.opts[LETTERS.indexOf(q.answer)]);
+    }
+  });
+  document.getElementById('missesText').value=wrongQs.length?wrongQs.join('\n'):'No misses -- perfect score!';
+}
+
+function copyMisses(e){
+  e.preventDefault();const txt=document.getElementById('missesText').value;
+  navigator.clipboard.writeText(txt).then(()=>{const btn=e.target;btn.textContent='Copied!';setTimeout(()=>{btn.textContent='Copy Misses';},2000);});
+}
+
+function saveToTracker(score,correct,wrong,skipped){
+  const elapsed=timer_duration*60-secondsLeft;const mm=String(Math.floor(elapsed/60)).padStart(2,'0');const ss=String(elapsed%60).padStart(2,'0');
+  const data={testName:'RC Series 03',name:studentName,pin:studentPin,batch:studentBatch,score:score,correct:correct,wrong:wrong,skipped:skipped,maxMarks:80,timeTaken:mm+':'+ss,timestamp:new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'})};
+  try{const existing=JSON.parse(localStorage.getItem('riim_results')||'[]');existing.unshift(data);localStorage.setItem('riim_results',JSON.stringify(existing.slice(0,200)));}catch(e){}
+}
+
+function logToSheet(score,correct,wrong,skipped,sectionErrors,wrongQuestions){
+  const notice=document.getElementById('sheet-notice');notice.className='submitting';notice.textContent='Submitting results to server...';notice.style.display='block';
+  const elapsed=timer_duration*60-secondsLeft;const mm=String(Math.floor(elapsed/60)).padStart(2,'0');const ss=String(elapsed%60).padStart(2,'0');
+  const LETTERS=['A','B','C','D'];
+  const payload={testName:'RC Series 03',name:studentName,pin:studentPin,batch:studentBatch,score:score,correct:correct,wrong:wrong,skipped:skipped,maxMarks:80,timeTaken:mm+':'+ss,timestamp:new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'}),sectionErrors:JSON.stringify(sectionErrors),wrongQuestions:JSON.stringify(wrongQuestions),studentAnswers:JSON.stringify(userAnswers.map(a=>a===null?null:LETTERS[a])),questionTimes:JSON.stringify(questionTimes.map(t=>Math.round(t/1000)))};
+  fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)})
+    .then(()=>{notice.className='success';notice.textContent='Results saved successfully.';})
+    .catch(()=>{notice.className='failure';notice.textContent='Could not reach server. Results saved locally.';});
+}
+
+function generatePDF(){
+  const el=document.getElementById('review-list');
+  html2pdf().set({margin:10,filename:'RoadToIIM_Test27_'+studentName.replace(/\s+/g,'_')+'.pdf',html2canvas:{scale:2},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}}).from(el).save();
+}
+
+document.addEventListener('contextmenu',e=>e.preventDefault());
+document.addEventListener('keydown',e=>{if(e.ctrlKey&&['c','a','u','s','p'].includes(e.key.toLowerCase()))e.preventDefault();});
+</script>
+</body>
+</html>
