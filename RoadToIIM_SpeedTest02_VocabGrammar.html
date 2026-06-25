@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Road to IIM · Rapid Fire Test 02</title>
+<style>
+:root{
+  --navy:#0d1b2a;--navy2:#1a2e45;--gold:#c9a84c;--gold2:#e8c76a;
+  --green:#2ecc71;--red:#e74c3c;--grey:#8899aa;--white:#f0f4f8;
+  --orange:#f39c12;--purple:#8b5cf6;--panel:300px;--topbar:56px;--navbar:62px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:"Segoe UI",sans-serif;background:var(--navy);color:var(--white);min-height:100vh;}
+
+/* LOGIN */
+#loginScreen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;}
+.login-box{background:var(--navy2);border:1px solid var(--gold);border-radius:12px;padding:40px 36px;width:100%;max-width:440px;}
+.login-logo{text-align:center;margin-bottom:24px;}
+.login-logo .brand{font-size:12px;color:var(--grey);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;}
+.login-logo h1{font-size:22px;color:var(--gold);font-weight:700;}
+.login-logo .badge{display:inline-block;margin-top:8px;padding:4px 14px;border:1px solid var(--gold);border-radius:20px;font-size:11px;color:var(--gold2);letter-spacing:1px;text-transform:uppercase;}
+.speed-note{background:rgba(243,156,18,.08);border:1px solid rgba(243,156,18,.4);border-radius:8px;padding:10px 14px;margin-bottom:20px;font-size:12px;color:var(--orange);line-height:1.6;}
+.speed-note b{color:#ffb347;}
+.fg{margin-bottom:14px;}
+.fg label{display:block;font-size:11px;color:var(--grey);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;}
+.fg input,.fg select{width:100%;padding:10px 12px;background:var(--navy);border:1px solid #2a4060;border-radius:6px;color:var(--white);font-size:14px;font-family:"Segoe UI",sans-serif;outline:none;transition:border-color .2s;}
+.fg input:focus,.fg select:focus{border-color:var(--gold);}
+.fg select option{background:var(--navy2);}
+.pin-hint{font-size:11px;color:var(--grey);margin-top:4px;}
+#pinErr{font-size:11px;color:var(--red);margin-top:4px;display:none;}
+#startBtn{width:100%;padding:13px;background:var(--gold);color:var(--navy);font-size:15px;font-weight:700;border:none;border-radius:8px;cursor:pointer;margin-top:6px;font-family:"Segoe UI",sans-serif;transition:background .2s;}
+#startBtn:hover{background:var(--gold2);}
+
+/* TEST SCREEN */
+#testScreen{display:none;}
+
+/* TOP BAR */
+#topBar{position:sticky;top:0;z-index:200;height:var(--topbar);background:var(--navy2);border-bottom:1px solid #2a4060;display:flex;align-items:center;padding:0 16px;padding-right:calc(var(--panel) + 16px);}
+.tb-brand{font-size:13px;color:var(--gold);font-weight:600;white-space:nowrap;}
+.tb-brand span{color:var(--grey);font-weight:400;}
+.tb-mid{flex:1;display:flex;justify-content:center;}
+.tb-badge{background:var(--navy);border:1px solid #2a4060;border-radius:20px;padding:4px 14px;font-size:11px;color:var(--grey);}
+.tb-badge b{color:var(--gold2);}
+.tb-right{display:flex;align-items:center;gap:10px;white-space:nowrap;}
+.tb-name{font-size:12px;color:var(--grey);}
+.tb-qcount{font-size:12px;color:var(--white);background:var(--navy);padding:3px 10px;border-radius:12px;border:1px solid #2a4060;}
+.timer-pill{display:flex;align-items:center;gap:6px;background:var(--navy);border:1px solid #2a4060;border-radius:20px;padding:4px 12px;}
+.timer-pill .tlabel{font-size:10px;color:var(--grey);text-transform:uppercase;letter-spacing:.5px;}
+.timer-pill .tval{font-size:15px;font-weight:700;font-variant-numeric:tabular-nums;min-width:28px;text-align:right;color:var(--green);}
+.timer-pill.running .tval{color:var(--orange);}
+.timer-pill.critical .tval{color:var(--red);}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
+.timer-pill.critical{animation:pulse .6s ease-in-out infinite;}
+
+/* TIMER BAR */
+#timerBar{height:3px;background:#2a4060;position:sticky;top:var(--topbar);z-index:199;margin-right:var(--panel);}
+#timerFill{height:100%;width:100%;background:var(--green);transition:width .95s linear,background .3s;}
+
+/* MAIN CONTENT */
+#mainContent{padding:20px 20px 80px 20px;padding-right:calc(var(--panel)+20px);min-height:calc(100vh - var(--topbar) - 3px);max-width:calc(100vw - var(--panel));}
+.qlabel{font-size:10px;text-transform:uppercase;letter-spacing:2px;color:var(--gold);font-weight:600;margin-bottom:6px;}
+.qnum{font-size:13px;color:var(--grey);margin-bottom:6px;}
+.qtext{font-size:15px;line-height:1.75;color:var(--white);margin-bottom:20px;overflow-wrap:break-word;word-break:break-word;}
+.qtext p{margin-bottom:8px;overflow-wrap:break-word;word-break:break-word;}
+.opts{display:flex;flex-direction:column;gap:10px;}
+.opt{display:flex;align-items:flex-start;gap:12px;padding:12px 16px;background:var(--navy2);border:1px solid #2a4060;border-radius:8px;cursor:pointer;text-align:left;width:100%;transition:border-color .15s,background .15s;font-family:"Segoe UI",sans-serif;}
+.opt:hover{border-color:var(--gold);background:#1f3655;}
+.opt.sel{border-color:var(--gold2);background:#1f3655;}
+.opt.correct{border-color:var(--green);background:rgba(46,204,113,.12);}
+.opt.wrong{border-color:var(--red);background:rgba(231,76,60,.12);}
+.opt.reveal{border-color:var(--green);background:rgba(46,204,113,.07);}
+.opt.locked{cursor:default;}
+.olabel{flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--navy);border:1px solid #2a4060;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--grey);}
+.opt.sel .olabel{background:var(--gold);border-color:var(--gold);color:var(--navy);}
+.opt.correct .olabel{background:var(--green);border-color:var(--green);color:var(--navy);}
+.opt.wrong .olabel{background:var(--red);border-color:var(--red);color:var(--white);}
+.opt.reveal .olabel{background:var(--green);border-color:var(--green);color:var(--navy);}
+.otext{flex:1;font-size:14px;line-height:1.5;color:var(--white);overflow-wrap:break-word;word-break:break-word;min-width:0;}
+.opt.sel .otext{color:var(--gold2);}
+
+#skipNotice{display:none;margin-top:14px;padding:10px 14px;background:rgba(231,76,60,.08);border:1px solid rgba(231,76,60,.3);border-radius:8px;font-size:13px;color:var(--red);}
+#expBox{display:none;margin-top:16px;padding:14px 16px;background:rgba(201,168,76,.07);border:1px solid rgba(201,168,76,.3);border-radius:8px;}
+#expBox .exph{font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:1px;font-weight:600;margin-bottom:6px;}
+#expBox .expt{font-size:13px;line-height:1.65;color:var(--white);}
+
+/* BOTTOM NAV */
+#bottomNav{position:fixed;bottom:0;left:0;right:var(--panel);height:var(--navbar);background:var(--navy2);border-top:1px solid #2a4060;display:flex;align-items:center;padding:0 16px;gap:8px;z-index:200;}
+.nav-spacer{flex:1;}
+.nbtn{padding:9px 20px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:"Segoe UI",sans-serif;transition:all .15s;}
+#btnNext{background:var(--green);color:var(--navy);}
+#btnNext:hover{background:#27ae60;}
+#btnSubmit{display:none;background:transparent;color:var(--gold);border:1px solid var(--gold) !important;border-radius:6px;}
+#btnSubmit:hover{background:rgba(201,168,76,.1);}
+
+/* RIGHT PANEL */
+#rightPanel{position:fixed;top:0;right:0;width:var(--panel);height:100vh;background:var(--navy2);border-left:1px solid #2a4060;overflow-y:auto;padding-top:calc(var(--topbar)+8px);z-index:190;}
+.psec{padding:14px 16px;border-bottom:1px solid #2a4060;}
+.psec h4{font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--gold);margin-bottom:10px;font-weight:600;}
+.mrow{display:flex;justify-content:space-between;font-size:12px;color:var(--grey);margin-bottom:5px;}
+.mrow span:last-child{color:var(--white);font-weight:600;}
+.legitem{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--grey);margin-bottom:6px;}
+.legdot{width:12px;height:12px;border-radius:3px;flex-shrink:0;}
+.progwrap{margin-top:8px;}
+.proglbl{display:flex;justify-content:space-between;font-size:11px;color:var(--grey);margin-bottom:5px;}
+.progbar{height:5px;background:var(--navy);border-radius:3px;overflow:hidden;}
+.progfill{height:100%;background:var(--green);border-radius:3px;transition:width .3s;}
+.palette{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;}
+.pb{aspect-ratio:1;border-radius:5px;font-size:11px;font-weight:600;cursor:default;border:2px solid transparent;background:var(--navy);color:var(--grey);font-family:"Segoe UI",sans-serif;}
+.pb.answered{background:var(--green);color:var(--navy);}
+.pb.skipped{background:var(--red);color:var(--white);}
+.pb.current{border-color:var(--gold);}
+
+/* RESULTS */
+#resultsScreen{display:none;min-height:100vh;padding:30px 20px;max-width:860px;margin:0 auto;}
+.rhead{text-align:center;margin-bottom:28px;}
+.rhead .rl{font-size:11px;color:var(--grey);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;}
+.rhead h2{font-size:26px;color:var(--gold);font-weight:700;margin-bottom:4px;}
+.rhead .rs{font-size:13px;color:var(--grey);}
+.sgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:22px;}
+.stat-box{background:var(--navy2);border:1px solid #2a4060;border-radius:10px;padding:16px;text-align:center;}
+.stat-box .sv{font-size:26px;font-weight:700;margin-bottom:4px;}
+.stat-box .sl{font-size:11px;color:var(--grey);text-transform:uppercase;letter-spacing:.5px;}
+.sbkd{background:var(--navy2);border:1px solid #2a4060;border-radius:10px;padding:18px;margin-bottom:20px;}
+.sbkd h3{font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:1px;font-weight:600;margin-bottom:14px;}
+.sbrow{display:flex;align-items:center;gap:10px;margin-bottom:10px;font-size:13px;}
+.sblbl{width:90px;color:var(--grey);}
+.sbbar{flex:1;height:8px;background:var(--navy);border-radius:4px;overflow:hidden;}
+.sbfill{height:100%;border-radius:4px;}
+.sbstat{width:50px;text-align:right;font-weight:600;}
+.bktable{background:var(--navy2);border:1px solid #2a4060;border-radius:10px;overflow:hidden;margin-bottom:20px;}
+.bktable h3{font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:1px;font-weight:600;padding:14px 18px;border-bottom:1px solid #2a4060;}
+.bkhead{display:grid;grid-template-columns:40px 80px 1fr 60px 60px;padding:8px 18px;background:var(--navy);font-size:10px;color:var(--grey);text-transform:uppercase;letter-spacing:.5px;}
+.bkrow{display:grid;grid-template-columns:40px 80px 1fr 60px 60px;padding:9px 18px;border-top:1px solid #1a2e45;font-size:12px;align-items:center;}
+.bkrow:hover{background:#1a2e45;}
+.explist{background:var(--navy2);border:1px solid #2a4060;border-radius:10px;overflow:hidden;margin-bottom:20px;}
+.explist h3{font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:1px;font-weight:600;padding:14px 18px;border-bottom:1px solid #2a4060;}
+.expitem{padding:14px 18px;border-top:1px solid #1a2e45;}
+.expitem:first-of-type{border-top:none;}
+.expitem:hover{background:#1a2e45;}
+.exphdr{display:flex;align-items:flex-start;gap:12px;margin-bottom:8px;}
+.expnum{flex-shrink:0;width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;}
+.expnum.c{background:rgba(46,204,113,.2);color:var(--green);}
+.expnum.w{background:rgba(231,76,60,.2);color:var(--red);}
+.expnum.s{background:rgba(136,153,170,.15);color:var(--grey);}
+.expqt{flex:1;font-size:13px;color:var(--white);line-height:1.5;}
+.expans{display:flex;gap:12px;font-size:12px;margin-bottom:8px;flex-wrap:wrap;}
+.expans span{padding:2px 10px;border-radius:4px;font-weight:600;}
+.ac{background:rgba(46,204,113,.15);color:var(--green);border:1px solid rgba(46,204,113,.3);}
+.ayc{background:rgba(46,204,113,.15);color:var(--green);border:1px solid rgba(46,204,113,.3);}
+.ayw{background:rgba(231,76,60,.15);color:var(--red);border:1px solid rgba(231,76,60,.3);}
+.ays{background:rgba(136,153,170,.1);color:var(--grey);border:1px solid #2a4060;}
+.exptext{font-size:12px;color:#b0bec5;line-height:1.65;padding:8px 12px;background:rgba(201,168,76,.05);border-left:3px solid var(--gold);border-radius:0 6px 6px 0;}
+.rbtnrow{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:30px;}
+.rbtn{padding:11px 28px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:"Segoe UI",sans-serif;transition:all .2s;}
+.rbtn-gold{background:var(--gold);color:var(--navy);border:none;}
+.rbtn-gold:hover{background:var(--gold2);}
+.rbtn-outline{background:transparent;color:var(--gold);border:1px solid var(--gold);}
+.rbtn-outline:hover{background:rgba(201,168,76,.1);}
+.rbtn-grey{background:transparent;color:var(--grey);border:1px solid #2a4060;}
+.rbtn-grey:hover{background:#1a2e45;}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="brand">Road to IIM</div>
+      <h1>Rapid Fire Test 02</h1>
+      <span class="badge">⚡ Speed Test · Vocab &amp; Grammar</span>
+    </div>
+    <div class="speed-note">
+      <b>Pace Training Mode.</b> Vocabulary: 25 sec/Q · Grammar: 35 sec/Q.<br>
+      No going back. Timer starts the moment you begin.
+    </div>
+    <div class="fg">
+      <label>Full Name</label>
+      <input type="text" id="inpName" placeholder="Enter your full name"/>
+    </div>
+    <div class="fg">
+      <label>IMS PIN</label>
+      <input type="text" id="inpPin" placeholder="e.g. STU1234567890" maxlength="13"/>
+      <div class="pin-hint">Format: STU or IMS followed by 10 digits</div>
+      <div id="pinErr">Invalid PIN format. Please check and try again.</div>
+    </div>
+    <div class="fg">
+      <label>Batch</label>
+      <select id="inpBatch">
+        <option value="">— Select your batch —</option>
+        <optgroup label="Classroom">
+          <option>A2701</option><option>A2702</option><option>A2703</option><option>A2704</option>
+          <option>A2705</option><option>A2706</option><option>A2707</option><option>A2708</option>
+          <option>A2709</option><option>A2710</option><option>A2711</option><option>A2712</option>
+        </optgroup>
+        <optgroup label="Online">
+          <option>27E101</option><option>27E102</option><option>27E103</option><option>27E104</option><option>27E105</option>
+        </optgroup>
+        <optgroup label="School"><option>Zebar</option></optgroup>
+        <optgroup label="Admin"><option>Admin</option></optgroup>
+      </select>
+    </div>
+    <button id="startBtn">Begin Rapid Fire ⚡</button>
+  </div>
+</div>
+
+<!-- TEST SCREEN -->
+<div id="testScreen">
+  <div id="topBar">
+    <div class="tb-brand">Road to IIM <span>· Rapid Fire 02</span></div>
+    <div class="tb-mid">
+      <div class="tb-badge">⚡ Speed Test &nbsp;|&nbsp; <b>+4</b> / <b style="color:var(--red)">−1</b> &nbsp;|&nbsp; 45 Questions</div>
+    </div>
+    <div class="tb-right">
+      <span class="tb-name" id="tbName"></span>
+      <div class="timer-pill" id="timerPill">
+        <span class="tlabel">Sec</span>
+        <span class="tval" id="timerVal">25</span>
+      </div>
+      <span class="tb-qcount" id="tbQCount">Q 1 / 45</span>
+    </div>
+  </div>
+  <div id="timerBar"><div id="timerFill"></div></div>
+  <div id="mainContent">
+    <div class="qlabel" id="qLabel"></div>
+    <div class="qnum" id="qNum"></div>
+    <div class="qtext" id="qText"></div>
+    <div class="opts" id="optsList"></div>
+    <div id="skipNotice">⏱ Time expired — this question was skipped.</div>
+    <div id="expBox"><div class="exph">Explanation</div><div class="expt" id="expText"></div></div>
+  </div>
+  <div id="bottomNav">
+    <div class="nav-spacer"></div>
+    <button class="nbtn" id="btnNext">Save &amp; Next →</button>
+    <button class="nbtn" id="btnSubmit">Submit Test</button>
+  </div>
+  <div id="rightPanel">
+    <div class="psec">
+      <h4>Marking Scheme</h4>
+      <div class="mrow"><span>Correct</span><span>+4</span></div>
+      <div class="mrow"><span>Wrong</span><span>−1</span></div>
+      <div class="mrow"><span>Skipped</span><span>0</span></div>
+      <div class="mrow"><span>Max Marks</span><span>180</span></div>
+    </div>
+    <div class="psec">
+      <h4>Legend</h4>
+      <div class="legitem"><div class="legdot" style="background:var(--green)"></div>Answered</div>
+      <div class="legitem"><div class="legdot" style="background:var(--red)"></div>Skipped / Expired</div>
+      <div class="legitem"><div class="legdot" style="background:#2a4060"></div>Not yet reached</div>
+      <div class="legitem"><div class="legdot" style="background:transparent;border:2px solid var(--gold)"></div>Current</div>
+    </div>
+    <div class="psec">
+      <h4>Progress</h4>
+      <div class="progwrap">
+        <div class="proglbl"><span id="progAns">0 answered</span><span id="progSkip">0 skipped</span></div>
+        <div class="progbar"><div class="progfill" id="progFill" style="width:0%"></div></div>
+      </div>
+    </div>
+    <div class="psec">
+      <h4>Question Palette</h4>
+      <div class="palette" id="palette"></div>
+    </div>
+  </div>
+</div>
+
+<!-- RESULTS SCREEN -->
+<div id="resultsScreen">
+  <div class="rhead">
+    <div class="rl">Road to IIM · Rapid Fire Test 02</div>
+    <h2>Rapid Fire Complete ⚡</h2>
+    <div class="rs" id="resSub"></div>
+  </div>
+  <div class="sgrid">
+    <div class="stat-box"><div class="sv" id="resScore" style="color:var(--gold)">—</div><div class="sl">Score</div></div>
+    <div class="stat-box"><div class="sv" id="resCorrect" style="color:var(--green)">—</div><div class="sl">Correct</div></div>
+    <div class="stat-box"><div class="sv" id="resWrong" style="color:var(--red)">—</div><div class="sl">Wrong</div></div>
+    <div class="stat-box"><div class="sv" id="resSkip" style="color:var(--grey)">—</div><div class="sl">Skipped</div></div>
+  </div>
+  <div class="sbkd">
+    <h3>Section Breakdown</h3>
+    <div class="sbrow"><div class="sblbl">Vocabulary</div><div class="sbbar"><div class="sbfill" id="sbVBar" style="background:var(--gold);width:0%"></div></div><div class="sbstat" id="sbVStat">—</div></div>
+    <div class="sbrow"><div class="sblbl">Grammar</div><div class="sbbar"><div class="sbfill" id="sbGBar" style="background:var(--purple);width:0%"></div></div><div class="sbstat" id="sbGStat">—</div></div>
+  </div>
+  <div class="bktable">
+    <h3>Per-Question Breakdown</h3>
+    <div class="bkhead"><div>Q</div><div>Section</div><div>Your Answer</div><div style="text-align:center">Time</div><div style="text-align:center">Result</div></div>
+    <div id="bkBody"></div>
+  </div>
+  <div class="sbkd" id="topicBkd" style="margin-bottom:20px;">
+    <h3>Topic Breakdown</h3>
+    <div id="topicBkdBody"></div>
+  </div>
+  <div class="explist">
+    <h3>Answer Key &amp; Explanations</h3>
+    <div id="expBody"></div>
+  </div>
+  <div class="rbtnrow">
+    <button class="rbtn rbtn-gold" id="btnRetake">⚡ Retake Test</button>
+    <button class="rbtn rbtn-outline" id="btnPDF">⬇ Download PDF Report</button>
+    <button class="rbtn rbtn-grey" id="btnLogin">← New Student Login</button>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════
+// CONFIG
+// ════════════════════════════════════════════
+var APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx5Ojm_zp4LfsMeelx5e06KNjVH1wfsXdV0keS4407m4FO1HU4EpVb7GKj-ibAsxnspeA/exec";
+var OPTS = ["A","B","C","D"];
+
+// ════════════════════════════════════════════
+// QUESTION BANK — 45 questions, fully mixed
+// ════════════════════════════════════════════
+var Q = [
+  {sec:"Vocabulary",td:25,q:"Choose the word closest in meaning to <b>CIRCUMSPECT</b>.",o:["Prudent and wary","Bold and rash","Excessively talkative","Open-handed"],a:0,e:"<i>Circumspect</i> means careful and wary, weighing all circumstances before acting. B (bold and rash) is its opposite. C and D are unrelated traps.",tag:{area:"Vocabulary",sub:"Synonym"}},
+  {sec:"Grammar",td:35,q:"A number of complaints ________ been lodged against the contractor this quarter.",o:["has","have","was","is"],a:1,e:"'A number of' (unlike 'the number of') is a plural quantifier and takes a plural verb: 'have been lodged.' Confusing it with the singular 'the number of' is the trap.",tag:{area:"Grammar",sub:"Subject-Verb Agreement"}},
+  {sec:"Vocabulary",td:25,q:"The jury's ________ deliberation dragged on for several days before a verdict finally emerged.",o:["Momentary","Protracted","Hasty","Truncated"],a:1,e:"'Dragged on for several days' signals something prolonged. <i>Protracted</i> means lasting longer than expected. Momentary, hasty, and truncated all suggest brevity \u2014 the opposite.",tag:{area:"Vocabulary",sub:"Fill in the Blank"}},
+  {sec:"Grammar",td:35,q:"Two-thirds of the harvest ________ been ruined by the unexpected frost.",o:["has","have","is","were"],a:0,e:"With a fraction, the verb agrees with the noun after 'of.' 'Harvest' is singular, so the verb is singular: 'has been ruined.' Had it been 'two-thirds of the farmers,' the verb would be plural.",tag:{area:"Grammar",sub:"Subject-Verb Agreement"}},
+  {sec:"Vocabulary",td:25,q:"Choose the word closest in meaning to <b>MOLLIFY</b>.",o:["Provoke","Exaggerate","Appease","Ignore"],a:2,e:"<i>Mollify</i> means to soothe or pacify someone's anger. <i>Appease</i> (C) is its closest synonym. A (provoke) is the antonym; B and D are unrelated.",tag:{area:"Vocabulary",sub:"Synonym"}},
+  {sec:"Grammar",td:35,q:"She has worked at the firm ________ 2015 and shows no sign of leaving.",o:["for","from","since","during"],a:2,e:"'Since' is used with a specific point in time (2015) in the present perfect. 'For' needs a duration; 'from' requires a matching 'to'; 'during' needs a period noun.",tag:{area:"Grammar",sub:"Fill in the Blank"}},
+  {sec:"Vocabulary",td:25,q:"The critic's ________ review was so severe that the novelist nearly shelved the manuscript for good.",o:["Laudatory","Tepid","Indifferent","Scathing"],a:3,e:"A review severe enough to make a writer quit must be harshly critical. <i>Scathing</i> fits. Laudatory means praising (opposite); tepid and indifferent are too mild to provoke that reaction.",tag:{area:"Vocabulary",sub:"Fill in the Blank"}},
+  {sec:"Grammar",td:35,q:"Everybody in the senior batches ________ expected to attend the orientation session.",o:["are","is","were","have been"],a:1,e:"'Everybody' is an indefinite pronoun and is always singular, regardless of the plural noun ('batches') that follows. The correct verb is 'is expected.'",tag:{area:"Grammar",sub:"Subject-Verb Agreement"}},
+  {sec:"Vocabulary",td:25,q:"Choose the word most nearly <b>OPPOSITE</b> in meaning to <b>PARSIMONIOUS</b>.",o:["Frugal","Lavish","Miserly","Punctual"],a:1,e:"<i>Parsimonious</i> means excessively unwilling to spend. Its opposite is <i>lavish</i> (generous, extravagant). Frugal and miserly are near-synonyms; punctual is unrelated.",tag:{area:"Vocabulary",sub:"Antonym"}},
+  {sec:"Grammar",td:35,q:"Identify the part of the sentence that contains an error.\n(A) One of the most pressing problem\n(B) facing the city today\n(C) is the shortage\n(D) of affordable housing.",o:["One of the most pressing problem","facing the city today","is the shortage","of affordable housing"],a:0,e:"After 'one of the,' the noun must be plural: 'one of the most pressing problems.' The error is in A. The singular verb 'is' (C) is correct because the subject is 'one,' not 'problems.'",tag:{area:"Grammar",sub:"Error Spotting"}},
+  {sec:"Vocabulary",td:25,q:"Critics dismissed his <b>pusillanimous</b> withdrawal from the debate as a national embarrassment.",o:["Bold and defiant","Arrogant and proud","Cowardly and timid","Calm and composed"],a:2,e:"<i>Pusillanimous</i> means showing a lack of courage. A is the opposite; B and D are unrelated. The grave context tempts students toward 'arrogant,' but the word specifically denotes cowardice.",tag:{area:"Vocabulary",sub:"Word Meaning"}},
+  {sec:"Grammar",td:35,q:"The quality of the candidates' responses ________ improved noticeably since the new training began.",o:["have","has","were","are"],a:1,e:"The subject is 'quality' (singular); 'of the candidates' responses' is a modifying phrase. The verb must be singular: 'has improved.' The plural 'responses' just before the verb is the trap.",tag:{area:"Grammar",sub:"Subject-Verb Agreement"}},
+  {sec:"Vocabulary",td:25,q:"Choose the word closest in meaning to <b>INDOLENT</b>.",o:["Diligent","Restless","Cheerful","Habitually lazy"],a:3,e:"<i>Indolent</i> means disliking work; habitually lazy. D is correct. A (diligent) is the antonym. B and C describe unrelated temperaments.",tag:{area:"Vocabulary",sub:"Synonym"}},
+  {sec:"Grammar",td:35,q:"No sooner ________ the lecture begun than the projector abruptly malfunctioned.",o:["has","was","had","did"],a:2,e:"'No sooner ... than' with the past participle 'begun' requires the past perfect with inversion: 'No sooner had the lecture begun.' D ('did') fails because it would need the base form 'begin,' not 'begun.'",tag:{area:"Grammar",sub:"Tense Usage"}},
+  {sec:"Vocabulary",td:25,q:"Her ________ tone calmed a confrontation that might otherwise have turned openly hostile.",o:["Placatory","Belligerent","Dismissive","Indignant"],a:0,e:"Calming a confrontation requires a soothing manner. <i>Placatory</i> means intended to pacify. Belligerent, dismissive, and indignant would all inflame the situation.",tag:{area:"Vocabulary",sub:"Fill in the Blank"}},
+  {sec:"Grammar",td:35,q:"Mathematics ________ often considered the most challenging subject by first-year students.",o:["is","are","were","have been"],a:0,e:"Though it ends in '-s,' 'mathematics' is a singular noun naming a field of study, so it takes a singular verb: 'is considered.'",tag:{area:"Grammar",sub:"Subject-Verb Agreement"}},
+  {sec:"Vocabulary",td:25,q:"Choose the word closest in meaning to <b>CAPRICIOUS</b>.",o:["Steadfast","Fickle","Generous","Sincere"],a:1,e:"<i>Capricious</i> means given to sudden, unpredictable changes of mood. <i>Fickle</i> (B) is the closest synonym. A (steadfast) is the antonym; C and D are unrelated.",tag:{area:"Vocabulary",sub:"Synonym"}},
+  {sec:"Grammar",td:35,q:"Choose the grammatically correct sentence.",o:["She is more intelligent than any student in her class.","She is the most intelligent than any other student in her class.","She is more intelligent than any other student in her class.","She is more intelligent than any others student in her class."],a:2,e:"In a comparison using 'more ... than,' a member of the same group must be excluded with 'any other student' \u2014 otherwise she is compared with herself (A). B mixes a superlative with 'than'; D uses the ungrammatical 'any others student.'",tag:{area:"Grammar",sub:"Sentence Correction"}},
+  {sec:"Vocabulary",td:25,q:"A person who remains indifferent to pleasure or pain, exercising great self-control:",o:["Hedonist","Epicurean","Stoic","Misanthrope"],a:2,e:"A <i>stoic</i> endures hardship without showing feeling. A hedonist and an epicurean both pursue pleasure (the opposite); a misanthrope dislikes people.",tag:{area:"Vocabulary",sub:"One Word Substitution"}},
+  {sec:"Grammar",td:35,q:"\"Great Expectations\" ________ regarded as one of Dickens's finest novels.",o:["are","were","have been","is"],a:3,e:"A title \u2014 even a plural-sounding one \u2014 names a single work and takes a singular verb: 'is regarded.' The plural noun 'Expectations' is the trap.",tag:{area:"Grammar",sub:"Subject-Verb Agreement"}},
+  {sec:"Vocabulary",td:25,q:"When the auditors arrived without warning, the embezzler knew <b>the game was up</b>.",o:["a contest had finally ended","his scheme had been exposed and would fail","it was simply time to stop playing","a rare chance had been missed"],a:1,e:"'The game is up' means a secret scheme or deception has been discovered and is bound to fail. A reads it too literally; C and D miss the sense of exposure.",tag:{area:"Vocabulary",sub:"Idiom"}},
+  {sec:"Grammar",td:35,q:"Choose the correct passive form of: 'The university will announce the results next week.'",o:["The results will be announced by the university next week.","The results will announce by the university next week.","The results are announced by the university next week.","The results would be announced by the university next week."],a:0,e:"Future simple passive = 'will be' + past participle: 'will be announced.' B omits 'be'; C shifts to present tense; D changes 'will' to 'would,' altering the meaning.",tag:{area:"Grammar",sub:"Active-Passive Voice"}},
+  {sec:"Vocabulary",td:25,q:"Choose the word closest in meaning to <b>AUSTERE</b>.",o:["Luxurious","Friendly","Ornate","Stern and severe"],a:3,e:"<i>Austere</i> means severe or plain, without comfort or decoration. D captures it. A (luxurious) and C (ornate) are opposites; B is unrelated.",tag:{area:"Vocabulary",sub:"Synonym"}},
+  {sec:"Grammar",td:35,q:"She pursued ________ university degree before joining the family business.",o:["an","a","the","no article"],a:1,e:"'University' begins with the consonant sound /j/ ('yoo'), so it takes 'a,' not 'an.' The spelling starts with a vowel, but the sound governs the article.",tag:{area:"Grammar",sub:"Article Usage"}},
+  {sec:"Vocabulary",td:25,q:"The committee dismissed his proposal as ________, citing its complete lack of supporting data.",o:["Spurious","Compelling","Rigorous","Substantiated"],a:0,e:"A proposal rejected for lacking data is not genuine or well-founded. <i>Spurious</i> means false or based on flawed reasoning. Compelling, rigorous, and substantiated all describe well-supported work.",tag:{area:"Vocabulary",sub:"Fill in the Blank"}},
+  {sec:"Grammar",td:35,q:"He spoke ________ such confidence that the entire audience was instantly won over.",o:["in","by","with","at"],a:2,e:"The fixed expression is 'with such confidence,' describing the manner of speaking. 'In,' 'by,' and 'at' do not collocate with 'confidence' here.",tag:{area:"Grammar",sub:"Fill in the Blank"}},
+  {sec:"Vocabulary",td:25,q:"Choose the word most nearly <b>OPPOSITE</b> in meaning to <b>EXONERATE</b>.",o:["Pardon","Acquit","Incriminate","Release"],a:2,e:"<i>Exonerate</i> means to clear someone of blame. Its opposite is <i>incriminate</i> (to suggest guilt). Pardon, acquit, and release are all near-synonyms of exonerate.",tag:{area:"Vocabulary",sub:"Antonym"}},
+  {sec:"Grammar",td:35,q:"Identify the part of the sentence that contains an error.\n(A) The senior managers discussed\n(B) about the quarterly targets\n(C) at length\n(D) during the strategy meeting.",o:["The senior managers discussed","about the quarterly targets","at length","during the strategy meeting"],a:1,e:"'Discuss' is transitive and takes a direct object with no preposition: 'discussed the quarterly targets.' The inserted 'about' in B is the error. 'Talk about' is correct, but 'discuss about' is not.",tag:{area:"Grammar",sub:"Error Spotting"}},
+  {sec:"Vocabulary",td:25,q:"Which sentence uses the word <b>VENERATE</b> correctly?",o:["The vandals venerated the ancient statue, smashing it to pieces.","Students across the country venerate the freedom fighter for his sacrifice.","The chef venerated the rotten produce straight into the bin.","She venerated the blaring music, covering her ears in irritation."],a:1,e:"<i>Venerate</i> means to regard with deep respect. Only B uses it correctly. A describes the opposite act; C and D are nonsensical misuses.",tag:{area:"Vocabulary",sub:"Contextual Usage"}},
+  {sec:"Grammar",td:35,q:"Choose the grammatically correct sentence.",o:["When I will reach home, I will call you.","When I reached home, I will call you.","When I will reaching home, I call you.","When I reach home, I will call you."],a:3,e:"A clause of time introduced by 'when' takes the present simple, not the future, even when it refers to future time: 'When I reach home, I will call you.' A and C wrongly use 'will' in the time clause; B mismatches the tenses.",tag:{area:"Grammar",sub:"Tense Usage"}},
+  {sec:"Vocabulary",td:25,q:"Choose the word closest in meaning to <b>TENACIOUS</b>.",o:["Yielding","Careless","Hostile","Persistent"],a:3,e:"<i>Tenacious</i> means holding firmly to a course of action; persistent. D is correct. A (yielding) is the antonym; B and C are unrelated.",tag:{area:"Vocabulary",sub:"Synonym"}},
+  {sec:"Grammar",td:35,q:"Choose the sentence with correct parallel structure.",o:["The new app is not only fast but also it is reliable.","The new app is not only fast but also reliable.","The new app not only is fast but also reliable.","The new app is not only fast but reliable also."],a:1,e:"'Not only ... but also' must join parallel elements \u2014 here two adjectives: 'not only fast but also reliable.' A adds a clause ('it is'); C misplaces 'is'; D scrambles 'also.'",tag:{area:"Grammar",sub:"Parallelism"}},
+  {sec:"Vocabulary",td:25,q:"The new manager was ________ in praise but ________ in offering concrete support, leaving the team motivated yet under-resourced.",o:["effusive / sparing","sparing / effusive","generous / abundant","reluctant / hesitant"],a:0,e:"The contrast 'motivated yet under-resourced' requires abundant praise but little support. <i>Effusive</i> (overflowing) praise with <i>sparing</i> (scant) support fits. B reverses it; C gives two positives; D gives two negatives.",tag:{area:"Vocabulary",sub:"Double Blank"}},
+  {sec:"Grammar",td:35,q:"Reading novels late into the night ________ become her favourite way to unwind after work.",o:["have","was","has","were"],a:2,e:"A gerund phrase acting as the subject ('Reading novels late into the night') is singular and takes a singular verb: 'has become.' The plural 'novels' is the trap.",tag:{area:"Grammar",sub:"Subject-Verb Agreement"}},
+  {sec:"Vocabulary",td:25,q:"<b>OBSCURE : FAMOUS :: DORMANT : ?</b>",o:["Sleeping","Hidden","Active","Quiet"],a:2,e:"Obscure and famous are antonyms. By the same logic, the opposite of <i>dormant</i> (inactive) is <i>active</i>. A (sleeping) and D (quiet) are near-synonyms of dormant \u2014 the traps; B is unrelated.",tag:{area:"Vocabulary",sub:"Analogy"}},
+  {sec:"Grammar",td:35,q:"Ten kilometres ________ a long way to walk in this heat.",o:["is","are","were","have been"],a:0,e:"A measurement of distance treated as a single quantity takes a singular verb: 'Ten kilometres is a long way.' The plural form 'kilometres' is the trap.",tag:{area:"Grammar",sub:"Subject-Verb Agreement"}},
+  {sec:"Vocabulary",td:25,q:"The motion was carried with ________ approval \u2014 not a single member raised an objection.",o:["unanimous","reluctant","partial","grudging"],a:0,e:"'Not a single member objected' means everyone agreed. <i>Unanimous</i> means fully agreed by all. Reluctant, partial, and grudging all imply some dissent.",tag:{area:"Vocabulary",sub:"Fill in the Blank"}},
+  {sec:"Grammar",td:35,q:"Choose the correct indirect form of: The doctor said to him, 'Take this medicine twice a day.'",o:["The doctor said him to take this medicine twice a day.","The doctor told that he should take this medicine twice a day.","The doctor advised him take that medicine twice a day.","The doctor advised him to take that medicine twice a day."],a:3,e:"A command in reported speech uses 'advised/told + object + to-infinitive,' with 'this' becoming 'that': 'advised him to take that medicine.' A uses 'said him'; B drops the object after 'told'; C omits 'to.'",tag:{area:"Grammar",sub:"Direct-Indirect Speech"}},
+  {sec:"Vocabulary",td:25,q:"A statement that appears to contradict itself yet may express a truth:",o:["Oxymoron","Paradox","Hyperbole","Euphemism"],a:1,e:"A <i>paradox</i> is a self-contradictory statement that may nonetheless be true. An oxymoron (A) is only a two-word contradiction (e.g. 'deafening silence') \u2014 the closest trap. Hyperbole is exaggeration; euphemism is mild substitution.",tag:{area:"Vocabulary",sub:"One Word Substitution"}},
+  {sec:"Grammar",td:35,q:"Choose the sentence that contains <b>no</b> dangling modifier.",o:["Having finished the report, the deadline no longer worried Priya.","Having finished the report, the worry about the deadline disappeared.","Having finished the report, the deadline seemed far less daunting.","Having finished the report, Priya no longer worried about the deadline."],a:3,e:"The opening modifier 'Having finished the report' must describe the subject of the main clause \u2014 the person who finished it. Only D supplies 'Priya.' In A, B, and C the deadline or the worry illogically finishes the report.",tag:{area:"Grammar",sub:"Dangling Modifier"}},
+  {sec:"Vocabulary",td:25,q:"Which word does <b>NOT</b> belong with the others?",o:["Extol","Laud","Eulogize","Censure"],a:3,e:"Extol, laud, and eulogize all mean to praise highly. <i>Censure</i> means to criticise or condemn \u2014 the odd one out.",tag:{area:"Vocabulary",sub:"Odd One Out"}},
+  {sec:"Grammar",td:35,q:"Choose the grammatically correct sentence.",o:["The scissors are kept in the top drawer of the cabinet.","The scissors is kept in the top drawer of the cabinet.","The scissors was kept in the top drawer of the cabinet.","The scissor are kept in the top drawer of the cabinet."],a:0,e:"'Scissors' is a plural-only noun and takes a plural verb: 'are kept.' B and C use singular verbs; D wrongly makes the noun singular ('scissor').",tag:{area:"Grammar",sub:"Sentence Correction"}},
+  {sec:"Vocabulary",td:25,q:"Choose the word closest in meaning to <b>ABATE</b>.",o:["Intensify","Prolong","Subside","Begin"],a:2,e:"<i>Abate</i> means to become less intense; to subside. C is correct. A (intensify) and D (begin) move the wrong way; B (prolong) is unrelated.",tag:{area:"Vocabulary",sub:"Synonym"}},
+  {sec:"Grammar",td:35,q:"Bread and butter ________ what most working families rely on for a quick breakfast.",o:["are","were","have been","is"],a:3,e:"When two nouns name a single combined idea ('bread and butter' as one dish), they take a singular verb: 'is.' Treating them as two separate items is the trap.",tag:{area:"Grammar",sub:"Subject-Verb Agreement"}},
+  {sec:"Vocabulary",td:25,q:"The stew was so <b>insipid</b> that no amount of salt could rescue it.",o:["Overly spicy","Rich and savoury","Pleasantly sweet","Lacking flavour and dull"],a:3,e:"<i>Insipid</i> means lacking flavour or interest. D is correct. A, B, and C all describe strong or pleasant flavour \u2014 the opposite.",tag:{area:"Vocabulary",sub:"Word Meaning"}}
+];
+
+// ════════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════════
+var sName="", sPin="", sBatch="";
+var cQ=0;
+var answers=new Array(45).fill(null);
+var qTimes=new Array(45).fill(0);
+var pState=new Array(45).fill("unseen");
+var pTimer=null;
+var secLeft=0;
+
+// ════════════════════════════════════════════
+// LOGIN
+// ════════════════════════════════════════════
+document.getElementById("inpPin").addEventListener("input",function(){this.value=this.value.toUpperCase();});
+
+document.getElementById("startBtn").addEventListener("click", function(){
+  var name=document.getElementById("inpName").value.trim();
+  var pin=document.getElementById("inpPin").value.trim().toUpperCase();
+  var batch=document.getElementById("inpBatch").value;
+  document.getElementById("pinErr").style.display="none";
+  if(!name){alert("Please enter your full name.");return;}
+  if(!/^(STU|IMS)\d{10}$/.test(pin)){document.getElementById("pinErr").style.display="block";return;}
+  if(!batch){alert("Please select your batch.");return;}
+  sName=name; sPin=pin; sBatch=batch;
+  document.getElementById("loginScreen").style.display="none";
+  document.getElementById("testScreen").style.display="block";
+  document.getElementById("tbName").textContent=name.split(" ")[0];
+  buildPalette();
+  showQ(0);
+});
+
+// ════════════════════════════════════════════
+// BUILD PALETTE
+// ════════════════════════════════════════════
+function buildPalette(){
+  var g=document.getElementById("palette");
+  g.innerHTML="";
+  for(var i=0;i<45;i++){
+    var b=document.createElement("div");
+    b.className="pb";
+    b.id="pb"+i;
+    b.textContent=i+1;
+    g.appendChild(b);
+  }
+}
+
+// ════════════════════════════════════════════
+// SHOW QUESTION
+// ════════════════════════════════════════════
+function showQ(idx){
+  cQ=idx;
+  var q=Q[idx];
+  document.getElementById("qLabel").textContent=q.sec;
+  document.getElementById("qNum").textContent="Question "+(idx+1)+" of 45";
+  document.getElementById("tbQCount").textContent="Q "+(idx+1)+" / 45";
+
+  // Question text
+  var qt=document.getElementById("qText");
+  qt.innerHTML=q.q.split("\n").map(function(l){return "<p>"+l+"</p>";}).join("");
+
+  // Options
+  var ol=document.getElementById("optsList");
+  ol.innerHTML="";
+  for(var i=0;i<q.o.length;i++){
+    (function(oi){
+      var btn=document.createElement("button");
+      btn.className="opt";
+      btn.id="opt"+oi;
+      btn.innerHTML='<span class="olabel">'+OPTS[oi]+'</span><span class="otext">'+q.o[oi]+'</span>';
+      btn.addEventListener("click",function(){selectOpt(oi);});
+      ol.appendChild(btn);
+    })(i);
+  }
+
+  // Hide notices
+  document.getElementById("skipNotice").style.display="none";
+  document.getElementById("expBox").style.display="none";
+
+  // Nav buttons
+  document.getElementById("btnNext").style.display=idx===44?"none":"inline-block";
+  document.getElementById("btnSubmit").style.display=idx===44?"inline-block":"none";
+
+  // Palette
+  updatePalette();
+  updateProgress();
+
+  // Start timer
+  startTimer(q.td);
+}
+
+// ════════════════════════════════════════════
+// TIMER
+// ════════════════════════════════════════════
+function startTimer(dur){
+  clearInterval(pTimer);
+  secLeft=dur;
+  tickTimer(dur,dur);
+  pTimer=setInterval(function(){
+    secLeft--;
+    qTimes[cQ]++;
+    tickTimer(secLeft,dur);
+    if(secLeft<=0){
+      clearInterval(pTimer);
+      onExpire();
+    }
+  },1000);
+}
+
+function tickTimer(left,total){
+  document.getElementById("timerVal").textContent=left;
+  var pct=left/total;
+  var pill=document.getElementById("timerPill");
+  pill.className="timer-pill";
+  if(pct<=0.25) pill.classList.add("critical");
+  else if(pct<=0.5) pill.classList.add("running");
+  var fill=document.getElementById("timerFill");
+  fill.style.width=(pct*100)+"%";
+  fill.style.background=pct>0.5?"var(--green)":pct>0.25?"var(--orange)":"var(--red)";
+}
+
+function onExpire(){
+  qTimes[cQ]=Q[cQ].td;
+  if(answers[cQ]===null){
+    pState[cQ]="skipped";
+    document.getElementById("skipNotice").style.display="block";
+  } else {
+    pState[cQ]="answered";
+  }
+  lockOpts();
+  showExp();
+  updatePalette();
+  updateProgress();
+  setTimeout(function(){
+    if(cQ===44) submitTest();
+    else advance();
+  },1500);
+}
+
+// ════════════════════════════════════════════
+// OPTIONS
+// ════════════════════════════════════════════
+function selectOpt(oi){
+  var btn=document.getElementById("opt"+oi);
+  if(!btn || btn.classList.contains("locked")) return;
+  answers[cQ]=oi;
+  var all=document.getElementById("optsList").querySelectorAll(".opt");
+  for(var i=0;i<all.length;i++) all[i].classList.remove("sel");
+  btn.classList.add("sel");
+  pState[cQ]="answered";
+  updatePalette();
+  updateProgress();
+}
+
+function lockOpts(){
+  var q=Q[cQ];
+  var all=document.getElementById("optsList").querySelectorAll(".opt");
+  for(var i=0;i<all.length;i++){
+    all[i].classList.add("locked");
+    all[i].classList.remove("sel");
+    if(i===answers[cQ] && i===q.a) all[i].classList.add("correct");
+    else if(i===answers[cQ] && i!==q.a) all[i].classList.add("wrong");
+    else if(i===q.a && answers[cQ]!==null) all[i].classList.add("reveal");
+  }
+}
+
+function showExp(){
+  document.getElementById("expText").innerHTML=Q[cQ].e;
+  document.getElementById("expBox").style.display="block";
+}
+
+// ════════════════════════════════════════════
+// NAVIGATION
+// ════════════════════════════════════════════
+function advance(){
+  clearInterval(pTimer);
+  if(answers[cQ]===null) pState[cQ]="skipped";
+  else pState[cQ]="answered";
+  if(cQ<44) showQ(cQ+1);
+}
+
+document.getElementById("btnNext").addEventListener("click",function(){advance();});
+document.getElementById("btnSubmit").addEventListener("click",function(){submitTest();});
+
+// ════════════════════════════════════════════
+// PALETTE & PROGRESS
+// ════════════════════════════════════════════
+function updatePalette(){
+  for(var i=0;i<45;i++){
+    var b=document.getElementById("pb"+i);
+    if(!b) continue;
+    b.className="pb";
+    if(pState[i]==="answered") b.classList.add("answered");
+    else if(pState[i]==="skipped") b.classList.add("skipped");
+    if(i===cQ) b.classList.add("current");
+  }
+}
+
+function updateProgress(){
+  var ans=0,skip=0;
+  for(var i=0;i<45;i++){
+    if(pState[i]==="answered") ans++;
+    else if(pState[i]==="skipped") skip++;
+  }
+  document.getElementById("progAns").textContent=ans+" answered";
+  document.getElementById("progSkip").textContent=skip+" skipped";
+  document.getElementById("progFill").style.width=((ans/45)*100)+"%";
+}
+
+// ════════════════════════════════════════════
+// SUBMIT
+// ════════════════════════════════════════════
+function submitTest(){
+  clearInterval(pTimer);
+  if(answers[cQ]===null) pState[cQ]="skipped";
+  else pState[cQ]="answered";
+
+  var numC=0,numW=0,numS=0;
+  var secErr={};
+  var wrongQs=[];
+
+  for(var i=0;i<45;i++){
+    if(answers[i]===null){
+      numS++;
+    } else if(answers[i]===Q[i].a){
+      numC++;
+    } else {
+      numW++;
+      wrongQs.push(i+1);
+      secErr[Q[i].sec]=(secErr[Q[i].sec]||0)+1;
+    }
+  }
+
+  var finalScore=(numC*4)-(numW*1);
+  var totalSec=0;
+  for(var i=0;i<45;i++) totalSec+=qTimes[i];
+  var mm=String(Math.floor(totalSec/60)).padStart(2,"0");
+  var ss=String(totalSec%60).padStart(2,"0");
+  var timeTaken=mm+":"+ss;
+  var timestamp=new Date().toLocaleString("en-IN",{timeZone:"Asia/Kolkata"});
+
+  // Build topicErrors
+  var topicErr={};
+  for(var i=0;i<45;i++){
+    if(answers[i]!==null && answers[i]!==Q[i].a){
+      var sub=Q[i].tag?Q[i].tag.sub:"Unknown";
+      topicErr[sub]=(topicErr[sub]||0)+1;
+    }
+  }
+
+  var payload={
+    testName:"Rapid Fire Test 02",
+    name:sName,
+    pin:sPin,
+    batch:sBatch,
+    score:finalScore,
+    correct:numC,
+    wrong:numW,
+    skipped:numS,
+    maxMarks:180,
+    timeTaken:timeTaken,
+    timestamp:timestamp,
+    sectionErrors:JSON.stringify(secErr),
+    wrongQuestions:JSON.stringify(wrongQs),
+    studentAnswers:answers.map(function(a){return a===null?null:a;}),
+    questionTimes:JSON.stringify(qTimes),
+    topicErrors:JSON.stringify(topicErr)
+  };
+
+  fetch(APPS_SCRIPT_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain"},body:JSON.stringify(payload)});
+
+  showResults(finalScore,numC,numW,numS,timeTaken);
+}
+
+// ════════════════════════════════════════════
+// RESULTS
+// ════════════════════════════════════════════
+function showResults(score,nc,nw,ns,time){
+  document.getElementById("testScreen").style.display="none";
+  document.getElementById("resultsScreen").style.display="block";
+  document.getElementById("resSub").textContent=sName+" · "+sBatch+" · Time: "+time;
+  document.getElementById("resScore").textContent=score;
+  document.getElementById("resCorrect").textContent=nc;
+  document.getElementById("resWrong").textContent=nw;
+  document.getElementById("resSkip").textContent=ns;
+
+  // Section breakdown
+  var vTotal=0,vC=0,gTotal=0,gC=0;
+  for(var i=0;i<45;i++){
+    if(Q[i].sec==="Vocabulary"){vTotal++;if(answers[i]===Q[i].a)vC++;}
+    else{gTotal++;if(answers[i]===Q[i].a)gC++;}
+  }
+  document.getElementById("sbVBar").style.width=((vC/vTotal)*100)+"%";
+  document.getElementById("sbVStat").textContent=vC+"/"+vTotal;
+  document.getElementById("sbGBar").style.width=((gC/gTotal)*100)+"%";
+  document.getElementById("sbGStat").textContent=gC+"/"+gTotal;
+
+  // Topic breakdown
+  var topicMap={};
+  for(var i=0;i<45;i++){
+    var sub=Q[i].tag?Q[i].tag.sub:"Unknown";
+    var area=Q[i].tag?Q[i].tag.area:"?";
+    if(!topicMap[sub]) topicMap[sub]={area:area,seen:0,correct:0,wrong:0,skipped:0};
+    topicMap[sub].seen++;
+    if(answers[i]===null) topicMap[sub].skipped++;
+    else if(answers[i]===Q[i].a) topicMap[sub].correct++;
+    else topicMap[sub].wrong++;
+  }
+  var tbody=document.getElementById("topicBkdBody");
+  tbody.innerHTML="";
+  // Sort by area then accuracy
+  var topics=Object.entries(topicMap).sort(function(a,b){
+    if(a[1].area!==b[1].area) return a[1].area.localeCompare(b[1].area);
+    var accA=a[1].correct/(a[1].correct+a[1].wrong||1);
+    var accB=b[1].correct/(b[1].correct+b[1].wrong||1);
+    return accA-accB;
+  });
+  var lastArea="";
+  topics.forEach(function(t){
+    var sub=t[0]; var d=t[1];
+    if(d.area!==lastArea){
+      var ah=document.createElement("div");
+      ah.style.cssText="font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--gold);font-weight:600;margin:12px 0 6px;";
+      ah.textContent=d.area;
+      tbody.appendChild(ah);
+      lastArea=d.area;
+    }
+    var attempted=d.correct+d.wrong;
+    var acc=attempted>0?Math.round(100*d.correct/attempted):null;
+    var verdict=acc===null?"—":acc>=70?"Strong":acc>=45?"Building":"Needs Work";
+    var vc=acc===null?"color:var(--grey)":acc>=70?"color:var(--green)":acc>=45?"color:var(--orange)":"color:var(--red)";
+    var row=document.createElement("div");
+    row.style.cssText="display:flex;align-items:center;gap:10px;margin-bottom:8px;font-size:12px;";
+    var barPct=acc||0;
+    var barCol=acc===null?"#2a4060":acc>=70?"var(--green)":acc>=45?"var(--orange)":"var(--red)";
+    row.innerHTML='<div style="width:140px;color:var(--white)">'+sub+'</div>'
+      +'<div style="flex:1;height:6px;background:#0d1b2a;border-radius:3px;overflow:hidden">'
+      +'<div style="height:100%;width:'+barPct+'%;background:'+barCol+';border-radius:3px;transition:width .4s"></div></div>'
+      +'<div style="width:80px;text-align:right;'+vc+';font-weight:600">'+verdict+'</div>'
+      +'<div style="width:60px;text-align:right;color:var(--grey)">'+d.correct+'/'+attempted+'</div>';
+    tbody.appendChild(row);
+  });
+
+  // Per-question breakdown
+  var bk=document.getElementById("bkBody");
+  bk.innerHTML="";
+  for(var i=0;i<45;i++){
+    var ua=answers[i];
+    var isC=ua!==null&&ua===Q[i].a;
+    var isW=ua!==null&&ua!==Q[i].a;
+    var row=document.createElement("div");
+    row.className="bkrow";
+    var sc=isC?"color:var(--green)":isW?"color:var(--red)":"color:var(--grey)";
+    var st=isC?"✓":isW?"✗":"—";
+    var at=ua===null?"—":OPTS[ua];
+    row.innerHTML='<div style="color:var(--grey)">'+(i+1)+'</div><div style="color:var(--gold2);font-size:11px;">'+Q[i].sec+'</div><div>'+at+'</div><div style="text-align:center;color:var(--grey)">'+qTimes[i]+'s</div><div style="text-align:center;font-weight:700;'+sc+'">'+st+'</div>';
+    bk.appendChild(row);
+  }
+
+  // Explanations
+  var eb=document.getElementById("expBody");
+  eb.innerHTML="";
+  for(var i=0;i<45;i++){
+    var ua=answers[i];
+    var isC=ua!==null&&ua===Q[i].a;
+    var isW=ua!==null&&ua!==Q[i].a;
+    var nc2=isC?"c":isW?"w":"s";
+    var yac=isC?"ayc":isW?"ayw":"ays";
+    var yat=ua===null?"Skipped":OPTS[ua]+" — "+Q[i].o[ua];
+    var cat=OPTS[Q[i].a]+" — "+Q[i].o[Q[i].a];
+    var qt=Q[i].q.replace(/<[^>]+>/g,"").split("\n")[0];
+    if(qt.length>120) qt=qt.substring(0,120)+"…";
+    var item=document.createElement("div");
+    item.className="expitem";
+    item.innerHTML='<div class="exphdr"><div class="expnum '+nc2+'">Q'+(i+1)+'</div><div class="expqt">'+qt+'</div></div><div class="expans"><span class="ac">✓ '+cat+'</span><span class="'+yac+'">'+(ua===null?"—":"Your: "+yat)+'</span></div><div class="exptext">'+Q[i].e+'</div>';
+    eb.appendChild(item);
+  }
+}
+
+// ════════════════════════════════════════════
+// RETAKE / PDF / LOGIN
+// ════════════════════════════════════════════
+document.getElementById("btnRetake").addEventListener("click",function(){
+  answers=new Array(45).fill(null);
+  qTimes=new Array(45).fill(0);
+  pState=new Array(45).fill("unseen");
+  clearInterval(pTimer);
+  document.getElementById("resultsScreen").style.display="none";
+  document.getElementById("testScreen").style.display="block";
+  buildPalette();
+  showQ(0);
+});
+
+document.getElementById("btnLogin").addEventListener("click",function(){
+  location.reload();
+});
+
+document.getElementById("btnPDF").addEventListener("click",function(){
+  var score=document.getElementById("resScore").textContent;
+  var rows="";
+  for(var i=0;i<45;i++){
+    var ua=answers[i];
+    var isC=ua!==null&&ua===Q[i].a;
+    var isW=ua!==null&&ua!==Q[i].a;
+    var st=isC?"✓ Correct":isW?"✗ Wrong":"— Skipped";
+    var sc=isC?"#2ecc71":isW?"#e74c3c":"#8899aa";
+    var ya=ua===null?"—":OPTS[ua]+" — "+Q[i].o[ua];
+    var ca=OPTS[Q[i].a]+" — "+Q[i].o[Q[i].a];
+    var qt=Q[i].q.replace(/<[^>]+>/g,"").split("\n")[0];
+    if(qt.length>80) qt=qt.substring(0,80)+"…";
+    rows+='<tr><td style="color:#8899aa;font-size:11px">'+(i+1)+'</td><td style="color:#c9a84c;font-size:11px">'+Q[i].sec+'</td><td style="font-size:11px">'+qt+'</td><td style="font-size:11px;color:#e8c76a">'+ca+'</td><td style="font-size:11px;color:#b0bec5">'+ya+'</td><td style="font-size:11px;font-weight:700;color:'+sc+'">'+st+'</td><td style="font-size:11px;color:#8899aa">'+qTimes[i]+'s</td></tr><tr><td colspan="7" style="padding:6px 8px 12px;font-size:11px;color:#b0bec5;background:#0d1b2a;border-left:3px solid #c9a84c"><b style="color:#c9a84c">Explanation:</b> '+Q[i].e+'</td></tr>';
+  }
+  var now=new Date().toLocaleString("en-IN",{timeZone:"Asia/Kolkata"});
+  var doc='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Rapid Fire Test 02 Report</title><style>body{font-family:Segoe UI,sans-serif;background:#0d1b2a;color:#f0f4f8;padding:24px;margin:0}h1{color:#c9a84c;font-size:20px;margin-bottom:4px}.sub{color:#8899aa;font-size:12px;margin-bottom:20px}.stats{display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap}.stat{background:#1a2e45;border:1px solid #2a4060;border-radius:8px;padding:12px 20px;text-align:center;min-width:80px}.stat .v{font-size:22px;font-weight:700;margin-bottom:2px}.stat .l{font-size:10px;color:#8899aa;text-transform:uppercase}table{width:100%;border-collapse:collapse}th{background:#1a2e45;color:#c9a84c;padding:8px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.5px}td{padding:8px;border-bottom:1px solid #1a2e45;vertical-align:top}@media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact}}</style></head><body><h1>Road to IIM · Rapid Fire Test 02</h1><div class="sub">Student: '+sName+' &nbsp;|&nbsp; Batch: '+sBatch+' &nbsp;|&nbsp; Generated: '+now+'</div><div class="stats"><div class="stat"><div class="v" style="color:#c9a84c">'+score+'</div><div class="l">Score</div></div><div class="stat"><div class="v" style="color:#2ecc71">'+document.getElementById("resCorrect").textContent+'</div><div class="l">Correct</div></div><div class="stat"><div class="v" style="color:#e74c3c">'+document.getElementById("resWrong").textContent+'</div><div class="l">Wrong</div></div><div class="stat"><div class="v" style="color:#8899aa">'+document.getElementById("resSkip").textContent+'</div><div class="l">Skipped</div></div></div><table><tr><th>Q</th><th>Section</th><th>Question</th><th>Correct Answer</th><th>Your Answer</th><th>Result</th><th>Time</th></tr>'+rows+'</table></body></html>';
+  var blob=new Blob([doc],{type:"text/html"});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement("a");
+  a.href=url;
+  a.download="RapidFireTest02_"+sName.replace(/\s+/g,"_")+"_Report.html";
+  a.click();
+  URL.revokeObjectURL(url);
+});
+</script>
+</body>
+</html>
