@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Road to IIM · Rapid Fire Test 03</title>
+<style>
+:root{
+  --navy:#0d1b2a; --navy2:#1a2e45; --gold:#c9a84c; --gold2:#e8c76a;
+  --green:#2ecc71; --red:#e74c3c; --grey:#8899aa; --white:#f0f4f8;
+  --purple:#8b5cf6; --purple2:#7c3aed;
+  --panel:300px; --topbar:56px; --navbar:62px;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+body{font-family:"Segoe UI",sans-serif; background:var(--navy); color:var(--white);}
+
+/* ---------- LOGIN ---------- */
+#loginScreen{min-height:100vh; display:flex; align-items:center; justify-content:center; padding:20px;}
+.login-box{background:var(--navy2); border:1px solid var(--gold); border-radius:14px; padding:34px 30px; width:100%; max-width:430px;}
+.login-box h1{color:var(--gold); font-size:24px; margin-bottom:4px;}
+.login-box .sub{color:var(--grey); font-size:13px; margin-bottom:22px;}
+.login-box label{display:block; font-size:13px; color:var(--grey); margin:14px 0 6px;}
+.login-box input,.login-box select{width:100%; padding:11px 12px; background:var(--navy); border:1px solid #2a3f5a; border-radius:8px; color:var(--white); font-size:15px; font-family:inherit;}
+.login-box input:focus,.login-box select:focus{outline:none; border-color:var(--gold);}
+.badge-info{background:var(--navy); border:1px solid #2a3f5a; border-radius:8px; padding:12px; margin:18px 0; font-size:12.5px; color:var(--grey); line-height:1.6;}
+.badge-info b{color:var(--gold2);}
+#loginBtn{width:100%; margin-top:20px; padding:13px; background:var(--gold); color:var(--navy); border:none; border-radius:8px; font-size:16px; font-weight:700; cursor:pointer;}
+#loginBtn:hover{background:var(--gold2);}
+.err{color:var(--red); font-size:13px; margin-top:10px; min-height:18px;}
+
+/* ---------- TEST SCREEN ---------- */
+#testScreen{display:none;}
+#topBar{position:sticky; top:0; z-index:200; height:var(--topbar); background:var(--navy2); border-bottom:1px solid var(--gold); display:flex; align-items:center; padding:0 18px; padding-right:calc(var(--panel) + 20px);}
+#topBar .tb-left{color:var(--gold); font-weight:700; font-size:15px; white-space:nowrap;}
+#topBar .tb-centre{flex:1; display:flex; justify-content:center;}
+.badge-pill{background:var(--navy); border:1px solid var(--gold); border-radius:20px; padding:5px 14px; font-size:12px; color:var(--gold2); white-space:nowrap;}
+#topBar .tb-right{display:flex; align-items:center; gap:14px; white-space:nowrap;}
+.tb-name{font-size:13px; color:var(--grey);}
+.tb-counter{font-size:13px; color:var(--white); font-weight:600;}
+.timer-pill{font-size:15px; font-weight:700; padding:5px 14px; border-radius:20px; min-width:64px; text-align:center; background:var(--navy); border:1px solid var(--green); color:var(--green);}
+.timer-pill.low{border-color:#e69a2e; color:#e69a2e;}
+.timer-pill.crit{border-color:var(--red); color:var(--red); animation:pulse 1s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.45;}}
+
+#timerBarWrap{position:sticky; top:var(--topbar); z-index:199; width:calc(100vw - var(--panel)); height:6px; background:#16243a; overflow:hidden;}
+#timerBar{height:100%; width:100%; background:var(--green); border-radius:0 3px 3px 0;}
+#timerBar.crit{animation:pulse 1s infinite;}
+
+#mainContent{padding:30px 36px 100px; max-width:calc(100vw - var(--panel));}
+.q-head{color:var(--grey); font-size:13px; margin-bottom:6px; text-transform:uppercase; letter-spacing:.5px;}
+.q-sub{color:var(--gold2); font-size:12px; margin-bottom:18px;}
+.qtext, .qtext p{font-size:20px; line-height:1.55; margin-bottom:10px; overflow-wrap:break-word; word-break:break-word;}
+.qtext{margin-bottom:24px;}
+.options{display:flex; flex-direction:column; gap:12px; max-width:760px;}
+.option-btn{display:flex; align-items:flex-start; gap:12px; background:var(--navy2); border:1px solid #2a3f5a; border-radius:10px; padding:14px 16px; cursor:pointer; text-align:left; color:var(--white); font-size:16px; font-family:inherit; transition:border-color .12s, background .12s;}
+.option-btn:hover{border-color:var(--gold);}
+.option-btn.selected{border-color:var(--gold); background:#243a57;}
+.option-btn.selected .opt-text{color:var(--gold2);}
+.opt-label{flex-shrink:0; width:26px; height:26px; border-radius:50%; border:1px solid var(--grey); display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; color:var(--grey);}
+.option-btn.selected .opt-label{border-color:var(--gold); color:var(--gold); background:var(--navy);}
+.otext{flex:1; min-width:0; overflow-wrap:break-word; word-break:break-word; line-height:1.4;}
+
+/* ---------- RIGHT PANEL ---------- */
+#rightPanel{position:fixed; top:var(--topbar); right:0; width:var(--panel); height:calc(100vh - var(--topbar)); background:var(--navy2); border-left:1px solid #2a3f5a; padding:20px 18px; overflow-y:auto;}
+#rightPanel h3{font-size:12px; color:var(--gold); text-transform:uppercase; letter-spacing:.6px; margin:18px 0 10px;}
+#rightPanel h3:first-child{margin-top:0;}
+.mark-scheme{font-size:12.5px; color:var(--grey); line-height:1.8;}
+.mark-scheme b{color:var(--white);}
+.legend{display:flex; flex-direction:column; gap:7px; font-size:12px; color:var(--grey);}
+.legend .row{display:flex; align-items:center; gap:9px;}
+.swatch{width:15px; height:15px; border-radius:4px; flex-shrink:0;}
+.sw-ans{background:var(--green);} .sw-skip{background:var(--red);} .sw-cur{border:2px solid var(--gold); background:var(--navy);} .sw-none{background:var(--navy); border:1px solid #2a3f5a;}
+.palette{display:grid; grid-template-columns:repeat(5,1fr); gap:7px; margin-top:4px;}
+.pal-cell{aspect-ratio:1; display:flex; align-items:center; justify-content:center; border-radius:6px; font-size:12px; font-weight:600; background:var(--navy); color:var(--grey); border:1px solid #2a3f5a; cursor:default;}
+.pal-cell.answered{background:var(--green); color:var(--navy); border-color:var(--green);}
+.pal-cell.skipped{background:var(--red); color:#fff; border-color:var(--red);}
+.pal-cell.current{outline:2px solid var(--gold); outline-offset:-2px;}
+.panel-note{font-size:11px; color:var(--grey); font-style:italic; margin-top:12px; line-height:1.5;}
+
+/* ---------- BOTTOM NAV ---------- */
+#navBar{position:fixed; bottom:0; left:0; right:var(--panel); height:var(--navbar); background:var(--navy2); border-top:1px solid #2a3f5a; display:flex; align-items:center; padding:0 24px; gap:14px;}
+#navBar .spacer{flex:1;}
+.nav-btn{padding:11px 24px; border-radius:8px; font-size:15px; font-weight:700; cursor:pointer; font-family:inherit; border:none;}
+#btnNext{background:var(--green); color:var(--navy);}
+#btnNext:hover{filter:brightness(1.08);}
+#btnSubmit{background:transparent; color:var(--gold); border:2px solid var(--gold);}
+#btnSubmit:hover{background:var(--gold); color:var(--navy);}
+
+/* ---------- RESULTS ---------- */
+#resultsScreen{display:none; min-height:100vh; padding:36px 20px 70px;}
+.res-wrap{max-width:840px; margin:0 auto;}
+.res-wrap h1{color:var(--gold); font-size:26px; margin-bottom:4px;}
+.res-wrap .rsub{color:var(--grey); font-size:13px; margin-bottom:26px;}
+.score-hero{background:var(--navy2); border:1px solid var(--gold); border-radius:14px; padding:26px; text-align:center; margin-bottom:22px;}
+.score-hero .big{font-size:46px; font-weight:700; color:var(--gold2);}
+.score-hero .of{font-size:18px; color:var(--grey);}
+.stats-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:22px;}
+.stat-box{background:var(--navy2); border:1px solid #2a3f5a; border-radius:10px; padding:16px; text-align:center;}
+.stat-box .n{font-size:26px; font-weight:700;}
+.stat-box .l{font-size:12px; color:var(--grey); margin-top:3px;}
+.stat-box.c .n{color:var(--green);} .stat-box.w .n{color:var(--red);} .stat-box.s .n{color:var(--grey);} .stat-box.t .n{color:var(--gold2);}
+.sbkd{background:var(--navy2); border:1px solid #2a3f5a; border-radius:12px; padding:20px; margin-bottom:20px;}
+.sbkd h3{color:var(--gold); font-size:15px; margin-bottom:14px;}
+.topic-row{display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #233649; font-size:14px;}
+.topic-row:last-child{border-bottom:none;}
+.topic-row .tname{color:var(--white);}
+.topic-row .tval{color:var(--grey);}
+.topic-row .tval b{color:var(--gold2);}
+.explist{margin-top:6px;}
+.exp-item{background:var(--navy2); border:1px solid #2a3f5a; border-left:4px solid var(--grey); border-radius:8px; padding:14px 16px; margin-bottom:12px;}
+.exp-item.correct{border-left-color:var(--green);}
+.exp-item.wrong{border-left-color:var(--red);}
+.exp-item.skipped{border-left-color:var(--gold);}
+.exp-q{font-size:14px; line-height:1.5; margin-bottom:8px; overflow-wrap:break-word; word-break:break-word;}
+.exp-q .qn{color:var(--gold); font-weight:700;}
+.exp-meta{font-size:12.5px; color:var(--grey); margin-bottom:6px;}
+.exp-meta .ok{color:var(--green);} .exp-meta .no{color:var(--red);}
+.exp-e{font-size:13px; color:#c5d1de; line-height:1.55;}
+.res-actions{display:flex; gap:14px; justify-content:center; margin:28px 0 10px;}
+.res-actions button{padding:12px 26px; border-radius:8px; font-size:15px; font-weight:700; cursor:pointer; font-family:inherit;}
+#btnRetake{background:var(--gold); color:var(--navy); border:none;}
+#btnPrint{background:transparent; color:var(--gold); border:2px solid var(--gold);}
+
+@media print{
+  #rightPanel,#navBar,.res-actions{display:none !important;}
+  body{background:#fff; color:#000;}
+}
+</style>
+</head>
+<body>
+
+<!-- ============ LOGIN ============ -->
+<div id="loginScreen">
+  <div class="login-box">
+    <h1>Rapid Fire Test 03</h1>
+    <div class="sub">Road to IIM · Collocations Special · IMS Ahmedabad</div>
+
+    <label for="inName">Full Name</label>
+    <input id="inName" type="text" autocomplete="off" placeholder="Your full name">
+
+    <label for="inPin">IMS PIN</label>
+    <input id="inPin" type="text" autocomplete="off" placeholder="STU########## or IMS##########">
+
+    <label for="inBatch">Batch</label>
+    <select id="inBatch">
+      <option value="">Select your batch</option>
+      <optgroup label="Classroom">
+        <option>A2701</option><option>A2702</option><option>A2703</option><option>A2704</option>
+        <option>A2705</option><option>A2706</option><option>A2707</option><option>A2708</option>
+        <option>A2709</option><option>A2710</option><option>A2711</option><option>A2712</option>
+      </optgroup>
+      <optgroup label="School"><option>Zebar</option></optgroup>
+      <optgroup label="Online">
+        <option>27E101</option><option>27E102</option><option>27E103</option><option>27E104</option><option>27E105</option>
+      </optgroup>
+    </select>
+
+    <div class="badge-info">
+      <b>Speed Test · Pace Training</b><br>
+      45 questions · <b>25 seconds each</b> · per-question countdown<br>
+      Marking: <b>+4</b> correct · <b>−1</b> wrong · <b>0</b> skipped<br>
+      No going back. Answer, or the timer moves you on. The discomfort is the point.
+    </div>
+
+    <button id="loginBtn">Start Test</button>
+    <div class="err" id="loginErr"></div>
+  </div>
+</div>
+
+<!-- ============ TEST ============ -->
+<div id="testScreen">
+  <div id="topBar">
+    <div class="tb-left">Road to IIM · RF Test 03</div>
+    <div class="tb-centre"><div class="badge-pill">Collocations · 45Q · 25s/Q · +4 / −1</div></div>
+    <div class="tb-right">
+      <span class="tb-name" id="tbName"></span>
+      <span class="timer-pill" id="timerPill">25</span>
+      <span class="tb-counter" id="tbCounter">Q1 / 45</span>
+    </div>
+  </div>
+
+  <div id="timerBarWrap"><div id="timerBar"></div></div>
+
+  <div id="mainContent">
+    <div class="q-head" id="qHead">Vocabulary</div>
+    <div class="q-sub" id="qSub"></div>
+    <div class="qtext" id="qText"></div>
+    <div class="options" id="optionsBox"></div>
+  </div>
+
+  <div id="rightPanel">
+    <h3>Marking Scheme</h3>
+    <div class="mark-scheme">
+      <b>+4</b> for each correct answer<br>
+      <b>−1</b> for each wrong answer<br>
+      <b>0</b> for skipped questions<br>
+      <b>25 sec</b> per question
+    </div>
+    <h3>Status</h3>
+    <div class="legend">
+      <div class="row"><span class="swatch sw-ans"></span> Answered</div>
+      <div class="row"><span class="swatch sw-skip"></span> Visited · skipped</div>
+      <div class="row"><span class="swatch sw-cur"></span> Current</div>
+      <div class="row"><span class="swatch sw-none"></span> Not yet reached</div>
+    </div>
+    <h3>Progress</h3>
+    <div class="palette" id="palette"></div>
+    <div class="panel-note">Tracker only — speed test does not allow returning to earlier questions.</div>
+  </div>
+
+  <div id="navBar">
+    <div class="spacer"></div>
+    <button class="nav-btn" id="btnNext">Save &amp; Next</button>
+    <button class="nav-btn" id="btnSubmit" style="display:none;">Submit Test</button>
+  </div>
+</div>
+
+<!-- ============ RESULTS (sibling of #testScreen) ============ -->
+<div id="resultsScreen">
+  <div class="res-wrap">
+    <h1>Rapid Fire Test 03 — Results</h1>
+    <div class="rsub" id="resSub"></div>
+
+    <div class="score-hero">
+      <div><span class="big" id="resScore">0</span><span class="of"> / 180</span></div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-box c"><div class="n" id="resC">0</div><div class="l">Correct</div></div>
+      <div class="stat-box w"><div class="n" id="resW">0</div><div class="l">Wrong</div></div>
+      <div class="stat-box s"><div class="n" id="resS">0</div><div class="l">Skipped</div></div>
+      <div class="stat-box t"><div class="n" id="resT">00:00</div><div class="l">Time</div></div>
+    </div>
+
+    <div class="sbkd">
+      <h3>Topic Breakdown</h3>
+      <div id="topicBkd"></div>
+    </div>
+
+    <div class="sbkd">
+      <h3>Question Review</h3>
+      <div class="explist" id="explist"></div>
+    </div>
+
+    <div class="res-actions">
+      <button id="btnRetake">Retake Test</button>
+      <button id="btnPrint">Download PDF</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var Q = [
+  {q:"The new findings proved entirely indicative ___ a cover-up.",o:["of","to","with","for"],a:0,sec:"Vocabulary",td:25,e:"'Indicative of' = a sign of.",tag:{area:"Vocabulary",sub:"Fill in the Blank"}},
+  {q:"By his own admission the old judge was partial ___ a fine claret.",o:["toward","to","with","of"],a:1,sec:"Vocabulary",td:25,e:"'Partial to' = fond of; not 'partial toward'.",tag:{area:"Vocabulary",sub:"Fill in the Blank"}},
+  {q:"'Tantamount to' most nearly means:",o:["equivalent to","opposed to","reliant on","subject to"],a:0,sec:"Vocabulary",td:25,e:"'Tantamount to' = effectively the same as.",tag:{area:"Vocabulary",sub:"Word Meaning"}},
+  {q:"By the final act he was visibly intent ___ revenge above all else.",o:["to","on","with","at"],a:1,sec:"Vocabulary",td:25,e:"'Intent on'.",tag:{area:"Vocabulary",sub:"Fill in the Blank"}},
+  {q:"The entire inquiry was centred ___ a single disputed transaction.",o:["on","around","in","at"],a:0,sec:"Vocabulary",td:25,e:"'Centred on'; 'centred around' is widely flagged as wrong.",tag:{area:"Vocabulary",sub:"Fill in the Blank"}},
+  {q:"Three share the same connotation. Pick the ODD one out.",o:["biased against","prejudiced against","pitted against","set against"],a:2,sec:"Vocabulary",td:25,e:"All four take 'against,' so preposition gives nothing away. 'Biased,' 'prejudiced,' and 'set against' are hostile prejudice; 'pitted against' is neutral — placed in competition with.",tag:{area:"Vocabulary",sub:"Odd One Out"}},
+  {q:"Three share the same connotation. Pick the ODD one out.",o:["infamous for","notorious for","reviled for","celebrated for"],a:3,sec:"Vocabulary",td:25,e:"celebrated is positive; the rest are negative reputation.",tag:{area:"Vocabulary",sub:"Odd One Out"}},
+  {q:"The melody was faintly reminiscent ___ an old folk lullaby.",o:["to","of","with","about"],a:1,sec:"Vocabulary",td:25,e:"'Reminiscent of' = calling to mind.",tag:{area:"Vocabulary",sub:"Fill in the Blank"}},
+  {q:"Her conclusions were strikingly different ___ those of every earlier study.",o:["than","from","to","with"],a:1,sec:"Vocabulary",td:25,e:"'Different from' is exam-correct; 'different than' is the trap.",tag:{area:"Vocabulary",sub:"Fill in the Blank"}},
+  {q:"The coastal town is ___ for a cuisine that draws food lovers from across the country.",o:["infamous","notorious","renowned","answerable"],a:2,sec:"Vocabulary",td:25,e:"Positive reputation: 'renowned for.' The others miss the celebratory sense.",tag:{area:"Vocabulary",sub:"Contextual Usage"}},
+  {q:"The committee proved surprisingly ___ to compromise once the deadline loomed.",o:["averse","opposed","resistant","amenable"],a:3,sec:"Vocabulary",td:25,e:"'Amenable to' = willing. The others mean unwilling.",tag:{area:"Vocabulary",sub:"Contextual Usage"}},
+  {q:"The whole release schedule was contingent ___ a single overdue approval.",o:["of","to","on","for"],a:2,sec:"Vocabulary",td:25,e:"'Contingent on' = dependent on.",tag:{area:"Vocabulary",sub:"Fill in the Blank"}},
+  {q:"The soil here is notably deficient ___ the iron that vines need.",o:["of","with","for","in"],a:3,sec:"Vocabulary",td:25,e:"'Deficient in' = lacking in.",tag:{area:"Vocabulary",sub:"Fill in the Blank"}},
+  {q:"An essay ___ with fresh insight but ___ in basic rigour will still irritate the examiner.",o:["brimming / lacking","couched / immersed","laden / rich","seething / versed"],a:0,sec:"Vocabulary",td:25,e:"brimming with insight; lacking in rigour.",tag:{area:"Vocabulary",sub:"Double Blank"}},
+  {q:"The English word is derived ___ a Latin root meaning 'to carry'.",o:["of","from","by","to"],a:1,sec:"Vocabulary",td:25,e:"'Derived from' = originates from.",tag:{area:"Vocabulary",sub:"Fill in the Blank"}},
+  {q:"Newcomers to the trade are especially susceptible ___ this kind of flattery.",o:["to","of","for","with"],a:0,sec:"Vocabulary",td:25,e:"'Susceptible to'.",tag:{area:"Vocabulary",sub:"Fill in the Blank"}},
+  {q:"'Shorn of' most nearly means:",o:["akin to","apt for","fluent in","stripped of"],a:3,sec:"Vocabulary",td:25,e:"'Shorn of' = deprived of.",tag:{area:"Vocabulary",sub:"Word Meaning"}},
+  {q:"The faded ballroom was redolent ___ a vanished age of elegance.",o:["with","of","to","in"],a:1,sec:"Vocabulary",td:25,e:"'Redolent of' = evocative of.",tag:{area:"Vocabulary",sub:"Fill in the Blank"}},
+  {q:"From her first recital it was clear the girl was destined ___ the concert stage.",o:["to","with","for","at"],a:2,sec:"Vocabulary",td:25,e:"'Destined for'.",tag:{area:"Vocabulary",sub:"Fill in the Blank"}},
+  {q:"At the awards ceremony, the young scientist was ___ with pride as her mentor read the citation.",o:["fraught","bursting","racked","plagued"],a:1,sec:"Vocabulary",td:25,e:"Pride is positive: 'bursting with pride.' The afflictions cannot describe a celebration.",tag:{area:"Vocabulary",sub:"Contextual Usage"}},
+  {q:"Such caution was wholly characteristic ___ the man.",o:["to","with","for","of"],a:3,sec:"Vocabulary",td:25,e:"'Characteristic of' = typical of.",tag:{area:"Vocabulary",sub:"Fill in the Blank"}},
+  {q:"Though ___ with mineral wealth, the nation was ___ of any coherent plan to use it.",o:["rife / cognisant","replete / bereft","saturated / abounding","awash / mindful"],a:1,sec:"Vocabulary",td:25,e:"B1 'full of'+with: replete; B2 'lacking'+of: bereft.",tag:{area:"Vocabulary",sub:"Double Blank"}},
+  {q:"'Imbued with' most nearly means:",o:["infused with","drained of","divorced from","keen on"],a:0,sec:"Vocabulary",td:25,e:"'Imbued with' = permeated with.",tag:{area:"Vocabulary",sub:"Word Meaning"}},
+  {q:"Even as a junior, she was remarkably adept ___ cross-examination.",o:["to","with","of","at"],a:3,sec:"Vocabulary",td:25,e:"'Adept at' = skilled at.",tag:{area:"Vocabulary",sub:"Fill in the Blank"}},
+  {q:"The remote valley was teeming ___ wildlife rarely seen elsewhere.",o:["of","to","with","in"],a:2,sec:"Vocabulary",td:25,e:"'Teeming with' = full of.",tag:{area:"Vocabulary",sub:"Fill in the Blank"}},
+  {q:"Three share the same connotation. Pick the ODD one out.",o:["rife with","ridden with","fraught with","brimming with"],a:3,sec:"Vocabulary",td:25,e:"brimming is positive; the rest are negative.",tag:{area:"Vocabulary",sub:"Odd One Out"}},
+  {q:"The senator claimed he had never been privy ___ the details.",o:["of","with","in","to"],a:3,sec:"Vocabulary",td:25,e:"'Privy to' = with inside knowledge of.",tag:{area:"Vocabulary",sub:"Fill in the Blank"}},
+  {q:"Charities of this kind are usually exempt ___ the standard levy.",o:["of","to","from","with"],a:2,sec:"Vocabulary",td:25,e:"'Exempt from'.",tag:{area:"Vocabulary",sub:"Fill in the Blank"}},
+  {q:"The prose was elegant but ultimately ___ of any real feeling.",o:["mindful","suggestive","desirous","devoid"],a:3,sec:"Vocabulary",td:25,e:"'Devoid of' = without. The others do not denote absence.",tag:{area:"Vocabulary",sub:"Contextual Usage"}},
+  {q:"Three share the same connotation. Pick the ODD one out.",o:["susceptible to","conducive to","vulnerable to","prone to"],a:1,sec:"Vocabulary",td:25,e:"conducive is favourable; the rest mean liable to harm.",tag:{area:"Vocabulary",sub:"Odd One Out"}},
+  {q:"In popular usage the brand name has become almost synonymous ___ the product itself.",o:["with","of","to","in"],a:0,sec:"Vocabulary",td:25,e:"'Synonymous with' = identified with.",tag:{area:"Vocabulary",sub:"Fill in the Blank"}},
+  {q:"Years of overwork had left him strangely ___ from the family he was trying to support.",o:["exempt","removed","distinct","estranged"],a:3,sec:"Vocabulary",td:25,e:"'Estranged from' = alienated from (people). The others miss the human rupture.",tag:{area:"Vocabulary",sub:"Contextual Usage"}},
+  {q:"The whole region is steeped ___ a tradition of seafaring and trade.",o:["with","in","to","of"],a:1,sec:"Vocabulary",td:25,e:"'Steeped in' = immersed in.",tag:{area:"Vocabulary",sub:"Fill in the Blank"}},
+  {q:"Seasoned investors are rarely averse ___ a calculated risk.",o:["from","of","to","with"],a:2,sec:"Vocabulary",td:25,e:"'Averse to'; 'averse from' is the classic error.",tag:{area:"Vocabulary",sub:"Fill in the Blank"}},
+  {q:"'Inured to' most nearly means:",o:["hardened to","eager for","apt for","privy to"],a:0,sec:"Vocabulary",td:25,e:"'Inured to' = hardened/accustomed to.",tag:{area:"Vocabulary",sub:"Word Meaning"}},
+  {q:"With the result due in an hour, the candidates grew visibly anxious ___ the outcome.",o:["of","at","about","with"],a:2,sec:"Vocabulary",td:25,e:"'Anxious about' = worried about.",tag:{area:"Vocabulary",sub:"Fill in the Blank"}},
+  {q:"Only second-year students are eligible ___ the travelling scholarship.",o:["to","with","for","of"],a:2,sec:"Vocabulary",td:25,e:"'Eligible for'.",tag:{area:"Vocabulary",sub:"Fill in the Blank"}},
+  {q:"Three share the same connotation. Pick the ODD one out.",o:["embroiled in","enmeshed in","entangled in","grounded in"],a:3,sec:"Vocabulary",td:25,e:"grounded = based on fact; the rest (embroiled, enmeshed, entangled) are all negative entanglement.",tag:{area:"Vocabulary",sub:"Odd One Out"}},
+  {q:"These hills are unusually rich ___ copper and rare earths.",o:["in","with","of","for"],a:0,sec:"Vocabulary",td:25,e:"'Rich in' (minerals).",tag:{area:"Vocabulary",sub:"Fill in the Blank"}},
+  {q:"Two years after the launch, the project was hopelessly ___ in debt and legal disputes.",o:["immersed","schooled","entangled","mired"],a:3,sec:"Vocabulary",td:25,e:"'Mired in' = stuck in. The other words are wrong for debt.",tag:{area:"Vocabulary",sub:"Contextual Usage"}},
+  {q:"Three share the same connotation. Pick the ODD one out.",o:["devoid of","destitute of","worthy of","bankrupt of"],a:2,sec:"Vocabulary",td:25,e:"worthy = deserving; the rest denote lack.",tag:{area:"Vocabulary",sub:"Odd One Out"}},
+  {q:"Her objection, however heartfelt, was simply not germane ___ the motion.",o:["with","for","to","of"],a:2,sec:"Vocabulary",td:25,e:"'Germane to' = relevant to.",tag:{area:"Vocabulary",sub:"Fill in the Blank"}},
+  {q:"The diplomat was ___ to every nuance of the talks yet wholly ___ to personal flattery.",o:["blind / partial","attuned / impervious","predisposed / vulnerable","alive / prone"],a:1,sec:"Vocabulary",td:25,e:"attuned (sensitive); impervious (resistant). 'prone to flattery' contradicts 'wholly'.",tag:{area:"Vocabulary",sub:"Double Blank"}},
+  {q:"His early novels, ___ in folklore, grew steadily more ___ with social criticism.",o:["rooted / laden","complicit / awash","schooled / racked","deficient / bristling"],a:0,sec:"Vocabulary",td:25,e:"rooted in folklore; laden with criticism.",tag:{area:"Vocabulary",sub:"Double Blank"}},
+  {q:"A few hardy strains proved entirely immune ___ the new blight.",o:["to","of","with","for"],a:0,sec:"Vocabulary",td:25,e:"'Immune to' (a disease/effect).",tag:{area:"Vocabulary",sub:"Fill in the Blank"}}
+];
+
+var APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx5Ojm_zp4LfsMeelx5e06KNjVH1wfsXdV0keS4407m4FO1HU4EpVb7GKj-ibAsxnspeA/exec";
+
+var sName="", sPin="", sBatch="";
+var currentQ=0;
+var answers=[], qTimes=[], visitedQ=[];
+var perQTimer=null, perQSecondsLeft=0;
+
+function $(id){ return document.getElementById(id); }
+
+function initState(){
+  answers=[]; qTimes=[]; visitedQ=[];
+  for(var i=0;i<Q.length;i++){ answers.push(null); qTimes.push(0); visitedQ.push(false); }
+  currentQ=0;
+}
+
+function doLogin(){
+  var n=$("inName").value.trim();
+  var p=$("inPin").value.trim().toUpperCase();
+  var b=$("inBatch").value;
+  $("inPin").value=p;
+  if(!n){ $("loginErr").textContent="Please enter your name."; return; }
+  if(!/^(STU|IMS)\d{10}$/.test(p)){ $("loginErr").textContent="Invalid PIN. Format: STU or IMS followed by 10 digits."; return; }
+  if(!b){ $("loginErr").textContent="Please select your batch."; return; }
+  sName=n; sPin=p; sBatch=b;
+  $("loginErr").textContent="";
+  $("tbName").textContent=sName;
+  $("loginScreen").style.display="none";
+  $("testScreen").style.display="block";
+  initState();
+  buildPalette();
+  renderQuestion(0);
+}
+
+function buildPalette(){
+  var pal=$("palette"); pal.innerHTML="";
+  for(var i=0;i<Q.length;i++){
+    var c=document.createElement("div");
+    c.className="pal-cell"; c.id="pal-"+i; c.textContent=(i+1);
+    pal.appendChild(c);
+  }
+}
+
+function updatePalette(){
+  for(var i=0;i<Q.length;i++){
+    var c=$("pal-"+i);
+    if(!c) continue;
+    c.className="pal-cell";
+    if(answers[i]!==null) c.classList.add("answered");
+    else if(visitedQ[i] && i<currentQ) c.classList.add("skipped");
+    if(i===currentQ) c.classList.add("current");
+  }
+}
+
+function renderQuestion(qi){
+  if(perQTimer){ clearInterval(perQTimer); perQTimer=null; }
+  currentQ=qi;
+  visitedQ[qi]=true;
+  var item=Q[qi];
+
+  $("qHead").textContent=item.sec;
+  $("qSub").textContent=item.tag.area+" · "+item.tag.sub;
+
+  var qbox=$("qText"); qbox.innerHTML="";
+  var lines=item.q.split("\n");
+  for(var L=0;L<lines.length;L++){
+    var p=document.createElement("p");
+    p.textContent=lines[L];
+    qbox.appendChild(p);
+  }
+
+  var box=$("optionsBox"); box.innerHTML="";
+  var labels=["A","B","C","D"];
+  for(var j=0;j<item.o.length;j++){
+    var btn=document.createElement("button");
+    btn.className="option-btn"+(answers[qi]===j?" selected":"");
+    btn.setAttribute("data-idx", j);
+    var lab=document.createElement("span"); lab.className="opt-label"; lab.textContent=labels[j];
+    var txt=document.createElement("span"); txt.className="otext"; txt.textContent=item.o[j];
+    btn.appendChild(lab); btn.appendChild(txt);
+    btn.addEventListener("click", onSelect);
+    box.appendChild(btn);
+  }
+
+  $("tbCounter").textContent="Q"+(qi+1)+" / "+Q.length;
+  updatePalette();
+
+  if(qi===44){ $("btnNext").style.display="none"; $("btnSubmit").style.display="inline-block"; }
+  else { $("btnNext").style.display="inline-block"; $("btnSubmit").style.display="none"; }
+
+  startPerQTimer(item.td);
+}
+
+function onSelect(e){
+  var btn=e.currentTarget;
+  var idx=parseInt(btn.getAttribute("data-idx"),10);
+  answers[currentQ]=idx;
+  var all=$("optionsBox").getElementsByClassName("option-btn");
+  for(var k=0;k<all.length;k++){ all[k].classList.remove("selected"); }
+  btn.classList.add("selected");
+  updatePalette();
+}
+
+function startPerQTimer(seconds){
+  perQSecondsLeft=seconds;
+  var bar=$("timerBar");
+  bar.style.transition="none";
+  bar.style.width="100%";
+  bar.style.background="var(--green)";
+  bar.classList.remove("crit");
+  void bar.offsetWidth; // force reflow so the sweep restarts cleanly
+  bar.style.transition="width "+seconds+"s linear";
+  bar.style.width="0%";
+  paintTimer(seconds, seconds);
+  perQTimer=setInterval(function(){
+    perQSecondsLeft--;
+    paintTimer(perQSecondsLeft, seconds);
+    if(perQSecondsLeft<=0){
+      clearInterval(perQTimer); perQTimer=null;
+      advance();
+    }
+  },1000);
+}
+
+function paintTimer(left, total){
+  var pill=$("timerPill");
+  pill.textContent=(left<0?0:left);
+  pill.className="timer-pill";
+  var bar=$("timerBar");
+  var frac=left/total;
+  if(frac<=0.25){ pill.classList.add("crit"); bar.style.background="var(--red)"; bar.classList.add("crit"); }
+  else if(frac<=0.50){ pill.classList.add("low"); bar.style.background="#e69a2e"; bar.classList.remove("crit"); }
+  else { bar.style.background="var(--green)"; bar.classList.remove("crit"); }
+}
+
+function advance(){
+  var spent=Q[currentQ].td - (perQSecondsLeft<0?0:perQSecondsLeft);
+  qTimes[currentQ]=spent;
+  if(perQTimer){ clearInterval(perQTimer); perQTimer=null; }
+  if(currentQ===44){ submitTest(); }
+  else { renderQuestion(currentQ+1); }
+}
+
+function submitTest(){
+  if(perQTimer){ clearInterval(perQTimer); perQTimer=null; }
+  // ensure final question's time is recorded if reached via submit button
+  if(qTimes[currentQ]===0 && visitedQ[currentQ]){
+    qTimes[currentQ]=Q[currentQ].td - (perQSecondsLeft<0?0:perQSecondsLeft);
+  }
+
+  var numC=0, numW=0, numS=0;
+  var wrongQs=[];
+  var secErr={};
+  var topicErr={};
+  for(var i=0;i<Q.length;i++){
+    if(answers[i]===null){ numS++; continue; }
+    if(answers[i]===Q[i].a){ numC++; }
+    else{
+      numW++;
+      wrongQs.push(i+1);
+      var area=Q[i].tag.area;
+      secErr[area]=(secErr[area]||0)+1;
+      var sub=Q[i].tag.sub;
+      topicErr[sub]=(topicErr[sub]||0)+1;
+    }
+  }
+  var finalScore=numC*4 - numW*1;
+
+  var totalSecs=0;
+  for(var t=0;t<qTimes.length;t++){ totalSecs+=qTimes[t]; }
+  var mm=String(Math.floor(totalSecs/60)).padStart(2,"0");
+  var ss=String(totalSecs%60).padStart(2,"0");
+  var timeTaken=mm+":"+ss;
+
+  var timestamp=new Date().toLocaleString("en-IN",{timeZone:"Asia/Kolkata"});
+
+  var payload={
+    testName:"Rapid Fire Test 03",
+    name:sName,
+    pin:sPin,
+    batch:sBatch,
+    score:finalScore,
+    correct:numC,
+    wrong:numW,
+    skipped:numS,
+    maxMarks:180,
+    timeTaken:timeTaken,
+    timestamp:timestamp,
+    sectionErrors:JSON.stringify(secErr),
+    wrongQuestions:JSON.stringify(wrongQs),
+    studentAnswers:answers.map(function(a){ return a===null?null:a; }),
+    questionTimes:JSON.stringify(qTimes),
+    topicErrors:JSON.stringify(topicErr)
+  };
+
+  fetch(APPS_SCRIPT_URL,{
+    method:"POST", mode:"no-cors",
+    headers:{"Content-Type":"text/plain"},
+    body:JSON.stringify(payload)
+  }).then(function(){ /* no-cors: no body returned, this is normal */ })
+    .catch(function(){ /* swallow — results still shown locally */ });
+
+  showResults(finalScore, numC, numW, numS, timeTaken, topicErr);
+}
+
+function showResults(score, c, w, s, timeTaken, topicErr){
+  $("testScreen").style.display="none";
+  $("resultsScreen").style.display="block";
+  window.scrollTo(0,0);
+
+  $("resSub").textContent=sName+" · "+sBatch+" · "+sPin;
+  $("resScore").textContent=score;
+  $("resC").textContent=c;
+  $("resW").textContent=w;
+  $("resS").textContent=s;
+  $("resT").textContent=timeTaken;
+
+  // Topic breakdown — attempts vs errors per sub
+  var attempts={};
+  for(var i=0;i<Q.length;i++){
+    var sub=Q[i].tag.sub;
+    attempts[sub]=(attempts[sub]||0)+1;
+  }
+  var tb=$("topicBkd"); tb.innerHTML="";
+  var subs=Object.keys(attempts);
+  for(var k=0;k<subs.length;k++){
+    var sub2=subs[k];
+    var errs=topicErr[sub2]||0;
+    var total=attempts[sub2];
+    var corr=total-errs;
+    var row=document.createElement("div"); row.className="topic-row";
+    var nm=document.createElement("span"); nm.className="tname"; nm.textContent=sub2;
+    var vl=document.createElement("span"); vl.className="tval";
+    vl.innerHTML="<b>"+corr+"</b> / "+total+" correct";
+    row.appendChild(nm); row.appendChild(vl);
+    tb.appendChild(row);
+  }
+
+  // Question review
+  var el=$("explist"); el.innerHTML="";
+  var labels=["A","B","C","D"];
+  for(var q=0;q<Q.length;q++){
+    var ua=answers[q];
+    var correctIdx=Q[q].a;
+    var cls="skipped", metaHtml="";
+    if(ua===null){
+      cls="skipped";
+      metaHtml='<span class="no">Skipped</span> · Correct: <span class="ok">'+labels[correctIdx]+". "+Q[q].o[correctIdx]+'</span>';
+    } else if(ua===correctIdx){
+      cls="correct";
+      metaHtml='<span class="ok">Correct ('+labels[ua]+")</span>";
+    } else {
+      cls="wrong";
+      metaHtml='Your answer: <span class="no">'+labels[ua]+". "+Q[q].o[ua]+'</span> · Correct: <span class="ok">'+labels[correctIdx]+". "+Q[q].o[correctIdx]+'</span>';
+    }
+    var item=document.createElement("div"); item.className="exp-item "+cls;
+    var qd=document.createElement("div"); qd.className="exp-q";
+    qd.innerHTML='<span class="qn">Q'+(q+1)+'.</span> '+escapeHtml(Q[q].q);
+    var md=document.createElement("div"); md.className="exp-meta"; md.innerHTML=metaHtml;
+    var ed=document.createElement("div"); ed.className="exp-e"; ed.textContent=Q[q].e;
+    item.appendChild(qd); item.appendChild(md); item.appendChild(ed);
+    el.appendChild(item);
+  }
+}
+
+function escapeHtml(str){
+  return str.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+
+function retake(){
+  $("resultsScreen").style.display="none";
+  $("testScreen").style.display="block";
+  initState();
+  buildPalette();
+  renderQuestion(0);
+}
+
+document.addEventListener("DOMContentLoaded", function(){
+  $("loginBtn").addEventListener("click", doLogin);
+  $("inBatch").addEventListener("keydown", function(e){ if(e.key==="Enter") doLogin(); });
+  $("inPin").addEventListener("keydown", function(e){ if(e.key==="Enter") doLogin(); });
+  $("btnNext").addEventListener("click", advance);
+  $("btnSubmit").addEventListener("click", submitTest);
+  $("btnRetake").addEventListener("click", retake);
+  $("btnPrint").addEventListener("click", function(){ window.print(); });
+});
+</script>
+</body>
+</html>
