@@ -1,0 +1,1436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IWP — Collocations Master List</title>
+<style>
+  :root {
+    --gold: #c9a027;
+    --gold-dim: rgba(201,160,39,0.18);
+    --bg: #0f1117;
+    --card: #1c2230;
+    --card2: #222b3a;
+    --border: rgba(255,255,255,0.07);
+    --text: #d4daea;
+    --muted: #8a95b0;
+    --green: #3ecf8e;
+    --red: #e05c6b;
+    --blue: #4a9eff;
+    --radius: 10px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; font-size: 15px; line-height: 1.6; }
+
+  /* ── LOGIN ── */
+  #login-screen {
+    display: flex; align-items: center; justify-content: center;
+    min-height: 100vh; padding: 20px;
+  }
+  .login-card {
+    background: var(--card); border-radius: 12px; padding: 40px 36px;
+    width: 100%; max-width: 420px; border: 1px solid var(--border);
+    box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+  }
+  .login-eyebrow { color: var(--gold); font-size: 11px; font-variant: small-caps; letter-spacing: 1.5px; margin-bottom: 8px; }
+  .login-title { font-size: 22px; font-weight: 700; color: #fff; margin-bottom: 6px; }
+  .login-sub { color: var(--muted); font-size: 13px; margin-bottom: 28px; }
+  .field-label { display: block; font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+  .field-group { margin-bottom: 18px; }
+  .login-card input, .login-card select {
+    width: 100%; background: #131822; border: 1px solid rgba(255,255,255,0.1);
+    color: var(--text); border-radius: 7px; padding: 10px 13px; font-size: 14px;
+    outline: none; transition: border-color 0.2s;
+  }
+  .login-card input:focus, .login-card select:focus { border-color: var(--gold); }
+  .login-card select option { background: #131822; }
+  #login-error { color: var(--red); font-size: 12px; margin-top: 4px; min-height: 16px; }
+  .btn-login {
+    width: 100%; background: var(--gold); color: #0f1117; border: none;
+    border-radius: 7px; padding: 12px; font-size: 15px; font-weight: 700;
+    cursor: pointer; margin-top: 8px; transition: opacity 0.2s;
+  }
+  .btn-login:hover { opacity: 0.9; }
+
+  /* ── MAIN ── */
+  #main-screen { display: none; }
+  .site-header {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(15,17,23,0.95); backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 20px; height: 52px;
+  }
+  .header-title { font-size: 13px; font-weight: 600; color: var(--gold); letter-spacing: 0.3px; }
+  .header-right { display: flex; align-items: center; gap: 16px; }
+  .timer-display { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .student-tag { font-size: 12px; color: var(--muted); }
+
+  .main-wrap { max-width: 860px; margin: 0 auto; padding: 28px 20px 60px; }
+
+  /* ── PROGRESS ── */
+  .progress-track {
+    display: flex; gap: 6px; align-items: center; margin-bottom: 28px; flex-wrap: wrap;
+  }
+  .prog-step {
+    flex: 1; height: 4px; border-radius: 2px; background: rgba(255,255,255,0.08);
+    min-width: 40px; transition: background 0.3s;
+  }
+  .prog-step.active { background: var(--gold); }
+  .prog-step.done { background: var(--green); }
+
+  /* ── SECTION CARDS ── */
+  .section-card { display: none; }
+  .section-card.active { display: block; }
+
+  .sec-eyebrow { font-size: 11px; font-variant: small-caps; letter-spacing: 1.5px; color: var(--gold); margin-bottom: 4px; }
+  .sec-title { font-size: 22px; font-weight: 700; color: #fff; margin-bottom: 6px; }
+  .sec-sub { color: var(--muted); font-size: 13px; margin-bottom: 24px; }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 20px 22px; margin-bottom: 16px;
+  }
+  .card-title { font-size: 13px; font-weight: 700; color: var(--gold); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  /* ── HOOK BOX ── */
+  .hook-box {
+    background: linear-gradient(135deg, rgba(201,160,39,0.12), rgba(201,160,39,0.05));
+    border: 1px solid rgba(201,160,39,0.3); border-radius: var(--radius);
+    padding: 22px 24px; margin-bottom: 20px;
+  }
+  .hook-box p { color: var(--text); line-height: 1.7; font-size: 15px; }
+  .hook-box p + p { margin-top: 10px; }
+  .hook-lead { font-size: 17px; font-weight: 600; color: #fff; display: block; margin-bottom: 8px; }
+
+  /* ── CONCEPT GRID ── */
+  .concept-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; margin-bottom: 20px; }
+  .concept-card {
+    background: var(--card2); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 16px 18px;
+  }
+  .concept-card h4 { font-size: 14px; font-weight: 700; color: var(--gold); margin-bottom: 6px; }
+  .concept-card p { font-size: 13px; color: var(--muted); line-height: 1.55; }
+
+  /* ── VALENCE CHIPS ── */
+  .chip { display: inline-flex; align-items: center; gap: 4px; padding: 2px 9px; border-radius: 20px; font-size: 11px; font-weight: 700; letter-spacing: 0.3px; }
+  .chip.neg { background: rgba(224,92,107,0.18); color: #e05c6b; border: 1px solid rgba(224,92,107,0.3); }
+  .chip.pos { background: rgba(62,207,142,0.15); color: #3ecf8e; border: 1px solid rgba(62,207,142,0.3); }
+  .chip.neu { background: rgba(138,149,176,0.18); color: #a0aec0; border: 1px solid rgba(138,149,176,0.3); }
+
+  /* ── COLLOCATION TABLE ── */
+  .coll-table { width: 100%; border-collapse: collapse; margin-bottom: 16px; }
+  .coll-table th {
+    font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase;
+    letter-spacing: 1px; padding: 8px 10px; border-bottom: 1px solid var(--border);
+    text-align: left;
+  }
+  .coll-table td { padding: 9px 10px; border-bottom: 1px solid rgba(255,255,255,0.04); vertical-align: middle; }
+  .coll-table tr:last-child td { border-bottom: none; }
+  .coll-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .coll-word { font-weight: 600; color: #e0e8f5; font-size: 14px; }
+  .coll-prep { color: var(--gold); font-weight: 700; }
+  .coll-gloss { font-size: 12px; color: var(--muted); }
+
+  /* ── FAMILY HEADER ── */
+  .family-header {
+    background: var(--card2); border-left: 3px solid var(--gold);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    padding: 12px 16px; margin-bottom: 12px;
+  }
+  .family-header h3 { font-size: 15px; font-weight: 700; color: var(--gold); margin-bottom: 3px; }
+  .family-header p { font-size: 12px; color: var(--muted); }
+
+  /* ── ACTIVE RECALL (COVER & PRODUCE) ── */
+  .recall-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 12px; margin-bottom: 20px; }
+  .recall-card {
+    background: var(--card2); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 16px; cursor: pointer;
+    transition: border-color 0.2s, transform 0.15s;
+    user-select: none;
+  }
+  .recall-card:hover { border-color: rgba(201,160,39,0.4); transform: translateY(-1px); }
+  .recall-card.flipped { border-color: var(--green) !important; }
+  .recall-card.wrong-flip { border-color: var(--red) !important; }
+  .rc-front { display: block; }
+  .rc-back { display: none; }
+  .recall-card.flipped .rc-front { display: none; }
+  .recall-card.flipped .rc-back { display: block; }
+  .recall-card.wrong-flip .rc-front { display: none; }
+  .recall-card.wrong-flip .rc-back { display: block; }
+  .rc-prompt { font-size: 14px; color: var(--text); margin-bottom: 8px; }
+  .rc-blank { display: inline-block; width: 48px; height: 18px; background: rgba(201,160,39,0.15); border-bottom: 2px solid var(--gold); margin: 0 4px; border-radius: 2px 2px 0 0; vertical-align: middle; }
+  .rc-hint { font-size: 11px; color: var(--muted); margin-top: 4px; }
+  .rc-answer { font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 6px; }
+  .rc-gloss { font-size: 12px; color: var(--muted); }
+  .rc-tap { font-size: 11px; color: var(--muted); text-align: right; margin-top: 8px; opacity: 0.6; }
+  .recall-score { font-size: 13px; color: var(--muted); margin-bottom: 16px; padding: 10px 14px; background: var(--card2); border-radius: 7px; }
+  .recall-score span { color: var(--gold); font-weight: 700; }
+
+  /* ── FILL-IN BLANKS ── */
+  .fill-item { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px; margin-bottom: 12px; }
+  .fill-item.attempted { border-color: rgba(255,255,255,0.12); }
+  .fill-sentence { font-size: 15px; color: var(--text); line-height: 1.7; margin-bottom: 10px; }
+  .fill-opts { display: flex; flex-wrap: wrap; gap: 8px; }
+  .fill-opt {
+    padding: 6px 16px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.12);
+    background: transparent; color: var(--text); font-size: 13px; cursor: pointer;
+    transition: all 0.15s;
+  }
+  .fill-opt:hover:not(:disabled) { border-color: var(--gold); color: var(--gold); }
+  .fill-opt.correct { background: rgba(62,207,142,0.15); border-color: var(--green); color: var(--green); }
+  .fill-opt.wrong { background: rgba(224,92,107,0.12); border-color: var(--red); color: var(--red); }
+  .fill-opt:disabled { cursor: default; opacity: 0.65; }
+  .fill-fb { font-size: 12px; margin-top: 8px; min-height: 16px; color: var(--muted); }
+
+  /* ── CONTEXT / THINK WITH WORDS ── */
+  .ctx-item { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px; margin-bottom: 12px; }
+  .ctx-sentence { font-size: 15px; color: var(--text); line-height: 1.7; margin-bottom: 12px; font-style: italic; border-left: 3px solid var(--gold); padding-left: 14px; }
+  .ctx-input {
+    width: 100%; background: #131822; border: 1px solid rgba(255,255,255,0.1);
+    color: var(--text); border-radius: 7px; padding: 9px 12px; font-size: 14px;
+    outline: none; transition: border-color 0.2s; margin-bottom: 8px;
+  }
+  .ctx-input:focus { border-color: var(--gold); }
+  .ctx-check-btn {
+    padding: 7px 20px; background: var(--gold-dim); border: 1px solid rgba(201,160,39,0.3);
+    color: var(--gold); border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer;
+    transition: background 0.15s;
+  }
+  .ctx-check-btn:hover { background: rgba(201,160,39,0.28); }
+  .ctx-check-btn:disabled { opacity: 0.5; cursor: default; }
+  .ctx-fb { font-size: 13px; margin-top: 8px; min-height: 16px; }
+  .ctx-fb.ok { color: var(--green); }
+  .ctx-fb.err { color: var(--red); }
+
+  /* ── TRAP DRILL ── */
+  .trap-block {
+    background: linear-gradient(135deg, rgba(224,92,107,0.08), rgba(224,92,107,0.03));
+    border: 1px solid rgba(224,92,107,0.25); border-radius: var(--radius);
+    padding: 20px 22px; margin-bottom: 16px;
+  }
+  .trap-block h3 { font-size: 14px; font-weight: 700; color: #e05c6b; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .trap-item { padding: 12px 0; border-bottom: 1px solid rgba(224,92,107,0.1); }
+  .trap-item:last-child { border-bottom: none; }
+  .trap-label { font-size: 12px; font-weight: 700; color: #e05c6b; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+  .trap-rule { font-size: 14px; color: var(--text); margin-bottom: 3px; }
+  .trap-rule code { background: rgba(201,160,39,0.15); color: var(--gold); padding: 1px 6px; border-radius: 3px; font-family: monospace; font-size: 13px; }
+  .trap-rule s { color: var(--red); opacity: 0.7; }
+  .trap-example { font-size: 13px; color: var(--muted); font-style: italic; }
+
+  /* ── EXIT SLIP ── */
+  .mcq-item { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px; margin-bottom: 12px; }
+  .mcq-q { font-size: 15px; color: var(--text); margin-bottom: 12px; font-weight: 500; }
+  .mcq-opts { display: flex; flex-direction: column; gap: 8px; }
+  .mcq-opt {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 14px; border-radius: 7px; border: 1px solid rgba(255,255,255,0.08);
+    background: transparent; color: var(--text); font-size: 14px; cursor: pointer;
+    text-align: left; transition: all 0.15s; width: 100%;
+  }
+  .mcq-opt:hover:not(:disabled) { border-color: var(--gold); color: var(--gold); }
+  .mcq-opt.selected { border-color: var(--gold); background: var(--gold-dim); color: var(--gold); }
+  .mcq-opt.correct { border-color: var(--green); background: rgba(62,207,142,0.12); color: var(--green); }
+  .mcq-opt.wrong { border-color: var(--red); background: rgba(224,92,107,0.1); color: var(--red); }
+  .mcq-opt:disabled { cursor: default; }
+  .opt-letter { font-weight: 700; font-size: 12px; min-width: 18px; }
+
+  /* ── SCORE CARD ── */
+  .score-card { display: none; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; margin-top: 20px; text-align: center; }
+  .score-num { font-size: 48px; font-weight: 800; color: var(--gold); line-height: 1; }
+  .score-label { font-size: 14px; color: var(--muted); margin-top: 4px; margin-bottom: 16px; }
+  .score-grade { font-size: 20px; font-weight: 700; color: #fff; margin-bottom: 8px; }
+  .score-ans { font-size: 12px; color: var(--muted); margin-top: 8px; }
+
+  /* ── BUTTONS ── */
+  .btn-next {
+    display: inline-block; margin-top: 20px;
+    background: var(--gold); color: #0f1117; border: none;
+    border-radius: 7px; padding: 12px 28px; font-size: 14px; font-weight: 700;
+    cursor: pointer; transition: opacity 0.2s;
+  }
+  .btn-next:hover:not(:disabled) { opacity: 0.88; }
+  .btn-next:disabled { opacity: 0.35; cursor: not-allowed; }
+  .btn-submit {
+    display: inline-block; margin-top: 20px;
+    background: var(--gold); color: #0f1117; border: none;
+    border-radius: 7px; padding: 12px 28px; font-size: 14px; font-weight: 700;
+    cursor: pointer; transition: opacity 0.2s;
+  }
+  .btn-submit:disabled { opacity: 0.35; cursor: not-allowed; }
+
+  /* ── LOG BAR ── */
+  #log-bar { display: none; background: var(--card); border-top: 1px solid var(--border); padding: 18px 20px; text-align: center; }
+  .btn-log {
+    background: var(--green); color: #0f1117; border: none;
+    border-radius: 7px; padding: 12px 36px; font-size: 15px; font-weight: 700;
+    cursor: pointer; transition: opacity 0.2s;
+  }
+  .btn-log:hover { opacity: 0.88; }
+  #log-status { font-size: 13px; color: var(--muted); margin-top: 10px; }
+
+  /* ── COMPLETE SCREEN ── */
+  #complete-screen { display: none; min-height: 60vh; display: none; align-items: center; justify-content: center; padding: 40px 20px; }
+  .complete-card { background: var(--card); border-radius: 12px; padding: 40px; max-width: 500px; width: 100%; text-align: center; border: 1px solid var(--border); }
+  .complete-icon { font-size: 48px; margin-bottom: 16px; }
+  .complete-title { font-size: 24px; font-weight: 700; color: #fff; margin-bottom: 8px; }
+  .complete-sub { color: var(--muted); font-size: 14px; }
+
+  /* ── DIVIDER ── */
+  .section-div { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+
+  /* ── NOTE BOX ── */
+  .note-box { background: rgba(74,158,255,0.07); border: 1px solid rgba(74,158,255,0.2); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 16px; font-size: 13px; color: #a0c4ff; }
+  .note-box strong { color: var(--blue); }
+
+  /* ── SENTENCE WRITE ── */
+  .sentence-box {
+    width: 100%; background: #131822; border: 1px solid rgba(255,255,255,0.1);
+    color: var(--text); border-radius: 7px; padding: 10px 13px; font-size: 14px;
+    outline: none; transition: border-color 0.2s; resize: vertical; min-height: 60px;
+    font-family: inherit;
+  }
+  .sentence-box:focus { border-color: var(--gold); }
+
+  @media (max-width: 600px) {
+    .recall-grid { grid-template-columns: 1fr; }
+    .concept-grid { grid-template-columns: 1fr; }
+    .login-card { padding: 28px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════ LOGIN ══ -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-eyebrow">Camp Verbal × Road to IIM</div>
+    <div class="login-title">Collocations Master List</div>
+    <div class="login-sub">Words and the prepositions they demand — Interactive Session</div>
+
+    <div class="field-group">
+      <label class="field-label" for="inp-name">Full Name</label>
+      <input type="text" id="inp-name" placeholder="Your full name" autocomplete="name">
+    </div>
+    <div class="field-group">
+      <label class="field-label" for="inp-pin">IMS / STU PIN</label>
+      <input type="text" id="inp-pin" placeholder="IMS0000000000" autocomplete="off" maxlength="13">
+      <div id="login-error"></div>
+    </div>
+    <div class="field-group">
+      <label class="field-label" for="inp-batch">Batch</label>
+      <select id="inp-batch">
+        <option value="">— Select your batch —</option>
+        <optgroup label="Classroom">
+          <option>A2701</option><option>A2702</option><option>A2703</option>
+          <option>A2704</option><option>A2705</option><option>A2706</option>
+          <option>A2707</option><option>A2708</option><option>A2709</option>
+          <option>A2710</option><option>A2711</option><option>A2712</option>
+        </optgroup>
+        <optgroup label="Online">
+          <option>27E101</option><option>27E102</option><option>27E103</option>
+          <option>27E104</option><option>27E105</option>
+        </optgroup>
+        <optgroup label="School">
+          <option>Zebar</option>
+        </optgroup>
+        <optgroup label="Admin">
+          <option>Admin</option>
+        </optgroup>
+      </select>
+    </div>
+    <button class="btn-login" onclick="doLogin()">Begin Session &gt;</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════ MAIN ══ -->
+<div id="main-screen">
+  <header class="site-header">
+    <div class="header-title">IWP — Collocations Master List</div>
+    <div class="header-right">
+      <div class="timer-display" id="timer-display">00:00</div>
+      <div class="student-tag" id="student-tag"></div>
+    </div>
+  </header>
+
+  <div class="main-wrap">
+    <div class="progress-track">
+      <div class="prog-step active" id="ps1"></div>
+      <div class="prog-step" id="ps2"></div>
+      <div class="prog-step" id="ps3"></div>
+      <div class="prog-step" id="ps4"></div>
+      <div class="prog-step" id="ps5"></div>
+    </div>
+
+    <!-- ═══════════════════════════════════════ SEC 1: LOGIC ══ -->
+    <div class="section-card active" id="sec1">
+      <div class="sec-eyebrow">Section 1 of 5</div>
+      <div class="sec-title">Why Words Demand Specific Prepositions</div>
+      <div class="sec-sub">Semantic logic, not rote memory — understand the pull behind each family</div>
+
+      <div class="hook-box">
+        <span class="hook-lead">The word already knows what comes next.</span>
+        <p>English prepositions are not random. When a word carries a deep sense — fullness, lack, resistance, immersion — it pulls a specific preposition with it. <em>Brimming</em> wants something overflowing and good; it demands <strong>with</strong>. <em>Devoid</em> describes total absence; it demands <strong>of</strong>. <em>Mired</em> suggests sinking into something bad; it demands <strong>in</strong>.</p>
+        <p>This means you can <strong>infer</strong> both the preposition and the valence (positive/negative/neutral) from the word itself. That inference is the tool this session builds.</p>
+      </div>
+
+      <div class="concept-grid">
+        <div class="concept-card">
+          <h4>WITH — Fullness &amp; Affliction</h4>
+          <p>The container is full. Valence is locked: <em>brimming</em> wants good things; <em>riddled</em> and <em>rife</em> want bad ones. The preposition follows from the idea of being filled.</p>
+        </div>
+        <div class="concept-card">
+          <h4>OF — Emptiness &amp; Composition</h4>
+          <p>Two senses: lacking (<em>devoid, bereft</em>) and standing-for (<em>emblematic, symptomatic</em>). <em>Bereft</em> = lost what it had. <em>Devoid</em> = never had it. A subtle but testable distinction.</p>
+        </div>
+        <div class="concept-card">
+          <h4>TO — Resistance &amp; Susceptibility</h4>
+          <p>Things that resist or are vulnerable to something else. The wall blocks: <em>impervious to, immune to</em>. The weak point yields: <em>susceptible to, prone to</em>. Direction is the key idea.</p>
+        </div>
+        <div class="concept-card">
+          <h4>IN — Immersion &amp; Entanglement</h4>
+          <p>You are inside something. Positive immersion: <em>versed in, schooled in</em>. Negative entanglement: <em>mired in, embroiled in</em>. The valence of the immersion changes; the preposition stays.</p>
+        </div>
+        <div class="concept-card">
+          <h4>FOR — Reputation &amp; Suitability</h4>
+          <p>What you are known or suited for. Reputation splits by valence: <em>renowned</em> = positive; <em>notorious</em> = negative. Both demand <strong>for</strong>.</p>
+        </div>
+        <div class="concept-card">
+          <h4>FROM — Separation &amp; Origin</h4>
+          <p>Distance or derivation. You come <em>from</em> something or you are separated <em>from</em> it. Exam trap: <em>different from</em>, not "different than."</p>
+        </div>
+        <div class="concept-card">
+          <h4>ON — Dependence &amp; Focus</h4>
+          <p>Resting upon or contingent upon. <em>Predicated on, contingent on, centred on</em>. Exam trap: <em>centred on</em>, not "centred around."</p>
+        </div>
+        <div class="concept-card">
+          <h4>AT / OVER — Skill &amp; Emotion</h4>
+          <p>Skill targets: <em>adept at, proficient at</em>. Emotional reactions take <em>at</em> or <em>over</em> depending on whether the trigger is immediate (<em>aghast at</em>) or lingering (<em>agonise over</em>).</p>
+        </div>
+        <div class="concept-card">
+          <h4>AGAINST / INTO — Opposition &amp; Change</h4>
+          <p>Forces working against something or transformations into something else. <em>Biased against, rail against</em>; <em>coerced into, lapse into</em>.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">The Valence Shortcut</div>
+        <p style="margin-bottom:12px; color:var(--muted); font-size:14px;">When you see a collocation, the valence chip tells you what kind of thing usually follows. This is a fast inference tool in RC and Verbal:</p>
+        <div style="display:flex; flex-wrap:wrap; gap:10px; align-items:center;">
+          <span class="chip neg">▼ Negative</span>
+          <span style="font-size:13px; color:var(--muted)">Valence is locked — the word pulls bad objects. <em>Fraught with danger</em>, never <em>fraught with joy</em>.</span>
+        </div>
+        <div style="display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-top:10px;">
+          <span class="chip pos">▲ Positive</span>
+          <span style="font-size:13px; color:var(--muted)">Locked positive. <em>Brimming with confidence</em>, not <em>brimming with despair</em>.</span>
+        </div>
+        <div style="display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-top:10px;">
+          <span class="chip neu">● Neutral</span>
+          <span style="font-size:13px; color:var(--muted)">Context-dependent. <em>Laden with</em> can take guilt (bad) or meaning (neutral).</span>
+        </div>
+      </div>
+
+      <button class="btn-next" id="next1" onclick="goSection(2)">Continue to WITH / OF Families &rarr;</button>
+    </div>
+
+    <!-- ═════════════════════════════════ SEC 2: WITH / OF ══ -->
+    <div class="section-card" id="sec2">
+      <div class="sec-eyebrow">Section 2 of 5</div>
+      <div class="sec-title">WITH &amp; OF Families</div>
+      <div class="sec-sub">Fullness + emptiness/composition — valence is often locked by the word itself</div>
+
+      <!-- Reference table: WITH -->
+      <div class="family-header">
+        <h3>+ WITH — Fullness, Accompaniment, Affliction</h3>
+        <p>Valence is usually locked: brimming wants good things, riddled and rife want bad ones.</p>
+      </div>
+      <table class="coll-table">
+        <thead><tr><th>Collocation</th><th>Valence</th><th>Typical objects / gloss</th></tr></thead>
+        <tbody>
+          <tr><td class="coll-word">rife <span class="coll-prep">with</span></td><td><span class="chip neg">▼ neg</span></td><td class="coll-gloss">rumours, errors, corruption, speculation</td></tr>
+          <tr><td class="coll-word">riddled <span class="coll-prep">with</span></td><td><span class="chip neg">▼ neg</span></td><td class="coll-gloss">errors, holes, debt, guilt, bullets</td></tr>
+          <tr><td class="coll-word">fraught <span class="coll-prep">with</span></td><td><span class="chip neg">▼ neg</span></td><td class="coll-gloss">danger, difficulty, tension, peril</td></tr>
+          <tr><td class="coll-word">beset <span class="coll-prep">with/by</span></td><td><span class="chip neg">▼ neg</span></td><td class="coll-gloss">problems, doubts, difficulties</td></tr>
+          <tr><td class="coll-word">plagued <span class="coll-prep">with/by</span></td><td><span class="chip neg">▼ neg</span></td><td class="coll-gloss">injuries, doubts, setbacks</td></tr>
+          <tr><td class="coll-word">consumed <span class="coll-prep">with/by</span></td><td><span class="chip neg">▼ neg</span></td><td class="coll-gloss">jealousy, rage, guilt, grief</td></tr>
+          <tr><td class="coll-word">racked <span class="coll-prep">with</span></td><td><span class="chip neg">▼ neg</span></td><td class="coll-gloss">pain, guilt, sobs, doubt</td></tr>
+          <tr><td class="coll-word">seething <span class="coll-prep">with</span></td><td><span class="chip neg">▼ neg</span></td><td class="coll-gloss">anger, resentment, people</td></tr>
+          <tr><td class="coll-word">laden <span class="coll-prep">with</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">cargo, guilt, meaning, symbolism</td></tr>
+          <tr><td class="coll-word">awash <span class="coll-prep">with/in</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">cash, problems, colour, light</td></tr>
+          <tr><td class="coll-word">saturated <span class="coll-prep">with</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">moisture, meaning, ads; market saturated</td></tr>
+          <tr><td class="coll-word">replete <span class="coll-prep">with</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">examples, detail, references (formal)</td></tr>
+          <tr><td class="coll-word">teeming <span class="coll-prep">with</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">life, fish, people, ideas</td></tr>
+          <tr><td class="coll-word">bristling <span class="coll-prep">with</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">weapons, hostility, antennae, energy</td></tr>
+          <tr><td class="coll-word">imbued <span class="coll-prep">with</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">meaning, authority, a sense of</td></tr>
+          <tr><td class="coll-word">synonymous <span class="coll-prep">with</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">identified with, the same as</td></tr>
+          <tr><td class="coll-word">abounding <span class="coll-prep">with</span></td><td><span class="chip pos">▲ pos</span></td><td class="coll-gloss">opportunity, wildlife, good cheer</td></tr>
+          <tr><td class="coll-word">brimming <span class="coll-prep">with</span></td><td><span class="chip pos">▲ pos</span></td><td class="coll-gloss">confidence, energy, ideas, life</td></tr>
+          <tr><td class="coll-word">bursting <span class="coll-prep">with</span></td><td><span class="chip pos">▲ pos</span></td><td class="coll-gloss">pride, flavour, joy, vitality</td></tr>
+          <tr><td class="coll-word">flush <span class="coll-prep">with</span></td><td><span class="chip pos">▲ pos</span></td><td class="coll-gloss">cash, success, victory</td></tr>
+        </tbody>
+      </table>
+
+      <hr class="section-div">
+
+      <!-- Reference table: OF -->
+      <div class="family-header">
+        <h3>+ OF — Emptiness, Composition, Representation</h3>
+        <p>Two senses: lacking (devoid/bereft) and standing-for (emblematic/symptomatic). Bereft = lost what it had; devoid = never had it.</p>
+      </div>
+      <table class="coll-table">
+        <thead><tr><th>Collocation</th><th>Valence</th><th>Typical objects / gloss</th></tr></thead>
+        <tbody>
+          <tr><td class="coll-word">devoid <span class="coll-prep">of</span></td><td><span class="chip neg">▼ neg</span></td><td class="coll-gloss">meaning, emotion, life, merit</td></tr>
+          <tr><td class="coll-word">bereft <span class="coll-prep">of</span></td><td><span class="chip neg">▼ neg</span></td><td class="coll-gloss">hope, support, ideas (formal; lost what it had)</td></tr>
+          <tr><td class="coll-word">destitute <span class="coll-prep">of</span></td><td><span class="chip neg">▼ neg</span></td><td class="coll-gloss">means, virtue (archaic)</td></tr>
+          <tr><td class="coll-word">shorn <span class="coll-prep">of</span></td><td><span class="chip neg">▼ neg</span></td><td class="coll-gloss">power, illusions, dignity</td></tr>
+          <tr><td class="coll-word">bankrupt <span class="coll-prep">of</span></td><td><span class="chip neg">▼ neg</span></td><td class="coll-gloss">ideas, morals</td></tr>
+          <tr><td class="coll-word">symptomatic <span class="coll-prep">of</span></td><td><span class="chip neg">▼ neg</span></td><td class="coll-gloss">a deeper problem, malaise</td></tr>
+          <tr><td class="coll-word">redolent <span class="coll-prep">of</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">spices, nostalgia, an era</td></tr>
+          <tr><td class="coll-word">emblematic <span class="coll-prep">of</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">an age, a movement, decline</td></tr>
+          <tr><td class="coll-word">indicative <span class="coll-prep">of</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">a trend, intent, quality</td></tr>
+          <tr><td class="coll-word">reminiscent <span class="coll-prep">of</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">an earlier style, the past</td></tr>
+          <tr><td class="coll-word">characteristic <span class="coll-prep">of</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">the author, the period</td></tr>
+          <tr><td class="coll-word">worthy <span class="coll-prep">of</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">note, mention, respect</td></tr>
+          <tr><td class="coll-word">desirous <span class="coll-prep">of</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">change, approval (formal)</td></tr>
+          <tr><td class="coll-word">mindful <span class="coll-prep">of</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">risks, others, the cost</td></tr>
+          <tr><td class="coll-word">cognisant <span class="coll-prep">of</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">the danger, the facts (formal)</td></tr>
+          <tr><td class="coll-word">oblivious <span class="coll-prep">of/to</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">the danger, surroundings ⚠ both valid</td></tr>
+          <tr><td class="coll-word">apprised <span class="coll-prep">of</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">the situation, developments</td></tr>
+          <tr><td class="coll-word">suggestive <span class="coll-prep">of</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">hinting at, implying</td></tr>
+        </tbody>
+      </table>
+
+      <hr class="section-div">
+
+      <!-- Active Recall: WITH/OF -->
+      <div class="card">
+        <div class="card-title">⚡ Active Recall — Cover &amp; Produce</div>
+        <p style="font-size:13px; color:var(--muted); margin-bottom:14px;">Each card shows the word with the preposition hidden. Say the preposition aloud, then tap to reveal. Your honest self-assessment is the drill.</p>
+        <div class="recall-score" id="rs2">Cards attempted: <span id="rc2-count">0</span> / <span id="rc2-total">12</span></div>
+        <div class="recall-grid" id="recall-grid-2">
+          <!-- Cards injected by JS -->
+        </div>
+      </div>
+
+      <!-- Sentence Writing -->
+      <div class="card">
+        <div class="card-title">✍ Write Your Own Sentences</div>
+        <p style="font-size:13px; color:var(--muted); margin-bottom:14px;">Pick any two collocations from WITH or OF. Write one sentence each using it correctly.</p>
+        <label style="font-size:13px; color:var(--muted); display:block; margin-bottom:6px;">Sentence 1 (WITH family):</label>
+        <textarea class="sentence-box" id="sw2a" placeholder="e.g. The report was riddled with errors that undermined its credibility."></textarea>
+        <label style="font-size:13px; color:var(--muted); display:block; margin-bottom:6px; margin-top:10px;">Sentence 2 (OF family):</label>
+        <textarea class="sentence-box" id="sw2b" placeholder="e.g. The committee's proposal was devoid of any original thinking."></textarea>
+      </div>
+
+      <!-- Fill-in: WITH/OF -->
+      <div class="card">
+        <div class="card-title">Fill in the Blank — WITH / OF</div>
+      </div>
+      <div class="fill-item" id="fi2-1">
+        <div class="fill-sentence">The city was <strong>________</strong> with rumours about the imminent cabinet reshuffle.</div>
+        <div class="fill-opts">
+          <button class="fill-opt" onclick="checkFill2(1,'rife','rife')">rife</button>
+          <button class="fill-opt" onclick="checkFill2(1,'flush','rife')">flush</button>
+          <button class="fill-opt" onclick="checkFill2(1,'replete','rife')">replete</button>
+          <button class="fill-opt" onclick="checkFill2(1,'brimming','rife')">brimming</button>
+        </div>
+        <div class="fill-fb" id="fb2-1"></div>
+      </div>
+      <div class="fill-item" id="fi2-2">
+        <div class="fill-sentence">The young athlete arrived at training camp <strong>________</strong> with energy and ambition.</div>
+        <div class="fill-opts">
+          <button class="fill-opt" onclick="checkFill2(2,'brimming','brimming')">brimming</button>
+          <button class="fill-opt" onclick="checkFill2(2,'fraught','brimming')">fraught</button>
+          <button class="fill-opt" onclick="checkFill2(2,'racked','brimming')">racked</button>
+          <button class="fill-opt" onclick="checkFill2(2,'plagued','brimming')">plagued</button>
+        </div>
+        <div class="fill-fb" id="fb2-2"></div>
+      </div>
+      <div class="fill-item" id="fi2-3">
+        <div class="fill-sentence">After the accident, he was <strong>________</strong> of hope, unable to imagine a path forward.</div>
+        <div class="fill-opts">
+          <button class="fill-opt" onclick="checkFill2(3,'bereft','bereft')">bereft</button>
+          <button class="fill-opt" onclick="checkFill2(3,'worthy','bereft')">worthy</button>
+          <button class="fill-opt" onclick="checkFill2(3,'mindful','bereft')">mindful</button>
+          <button class="fill-opt" onclick="checkFill2(3,'cognisant','bereft')">cognisant</button>
+        </div>
+        <div class="fill-fb" id="fb2-3"></div>
+      </div>
+      <div class="fill-item" id="fi2-4">
+        <div class="fill-sentence">The minister's speech was <strong>________</strong> of any concrete policy proposals.</div>
+        <div class="fill-opts">
+          <button class="fill-opt" onclick="checkFill2(4,'devoid','devoid')">devoid</button>
+          <button class="fill-opt" onclick="checkFill2(4,'redolent','devoid')">redolent</button>
+          <button class="fill-opt" onclick="checkFill2(4,'teeming','devoid')">teeming</button>
+          <button class="fill-opt" onclick="checkFill2(4,'emblematic','devoid')">emblematic</button>
+        </div>
+        <div class="fill-fb" id="fb2-4"></div>
+      </div>
+      <div class="fill-item" id="fi2-5">
+        <div class="fill-sentence">Her acceptance speech was <strong>________</strong> of references to her mentor's early guidance.</div>
+        <div class="fill-opts">
+          <button class="fill-opt" onclick="checkFill2(5,'replete','replete')">replete</button>
+          <button class="fill-opt" onclick="checkFill2(5,'shorn','replete')">shorn</button>
+          <button class="fill-opt" onclick="checkFill2(5,'fraught','replete')">fraught</button>
+          <button class="fill-opt" onclick="checkFill2(5,'consumed','replete')">consumed</button>
+        </div>
+        <div class="fill-fb" id="fb2-5"></div>
+      </div>
+      <div class="fill-item" id="fi2-6">
+        <div class="fill-sentence">The décor of the old library was <strong>________</strong> of an earlier, more gracious era.</div>
+        <div class="fill-opts">
+          <button class="fill-opt" onclick="checkFill2(6,'redolent','redolent')">redolent</button>
+          <button class="fill-opt" onclick="checkFill2(6,'rife','redolent')">rife</button>
+          <button class="fill-opt" onclick="checkFill2(6,'bankrupt','redolent')">bankrupt</button>
+          <button class="fill-opt" onclick="checkFill2(6,'seething','redolent')">seething</button>
+        </div>
+        <div class="fill-fb" id="fb2-6"></div>
+      </div>
+
+      <button class="btn-next" id="next2" onclick="goSection(3)" disabled>Continue to TO / IN Families &rarr;</button>
+    </div>
+
+    <!-- ══════════════════════════════════ SEC 3: TO / IN ══ -->
+    <div class="section-card" id="sec3">
+      <div class="sec-eyebrow">Section 3 of 5</div>
+      <div class="sec-title">TO &amp; IN Families</div>
+      <div class="sec-sub">Resistance/susceptibility + immersion/entanglement — valence signals danger or depth</div>
+
+      <!-- Reference: TO -->
+      <div class="family-header">
+        <h3>+ TO — Resistance, Susceptibility, Favour, Equivalence</h3>
+        <p>Exam traps: averse TO (never 'from'), partial TO, akin TO, oblivious TO/OF.</p>
+      </div>
+      <table class="coll-table">
+        <thead><tr><th>Collocation</th><th>Valence</th><th>Typical objects / gloss</th></tr></thead>
+        <tbody>
+          <tr><td class="coll-word">impervious <span class="coll-prep">to</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">criticism, water, logic, pain</td></tr>
+          <tr><td class="coll-word">immune <span class="coll-prep">to</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">disease, persuasion, pressure</td></tr>
+          <tr><td class="coll-word">resistant <span class="coll-prep">to</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">change, antibiotics, heat</td></tr>
+          <tr><td class="coll-word">susceptible <span class="coll-prep">to</span></td><td><span class="chip neg">▼ neg</span></td><td class="coll-gloss">flattery, illness, influence</td></tr>
+          <tr><td class="coll-word">vulnerable <span class="coll-prep">to</span></td><td><span class="chip neg">▼ neg</span></td><td class="coll-gloss">attack, criticism, shocks</td></tr>
+          <tr><td class="coll-word">prone <span class="coll-prep">to</span></td><td><span class="chip neg">▼ neg</span></td><td class="coll-gloss">errors, anger, flooding</td></tr>
+          <tr><td class="coll-word">predisposed <span class="coll-prep">to</span></td><td><span class="chip neg">▼ neg</span></td><td class="coll-gloss">illness, certain views</td></tr>
+          <tr><td class="coll-word">liable <span class="coll-prep">to</span></td><td><span class="chip neg">▼ neg</span></td><td class="coll-gloss">fines, error, breakage</td></tr>
+          <tr><td class="coll-word">averse <span class="coll-prep">to</span></td><td><span class="chip neg">▼ neg</span></td><td class="coll-gloss">risk, change, hard work — ⚠ never 'averse from'</td></tr>
+          <tr><td class="coll-word">opposed <span class="coll-prep">to</span></td><td><span class="chip neg">▼ neg</span></td><td class="coll-gloss">the plan, the war</td></tr>
+          <tr><td class="coll-word">blind <span class="coll-prep">to</span></td><td><span class="chip neg">▼ neg</span></td><td class="coll-gloss">faults, the truth</td></tr>
+          <tr><td class="coll-word">indifferent <span class="coll-prep">to</span></td><td><span class="chip neg">▼ neg</span></td><td class="coll-gloss">suffering, criticism</td></tr>
+          <tr><td class="coll-word">tantamount <span class="coll-prep">to</span></td><td><span class="chip neg">▼ neg</span></td><td class="coll-gloss">treason, surrender, a refusal</td></tr>
+          <tr><td class="coll-word">amenable <span class="coll-prep">to</span></td><td><span class="chip pos">▲ pos</span></td><td class="coll-gloss">reason, change, suggestion</td></tr>
+          <tr><td class="coll-word">conducive <span class="coll-prep">to</span></td><td><span class="chip pos">▲ pos</span></td><td class="coll-gloss">growth, learning, sleep</td></tr>
+          <tr><td class="coll-word">partial <span class="coll-prep">to</span></td><td><span class="chip pos">▲ pos</span></td><td class="coll-gloss">sweets, a good view — ⚠ not 'toward'</td></tr>
+          <tr><td class="coll-word">integral <span class="coll-prep">to</span></td><td><span class="chip pos">▲ pos</span></td><td class="coll-gloss">the plan, success, identity</td></tr>
+          <tr><td class="coll-word">akin <span class="coll-prep">to</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">theft, magic; similar to</td></tr>
+          <tr><td class="coll-word">equivalent <span class="coll-prep">to</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">a month's pay, a refusal</td></tr>
+          <tr><td class="coll-word">attuned <span class="coll-prep">to</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">needs, nuance, the mood</td></tr>
+          <tr><td class="coll-word">alive <span class="coll-prep">to</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">the danger, the possibility</td></tr>
+          <tr><td class="coll-word">privy <span class="coll-prep">to</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">secrets, the plan, information</td></tr>
+          <tr><td class="coll-word">subject <span class="coll-prep">to</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">approval, tax, change</td></tr>
+          <tr><td class="coll-word">germane <span class="coll-prep">to</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">the argument, the issue</td></tr>
+        </tbody>
+      </table>
+
+      <hr class="section-div">
+
+      <!-- Reference: IN -->
+      <div class="family-header">
+        <h3>+ IN — Immersion, Entanglement, Skill, Expression</h3>
+        <p>Positive depth: steeped/versed. Negative entanglement: mired/embroiled/enmeshed.</p>
+      </div>
+      <table class="coll-table">
+        <thead><tr><th>Collocation</th><th>Valence</th><th>Typical objects / gloss</th></tr></thead>
+        <tbody>
+          <tr><td class="coll-word">steeped <span class="coll-prep">in</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">tradition, history, controversy</td></tr>
+          <tr><td class="coll-word">versed <span class="coll-prep">in</span></td><td><span class="chip pos">▲ pos</span></td><td class="coll-gloss">the classics, law, diplomacy</td></tr>
+          <tr><td class="coll-word">well-versed <span class="coll-prep">in</span></td><td><span class="chip pos">▲ pos</span></td><td class="coll-gloss">the subject, procedure</td></tr>
+          <tr><td class="coll-word">schooled <span class="coll-prep">in</span></td><td><span class="chip pos">▲ pos</span></td><td class="coll-gloss">the art of, hardship</td></tr>
+          <tr><td class="coll-word">immersed <span class="coll-prep">in</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">work, a culture, a book</td></tr>
+          <tr><td class="coll-word">engrossed <span class="coll-prep">in</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">a task, a novel</td></tr>
+          <tr><td class="coll-word">absorbed <span class="coll-prep">in</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">thought, work, play</td></tr>
+          <tr><td class="coll-word">rooted <span class="coll-prep">in</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">tradition, reality, fear</td></tr>
+          <tr><td class="coll-word">grounded <span class="coll-prep">in</span></td><td><span class="chip pos">▲ pos</span></td><td class="coll-gloss">fact, evidence, reality</td></tr>
+          <tr><td class="coll-word">fluent <span class="coll-prep">in</span></td><td><span class="chip pos">▲ pos</span></td><td class="coll-gloss">French, the idiom, code</td></tr>
+          <tr><td class="coll-word">rich <span class="coll-prep">in</span></td><td><span class="chip pos">▲ pos</span></td><td class="coll-gloss">minerals, history, detail</td></tr>
+          <tr><td class="coll-word">conversant <span class="coll-prep">in/with</span></td><td><span class="chip pos">▲ pos</span></td><td class="coll-gloss">several languages, the issues</td></tr>
+          <tr><td class="coll-word">couched <span class="coll-prep">in</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">vague terms, diplomacy</td></tr>
+          <tr><td class="coll-word">cloaked <span class="coll-prep">in</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">secrecy, mystery</td></tr>
+          <tr><td class="coll-word">shrouded <span class="coll-prep">in</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">mystery, fog, secrecy</td></tr>
+          <tr><td class="coll-word">mired <span class="coll-prep">in</span></td><td><span class="chip neg">▼ neg</span></td><td class="coll-gloss">debt, scandal, bureaucracy</td></tr>
+          <tr><td class="coll-word">embroiled <span class="coll-prep">in</span></td><td><span class="chip neg">▼ neg</span></td><td class="coll-gloss">conflict, controversy, a feud</td></tr>
+          <tr><td class="coll-word">enmeshed <span class="coll-prep">in</span></td><td><span class="chip neg">▼ neg</span></td><td class="coll-gloss">intrigue, a web of lies</td></tr>
+          <tr><td class="coll-word">entangled <span class="coll-prep">in</span></td><td><span class="chip neg">▼ neg</span></td><td class="coll-gloss">a dispute, red tape</td></tr>
+          <tr><td class="coll-word">complicit <span class="coll-prep">in</span></td><td><span class="chip neg">▼ neg</span></td><td class="coll-gloss">the crime, the cover-up</td></tr>
+          <tr><td class="coll-word">deficient <span class="coll-prep">in</span></td><td><span class="chip neg">▼ neg</span></td><td class="coll-gloss">iron, vitamins, judgement</td></tr>
+          <tr><td class="coll-word">lacking <span class="coll-prep">in</span></td><td><span class="chip neg">▼ neg</span></td><td class="coll-gloss">confidence, detail, tact</td></tr>
+        </tbody>
+      </table>
+
+      <hr class="section-div">
+
+      <!-- Active Recall: TO/IN -->
+      <div class="card">
+        <div class="card-title">⚡ Active Recall — Cover &amp; Produce</div>
+        <p style="font-size:13px; color:var(--muted); margin-bottom:14px;">Say the preposition before tapping. Track your honest hits.</p>
+        <div class="recall-score" id="rs3">Cards attempted: <span id="rc3-count">0</span> / <span id="rc3-total">12</span></div>
+        <div class="recall-grid" id="recall-grid-3"></div>
+      </div>
+
+      <!-- Context / Think With Words -->
+      <div class="card">
+        <div class="card-title">Think With Words — Context Sentences</div>
+        <p style="font-size:13px; color:var(--muted); margin-bottom:14px;">Choose the word that fits the context exactly. Type it in the box, then check.</p>
+      </div>
+
+      <div class="ctx-item" id="ci3-1">
+        <div class="ctx-sentence">"The new environment was ___ to deep concentration — silent, cool, and entirely free of distraction." <em>(Choose: conducive / susceptible / integral / averse)</em></div>
+        <input class="ctx-input" id="ci3-1-inp" placeholder="type the correct word..." oninput="ctx3Typed(1)">
+        <button class="ctx-check-btn" id="ci3-1-btn" onclick="checkCtx3(1,'conducive')">Check</button>
+        <div class="ctx-fb" id="ci3-1-fb"></div>
+      </div>
+      <div class="ctx-item" id="ci3-2">
+        <div class="ctx-sentence">"Having grown up in a border town, she was deeply ___ in the customs and cuisine of two cultures." <em>(Choose: steeped / mired / embroiled / entangled)</em></div>
+        <input class="ctx-input" id="ci3-2-inp" placeholder="type the correct word..." oninput="ctx3Typed(2)">
+        <button class="ctx-check-btn" id="ci3-2-btn" onclick="checkCtx3(2,'steeped')">Check</button>
+        <div class="ctx-fb" id="ci3-2-fb"></div>
+      </div>
+      <div class="ctx-item" id="ci3-3">
+        <div class="ctx-sentence">"She was completely ___ to the criticism — every barb slid off her without leaving a mark." <em>(Choose: impervious / susceptible / prone / averse)</em></div>
+        <input class="ctx-input" id="ci3-3-inp" placeholder="type the correct word..." oninput="ctx3Typed(3)">
+        <button class="ctx-check-btn" id="ci3-3-btn" onclick="checkCtx3(3,'impervious')">Check</button>
+        <div class="ctx-fb" id="ci3-3-fb"></div>
+      </div>
+      <div class="ctx-item" id="ci3-4">
+        <div class="ctx-sentence">"The company became ___ in a costly legal dispute that drained its resources for three years." <em>(Choose: embroiled / versed / grounded / couched)</em></div>
+        <input class="ctx-input" id="ci3-4-inp" placeholder="type the correct word..." oninput="ctx3Typed(4)">
+        <button class="ctx-check-btn" id="ci3-4-btn" onclick="checkCtx3(4,'embroiled')">Check</button>
+        <div class="ctx-fb" id="ci3-4-fb"></div>
+      </div>
+
+      <button class="btn-next" id="next3" onclick="goSection(4)" disabled>Continue to FOR / FROM / ON Families &rarr;</button>
+    </div>
+
+    <!-- ═══════════════════════════ SEC 4: FOR / FROM / ON ══ -->
+    <div class="section-card" id="sec4">
+      <div class="sec-eyebrow">Section 4 of 5</div>
+      <div class="sec-title">FOR, FROM &amp; ON Families</div>
+      <div class="sec-sub">Suitability + separation + dependence — three logics, one section</div>
+
+      <!-- Reference: FOR -->
+      <div class="family-header">
+        <h3>+ FOR — Suitability, Reputation, Longing, Destiny</h3>
+        <p>Reputation splits by valence: renowned/noted = good; notorious/infamous = bad. Both demand FOR.</p>
+      </div>
+      <table class="coll-table">
+        <thead><tr><th>Collocation</th><th>Valence</th><th>Typical objects / gloss</th></tr></thead>
+        <tbody>
+          <tr><td class="coll-word">renowned <span class="coll-prep">for</span></td><td><span class="chip pos">▲ pos</span></td><td class="coll-gloss">cuisine, hospitality, research</td></tr>
+          <tr><td class="coll-word">noted <span class="coll-prep">for</span></td><td><span class="chip pos">▲ pos</span></td><td class="coll-gloss">precision, wit, generosity</td></tr>
+          <tr><td class="coll-word">celebrated <span class="coll-prep">for</span></td><td><span class="chip pos">▲ pos</span></td><td class="coll-gloss">achievements, courage</td></tr>
+          <tr><td class="coll-word">eager <span class="coll-prep">for</span></td><td><span class="chip pos">▲ pos</span></td><td class="coll-gloss">approval, news, a chance</td></tr>
+          <tr><td class="coll-word">notorious <span class="coll-prep">for</span></td><td><span class="chip neg">▼ neg</span></td><td class="coll-gloss">corruption, delays, cruelty</td></tr>
+          <tr><td class="coll-word">infamous <span class="coll-prep">for</span></td><td><span class="chip neg">▼ neg</span></td><td class="coll-gloss">scandal, brutality</td></tr>
+          <tr><td class="coll-word">liable <span class="coll-prep">for</span></td><td><span class="chip neg">▼ neg</span></td><td class="coll-gloss">damages, the debt, costs</td></tr>
+          <tr><td class="coll-word">destined <span class="coll-prep">for</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">greatness, failure, the top</td></tr>
+          <tr><td class="coll-word">bound <span class="coll-prep">for</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">glory, ruin, the coast</td></tr>
+          <tr><td class="coll-word">eligible <span class="coll-prep">for</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">a grant, parole, the role</td></tr>
+          <tr><td class="coll-word">answerable <span class="coll-prep">for</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">one's actions, the outcome</td></tr>
+          <tr><td class="coll-word">hungry/starved <span class="coll-prep">for</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">attention, success, news</td></tr>
+          <tr><td class="coll-word">apt <span class="coll-prep">for</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">the purpose, the occasion</td></tr>
+          <tr><td class="coll-word">ripe <span class="coll-prep">for</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">reform, change, the picking</td></tr>
+          <tr><td class="coll-word">earmarked <span class="coll-prep">for</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">closure, promotion, funds</td></tr>
+        </tbody>
+      </table>
+
+      <hr class="section-div">
+
+      <!-- Reference: FROM -->
+      <div class="family-header">
+        <h3>+ FROM — Separation, Derivation, Exemption</h3>
+        <p>Note: <em>different FROM</em> is the exam-correct form — not 'than' or 'to'.</p>
+      </div>
+      <table class="coll-table">
+        <thead><tr><th>Collocation</th><th>Valence</th><th>Typical objects / gloss</th></tr></thead>
+        <tbody>
+          <tr><td class="coll-word">derived <span class="coll-prep">from</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">Latin, the data, oil</td></tr>
+          <tr><td class="coll-word">stemming <span class="coll-prep">from</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">a cause, the policy, fear</td></tr>
+          <tr><td class="coll-word">exempt <span class="coll-prep">from</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">tax, duty, the rule</td></tr>
+          <tr><td class="coll-word">immune <span class="coll-prep">from</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">prosecution, liability</td></tr>
+          <tr><td class="coll-word">removed <span class="coll-prep">from</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">reality, office, the list</td></tr>
+          <tr><td class="coll-word">refrained <span class="coll-prep">from</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">comment, action, judgement</td></tr>
+          <tr><td class="coll-word">absolved <span class="coll-prep">from/of</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">blame, responsibility</td></tr>
+          <tr><td class="coll-word">different <span class="coll-prep">from</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">the others — ⚠ exam-correct form, not 'than'</td></tr>
+          <tr><td class="coll-word">distinct <span class="coll-prep">from</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">the rest, its rivals</td></tr>
+          <tr><td class="coll-word">inseparable <span class="coll-prep">from</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">its history, the brand</td></tr>
+          <tr><td class="coll-word">estranged <span class="coll-prep">from</span></td><td><span class="chip neg">▼ neg</span></td><td class="coll-gloss">family, society, reality</td></tr>
+          <tr><td class="coll-word">alienated <span class="coll-prep">from</span></td><td><span class="chip neg">▼ neg</span></td><td class="coll-gloss">peers, the process</td></tr>
+          <tr><td class="coll-word">divorced <span class="coll-prep">from</span></td><td><span class="chip neg">▼ neg</span></td><td class="coll-gloss">reality, context, fact</td></tr>
+          <tr><td class="coll-word">recoiled <span class="coll-prep">from</span></td><td><span class="chip neg">▼ neg</span></td><td class="coll-gloss">the idea, the sight</td></tr>
+        </tbody>
+      </table>
+
+      <hr class="section-div">
+
+      <!-- Reference: ON -->
+      <div class="family-header">
+        <h3>+ ON / UPON — Dependence, Focus, Imposition</h3>
+        <p>Centred ON (not 'around'). Predicated/contingent introduce conditions.</p>
+      </div>
+      <table class="coll-table">
+        <thead><tr><th>Collocation</th><th>Valence</th><th>Typical objects / gloss</th></tr></thead>
+        <tbody>
+          <tr><td class="coll-word">contingent <span class="coll-prep">on</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">approval, funding, results</td></tr>
+          <tr><td class="coll-word">predicated <span class="coll-prep">on</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">an assumption, the idea that</td></tr>
+          <tr><td class="coll-word">dependent <span class="coll-prep">on</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">aid, mood, the weather</td></tr>
+          <tr><td class="coll-word">reliant <span class="coll-prep">on</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">imports, support, others</td></tr>
+          <tr><td class="coll-word">centred <span class="coll-prep">on</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">the issue, the family — ⚠ not 'centred around'</td></tr>
+          <tr><td class="coll-word">focused <span class="coll-prep">on</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">growth, the task, detail</td></tr>
+          <tr><td class="coll-word">intent <span class="coll-prep">on</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">revenge, winning, leaving</td></tr>
+          <tr><td class="coll-word">hinged <span class="coll-prep">on</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">one vote, the outcome</td></tr>
+          <tr><td class="coll-word">incumbent <span class="coll-prep">on/upon</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">us, the board, the state</td></tr>
+          <tr><td class="coll-word">verge <span class="coll-prep">on</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">the absurd, brilliance, panic</td></tr>
+          <tr><td class="coll-word">border <span class="coll-prep">on</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">rudeness, obsession</td></tr>
+          <tr><td class="coll-word">keen <span class="coll-prep">on</span></td><td><span class="chip pos">▲ pos</span></td><td class="coll-gloss">the idea, the plan, cricket</td></tr>
+          <tr><td class="coll-word">lavished <span class="coll-prep">on</span></td><td><span class="chip pos">▲ pos</span></td><td class="coll-gloss">praise, attention, gifts</td></tr>
+          <tr><td class="coll-word">bent <span class="coll-prep">on</span></td><td><span class="chip neg">▼ neg</span></td><td class="coll-gloss">destruction, mischief, revenge</td></tr>
+          <tr><td class="coll-word">encroach <span class="coll-prep">on/upon</span></td><td><span class="chip neg">▼ neg</span></td><td class="coll-gloss">rights, time, territory</td></tr>
+          <tr><td class="coll-word">impinge <span class="coll-prep">on/upon</span></td><td><span class="chip neg">▼ neg</span></td><td class="coll-gloss">freedom, rights, time</td></tr>
+        </tbody>
+      </table>
+
+      <hr class="section-div">
+
+      <!-- Active Recall: FOR/FROM/ON -->
+      <div class="card">
+        <div class="card-title">⚡ Active Recall — Cover &amp; Produce</div>
+        <p style="font-size:13px; color:var(--muted); margin-bottom:14px;">Say the preposition before tapping.</p>
+        <div class="recall-score" id="rs4">Cards attempted: <span id="rc4-count">0</span> / <span id="rc4-total">12</span></div>
+        <div class="recall-grid" id="recall-grid-4"></div>
+      </div>
+
+      <!-- Fill-in: FOR/FROM/ON -->
+      <div class="card">
+        <div class="card-title">Fill in the Blank — FOR / FROM / ON</div>
+      </div>
+      <div class="fill-item" id="fi4-1">
+        <div class="fill-sentence">The chef was <strong>________</strong> for her innovative use of regional spices in fine dining.</div>
+        <div class="fill-opts">
+          <button class="fill-opt" onclick="checkFill4(1,'renowned','renowned')">renowned</button>
+          <button class="fill-opt" onclick="checkFill4(1,'notorious','renowned')">notorious</button>
+          <button class="fill-opt" onclick="checkFill4(1,'eager','renowned')">eager</button>
+          <button class="fill-opt" onclick="checkFill4(1,'liable','renowned')">liable</button>
+        </div>
+        <div class="fill-fb" id="fb4-1"></div>
+      </div>
+      <div class="fill-item" id="fi4-2">
+        <div class="fill-sentence">His argument was <strong>________</strong> from the data — the connection existed only in his imagination.</div>
+        <div class="fill-opts">
+          <button class="fill-opt" onclick="checkFill4(2,'divorced','divorced')">divorced</button>
+          <button class="fill-opt" onclick="checkFill4(2,'derived','divorced')">derived</button>
+          <button class="fill-opt" onclick="checkFill4(2,'exempt','divorced')">exempt</button>
+          <button class="fill-opt" onclick="checkFill4(2,'distinct','divorced')">distinct</button>
+        </div>
+        <div class="fill-fb" id="fb4-2"></div>
+      </div>
+      <div class="fill-item" id="fi4-3">
+        <div class="fill-sentence">The entire business model was <strong>________</strong> on a single, unverified assumption.</div>
+        <div class="fill-opts">
+          <button class="fill-opt" onclick="checkFill4(3,'predicated','predicated')">predicated</button>
+          <button class="fill-opt" onclick="checkFill4(3,'focused','predicated')">focused</button>
+          <button class="fill-opt" onclick="checkFill4(3,'keen','predicated')">keen</button>
+          <button class="fill-opt" onclick="checkFill4(3,'contingent','predicated')">contingent</button>
+        </div>
+        <div class="fill-fb" id="fb4-3"></div>
+      </div>
+      <div class="fill-item" id="fi4-4">
+        <div class="fill-sentence">The sector was <strong>________</strong> for reform after decades of neglect.</div>
+        <div class="fill-opts">
+          <button class="fill-opt" onclick="checkFill4(4,'ripe','ripe')">ripe</button>
+          <button class="fill-opt" onclick="checkFill4(4,'infamous','ripe')">infamous</button>
+          <button class="fill-opt" onclick="checkFill4(4,'bound','ripe')">bound</button>
+          <button class="fill-opt" onclick="checkFill4(4,'inseparable','ripe')">inseparable</button>
+        </div>
+        <div class="fill-fb" id="fb4-4"></div>
+      </div>
+      <div class="fill-item" id="fi4-5">
+        <div class="fill-sentence">He <strong>________</strong> from making any comment until all the facts were known.</div>
+        <div class="fill-opts">
+          <button class="fill-opt" onclick="checkFill4(5,'refrained','refrained')">refrained</button>
+          <button class="fill-opt" onclick="checkFill4(5,'recoiled','refrained')">recoiled</button>
+          <button class="fill-opt" onclick="checkFill4(5,'stemmed','refrained')">stemmed</button>
+          <button class="fill-opt" onclick="checkFill4(5,'encroached','refrained')">encroached</button>
+        </div>
+        <div class="fill-fb" id="fb4-5"></div>
+      </div>
+      <div class="fill-item" id="fi4-6">
+        <div class="fill-sentence">It is <strong>________</strong> on every member of the team to report any conflict of interest.</div>
+        <div class="fill-opts">
+          <button class="fill-opt" onclick="checkFill4(6,'incumbent','incumbent')">incumbent</button>
+          <button class="fill-opt" onclick="checkFill4(6,'intent','incumbent')">intent</button>
+          <button class="fill-opt" onclick="checkFill4(6,'reliant','incumbent')">reliant</button>
+          <button class="fill-opt" onclick="checkFill4(6,'impinging','incumbent')">impinging</button>
+        </div>
+        <div class="fill-fb" id="fb4-6"></div>
+      </div>
+
+      <button class="btn-next" id="next4" onclick="goSection(5)" disabled>Continue to AT/OVER + Traps + Exit Slip &rarr;</button>
+    </div>
+
+    <!-- ══════════════════════════════ SEC 5: AT/OVER + TRAPS ══ -->
+    <div class="section-card" id="sec5">
+      <div class="sec-eyebrow">Section 5 of 5</div>
+      <div class="sec-title">AT/OVER + AGAINST/INTO + Five Trap Drill + Exit Slip</div>
+      <div class="sec-sub">Skill &amp; emotion prepositions, opposition/transformation, and the five traps you must never miss</div>
+
+      <!-- Reference: AT/OVER -->
+      <div class="family-header">
+        <h3>+ AT / OVER / ABOUT — Skill, Emotion, Dispute</h3>
+        <p>Adept/proficient AT. Emotional reactions take OVER or ABOUT depending on immediacy vs. lingering.</p>
+      </div>
+      <table class="coll-table">
+        <thead><tr><th>Collocation</th><th>Valence</th><th>Typical objects / gloss</th></tr></thead>
+        <tbody>
+          <tr><td class="coll-word">adept <span class="coll-prep">at</span></td><td><span class="chip pos">▲ pos</span></td><td class="coll-gloss">negotiation, languages</td></tr>
+          <tr><td class="coll-word">proficient <span class="coll-prep">at/in</span></td><td><span class="chip pos">▲ pos</span></td><td class="coll-gloss">maths, coding, the task</td></tr>
+          <tr><td class="coll-word">skilled <span class="coll-prep">at/in</span></td><td><span class="chip pos">▲ pos</span></td><td class="coll-gloss">carpentry, persuasion</td></tr>
+          <tr><td class="coll-word">adroit <span class="coll-prep">at</span></td><td><span class="chip pos">▲ pos</span></td><td class="coll-gloss">evasion, handling people</td></tr>
+          <tr><td class="coll-word">delighted <span class="coll-prep">at/by</span></td><td><span class="chip pos">▲ pos</span></td><td class="coll-gloss">the news, the offer</td></tr>
+          <tr><td class="coll-word">inept <span class="coll-prep">at</span></td><td><span class="chip neg">▼ neg</span></td><td class="coll-gloss">small talk, management</td></tr>
+          <tr><td class="coll-word">aghast <span class="coll-prep">at</span></td><td><span class="chip neg">▼ neg</span></td><td class="coll-gloss">the news, the scale</td></tr>
+          <tr><td class="coll-word">indignant <span class="coll-prep">at/about</span></td><td><span class="chip neg">▼ neg</span></td><td class="coll-gloss">the treatment, injustice</td></tr>
+          <tr><td class="coll-word">dismayed <span class="coll-prep">at/by</span></td><td><span class="chip neg">▼ neg</span></td><td class="coll-gloss">the result, the decline</td></tr>
+          <tr><td class="coll-word">incensed <span class="coll-prep">at/by</span></td><td><span class="chip neg">▼ neg</span></td><td class="coll-gloss">the remark, the delay</td></tr>
+          <tr><td class="coll-word">anxious <span class="coll-prep">about</span></td><td><span class="chip neg">▼ neg</span></td><td class="coll-gloss">the future, the exam</td></tr>
+          <tr><td class="coll-word">agonise <span class="coll-prep">over</span></td><td><span class="chip neg">▼ neg</span></td><td class="coll-gloss">the decision, every word</td></tr>
+          <tr><td class="coll-word">anguish/brood <span class="coll-prep">over</span></td><td><span class="chip neg">▼ neg</span></td><td class="coll-gloss">the past, mistakes</td></tr>
+          <tr><td class="coll-word">ambivalent <span class="coll-prep">about</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">the move, the plan</td></tr>
+          <tr><td class="coll-word">adamant <span class="coll-prep">about</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">the point, the rule</td></tr>
+          <tr><td class="coll-word">philosophical <span class="coll-prep">about</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">the loss, defeat</td></tr>
+          <tr><td class="coll-word">preside <span class="coll-prep">over</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">a meeting, the decline</td></tr>
+        </tbody>
+      </table>
+
+      <hr class="section-div">
+
+      <!-- Reference: AGAINST/INTO -->
+      <div class="family-header">
+        <h3>+ AGAINST / INTO / TOWARD — Opposition, Transformation, Disposition</h3>
+        <p>High-value exam collocations across remaining prepositions.</p>
+      </div>
+      <table class="coll-table">
+        <thead><tr><th>Collocation</th><th>Valence</th><th>Typical objects / gloss</th></tr></thead>
+        <tbody>
+          <tr><td class="coll-word">biased <span class="coll-prep">against</span></td><td><span class="chip neg">▼ neg</span></td><td class="coll-gloss">minorities, the defendant</td></tr>
+          <tr><td class="coll-word">prejudiced <span class="coll-prep">against</span></td><td><span class="chip neg">▼ neg</span></td><td class="coll-gloss">outsiders, a group</td></tr>
+          <tr><td class="coll-word">inveigh <span class="coll-prep">against</span></td><td><span class="chip neg">▼ neg</span></td><td class="coll-gloss">vice, the policy (formal)</td></tr>
+          <tr><td class="coll-word">rail <span class="coll-prep">against</span></td><td><span class="chip neg">▼ neg</span></td><td class="coll-gloss">fate, the system</td></tr>
+          <tr><td class="coll-word">coerced <span class="coll-prep">into</span></td><td><span class="chip neg">▼ neg</span></td><td class="coll-gloss">a confession, signing</td></tr>
+          <tr><td class="coll-word">goaded/cajoled <span class="coll-prep">into</span></td><td><span class="chip neg">▼ neg</span></td><td class="coll-gloss">a fight, agreement</td></tr>
+          <tr><td class="coll-word">lapse <span class="coll-prep">into</span></td><td><span class="chip neg">▼ neg</span></td><td class="coll-gloss">silence, a coma, cliché</td></tr>
+          <tr><td class="coll-word">descend <span class="coll-prep">into</span></td><td><span class="chip neg">▼ neg</span></td><td class="coll-gloss">chaos, farce, violence</td></tr>
+          <tr><td class="coll-word">guard <span class="coll-prep">against</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">complacency, error, risk</td></tr>
+          <tr><td class="coll-word">pitted <span class="coll-prep">against</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">rivals, the odds</td></tr>
+          <tr><td class="coll-word">inured/hardened <span class="coll-prep">against</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">hardship, criticism</td></tr>
+          <tr><td class="coll-word">transformed <span class="coll-prep">into</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">a success, a ruin</td></tr>
+          <tr><td class="coll-word">disposed <span class="coll-prep">toward</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">leniency, optimism</td></tr>
+          <tr><td class="coll-word">inclined <span class="coll-prep">toward</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">caution, the arts</td></tr>
+          <tr><td class="coll-word">gravitate <span class="coll-prep">toward</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">power, the familiar</td></tr>
+          <tr><td class="coll-word">veer <span class="coll-prep">toward</span></td><td><span class="chip neu">● neu</span></td><td class="coll-gloss">the extreme, caution</td></tr>
+        </tbody>
+      </table>
+
+      <hr class="section-div">
+
+      <!-- FIVE TRAP DRILL -->
+      <div class="trap-block">
+        <h3>⚠ Five Exam Traps — Drill These Until They're Automatic</h3>
+
+        <div class="trap-item">
+          <div class="trap-label">Trap 1</div>
+          <div class="trap-rule">Write: <code>averse to</code> &nbsp;|&nbsp; Never: <s>averse from</s></div>
+          <div class="trap-example">"She is averse to risk" — the preposition TO is locked. There is no 'averse from' in standard English.</div>
+        </div>
+
+        <div class="trap-item">
+          <div class="trap-label">Trap 2</div>
+          <div class="trap-rule">Write: <code>different from</code> &nbsp;|&nbsp; Never: <s>different than</s></div>
+          <div class="trap-example">"This is different from the others" — exams test this every cycle. 'Different than' is American informal; avoid it.</div>
+        </div>
+
+        <div class="trap-item">
+          <div class="trap-label">Trap 3</div>
+          <div class="trap-rule">Write: <code>centred on</code> &nbsp;|&nbsp; Never: <s>centred around</s></div>
+          <div class="trap-example">"The debate was centred on fiscal policy" — a centre is a point, not an area. You centre ON something, not around it.</div>
+        </div>
+
+        <div class="trap-item">
+          <div class="trap-label">Trap 4</div>
+          <div class="trap-rule">Write: <code>oblivious to</code> or <code>oblivious of</code> &nbsp;|&nbsp; Both are valid</div>
+          <div class="trap-example">"He was oblivious to the danger" — TO is more common in modern usage; OF is traditional. Either is accepted, but TO is the safer exam choice.</div>
+        </div>
+
+        <div class="trap-item">
+          <div class="trap-label">Trap 5</div>
+          <div class="trap-rule">Write: <code>partial to</code> &nbsp;|&nbsp; Never: <s>partial toward</s></div>
+          <div class="trap-example">"She is partial to sweets" — partial means having a preference for, and that preference is directed TO, not toward.</div>
+        </div>
+      </div>
+
+      <hr class="section-div">
+
+      <!-- EXIT SLIP -->
+      <div class="sec-eyebrow" style="margin-bottom:4px;">Exit Slip</div>
+      <div class="sec-title" style="font-size:18px; margin-bottom:6px;">5 Questions — Test Your Traps &amp; Valence Sense</div>
+      <div class="sec-sub">Select one answer per question. Submit unlocks when all 5 are selected.</div>
+
+      <!-- Q1 -->
+      <div class="mcq-item" id="mcq1">
+        <div class="mcq-q"><strong>1.</strong> Which sentence uses the correct preposition?</div>
+        <div class="mcq-opts">
+          <button class="mcq-opt" id="q1A" onclick="selectOpt(1,'A')"><span class="opt-letter">A</span> She was averse from taking any financial risks.</button>
+          <button class="mcq-opt" id="q1B" onclick="selectOpt(1,'B')"><span class="opt-letter">B</span> She was averse to taking any financial risks.</button>
+          <button class="mcq-opt" id="q1C" onclick="selectOpt(1,'C')"><span class="opt-letter">C</span> She was averse of taking any financial risks.</button>
+          <button class="mcq-opt" id="q1D" onclick="selectOpt(1,'D')"><span class="opt-letter">D</span> She was averse about taking any financial risks.</button>
+        </div>
+      </div>
+
+      <!-- Q2 -->
+      <div class="mcq-item" id="mcq2">
+        <div class="mcq-q"><strong>2.</strong> The word <em>fraught</em> is <span class="chip neg" style="font-size:10px;">▼ neg</span> valence. Which completion is therefore MOST natural?</div>
+        <div class="mcq-opts">
+          <button class="mcq-opt" id="q2A" onclick="selectOpt(2,'A')"><span class="opt-letter">A</span> The journey was fraught with breathtaking scenery.</button>
+          <button class="mcq-opt" id="q2B" onclick="selectOpt(2,'B')"><span class="opt-letter">B</span> The journey was fraught with unexpected peril.</button>
+          <button class="mcq-opt" id="q2C" onclick="selectOpt(2,'C')"><span class="opt-letter">C</span> The journey was fraught with warm hospitality.</button>
+          <button class="mcq-opt" id="q2D" onclick="selectOpt(2,'D')"><span class="opt-letter">D</span> The journey was fraught with joyful surprises.</button>
+        </div>
+      </div>
+
+      <!-- Q3 -->
+      <div class="mcq-item" id="mcq3">
+        <div class="mcq-q"><strong>3.</strong> "The entire exhibition was ___ the theme of memory and loss." Which is the correct preposition form?</div>
+        <div class="mcq-opts">
+          <button class="mcq-opt" id="q3A" onclick="selectOpt(3,'A')"><span class="opt-letter">A</span> centred around</button>
+          <button class="mcq-opt" id="q3B" onclick="selectOpt(3,'B')"><span class="opt-letter">B</span> focused around</button>
+          <button class="mcq-opt" id="q3C" onclick="selectOpt(3,'C')"><span class="opt-letter">C</span> centred on</button>
+          <button class="mcq-opt" id="q3D" onclick="selectOpt(3,'D')"><span class="opt-letter">D</span> predicated around</button>
+        </div>
+      </div>
+
+      <!-- Q4 -->
+      <div class="mcq-item" id="mcq4">
+        <div class="mcq-q"><strong>4.</strong> Which pair has OPPOSITE valence?</div>
+        <div class="mcq-opts">
+          <button class="mcq-opt" id="q4A" onclick="selectOpt(4,'A')"><span class="opt-letter">A</span> brimming with / bursting with</button>
+          <button class="mcq-opt" id="q4B" onclick="selectOpt(4,'B')"><span class="opt-letter">B</span> mired in / embroiled in</button>
+          <button class="mcq-opt" id="q4C" onclick="selectOpt(4,'C')"><span class="opt-letter">C</span> contingent on / predicated on</button>
+          <button class="mcq-opt" id="q4D" onclick="selectOpt(4,'D')"><span class="opt-letter">D</span> renowned for / notorious for</button>
+        </div>
+      </div>
+
+      <!-- Q5 -->
+      <div class="mcq-item" id="mcq5">
+        <div class="mcq-q"><strong>5.</strong> "He was ___ to chocolate — he couldn't resist it at any occasion." Which collocation fits best?</div>
+        <div class="mcq-opts">
+          <button class="mcq-opt" id="q5A" onclick="selectOpt(5,'A')"><span class="opt-letter">A</span> partial to</button>
+          <button class="mcq-opt" id="q5B" onclick="selectOpt(5,'B')"><span class="opt-letter">B</span> partial toward</button>
+          <button class="mcq-opt" id="q5C" onclick="selectOpt(5,'C')"><span class="opt-letter">C</span> partial from</button>
+          <button class="mcq-opt" id="q5D" onclick="selectOpt(5,'D')"><span class="opt-letter">D</span> partial of</button>
+        </div>
+      </div>
+
+      <button class="btn-submit" id="btn-submit" onclick="submitExit()" disabled>Submit Exit Slip</button>
+
+      <!-- Score Card -->
+      <div class="score-card" id="score-card">
+        <div class="score-num" id="score-num">0/5</div>
+        <div class="score-label">Exit Slip Score</div>
+        <div class="score-grade" id="score-grade"></div>
+        <div class="score-ans" id="score-ans"></div>
+      </div>
+    </div>
+    <!-- END sections -->
+
+  </div><!-- .main-wrap -->
+
+  <!-- LOG BAR -->
+  <div id="log-bar">
+    <button class="btn-log" onclick="logToTracker()">Log Results to Tracker</button>
+    <div id="log-status"></div>
+  </div>
+
+</div><!-- #main-screen -->
+
+<!-- COMPLETE SCREEN -->
+<div id="complete-screen">
+  <div class="complete-card">
+    <div class="complete-icon">✅</div>
+    <div class="complete-title">Session Complete!</div>
+    <div class="complete-sub">Your results have been logged. Great work on the Collocations Master List.</div>
+  </div>
+</div>
+
+<script>
+  // ─── CONSTANTS ────────────────────────────────────────
+  const SESSION_NAME = "IWP — Collocations Master List";
+  const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx5Ojm_zp4LfsMeelx5e06KNjVH1wfsXdV0keS4407m4FO1HU4EpVb7GKj-ibAsxnspeA/exec";
+  const CORRECT_ANSWERS = { 1:'B', 2:'B', 3:'C', 4:'D', 5:'A' };
+
+  // ─── STUDENT DATA ─────────────────────────────────────
+  let studentName = '', studentPin = '', studentBatch = '';
+  let secondsElapsed = 0;
+  let timerInterval = null;
+
+  // ─── SECTION STATE ────────────────────────────────────
+  let fill2Attempted = 0;
+  let fill4Attempted = 0;
+  let ctx3Attempted = 0;
+  const fill2Total = 6, ctx3Total = 4, fill4Total = 6;
+
+  // ─── EXIT SLIP STATE ──────────────────────────────────
+  let exitSelections = {};
+  let exitSubmitted = false;
+  let exitCorrect = 0;
+  let exitScore = 0;
+
+  // ─── RECALL CARD DATA ─────────────────────────────────
+  const recallData = {
+    2: [
+      { word: 'rife', prep: 'with', valence: 'neg', gloss: 'rumours, errors, corruption' },
+      { word: 'brimming', prep: 'with', valence: 'pos', gloss: 'confidence, energy, ideas' },
+      { word: 'fraught', prep: 'with', valence: 'neg', gloss: 'danger, tension, peril' },
+      { word: 'devoid', prep: 'of', valence: 'neg', gloss: 'meaning, emotion, merit' },
+      { word: 'bereft', prep: 'of', valence: 'neg', gloss: 'hope, support, ideas' },
+      { word: 'riddled', prep: 'with', valence: 'neg', gloss: 'errors, holes, debt' },
+      { word: 'flush', prep: 'with', valence: 'pos', gloss: 'cash, success, victory' },
+      { word: 'emblematic', prep: 'of', valence: 'neu', gloss: 'an age, a movement' },
+      { word: 'replete', prep: 'with', valence: 'neu', gloss: 'examples, detail, references' },
+      { word: 'teeming', prep: 'with', valence: 'neu', gloss: 'life, fish, people, ideas' },
+      { word: 'shorn', prep: 'of', valence: 'neg', gloss: 'power, illusions, dignity' },
+      { word: 'seething', prep: 'with', valence: 'neg', gloss: 'anger, resentment' },
+    ],
+    3: [
+      { word: 'impervious', prep: 'to', valence: 'neu', gloss: 'criticism, logic, pain' },
+      { word: 'susceptible', prep: 'to', valence: 'neg', gloss: 'flattery, illness, influence' },
+      { word: 'amenable', prep: 'to', valence: 'pos', gloss: 'reason, change, suggestion' },
+      { word: 'averse', prep: 'to', valence: 'neg', gloss: 'risk, change — NOT "from"' },
+      { word: 'steeped', prep: 'in', valence: 'neu', gloss: 'tradition, history' },
+      { word: 'mired', prep: 'in', valence: 'neg', gloss: 'debt, scandal, bureaucracy' },
+      { word: 'versed', prep: 'in', valence: 'pos', gloss: 'classics, law, diplomacy' },
+      { word: 'embroiled', prep: 'in', valence: 'neg', gloss: 'conflict, controversy, a feud' },
+      { word: 'conducive', prep: 'to', valence: 'pos', gloss: 'growth, learning, sleep' },
+      { word: 'grounded', prep: 'in', valence: 'pos', gloss: 'fact, evidence, reality' },
+      { word: 'partial', prep: 'to', valence: 'pos', gloss: 'sweets, a good view — NOT "toward"' },
+      { word: 'shrouded', prep: 'in', valence: 'neu', gloss: 'mystery, fog, secrecy' },
+    ],
+    4: [
+      { word: 'renowned', prep: 'for', valence: 'pos', gloss: 'cuisine, hospitality, research' },
+      { word: 'notorious', prep: 'for', valence: 'neg', gloss: 'corruption, delays, cruelty' },
+      { word: 'derived', prep: 'from', valence: 'neu', gloss: 'Latin, the data, oil' },
+      { word: 'estranged', prep: 'from', valence: 'neg', gloss: 'family, society, reality' },
+      { word: 'predicated', prep: 'on', valence: 'neu', gloss: 'an assumption, the idea that' },
+      { word: 'contingent', prep: 'on', valence: 'neu', gloss: 'approval, funding, results' },
+      { word: 'ripe', prep: 'for', valence: 'neu', gloss: 'reform, change, the picking' },
+      { word: 'different', prep: 'from', valence: 'neu', gloss: 'the others — NOT "than"' },
+      { word: 'eligible', prep: 'for', valence: 'neu', gloss: 'a grant, parole, the role' },
+      { word: 'incumbent', prep: 'on', valence: 'neu', gloss: 'us, the board, the state' },
+      { word: 'divorced', prep: 'from', valence: 'neg', gloss: 'reality, context, fact' },
+      { word: 'centred', prep: 'on', valence: 'neu', gloss: 'the issue, family — NOT "around"' },
+    ],
+  };
+
+  const rcAttempted = { 2: new Set(), 3: new Set(), 4: new Set() };
+
+  function valenceClass(v) {
+    return v === 'neg' ? 'neg' : v === 'pos' ? 'pos' : 'neu';
+  }
+  function valenceSym(v) {
+    return v === 'neg' ? '▼ neg' : v === 'pos' ? '▲ pos' : '● neu';
+  }
+
+  function buildRecallGrid(sec) {
+    const grid = document.getElementById('recall-grid-' + sec);
+    const data = recallData[sec];
+    document.getElementById('rc' + sec + '-total').textContent = data.length;
+    grid.innerHTML = data.map((item, i) => `
+      <div class="recall-card" id="rcard-${sec}-${i}" onclick="flipCard(${sec},${i})">
+        <div class="rc-front">
+          <div class="rc-prompt">
+            <strong style="font-size:16px;">${item.word}</strong>
+            <span class="rc-blank"></span>
+            <span style="font-size:12px;color:var(--muted)">...</span>
+          </div>
+          <div class="rc-hint"><span class="chip ${valenceClass(item.valence)}">${valenceSym(item.valence)}</span></div>
+          <div class="rc-tap">Tap to reveal</div>
+        </div>
+        <div class="rc-back">
+          <div class="rc-answer">${item.word} <strong style="color:var(--gold)">${item.prep}</strong></div>
+          <div class="rc-hint"><span class="chip ${valenceClass(item.valence)}">${valenceSym(item.valence)}</span></div>
+          <div class="rc-gloss">${item.gloss}</div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function flipCard(sec, idx) {
+    const card = document.getElementById('rcard-' + sec + '-' + idx);
+    if (!card.classList.contains('flipped')) {
+      card.classList.add('flipped');
+      rcAttempted[sec].add(idx);
+      const count = rcAttempted[sec].size;
+      document.getElementById('rc' + sec + '-count').textContent = count;
+      // Unlock next button after ≥8 cards flipped (≥2/3 of 12)
+      if (sec === 2 && count >= 8) checkSec2Unlock();
+    } else {
+      card.classList.remove('flipped');
+    }
+  }
+
+  // ─── LOGIN ────────────────────────────────────────────
+  function doLogin() {
+    const nameEl = document.getElementById('inp-name');
+    const pinEl = document.getElementById('inp-pin');
+    const batchEl = document.getElementById('inp-batch');
+    const errEl = document.getElementById('login-error');
+    errEl.textContent = '';
+
+    const name = nameEl.value.trim();
+    const pin = pinEl.value.trim().toUpperCase();
+    const batch = batchEl.value;
+
+    if (name.length < 3) { errEl.textContent = 'Please enter your full name.'; return; }
+    if (!/^(STU|IMS)\d{10}$/.test(pin)) { errEl.textContent = 'PIN must be IMS or STU followed by 10 digits.'; return; }
+    if (!batch) { errEl.textContent = 'Please select your batch.'; return; }
+
+    studentName = name;
+    studentPin = pin;
+    studentBatch = batch;
+
+    document.getElementById('student-tag').textContent = name.split(' ')[0];
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('main-screen').style.display = 'block';
+
+    startTimer();
+    buildRecallGrid(2);
+    buildRecallGrid(3);
+    buildRecallGrid(4);
+  }
+
+  // ─── TIMER ────────────────────────────────────────────
+  function startTimer() {
+    timerInterval = setInterval(() => {
+      secondsElapsed++;
+      const m = String(Math.floor(secondsElapsed / 60)).padStart(2, '0');
+      const s = String(secondsElapsed % 60).padStart(2, '0');
+      document.getElementById('timer-display').textContent = m + ':' + s;
+    }, 1000);
+  }
+
+  function getTimeTaken() {
+    const m = String(Math.floor(secondsElapsed / 60)).padStart(2, '0');
+    const s = String(secondsElapsed % 60).padStart(2, '0');
+    return m + ':' + s;
+  }
+
+  // ─── NAVIGATION ───────────────────────────────────────
+  function goSection(n) {
+    [1,2,3,4,5].forEach(i => {
+      document.getElementById('sec' + i).classList.remove('active');
+    });
+    document.getElementById('sec' + n).classList.add('active');
+    [1,2,3,4,5].forEach(i => {
+      const el = document.getElementById('ps' + i);
+      if (i < n) { el.className = 'prog-step done'; }
+      else if (i === n) { el.className = 'prog-step active'; }
+      else { el.className = 'prog-step'; }
+    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // ─── FILL-IN: SEC 2 ───────────────────────────────────
+  function checkFill2(num, chosen, correct) {
+    const item = document.getElementById('fi2-' + num);
+    if (item.classList.contains('attempted')) return;
+    item.classList.add('attempted');
+    fill2Attempted++;
+    const btns = item.querySelectorAll('.fill-opt');
+    btns.forEach(b => b.disabled = true);
+    const fb = document.getElementById('fb2-' + num);
+    if (chosen === correct) {
+      btns.forEach(b => { if (b.textContent.trim() === correct) b.classList.add('correct'); });
+      fb.textContent = '✓ Correct!';
+      fb.style.color = 'var(--green)';
+    } else {
+      btns.forEach(b => {
+        if (b.textContent.trim() === chosen) b.classList.add('wrong');
+        if (b.textContent.trim() === correct) b.classList.add('correct');
+      });
+      fb.textContent = '✗ The correct answer is: ' + correct;
+      fb.style.color = 'var(--red)';
+    }
+    checkSec2Unlock();
+  }
+
+  function checkSec2Unlock() {
+    if (fill2Attempted >= fill2Total && rcAttempted[2].size >= 6) {
+      document.getElementById('next2').disabled = false;
+    }
+  }
+
+  // ─── CONTEXT: SEC 3 ───────────────────────────────────
+  function ctx3Typed(num) {
+    const btn = document.getElementById('ci3-' + num + '-btn');
+    const val = document.getElementById('ci3-' + num + '-inp').value.trim();
+    btn.disabled = val.length < 2;
+  }
+
+  function checkCtx3(num, correct) {
+    const inp = document.getElementById('ci3-' + num + '-inp');
+    const fb = document.getElementById('ci3-' + num + '-fb');
+    const btn = document.getElementById('ci3-' + num + '-btn');
+    const item = document.getElementById('ci3-' + num);
+    if (item.classList.contains('attempted')) return;
+    const typed = inp.value.trim().toLowerCase();
+    item.classList.add('attempted');
+    btn.disabled = true;
+    inp.disabled = true;
+    ctx3Attempted++;
+    if (typed === correct.toLowerCase()) {
+      fb.textContent = '✓ Correct! "' + correct + '" fits perfectly.';
+      fb.className = 'ctx-fb ok';
+      inp.style.borderColor = 'var(--green)';
+    } else {
+      fb.textContent = '✗ The word is "' + correct + '". Read the gloss above to see why.';
+      fb.className = 'ctx-fb err';
+      inp.style.borderColor = 'var(--red)';
+    }
+    if (ctx3Attempted >= ctx3Total) {
+      document.getElementById('next3').disabled = false;
+    }
+  }
+
+  // ─── FILL-IN: SEC 4 ───────────────────────────────────
+  function checkFill4(num, chosen, correct) {
+    const item = document.getElementById('fi4-' + num);
+    if (item.classList.contains('attempted')) return;
+    item.classList.add('attempted');
+    fill4Attempted++;
+    const btns = item.querySelectorAll('.fill-opt');
+    btns.forEach(b => b.disabled = true);
+    const fb = document.getElementById('fb4-' + num);
+    if (chosen === correct) {
+      btns.forEach(b => { if (b.textContent.trim() === correct) b.classList.add('correct'); });
+      fb.textContent = '✓ Correct!';
+      fb.style.color = 'var(--green)';
+    } else {
+      btns.forEach(b => {
+        if (b.textContent.trim() === chosen) b.classList.add('wrong');
+        if (b.textContent.trim() === correct) b.classList.add('correct');
+      });
+      fb.textContent = '✗ The correct answer is: ' + correct;
+      fb.style.color = 'var(--red)';
+    }
+    if (fill4Attempted >= fill4Total) {
+      document.getElementById('next4').disabled = false;
+    }
+  }
+
+  // ─── EXIT SLIP ────────────────────────────────────────
+  function selectOpt(q, letter) {
+    if (exitSubmitted) return;
+    ['A','B','C','D'].forEach(l => {
+      const el = document.getElementById('q' + q + l);
+      if (el) el.classList.remove('selected');
+    });
+    const chosen = document.getElementById('q' + q + letter);
+    if (chosen) chosen.classList.add('selected');
+    exitSelections[q] = letter;
+    if (Object.keys(exitSelections).length === 5) {
+      document.getElementById('btn-submit').disabled = false;
+    }
+  }
+
+  function submitExit() {
+    if (exitSubmitted) return;
+    exitSubmitted = true;
+    exitCorrect = 0;
+    let answerString = '';
+    [1,2,3,4,5].forEach(q => {
+      const chosen = exitSelections[q];
+      const correct = CORRECT_ANSWERS[q];
+      answerString += q + ':' + chosen;
+      if (q < 5) answerString += '|';
+      const chosenEl = document.getElementById('q' + q + chosen);
+      const correctEl = document.getElementById('q' + q + correct);
+      ['A','B','C','D'].forEach(l => {
+        const el = document.getElementById('q' + q + l);
+        if (el) el.disabled = true;
+      });
+      if (chosen === correct) {
+        if (chosenEl) chosenEl.classList.add('correct');
+        exitCorrect++;
+      } else {
+        if (chosenEl) chosenEl.classList.add('wrong');
+        if (correctEl) correctEl.classList.add('correct');
+      }
+    });
+    exitScore = exitCorrect * 20;
+
+    const grades = ['Needs Review','Needs Review','Needs Review','Good','Excellent','Superb'];
+    const grade = grades[exitCorrect] || 'Needs Review';
+
+    document.getElementById('score-num').textContent = exitCorrect + '/5';
+    document.getElementById('score-grade').textContent = grade;
+    document.getElementById('score-ans').textContent = 'Answers: ' + answerString;
+    document.getElementById('score-card').style.display = 'block';
+    document.getElementById('btn-submit').disabled = true;
+    document.getElementById('log-bar').style.display = 'block';
+
+    if (timerInterval) clearInterval(timerInterval);
+  }
+
+  function logToTracker() {
+    const payload = {
+      type: 'selfStudy',
+      sessionName: SESSION_NAME,
+      name: studentName,
+      pin: studentPin,
+      batch: studentBatch,
+      timeTaken: getTimeTaken(),
+      exitScore: exitScore,
+      exitCorrect: exitCorrect,
+      exitTotal: 5,
+      answers: Object.keys(exitSelections).map(q => q + ':' + exitSelections[q]).join('|'),
+      timestamp: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })
+    };
+
+    document.getElementById('log-status').textContent = 'Logging…';
+    fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify(payload)
+    }).then(() => {
+      document.getElementById('log-status').textContent = '✓ Logged successfully!';
+      document.getElementById('log-bar').innerHTML = '<div style="color:var(--green);font-size:14px;">✓ Results logged. Session complete.</div>';
+      document.getElementById('main-screen').style.display = 'none';
+      const cs = document.getElementById('complete-screen');
+      cs.style.display = 'flex';
+    }).catch(() => {
+      document.getElementById('log-status').textContent = '⚠ Could not connect. Results saved locally.';
+    });
+  }
+
+  // ─── ENTER KEY ON LOGIN ───────────────────────────────
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+      const ls = document.getElementById('login-screen');
+      if (ls && ls.style.display !== 'none' && !ls.style.display === 'none') doLogin();
+      else if (ls && ls.offsetParent !== null) doLogin();
+    }
+  });
+</script>
+</body>
+</html>
