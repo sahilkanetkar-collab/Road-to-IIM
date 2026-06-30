@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Concept Test 1 — Word Web I | Road to IIM</title>
+<style>
+:root{
+  --navy:#0d1b2a;--navy2:#1a2e45;
+  --gold:#c9a84c;--gold2:#e8c76a;
+  --green:#2ecc71;--red:#e74c3c;
+  --grey:#8899aa;--white:#f0f4f8;
+  --purple:#8b5cf6;--purple2:#7c3aed;
+  --panel:300px;--topbar:56px;--navbar:62px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--navy);color:var(--white);font-family:'Segoe UI',sans-serif;min-height:100vh}
+button{font-family:inherit;cursor:pointer}
+input,select{font-family:inherit}
+
+/* ===== LOGIN ===== */
+#loginScreen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+.login-card{background:var(--navy2);border:1px solid rgba(201,168,76,0.25);border-radius:14px;padding:40px 36px;width:100%;max-width:420px}
+.login-brand{font-size:13px;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+.login-title{font-size:24px;font-weight:600;margin-bottom:4px}
+.login-sub{font-size:13px;color:var(--grey);margin-bottom:24px}
+.login-meta{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px}
+.login-meta span{font-size:11px;background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.25);color:var(--gold2);padding:4px 10px;border-radius:6px}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:12px;color:var(--grey);margin-bottom:6px}
+.field input,.field select{width:100%;padding:11px 12px;background:var(--navy);border:1px solid rgba(255,255,255,0.12);border-radius:8px;color:var(--white);font-size:14px}
+.field input:focus,.field select:focus{outline:none;border-color:var(--gold)}
+#loginError{color:var(--red);font-size:12px;margin-top:-8px;margin-bottom:14px;display:none}
+.start-btn{width:100%;padding:13px;background:var(--gold);color:var(--navy);border:none;border-radius:8px;font-size:15px;font-weight:600;margin-top:6px}
+.start-btn:hover{background:var(--gold2)}
+.login-rules{margin-top:22px;font-size:11px;color:var(--grey);line-height:1.7;border-top:1px solid rgba(255,255,255,0.08);padding-top:16px}
+
+/* ===== TEST SCREEN ===== */
+#testScreen{display:none;min-height:100vh}
+#topBar{position:fixed;top:0;left:0;right:0;height:var(--topbar);background:var(--navy2);border-bottom:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:space-between;padding:0 20px;z-index:200}
+#topBar .tb-left{font-size:14px;font-weight:600;color:var(--gold2)}
+#topBar .tb-mid{font-size:12px;color:var(--grey)}
+#timerWrap{font:600 16px monospace;padding:6px 14px;border-radius:6px;background:rgba(46,204,113,0.12);color:var(--green);border:1px solid rgba(46,204,113,0.3)}
+#timerWrap.warn{background:rgba(231,76,60,0.14);color:var(--red);border-color:rgba(231,76,60,0.35);animation:pulseTimer 1s infinite}
+@keyframes pulseTimer{0%,100%{opacity:1}50%{opacity:.55}}
+
+#mainContent{position:fixed;top:var(--topbar);bottom:var(--navbar);left:0;right:var(--panel);overflow-y:auto;padding:36px 5vw;max-width:calc(100vw - var(--panel))}
+.qsec{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+.qnum{font-size:13px;color:var(--grey);margin-bottom:18px}
+.qtext,.qtext p{font-size:clamp(16px,2vw,19px);line-height:1.6;margin-bottom:28px;max-width:64ch;overflow-wrap:break-word;word-break:break-word}
+.optlist{display:flex;flex-direction:column;gap:12px;max-width:64ch}
+.opt{display:flex;align-items:flex-start;gap:12px;padding:14px 16px;border:1px solid rgba(255,255,255,0.12);border-radius:10px;background:var(--navy2);transition:border-color .15s,background .15s}
+.opt:hover{border-color:rgba(201,168,76,0.4)}
+.opt.selected{border-color:var(--gold);background:rgba(201,168,76,0.1)}
+.opt .ol{flex-shrink:0;width:26px;height:26px;border-radius:50%;border:1px solid var(--grey);display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--grey)}
+.opt.selected .ol{background:var(--gold);border-color:var(--gold);color:var(--navy);font-weight:700}
+.otext{font-size:15px;line-height:1.5;overflow-wrap:break-word;word-break:break-word;min-width:0}
+
+#rightPanel{position:fixed;top:var(--topbar);bottom:0;right:0;width:var(--panel);background:var(--navy2);border-left:1px solid rgba(255,255,255,0.08);overflow-y:auto;padding:18px 16px;z-index:150}
+.panel-title{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--grey);margin-bottom:12px}
+.legend{display:flex;flex-direction:column;gap:6px;font-size:11px;color:var(--grey);margin-bottom:18px}
+.legend .lg-item{display:flex;align-items:center;gap:8px}
+.lg-dot{width:12px;height:12px;border-radius:3px;flex-shrink:0}
+.palette{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:20px}
+.pal-btn{aspect-ratio:1;border-radius:6px;border:1px solid rgba(255,255,255,0.15);background:var(--navy);color:var(--white);font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center}
+.pal-btn.answered{background:var(--green);border-color:var(--green);color:var(--navy)}
+.pal-btn.marked{background:var(--purple);border-color:var(--purple2);color:var(--white)}
+.pal-btn.answered.marked{background:var(--purple);box-shadow:inset 0 0 0 2px var(--green)}
+.pal-btn.current{outline:2px solid var(--gold);outline-offset:1px}
+.submit-btn{width:100%;padding:13px;background:var(--red);color:var(--white);border:none;border-radius:8px;font-size:14px;font-weight:600}
+.submit-btn:hover{opacity:.9}
+
+#bottomNav{position:fixed;bottom:0;left:0;right:var(--panel);height:var(--navbar);background:var(--navy2);border-top:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:space-between;padding:0 20px;gap:10px;z-index:150}
+.nav-btn{padding:10px 20px;border-radius:8px;border:1px solid rgba(255,255,255,0.15);background:var(--navy);color:var(--white);font-size:13px;font-weight:500}
+.nav-btn:hover{border-color:var(--gold)}
+.nav-btn:disabled{opacity:.35;cursor:not-allowed}
+.nav-btn.mark{border-color:var(--purple2);color:#c4b5fd}
+.nav-btn.primary{background:var(--gold);color:var(--navy);border-color:var(--gold);font-weight:700}
+
+/* ===== RESULTS SCREEN ===== */
+#resultsScreen{display:none;min-height:100vh;padding:48px 20px;align-items:flex-start;justify-content:center}
+.results-wrap{width:100%;max-width:560px}
+.results-card{background:var(--navy2);border:1px solid rgba(201,168,76,0.25);border-radius:14px;padding:36px}
+.results-title{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:4px}
+.results-score{font-size:48px;font-weight:700;margin:10px 0 4px}
+.results-sub{font-size:13px;color:var(--grey);margin-bottom:26px}
+.stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:28px}
+.stat-box{background:var(--navy);border-radius:10px;padding:14px;text-align:center}
+.stat-box .v{font-size:22px;font-weight:700}
+.stat-box .l{font-size:11px;color:var(--grey);margin-top:2px}
+.stat-box.c .v{color:var(--green)}
+.stat-box.w .v{color:var(--red)}
+.stat-box.s .v{color:var(--grey)}
+.review-list{display:flex;flex-direction:column;gap:14px;margin-top:6px}
+.rv-item{background:var(--navy);border-radius:10px;padding:16px}
+.rv-q{font-size:13px;color:var(--grey);margin-bottom:8px}
+.rv-text{font-size:14px;margin-bottom:10px;line-height:1.5}
+.rv-ans{font-size:13px;line-height:1.6}
+.rv-ans .your{color:var(--red)}
+.rv-ans .correct{color:var(--green)}
+.rv-exp{font-size:12px;color:var(--grey);margin-top:8px;line-height:1.5;border-top:1px solid rgba(255,255,255,0.08);padding-top:8px}
+.home-link{display:block;text-align:center;margin-top:24px;color:var(--gold2);font-size:13px;text-decoration:none}
+</style>
+</head>
+<body>
+
+<!-- ============ LOGIN SCREEN ============ -->
+<div id="loginScreen">
+  <div class="login-card">
+    <div class="login-brand">Road to IIM &middot; IPMAT 28</div>
+    <div class="login-title">Concept Test 1</div>
+    <div class="login-sub">Word Web I &middot; Roots &amp; Prefixes</div>
+    <div class="login-meta">
+      <span>30 Qs</span><span>30 min</span><span>+4 / &minus;1</span><span>Vocabulary only</span>
+    </div>
+    <div class="field">
+      <label>Full Name</label>
+      <input type="text" id="loginName" placeholder="Your full name">
+    </div>
+    <div class="field">
+      <label>PIN</label>
+      <input type="text" id="loginPin" placeholder="STU/IMS + 10 digits" maxlength="13">
+    </div>
+    <div class="field">
+      <label>Batch</label>
+      <select id="loginBatch">
+        <option value="">Select your batch</option>
+        <optgroup label="Classroom">
+          <option>A2701</option><option>A2702</option><option>A2703</option><option>A2704</option>
+          <option>A2705</option><option>A2706</option><option>A2707</option><option>A2708</option>
+          <option>A2709</option><option>A2710</option><option>A2711</option><option>A2712</option>
+        </optgroup>
+        <optgroup label="School">
+          <option>Zebar</option>
+        </optgroup>
+        <optgroup label="IPMAT 28">
+          <option>A2714</option><option>A2715</option><option>A2716</option><option>A2717</option>
+          <option>A2718</option><option>A2719</option><option>A2720</option>
+          <option>Z2801</option><option>S2801</option><option>A2804</option><option>PN2801</option>
+        </optgroup>
+        <optgroup label="Admin">
+          <option>Admin</option>
+        </optgroup>
+      </select>
+    </div>
+    <div id="loginError">Please fill all fields with a valid PIN (STU/IMS + 10 digits).</div>
+    <button class="start-btn" onclick="startTest()">Start Test &rarr;</button>
+    <div class="login-rules">30 questions &middot; 30-minute overall timer, no per-question limit &middot; +4 for correct, &minus;1 for wrong, 0 for skipped &middot; max marks 120 &middot; you can move freely between questions and mark any for review.</div>
+  </div>
+</div>
+
+<!-- ============ TEST SCREEN ============ -->
+<div id="testScreen">
+  <div id="topBar">
+    <div class="tb-left">Concept Test 1 &middot; Word Web I</div>
+    <div class="tb-mid" id="tbStudent"></div>
+    <div id="timerWrap">30:00</div>
+  </div>
+
+  <div id="mainContent">
+    <div class="qsec" id="qSec"></div>
+    <div class="qnum" id="qNum"></div>
+    <div class="qtext" id="qText"></div>
+    <div class="optlist" id="qOpts"></div>
+  </div>
+
+  <div id="rightPanel">
+    <div class="panel-title">Question Palette</div>
+    <div class="legend">
+      <div class="lg-item"><span class="lg-dot" style="background:var(--green)"></span>Answered</div>
+      <div class="lg-item"><span class="lg-dot" style="background:var(--navy);border:1px solid rgba(255,255,255,.2)"></span>Not answered</div>
+      <div class="lg-item"><span class="lg-dot" style="background:var(--purple)"></span>Marked for review</div>
+    </div>
+    <div class="palette" id="palette"></div>
+    <button class="submit-btn" onclick="confirmSubmit()">Submit Test</button>
+  </div>
+
+  <div id="bottomNav">
+    <button class="nav-btn" id="prevBtn" onclick="prevQuestion()">&larr; Previous</button>
+    <button class="nav-btn mark" id="markBtn" onclick="toggleMark()">Mark for Review</button>
+    <button class="nav-btn primary" id="nextBtn" onclick="nextQuestion()">Save &amp; Next &rarr;</button>
+  </div>
+</div>
+
+<!-- ============ RESULTS SCREEN (sibling of testScreen) ============ -->
+<div id="resultsScreen">
+  <div class="results-wrap">
+    <div class="results-card">
+      <div class="results-title">Concept Test 1 &middot; Word Web I</div>
+      <div class="results-score" id="resScore">0 / 120</div>
+      <div class="results-sub" id="resName"></div>
+      <div class="stat-row">
+        <div class="stat-box c"><div class="v" id="resCorrect">0</div><div class="l">Correct</div></div>
+        <div class="stat-box w"><div class="v" id="resWrong">0</div><div class="l">Wrong</div></div>
+        <div class="stat-box s"><div class="v" id="resSkipped">0</div><div class="l">Skipped</div></div>
+      </div>
+      <div class="panel-title">Review your answers</div>
+      <div class="review-list" id="reviewList"></div>
+      <a class="home-link" href="index.html">&larr; Back to Road to IIM</a>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ================= CONFIG ================= */
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx5Ojm_zp4LfsMeelx5e06KNjVH1wfsXdV0keS4407m4FO1HU4EpVb7GKj-ibAsxnspeA/exec';
+const TEST_NAME = 'Concept Test 1';
+const timer_duration = 30; // minutes, overall countdown
+const MAX_MARKS = 120;
+
+/* ================= QUESTIONS ================= */
+const QUESTIONS = [
+{sec:'Vocabulary',td:25,q:"After the scandal, creditors moved to seize everything — the firm was effectively ___.",o:["bankrupt","abstain","dissect","contemporary"],a:0,e:"banca rotta — \"broken bench,\" ruined financially.",tag:{area:'Vocabulary',sub:'Fill in the Blank'}},
+{sec:'Vocabulary',td:25,q:"The professor's claim was purely ___; without hard evidence it remained an educated guess.",o:["dejected","remiss","abject","conjectural"],a:3,e:"con + ject → thrown together → based on guesswork.",tag:{area:'Vocabulary',sub:'Fill in the Blank'}},
+{sec:'Vocabulary',td:25,q:"The minister's resignation seemed ___ — no warning, just gone overnight.",o:["circumspect","abrupt","subtle","contemporary"],a:1,e:"ab + rupt → broken off mid-motion, sudden.",tag:{area:'Vocabulary',sub:'Fill in the Blank'}},
+{sec:'Vocabulary',td:25,q:"Investors praised her ___ approach — she weighed every risk before committing a single rupee.",o:["obstinate","remiss","circumspect","abject"],a:2,e:"circum (around) + spect → looking around before acting.",tag:{area:'Vocabulary',sub:'Fill in the Blank'}},
+{sec:'Vocabulary',td:25,q:"The teacher had no choice but to ___ the disruptive student for the day.",o:["dismiss","transmit","abstain","obstruct"],a:0,e:"dis + miss → to send away.",tag:{area:'Vocabulary',sub:'Fill in the Blank'}},
+{sec:'Vocabulary',td:25,q:"The board members had to ___ in an emergency meeting to address the crisis.",o:["abscond","exonerate","disparage","convene"],a:3,e:"con + venire → to come together.",tag:{area:'Vocabulary',sub:'Fill in the Blank'}},
+{sec:'Vocabulary',td:25,q:"New DNA evidence was enough to ___ the man who'd spent a decade wrongly imprisoned.",o:["exacerbate","exonerate","disparage","abdicate"],a:1,e:"ex (out) + onus (burden) → to lift the burden off someone.",tag:{area:'Vocabulary',sub:'Fill in the Blank'}},
+{sec:'Vocabulary',td:25,q:"Adding more troops only served to ___ tensions rather than calm them.",o:["expedite","dissuade","exacerbate","contradict"],a:2,e:"ex (intensifier) + acerbus (bitter) → make bitterly worse.",tag:{area:'Vocabulary',sub:'Fill in the Blank'}},
+{sec:'Vocabulary',td:25,q:"The king chose to ___ rather than face rebellion, handing the throne to his son.",o:["abdicate","abstain","abscond","disparage"],a:0,e:"ab (away) + dicare (proclaim) → to proclaim oneself away from power.",tag:{area:'Vocabulary',sub:'Fill in the Blank'}},
+{sec:'Vocabulary',td:25,q:"The witness's testimony seemed to ___ everything he'd said the day before.",o:["predict","dissent","interject","contradict"],a:3,e:"contra (against) + dict → to speak against.",tag:{area:'Vocabulary',sub:'Fill in the Blank'}},
+{sec:'Vocabulary',td:25,q:"The cashier decided to ___ with the day's earnings before anyone noticed.",o:["dissent","abscond","abdicate","disparage"],a:1,e:"ab (away) → to hide oneself away, flee secretly.",tag:{area:'Vocabulary',sub:'Fill in the Blank'}},
+{sec:'Vocabulary',td:25,q:"Critics initially ___ the debut album, calling it amateurish, only to later admit its brilliance.",o:["exonerated","synchronised","disparaged","dissuaded"],a:2,e:"dis (apart) + par (equal) → to push below equal rank, belittle.",tag:{area:'Vocabulary',sub:'Fill in the Blank'}},
+{sec:'Vocabulary',td:25,q:"Which of the following does NOT belong to the SPECT (to look) family?",o:["malediction","respect","retrospect","circumspect"],a:0,e:"malediction is male (badly) + DICT (say) — a curse, not SPECT.",tag:{area:'Vocabulary',sub:'Odd One Out'}},
+{sec:'Vocabulary',td:25,q:"Which of the following does NOT share the root JECT (to throw)?",o:["trajectory","reject","abject","obliterate"],a:3,e:"obliterate is OB (toward, against) + littera (letter) — to erase completely, no JECT.",tag:{area:'Vocabulary',sub:'Odd One Out'}},
+{sec:'Vocabulary',td:25,q:"Which of the following does NOT belong to the DICT (to say) family?",o:["verdict","edict","dissect","malediction"],a:2,e:"dissect is DIS + secare (cut), not DICT.",tag:{area:'Vocabulary',sub:'Odd One Out'}},
+{sec:'Vocabulary',td:25,q:"Which of the following does NOT carry the prefix SUB (under)?",o:["subordinate","perspicacious","subconscious","subterranean"],a:1,e:"perspicacious is PER (through) + SPECT (look), not SUB.",tag:{area:'Vocabulary',sub:'Odd One Out'}},
+{sec:'Vocabulary',td:25,q:"Which of the following does NOT belong to the MIT/MISS (to send) family?",o:["transmit","emissary","convene","missive"],a:2,e:"convene is CON (together) + venire, not MIT/MISS.",tag:{area:'Vocabulary',sub:'Odd One Out'}},
+{sec:'Vocabulary',td:25,q:"Which of the following does NOT belong to the RUPT (to break) family?",o:["erupt","introspective","corrupt","rupture"],a:1,e:"introspective is INTRO (inward) + SPECT (look), not RUPT.",tag:{area:'Vocabulary',sub:'Odd One Out'}},
+{sec:'Vocabulary',td:25,q:"Choose the word closest in meaning to REMISS.",o:["punctual","negligent","eager","generous"],a:1,e:"re + miss → \"sent back slack\" → careless about duty.",tag:{area:'Vocabulary',sub:'Synonym'}},
+{sec:'Vocabulary',td:25,q:"Choose the word closest in meaning to OBSTINATE.",o:["stubborn","agreeable","cautious","generous"],a:0,e:"standing against all persuasion — immovably stubborn.",tag:{area:'Vocabulary',sub:'Synonym'}},
+{sec:'Vocabulary',td:25,q:"Choose the word closest in meaning to PERSPICACIOUS.",o:["careless","timid","shrewd","talkative"],a:2,e:"per + spic (see through clearly) → shrewdly perceptive.",tag:{area:'Vocabulary',sub:'Synonym'}},
+{sec:'Vocabulary',td:25,q:"Choose the word closest in meaning to DISSUADE.",o:["encourage","deter","ignore","support"],a:1,e:"to advise someone away from a plan.",tag:{area:'Vocabulary',sub:'Synonym'}},
+{sec:'Vocabulary',td:25,q:"Choose the word closest in meaning to TRAJECTORY.",o:["mistake","delay","path","argument"],a:2,e:"the path of a throw.",tag:{area:'Vocabulary',sub:'Synonym'}},
+{sec:'Vocabulary',td:25,q:"Choose the word closest in meaning to ABJECT, as in \"abject poverty.\"",o:["utterly miserable","mildly annoyed","secretly proud","openly defiant"],a:0,e:"ab + ject → thrown away, cast to the lowest condition.",tag:{area:'Vocabulary',sub:'Synonym'}},
+{sec:'Vocabulary',td:25,q:"Three of these words mean \"to send away / dismiss.\" Which one does NOT?",o:["expel","banish","evict","inspect"],a:3,e:"inspect means \"to look into\" — unrelated meaning cluster.",tag:{area:'Vocabulary',sub:'Odd One Out'}},
+{sec:'Vocabulary',td:25,q:"Three of these words mean \"stubborn.\" Which one does NOT?",o:["obstinate","circumspect","dogged","intransigent"],a:1,e:"circumspect means cautious, not stubborn.",tag:{area:'Vocabulary',sub:'Odd One Out'}},
+{sec:'Vocabulary',td:25,q:"Three of these words relate to \"guesswork.\" Which one does NOT?",o:["conjecture","speculation","verdict","surmise"],a:2,e:"verdict is a definitive judgement, not a guess.",tag:{area:'Vocabulary',sub:'Odd One Out'}},
+{sec:'Vocabulary',td:25,q:"Three of these words mean \"to worsen.\" Which one does NOT?",o:["exacerbate","expedite","aggravate","intensify"],a:1,e:"expedite means to speed up, not worsen.",tag:{area:'Vocabulary',sub:'Odd One Out'}},
+{sec:'Vocabulary',td:25,q:"INTERJECT : THROW BETWEEN :: INTERDICT : ?",o:["to look between","to send into","to officially forbid (spoken between)","to break between"],a:2,e:"inter + dict → spoken between → to officially forbid.",tag:{area:'Vocabulary',sub:'Analogy'}},
+{sec:'Vocabulary',td:25,q:"ABJECT : THROWN AWAY :: ABSCOND : ?",o:["thrown under","spoken against","broken apart","hidden away — to flee secretly"],a:3,e:"ab (away) → to hide oneself away.",tag:{area:'Vocabulary',sub:'Analogy'}}
+];
+
+/* ================= STATE ================= */
+let currentQ = 0;
+let userAnswers = new Array(QUESTIONS.length).fill(null);
+let marked = new Array(QUESTIONS.length).fill(false);
+let questionTimes = new Array(QUESTIONS.length).fill(0);
+let qEnterTime = 0;
+let secondsLeft = timer_duration * 60;
+let timerInterval = null;
+let studentName = '', studentPin = '', studentBatch = '';
+let submitted = false;
+
+/* ================= LOGIN ================= */
+function startTest(){
+  studentName = document.getElementById('loginName').value.trim();
+  studentPin = document.getElementById('loginPin').value.trim().toUpperCase();
+  studentBatch = document.getElementById('loginBatch').value;
+  const pinOk = /^(STU|IMS)\d{10}$/.test(studentPin);
+  if(!studentName || !pinOk || !studentBatch){
+    document.getElementById('loginError').style.display = 'block';
+    return;
+  }
+  document.getElementById('loginError').style.display = 'none';
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('testScreen').style.display = 'block';
+  document.getElementById('tbStudent').textContent = studentName + ' · ' + studentPin + ' · ' + studentBatch;
+  buildPalette();
+  qEnterTime = Date.now();
+  renderQuestion(0);
+  startTimer();
+}
+
+/* ================= TIMER ================= */
+function startTimer(){
+  updateTimerDisplay();
+  timerInterval = setInterval(()=>{
+    secondsLeft--;
+    updateTimerDisplay();
+    if(secondsLeft <= 0){
+      clearInterval(timerInterval);
+      submitTest();
+    }
+  },1000);
+}
+function updateTimerDisplay(){
+  const m = Math.floor(secondsLeft/60), s = secondsLeft%60;
+  const el = document.getElementById('timerWrap');
+  el.textContent = String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+  el.classList.toggle('warn', secondsLeft <= 300);
+}
+
+/* ================= RENDER ================= */
+function buildPalette(){
+  const pal = document.getElementById('palette');
+  pal.innerHTML = '';
+  QUESTIONS.forEach((q,i)=>{
+    const b = document.createElement('button');
+    b.className = 'pal-btn';
+    b.textContent = i+1;
+    b.id = 'pal-'+i;
+    b.onclick = ()=>goToQuestion(i);
+    pal.appendChild(b);
+  });
+}
+function recordTimeSpent(){
+  const idx = currentQ;
+  const elapsed = Math.round((Date.now()-qEnterTime)/1000);
+  questionTimes[idx] += Math.max(0,elapsed);
+}
+function renderQuestion(i){
+  currentQ = i;
+  const q = QUESTIONS[i];
+  document.getElementById('qSec').textContent = q.sec;
+  document.getElementById('qNum').textContent = 'Question '+(i+1)+' of '+QUESTIONS.length;
+  document.getElementById('qText').textContent = q.q;
+  const optWrap = document.getElementById('qOpts');
+  optWrap.innerHTML = '';
+  q.o.forEach((opt,oi)=>{
+    const div = document.createElement('div');
+    div.className = 'opt'+(userAnswers[i]===oi?' selected':'');
+    div.onclick = ()=>selectOption(oi);
+    div.innerHTML = '<span class="ol">'+String.fromCharCode(65+oi)+'</span><span class="otext"></span>';
+    div.querySelector('.otext').textContent = opt;
+    optWrap.appendChild(div);
+  });
+  document.getElementById('prevBtn').disabled = (i===0);
+  document.getElementById('markBtn').textContent = marked[i] ? 'Unmark Review' : 'Mark for Review';
+  document.getElementById('nextBtn').textContent = (i===QUESTIONS.length-1) ? 'Finish Review' : 'Save & Next →';
+  updatePalette();
+  mainContentScrollTop();
+  qEnterTime = Date.now();
+}
+function mainContentScrollTop(){
+  document.getElementById('mainContent').scrollTop = 0;
+}
+function updatePalette(){
+  QUESTIONS.forEach((q,i)=>{
+    const b = document.getElementById('pal-'+i);
+    b.classList.toggle('answered', userAnswers[i]!==null);
+    b.classList.toggle('marked', marked[i]);
+    b.classList.toggle('current', i===currentQ);
+  });
+}
+function selectOption(oi){
+  userAnswers[currentQ] = oi;
+  const opts = document.querySelectorAll('#qOpts .opt');
+  opts.forEach((el,idx)=>el.classList.toggle('selected', idx===oi));
+  updatePalette();
+}
+function toggleMark(){
+  marked[currentQ] = !marked[currentQ];
+  document.getElementById('markBtn').textContent = marked[currentQ] ? 'Unmark Review' : 'Mark for Review';
+  updatePalette();
+}
+function goToQuestion(i){
+  if(i===currentQ) return;
+  recordTimeSpent();
+  renderQuestion(i);
+}
+function prevQuestion(){
+  if(currentQ===0) return;
+  recordTimeSpent();
+  renderQuestion(currentQ-1);
+}
+function nextQuestion(){
+  recordTimeSpent();
+  if(currentQ < QUESTIONS.length-1){
+    renderQuestion(currentQ+1);
+  }
+}
+
+/* ================= SUBMIT ================= */
+function confirmSubmit(){
+  recordTimeSpent();
+  const unanswered = userAnswers.filter(a=>a===null).length;
+  const msg = unanswered>0
+    ? unanswered+' question(s) still unanswered. Submit anyway?'
+    : 'Submit your test now?';
+  if(confirm(msg)) submitTest();
+}
+function submitTest(){
+  if(submitted) return;
+  submitted = true;
+  clearInterval(timerInterval);
+
+  let correct=0, wrong=0, skipped=0;
+  const wrongQuestions = [];
+  const sectionErrors = {};
+  const topicErr = {};
+
+  QUESTIONS.forEach((q,i)=>{
+    const ans = userAnswers[i];
+    if(ans===null){
+      skipped++;
+    } else if(ans===q.a){
+      correct++;
+    } else {
+      wrong++;
+      wrongQuestions.push(i+1);
+      sectionErrors[q.sec] = (sectionErrors[q.sec]||0)+1;
+      const sub = q.tag.sub;
+      topicErr[sub] = (topicErr[sub]||0)+1;
+    }
+  });
+
+  const score = (correct*4) - (wrong*1);
+  const s = (timer_duration*60) - secondsLeft;
+  const mm = String(Math.floor(s/60)).padStart(2,'0');
+  const ss = String(s%60).padStart(2,'0');
+  const timeTaken = mm+':'+ss;
+  const timestamp = new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'});
+
+  const payload = {
+    testName: TEST_NAME,
+    name: studentName,
+    pin: studentPin,
+    batch: studentBatch,
+    score: score,
+    correct: correct,
+    wrong: wrong,
+    skipped: skipped,
+    maxMarks: MAX_MARKS,
+    timeTaken: timeTaken,
+    timestamp: timestamp,
+    sectionErrors: JSON.stringify(sectionErrors),
+    wrongQuestions: JSON.stringify(wrongQuestions),
+    studentAnswers: JSON.stringify(userAnswers.map(a=>a===null?null:a)),
+    questionTimes: JSON.stringify(questionTimes),
+    topicErrors: JSON.stringify(topicErr)
+  };
+
+  fetch(APPS_SCRIPT_URL,{
+    method:"POST",
+    mode:"no-cors",
+    headers:{"Content-Type":"text/plain"},
+    body:JSON.stringify(payload)
+  }).then(()=>{
+    showResults(score,correct,wrong,skipped);
+  }).catch(()=>{
+    showResults(score,correct,wrong,skipped);
+  });
+}
+
+function showResults(score,correct,wrong,skipped){
+  document.getElementById('testScreen').style.display = 'none';
+  document.getElementById('resultsScreen').style.display = 'flex';
+  document.getElementById('resScore').textContent = score+' / '+MAX_MARKS;
+  document.getElementById('resName').textContent = studentName+' · '+studentBatch;
+  document.getElementById('resCorrect').textContent = correct;
+  document.getElementById('resWrong').textContent = wrong;
+  document.getElementById('resSkipped').textContent = skipped;
+
+  const list = document.getElementById('reviewList');
+  list.innerHTML = '';
+  QUESTIONS.forEach((q,i)=>{
+    const ans = userAnswers[i];
+    const div = document.createElement('div');
+    div.className = 'rv-item';
+    const yourTxt = ans===null ? 'Not answered' : q.o[ans];
+    const correctTxt = q.o[q.a];
+    const ansHtml = ans===q.a
+      ? '<span class="correct">Correct: '+correctTxt+'</span>'
+      : '<span class="your">Your answer: '+yourTxt+'</span><br><span class="correct">Correct: '+correctTxt+'</span>';
+    div.innerHTML =
+      '<div class="rv-q">Q'+(i+1)+' · '+q.tag.sub+'</div>'+
+      '<div class="rv-text"></div>'+
+      '<div class="rv-ans">'+ansHtml+'</div>'+
+      '<div class="rv-exp"></div>';
+    div.querySelector('.rv-text').textContent = q.q;
+    div.querySelector('.rv-exp').textContent = q.e;
+    list.appendChild(div);
+  });
+}
+</script>
+</body>
+</html>
