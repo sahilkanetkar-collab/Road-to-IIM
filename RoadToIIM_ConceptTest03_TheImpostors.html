@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Concept Test 3 — The Impostors | Road to IIM</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 :root{
   --navy:#0d1b2a;--navy2:#1a2e45;
@@ -100,6 +101,8 @@ input,select{font-family:inherit}
 .rv-ans .correct{color:var(--green)}
 .rv-exp{font-size:12px;color:var(--grey);margin-top:8px;line-height:1.5;border-top:1px solid rgba(255,255,255,0.08);padding-top:8px}
 .home-link{display:block;text-align:center;margin-top:24px;color:var(--gold2);font-size:13px;text-decoration:none}
+.pdf-btn{width:100%;padding:12px;background:transparent;border:1px solid var(--gold);color:var(--gold2);border-radius:8px;font-size:13px;font-weight:600;margin-top:20px;cursor:pointer}
+.pdf-btn:hover{background:rgba(201,168,76,0.1)}
 </style>
 </head>
 <body>
@@ -196,6 +199,7 @@ input,select{font-family:inherit}
       </div>
       <div class="panel-title">Review your answers</div>
       <div class="review-list" id="reviewList"></div>
+      <button class="pdf-btn" onclick="downloadPDF()">Download PDF &darr;</button>
       <a class="home-link" href="index.html">&larr; Back to Road to IIM</a>
     </div>
   </div>
@@ -473,6 +477,66 @@ function showResults(score,correct,wrong,skipped){
     div.querySelector('.rv-exp').textContent = q.e;
     list.appendChild(div);
   });
+}
+function downloadPDF(){
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({unit:'pt', format:'a4'});
+  const pageW = doc.internal.pageSize.getWidth();
+  const pageH = doc.internal.pageSize.getHeight();
+  const margin = 40;
+  let y = 50;
+
+  let correct=0, wrong=0, skipped=0;
+  QUESTIONS.forEach((q,i)=>{
+    const ans = userAnswers[i];
+    if(ans===null) skipped++;
+    else if(ans===q.a) correct++;
+    else wrong++;
+  });
+  const score = (correct*4)-(wrong*1);
+
+  doc.setFont('helvetica','bold'); doc.setFontSize(16); doc.setTextColor(0,0,0);
+  doc.text('Road to IIM', margin, y); y+=20;
+  doc.setFontSize(13);
+  doc.text(TEST_NAME, margin, y); y+=18;
+  doc.setFont('helvetica','normal'); doc.setFontSize(10);
+  doc.text((studentName||'')+'  |  '+(studentPin||'')+'  |  '+(studentBatch||''), margin, y); y+=16;
+  doc.text('Score: '+score+' / '+MAX_MARKS+'    Correct: '+correct+'    Wrong: '+wrong+'    Skipped: '+skipped, margin, y); y+=10;
+  doc.setDrawColor(200); doc.line(margin,y,pageW-margin,y); y+=20;
+
+  QUESTIONS.forEach((q,i)=>{
+    const ans = userAnswers[i];
+    const yourTxt = ans===null ? 'Not answered' : q.o[ans];
+    const correctTxt = q.o[q.a];
+    const isCorrect = ans===q.a;
+
+    doc.setFont('helvetica','bold'); doc.setFontSize(10);
+    const qLines = doc.splitTextToSize('Q'+(i+1)+'. '+q.q, pageW-2*margin);
+    const expLinesPreview = doc.splitTextToSize(q.e, pageW-2*margin);
+    const blockHeight = qLines.length*13 + 4 + 13*(isCorrect?1:2) + expLinesPreview.length*12 + 18;
+    if(y + blockHeight > pageH-40){ doc.addPage(); y = 50; }
+
+    doc.setFont('helvetica','bold'); doc.setFontSize(10); doc.setTextColor(0,0,0);
+    doc.text(qLines, margin, y); y += qLines.length*13 + 4;
+
+    doc.setFont('helvetica','normal'); doc.setFontSize(9.5);
+    if(isCorrect){
+      doc.setTextColor(0,120,0);
+      doc.text('Correct: '+correctTxt, margin, y); y+=13;
+    } else {
+      doc.setTextColor(180,0,0);
+      doc.text('Your answer: '+yourTxt, margin, y); y+=13;
+      doc.setTextColor(0,120,0);
+      doc.text('Correct answer: '+correctTxt, margin, y); y+=13;
+    }
+    doc.setTextColor(90,90,90);
+    const expLines = doc.splitTextToSize(q.e, pageW-2*margin);
+    doc.text(expLines, margin, y); y += expLines.length*12 + 14;
+    doc.setTextColor(0,0,0);
+  });
+
+  const fname = TEST_NAME.replace(/\s+/g,'_')+'_'+(studentName||'student').replace(/\s+/g,'_')+'.pdf';
+  doc.save(fname);
 }
 </script>
 </body>
