@@ -387,7 +387,6 @@
 <script>
 // ── Config ──────────────────────────────────────────────────────────
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx5Ojm_zp4LfsMeelx5e06KNjVH1wfsXdV0keS4407m4FO1HU4EpVb7GKj-ibAsxnspeA/exec';
-const ANTHROPIC_API   = 'https://api.anthropic.com/v1/messages';
 const DAILY_CAP       = 50;
 
 let currentPIN = '';
@@ -489,7 +488,7 @@ function resetPIN() {
   hideNotice('pin-notice');
 }
 
-// ── Condense essay ───────────────────────────────────────────────────
+// ── Condense essay ───────────────────────────────────────────────────────────────────────
 async function condenseEssay() {
   hideNotice('url-notice');
   document.getElementById('output-area').style.display = 'none';
@@ -508,71 +507,29 @@ async function condenseEssay() {
 
   setLoading('condense-btn', true, 'Working…');
   document.getElementById('spinner').classList.add('show');
-  document.getElementById('spinner-text').textContent = 'Fetching essay from Aeon…';
+  document.getElementById('spinner-text').textContent = 'Fetching and condensing — this takes ~15 seconds…';
 
   try {
-    // ── Step 1: Call Claude API with web fetch to get + condense the essay ──
-    document.getElementById('spinner-text').textContent = 'Condensing the essay…';
-
-    const prompt = `You are given an Aeon essay URL. Please:
-1. Fetch and read the full essay at: ${url}
-2. Write a condensed version of approximately 500 words.
-
-Rules for the condensed version:
-- Preserve the essay's core argument and thesis exactly
-- Maintain the logical flow and progression of ideas
-- Keep the author's key examples if they are load-bearing (i.e. the argument depends on them)
-- Preserve important transitions and signpost phrases (however, therefore, crucially, etc.)
-- Do NOT add your own commentary or analysis
-- Do NOT change the author's position or conclusions
-- Write in third person, not as the author
-- Begin with the essay's central claim or question
-- End where the essay ends, with the same conclusion
-
-Output format: Plain prose only. No bullet points. No headings. No "The author argues that..." meta-commentary. Just a flowing, faithful condensation.`;
-
-    const apiResponse = await fetch(ANTHROPIC_API, {
+    // Single relay call to Apps Script — fetches article, calls Claude, logs, returns condensed text
+    const res = await fetch(APPS_SCRIPT_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
-        max_tokens: 1000,
-        tools: [{ type: 'web_search_20250305', name: 'web_search' }],
-        messages: [{ role: 'user', content: prompt }]
-      })
-    });
-
-    const apiData = await apiResponse.json();
-
-    if (!apiData.content || apiData.content.length === 0) {
-      throw new Error('No response from Claude API.');
-    }
-
-    // Extract text blocks from response
-    const textBlocks = apiData.content.filter(b => b.type === 'text').map(b => b.text);
-    const condensed  = textBlocks.join('\n\n').trim();
-
-    if (!condensed) {
-      throw new Error('Claude did not return a condensed essay. The link may be paywalled or unavailable.');
-    }
-
-    // ── Step 2: Log to Apps Script ──
-    document.getElementById('spinner-text').textContent = 'Saving usage log…';
-
-    await fetch(APPS_SCRIPT_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        type: 'aeon',
+        type: 'aeonCondense',
         pin: currentPIN,
         url: url,
         timestamp: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })
       })
     });
 
-    // ── Step 3: Show output ──
-    const wc = countWords(condensed);
-    document.getElementById('output-text').textContent = condensed;
+    const data = await res.json();
+
+    if (data.status !== 'ok' || !data.condensed) {
+      throw new Error(data.message || 'Something went wrong. Please try again.');
+    }
+
+    const wc = countWords(data.condensed);
+    document.getElementById('output-text').textContent = data.condensed;
     document.getElementById('word-count').textContent = wc;
     document.getElementById('output-area').style.display = 'block';
     document.getElementById('output-area').scrollIntoView({ behavior: 'smooth', block: 'start' });
