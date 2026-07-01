@@ -510,17 +510,12 @@ async function condenseEssay() {
   document.getElementById('spinner-text').textContent = 'Fetching and condensing — this takes ~15 seconds…';
 
   try {
-    // Single relay call to Apps Script — fetches article, calls Claude, logs, returns condensed text
-    const res = await fetch(APPS_SCRIPT_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        type: 'aeonCondense',
-        pin: currentPIN,
-        url: url,
-        timestamp: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })
-      })
-    });
+    // GET call to Apps Script relay — no CORS issues (same as tracker calls)
+    const ts = encodeURIComponent(new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }));
+    const encodedUrl = encodeURIComponent(url);
+    const res = await fetch(
+      `${APPS_SCRIPT_URL}?mode=aeoncondense&pin=${encodeURIComponent(currentPIN)}&url=${encodedUrl}&timestamp=${ts}`
+    );
 
     const data = await res.json();
 
