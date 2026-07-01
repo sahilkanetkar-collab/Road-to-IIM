@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aeon Essay Condenser — Road to IIM</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Fraunces:ital,wght@0,400;0,600;1,400&display=swap');
+
+  :root {
+    --navy: #0d1b2a;
+    --navy-mid: #162032;
+    --navy-light: #1e2e42;
+    --gold: #c9a84c;
+    --gold-dim: #a8873a;
+    --teal: #4ea082;
+    --cream: #f5f0e8;
+    --cream-dim: #e8e0d0;
+    --text: #e8e4dc;
+    --text-dim: #a0a8b0;
+    --border: rgba(201,168,76,0.2);
+    --error: #e05c5c;
+    --success: #4ea082;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--navy);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── Header ── */
+  header {
+    border-bottom: 1px solid var(--border);
+    padding: 18px 32px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .header-logo {
+    font-family: 'Fraunces', serif;
+    font-size: 13px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+    opacity: 0.85;
+  }
+
+  .header-divider {
+    width: 1px;
+    height: 18px;
+    background: var(--border);
+  }
+
+  .header-title {
+    font-size: 13px;
+    color: var(--text-dim);
+    letter-spacing: 0.04em;
+  }
+
+  /* ── Main ── */
+  main {
+    flex: 1;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 48px 24px 64px;
+    width: 100%;
+  }
+
+  .page-eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 10px;
+  }
+
+  .page-title {
+    font-family: 'Fraunces', serif;
+    font-size: 32px;
+    font-weight: 600;
+    line-height: 1.2;
+    color: var(--cream);
+    margin-bottom: 10px;
+  }
+
+  .page-subtitle {
+    font-size: 14px;
+    color: var(--text-dim);
+    line-height: 1.6;
+    margin-bottom: 40px;
+    max-width: 520px;
+  }
+
+  /* ── Card ── */
+  .card {
+    background: var(--navy-mid);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 28px;
+    margin-bottom: 20px;
+  }
+
+  .card-label {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 10px;
+    display: block;
+  }
+
+  /* ── Form elements ── */
+  input[type="text"], input[type="password"], input[type="url"] {
+    width: 100%;
+    background: var(--navy-light);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 12px 16px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  input:focus {
+    border-color: var(--gold-dim);
+  }
+
+  input::placeholder {
+    color: var(--text-dim);
+    opacity: 0.6;
+  }
+
+  .input-hint {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-top: 8px;
+  }
+
+  /* ── Buttons ── */
+  .btn-primary {
+    background: var(--gold);
+    color: var(--navy);
+    border: none;
+    border-radius: 6px;
+    padding: 13px 28px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, opacity 0.2s;
+    letter-spacing: 0.02em;
+  }
+
+  .btn-primary:hover { background: var(--gold-dim); }
+  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .btn-outline {
+    background: transparent;
+    color: var(--gold);
+    border: 1px solid var(--gold);
+    border-radius: 6px;
+    padding: 10px 20px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .btn-outline:hover { background: rgba(201,168,76,0.08); }
+
+  /* ── Notice / status ── */
+  .notice {
+    border-radius: 6px;
+    padding: 12px 16px;
+    font-size: 13px;
+    line-height: 1.5;
+    margin-bottom: 16px;
+    display: none;
+  }
+
+  .notice.error   { background: rgba(224,92,92,0.12); border: 1px solid rgba(224,92,92,0.3); color: #f08080; }
+  .notice.success { background: rgba(78,160,130,0.12); border: 1px solid rgba(78,160,130,0.3); color: #7dd4b8; }
+  .notice.info    { background: rgba(201,168,76,0.08); border: 1px solid rgba(201,168,76,0.2); color: var(--gold); }
+  .notice.show    { display: block; }
+
+  /* ── Sections ── */
+  #pin-section  { display: block; }
+  #tool-section { display: none; }
+
+  /* ── PIN verified strip ── */
+  .pin-verified-strip {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(78,160,130,0.08);
+    border: 1px solid rgba(78,160,130,0.25);
+    border-radius: 8px;
+    padding: 12px 18px;
+    margin-bottom: 24px;
+    font-size: 13px;
+  }
+
+  .pin-verified-strip .pin-label { color: var(--text-dim); }
+  .pin-verified-strip .pin-value { color: var(--teal); font-weight: 600; font-size: 14px; }
+  .pin-verified-strip .change-pin { font-size: 12px; color: var(--text-dim); cursor: pointer; text-decoration: underline; }
+  .pin-verified-strip .change-pin:hover { color: var(--gold); }
+
+  /* ── Output area ── */
+  #output-area {
+    display: none;
+    margin-top: 24px;
+  }
+
+  .output-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+
+  .output-meta {
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+
+  .output-meta span {
+    color: var(--teal);
+    font-weight: 500;
+  }
+
+  .output-box {
+    background: var(--navy-light);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px;
+    font-size: 15px;
+    line-height: 1.75;
+    color: var(--cream);
+    white-space: pre-wrap;
+    min-height: 200px;
+  }
+
+  .output-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 14px;
+  }
+
+  /* ── Spinner ── */
+  .spinner-wrap {
+    display: none;
+    align-items: center;
+    gap: 12px;
+    padding: 20px 0;
+    color: var(--text-dim);
+    font-size: 13px;
+  }
+
+  .spinner-wrap.show { display: flex; }
+
+  .spinner {
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(201,168,76,0.2);
+    border-top-color: var(--gold);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    flex-shrink: 0;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── Limit badge ── */
+  .limit-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(201,168,76,0.08);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-bottom: 24px;
+  }
+
+  .limit-badge .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--teal);
+  }
+
+  /* ── Footer ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 16px 32px;
+    text-align: center;
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 0.04em;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <span class="header-logo">Road to IIM</span>
+  <div class="header-divider"></div>
+  <span class="header-title">Essay Condenser</span>
+</header>
+
+<main>
+  <p class="page-eyebrow">Reading Practice Tool</p>
+  <h1 class="page-title">Condense an Aeon Essay</h1>
+  <p class="page-subtitle">Paste any Aeon essay link. Get a crisp 500-word condensation that preserves the argument structure and logical flow — built for RC practice.</p>
+
+  <!-- PIN Section -->
+  <div id="pin-section">
+    <div class="card">
+      <span class="card-label">Step 1 — Verify your PIN</span>
+      <div class="notice" id="pin-notice"></div>
+      <input type="text" id="pin-input" placeholder="Enter your IMS PIN (e.g. STU0001234567)" maxlength="14" autocomplete="off" />
+      <p class="input-hint">Your PIN is the same one you use on the Road to IIM tracker.</p>
+      <br>
+      <button class="btn-primary" id="verify-btn" onclick="verifyPIN()">Verify PIN</button>
+    </div>
+  </div>
+
+  <!-- Tool Section -->
+  <div id="tool-section">
+
+    <div class="pin-verified-strip">
+      <div>
+        <span class="pin-label">Signed in as </span>
+        <span class="pin-value" id="pin-display"></span>
+      </div>
+      <span class="change-pin" onclick="resetPIN()">Change PIN</span>
+    </div>
+
+    <div class="limit-badge">
+      <span class="dot"></span>
+      1 article per PIN per day · 50 articles daily cap
+    </div>
+
+    <div class="card">
+      <span class="card-label">Step 2 — Paste an Aeon link</span>
+      <div class="notice" id="url-notice"></div>
+      <input type="url" id="url-input" placeholder="https://aeon.co/essays/..." />
+      <p class="input-hint">Only aeon.co links are accepted.</p>
+      <br><br>
+      <button class="btn-primary" id="condense-btn" onclick="condenseEssay()">Condense Essay</button>
+    </div>
+
+    <div class="spinner-wrap" id="spinner">
+      <div class="spinner"></div>
+      <span id="spinner-text">Fetching essay and condensing…</span>
+    </div>
+
+    <div id="output-area">
+      <div class="output-header">
+        <span class="card-label" style="margin:0">Condensed Version</span>
+        <span class="output-meta">~500 words · <span id="word-count">0</span> words</span>
+      </div>
+      <div class="output-box" id="output-text"></div>
+      <div class="output-actions">
+        <button class="btn-outline" onclick="copyOutput()">Copy Text</button>
+        <button class="btn-outline" onclick="resetTool()">New Essay</button>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<footer>Road to IIM · Essay Condenser · For registered students only</footer>
+
+<script>
+// ── Config ──────────────────────────────────────────────────────────
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx5Ojm_zp4LfsMeelx5e06KNjVH1wfsXdV0keS4407m4FO1HU4EpVb7GKj-ibAsxnspeA/exec';
+const ANTHROPIC_API   = 'https://api.anthropic.com/v1/messages';
+const DAILY_CAP       = 50;
+
+let currentPIN = '';
+
+// ── Helpers ──────────────────────────────────────────────────────────
+function showNotice(id, type, msg) {
+  const el = document.getElementById(id);
+  el.className = `notice ${type} show`;
+  el.textContent = msg;
+}
+
+function hideNotice(id) {
+  const el = document.getElementById(id);
+  el.className = 'notice';
+  el.textContent = '';
+}
+
+function setLoading(btnId, loading, label = '') {
+  const btn = document.getElementById(btnId);
+  btn.disabled = loading;
+  if (label) btn.textContent = label;
+}
+
+function validPINFormat(pin) {
+  return /^(STU|IMS)\d{10}$/i.test(pin.trim());
+}
+
+function validAeonURL(url) {
+  try {
+    const u = new URL(url.trim());
+    return u.hostname === 'aeon.co' || u.hostname === 'www.aeon.co';
+  } catch { return false; }
+}
+
+function countWords(text) {
+  return text.trim().split(/\s+/).filter(Boolean).length;
+}
+
+// ── PIN verification ─────────────────────────────────────────────────
+async function verifyPIN() {
+  hideNotice('pin-notice');
+  const raw = document.getElementById('pin-input').value.trim().toUpperCase();
+
+  if (!validPINFormat(raw)) {
+    showNotice('pin-notice', 'error', 'Invalid PIN format. Must be STU or IMS followed by 10 digits.');
+    return;
+  }
+
+  setLoading('verify-btn', true, 'Checking…');
+
+  try {
+    const res = await fetch(`${APPS_SCRIPT_URL}?mode=aeonCheck&pin=${encodeURIComponent(raw)}`);
+    const data = await res.json();
+
+    if (data.status === 'blocked_global') {
+      showNotice('pin-notice', 'error', `Today's 50-essay limit has been reached. Come back tomorrow.`);
+      setLoading('verify-btn', false, 'Verify PIN');
+      return;
+    }
+
+    if (data.status === 'blocked_pin') {
+      showNotice('pin-notice', 'error', `You've already used your article for today (${raw}). Come back tomorrow.`);
+      setLoading('verify-btn', false, 'Verify PIN');
+      return;
+    }
+
+    if (data.status === 'invalid_pin') {
+      showNotice('pin-notice', 'error', 'PIN not found in the system. Please check and try again.');
+      setLoading('verify-btn', false, 'Verify PIN');
+      return;
+    }
+
+    // All clear
+    currentPIN = raw;
+    document.getElementById('pin-display').textContent = raw;
+    document.getElementById('pin-section').style.display = 'none';
+    document.getElementById('tool-section').style.display = 'block';
+
+  } catch (err) {
+    showNotice('pin-notice', 'error', 'Could not connect to the server. Please try again.');
+    setLoading('verify-btn', false, 'Verify PIN');
+  }
+}
+
+// ── Allow Enter key on PIN input ─────────────────────────────────────
+document.getElementById('pin-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') verifyPIN();
+});
+
+// ── Reset PIN ────────────────────────────────────────────────────────
+function resetPIN() {
+  currentPIN = '';
+  document.getElementById('pin-input').value = '';
+  document.getElementById('pin-section').style.display = 'block';
+  document.getElementById('tool-section').style.display = 'none';
+  document.getElementById('output-area').style.display = 'none';
+  document.getElementById('verify-btn').textContent = 'Verify PIN';
+  document.getElementById('verify-btn').disabled = false;
+  hideNotice('pin-notice');
+}
+
+// ── Condense essay ───────────────────────────────────────────────────
+async function condenseEssay() {
+  hideNotice('url-notice');
+  document.getElementById('output-area').style.display = 'none';
+
+  const url = document.getElementById('url-input').value.trim();
+
+  if (!url) {
+    showNotice('url-notice', 'error', 'Please paste an Aeon essay link.');
+    return;
+  }
+
+  if (!validAeonURL(url)) {
+    showNotice('url-notice', 'error', 'Only aeon.co links are accepted. Please paste a valid Aeon essay URL.');
+    return;
+  }
+
+  setLoading('condense-btn', true, 'Working…');
+  document.getElementById('spinner').classList.add('show');
+  document.getElementById('spinner-text').textContent = 'Fetching essay from Aeon…';
+
+  try {
+    // ── Step 1: Call Claude API with web fetch to get + condense the essay ──
+    document.getElementById('spinner-text').textContent = 'Condensing the essay…';
+
+    const prompt = `You are given an Aeon essay URL. Please:
+1. Fetch and read the full essay at: ${url}
+2. Write a condensed version of approximately 500 words.
+
+Rules for the condensed version:
+- Preserve the essay's core argument and thesis exactly
+- Maintain the logical flow and progression of ideas
+- Keep the author's key examples if they are load-bearing (i.e. the argument depends on them)
+- Preserve important transitions and signpost phrases (however, therefore, crucially, etc.)
+- Do NOT add your own commentary or analysis
+- Do NOT change the author's position or conclusions
+- Write in third person, not as the author
+- Begin with the essay's central claim or question
+- End where the essay ends, with the same conclusion
+
+Output format: Plain prose only. No bullet points. No headings. No "The author argues that..." meta-commentary. Just a flowing, faithful condensation.`;
+
+    const apiResponse = await fetch(ANTHROPIC_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 1000,
+        tools: [{ type: 'web_search_20250305', name: 'web_search' }],
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    const apiData = await apiResponse.json();
+
+    if (!apiData.content || apiData.content.length === 0) {
+      throw new Error('No response from Claude API.');
+    }
+
+    // Extract text blocks from response
+    const textBlocks = apiData.content.filter(b => b.type === 'text').map(b => b.text);
+    const condensed  = textBlocks.join('\n\n').trim();
+
+    if (!condensed) {
+      throw new Error('Claude did not return a condensed essay. The link may be paywalled or unavailable.');
+    }
+
+    // ── Step 2: Log to Apps Script ──
+    document.getElementById('spinner-text').textContent = 'Saving usage log…';
+
+    await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        type: 'aeon',
+        pin: currentPIN,
+        url: url,
+        timestamp: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })
+      })
+    });
+
+    // ── Step 3: Show output ──
+    const wc = countWords(condensed);
+    document.getElementById('output-text').textContent = condensed;
+    document.getElementById('word-count').textContent = wc;
+    document.getElementById('output-area').style.display = 'block';
+    document.getElementById('output-area').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  } catch (err) {
+    showNotice('url-notice', 'error', err.message || 'Something went wrong. Please try again.');
+  } finally {
+    document.getElementById('spinner').classList.remove('show');
+    setLoading('condense-btn', false, 'Condense Essay');
+  }
+}
+
+// ── Allow Enter on URL input ─────────────────────────────────────────
+document.getElementById('url-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') condenseEssay();
+});
+
+// ── Copy output ──────────────────────────────────────────────────────
+function copyOutput() {
+  const text = document.getElementById('output-text').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = event.target;
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy Text', 2000);
+  });
+}
+
+// ── Reset tool ───────────────────────────────────────────────────────
+function resetTool() {
+  document.getElementById('url-input').value = '';
+  document.getElementById('output-area').style.display = 'none';
+  hideNotice('url-notice');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
