@@ -509,32 +509,48 @@ async function condenseEssay() {
   document.getElementById('spinner').classList.add('show');
   document.getElementById('spinner-text').textContent = 'Fetching and condensing — this takes ~15 seconds…';
 
-  try {
-    // GET call to Apps Script relay — no CORS issues (same as tracker calls)
-    const ts = encodeURIComponent(new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }));
-    const encodedUrl = encodeURIComponent(url);
-    const res = await fetch(
-      `${APPS_SCRIPT_URL}?mode=aeoncondense&pin=${encodeURIComponent(currentPIN)}&url=${encodedUrl}&timestamp=${ts}`
-    );
+  // JSONP approach — only method that bypasses CORS for Apps Script from GitHub Pages
+  const ts = encodeURIComponent(new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }));
+  const encodedUrl = encodeURIComponent(url);
+  const callbackName = 'aeonCallback_' + Date.now();
 
-    const data = await res.json();
+  const scriptTag = document.createElement('script');
+  scriptTag.src = `${APPS_SCRIPT_URL}?mode=aeoncondense&pin=${encodeURIComponent(currentPIN)}&url=${encodedUrl}&timestamp=${ts}&callback=${callbackName}`;
 
+  const cleanup = () => {
+    if (document.body.contains(scriptTag)) document.body.removeChild(scriptTag);
+    delete window[callbackName];
+    document.getElementById('spinner').classList.remove('show');
+    setLoading('condense-btn', false, 'Condense Essay');
+  };
+
+  window[callbackName] = function(data) {
+    cleanup();
     if (data.status !== 'ok' || !data.condensed) {
-      throw new Error(data.message || 'Something went wrong. Please try again.');
+      showNotice('url-notice', 'error', data.message || 'Something went wrong. Please try again.');
+      return;
     }
-
     const wc = countWords(data.condensed);
     document.getElementById('output-text').textContent = data.condensed;
     document.getElementById('word-count').textContent = wc;
     document.getElementById('output-area').style.display = 'block';
     document.getElementById('output-area').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
 
-  } catch (err) {
-    showNotice('url-notice', 'error', err.message || 'Something went wrong. Please try again.');
-  } finally {
-    document.getElementById('spinner').classList.remove('show');
-    setLoading('condense-btn', false, 'Condense Essay');
-  }
+  scriptTag.onerror = function() {
+    cleanup();
+    showNotice('url-notice', 'error', 'Could not reach the server. Please try again.');
+  };
+
+  // Timeout after 60 seconds (Claude API can be slow)
+  setTimeout(() => {
+    if (window[callbackName]) {
+      cleanup();
+      showNotice('url-notice', 'error', 'Request timed out. Please try again.');
+    }
+  }, 60000);
+
+  document.body.appendChild(scriptTag);
 }
 
 // ── Allow Enter on URL input ─────────────────────────────────────────
