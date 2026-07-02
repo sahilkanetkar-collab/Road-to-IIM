@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Road to IIM — Rapid Fire Test 04</title>
+<style>
+:root{
+  --navy:#0d1b2a;--navy2:#1a2e45;--gold:#c9a84c;--gold2:#e8c76a;
+  --green:#2ecc71;--red:#e74c3c;--grey:#8899aa;--white:#f0f4f8;
+  --purple:#8b5cf6;--purple2:#7c3aed;--panel:300px;--topbar:56px;--navbar:62px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--navy);color:var(--white);font-family:'Segoe UI',sans-serif;min-height:100vh;}
+
+/* ── LOGIN ── */
+#loginScreen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:20px;}
+.login-box{background:var(--navy2);border:1px solid var(--gold);border-radius:12px;padding:40px 32px;width:100%;max-width:420px;}
+.login-box h1{color:var(--gold);font-size:1.4rem;margin-bottom:6px;text-align:center;}
+.login-box p{color:var(--grey);font-size:.85rem;text-align:center;margin-bottom:24px;}
+.login-box label{display:block;font-size:.82rem;color:var(--grey);margin-bottom:4px;margin-top:14px;}
+.login-box input,.login-box select{width:100%;padding:10px 12px;background:#0d1b2a;border:1px solid #2a3f5a;border-radius:7px;color:var(--white);font-size:.95rem;}
+.login-box input:focus,.login-box select:focus{outline:none;border-color:var(--gold);}
+.btn-gold{width:100%;margin-top:22px;padding:12px;background:var(--gold);color:#0d1b2a;font-weight:700;font-size:1rem;border:none;border-radius:8px;cursor:pointer;transition:background .2s;}
+.btn-gold:hover{background:var(--gold2);}
+#loginError{color:var(--red);font-size:.83rem;margin-top:10px;text-align:center;display:none;}
+
+/* ── TOP BAR ── */
+#topBar{position:fixed;top:0;left:0;right:0;height:var(--topbar);background:var(--navy2);border-bottom:1px solid var(--gold);display:flex;align-items:center;justify-content:space-between;padding:0 18px;z-index:200;}
+#topBar h2{color:var(--gold);font-size:1rem;font-weight:700;}
+#topMeta{font-size:.8rem;color:var(--grey);}
+
+/* ── TIMER BAR ── */
+#timerBarWrap{position:sticky;top:var(--topbar);z-index:199;width:calc(100vw - var(--panel));height:6px;background:#16243a;overflow:hidden;}
+#timerBar{height:100%;width:100%;background:var(--green);transition:width linear;}
+#timerBar.crit{animation:pulse 1s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.5;}}
+
+/* ── LAYOUT ── */
+#testScreen{display:none;padding-top:var(--topbar);}
+#mainContent{margin-right:var(--panel);min-height:calc(100vh - var(--topbar));padding:24px 28px 100px;}
+
+/* ── QUESTION ── */
+.q-header{display:flex;align-items:center;gap:12px;margin-bottom:18px;}
+#qNum{background:var(--gold);color:#0d1b2a;font-weight:700;font-size:.85rem;padding:4px 12px;border-radius:20px;}
+#secBadge{background:var(--navy2);border:1px solid var(--gold);color:var(--gold);font-size:.78rem;padding:3px 10px;border-radius:20px;}
+#timerNum{margin-left:auto;font-size:1.1rem;font-weight:700;color:var(--green);}
+#qtext{font-size:1.05rem;line-height:1.7;margin-bottom:22px;color:var(--white);}
+.qtext,.qtext p{overflow-wrap:break-word;word-break:break-word;}
+#mainContent{max-width:calc(100vw - var(--panel));}
+
+/* ── OPTIONS ── */
+.opt{display:flex;align-items:flex-start;gap:12px;background:var(--navy2);border:1.5px solid #2a3f5a;border-radius:9px;padding:13px 16px;margin-bottom:11px;cursor:pointer;transition:border-color .15s,background .15s;}
+.opt:hover{border-color:var(--gold);}
+.opt.selected{border-color:var(--gold);background:#1f3550;}
+.opt.correct{border-color:var(--green);background:#1a3a28;}
+.opt.wrong{border-color:var(--red);background:#3a1a1a;}
+.opt-label{font-weight:700;color:var(--gold);min-width:22px;font-size:.95rem;}
+.otext{color:var(--white);font-size:.95rem;line-height:1.55;overflow-wrap:break-word;word-break:break-word;min-width:0;}
+
+/* ── BOTTOM NAV ── */
+#bottomNav{position:fixed;bottom:0;left:0;width:calc(100vw - var(--panel));height:var(--navbar);background:var(--navy2);border-top:1px solid #2a3f5a;display:flex;align-items:center;justify-content:center;gap:16px;z-index:198;}
+#btnNext{padding:10px 32px;background:var(--gold);color:#0d1b2a;font-weight:700;border:none;border-radius:8px;cursor:pointer;font-size:.95rem;}
+#btnNext:hover{background:var(--gold2);}
+#skipNote{font-size:.78rem;color:var(--grey);}
+
+/* ── RIGHT PANEL ── */
+#rightPanel{position:fixed;top:var(--topbar);right:0;width:var(--panel);height:calc(100vh - var(--topbar));background:var(--navy2);border-left:1px solid #2a3f5a;display:flex;flex-direction:column;padding:16px;overflow-y:auto;z-index:197;}
+#rightPanel h3{color:var(--gold);font-size:.85rem;margin-bottom:12px;font-weight:700;}
+#palette{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-bottom:18px;}
+.p-btn{aspect-ratio:1;border-radius:5px;border:1.5px solid #2a3f5a;background:var(--navy);color:var(--grey);font-size:.72rem;font-weight:600;display:flex;align-items:center;justify-content:center;cursor:default;}
+.p-btn.answered{background:var(--green);border-color:var(--green);color:#0d1b2a;}
+.p-btn.skipped{background:#2a3f5a;border-color:#2a3f5a;color:var(--grey);}
+.p-btn.current{border-color:var(--gold);color:var(--gold);}
+.legend{display:flex;flex-direction:column;gap:7px;margin-top:6px;}
+.leg-item{display:flex;align-items:center;gap:8px;font-size:.75rem;color:var(--grey);}
+.leg-dot{width:13px;height:13px;border-radius:3px;flex-shrink:0;}
+
+/* ── RESULTS ── */
+#resultsScreen{display:none;padding:30px 24px;max-width:780px;margin:0 auto;}
+#resultsScreen h2{color:var(--gold);font-size:1.5rem;margin-bottom:6px;}
+.score-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:20px 0;}
+.sc-box{background:var(--navy2);border:1px solid #2a3f5a;border-radius:9px;padding:14px;text-align:center;}
+.sc-box .val{font-size:1.6rem;font-weight:700;color:var(--gold);}
+.sc-box .lbl{font-size:.75rem;color:var(--grey);margin-top:4px;}
+.section-breakdown{background:var(--navy2);border:1px solid #2a3f5a;border-radius:9px;padding:16px;margin-bottom:18px;}
+.section-breakdown h3{color:var(--gold);font-size:.9rem;margin-bottom:10px;}
+.sb-row{display:flex;justify-content:space-between;font-size:.85rem;padding:5px 0;border-bottom:1px solid #1a2e45;}
+.sb-row:last-child{border-bottom:none;}
+
+/* ── ANSWER KEY ── */
+#answerKey{margin-top:24px;}
+#answerKey h3{color:var(--gold);font-size:1rem;margin-bottom:14px;}
+.ak-item{background:var(--navy2);border-radius:9px;padding:16px;margin-bottom:12px;border-left:3px solid var(--green);}
+.ak-item.wrong-ak{border-left-color:var(--red);}
+.ak-item.skip-ak{border-left-color:var(--grey);}
+.ak-q{font-size:.82rem;color:var(--grey);margin-bottom:6px;}
+.ak-qtext{font-size:.9rem;color:var(--white);margin-bottom:10px;line-height:1.5;}
+.ak-opts{margin-bottom:10px;}
+.ak-opt{font-size:.84rem;padding:4px 0;display:flex;gap-8px;}
+.ak-opt.correct-opt{color:var(--green);font-weight:600;}
+.ak-opt.wrong-opt{color:var(--red);}
+.ak-opt.neutral-opt{color:var(--grey);}
+.ak-exp{font-size:.83rem;background:#0d1b2a;border-radius:6px;padding:10px 12px;margin-top:6px;}
+.ak-exp .exp-title{color:var(--gold);font-weight:700;font-size:.78rem;margin-bottom:4px;}
+.ak-exp .correct-why{color:var(--green);margin-bottom:6px;line-height:1.5;}
+.ak-exp .wrong-why{color:var(--grey);line-height:1.5;margin-bottom:3px;}
+.ak-exp .wrong-why span{color:var(--red);font-weight:600;}
+.your-ans{font-size:.78rem;margin-bottom:4px;}
+.your-ans .ya-label{color:var(--grey);}
+.your-ans .ya-correct{color:var(--green);font-weight:600;}
+.your-ans .ya-wrong{color:var(--red);font-weight:600;}
+.your-ans .ya-skip{color:var(--grey);}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════ LOGIN ══════════════════════ -->
+<div id="loginScreen">
+  <div class="login-box">
+    <h1>Road to IIM</h1>
+    <p>Rapid Fire Test 04 · Vocabulary &amp; Grammar</p>
+    <label>Full Name</label>
+    <input type="text" id="inName" placeholder="Enter your full name"/>
+    <label>PIN</label>
+    <input type="text" id="inPin" placeholder="IMS / STU followed by 10 digits" maxlength="13"/>
+    <label>Batch</label>
+    <select id="inBatch">
+      <option value="">— Select Batch —</option>
+      <optgroup label="Classroom">
+        <option>A2701</option><option>A2702</option><option>A2703</option>
+        <option>A2704</option><option>A2705</option><option>A2706</option>
+        <option>A2707</option><option>A2708</option><option>A2709</option>
+        <option>A2710</option><option>A2711</option><option>A2712</option>
+        <option>A2713</option><option>A2714</option><option>A2715</option>
+        <option>A2716</option><option>A2717</option><option>A2718</option>
+        <option>A2719</option><option>A2720</option>
+      </optgroup>
+      <optgroup label="School">
+        <option>Zebar</option>
+      </optgroup>
+      <optgroup label="IPMAT 28">
+        <option>A2804</option><option>S2801</option><option>PN2801</option>
+      </optgroup>
+      <optgroup label="Admin">
+        <option>Admin</option>
+      </optgroup>
+    </select>
+    <button class="btn-gold" onclick="startTest()">Start Test</button>
+    <div id="loginError">Invalid PIN format. Use IMS or STU followed by exactly 10 digits.</div>
+  </div>
+</div>
+
+<!-- ══════════════════════ TEST ══════════════════════ -->
+<div id="testScreen">
+  <div id="topBar">
+    <h2>Road to IIM — Rapid Fire Test 04</h2>
+    <div id="topMeta"></div>
+  </div>
+
+  <div id="timerBarWrap"><div id="timerBar"></div></div>
+
+  <div id="mainContent">
+    <div class="q-header">
+      <span id="qNum">Q1</span>
+      <span id="secBadge">Vocabulary</span>
+      <span id="timerNum">25</span>
+    </div>
+    <div id="qtext"></div>
+    <div id="optionsContainer"></div>
+  </div>
+
+  <div id="bottomNav">
+    <span id="skipNote">No answer selected — will be skipped</span>
+    <button id="btnNext" onclick="nextQ()">Next →</button>
+  </div>
+
+  <div id="rightPanel">
+    <h3>Question Palette</h3>
+    <div id="palette"></div>
+    <div class="legend">
+      <div class="leg-item"><div class="leg-dot" style="background:var(--green)"></div>Answered</div>
+      <div class="leg-item"><div class="leg-dot" style="background:#2a3f5a"></div>Skipped / Not visited</div>
+      <div class="leg-item"><div class="leg-dot" style="border:1.5px solid var(--gold);background:var(--navy)"></div>Current</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════ RESULTS ══════════════════════ -->
+<div id="resultsScreen">
+  <h2>Test Complete</h2>
+  <p id="resName" style="color:var(--grey);font-size:.9rem;margin-bottom:4px;"></p>
+  <p id="resMeta" style="color:var(--grey);font-size:.85rem;margin-bottom:16px;"></p>
+  <div class="score-grid">
+    <div class="sc-box"><div class="val" id="rScore">—</div><div class="lbl">Score</div></div>
+    <div class="sc-box"><div class="val" id="rCorrect" style="color:var(--green)">—</div><div class="lbl">Correct</div></div>
+    <div class="sc-box"><div class="val" id="rWrong" style="color:var(--red)">—</div><div class="lbl">Wrong</div></div>
+    <div class="sc-box"><div class="val" id="rSkipped" style="color:var(--grey)">—</div><div class="lbl">Skipped</div></div>
+  </div>
+  <div class="score-grid" style="grid-template-columns:repeat(2,1fr);">
+    <div class="sc-box"><div class="val" id="rTime" style="font-size:1.2rem">—</div><div class="lbl">Time Taken</div></div>
+    <div class="sc-box"><div class="val" id="rAccuracy" style="font-size:1.2rem">—</div><div class="lbl">Accuracy</div></div>
+  </div>
+  <div class="section-breakdown">
+    <h3>Section Breakdown</h3>
+    <div id="sectionBreakdown"></div>
+  </div>
+  <div id="answerKey">
+    <h3>Detailed Answer Key</h3>
+    <div id="akContainer"></div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+//  QUESTIONS
+// ══════════════════════════════════════════════
+const QUESTIONS = [
+  {
+    sec:'Vocabulary', td:25,
+    q:'What does the word Corpulence mean?',
+    o:['Excessive pride in one\'s appearance','A condition of prolonged fatigue','The state of being excessively overweight','An unhealthy obsession with food'],
+    a:2,
+    tag:{area:'Vocabulary',sub:'Word Meaning'},
+    e:'Why C is correct: Corpulence refers specifically to the state of being very overweight or excessively fat. It is a formal or literary synonym for obesity.\nWhy A is wrong: Excessive pride in appearance describes vanity or narcissism — unrelated to body weight.\nWhy B is wrong: Prolonged fatigue describes conditions such as chronic fatigue syndrome — again, unrelated.\nWhy D is wrong: An obsession with food may describe conditions like orthorexia or hyperphagia, but not corpulence, which is about physical state, not psychological fixation.'
+  },
+  {
+    sec:'Grammar', td:35,
+    q:'Identify the segment containing a grammatical error:\n"Each of the senior economists were reaching different conclusions about the long-term viability of the proposed fiscal policy, despite having access to identical data sets."',
+    o:['Each of the senior economists were','reaching different conclusions','about the long-term viability','despite having access to identical data sets'],
+    a:0,
+    tag:{area:'Grammar',sub:'Subject-Verb Agreement'},
+    e:'Why A is correct: "Each of" always takes a singular verb regardless of the noun that follows it. "Each of the senior economists were" should be "Each of the senior economists was." The error is in segment A.\nWhy B is wrong: "Reaching different conclusions" is a grammatically sound participial phrase — no error.\nWhy C is wrong: "About the long-term viability" is a correctly formed prepositional phrase.\nWhy D is wrong: "Despite having access to identical data sets" is a correctly formed concessive phrase using the gerund — no error here.'
+  },
+  {
+    sec:'Vocabulary', td:25,
+    q:'Choose the word closest in meaning to Eschew.',
+    o:['Embrace','Shun','Evaluate','Tolerate'],
+    a:1,
+    tag:{area:'Vocabulary',sub:'Synonym'},
+    e:'Why B is correct: Eschew means to deliberately avoid or abstain from something. Shun is its closest synonym — both convey active, intentional avoidance.\nWhy A is wrong: Embrace is the direct antonym of eschew — it means to accept or adopt willingly.\nWhy C is wrong: Evaluate means to assess or judge — it has no semantic connection to avoidance.\nWhy D is wrong: Tolerate implies reluctant acceptance, which is the opposite of avoidance.'
+  },
+  {
+    sec:'Grammar', td:35,
+    q:'Choose the option that correctly fills both blanks:\n"The solicitor confirmed that the estate ______ (bequeath) entirely to the university\'s endowment fund, provided that the trustees ______ the conditions stipulated in the original deed."',
+    o:['was bequeathed / will honour','is bequeathed / honoured','has been bequeathed / would honour','be bequeathed / honour'],
+    a:3,
+    tag:{area:'Grammar',sub:'Tense Usage'},
+    e:'Why D is correct: "Confirmed that" followed by a stipulated condition requires the mandative subjunctive — the base form "be bequeathed" (not was/is/has been). "Provided that" introduces a real conditional requiring the simple present "honour" (not the future "will honour" or past forms).\nWhy A is wrong: "Was bequeathed" is simple past indicative — subjunctive requires the base form "be." "Will honour" incorrectly uses the future tense in a "provided that" clause.\nWhy B is wrong: "Is bequeathed" is present indicative — again, subjunctive requires "be." "Honoured" (past tense) breaks the conditional logic.\nWhy C is wrong: "Has been bequeathed" is present perfect indicative — not the subjunctive base form. "Would honour" would require a hypothetical conditional structure, not present conditional.'
+  },
+  {
+    sec:'Vocabulary', td:25,
+    q:'Which sentence uses accentuate correctly?',
+    o:['The minimalist décor accentuated the grand proportions of the hall, making the space feel even more imposing.','The lawyer accentuated his client from any further legal proceedings.','She accentuated the contract before forwarding it to the legal team.','The teacher accentuated three students for their disruptive behaviour.'],
+    a:0,
+    tag:{area:'Vocabulary',sub:'Contextual Usage'},
+    e:'Why A is correct: Accentuate means to make something more noticeable, prominent, or pronounced. Minimalist décor drawing attention to the hall\'s proportions is a precise and idiomatic use.\nWhy B is wrong: The sentence attempts to use accentuate as if it means "exempt" or "protect" — that is not a meaning this word carries. The correct word might be "shielded" or "protected."\nWhy C is wrong: Accentuate cannot mean "annotate" or "mark" a document. The intended action might need "highlighted" or "reviewed."\nWhy D is wrong: Accentuate cannot mean "single out" or "reprimand." The sentence needs a word like "singled out" or "called out."'
+  },
+  {
+    sec:'Grammar', td:35,
+    q:'Choose the option that corrects the sentence:\n"If the board would have approved the restructuring plan last quarter, the company would not be facing the liquidity crisis it is dealing with today."',
+    o:['No correction needed','If the board had approved → the company would not face','If the board had approved → the company would not be facing','If the board approved → the company would not be facing'],
+    a:2,
+    tag:{area:'Grammar',sub:'Conditional'},
+    e:'Why C is correct: This is a mixed conditional. The condition refers to a past unreal event (the board did not approve), requiring "had approved" in the if-clause. The result refers to the present consequence, requiring "would not be facing" (present continuous in the result clause). C makes only the necessary fix to the if-clause.\nWhy A is wrong: "Would have approved" in an if-clause is a standard grammar error in English. The if-clause of a third conditional requires the past perfect "had approved," not "would have."\nWhy B is wrong: "Would not face" (simple) is acceptable in a pure third conditional result clause, but here the present continuous "be facing" accurately reflects an ongoing present situation — C is the more precise correction.\nWhy D is wrong: "If the board approved" is simple past, which signals a second conditional (hypothetical present/future), not the past unreal condition the sentence requires.'
+  },
+  {
+    sec:'Vocabulary', td:25,
+    q:'Choose the word most opposite in meaning to Brusque.',
+    o:['Curt','Gracious','Blunt','Terse'],
+    a:1,
+    tag:{area:'Vocabulary',sub:'Antonym'},
+    e:'Why B is correct: Brusque means abruptly short and dismissive in manner — rude in its curtness. Its antonym is gracious, which means warm, courteous, and considerate in manner.\nWhy A is wrong: Curt is a near-synonym of brusque, not its antonym — both describe abrupt, terse behaviour.\nWhy C is wrong: Blunt means direct to the point of rudeness — again a near-synonym, not an antonym.\nWhy D is wrong: Terse means brief and abrupt — synonymous with brusque, not opposite to it.'
+  },
+  {
+    sec:'Grammar', td:35,
+    q:'Choose the option that correctly fills both blanks:\n"Rather than ______ (aggrandize) his own role in the negotiations, the diplomat preferred ______ credit quietly among the junior staff who had done most of the groundwork."',
+    o:['aggrandize / distributing','aggrandized / to distribute','to aggrandize / distributing','aggrandizing / to distribute'],
+    a:3,
+    tag:{area:'Grammar',sub:'Parallelism'},
+    e:'Why D is correct: "Rather than" functions as a preposition here and requires a gerund — "aggrandizing." "Preferred" takes an infinitive complement — "to distribute." D supplies both correctly.\nWhy A is wrong: "Aggrandize" (base form) after "rather than" is incorrect — "rather than" used as a preposition requires a gerund (-ing form), not a base form.\nWhy B is wrong: "Aggrandized" (past tense) after "rather than" is grammatically incorrect. Past tense cannot function as a complement to this preposition.\nWhy C is wrong: "To aggrandize" treats "rather than" as a conjunction linking two infinitives — but "preferred to + infinitive" follows, and "rather than to aggrandize / to distribute" creates a structural mismatch. The gerund "aggrandizing" is the required form after the prepositional use of "rather than."'
+  },
+  {
+    sec:'Vocabulary', td:25,
+    q:'Choose the word that best fills the blank:\n"The film critic argued that the extended action sequence was entirely ______, adding nothing to the plot and existing solely to satisfy a presumed appetite for spectacle."',
+    o:['concomitant','brusque','gratuitous','cloying'],
+    a:2,
+    tag:{area:'Vocabulary',sub:'Fill in the Blank'},
+    e:'Why C is correct: Gratuitous means uncalled for, lacking any justification or necessity. The sequence "adds nothing" and exists only for spectacle — a textbook case of gratuitousness.\nWhy A is wrong: Concomitant means naturally accompanying something else. The sequence is not described as accompanying anything — it is described as purposeless.\nWhy B is wrong: Brusque describes a manner of speaking or behaving (abrupt, curt) — it cannot describe a film sequence.\nWhy D is wrong: Cloying means excessively sweet or sentimental to the point of being overwhelming. It could apply to a sequence, but the sentence does not describe sentiment — it describes purposelessness. Gratuitous is the precise fit.'
+  },
+  {
+    sec:'Grammar', td:35,
+    q:'Identify the sentence that is grammatically correct.',
+    o:['The quality of the submissions received from all three departments has disappointed the review panel.','The quality of the submissions received from all three departments have disappointed the review panel.','The quality of the submissions received from all three departments are disappointing the review panel.','The quality of the submissions received from all three departments disappoint the review panel.'],
+    a:0,
+    tag:{area:'Grammar',sub:'Subject-Verb Agreement'},
+    e:'Why A is correct: The subject of the sentence is "The quality" — a singular noun. All prepositional phrases following it ("of the submissions received from all three departments") are modifiers and do not change the subject. Singular subject requires singular verb: "has disappointed."\nWhy B is wrong: "Have disappointed" is a plural verb — incorrect for the singular subject "The quality."\nWhy C is wrong: "Are disappointing" is plural present continuous — again incorrect for the singular subject.\nWhy D is wrong: "Disappoint" (bare plural form) is incorrect for a singular third-person subject, which requires "disappoints."'
+  },
+  {
+    sec:'Vocabulary', td:25,
+    q:'Which sentence uses cloying correctly?',
+    o:['The journalist\'s cloying investigation revealed several financial irregularities.','The relentless cheerfulness of the host became cloying after the first hour, leaving guests quietly exhausted.','His cloying argument convinced the panel to reconsider their earlier verdict.','The architect submitted a cloying design that won the regional award.'],
+    a:1,
+    tag:{area:'Vocabulary',sub:'Contextual Usage'},
+    e:'Why B is correct: Cloying means excessively sweet, pleasant, or sentimental to the point of being overwhelming or sickening. Relentless cheerfulness that wears people out is a precise contextual use — something positive that becomes oppressive through excess.\nWhy A is wrong: An "investigation" cannot be cloying. The sentence tries to use it as an adjective for thoroughness or persistence — neither of which is a meaning of cloying.\nWhy C is wrong: An "argument" being cloying is conceptually possible if it is excessively flattering, but "convinced the panel" suggests it was effective and persuasive — cloying typically implies a negative reaction, not successful persuasion.\nWhy D is wrong: A "design" winning an award cannot logically be cloying — cloying implies an excess that repels, not one that earns recognition.'
+  },
+  {
+    sec:'Grammar', td:35,
+    q:'Choose the option that correctly fills both blanks:\n"The ethics committee recommended that each researcher ______ (delineate) the boundaries of their study and that no participant ______ without documented informed consent."',
+    o:['delineates / is enrolled','delineated / was enrolled','delineate / be enrolled','has delineated / should be enrolled'],
+    a:2,
+    tag:{area:'Grammar',sub:'Tense Usage'},
+    e:'Why C is correct: "Recommended that" triggers the mandative subjunctive mood in both clauses. The subjunctive requires the base form of the verb (without -s, -ed, or auxiliaries): "delineate" (not delineates) and "be enrolled" (not is/was enrolled). Both blanks must use the bare subjunctive.\nWhy A is wrong: "Delineates" adds the third-person -s, which is the indicative form — not the subjunctive. "Is enrolled" is also indicative.\nWhy B is wrong: "Delineated" is the past tense indicative. "Was enrolled" is past passive indicative. Neither is the required subjunctive base form.\nWhy D is wrong: "Has delineated" is present perfect — not subjunctive. "Should be enrolled" is a modal construction, which some grammars accept but which is less standard than the pure bare subjunctive "be enrolled" after "recommended that."'
+  },
+  {
+    sec:'Vocabulary', td:25,
+    q:'Choose the one phrase that Camaraderie substitutes:\n"______"',
+    o:['A formal alliance between two sovereign nations','Grudging respect earned through prolonged rivalry','The hierarchy established within a professional organisation','Mutual trust, warmth, and loyalty shared among members of a close group'],
+    a:3,
+    tag:{area:'Vocabulary',sub:'One Word Substitution'},
+    e:'Why D is correct: Camaraderie specifically denotes the spirit of friendship, trust, and mutual loyalty that develops within a close-knit group, especially through shared experience. D captures all three essential elements: mutual trust, warmth, and group membership.\nWhy A is wrong: A formal alliance between nations describes a treaty or pact — a legal/political arrangement, not a personal bond.\nWhy B is wrong: Grudging respect between rivals describes a very different dynamic — it lacks warmth and is based on competition, not fellowship.\nWhy C is wrong: Hierarchy describes a structure of authority and rank — the opposite of the horizontal, peer-based bond camaraderie implies.'
+  },
+  {
+    sec:'Grammar', td:35,
+    q:'Choose the correct passive transformation of:\n"The panel will announce the results after reviewing all the submitted entries."',
+    o:['The results will be announced by the panel after all the submitted entries are reviewed.','The results will be announced by the panel after all the submitted entries have been reviewed.','The results are announced by the panel after reviewing all the submitted entries.','The results will have been announced by the panel after all the submitted entries are reviewed.'],
+    a:0,
+    tag:{area:'Grammar',sub:'Active-Passive Voice'},
+    e:'Why A is correct: Simple future active ("will announce") converts to simple future passive ("will be announced"). The adverbial clause "after reviewing" also converts to passive ("after...are reviewed") using the general passive, which is consistent with a future action not yet completed.\nWhy B is wrong: "Have been reviewed" is present perfect passive. While logically plausible (entries are reviewed before announcement), the original sentence uses "after reviewing" — a present participial phrase suggesting simultaneous or immediately prior action, better captured by the simple passive "are reviewed."\nWhy C is wrong: "Are announced" is simple present passive — the original is future tense ("will announce"). The tense conversion is incorrect.\nWhy D is wrong: "Will have been announced" is future perfect passive — this implies the announcement will be completed before some other future point, which is not what the original sentence states.'
+  },
+  {
+    sec:'Vocabulary', td:25,
+    q:'Choose the word most opposite in meaning to Concomitant.',
+    o:['Simultaneous','Unrelated','Accompanying','Incidental'],
+    a:1,
+    tag:{area:'Vocabulary',sub:'Antonym'},
+    e:'Why B is correct: Concomitant means naturally accompanying or occurring alongside something else as a direct consequence. Its antonym is unrelated — having no connection or co-occurrence with something.\nWhy A is wrong: Simultaneous means happening at the same time — this is close in meaning to concomitant, not opposite to it.\nWhy C is wrong: Accompanying is essentially a synonym of concomitant — directly opposite of what the question asks.\nWhy D is wrong: Incidental means occurring as a minor accompaniment — while not as strong as concomitant, it still implies connection rather than absence of it.'
+  },
+  {
+    sec:'Grammar', td:35,
+    q:'Choose the option that correctly fills both blanks, producing a grammatically sound sentence:\n"______ (abjure) all claims to the contested territories, the delegation\'s position was that a neutral arbitration body ______ the final boundary demarcation."',
+    o:['Abjuring / oversees','Having abjured / should have overseen','To abjure / will oversee','Having abjured / oversee'],
+    a:3,
+    tag:{area:'Grammar',sub:'Dangling Modifier'},
+    e:'Why D is correct: "Having abjured" is the perfect participle — it correctly attaches to the delegation (the subject of the main clause), indicating a prior completed action. "Oversee" is the bare subjunctive required after "position was that" — the mandative subjunctive demands the base form without inflection.\nWhy A is wrong: "Abjuring" (present participle) implies the action is happening simultaneously with the main clause — but abjuring the claims is logically prior to the delegation\'s stated position. The perfect participle "having abjured" is needed.\nWhy B is wrong: "Should have overseen" is a past modal perfect — it implies the oversight should have happened in the past but did not. The sentence describes the delegation\'s current stated position about future/ongoing arbitration, not a missed past obligation.\nWhy C is wrong: "To abjure" is an infinitive phrase as a modifier — this creates a dangling modifier because the infinitive subject is ambiguous (it does not clearly attach to "the delegation"). "Will oversee" is indicative future, not the required subjunctive.'
+  },
+  {
+    sec:'Vocabulary', td:25,
+    q:'What does Desecrate mean?',
+    o:['To violate the sanctity of something sacred or deeply revered','To restore a damaged monument to its original condition','To formally remove a religious designation from a site','To document the history of a place of worship'],
+    a:0,
+    tag:{area:'Vocabulary',sub:'Word Meaning'},
+    e:'Why A is correct: Desecrate means to treat something considered sacred or holy with violent disrespect, irreverence, or profanity — to violate its sanctity. The word carries a strong sense of deliberate defilement.\nWhy B is wrong: Restoring a damaged monument is the opposite of desecrating it — restoration preserves sanctity rather than violating it. The word for this might be "restore" or "consecrate."\nWhy C is wrong: Formally removing a religious designation describes "deconsecration" — a neutral administrative act, not an act of violent disrespect.\nWhy D is wrong: Documenting the history of a place of worship is an act of preservation and scholarship — the opposite in spirit to desecration.'
+  },
+  {
+    sec:'Grammar', td:35,
+    q:'Four sentences are given. Choose the one in which the reported speech has been correctly converted.',
+    o:['She said that she has finished the assignment the previous night.','He told me that he will call me the next morning.','They announced that the event has been postponed until further notice.','The director informed the staff that the meeting had been rescheduled to the following Thursday.'],
+    a:3,
+    tag:{area:'Grammar',sub:'Direct-Indirect Speech'},
+    e:'Why D is correct: The reporting verb "informed" is in the past tense, so backshift is required throughout. "Has been rescheduled" backshifts correctly to "had been rescheduled" (past perfect). "Thursday" becomes "the following Thursday" — correct time expression shift. D applies all rules of indirect speech accurately.\nWhy A is wrong: "She said that she has finished" — the present perfect "has finished" should backshift to past perfect "had finished" when the reporting verb is in the past tense ("said").\nWhy B is wrong: "He told me that he will call" — "will" should backshift to "would" in indirect speech when the reporting verb is past tense ("told").\nWhy C is wrong: "They announced that the event has been postponed" — "has been postponed" (present perfect) should backshift to "had been postponed" (past perfect) after the past reporting verb "announced."'
+  },
+  {
+    sec:'Vocabulary', td:25,
+    q:'Choose the word closest in meaning to Beguile.',
+    o:['Repel','Enchant','Instruct','Intimidate'],
+    a:1,
+    tag:{area:'Vocabulary',sub:'Synonym'},
+    e:'Why B is correct: Beguile means to charm or enchant someone, often with an element of gentle deception. Enchant is its closest synonym — both carry a sense of captivating attraction.\nWhy A is wrong: Repel means to drive away or cause disgust — the direct antonym of beguile.\nWhy C is wrong: Instruct means to teach or direct — it has no semantic relationship with charm or deception.\nWhy D is wrong: Intimidate means to frighten or overawe — this is forceful and negative, the opposite of beguile\'s soft, charming quality.'
+  },
+  {
+    sec:'Grammar', td:35,
+    q:'Choose the option that correctly fills both blanks:\n"The editorial board decided to ______ (eschew) ______ use of sensationalist language, recognising that credibility, once lost, is rarely recovered in the court of public opinion."',
+    o:['eschew / a','eschewing / the','eschew / the','eschewed / a'],
+    a:2,
+    tag:{area:'Grammar',sub:'Article Usage'},
+    e:'Why C is correct: "Decided to" takes an infinitive complement — the base form "eschew" (not "eschewing" or "eschewed"). The definite article "the" is required before "use" because it refers to a specific, contextually identified type of use — the sensationalist language employed by this particular publication. "The use" = that specific practice.\nWhy A is wrong: "Eschew" (infinitive) is correct, but "a use" is wrong. The indefinite article "a" implies any unspecified instance, whereas "the use" refers to the specific practice already identified in context.\nWhy B is wrong: "Eschewing" is a gerund, but "decided to" requires an infinitive (decided to + base verb), not a gerund. "The" is correctly chosen here, but the verb form invalidates the option.\nWhy D is wrong: "Eschewed" is past tense — it cannot follow "decided to," which requires an infinitive. "A use" also has the same article problem as option A.'
+  },
+  {
+    sec:'Vocabulary', td:25,
+    q:'Three of the following words share a common connotation. Identify the odd one out.',
+    o:['Beguile','Inveigle','Cajole','Fortify'],
+    a:3,
+    tag:{area:'Vocabulary',sub:'Odd One Out'},
+    e:'Why D is correct (odd one out): Fortify means to strengthen or reinforce — physically, emotionally, or structurally. It belongs to an entirely different semantic field.\nWhy A is not the odd one out: Beguile means to charm or enchant, sometimes deceptively — it belongs to the cluster of words about persuasion through attraction.\nWhy B is not the odd one out: Inveigle means to persuade someone to do something through flattery or deception — directly in the same cluster as beguile and cajole.\nWhy C is not the odd one out: Cajole means to persuade someone through repeated flattery or gentle pressure — again, part of the persuasion-through-charm cluster. The three (beguile, inveigle, cajole) all describe manipulative or charming forms of persuasion; fortify does not.'
+  },
+  {
+    sec:'Grammar', td:35,
+    q:'Identify the segment containing a grammatical error:\n"The research team, who had been working on the project for nearly a decade, was surprised to learned that their funding had been withdrawn without prior notice."',
+    o:['who had been working','was surprised to learned','for nearly a decade','had been withdrawn without prior notice'],
+    a:1,
+    tag:{area:'Grammar',sub:'Error Spotting'},
+    e:'Why B is correct: "Was surprised to learned" is the error. After "to" (the infinitive marker), only the base form of the verb is permitted. "Learned" is past tense — it should be "learn." The correct form is "was surprised to learn."\nWhy A is wrong: "Who had been working" is a correctly formed past perfect continuous relative clause. No error here.\nWhy C is wrong: "For nearly a decade" is a correctly formed time expression modifying "had been working." No error.\nWhy D is wrong: "Had been withdrawn without prior notice" is correctly formed past perfect passive. No error.'
+  },
+  {
+    sec:'Vocabulary', td:25,
+    q:'Which sentence uses delineate correctly?',
+    o:['The project manager delineated the responsibilities of each team member at the outset to avoid any overlap.','The surgeon delineated the patient\'s recovery by administering a new course of medication.','She delineated the prize among the three finalists in equal measure.','The committee delineated the offending member by a formal vote.'],
+    a:0,
+    tag:{area:'Vocabulary',sub:'Contextual Usage'},
+    e:'Why A is correct: Delineate means to describe, indicate, or portray something precisely and in detail — to draw clear lines around it, literally or figuratively. Assigning and clearly marking out team responsibilities is a precise idiomatic use.\nWhy B is wrong: A surgeon cannot "delineate" a patient\'s recovery by administering medication. Delineate means to describe or define, not to influence or cause. The correct word might be "accelerated" or "aided."\nWhy C is wrong: Delineate cannot mean "distribute" or "divide." The sentence attempts to use it as a synonym for "divided" — that is not a meaning this word carries.\nWhy D is wrong: Delineate cannot mean "expel" or "remove" a member. The sentence needs a word like "censured," "expelled," or "removed."'
+  },
+  {
+    sec:'Grammar', td:35,
+    q:'Choose the option that correctly fills both blanks:\n"Had the authorities not intervened in time, the mob ______ the historic shrine, and the incident ______ an international diplomatic crisis."',
+    o:['would desecrate / triggers','desecrated / would trigger','would have desecrated / would have triggered','had desecrated / had triggered'],
+    a:2,
+    tag:{area:'Grammar',sub:'Conditional'},
+    e:'Why C is correct: This is a third conditional (past unreal). The if-clause uses "Had + subject + past participle" (inverted conditional), so both result clauses require "would have + past participle": "would have desecrated" and "would have triggered." Both blanks must follow the same third-conditional pattern.\nWhy A is wrong: "Would desecrate" is the second conditional result form (simple present result) — it does not match the third conditional "Had...not intervened" structure.\nWhy B is wrong: "Desecrated" (simple past) and "would trigger" (second conditional) both break the third conditional pattern required by the inverted "Had...not intervened" structure.\nWhy D is wrong: "Had desecrated / had triggered" are past perfect forms used in the if-clause of a third conditional, not in the result clause. The result clause requires "would have + past participle," not past perfect.'
+  },
+  {
+    sec:'Vocabulary', td:25,
+    q:'Choose the word that best fills the blank:\n"Rapid industrialisation brought with it a ______ rise in urban migration, as workers flocked to cities in search of factory employment."',
+    o:['gratuitous','concomitant','brusque','cloying'],
+    a:1,
+    tag:{area:'Vocabulary',sub:'Fill in the Blank'},
+    e:'Why B is correct: Concomitant means naturally accompanying or occurring as a direct result of something else. A concomitant rise in urban migration is one that happens alongside and as a direct consequence of industrialisation — precisely the relationship the sentence describes.\nWhy A is wrong: Gratuitous means uncalled for or unjustified — implying the rise was unnecessary or unwarranted. The sentence presents it as a natural, expected consequence, not an unjustified one.\nWhy C is wrong: Brusque describes manner (abrupt, curt) — it is an adjective of behaviour, not of phenomena or trends. It cannot modify "rise."\nWhy D is wrong: Cloying means excessively sweet or sentimental. It cannot describe a rise in migration — there is no emotional or sentimental dimension to this noun phrase.'
+  },
+  {
+    sec:'Grammar', td:35,
+    q:'Choose the option that corrects the sentence:\n"The new policy requires all employees to clock in on time, maintaining a clean workstation, and to report any safety violations immediately."',
+    o:['No correction needed','to clock in on time, to maintain a clean workstation, and reporting','to clock in on time, to maintain a clean workstation, and to report','clocking in on time, maintaining a clean workstation, and to report'],
+    a:2,
+    tag:{area:'Grammar',sub:'Parallelism'},
+    e:'Why C is correct: The sentence lists three obligations that all follow "requires all employees ___." For grammatical parallelism, all three items must use the same form. Since the first ("to clock") and third ("to report") use infinitives, the second must also be an infinitive: "to maintain." C makes all three parallel infinitives.\nWhy A is wrong: The original sentence is not correct — "maintaining" (gerund) breaks the parallelism with "to clock" and "to report" (infinitives).\nWhy B is wrong: "To clock," "to maintain" are infinitives, but "reporting" is a gerund — parallelism is still broken at the third item.\nWhy D is wrong: "Clocking" and "maintaining" are gerunds but "to report" is an infinitive — the parallelism error is simply shifted to a different position rather than corrected.'
+  },
+  {
+    sec:'Vocabulary', td:25,
+    q:'Choose the option that correctly fills both blanks:\n"The Victorian novelist\'s prose ______ to contemporary readers a portrait of a society where ______ was often coded as moral failure rather than medical condition."',
+    o:['bequeaths / corpulence','bequeathed / brusqueness','is bequeathing / camaraderie','will bequeath / concomitance'],
+    a:0,
+    tag:{area:'Vocabulary',sub:'Double Blank'},
+    e:'Why A is correct: "Bequeaths" (simple present) is correct for a timeless, habitual literary truth — novels perpetually transmit meaning to each generation of readers. "Corpulence" fits perfectly: Victorian moral discourse did explicitly link excessive weight to laziness and lack of self-discipline, and this is a well-documented historical fact.\nWhy B is wrong: "Bequeathed" (simple past) would imply the prose no longer transmits meaning to readers — inappropriate for a timeless claim about literature. "Brusqueness" (abruptness of manner) has no meaningful connection to Victorian moral coding of the body.\nWhy C is wrong: "Is bequeathing" (present continuous) implies a temporary, ongoing action rather than a timeless truth — unidiomatic for this context. "Camaraderie" (group fellowship) has no connection to Victorian attitudes toward body weight.\nWhy D is wrong: "Will bequeath" (future) is incorrect — the novel already does this continuously. "Concomitance" is not a standard English noun in common usage, and even if it were, it would not fit the moral-coding context.'
+  },
+  {
+    sec:'Grammar', td:35,
+    q:'Choose the grammatically correct sentence.',
+    o:['Neither the principal nor the teachers was present at the emergency meeting called by the board.','Neither the principal nor the teachers were present at the emergency meeting called by the board.','Neither the principal nor the teachers are having been present at the emergency meeting.','Neither the principal nor the teachers has been present at the emergency meeting called by the board.'],
+    a:1,
+    tag:{area:'Grammar',sub:'Subject-Verb Agreement'},
+    e:'Why B is correct: In "neither...nor" constructions, the verb agrees with the noun closest to it (the proximity rule). "The teachers" is the noun closest to the verb and is plural, so the verb must be plural: "were." B correctly uses "were present."\nWhy A is wrong: "Was present" is singular — but the noun closest to the verb is "the teachers" (plural), so the singular verb is incorrect.\nWhy C is wrong: "Are having been present" is not a grammatical verb form in English. It combines continuous and perfect aspects in an impossible construction.\nWhy D is wrong: "Has been present" is singular present perfect — incorrect both in number (plural "teachers" is the proximate noun) and in tense (the sentence refers to a specific past event, not an ongoing state).'
+  },
+  {
+    sec:'Vocabulary', td:25,
+    q:'Choose the word most opposite in meaning to Aggrandize.',
+    o:['Glorify','Elevate','Embellish','Diminish'],
+    a:3,
+    tag:{area:'Vocabulary',sub:'Antonym'},
+    e:'Why D is correct: Aggrandize means to increase the power, status, wealth, or reputation of someone — often excessively or misleadingly. Its antonym is diminish — to make lesser, reduce in importance or stature.\nWhy A is wrong: Glorify means to present something in a highly favourable light — this is a near-synonym of aggrandize, not its antonym.\nWhy B is wrong: Elevate means to raise in status or importance — again, synonymous with aggrandize, not opposite.\nWhy C is wrong: Embellish means to add decoration or exaggerate — it shares the sense of enhancement that aggrandize carries, making it a partial synonym rather than an antonym.'
+  },
+  {
+    sec:'Grammar', td:35,
+    q:'Choose the option that correctly fills both blanks:\n"The stark contrast between the two architectural styles ______ (accentuate) by the absence of any transitional structure, and this contrast ______ widely in subsequent critiques of the urban planning project."',
+    o:['was accentuated / was noted','is accentuated / noted','accentuated / has been noted','had been accentuated / is noted'],
+    a:0,
+    tag:{area:'Grammar',sub:'Active-Passive Voice'},
+    e:'Why A is correct: Both clauses describe a completed past situation. The first requires passive voice (the contrast was made more prominent by an external factor) in simple past: "was accentuated." The second also describes a completed past action: "was noted" (simple past passive). A maintains consistent simple past passive throughout.\nWhy B is wrong: "Is accentuated" (present passive) breaks the past tense established by the sentence\'s context. "Noted" (active simple past) is also inconsistent — the subject "this contrast" is not doing the noting; it is being noted.\nWhy C is wrong: "Accentuated" (active simple past) is incorrect — the contrast was not the agent; it was the recipient of accentuation. The passive is required. "Has been noted" (present perfect passive) is also inconsistent with the simple past context.\nWhy D is wrong: "Had been accentuated" (past perfect passive) implies this happened before another past event — but no such earlier event is referenced in the sentence. Simple past is sufficient. "Is noted" (present passive) breaks the past tense context.'
+  },
+  {
+    sec:'Vocabulary', td:25,
+    q:'Which sentence uses camaraderie correctly?',
+    o:['The general signed a camaraderie with the neighbouring state to ensure mutual defence.','The two rivals developed a camaraderie that made further negotiation impossible.','Years of shared hardship on the expedition had forged a deep camaraderie among the team members.','The inspector filed a camaraderie report following the workplace incident.'],
+    a:2,
+    tag:{area:'Vocabulary',sub:'Contextual Usage'},
+    e:'Why C is correct: Camaraderie means the mutual trust, friendship, and loyalty that develops within a close group, especially through shared experience. "Years of shared hardship" forging camaraderie is the most authentic and idiomatic use — adversity is a classic catalyst for camaraderie.\nWhy A is wrong: Camaraderie is a noun describing a quality of relationship — it cannot be "signed" like a treaty or agreement. The word needed here is "pact," "accord," or "alliance."\nWhy B is wrong: Camaraderie that "made further negotiation impossible" implies the bond was a problem — but camaraderie is characterised by warmth and fellowship, not by obstruction. The sentence also contradicts the typical use: rivals rarely develop camaraderie that hinders resolution.\nWhy D is wrong: Camaraderie is not a type of report, document, or filing. It is a quality of interpersonal relationship and cannot modify "report" in this way.'
+  },
+  {
+    sec:'Grammar', td:35,
+    q:'Choose the option that correctly fills the blank:\n"By the time the investigative report ______, the company had already initiated damage-control measures and briefed its legal team."',
+    o:['will be published','was published','has been published','is published'],
+    a:1,
+    tag:{area:'Grammar',sub:'Tense Usage'},
+    e:'Why B is correct: The main clause uses past perfect ("had already initiated"), establishing that we are in a past narrative. "By the time" introduces a time clause — in a past narrative context, this time clause requires the simple past ("was published"), not the present or future.\nWhy A is wrong: "Will be published" is future passive — you cannot use a future tense in a time clause that describes a past sequence of events. This would only work if the main clause were also future.\nWhy C is wrong: "Has been published" is present perfect — it cannot be used in a past narrative time clause. Present perfect typically indicates a connection to the present, not a completed past event in a sequence.\nWhy D is wrong: "Is published" is simple present — also incompatible with a past narrative. While "by the time + present" is used for future sequences, here the main clause is past perfect, requiring the time clause to be simple past.'
+  },
+  {
+    sec:'Vocabulary', td:25,
+    q:'Which of the following best captures the meaning of Beguile?',
+    o:['To frighten someone into compliance through threats','To instruct someone patiently over a long period','To openly deceive someone through false documentation','To charm or enchant someone, sometimes with an element of deception'],
+    a:3,
+    tag:{area:'Vocabulary',sub:'Word Meaning'},
+    e:'Why D is correct: Beguile carries a dual meaning — to charm or captivate (often through attractiveness or pleasantness) and to subtly mislead through that charm. D captures both dimensions: the enchantment and the possibility of deception embedded within it.\nWhy A is wrong: Frightening someone into compliance describes coercion or intimidation — this is forceful and negative, the opposite of beguile\'s soft, attractive quality.\nWhy B is wrong: Patiently instructing someone describes mentoring or tutoring — no element of charm, attraction, or deception is involved.\nWhy C is wrong: Openly deceiving through false documentation describes fraud or forgery. Beguile involves subtle, charming deception — not open, deliberate falsification. The word "openly" is also antithetical to beguile\'s nuanced, indirect quality.'
+  },
+  {
+    sec:'Grammar', td:35,
+    q:'Choose the option that correctly fills both blanks:\n"What had initially ______ as an endearing quirk gradually ______ into something cloying — a relentless need for reassurance that wore on everyone around him."',
+    o:['begun / transform','began / transformed','begun / transformed','beginning / was transforming'],
+    a:2,
+    tag:{area:'Grammar',sub:'Tense Usage'},
+    e:'Why C is correct: "Had initially begun" is past perfect — requiring the past participle "begun" (not "began," which is simple past). "Gradually transformed" is simple past — consistent with the narrative past tense used to describe the progression. The combination "had begun / transformed" correctly sequences the initial state (past perfect) followed by the gradual change (simple past).\nWhy A is wrong: "Begun" is correct for the past perfect, but "transform" is the base form — it cannot stand alone as a finite verb in a simple past clause. It needs to be "transformed."\nWhy B is wrong: "Began" is simple past — but the sentence uses "had initially," which signals past perfect and requires the past participle "begun." "Transformed" is correct for the second blank, but the first blank invalidates this option.\nWhy D is wrong: "Beginning" is a present participle — it cannot be the complement of "had initially" (which requires a past participle). "Was transforming" (past continuous) is also less precise than simple past "transformed" for describing a gradual completed change.'
+  },
+  {
+    sec:'Vocabulary', td:25,
+    q:'Choose the word closest in meaning to Corpulence.',
+    o:['Obesity','Lethargy','Indulgence','Sluggishness'],
+    a:0,
+    tag:{area:'Vocabulary',sub:'Synonym'},
+    e:'Why A is correct: Corpulence means the state of being excessively overweight or fat. Obesity is the direct medical and semantic equivalent — both refer to the same physical condition, with corpulence being the more formal or literary term.\nWhy B is wrong: Lethargy means a lack of energy or enthusiasm — it describes a mental or physical state of sluggishness, not body weight or size.\nWhy C is wrong: Indulgence means the act of allowing oneself excessive pleasure or gratification — it describes behaviour, not a physical state. It might be associated with causes of corpulence but is not synonymous.\nWhy D is wrong: Sluggishness means slowness or lack of alertness — like lethargy, it describes energy levels or speed, not body composition or weight.'
+  },
+  {
+    sec:'Grammar', td:35,
+    q:'Identify the segment containing a grammatical error:\n"The symposium\'s findings, which were presented by a panel of internationally recognised scholars, has sparked considerable debate among policymakers."',
+    o:['findings, which were','internationally recognised scholars','among policymakers','has sparked'],
+    a:3,
+    tag:{area:'Grammar',sub:'Error Spotting'},
+    e:'Why D is correct: The subject of the sentence is "findings" — a plural noun. "Has sparked" is singular and therefore incorrect. It should be "have sparked." The relative clause "which were presented..." is a parenthetical and does not change the subject.\nWhy A is wrong: "Findings, which were" — "findings" is the correct plural subject and "which were presented" is a correctly formed relative clause in the past passive. No error here.\nWhy B is wrong: "Internationally recognised scholars" is a correctly formed noun phrase — adjective modification is standard. No error.\nWhy C is wrong: "Among policymakers" is a correctly formed prepositional phrase. No error.'
+  },
+  {
+    sec:'Vocabulary', td:25,
+    q:'Choose the one phrase that Gratuitous best substitutes:\n"______"',
+    o:['Done with great care and considerable expense','Done without good reason, uncalled for, and often excessive','Done reluctantly under significant external pressure','Done in secret to avoid public scrutiny'],
+    a:1,
+    tag:{area:'Vocabulary',sub:'One Word Substitution'},
+    e:'Why B is correct: Gratuitous means done without any good reason or justification — uncalled for, unnecessary, and often excessive in its pointlessness. B captures all three dimensions: lack of reason, being uncalled for, and excessiveness.\nWhy A is wrong: Done with great care and expense describes something deliberate and costly — the opposite of gratuitous, which implies something unnecessary and unjustified.\nWhy C is wrong: Done reluctantly under pressure describes coerced action — gratuitous actions are not coerced; they are voluntary and unjustified.\nWhy D is wrong: Done in secret to avoid scrutiny describes clandestine behaviour — secrecy is not a defining feature of gratuitous actions, which are often committed openly.'
+  },
+  {
+    sec:'Grammar', td:35,
+    q:'Choose the option that corrects the sentence:\n"Walking briskly through the corridor, the ancient portraits seemed to watch the new curator with unsettling intensity."',
+    o:['No correction needed','Walking briskly through the corridor, the curator was watched by the ancient portraits with unsettling intensity.','Walking briskly through the corridor, the new curator felt the ancient portraits watching her with unsettling intensity.','As the ancient portraits watched, the new curator was walking briskly through the corridor with unsettling intensity.'],
+    a:2,
+    tag:{area:'Grammar',sub:'Dangling Modifier'},
+    e:'Why C is correct: The participial phrase "Walking briskly through the corridor" must attach to the subject of the main clause — it describes whoever is doing the walking. C makes "the new curator" the subject, correctly anchoring the modifier.\nWhy A is wrong: The original sentence is incorrect. "Walking briskly" dangles — portraits cannot walk, so the modifier is attached to the wrong subject. This is a classic dangling modifier error.\nWhy B is wrong: In B, "the curator was watched" makes the curator the grammatical subject, so "Walking briskly" would still attach to the curator — which is correct for the modifier. However, this passive construction is awkward and implies the portraits were actively doing the watching (which is a stretch), whereas C is the more natural and idiomatic correction.\nWhy D is wrong: D shifts "unsettling intensity" to modify the walking rather than the watching, which distorts the sentence\'s meaning. The intensity belongs to the portraits\' gaze, not the curator\'s stride.'
+  },
+  {
+    sec:'Vocabulary', td:25,
+    q:'Which sentence uses abjure correctly?',
+    o:['Under international pressure, the faction formally abjured its claim to the disputed region, paving the way for a ceasefire.','The scientist abjured three new compounds in the laboratory, each with potential therapeutic value.','The architect abjured a striking glass facade onto the heritage building.','She abjured the committee\'s findings and submitted a supporting affidavit.'],
+    a:0,
+    tag:{area:'Vocabulary',sub:'Contextual Usage'},
+    e:'Why A is correct: Abjure means to formally and solemnly renounce, reject, or give up a claim, belief, or allegiance. Renouncing a territorial claim under international pressure is a precise and idiomatic use.\nWhy B is wrong: A scientist cannot "abjure" compounds — abjure applies to claims, beliefs, or allegiances, not to physical substances or discoveries. The sentence needs "synthesised" or "isolated."\nWhy C is wrong: Abjure cannot mean "add" or "attach." The sentence needs a word like "added" or "incorporated." Abjure means to renounce, not to apply or affix.\nWhy D is wrong: "Abjured the committee\'s findings and submitted a supporting affidavit" is contradictory — if she abjured (renounced) the findings, she would not support them. More likely the intended word is "endorsed" or "supported." This option relies on a confusion between abjure and a different word.'
+  },
+  {
+    sec:'Grammar', td:35,
+    q:'Choose the grammatically correct sentence.',
+    o:['The jury have reached a verdict after three days of deliberation, and they are ready to announce it.','The jury has reached a verdict after three days of deliberation, and they is ready to announce it.','The jury have reached a verdict after three days of deliberation, and it are ready to announce it.','The jury has reached a verdict after three days of deliberation, and it is ready to announce it.'],
+    a:3,
+    tag:{area:'Grammar',sub:'Subject-Verb Agreement'},
+    e:'Why D is correct: In formal written English, collective nouns like "jury" are treated as a single unit and take singular verbs and singular pronouns. "Has reached" (singular verb) and "it is ready" (singular pronoun + singular verb) are both consistent and correct.\nWhy A is wrong: "Have reached" (plural verb) and "they are" (plural pronoun) treat "jury" as a collection of individuals rather than a unified body — acceptable in informal British English but not in standard formal written English for exam purposes. Consistency alone does not make it correct by the standard tested.\nWhy B is wrong: "Has reached" (singular) is correct, but "they is" is grammatically impossible — "they" requires "are," not "is." This is an internal contradiction.\nWhy C is wrong: "Have reached" (plural) is inconsistent with treating jury as a unit, and "it are" is grammatically impossible — "it" requires "is," not "are." Two errors in one sentence.'
+  },
+  {
+    sec:'Vocabulary', td:25,
+    q:'Choose the word that best fills the blank:\n"The protesters were condemned by religious leaders across the country after they ______ the centuries-old shrine by scrawling political slogans across its walls."',
+    o:['bequeathed','desecrated','delineated','accentuated'],
+    a:1,
+    tag:{area:'Vocabulary',sub:'Fill in the Blank'},
+    e:'Why B is correct: Desecrate means to violate the sanctity of something sacred with irreverence or destructive disrespect. Defacing a centuries-old shrine with graffiti is a textbook act of desecration.\nWhy A is wrong: Bequeath means to leave something to someone through a will or legacy. Protesters scrawling slogans are not leaving an inheritance — the word is semantically impossible here.\nWhy C is wrong: Delineate means to describe or mark out precisely. Scrawling slogans is not a precise act of delineation — it is defacement, not demarcation.\nWhy D is wrong: Accentuate means to make something more prominent or noticeable. While the slogans do make the shrine more visible, the sentence\'s tone (condemned by religious leaders) demands a word of violation, not of emphasis. Accentuate is far too neutral for this context.'
+  },
+  {
+    sec:'Grammar', td:35,
+    q:'Choose the option that correctly fills the blank:\n"The committee members argued for hours but ______ to a consensus only after the chairperson proposed a compromise that satisfied all parties."',
+    o:['come','had come','came','have come'],
+    a:2,
+    tag:{area:'Grammar',sub:'Tense Usage'},
+    e:'Why C is correct: The sentence narrates a completed sequence of past events: "argued" (simple past) → "came" (simple past). Both verbs describe actions that are finished and sequential — simple past throughout is correct and consistent.\nWhy A is wrong: "Come" is the base form (or present form) of the verb — it cannot function as a finite verb in simple past narration. It would only work as a bare infinitive or present tense form.\nWhy B is wrong: "Had come" is past perfect — this would imply the committee reached consensus before some other past event referenced in the sentence. No such earlier anchor event exists; the consensus was the final event in the sequence, not a prior one.\nWhy D is wrong: "Have come" is present perfect — it signals a connection to the present moment. The sentence describes a completed past episode with no relevance to the present, making simple past "came" the appropriate choice.'
+  },
+  {
+    sec:'Vocabulary', td:25,
+    q:'Choose the word most opposite in meaning to Beguile.',
+    o:['Charm','Captivate','Enchant','Repel'],
+    a:3,
+    tag:{area:'Vocabulary',sub:'Antonym'},
+    e:'Why D is correct: Beguile means to charm or attract, sometimes through gentle deception. Its antonym is repel — to drive away, cause disgust, or create aversion. Where beguile draws people in, repel pushes them away.\nWhy A is wrong: Charm is a near-synonym of beguile — both describe the act of attracting through pleasantness or attractiveness. Not an antonym.\nWhy B is wrong: Captivate means to attract and hold someone\'s attention completely — again synonymous with beguile, not opposite.\nWhy C is wrong: Enchant means to delight or charm — directly synonymous with the core meaning of beguile. Not an antonym.'
+  },
+  {
+    sec:'Grammar', td:35,
+    q:'Identify the segment containing a grammatical error:\n"Neither of the two proposals submitted by the external consultants were found to be feasible given the budgetary constraints imposed by the finance ministry."',
+    o:['Neither of the two proposals were found','submitted by the external consultants','to be feasible','given the budgetary constraints'],
+    a:0,
+    tag:{area:'Grammar',sub:'Subject-Verb Agreement'},
+    e:'Why A is correct: "Neither of" always takes a singular verb — the subject is "neither" (singular), not "the two proposals" (which is a prepositional phrase modifier). "Were found" is plural and therefore incorrect; it should be "was found." The error is in segment A.\nWhy B is wrong: "Submitted by the external consultants" is a correctly formed past participial phrase modifying "proposals." No grammatical error.\nWhy C is wrong: "To be feasible" is a correctly formed infinitive complement after "found." No error.\nWhy D is wrong: "Given the budgetary constraints" is a correctly formed participial phrase indicating cause or condition. No error.'
+  },
+  {
+    sec:'Vocabulary', td:25,
+    q:'Which sentence uses corpulence correctly?',
+    o:['The professor\'s corpulence in analysing the data impressed the entire research panel.','The ancient statue\'s corpulence symbolised the kingdom\'s military dominance over its rivals.','Victorian moralists frequently linked corpulence to laziness and a lack of self-discipline, regardless of the individual\'s circumstances.','The athlete trained rigorously to achieve a state of corpulence before the national championships.'],
+    a:2,
+    tag:{area:'Vocabulary',sub:'Contextual Usage'},
+    e:'Why C is correct: Corpulence means the state of being excessively overweight or fat. Victorian moral discourse did explicitly and historically link corpulence to laziness and moral weakness — C uses the word accurately in a historically and contextually sound sentence.\nWhy A is wrong: Corpulence cannot describe a quality of intellectual work or analytical thoroughness. The sentence attempts to use it as if it means "depth" or "comprehensiveness" — neither of which is a meaning it carries.\nWhy B is wrong: While a large statue might be described as corpulent in a descriptive sense, "symbolised military dominance" is not a standard cultural or historical association of corpulence. The sentence strains the word\'s meaning beyond its typical register.\nWhy D is wrong: Athletes do not train toward corpulence — they train toward fitness, strength, or endurance. This option exploits a surface misreading of the word as something desirable for sport. Corpulence is excessive fatness, which would hinder athletic performance.'
+  }
+];
+
+// ══════════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════════
+let studentName='', studentPin='', studentBatch='';
+let currentQ=0;
+let userAnswers=new Array(45).fill(null);
+let questionTimes=new Array(45).fill(0);
+let timerInterval=null, barInterval=null;
+let secondsLeft=0;
+let locked=false;
+const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbx5Ojm_zp4LfsMeelx5e06KNjVH1wfsXdV0keS4407m4FO1HU4EpVb7GKj-ibAsxnspeA/exec';
+
+// ══════════════════════════════════════════════
+//  LOGIN
+// ══════════════════════════════════════════════
+function startTest(){
+  const name=document.getElementById('inName').value.trim();
+  const pin=document.getElementById('inPin').value.trim().toUpperCase();
+  const batch=document.getElementById('inBatch').value;
+  const err=document.getElementById('loginError');
+  if(!name||!pin||!batch){err.textContent='Please fill in all fields.';err.style.display='block';return;}
+  if(!/^(STU|IMS)\d{10}$/.test(pin)){err.style.display='block';return;}
+  err.style.display='none';
+  studentName=name; studentPin=pin; studentBatch=batch;
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('testScreen').style.display='block';
+  document.getElementById('topMeta').textContent=name+' · '+batch;
+  buildPalette();
+  renderQuestion();
+}
+
+// ══════════════════════════════════════════════
+//  PALETTE
+// ══════════════════════════════════════════════
+function buildPalette(){
+  const p=document.getElementById('palette');
+  p.innerHTML='';
+  QUESTIONS.forEach((_,i)=>{
+    const b=document.createElement('div');
+    b.className='p-btn';
+    b.id='pb'+i;
+    b.textContent=i+1;
+    p.appendChild(b);
+  });
+}
+function updatePalette(){
+  QUESTIONS.forEach((_,i)=>{
+    const b=document.getElementById('pb'+i);
+    b.className='p-btn';
+    if(i===currentQ) b.classList.add('current');
+    else if(userAnswers[i]!==null) b.classList.add('answered');
+    else if(i<currentQ) b.classList.add('skipped');
+  });
+}
+
+// ══════════════════════════════════════════════
+//  RENDER QUESTION
+// ══════════════════════════════════════════════
+function renderQuestion(){
+  locked=false;
+  const Q=QUESTIONS[currentQ];
+  document.getElementById('qNum').textContent='Q'+(currentQ+1);
+  document.getElementById('secBadge').textContent=Q.sec;
+  document.getElementById('qtext').innerHTML=Q.q.replace(/\n/g,'<br>');
+
+  const oc=document.getElementById('optionsContainer');
+  oc.innerHTML='';
+  ['A','B','C','D'].forEach((lbl,i)=>{
+    const d=document.createElement('div');
+    d.className='opt';
+    d.id='opt'+i;
+    d.innerHTML=`<span class="opt-label">${lbl}</span><span class="otext">${Q.o[i]}</span>`;
+    d.onclick=()=>selectOpt(i);
+    oc.appendChild(d);
+  });
+
+  document.getElementById('skipNote').style.display='inline';
+  updatePalette();
+  startTimer(Q.td);
+}
+
+// ══════════════════════════════════════════════
+//  TIMER
+// ══════════════════════════════════════════════
+function startTimer(duration){
+  clearInterval(timerInterval);
+  secondsLeft=duration;
+  const numEl=document.getElementById('timerNum');
+  const bar=document.getElementById('timerBar');
+
+  // reset bar
+  bar.style.transition='none';
+  bar.style.width='100%';
+  bar.classList.remove('crit');
+  void bar.offsetWidth; // force reflow
+  bar.style.transition=`width ${duration}s linear`;
+  bar.style.width='0%';
+
+  paintTimer(duration,duration);
+
+  timerInterval=setInterval(()=>{
+    secondsLeft--;
+    questionTimes[currentQ]=(duration-secondsLeft);
+    paintTimer(secondsLeft,duration);
+    if(secondsLeft<=0){
+      clearInterval(timerInterval);
+      autoAdvance();
+    }
+  },1000);
+}
+
+function paintTimer(left,total){
+  const numEl=document.getElementById('timerNum');
+  const bar=document.getElementById('timerBar');
+  const pct=left/total;
+  numEl.textContent=left;
+  if(pct>0.5){numEl.style.color='var(--green)';bar.style.background='var(--green)';bar.classList.remove('crit');}
+  else if(pct>0.25){numEl.style.color='orange';bar.style.background='orange';bar.classList.remove('crit');}
+  else{numEl.style.color='var(--red)';bar.style.background='var(--red)';bar.classList.add('crit');}
+}
+
+function autoAdvance(){
+  locked=true;
+  questionTimes[currentQ]=QUESTIONS[currentQ].td;
+  if(currentQ===44){submitTest();return;}
+  currentQ++;
+  renderQuestion();
+}
+
+// ══════════════════════════════════════════════
+//  SELECT OPTION
+// ══════════════════════════════════════════════
+function selectOpt(i){
+  if(locked)return;
+  userAnswers[currentQ]=i;
+  document.querySelectorAll('.opt').forEach((o,idx)=>{
+    o.classList.toggle('selected',idx===i);
+  });
+  document.getElementById('skipNote').style.display='none';
+}
+
+// ══════════════════════════════════════════════
+//  NEXT
+// ══════════════════════════════════════════════
+function nextQ(){
+  clearInterval(timerInterval);
+  questionTimes[currentQ]=QUESTIONS[currentQ].td-secondsLeft;
+  if(currentQ===44){submitTest();return;}
+  currentQ++;
+  renderQuestion();
+}
+
+// ══════════════════════════════════════════════
+//  SUBMIT
+// ══════════════════════════════════════════════
+function submitTest(){
+  clearInterval(timerInterval);
+  document.getElementById('testScreen').style.display='none';
+  document.getElementById('resultsScreen').style.display='block';
+
+  let correct=0,wrong=0,skipped=0;
+  const sectionErrors={Vocabulary:0,Grammar:0};
+  const wrongQs=[];
+  const topicErr={};
+
+  QUESTIONS.forEach((Q,i)=>{
+    if(userAnswers[i]===null){skipped++;}
+    else if(userAnswers[i]===Q.a){correct++;}
+    else{
+      wrong++;
+      wrongQs.push(i);
+      sectionErrors[Q.sec]=(sectionErrors[Q.sec]||0)+1;
+      const sub=Q.tag.sub;
+      topicErr[sub]=(topicErr[sub]||0)+1;
+    }
+  });
+
+  const score=correct*4-wrong;
+  const totalTime=questionTimes.reduce((a,b)=>a+b,0);
+  const mm=String(Math.floor(totalTime/60)).padStart(2,'0');
+  const ss=String(totalTime%60).padStart(2,'0');
+  const timeTaken=mm+':'+ss;
+  const accuracy=correct+wrong>0?Math.round(correct/(correct+wrong)*100):0;
+
+  document.getElementById('resName').textContent=studentName+' · '+studentPin;
+  document.getElementById('resMeta').textContent='Rapid Fire Test 04 · '+studentBatch+' · '+new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'});
+  document.getElementById('rScore').textContent=score;
+  document.getElementById('rCorrect').textContent=correct;
+  document.getElementById('rWrong').textContent=wrong;
+  document.getElementById('rSkipped').textContent=skipped;
+  document.getElementById('rTime').textContent=timeTaken;
+  document.getElementById('rAccuracy').textContent=accuracy+'%';
+
+  const sb=document.getElementById('sectionBreakdown');
+  ['Vocabulary','Grammar'].forEach(sec=>{
+    const qs=QUESTIONS.filter(q=>q.sec===sec);
+    const secCorrect=qs.filter((_,i)=>userAnswers[QUESTIONS.indexOf(qs[i])]===qs[i].a).length;
+    const secWrong=sectionErrors[sec]||0;
+    const secSkipped=qs.length-secCorrect-secWrong;
+    sb.innerHTML+=`<div class="sb-row"><span>${sec}</span><span style="color:var(--green)">${secCorrect}C</span><span style="color:var(--red)">${secWrong}W</span><span style="color:var(--grey)">${secSkipped}S</span></div>`;
+  });
+
+  buildAnswerKey();
+
+  const payload={
+    testName:'Rapid Fire Test 04',
+    name:studentName,
+    pin:studentPin,
+    batch:studentBatch,
+    score:score,
+    correct:correct,
+    wrong:wrong,
+    skipped:skipped,
+    maxMarks:180,
+    timeTaken:timeTaken,
+    timestamp:new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'}),
+    sectionErrors:JSON.stringify(sectionErrors),
+    wrongQuestions:JSON.stringify(wrongQs),
+    studentAnswers:JSON.stringify(userAnswers.map(a=>a===null?null:a)),
+    questionTimes:JSON.stringify(questionTimes),
+    topicErrors:JSON.stringify(topicErr)
+  };
+
+  fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)});
+}
+
+// ══════════════════════════════════════════════
+//  ANSWER KEY
+// ══════════════════════════════════════════════
+function buildAnswerKey(){
+  const c=document.getElementById('akContainer');
+  c.innerHTML='';
+  const labels=['A','B','C','D'];
+  QUESTIONS.forEach((Q,i)=>{
+    const ua=userAnswers[i];
+    const isCorrect=ua===Q.a;
+    const isSkip=ua===null;
+    const div=document.createElement('div');
+    div.className='ak-item'+(isCorrect?'':isSkip?' skip-ak':' wrong-ak');
+
+    const expLines=Q.e.split('\n');
+    const correctLine=expLines[0]||'';
+    const wrongLines=expLines.slice(1);
+
+    let optsHtml='<div class="ak-opts">';
+    Q.o.forEach((opt,oi)=>{
+      let cls='neutral-opt';
+      let prefix=labels[oi]+'. ';
+      if(oi===Q.a){cls='correct-opt';prefix='✓ '+labels[oi]+'. ';}
+      else if(oi===ua&&ua!==Q.a){cls='wrong-opt';prefix='✗ '+labels[oi]+'. ';}
+      optsHtml+=`<div class="ak-opt ${cls}">${prefix}${opt}</div>`;
+    });
+    optsHtml+='</div>';
+
+    let yaHtml='<div class="your-ans"><span class="ya-label">Your answer: </span>';
+    if(isSkip) yaHtml+='<span class="ya-skip">Skipped</span>';
+    else if(isCorrect) yaHtml+=`<span class="ya-correct">${labels[ua]} — Correct ✓</span>`;
+    else yaHtml+=`<span class="ya-wrong">${labels[ua]} — Wrong ✗</span>`;
+    yaHtml+='</div>';
+
+    let wrongHtml=wrongLines.map(l=>`<div class="wrong-why">${l.replace(/^Why ([A-D]) is (wrong|not the odd one out):(.*)$/,(m,letter,status,rest)=>`<span>Why ${letter} is ${status}:</span>${rest}`)}</div>`).join('');
+
+    div.innerHTML=`
+      <div class="ak-q">Q${i+1} · ${Q.sec} · ${Q.tag.sub}</div>
+      <div class="ak-qtext">${Q.q.replace(/\n/g,'<br>')}</div>
+      ${optsHtml}
+      ${yaHtml}
+      <div class="ak-exp">
+        <div class="exp-title">EXPLANATION</div>
+        <div class="correct-why">${correctLine}</div>
+        ${wrongHtml}
+      </div>`;
+    c.appendChild(div);
+  });
+}
+</script>
+</body>
+</html>
