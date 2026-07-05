@@ -122,11 +122,14 @@ body{background:var(--navy);color:var(--white);font-family:'Segoe UI',sans-serif
       <option>A2704</option><option>A2705</option><option>A2706</option>
       <option>A2707</option><option>A2708</option><option>A2709</option>
       <option>A2710</option><option>A2711</option><option>A2712</option>
+      <option>A2714</option><option>A2715</option><option>A2716</option>
+      <option>A2717</option><option>A2718</option><option>A2719</option>
+      <option>A2720</option>
     </optgroup>
     <optgroup label="School"><option>Zebar</option></optgroup>
-    <optgroup label="Online">
-      <option>27E101</option><option>27E102</option><option>27E103</option>
-      <option>27E104</option><option>27E105</option>
+    <optgroup label="IPMAT 28">
+      <option>S2801</option><option>PN2801</option><option>A2804</option>
+      <option>Z2801</option>
     </optgroup>
     <optgroup label="Admin"><option>Admin</option></optgroup>
   </select>
@@ -179,7 +182,7 @@ body{background:var(--navy);color:var(--white);font-family:'Segoe UI',sans-serif
     <div id="sheet-notice"></div>
     <div class="stats-grid" id="statsGrid"></div>
     <div style="text-align:center;margin-bottom:24px;">
-      <button class="result-btn gold" onclick="location.href='road_to_iim_tracker_v2.html'">Go to Tracker</button>
+      <button class="result-btn gold" onclick="location.href='road_to_iim_tracker_v3.html'">Go to Tracker</button>
       <button class="result-btn ghost" onclick="location.href='https://sahilkanetkar-collab.github.io/Road-to-IIM/'">All Tests</button>
       <button class="result-btn ghost" onclick="generatePDF()">Download PDF</button>
     </div>
@@ -196,7 +199,7 @@ body{background:var(--navy);color:var(--white);font-family:'Segoe UI',sans-serif
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script>
-const APPS_SCRIPT_URL="https://script.google.com/macros/s/AKfycbwGGxswx4hcBUFiT0QJIglowhKcJCv47MOR5LKBv9sILl-evsgZeKCms5y6s5zEXOUo6Q/exec";
+const APPS_SCRIPT_URL="https://script.google.com/macros/s/AKfycbx5Ojm_zp4LfsMeelx5e06KNjVH1wfsXdV0keS4407m4FO1HU4EpVb7GKj-ibAsxnspeA/exec";
 const TIMER_DURATION=30;
 const ADMIN_PINS=['IMS1111111111','IMS2222222222','IMS3333333333','IMS4444444444','IMS5555555555'];
 
@@ -252,6 +255,12 @@ let studentName="",studentPin="",studentBatch="";
 let currentQ=0,secondsLeft=TIMER_DURATION*60,timerInterval=null;
 let userAnswers=new Array(45).fill(null);
 let markedForReview=new Array(45).fill(false);
+let questionTimes=new Array(45).fill(0);
+let lastQ=null,qEnterTs=null;
+function logQTime(){
+  if(lastQ!==null&&qEnterTs!==null){questionTimes[lastQ]+=Math.round((Date.now()-qEnterTs)/1000);}
+  qEnterTs=Date.now();
+}
 let testSubmitted=false;
 
 function startTest(){
@@ -285,6 +294,7 @@ function startTimer(){
 }
 
 function renderQuestion(){
+  if(lastQ!==currentQ){logQTime();lastQ=currentQ;}
   const q=QUESTIONS[currentQ];
   document.getElementById('sectionTag').textContent=q.section;
   document.getElementById('questionNumber').textContent='Question '+(currentQ+1)+' of 45';
@@ -358,6 +368,7 @@ function confirmSubmit(){
 function submitTest(){
   if(testSubmitted)return;
   testSubmitted=true;clearInterval(timerInterval);
+  logQTime();
   let correct=0,wrong=0,skipped=0;
   const sectionErrors={};const wrongQuestions=[];
   QUESTIONS.forEach((q,i)=>{
@@ -471,8 +482,8 @@ function logToSheet(score,correct,wrong,skipped,sectionErrors,wrongQuestions){
   const s=TIMER_DURATION*60-secondsLeft;
   const mm=String(Math.floor(s/60)).padStart(2,'0');
   const ss2=String(s%60).padStart(2,'0');
-  const payload={testName:'Road to IIM Test 19',name:studentName,pin:studentPin,batch:studentBatch,score:score,correct:correct,wrong:wrong,skipped:skipped,maxMarks:180,timeTaken:mm+':'+ss2,timestamp:new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'}),sectionErrors:JSON.stringify(sectionErrors),wrongQuestions:JSON.stringify(wrongQuestions),studentAnswers:JSON.stringify(userAnswers.map(a=>a===null?null:a))};
-  fetch('https://script.google.com/macros/s/AKfycbwGGxswx4hcBUFiT0QJIglowhKcJCv47MOR5LKBv9sILl-evsgZeKCms5y6s5zEXOUo6Q/exec',{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)})
+  const payload={testName:'Road to IIM Test 19',name:studentName,pin:studentPin,batch:studentBatch,score:score,correct:correct,wrong:wrong,skipped:skipped,maxMarks:180,timeTaken:mm+':'+ss2,timestamp:new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'}),sectionErrors:JSON.stringify(sectionErrors),wrongQuestions:JSON.stringify(wrongQuestions),studentAnswers:JSON.stringify(userAnswers.map(a=>a===null?null:a)),questionTimes:JSON.stringify(questionTimes)};
+  fetch('https://script.google.com/macros/s/AKfycbx5Ojm_zp4LfsMeelx5e06KNjVH1wfsXdV0keS4407m4FO1HU4EpVb7GKj-ibAsxnspeA/exec',{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)})
     .then(()=>{notice.className='success';notice.textContent='Results saved successfully.';})
     .catch(()=>{notice.className='failure';notice.textContent='Could not reach server. Results saved locally.';});
 }
