@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Road to IIM — Rapid Fire Test 05</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --navy:#0d1b2a;--navy2:#1a2e45;--gold:#c9a84c;--gold2:#e8c76a;
+  --green:#2ecc71;--red:#e74c3c;--grey:#8899aa;--white:#f0f4f8;
+  --panel:300px;--topbar:56px;--navbar:62px;
+}
+body{background:var(--navy);color:var(--white);font-family:'Segoe UI',sans-serif;min-height:100vh;}
+
+/* ── TOP BAR ── */
+#topBar{position:fixed;top:0;left:0;width:100%;height:var(--topbar);background:var(--navy2);
+  border-bottom:2px solid var(--gold);display:flex;align-items:center;justify-content:space-between;
+  padding:0 20px;z-index:300;}
+#topBar h1{font-size:1.1rem;color:var(--gold);font-weight:700;}
+#topBarMeta{font-size:0.82rem;color:var(--grey);}
+
+/* ── TIMER BAR ── */
+#timerBarWrap{position:sticky;top:var(--topbar);z-index:199;
+  width:calc(100vw - var(--panel));height:6px;background:#16243a;overflow:hidden;}
+#timerBar{height:100%;width:100%;background:var(--green);transition:none;}
+#timerBar.crit{animation:pulse 1s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.5;}}
+
+/* ── MAIN LAYOUT ── */
+#testScreen{display:flex;padding-top:var(--topbar);}
+#mainContent{flex:1;padding:24px 28px;max-width:calc(100vw - var(--panel));overflow-x:hidden;}
+#rightPanel{width:var(--panel);position:fixed;right:0;top:var(--topbar);
+  height:calc(100vh - var(--topbar));background:var(--navy2);border-left:1px solid #2a3f5a;
+  overflow-y:auto;padding:16px;}
+
+/* ── QUESTION ── */
+#qHeader{display:flex;align-items:center;gap:12px;margin-bottom:6px;}
+#qNum{background:var(--gold);color:var(--navy);font-weight:700;font-size:0.85rem;
+  padding:3px 10px;border-radius:4px;}
+#qSec{font-size:0.78rem;color:var(--grey);background:#16243a;padding:3px 9px;border-radius:4px;}
+#timerDisplay{font-size:0.85rem;color:var(--grey);margin-left:auto;}
+#timerNum{font-weight:700;color:var(--green);}
+
+.qtext{font-size:1.05rem;line-height:1.65;color:var(--white);margin-bottom:22px;
+  overflow-wrap:break-word;word-break:break-word;white-space:pre-line;}
+.qtext p{overflow-wrap:break-word;word-break:break-word;}
+
+.opt{display:flex;align-items:flex-start;gap:12px;padding:13px 16px;margin-bottom:10px;
+  border:1.5px solid #2a3f5a;border-radius:8px;cursor:pointer;
+  transition:border-color .15s,background .15s;background:#111e2e;}
+.opt:hover{border-color:var(--gold);background:#1e3350;}
+.opt.selected{border-color:var(--gold);background:#1e3350;}
+.opt.correct{border-color:var(--green);background:#0d2b1a;}
+.opt.wrong{border-color:var(--red);background:#2b0d0d;}
+.opt.reveal{border-color:var(--green);background:#0d2b1a;}
+.optLabel{font-weight:700;color:var(--gold);min-width:22px;font-size:0.95rem;}
+.otext{font-size:0.97rem;line-height:1.55;overflow-wrap:break-word;word-break:break-word;min-width:0;}
+
+/* ── EXPLANATION ── */
+#explanation{display:none;margin-top:18px;padding:16px;background:#111e2e;
+  border-left:3px solid var(--gold);border-radius:6px;font-size:0.9rem;
+  line-height:1.6;color:#cdd8e8;}
+
+/* ── NAV BUTTON ── */
+#navRow{margin-top:24px;display:flex;gap:12px;}
+#btnNext{background:var(--gold);color:var(--navy);font-weight:700;font-size:1rem;
+  border:none;padding:12px 32px;border-radius:8px;cursor:pointer;}
+#btnNext:hover{background:var(--gold2);}
+
+/* ── TIMER NUMBER COLORS ── */
+.t-green{color:var(--green);}
+.t-orange{color:#f39c12;}
+.t-red{color:var(--red);}
+
+/* ── RIGHT PANEL ── */
+#rpTitle{font-size:0.8rem;color:var(--grey);text-transform:uppercase;
+  letter-spacing:.08em;margin-bottom:12px;}
+#palette{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;}
+.pq{width:100%;aspect-ratio:1;border-radius:5px;background:#16243a;
+  border:1.5px solid #2a3f5a;display:flex;align-items:center;justify-content:center;
+  font-size:0.78rem;font-weight:700;color:var(--grey);cursor:default;}
+.pq.current{border-color:var(--gold);color:var(--gold);}
+.pq.answered{background:#1e3a20;border-color:var(--green);color:var(--green);}
+.pq.skipped{background:#2b1a1a;border-color:#6b3030;color:#c07070;}
+#rpScore{margin-top:18px;padding:12px;background:#16243a;border-radius:8px;}
+#rpScore p{font-size:0.82rem;color:var(--grey);margin-bottom:4px;}
+#rpScore span{font-weight:700;color:var(--white);}
+#rpVG{margin-top:10px;}
+.vgRow{display:flex;justify-content:space-between;font-size:0.8rem;
+  padding:4px 0;border-bottom:1px solid #2a3f5a;}
+.vgRow:last-child{border-bottom:none;}
+.vgLabel{color:var(--grey);}
+.vgVal{color:var(--white);font-weight:600;}
+
+/* ── LOGIN SCREEN ── */
+#loginScreen{display:flex;align-items:center;justify-content:center;
+  min-height:100vh;padding:20px;}
+.loginBox{background:var(--navy2);border:1px solid var(--gold);border-radius:12px;
+  padding:36px 32px;width:100%;max-width:420px;}
+.loginBox h2{color:var(--gold);font-size:1.3rem;margin-bottom:6px;}
+.loginBox p{color:var(--grey);font-size:0.88rem;margin-bottom:24px;}
+.fGroup{margin-bottom:16px;}
+.fGroup label{display:block;font-size:0.82rem;color:var(--grey);margin-bottom:6px;}
+.fGroup input,.fGroup select{width:100%;background:#111e2e;border:1.5px solid #2a3f5a;
+  color:var(--white);padding:10px 12px;border-radius:7px;font-size:0.95rem;}
+.fGroup input:focus,.fGroup select:focus{outline:none;border-color:var(--gold);}
+.fGroup select option{background:var(--navy2);}
+#btnStart{width:100%;background:var(--gold);color:var(--navy);font-weight:700;
+  font-size:1rem;border:none;padding:13px;border-radius:8px;cursor:pointer;margin-top:8px;}
+#btnStart:hover{background:var(--gold2);}
+#loginError{color:var(--red);font-size:0.85rem;margin-top:10px;display:none;}
+
+/* ── RESULTS SCREEN ── */
+#resultsScreen{display:none;padding:80px 20px 40px;max-width:860px;margin:0 auto;}
+#resultsScreen h2{color:var(--gold);font-size:1.6rem;margin-bottom:6px;}
+#resMeta{color:var(--grey);font-size:0.88rem;margin-bottom:24px;}
+.scoreCard{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:14px;margin-bottom:28px;}
+.sCard{background:var(--navy2);border:1px solid #2a3f5a;border-radius:10px;padding:16px;text-align:center;}
+.sCard .sVal{font-size:1.6rem;font-weight:700;color:var(--gold);}
+.sCard .sLbl{font-size:0.78rem;color:var(--grey);margin-top:4px;}
+.sCard.hi .sVal{color:var(--green);}
+.sCard.lo .sVal{color:var(--red);}
+#resActions{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:32px;}
+.resBtn{padding:10px 22px;border-radius:7px;font-weight:700;font-size:0.9rem;
+  cursor:pointer;border:none;}
+#btnRetake{background:var(--gold);color:var(--navy);}
+#btnRetake:hover{background:var(--gold2);}
+#btnPDF{background:#16243a;color:var(--white);border:1px solid #2a3f5a;}
+#btnPDF:hover{border-color:var(--gold);}
+#reviewList{display:flex;flex-direction:column;gap:14px;}
+.rItem{background:var(--navy2);border:1px solid #2a3f5a;border-radius:10px;padding:18px;}
+.rItem.rCorrect{border-color:var(--green);}
+.rItem.rWrong{border-color:var(--red);}
+.rItem.rSkipped{border-color:#6b3030;}
+.rQnum{font-size:0.78rem;color:var(--grey);margin-bottom:6px;}
+.rQtext{font-size:0.95rem;margin-bottom:12px;overflow-wrap:break-word;word-break:break-word;white-space:pre-line;}
+.rOpts{display:flex;flex-direction:column;gap:6px;margin-bottom:10px;}
+.rOpt{padding:8px 12px;border-radius:6px;font-size:0.88rem;border:1px solid #2a3f5a;
+  overflow-wrap:break-word;word-break:break-word;}
+.rOpt.rCorrectOpt{border-color:var(--green);background:#0d2b1a;}
+.rOpt.rWrongOpt{border-color:var(--red);background:#2b0d0d;}
+.rExp{font-size:0.85rem;color:#cdd8e8;line-height:1.6;border-top:1px solid #2a3f5a;
+  padding-top:10px;margin-top:6px;}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ LOGIN ═══════════════ -->
+<div id="loginScreen">
+  <div class="loginBox">
+    <h2>Rapid Fire Test 05</h2>
+    <p>Vocab &amp; Grammar · 45 Questions · +4 / −1</p>
+    <div class="fGroup">
+      <label>Full Name</label>
+      <input type="text" id="inName" placeholder="Enter your name" autocomplete="off">
+    </div>
+    <div class="fGroup">
+      <label>PIN</label>
+      <input type="text" id="inPin" placeholder="IMS / STU + 10 digits" autocomplete="off">
+    </div>
+    <div class="fGroup">
+      <label>Batch</label>
+      <select id="inBatch">
+        <option value="">— Select Batch —</option>
+        <optgroup label="Classroom">
+          <option>A2701</option><option>A2702</option><option>A2703</option><option>A2704</option>
+          <option>A2705</option><option>A2706</option><option>A2707</option><option>A2708</option>
+          <option>A2709</option><option>A2710</option><option>A2711</option><option>A2712</option>
+          <option>A2713</option><option>A2714</option><option>A2715</option><option>A2716</option>
+          <option>A2717</option><option>A2718</option><option>A2719</option><option>A2720</option>
+        </optgroup>
+        <optgroup label="School">
+          <option>Zebar</option>
+        </optgroup>
+        <optgroup label="IPMAT 28">
+          <option>A2804</option><option>S2801</option><option>PN2801</option>
+        </optgroup>
+        <optgroup label="Admin">
+          <option>Admin</option>
+        </optgroup>
+      </select>
+    </div>
+    <button id="btnStart">Start Test</button>
+    <div id="loginError"></div>
+  </div>
+</div>
+
+<!-- ═══════════════ TEST SCREEN ═══════════════ -->
+<div id="testScreen" style="display:none;">
+  <div id="topBar">
+    <h1>Rapid Fire Test 05</h1>
+    <div id="topBarMeta">Vocab &amp; Grammar · 45 Qs · +4 / −1</div>
+  </div>
+
+  <div id="timerBarWrap"><div id="timerBar"></div></div>
+
+  <div style="display:flex;">
+    <div id="mainContent">
+      <div id="qHeader">
+        <span id="qNum">Q1</span>
+        <span id="qSec">Vocabulary</span>
+        <span id="timerDisplay">Time: <span id="timerNum">25</span>s</span>
+      </div>
+      <div class="qtext" id="qText"></div>
+      <div id="opts"></div>
+      <div id="explanation"></div>
+      <div id="navRow"><button id="btnNext">Next →</button></div>
+    </div>
+    <div id="rightPanel">
+      <div id="rpTitle">Question Palette</div>
+      <div id="palette"></div>
+      <div id="rpScore">
+        <p>Live Score</p>
+        <span id="rpScoreVal">0</span>
+        <div id="rpVG">
+          <div class="vgRow"><span class="vgLabel">Correct</span><span class="vgVal" id="rpCorrect">0</span></div>
+          <div class="vgRow"><span class="vgLabel">Wrong</span><span class="vgVal" id="rpWrong">0</span></div>
+          <div class="vgRow"><span class="vgLabel">Skipped</span><span class="vgVal" id="rpSkipped">0</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ RESULTS SCREEN ═══════════════ -->
+<div id="resultsScreen">
+  <h2>Test Complete!</h2>
+  <div id="resMeta"></div>
+  <div class="scoreCard" id="scoreCard"></div>
+  <div id="resActions">
+    <button class="resBtn" id="btnRetake">Retake Test</button>
+    <button class="resBtn" id="btnPDF">Download PDF</button>
+  </div>
+  <div id="reviewList"></div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════════
+//  RF05 QUESTIONS ARRAY
+// ══════════════════════════════════════════════════════════
+var QUESTIONS = [
+{sec:"Vocabulary",td:25,tag:{area:"Vocabulary",sub:"Contextual Usage"},
+ q:"The finance minister presented the new subsidy scheme as a panacea for rural distress, but critics pointed out that it addressed only the immediate cash shortfall, leaving the structural causes of agrarian debt entirely intact.\n\n'Panacea' most likely means the scheme was expected to be:",
+ o:["A measure designed to reduce political opposition","A universal remedy intended to solve all aspects of a problem","A targeted intervention focused on a specific symptom","A compromise reached under pressure from farming lobbies"],
+ a:1,
+ e:"Panacea = a solution for all problems or difficulties. The sentence's criticism ('leaving structural causes intact') only lands if the scheme was presented as fixing everything — making 'universal remedy' (B) the precise match. (A) is a political motive, not what panacea means. (C) is the opposite — panacea implies breadth, not targeting. (D) introduces a political compromise, which the word does not carry."},
+
+{sec:"Grammar",td:35,tag:{area:"Grammar",sub:"Subject-Verb Agreement"},
+ q:"Neither the findings presented in the preliminary audit report nor the manager responsible for overseeing the review _____ able to account for the discrepancies flagged by the external committee.",
+ o:["was","were","have been","had been"],
+ a:0,
+ e:"In a neither...nor construction, the verb agrees with the subject immediately preceding it. The subject closest to the blank is 'the manager' (singular), so 'was' (A) is correct. (B) 'were' would be correct if the closer subject were plural — it isn't. (C) 'have been' is plural and shifts tense unnecessarily. (D) 'had been' introduces a past perfect not supported by the rest of the sentence."},
+
+{sec:"Vocabulary",td:25,tag:{area:"Vocabulary",sub:"Contextual Usage"},
+ q:"After three months of unrelenting conflict between the two departments, the new director managed to establish a modicum of cooperation — enough, at least, for joint projects to proceed without open hostility.\n\n'Modicum' here is best understood as:",
+ o:["An impressive and self-sustaining level","A deceptive or superficial appearance","A small but real and functional degree","A reluctant and temporary accommodation"],
+ a:2,
+ e:"Modicum = a small quantity of something. 'A small but real and functional degree' (C) captures both the smallness and the sufficiency implied in the sentence. (A) overstates it — modicum is explicitly not impressive in quantity. (B) introduces deception, which is not in the word's meaning. (D) adds reluctance and temporariness, neither of which modicum conveys."},
+
+{sec:"Grammar",td:35,tag:{area:"Grammar",sub:"Modifiers"},
+ q:"Exhausted after the overnight flight, the hotel room felt like a welcome refuge to the delegates.\n\nWhich revision best corrects the modifier error in the original sentence?",
+ o:["The hotel room, exhausted after the overnight flight, felt like a welcome refuge.","After exhausting themselves on the overnight flight, the delegates found refuge in the hotel room.","Exhausted after the overnight flight, refuge was found in the hotel room by the delegates.","Exhausted after the overnight flight, the delegates found the hotel room a welcome refuge."],
+ a:3,
+ e:"The original dangles: 'Exhausted after the overnight flight' must modify the subject doing the action — the delegates, not the hotel room. (D) correctly places 'the delegates' immediately after the participial phrase, preserving the participial structure of the original — making it the best correction. (A) still dangles — the hotel room is not exhausted. (B) is grammatically valid but restructures the sentence into a different clause type entirely, moving further from the original. (C) uses passive voice and retains a dangler — 'refuge' was not exhausted."},
+
+{sec:"Vocabulary",td:25,tag:{area:"Vocabulary",sub:"Contextual Usage"},
+ q:"He cast a furtive glance toward the envelope on the table, hoping no one in the room had noticed his sudden interest in it.\n\n'Furtive' here suggests the glance was:",
+ o:["Admiring and prolonged","Quick and secretive, intended to avoid detection","Confused and unfocused","Cold and deliberately intimidating"],
+ a:1,
+ e:"Furtive = attempting to avoid notice, done in a sly or cautious way. 'Quick and secretive, intended to avoid detection' (B) captures the meaning precisely. (A) describes an admiring gaze — the opposite in character. (C) suggests confusion, which has no connection to the word. (D) implies intimidation — furtive behaviour is about concealment, not aggression."},
+
+{sec:"Grammar",td:35,tag:{area:"Grammar",sub:"Pronouns"},
+ q:"The board and the committee both reviewed the merger proposal, but only _____ voted to approve it at the final session.",
+ o:["they","it","the committee","its members"],
+ a:2,
+ e:"The sentence refers to one of two bodies (the board and the committee) and needs a specific noun to avoid ambiguity. 'The committee' (C) correctly identifies which body voted. (A) 'they' is ambiguous — it could refer to either the board or the committee, or both. (B) 'it' is similarly ambiguous between the two bodies named in the sentence. (D) 'its members' uses a possessive pronoun without a clear singular antecedent — 'its' could refer to either body."},
+
+{sec:"Vocabulary",td:25,tag:{area:"Vocabulary",sub:"Contextual Usage"},
+ q:"By the third toast of the evening, his speech had grown maudlin — full of self-pitying anecdotes about opportunities missed and friendships squandered, delivered through increasingly watery eyes.\n\n'Maudlin' means:",
+ o:["Excessively sentimental and tearfully self-indulgent","Harshly critical and unsparing in its judgements","Witty but edged with bitterness","Confused and rambling without emotional charge"],
+ a:0,
+ e:"Maudlin = self-pityingly or tearfully sentimental, often associated with drunkenness. 'Excessively sentimental and tearfully self-indulgent' (A) matches both the meaning and the context clues ('watery eyes', 'self-pitying'). (B) describes criticism, not sentiment. (C) introduces wit and bitterness — maudlin implies soft sentimentality, not sharpness. (D) 'confused and rambling' misses the emotional core of the word."},
+
+{sec:"Grammar",td:35,tag:{area:"Grammar",sub:"Subject-Verb Agreement"},
+ q:"The board of directors, along with the three external advisors appointed last quarter, _____ yet to sign off on the restructuring plan.",
+ o:["are","were","have been","is"],
+ a:3,
+ e:"The subject is 'the board of directors' — singular. Phrases introduced by 'along with', 'as well as', or 'together with' are parenthetical and do not change the number of the subject. 'Is' (D) correctly agrees with the singular 'board.' (A) 'are' and (B) 'were' treat the compound as plural — incorrect. (C) 'have been' is plural and changes the aspect of the verb."},
+
+{sec:"Vocabulary",td:25,tag:{area:"Vocabulary",sub:"Contextual Usage"},
+ q:"The soap bubble drifted upward, its surface iridescent in the afternoon light — shifting from violet to gold to green as it turned slowly in the breeze.\n\n'Iridescent' describes a surface that is:",
+ o:["Perfectly transparent and colourless","Showing shifting, rainbow-like colours depending on the angle of light","Intensely bright and blinding to look at","Delicately patterned with fine geometric lines"],
+ a:1,
+ e:"Iridescent = showing luminous colours that seem to change when seen from different angles, like a soap bubble or a butterfly wing. (B) is the precise definition, confirmed by 'shifting from violet to gold to green.' (A) 'transparent' is the opposite — iridescent implies vivid colour. (C) 'blinding' overstates it; iridescence is about shifting hue, not intensity. (D) 'geometric patterns' describes a visual texture, not the colour-shifting property."},
+
+{sec:"Grammar",td:35,tag:{area:"Grammar",sub:"Modifiers"},
+ q:"Which sentence uses a modifier correctly?\n\nI. Turning the corner sharply, the old temple came into view.\nII. Turning the corner sharply, we suddenly saw the old temple.",
+ o:["II only","I only","Both I and II","Neither I nor II"],
+ a:0,
+ e:"In sentence II, 'Turning the corner sharply' correctly modifies 'we' — the subject that actually turned the corner. (A) is correct. In sentence I, the participial phrase dangles — 'the old temple' did not turn the corner. (B) is therefore wrong. (C) cannot be correct since I is flawed. (D) is wrong since II is grammatically sound."},
+
+{sec:"Vocabulary",td:25,tag:{area:"Vocabulary",sub:"Word Meaning"},
+ q:"Which of the following is closest in meaning to 'panacea'?",
+ o:["A palliative that eases suffering without treating the underlying cause","A cure-all that is supposed to remedy all problems at once","A prophylactic that prevents a problem from arising in the first place","A placebo that produces improvement through belief rather than treatment"],
+ a:1,
+ e:"Panacea = a supposed remedy for all problems or difficulties. (B) is the correct definition. (A) describes a palliative — it reduces suffering but does not cure; panacea implies total resolution. (C) describes a prophylactic — it prevents, not cures; panacea is about solving all problems, not preventing them. (D) describes a placebo — improvement through belief, not actual remedy."},
+
+{sec:"Grammar",td:35,tag:{area:"Grammar",sub:"Pronouns"},
+ q:"Each of the senior researchers submitted _____ findings to the journal before the deadline.",
+ o:["their","his or her","its","they're"],
+ a:1,
+ e:"'Each' is a singular indefinite pronoun, so it requires a singular pronoun reference. In formal written English, 'his or her' (B) is the standard singular gender-neutral form. (A) 'their' is common in informal usage but is technically non-standard with 'each' in formal grammar. (C) 'its' is used for non-human entities — inappropriate for researchers. (D) 'they're' is a contraction of 'they are', not a possessive pronoun at all."},
+
+{sec:"Vocabulary",td:25,tag:{area:"Vocabulary",sub:"Contextual Usage"},
+ q:"Years of receiving harsh feedback in editorial meetings had inured her to criticism; she could now sit through the most pointed reviews without betraying the slightest discomfort.\n\n'Inured' here means:",
+ o:["Made her more sensitive and defensive","Left her permanently resentful","Trained her to respond with sharp, well-prepared counterarguments","Made her numb or accustomed to something unpleasant through prolonged exposure"],
+ a:3,
+ e:"Inure = to accustom or harden through prolonged exposure, usually to something unpleasant. (D) is the precise meaning, confirmed by 'without betraying the slightest discomfort.' (A) is the opposite; inure implies reduced sensitivity, not increased. (B) 'permanently resentful' adds an emotional response the word does not carry. (C) 'sharp counterarguments' implies a combative skill — inure is about emotional habituation, not acquired technique."},
+
+{sec:"Grammar",td:35,tag:{area:"Grammar",sub:"Subject-Verb Agreement"},
+ q:"The number of unresolved complaints filed against the contractor _____ risen sharply over the past two quarters.",
+ o:["has","have","had","were"],
+ a:0,
+ e:"'The number of' takes a singular verb — the subject is 'the number', not 'complaints.' 'Has risen' (A) is correct. (B) 'have' treats 'complaints' as the subject — a classic trap. Compare: 'A number of complaints have been filed' (where 'a number of' = several, taking plural) vs 'the number... has' (where 'the number' is a singular noun). (C) 'had' changes the tense without justification. (D) 'were' is plural and also wrong in tense."},
+
+{sec:"Vocabulary",td:25,tag:{area:"Vocabulary",sub:"Word Meaning"},
+ q:"A 'modicum' of something differs from an 'iota' of something in that a modicum:",
+ o:["Is always used in a negative or critical context","Refers to an amount so small it is functionally worthless","Implies a small but real and usable quantity, not a negligible trace","Suggests the amount is temporary and likely to diminish"],
+ a:2,
+ e:"Modicum = a small but real and functional amount — enough to count. (C) captures this: a modicum is minimal but usable, unlike 'iota' which implies something negligibly small or barely worth mentioning. (A) is wrong — modicum is neutral in register. (B) describes 'iota' or 'jot', not modicum. (D) introduces temporariness, which modicum does not imply."},
+
+{sec:"Grammar",td:35,tag:{area:"Grammar",sub:"Modifiers"},
+ q:"The investigative journalist _____ wrote the exposé on the pharmaceutical cartel received death threats within hours of publication.",
+ o:["which","who","whom","whose"],
+ a:1,
+ e:"The relative clause modifies 'the investigative journalist' — a person. For a person acting as the subject of the relative clause ('wrote the exposé'), 'who' (B) is correct. (A) 'which' is used for things, not people. (C) 'whom' is the object form — incorrect here since the journalist is performing the action (subject role). (D) 'whose' indicates possession — the sentence does not call for a possessive relative pronoun."},
+
+{sec:"Vocabulary",td:25,tag:{area:"Vocabulary",sub:"Contextual Usage"},
+ q:"Standing at the edge of the canyon at dawn, she felt something ineffable — a sensation too vast and layered to reduce to words, let alone explain to anyone who hadn't stood in the same place.\n\n'Ineffable' here means:",
+ o:["Deeply personal and likely to be misunderstood","Intensely physical and difficult to endure","Familiar yet oddly difficult to place","Too great or extreme to be expressed in words"],
+ a:3,
+ e:"Ineffable = too great, extreme, or beautiful to be expressed in words. (D) is the definition, directly supported by 'too vast and layered to reduce to words.' (A) describes something private and prone to misinterpretation — close in feel but not the word's meaning. (B) introduces physical endurance — ineffable is about inexpressibility, not physicality. (C) 'familiar yet hard to place' describes a déjà vu sensation, unrelated."},
+
+{sec:"Grammar",td:35,tag:{area:"Grammar",sub:"Subject-Verb Agreement"},
+ q:"Every delegate, every observer, and every member of the press _____ required to show accreditation at the checkpoint.",
+ o:["was","were","are","have been"],
+ a:0,
+ e:"When multiple singular subjects are connected by 'every... every... and every...', the verb is singular — each 'every' establishes individuality rather than plurality. 'Was' (A) is correct. (B) 'were' incorrectly pluralises the subject. (C) 'are' shifts to present tense without justification. (D) 'have been' is both plural and changes the tense."},
+
+{sec:"Vocabulary",td:25,tag:{area:"Vocabulary",sub:"Word Meaning"},
+ q:"Which word is most nearly OPPOSITE in meaning to 'furtive'?",
+ o:["Cautious","Stealthy","Brazen","Restless"],
+ a:2,
+ e:"Furtive = attempting to avoid notice; secretive and sly. Its antonym is brazen (C) — openly bold, without any attempt at concealment. (A) 'cautious' is related in feel but not opposite — a cautious person is careful, not necessarily concealing anything. (B) 'stealthy' is a near-synonym of furtive, not its opposite. (D) 'restless' describes agitation — unrelated to the concealment meaning of furtive."},
+
+{sec:"Grammar",td:35,tag:{area:"Grammar",sub:"Pronouns"},
+ q:"The professor told the students that _____ notes would be made available on the portal after the lecture.",
+ o:["his","their","its","they"],
+ a:1,
+ e:"'The students' is a plural noun, so the possessive pronoun referring to them must be plural. 'Their' (B) is correct. (A) 'his' is singular and implies the notes belong to the professor — ambiguous at best, wrong in context. (C) 'its' is a singular neuter pronoun — inappropriate for a group of people. (D) 'they' is a subject pronoun, not a possessive, and cannot modify 'notes.'"},
+
+{sec:"Vocabulary",td:25,tag:{area:"Vocabulary",sub:"Contextual Usage"},
+ q:"It would be unfair to impute dishonesty to the researchers simply because they failed to disclose a funding source that was, by most accounts, entirely unrelated to their conclusions.\n\n'Impute' means:",
+ o:["To prove beyond doubt through documented evidence","To suggest as a likely future consequence","To publicly acknowledge as a shared responsibility","To attribute a fault or wrongdoing to someone"],
+ a:3,
+ e:"Impute = to attribute something, especially something undesirable, to a cause or person. (D) is correct: 'to attribute a fault or wrongdoing.' (A) 'to prove beyond doubt' — impute implies an attribution that may be unjust, not a proven fact. (B) 'to suggest as a future consequence' confuses impute with imply or portend. (C) 'to publicly acknowledge as shared responsibility' is closer to 'ascribe' used positively, not impute."},
+
+{sec:"Grammar",td:35,tag:{area:"Grammar",sub:"Modifiers"},
+ q:"Identify the sentence in which the modifier is used correctly.",
+ o:["Being the oldest building in the district, the authorities decided to preserve the structure.","Carefully restored last year, the architects were praised for their work on the façade.","Carefully restored last year, the façade now gleams against the surrounding grey stonework.","Having stood for four centuries, the preservation effort was finally completed."],
+ a:2,
+ e:"In (C), 'Carefully restored last year' correctly modifies 'the façade' — the façade is what was restored. In (A), 'Being the oldest building' dangles — the authorities are not the building. In (B), 'Carefully restored' dangles — the architects were not restored. In (D), 'Having stood for four centuries' dangles — the preservation effort did not stand for centuries; the building did."},
+
+{sec:"Vocabulary",td:25,tag:{area:"Vocabulary",sub:"Word Meaning"},
+ q:"'Maudlin' differs from merely 'sentimental' primarily because maudlin:",
+ o:["Implies excessive self-pity, often intensified by drink, beyond what the situation warrants","Describes a sadness that is dignified and quietly restrained","Refers only to grief over the loss of a person, not a situation","Is used approvingly to describe deep and sincere feeling"],
+ a:0,
+ e:"Maudlin = self-pityingly or tearfully sentimental, often associated with drunkenness. (A) captures what separates it from plain 'sentimental' — the excess, the self-pity, and the frequent association with alcohol. (B) is the opposite — maudlin implies an undignified, effusive display. (C) wrongly restricts maudlin to grief over persons; it applies broadly to any excessive sentimentality. (D) is wrong — maudlin is always pejorative, never approving."},
+
+{sec:"Grammar",td:35,tag:{area:"Grammar",sub:"Subject-Verb Agreement"},
+ q:"Not only the senior consultant but also the two junior analysts _____ blamed for the miscalculation in the final report.",
+ o:["was","were","has been","is"],
+ a:1,
+ e:"In a 'not only... but also...' construction, the verb agrees with the subject closer to it. The closer subject is 'the two junior analysts' — plural. 'Were' (B) is correct. (A) 'was' agrees with the singular 'senior consultant', which is the farther subject. (C) 'has been' is singular and incorrect. (D) 'is' is singular and present tense — both wrong."},
+
+{sec:"Vocabulary",td:25,tag:{area:"Vocabulary",sub:"Contextual Usage"},
+ q:"The coach harangued the team for nearly twenty minutes after the half-time whistle, his voice rising steadily as he catalogued every defensive error in exhausting detail.\n\n'Harangued' means:",
+ o:["Quietly coached with structured feedback","Praised effusively to boost morale","Calmly analysed performance using video footage","Lectured at length in a forceful, scolding manner"],
+ a:3,
+ e:"Harangue = to lecture or scold at length and with force. (D) captures the intensity ('voice rising') and the sustained criticism ('exhausting detail'). (A) 'quietly coached' contradicts the loud, forceful context. (B) 'praised effusively' is the opposite — harangue is always critical. (C) 'calmly analysed' contradicts the emotional charge of the word."},
+
+{sec:"Grammar",td:35,tag:{area:"Grammar",sub:"Pronouns"},
+ q:"Ms Reyes, the firm's managing partner, will present _____ findings to the board alongside the full team of associates she has assembled.",
+ o:["their","its","her","they're"],
+ a:2,
+ e:"'Ms Reyes' is a singular, female subject. The possessive pronoun referring to her must be singular and feminine. 'Her' (C) is correct. (A) 'their' is a plural possessive — Ms Reyes is one person. (B) 'its' is a neuter possessive used for non-human entities — inappropriate for a person. (D) 'they're' is a contraction of 'they are', not a possessive pronoun at all."},
+
+{sec:"Vocabulary",td:25,tag:{area:"Vocabulary",sub:"Word Meaning"},
+ q:"'Iridescent' specifically describes a surface that:",
+ o:["Emits its own light steadily, like a glow-in-the-dark material","Glows only after absorbing energy from an external light source","Appears uniformly bright regardless of the direction of observation","Changes apparent colour depending on the viewing angle, due to the way light interferes on its surface"],
+ a:3,
+ e:"Iridescent = showing colours that shift depending on the angle of light, due to light interference on the surface. (D) is the precise definition. (A) describes luminescence — self-generated light; iridescent surfaces do not generate their own light. (B) describes phosphorescence — stored and re-emitted light; iridescence is about reflected light interference, not stored energy. (C) is the opposite — iridescence is defined by how the appearance changes with angle, not uniformity."},
+
+{sec:"Grammar",td:35,tag:{area:"Grammar",sub:"Modifiers"},
+ q:"The restoration project _____ the city council approved last spring has already transformed the waterfront area.",
+ o:["which","that","whom","whose"],
+ a:1,
+ e:"The relative clause modifies 'the restoration project' — a thing. When the relative clause is restrictive (no commas), 'that' (B) is preferred over 'which' in formal grammar for things. (A) 'which' would require a comma before it, making the clause non-restrictive — incorrect here since it identifies which project. (C) 'whom' is for persons acting as objects — not applicable to a project. (D) 'whose' implies possession — the project does not possess the approval."},
+
+{sec:"Vocabulary",td:25,tag:{area:"Vocabulary",sub:"Contextual Usage"},
+ q:"The company's share price, which had been declining for months, hit its nadir in the third quarter — dropping to levels not seen since the financial crisis — before a cautious recovery began.\n\n'Nadir' here means:",
+ o:["Its highest recorded valuation during the review period","Its most volatile and unpredictable phase","Its final and definitive closing price","Its lowest point in the period under discussion"],
+ a:3,
+ e:"Nadir = the lowest point in the fortunes of a person or organisation; the opposite of zenith. (D) is correct. (A) 'highest recorded valuation' is the definition of zenith or peak — the antonym. (B) 'most volatile phase' describes instability, not a specific low point. (C) 'final closing price' introduces a sense of conclusion — nadir is about depth, not finality."},
+
+{sec:"Grammar",td:35,tag:{area:"Grammar",sub:"Subject-Verb Agreement"},
+ q:"Neither of the two shortlisted candidates _____ met the revised eligibility criteria announced after the initial application window closed.",
+ o:["has","have","had","were"],
+ a:0,
+ e:"'Neither' used alone (or with 'of + plural noun') takes a singular verb. 'Neither of the two candidates has' (A) is correct. (B) 'have' treats 'neither' as plural — incorrect. (C) 'had' is past perfect and introduces an unsupported tense shift. (D) 'were' is plural and also changes the voice of the sentence unnecessarily."},
+
+{sec:"Vocabulary",td:25,tag:{area:"Vocabulary",sub:"Word Meaning"},
+ q:"In which sentence is 'inure' used correctly?",
+ o:["Decades of criticism had inured him to even the harshest reviews.","The new policy will inure the company against all financial losses.","Years of praise had inured her confidence beyond all expectation.","The contract will inure all parties to its benefits equally."],
+ a:0,
+ e:"Inure = to accustom someone to something unpleasant through prolonged exposure. (A) is correct — criticism is the unpleasant stimulus, and exposure has made him numb to it. (B) misuses inure as if it means 'insure' or 'protect' — a common confusion. (C) misuses inure — praise is not unpleasant, and 'inured her confidence' is not a valid construction. (D) also misuses inure as 'insure' or 'guarantee' — inure does not mean to confer a benefit."},
+
+{sec:"Grammar",td:35,tag:{area:"Grammar",sub:"Pronouns"},
+ q:"Between you and _____, the committee's decision to table the report until next quarter makes little strategic sense.",
+ o:["I","me","myself","we"],
+ a:1,
+ e:"After a preposition ('between'), the object form of the pronoun is required. 'Between you and me' (B) is correct. (A) 'I' is the subject form — a common hypercorrection; 'Between you and I' is grammatically wrong despite being frequently heard. (C) 'myself' is a reflexive/emphatic pronoun and cannot follow 'between' without a prior reference. (D) 'we' is a subject pronoun — equally wrong after a preposition."},
+
+{sec:"Vocabulary",td:25,tag:{area:"Vocabulary",sub:"Contextual Usage"},
+ q:"The CEO's transparent handling of the crisis engendered a level of trust among employees that the company had not experienced in years.\n\n'Engendered' means:",
+ o:["Restored after a period of sustained effort","Demonstrated through carefully chosen actions","Destroyed gradually through accumulated missteps","Produced or brought about as a result of something"],
+ a:3,
+ e:"Engender = to cause or give rise to a feeling, situation, or condition. (D) — 'produced or brought about' — is the correct definition. (A) 'restored' implies the trust existed before and was recovered — engender means to create, not recover. (B) 'demonstrated through actions' describes a show of trust, not its creation. (C) 'destroyed gradually' is the antonym in effect."},
+
+{sec:"Grammar",td:35,tag:{area:"Grammar",sub:"Subject-Verb Agreement"},
+ q:"The team of forensic accountants, despite working around the clock for three weeks, _____ yet to find conclusive evidence of deliberate misreporting.",
+ o:["is","are","were","have been"],
+ a:0,
+ e:"The subject is 'the team' — singular. Intervening phrases like 'despite working around the clock' do not affect subject-verb agreement. 'Is' (A) correctly agrees with the singular 'team.' (B) 'are' treats 'team' as plural. (C) 'were' is plural and shifts to simple past unnecessarily. (D) 'have been' is plural and changes the aspect of the verb."},
+
+{sec:"Vocabulary",td:25,tag:{area:"Vocabulary",sub:"Word Meaning"},
+ q:"'Ineffable' most precisely describes something that:",
+ o:["Cannot be understood, no matter how carefully it is explained","Is forbidden by social convention to express openly","Surpasses what language is capable of conveying, not merely something difficult to articulate","Is deeply personal and therefore inappropriate to share publicly"],
+ a:2,
+ e:"Ineffable = too great, extreme, or beautiful to be expressed in words at all. (C) is the precise definition — the key is that language itself is insufficient, not merely that articulation is hard. (A) describes incomprehensibility — something that cannot be understood; ineffable is about expression, not comprehension. (B) describes a taboo — social prohibition, not linguistic inadequacy. (D) describes something private or intimate — ineffable has nothing to do with social appropriateness."},
+
+{sec:"Grammar",td:35,tag:{area:"Grammar",sub:"Modifiers"},
+ q:"Which of the following sentences contains a dangling modifier?",
+ o:["Having reviewed all the evidence, the committee reached a unanimous verdict.","To qualify for the scholarship, all required documents must be submitted by Friday.","Driving through the mountains, we saw snow on the higher passes.","Determined to finish on time, the architect revised the plans overnight."],
+ a:1,
+ e:"(B) contains a dangling modifier: 'To qualify for the scholarship' implies a person who qualifies, but the subject of the main clause is 'all required documents' — documents cannot qualify. (A) is correct: 'Having reviewed all the evidence' modifies 'the committee', which did the reviewing. (C) is correct: 'Driving through the mountains' modifies 'we', which did the driving. (D) is correct: 'Determined to finish on time' modifies 'the architect', who was determined."},
+
+{sec:"Vocabulary",td:25,tag:{area:"Vocabulary",sub:"Contextual Usage"},
+ q:"The negotiations had reached a precipice: one wrong move by either side, and months of carefully built progress would collapse irreversibly.\n\n'Precipice' here means:",
+ o:["A critically dangerous point where disaster is imminent","A temporary impasse that typically resolves with time","A formal procedure for resolving a deadlocked situation","A moment of unexpected opportunity disguised as risk"],
+ a:0,
+ e:"Precipice literally = a steep rock face or cliff; figuratively = a situation of extreme danger where disaster is very close. (A) captures both the immediacy ('one wrong move') and the stakes ('collapse irreversibly'). (B) 'temporary impasse' implies a routine stall — a precipice is not routine. (C) 'formal procedure' describes mediation — no connection. (D) 'opportunity disguised as risk' is a positive reframing — a precipice is purely dangerous."},
+
+{sec:"Vocabulary",td:25,tag:{area:"Vocabulary",sub:"Word Meaning"},
+ q:"Which sentence uses 'precipice' in its LITERAL sense?",
+ o:["The country stood at a precipice, one election away from collapse.","The negotiations reached a precipice from which neither side could retreat.","The climbers paused at the edge of the precipice before beginning their descent.","The company's finances were at a precipice after the failed merger."],
+ a:2,
+ e:"Precipice literally = a very steep rock face or cliff. (C) uses it in this physical sense — climbers at an actual cliff edge. (A) uses it figuratively: a dangerous political moment. (B) uses it figuratively: a critical point in negotiations. (D) uses it figuratively: a financial crisis point. The literal sense refers to an actual geological feature, not a metaphorical danger point."},
+
+{sec:"Grammar",td:35,tag:{area:"Grammar",sub:"Subject-Verb Agreement"},
+ q:"The majority of the evidence collected during the three-year investigation _____ now been submitted to the tribunal.",
+ o:["have","were","are","has"],
+ a:3,
+ e:"'The majority of' can take a singular or plural verb depending on what follows. When followed by an uncountable noun like 'evidence', the verb is singular. 'Has' (D) is correct. (A) 'have' would be correct if the noun were countable and plural (e.g. 'the majority of the witnesses have'). (B) 'were' is plural and shifts tense. (C) 'are' is plural and present tense — inconsistent with the context."},
+
+{sec:"Vocabulary",td:25,tag:{area:"Vocabulary",sub:"Word Meaning"},
+ q:"'Impute' is best distinguished from 'accuse' in that impute:",
+ o:["Requires formal legal proceedings before it can be applied","Attributes a quality or motive to someone without necessarily asserting direct evidence","Always implies a direct personal confrontation between two parties","Demands proof of deliberate intent before it can be used"],
+ a:1,
+ e:"Impute = to attribute a quality, motive, or fault to someone, often without direct proof. (B) is the key distinction: impute involves attribution, not a direct accusation backed by confrontation. (A) is wrong — impute needs no legal context; it is used in everyday and formal writing alike. (C) is wrong — impute is often used in the third person or in writing, with no direct confrontation involved. (D) is wrong — impute can be used even when intent is unclear or disputed."},
+
+{sec:"Grammar",td:35,tag:{area:"Grammar",sub:"Pronouns"},
+ q:"The selection panel shortlisted three candidates, but _____ ultimately did not meet the undisclosed criteria for the senior role.",
+ o:["which","who","none of them","neither"],
+ a:2,
+ e:"The sentence refers to three candidates and says none of them qualified. 'None of them' (C) is the correct form — it clearly refers to all three and serves as the subject. (A) 'which' is for things, not people. (B) 'who' would require a full relative clause structure, not a main clause continuation. (D) 'neither' is used for exactly two options — the sentence specifies three candidates."},
+
+{sec:"Vocabulary",td:25,tag:{area:"Vocabulary",sub:"Word Meaning"},
+ q:"Which of the following scenarios would NOT be described as a harangue?",
+ o:["A coach delivering a twenty-minute tirade at his players after a poor performance","An executive loudly berating a junior employee in front of the entire team","A politician delivering an hour-long attack speech against a rival party","A mentor offering quiet, structured feedback to a student over coffee"],
+ a:3,
+ e:"Harangue = a lengthy, forceful, and aggressive speech, typically critical or scolding. (D) is the answer — quiet, structured feedback over coffee is measured and constructive, the opposite of a harangue. (A) is a harangue — a tirade delivered forcefully at length. (B) is a harangue — loud public berating. (C) is a harangue — a lengthy aggressive attack speech. Harangue requires both length and emotional force; option D has neither."},
+
+{sec:"Grammar",td:35,tag:{area:"Grammar",sub:"Modifiers"},
+ q:"_____ for over a decade, the bridge was finally condemned and scheduled for demolition.",
+ o:["Having been left without maintenance","Left without maintenance for over a decade, the bridge","Neglected without proper maintenance having occurred","The bridge, without maintenance for over a decade, it"],
+ a:0,
+ e:"(A) 'Having been left without maintenance' is a perfect participial phrase that correctly modifies 'the bridge' — the subject immediately following. (B) is a sentence fragment that repeats the subject mid-clause. (C) is an awkward passive construction that creates a dangling modifier. (D) introduces a pronoun ('it') that duplicates the subject, making it a comma splice error."},
+
+{sec:"Vocabulary",td:25,tag:{area:"Vocabulary",sub:"Word Meaning"},
+ q:"In its original astronomical use, 'nadir' refers to:",
+ o:["The point in a planet's orbit where it is farthest from the sun","The point on the celestial sphere directly below the observer, opposite the zenith","The moment when a star reaches its greatest brightness in its cycle","The lowest visible point on the horizon as seen from a given location"],
+ a:1,
+ e:"In astronomy, nadir = the point on the celestial sphere directly below the observer — the opposite of the zenith, which is directly above. (B) is correct. (A) describes aphelion — the point in an orbit farthest from the sun; nadir is not an orbital term. (C) describes maximum magnitude or peak brightness of a star — unrelated to nadir. (D) confuses nadir with the horizon — the horizon is a circle at eye level, not the point directly below."},
+
+{sec:"Vocabulary",td:25,tag:{area:"Vocabulary",sub:"Word Meaning"},
+ q:"Which of the following most naturally collocates with 'engender'?",
+ o:["Engender a procedure","Engender a location","Engender trust","Engender a measurement"],
+ a:2,
+ e:"Engender = to produce or give rise to a feeling, condition, or situation. It collocates naturally with abstract nouns like trust, resentment, conflict, and goodwill. (C) 'engender trust' is the natural pairing. (A) 'engender a procedure' — procedures are designed or established, not engendered. (B) 'engender a location' — locations are created or built, not engendered; the word requires an abstract condition or emotion. (D) 'engender a measurement' — measurements are taken or recorded, not engendered."}
+]; // ══ END QUESTIONS ══
+
+// ══════════════════════════════════════════════════════════
+//  INFRASTRUCTURE
+// ══════════════════════════════════════════════════════════
+var APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx5Ojm_zp4LfsMeelx5e06KNjVH1wfsXdV0keS4407m4FO1HU4EpVb7GKj-ibAsxnspeA/exec";
+var PIN_REGEX = /^(STU|IMS)\d{10}$/;
+
+var studentName = "", studentPin = "", studentBatch = "";
+var currentQ = 0;
+var userAnswers = new Array(45).fill(null);
+var questionTimes = new Array(45).fill(0);
+var qTimer = null, qSecondsLeft = 0, qStartTime = 0;
+var locked = false;
+
+// ── LOGIN ──
+document.getElementById("btnStart").addEventListener("click", function(){
+  var n = document.getElementById("inName").value.trim();
+  var p = document.getElementById("inPin").value.trim().toUpperCase();
+  var b = document.getElementById("inBatch").value;
+  var err = document.getElementById("loginError");
+  if(!n){err.textContent="Please enter your name.";err.style.display="block";return;}
+  if(!PIN_REGEX.test(p)){err.textContent="Invalid PIN. Format: IMS or STU + 10 digits.";err.style.display="block";return;}
+  if(!b){err.textContent="Please select your batch.";err.style.display="block";return;}
+  studentName=n; studentPin=p; studentBatch=b;
+  err.style.display="none";
+  document.getElementById("loginScreen").style.display="none";
+  document.getElementById("testScreen").style.display="block";
+  buildPalette();
+  renderQuestion();
+});
+
+// ── PALETTE ──
+function buildPalette(){
+  var pal = document.getElementById("palette");
+  pal.innerHTML="";
+  for(var i=0;i<45;i++){
+    var d=document.createElement("div");
+    d.className="pq";
+    d.id="pq"+(i+1);
+    d.textContent=i+1;
+    pal.appendChild(d);
+  }
+}
+function updatePalette(){
+  for(var i=0;i<45;i++){
+    var el=document.getElementById("pq"+(i+1));
+    el.className="pq";
+    if(i===currentQ) el.classList.add("current");
+    else if(userAnswers[i]!==null) el.classList.add("answered");
+    else if(i<currentQ) el.classList.add("skipped");
+  }
+}
+
+// ── RENDER QUESTION ──
+function renderQuestion(){
+  locked=false;
+  var q=QUESTIONS[currentQ];
+  document.getElementById("qNum").textContent="Q"+(currentQ+1);
+  document.getElementById("qSec").textContent=q.sec;
+  document.getElementById("qText").textContent=q.q;
+
+  // Options
+  var optsDiv=document.getElementById("opts");
+  optsDiv.innerHTML="";
+  var labels=["A","B","C","D"];
+  for(var i=0;i<4;i++){
+    var d=document.createElement("div");
+    d.className="opt";
+    d.dataset.idx=i;
+    d.innerHTML='<span class="optLabel">'+labels[i]+'</span><span class="otext">'+q.o[i]+'</span>';
+    d.addEventListener("click", handleOptClick);
+    optsDiv.appendChild(d);
+  }
+
+  document.getElementById("explanation").style.display="none";
+  document.getElementById("explanation").textContent="";
+
+  // Next button
+  var btn=document.getElementById("btnNext");
+  btn.textContent = currentQ===44 ? "Submit Test" : "Next →";
+
+  updatePalette();
+
+  // Timer bar reset
+  var bar=document.getElementById("timerBar");
+  bar.classList.remove("crit");
+  bar.style.transition="none";
+  bar.style.width="100%";
+  bar.style.background="var(--green)";
+  // Force reflow
+  void bar.offsetWidth;
+
+  // Start countdown
+  qSecondsLeft = q.td;
+  qStartTime = Date.now();
+  paintTimer(qSecondsLeft, q.td);
+
+  bar.style.transition="width "+q.td+"s linear";
+  bar.style.width="0%";
+
+  clearInterval(qTimer);
+  qTimer=setInterval(function(){
+    qSecondsLeft--;
+    paintTimer(qSecondsLeft, q.td);
+    if(qSecondsLeft<=0){
+      clearInterval(qTimer);
+      onTimerExpire();
+    }
+  },1000);
+}
+
+function paintTimer(s, td){
+  var pct = s/td;
+  var numEl=document.getElementById("timerNum");
+  numEl.textContent=s;
+  var bar=document.getElementById("timerBar");
+  if(pct>0.5){
+    numEl.className="t-green";
+    bar.style.background="var(--green)";
+    bar.classList.remove("crit");
+  } else if(pct>0.25){
+    numEl.className="t-orange";
+    bar.style.background="#f39c12";
+    bar.classList.remove("crit");
+  } else {
+    numEl.className="t-red";
+    bar.style.background="var(--red)";
+    bar.classList.add("crit");
+  }
+}
+
+function onTimerExpire(){
+  var elapsed = Math.round((Date.now()-qStartTime)/1000);
+  questionTimes[currentQ]=elapsed;
+  advanceQuestion();
+}
+
+function handleOptClick(){
+  if(locked) return;
+  var idx=parseInt(this.dataset.idx);
+  userAnswers[currentQ]=idx;
+  var opts=document.querySelectorAll(".opt");
+  opts.forEach(function(o){o.classList.remove("selected");});
+  this.classList.add("selected");
+}
+
+// ── NEXT BUTTON ──
+document.getElementById("btnNext").addEventListener("click", function(){
+  var elapsed=Math.round((Date.now()-qStartTime)/1000);
+  questionTimes[currentQ]=elapsed;
+  clearInterval(qTimer);
+  if(currentQ===44){
+    submitTest();
+  } else {
+    advanceQuestion();
+  }
+});
+
+function advanceQuestion(){
+  currentQ++;
+  if(currentQ<45) renderQuestion();
+}
+
+// ── SCORING ──
+function computeScore(){
+  var correct=0,wrong=0,skipped=0,score=0;
+  var wrongQs=[],topicErr={};
+  var secErr={Vocabulary:{correct:0,wrong:0,skipped:0},Grammar:{correct:0,wrong:0,skipped:0}};
+  for(var i=0;i<45;i++){
+    var q=QUESTIONS[i];
+    var ua=userAnswers[i];
+    var sec=q.sec;
+    if(ua===null){skipped++;secErr[sec].skipped++;}
+    else if(ua===q.a){correct++;score+=4;secErr[sec].correct++;}
+    else{wrong++;score-=1;secErr[sec].wrong++;wrongQs.push(i);
+      var sub=q.tag.sub;
+      topicErr[sub]=(topicErr[sub]||0)+1;
+    }
+  }
+  return{score:score,correct:correct,wrong:wrong,skipped:skipped,wrongQs:wrongQs,secErr:secErr,topicErr:topicErr};
+}
+
+// ── SUBMIT ──
+function submitTest(){
+  clearInterval(qTimer);
+  var res=computeScore();
+  var totalSecs=questionTimes.reduce(function(a,b){return a+b;},0);
+  var mm=String(Math.floor(totalSecs/60)).padStart(2,"0");
+  var ss=String(totalSecs%60).padStart(2,"0");
+  var timeTaken=mm+":"+ss;
+
+  var payload={
+    testName:"Rapid Fire Test 05",
+    name:studentName,
+    pin:studentPin,
+    batch:studentBatch,
+    score:res.score,
+    correct:res.correct,
+    wrong:res.wrong,
+    skipped:res.skipped,
+    maxMarks:180,
+    timeTaken:timeTaken,
+    timestamp:new Date().toLocaleString("en-IN",{timeZone:"Asia/Kolkata"}),
+    sectionErrors:JSON.stringify(res.secErr),
+    wrongQuestions:JSON.stringify(res.wrongQs),
+    studentAnswers:JSON.stringify(userAnswers.map(function(a){return a===null?null:a;})),
+    questionTimes:JSON.stringify(questionTimes),
+    topicErrors:JSON.stringify(res.topicErr)
+  };
+
+  fetch(APPS_SCRIPT_URL,{method:"POST",mode:"no-cors",
+    headers:{"Content-Type":"text/plain"},body:JSON.stringify(payload)})
+    .then(function(){console.log("Submitted.");})
+    .catch(function(e){console.warn("Submit error:",e);});
+
+  showResults(res, timeTaken);
+}
+
+// ── RESULTS ──
+function showResults(res, timeTaken){
+  document.getElementById("testScreen").style.display="none";
+  var rs=document.getElementById("resultsScreen");
+  rs.style.display="block";
+
+  document.getElementById("resMeta").textContent=
+    studentName+" · "+studentBatch+" · Time: "+timeTaken;
+
+  var pct=res.correct>0?Math.round(res.correct/45*100):0;
+  var cardClass=res.score>=120?"hi":res.score<60?"lo":"";
+  document.getElementById("scoreCard").innerHTML=
+    '<div class="sCard '+cardClass+'"><div class="sVal">'+res.score+'</div><div class="sLbl">Score / 180</div></div>'+
+    '<div class="sCard hi"><div class="sVal">'+res.correct+'</div><div class="sLbl">Correct</div></div>'+
+    '<div class="sCard lo"><div class="sVal">'+res.wrong+'</div><div class="sLbl">Wrong</div></div>'+
+    '<div class="sCard"><div class="sVal">'+res.skipped+'</div><div class="sLbl">Skipped</div></div>'+
+    '<div class="sCard"><div class="sVal">'+pct+'%</div><div class="sLbl">Accuracy</div></div>'+
+    '<div class="sCard"><div class="sVal">'+timeTaken+'</div><div class="sLbl">Time Taken</div></div>';
+
+  // Review list
+  var labels=["A","B","C","D"];
+  var rl=document.getElementById("reviewList");
+  rl.innerHTML="";
+  for(var i=0;i<45;i++){
+    var q=QUESTIONS[i];
+    var ua=userAnswers[i];
+    var status=ua===null?"rSkipped":ua===q.a?"rCorrect":"rWrong";
+    var statusLabel=ua===null?"Skipped":ua===q.a?"Correct":"Wrong";
+    var div=document.createElement("div");
+    div.className="rItem "+status;
+    var optsHtml="";
+    for(var j=0;j<4;j++){
+      var cls="rOpt";
+      if(j===q.a) cls+=" rCorrectOpt";
+      else if(ua!==null && j===ua) cls+=" rWrongOpt";
+      optsHtml+='<div class="'+cls+'">'+labels[j]+'. '+q.o[j]+'</div>';
+    }
+    div.innerHTML=
+      '<div class="rQnum">Q'+(i+1)+' · '+q.sec+' · '+q.tag.sub+' · '+statusLabel+'</div>'+
+      '<div class="rQtext">'+q.q+'</div>'+
+      '<div class="rOpts">'+optsHtml+'</div>'+
+      '<div class="rExp">'+q.e+'</div>';
+    rl.appendChild(div);
+  }
+}
+
+// ── RETAKE ──
+document.getElementById("btnRetake").addEventListener("click", function(){
+  currentQ=0;
+  userAnswers=new Array(45).fill(null);
+  questionTimes=new Array(45).fill(0);
+  locked=false;
+  document.getElementById("resultsScreen").style.display="none";
+  document.getElementById("testScreen").style.display="block";
+  buildPalette();
+  renderQuestion();
+});
+
+// ── PDF ──
+document.getElementById("btnPDF").addEventListener("click", function(){
+  window.print();
+});
+</script>
+</body>
+</html>
