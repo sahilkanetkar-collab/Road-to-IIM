@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Road to IIM RC Series 05</title>
+<style>
+:root {
+  --navy: #0d1b2a;
+  --navy2: #1a2e45;
+  --gold: #c9a84c;
+  --gold2: #e8c76a;
+  --green: #2ecc71;
+  --red: #e74c3c;
+  --grey: #8899aa;
+  --white: #f0f4f8;
+  --purple: #8b5cf6;
+  --purple2: #7c3aed;
+  --panel: 300px;
+  --topbar: 56px;
+  --tabs: 42px;
+  --navbar: 62px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: "Segoe UI", sans-serif; background: var(--navy); color: var(--white); min-height: 100vh; }
+#loginScreen { display:flex; align-items:center; justify-content:center; min-height:100vh; padding:20px; }
+.login-box { background:var(--navy2); border:1px solid var(--gold); border-radius:10px; padding:40px; width:100%; max-width:420px; }
+.login-box h1 { color:var(--gold); font-size:22px; margin-bottom:6px; text-align:center; }
+.login-box .subtitle { color:var(--grey); font-size:13px; text-align:center; margin-bottom:28px; }
+.login-box label { display:block; font-size:13px; color:var(--grey); margin-bottom:5px; margin-top:16px; }
+.login-box input, .login-box select { width:100%; padding:10px 12px; background:var(--navy); border:1px solid #2a4a6a; border-radius:6px; color:var(--white); font-size:14px; font-family:"Segoe UI",sans-serif; }
+.login-box select option { background:var(--navy); }
+.login-box input:focus, .login-box select:focus { outline:none; border-color:var(--gold); }
+#loginError { color:var(--red); font-size:13px; margin-top:10px; display:none; }
+#startBtn { width:100%; margin-top:24px; padding:12px; background:var(--gold); color:var(--navy); font-size:15px; font-weight:700; border:none; border-radius:6px; cursor:pointer; }
+#startBtn:hover { background:var(--gold2); }
+#topBar { position:sticky; top:0; z-index:200; height:var(--topbar); background:var(--navy2); border-bottom:1px solid #1e3a5a; display:flex; align-items:center; padding:0 16px; padding-right:calc(var(--panel) + 20px); }
+#topBar .brand { font-size:14px; font-weight:700; color:var(--gold); white-space:nowrap; }
+#topBar .badge { margin:0 auto; background:#0d2a3a; border:1px solid var(--gold); border-radius:20px; padding:4px 16px; font-size:12px; color:var(--gold2); white-space:nowrap; }
+#topBar .right { display:flex; align-items:center; gap:12px; white-space:nowrap; }
+#studentNameDisplay { font-size:13px; color:var(--grey); }
+#timerDisplay { background:var(--navy); border:1px solid var(--green); border-radius:20px; padding:4px 14px; font-size:13px; font-weight:700; color:var(--green); min-width:70px; text-align:center; }
+#timerDisplay.urgent { border-color:var(--red); color:var(--red); }
+#qCounter { font-size:12px; color:var(--grey); }
+#sectionTabs { position:sticky; top:var(--topbar); z-index:190; height:var(--tabs); background:var(--navy2); border-bottom:1px solid #1e3a5a; display:flex; align-items:center; padding:0 16px; gap:8px; overflow-x:auto; padding-right:calc(var(--panel) + 16px); }
+.sec-tab { padding:6px 14px; border-radius:20px; font-size:12px; font-weight:600; cursor:pointer; border:1px solid #2a4a6a; color:var(--grey); background:transparent; white-space:nowrap; }
+.sec-tab.active { background:var(--white); color:var(--navy); font-weight:700; border-color:var(--white); }
+.sec-tab:hover:not(.active) { border-color:var(--gold); color:var(--gold); }
+#mainArea { display:flex; height:calc(100vh - var(--topbar) - var(--tabs) - var(--navbar)); margin-right:var(--panel); }
+#passagePane { width:50%; min-width:280px; max-width:600px; overflow-y:auto; padding:20px 22px 20px 24px; border-right:1px solid #1e3a5a; flex-shrink:0; }
+#questionPane { flex:1; overflow-y:auto; padding:20px 20px 20px 22px; display:flex; flex-direction:column; }
+.passage-header { margin-bottom:14px; }
+.passage-label { font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--gold); font-weight:700; margin-bottom:4px; }
+.passage-meta { font-size:11px; color:var(--grey); margin-bottom:10px; }
+.passage-qrange { font-size:11px; color:var(--grey); background:#0d2233; border:1px solid #1e3a5a; border-radius:4px; padding:3px 8px; display:inline-block; margin-bottom:12px; }
+.passage-text { font-size:14px; line-height:1.8; color:var(--white); }
+.passage-text p { margin-bottom:12px; }
+.q-header { font-size:11px; color:var(--grey); margin-bottom:8px; }
+.q-num { color:var(--gold); font-weight:700; }
+.q-type { color:var(--grey); font-size:10px; text-transform:uppercase; letter-spacing:0.5px; margin-left:8px; }
+.q-stem { font-size:15px; line-height:1.6; margin-bottom:16px; color:var(--white); }
+.options-list { display:flex; flex-direction:column; gap:8px; margin-bottom:16px; }
+.option-btn { display:flex; align-items:flex-start; gap:10px; padding:10px 14px; background:var(--navy2); border:1px solid #2a4a6a; border-radius:6px; cursor:pointer; text-align:left; width:100%; color:var(--white); font-family:"Segoe UI",sans-serif; font-size:14px; transition:border-color 0.15s; }
+.option-btn:hover { border-color:var(--gold); }
+.option-btn.selected { border-color:var(--gold); background:#1e3020; }
+.option-btn.correct { border-color:var(--green); background:#0d2a1a; }
+.option-btn.wrong { border-color:var(--red); background:#2a0d0d; }
+.opt-label { font-weight:700; color:var(--gold); flex-shrink:0; min-width:20px; }
+.opt-text { flex:1; line-height:1.5; }
+.explanation { display:none; background:#0d2233; border:1px solid #1e3a5a; border-radius:6px; padding:12px 14px; font-size:13px; line-height:1.6; color:#a0b4c8; margin-top:8px; }
+.explanation.show { display:block; }
+.exp-label { color:var(--gold); font-weight:700; font-size:11px; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px; }
+#navBar { position:fixed; bottom:0; left:0; right:var(--panel); background:var(--navy2); border-top:1px solid #1e3a5a; display:flex; align-items:center; padding:0 16px; z-index:190; height:var(--navbar); gap:8px; }
+.nav-btn { padding:8px 16px; border-radius:6px; font-size:13px; font-weight:600; cursor:pointer; border:1px solid; font-family:"Segoe UI",sans-serif; }
+#prevBtn { background:transparent; border-color:#2a4a6a; color:var(--grey); }
+#prevBtn:hover { border-color:var(--grey); color:var(--white); }
+#markBtn { background:var(--purple2); border-color:var(--purple); color:var(--white); }
+#markBtn:hover { background:var(--purple); }
+#clearBtn { background:transparent; border-color:#b85c00; color:#e87c30; }
+#clearBtn:hover { background:#1a1200; }
+.nav-spacer { flex:1; }
+#saveNextBtn { background:var(--green); border-color:var(--green); color:var(--navy); }
+#saveNextBtn:hover { background:#27ae60; }
+#submitBtn { background:transparent; border-color:var(--gold); color:var(--gold); display:none; }
+#submitBtn:hover { background:#1a1200; }
+#rightPanel { position:fixed; right:0; top:0; width:var(--panel); height:100vh; background:var(--navy2); border-left:1px solid #1e3a5a; overflow-y:auto; padding-top:calc(var(--topbar) + var(--tabs) + 2px); padding-bottom:80px; z-index:180; }
+.panel-section { padding:12px 14px; border-bottom:1px solid #1e3a5a; }
+.panel-title { font-size:11px; text-transform:uppercase; letter-spacing:0.8px; color:var(--grey); font-weight:700; margin-bottom:8px; }
+.marking-row { display:flex; justify-content:space-between; font-size:12px; color:var(--white); margin-bottom:4px; }
+.marking-row span:last-child { color:var(--gold); font-weight:600; }
+.legend-row { display:flex; align-items:center; gap:8px; font-size:12px; color:var(--grey); margin-bottom:4px; }
+.legend-dot { width:14px; height:14px; border-radius:3px; flex-shrink:0; }
+.jump-pills { display:flex; flex-wrap:wrap; gap:6px; }
+.jump-pill { padding:4px 10px; border-radius:12px; font-size:11px; font-weight:600; cursor:pointer; border:1px solid #2a4a6a; color:var(--grey); background:transparent; }
+.jump-pill:hover { border-color:var(--gold); color:var(--gold); }
+.palette-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:5px; }
+.pal-btn { aspect-ratio:1; border-radius:4px; font-size:12px; font-weight:700; cursor:pointer; border:1px solid #2a4a6a; background:var(--navy); color:var(--grey); display:flex; align-items:center; justify-content:center; }
+.pal-btn.answered { background:var(--green); color:var(--navy); border-color:var(--green); }
+.pal-btn.unanswered { background:var(--red); color:var(--white); border-color:var(--red); }
+.pal-btn.marked { background:var(--purple); color:var(--white); border-color:var(--purple); }
+.pal-btn.current { outline:2px solid var(--gold); outline-offset:1px; }
+#resultsScreen { display:none; min-height:100vh; padding:30px 20px; }
+.results-header { text-align:center; margin-bottom:30px; }
+.results-header h2 { color:var(--gold); font-size:24px; margin-bottom:8px; }
+.results-header p { color:var(--grey); font-size:14px; }
+.stats-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:12px; max-width:700px; margin:0 auto 30px; }
+.stat-box { background:var(--navy2); border:1px solid #2a4a6a; border-radius:8px; padding:16px; text-align:center; }
+.stat-box .stat-label { font-size:11px; color:var(--grey); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px; }
+.stat-box .stat-val { font-size:28px; font-weight:700; color:var(--gold); }
+.stat-box .stat-sub { font-size:11px; color:var(--grey); margin-top:3px; }
+.review-section { max-width:800px; margin:0 auto; }
+.review-section h3 { color:var(--gold); font-size:16px; margin-bottom:16px; border-bottom:1px solid #1e3a5a; padding-bottom:8px; }
+.review-item { background:var(--navy2); border:1px solid #2a4a6a; border-radius:8px; padding:14px; margin-bottom:12px; }
+.review-item.ri-correct { border-left:3px solid var(--green); }
+.review-item.ri-wrong { border-left:3px solid var(--red); }
+.review-item.ri-skipped { border-left:3px solid var(--grey); }
+.review-qnum { font-size:11px; color:var(--grey); margin-bottom:6px; }
+.review-stem { font-size:13px; margin-bottom:8px; line-height:1.5; }
+.review-ans { font-size:12px; margin-bottom:4px; }
+.review-ans .correct-ans { color:var(--green); font-weight:700; }
+.review-ans .wrong-ans { color:var(--red); font-weight:700; }
+.review-exp { font-size:12px; color:#8aa0b4; margin-top:6px; line-height:1.5; }
+.error-breakdown { max-width:700px; margin:0 auto 20px; }
+.error-breakdown h3 { color:var(--gold); font-size:14px; margin-bottom:10px; }
+.eb-row { display:flex; justify-content:space-between; padding:6px 10px; background:var(--navy2); border-radius:4px; margin-bottom:4px; font-size:13px; }
+.eb-row .eb-type { color:var(--grey); }
+.eb-row .eb-count { color:var(--red); font-weight:700; }
+
+/* PDF / Print */
+.print-btn { display:block; margin:0 auto 24px; padding:10px 28px; background:transparent; border:1px solid var(--gold); color:var(--gold); border-radius:6px; font-size:13px; font-weight:600; cursor:pointer; font-family:"Segoe UI",sans-serif; }
+.print-btn:hover { background:#1a1200; }
+@media print {
+  #loginScreen, #testScreen, .print-btn { display:none !important; }
+  #resultsScreen { display:block !important; padding:10px; }
+  body { background:#fff; color:#000; }
+  .results-header h2 { color:#8a6200; }
+  .results-header p { color:#555; }
+  .stat-box { background:#f5f5f5; border:1px solid #ccc; }
+  .stat-box .stat-label { color:#555; }
+  .stat-box .stat-val { color:#8a6200; }
+  .stat-box .stat-sub { color:#777; }
+  .review-item { background:#f9f9f9; border:1px solid #ddd; break-inside:avoid; }
+  .review-item.ri-correct { border-left:3px solid #27ae60; }
+  .review-item.ri-wrong { border-left:3px solid #c0392b; }
+  .review-item.ri-skipped { border-left:3px solid #888; }
+  .review-qnum { color:#555; }
+  .review-ans .correct-ans { color:#27ae60; }
+  .review-ans .wrong-ans { color:#c0392b; }
+  .review-exp { color:#444; }
+  .error-breakdown .eb-row { background:#f5f5f5; }
+  .eb-type { color:#555 !important; }
+  .eb-count { color:#c0392b !important; }
+  .stats-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 768px) {
+  #mainArea { flex-direction:column; height:auto; margin-right:0; }
+  #passagePane { width:100%; max-width:100%; border-right:none; border-bottom:1px solid #1e3a5a; max-height:40vh; }
+  #questionPane { padding-bottom:80px; }
+  #rightPanel { display:none; }
+  #topBar { padding-right:16px; }
+  #sectionTabs { padding-right:16px; }
+  #navBar { right:0; }
+}
+</style>
+</head>
+<body>
+
+<div id="loginScreen">
+  <div class="login-box">
+    <h1>Road to IIM</h1>
+    <div class="subtitle">RC Series 05 &nbsp;·&nbsp; 21 Questions &nbsp;·&nbsp; 25 Minutes</div>
+    <label>Full Name</label>
+    <input type="text" id="nameInput" placeholder="Enter your full name" autocomplete="off">
+    <label>IMS PIN</label>
+    <input type="text" id="pinInput" placeholder="e.g. STU1234567890" autocomplete="off" maxlength="13">
+    <label>Batch</label>
+    <select id="batchSelect">
+      <option value="">— Select batch —</option>
+      
+        <optgroup label="Classroom">
+          <option value="A2701">A2701</option>
+          <option value="A2702">A2702</option>
+          <option value="A2703">A2703</option>
+          <option value="A2704">A2704</option>
+          <option value="A2705">A2705</option>
+          <option value="A2706">A2706</option>
+          <option value="A2707">A2707</option>
+          <option value="A2708">A2708</option>
+          <option value="A2709">A2709</option>
+          <option value="A2710">A2710</option>
+          <option value="A2711">A2711</option>
+          <option value="A2712">A2712</option>
+          <option value="A2713">A2713</option>
+          <option value="A2714">A2714</option>
+          <option value="A2715">A2715</option>
+          <option value="A2716">A2716</option>
+          <option value="A2717">A2717</option>
+          <option value="A2718">A2718</option>
+          <option value="A2719">A2719</option>
+          <option value="A2720">A2720</option>
+        </optgroup>
+        <optgroup label="IPMAT 28">
+          <option value="Z2801">Z2801</option>
+          <option value="S2801">S2801</option>
+          <option value="A2804">A2804</option>
+          <option value="PN2801">PN2801</option>
+        </optgroup>
+        <optgroup label="School">
+          <option value="Zebar">Zebar</option>
+        </optgroup>
+        <optgroup label="Admin">
+          <option value="Admin">Admin</option>
+        </optgroup>
+    </select>
+    <div id="loginError">Please fill all fields with a valid PIN (STU/IMS + 10 digits).</div>
+    <button id="startBtn" onclick="startTest()">Start Test</button>
+  </div>
+</div>
+
+<div id="testScreen" style="display:none;">
+  <div id="topBar">
+    <span class="brand">Road to IIM · RC 05</span>
+    <span class="badge">RC Drill &nbsp;|&nbsp; 21 Qs &nbsp;|&nbsp; 25 min &nbsp;|&nbsp; +4 / −1</span>
+    <div class="right">
+      <span id="studentNameDisplay"></span>
+      <span id="timerDisplay">25:00</span>
+      <span id="qCounter">Q1 / 21</span>
+    </div>
+  </div>
+  <div id="sectionTabs"></div>
+  <div id="mainArea">
+    <div id="passagePane"></div>
+    <div id="questionPane"></div>
+  </div>
+  <div id="navBar">
+    <button class="nav-btn" id="prevBtn" onclick="navigate(-1)">← Prev</button>
+    <button class="nav-btn" id="markBtn" onclick="markForReview()">★ Mark</button>
+    <button class="nav-btn" id="clearBtn" onclick="clearAnswer()">✕ Clear</button>
+    <div class="nav-spacer"></div>
+    <button class="nav-btn" id="saveNextBtn" onclick="navigate(1)">Save & Next →</button>
+    <button class="nav-btn" id="submitBtn" onclick="confirmSubmit()">Submit Test</button>
+  </div>
+  <div id="rightPanel">
+    <div class="panel-section">
+      <div class="panel-title">Marking Scheme</div>
+      <div class="marking-row"><span>Correct</span><span>+4</span></div>
+      <div class="marking-row"><span>Wrong</span><span>−1</span></div>
+      <div class="marking-row"><span>Skipped</span><span>0</span></div>
+      <div class="marking-row"><span>Max Marks</span><span>84</span></div>
+    </div>
+    <div class="panel-section">
+      <div class="panel-title">Status</div>
+      <div class="legend-row"><div class="legend-dot" style="background:var(--green)"></div>Answered</div>
+      <div class="legend-row"><div class="legend-dot" style="background:var(--red)"></div>Visited, unanswered</div>
+      <div class="legend-row"><div class="legend-dot" style="background:var(--purple)"></div>Marked for review</div>
+      <div class="legend-row"><div class="legend-dot" style="background:var(--navy);border:1px solid #2a4a6a"></div>Not visited</div>
+    </div>
+    <div class="panel-section">
+      <div class="panel-title">Jump to section</div>
+      <div class="jump-pills" id="jumpPills"></div>
+    </div>
+    <div class="panel-section">
+      <div class="panel-title">Question Palette</div>
+      <div class="palette-grid" id="palette"></div>
+    </div>
+  </div>
+</div>
+
+<div id="resultsScreen">
+  <div class="results-header">
+    <h2>RC Series 05 — Results</h2>
+    <p id="resultsSubtitle"></p>
+  </div>
+  <button class="print-btn" onclick="window.print()">⬇ Download / Print Review</button>
+  <div class="stats-grid" id="statsGrid"></div>
+  <div class="error-breakdown" id="errorBreakdown"></div>
+  <div class="review-section">
+    <h3>Full Review</h3>
+    <div id="reviewItems"></div>
+  </div>
+</div>
+
+<script>
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx5Ojm_zp4LfsMeelx5e06KNjVH1wfsXdV0keS4407m4FO1HU4EpVb7GKj-ibAsxnspeA/exec';
+const TEST_NAME = 'Road to IIM RC Series 05';
+const TIMER_DURATION = 25;
+const TOTAL_Q = 21;
+
+const QUESTIONS = [
+  { section:'P1', stem:'How it is relevant or irrelevant in being choosy with the timings of an interview?', options:['Picking a date earlier means you are too eager and a date posterior means you are sought after', 'Picking an earlier or posterior date does not have to do anything with attitude of candidate', 'Committee wants that candidates choose a date that may have an implication mentally', 'Committee wants to know the interest in taking admission to the course for which they are to be interviewed'], answer:'B', explanation:'There is nothing lies in the fact that one is choosing earlier or posterior dates for an interview as it has nothing to do anything with attitude of the candidate. FACE 2 FACE CAT', q_type:'SPECIFIC DETAIL' },
+  { section:'P1', stem:'Digital age and digital economy are best explained by which of the following?', options:['Both of them speaks of the use of e-commerce and their popularity which generate optimal revenue', 'Both are the integral part of the modern day B-schools and need to be given another thought', 'Both shows a boom in the choice of the people that have its roots in the expanding use of computers', 'None of the above'], answer:'A', explanation:'Digital age and digital economy both speaks of e-commerce and their much popularity which generates optimal revenue.', q_type:'SPECIFIC DETAIL' },
+  { section:'P1', stem:'Why do the B-schools need to adapt a new policy in their teaching manual?', options:['To check the situation of lower admission rates that are going for different streams', 'To maintain the smooth flow of revenue for their usual operations', 'To upgrade the professional skills that the educators are having with them', 'All of the above'], answer:'D', explanation:'B-schools need all of the above mentioned reasons in order to adapt a new policy.', q_type:'SPECIFIC DETAIL' },
+  { section:'P1', stem:'‘Data age’ refers to', options:['mobile data', 'corporate database', 'data associated with B-schools', 'modern age where facts are manipulated for deriving conclusions'], answer:'D', explanation:'Here, ‘data age’ refers to the modern age where facts are manipulated for deriving conclusions.', q_type:'SPECIFIC DETAIL' },
+  { section:'P2', stem:'According to the writer, a larger part of the American population', options:['indulges in playing out the role of gag writers', 'indulges in the word trade', 'seeks employment in the gag trade for want of something better', 'looks down on gag writers'], answer:'B', explanation:'The passage stipulates 40% of American population is engaged in world trade.', q_type:'FACT RETRIEVAL' },
+  { section:'P2', stem:'The hallmark of gag writers is that', options:['they ruin good, simple language', 'have fun with words', 'make better sense of words', 'play with words to suit the audience’s requirements'], answer:'B', explanation:'The passage implies that wrecking technique reveals our language as full of tricky words. With 19 different meanings, other which sounds alike but differ in sense. To ring good punning changes, gag writers have to know their way around in the language.', q_type:'SPECIFIC DETAIL' },
+  { section:'P2', stem:'According to the passage, the second level of language is important if', options:['one wants to be at home reading and listening today', 'one wants to be a gag writer', 'one wants to understand clean entertainment', 'All of the above'], answer:'A', explanation:'According to the passage we have two distinct level of languages : Familiar and ordinary words to which everybody knows; elaborate words that we need to know if we are to feel at home in listening and reading today.', q_type:'FACT RETRIEVAL' },
+  { section:'P2', stem:'According to the writer, gag writers thrive on', options:['the double-layered aspect of language', 'audience craze for double entendres', 'vulgar innuendoes', 'common place jugglery with language'], answer:'A', explanation:'The passage makes us understand that gag writers often use a long and unusual word as a hinge of joke.', q_type:'FACT RETRIEVAL' },
+  { section:'P2', stem:'In gag writers’ trade', options:['long words are abbreviated for effect', 'parts of words are combined to produce hilarious portmanteau effect', 'long words play a major role', 'Both (b) and (c)'], answer:'D', explanation:'The passage makes us understand that gag writers often use a long and unusual word as a hinge of joke or as a peg for situation comedy tells something significant; they are well aware of limitations of average vocabulary and are willing to cash in on its shortcomings. FACE 2 FACE CAT', q_type:'SPECIFIC DETAIL' },
+  { section:'P2', stem:'When the writer says, ‘‘They don’t get paid for ignorance, only for simulating it,’’ he means to say', options:['the audience likes to think the gag writers are an ignorant lot', 'gag writers are terrific with insinuations', 'simulating ignorance is the trick that makes gag writers tick', 'None of the above'], answer:'C', explanation:'The passage reveals that wrecking reveals our language as full of tricky words which sound alike but differ in sense. Gag writers have to know their way around in the language. Hence they don’t get paid for ignorance only for simulating it.', q_type:'AUTHOR TONE' },
+  { section:'P2', stem:'Gag writers have influenced', options:['television artists', 'radio writers', 'circus clowns', 'All of these'], answer:'B', explanation:'The gag writers have influenced radio writers as words like lepidopterist and extomologist occur in famous radio plays.', q_type:'SPECIFIC DETAIL' },
+  { section:'P3', stem:'The central thrust of the passage is that', options:['India is gearing up for a new awakening', 'India is going back to its past status', 'India is yet to understand itself', 'India’s glorious past is a figment of the imagination'], answer:'C', explanation:'The passage describes that people don’t understand that every invasion, every war, was accompanied by slaughter of talented people in country. People don’t even know whether 50 years of India’s Independence were achievement or failure.', q_type:'MAIN IDEA' },
+  { section:'P3', stem:'The writer’s attitude is', options:['excessively critical of India', 'insightful', 'cynical', 'cold'], answer:'B', explanation:'The passage shows that author tries to show what exactly was India’s history and what are it’s prospects for the future.', q_type:'AUTHOR TONE' },
+  { section:'P3', stem:'The writer has given the example of the Vijaynagar kingdom in order to drive home the point that', options:['Indians should know their historical sites', 'Indians should be aware of the existence of such a historical past', 'It is time that India came to terms with the past', 'All of the above'], answer:'C', explanation:'The passage states that Vijayanagar was destroyed in 1565 and it is now that surrounding regions have begun to revive.', q_type:'STRUCTURE' },
+  { section:'P3', stem:'The writer is against', options:['the child’s view of history', 'taking a critical stand on their history', 'indulging in the details of the past', 'None of the above'], answer:'A', explanation:'The passage explains the story that any body could run and pull the bell and the emperor would appear at his window and give justice is the child’s idea of history which the author compares with slave ideas of ruler’s mercy and doesn’t follow the idea.', q_type:'AUTHOR TONE' },
+  { section:'P3', stem:'According to the writer, India’s regeneration and revival took place', options:['in the British period', 'after the British period', 'during and after the British period', 'a long time after the British left'], answer:'C', explanation:'The passage explains that in the British period and in 50 years after the British period there has been a kind of recovery,a slow revival of energy and intellect.', q_type:'FACT RETRIEVAL' },
+  { section:'P3', stem:'According to the passage, self-awareness is followed by', options:['self- righteousness', 'a higher idea of human possibilities', 'a desire for more in everything', 'Both (b) and (c)'], answer:'D', explanation:'The passage explains that when self-awareness follows when people begin to make new demands from their leaders, their fellows or on themselves. They ask for more in everything. They have higher ideas of human possibilities. They want to move.', q_type:'FACT RETRIEVAL' },
+  { section:'P3', stem:'According to the passage, India’s current situation is', options:['blank', 'horrific', 'primitive and messay', 'all are wrong'], answer:'C', explanation:'According to author India’s current situation is primitive and messy.', q_type:'FACT RETRIEVAL' },
+  { section:'P3', stem:'For a country to be alive and progressive, it is important that', options:['self-criticism does not stop', 'self-criticism does not exceed a certain limit', 'it feels that all is right with itself', 'None of the above'], answer:'A', explanation:'The passage explains that for the country to progressive and alive the mind has to work and mind has to be active, there has to be an exercise of the mind. The author defines it as the definition of a living country.', q_type:'SPECIFIC DETAIL' },
+  { section:'P3', stem:'The writer’s prognosis for India’s future is that', options:['it will be stable', 'it will be chaotic', 'it will reflect the manipulations of the present', 'it will give way to self-criticism'], answer:'B', explanation:'The passage explains that for every kind of disorder there is a positive movement in India. But the future will be chaotic. Politics will have to be at the level of people now.', q_type:'AUTHOR TONE' },
+  { section:'P3', stem:'One of the main features of the tyranny of foreign rulers was', options:['the decimation of the country’s artists', 'the decimation of the country’s wealth', 'the decimation of the country’s talented people', 'All of the above'], answer:'C', explanation:'The passage stipulates that idea of liberty is tyranny. The rulers were tyrants and tyrants were foreigners. Moreover, every invasion was accompanied by slaughter of country’s most talented people.', q_type:'SPECIFIC DETAIL' }
+];
+
+const PASSAGES = [
+  { id:'rc_013', label:'Passage 1', meta:'CAT 2014 · Business/Economics · Analytical · Moderate', text:'Business is changing and with it elite business, education is also changing. As a recent article in the New York Times suggests, MBA students in the ‘data age’ are seeking something more than traditional corporate strategy and finance. Increasingly, the business school brand seems to have fallen under the sway of Silicon Valley. With MBA applicants reportedly shrinking by 1% in 2013 and applicants to graduate programmes in computer science and mathematics growing by 11%, the article makes the case that business educators will need to seek out inventive ways of keeping a pace with technology.\n\nMore and more applicants to business school now possess undergraduate training in science, technology, engineering or mathematics. David B Yoffie, a professor at Harvard Business School (HBS) has observed ‘an extraordinary change in the talent pool,’ estimating that one-third of HBS’s incoming class of 900 MBA students have programming experience.\n\nCornell Tech in New York City is one example of a top-ranked school attempting to hybridise business with computer science. ‘Business schools (B-schools) are a legacy industry that is trying to adapt to a digital world,’ explained as associate Dean at the school. At the core of Cornell Tech’s innovative curriculum is a recognition that data-driven skills now hold relevance across industries. A similar outlook has been adopted at other top-ranked programmes in the United States with the introduction | start-up competitions and digitally focused courses. Of the 150 elective courses offered at the Stanford Graduate School of Business (SGSB) this year, for instance, 28% are new. ‘We are responding to the best practices we see in the outside world like A/B testing and working with massive data sets,’ commented Stanford GSB Dean, Garth Saloner. ‘We are adapting’. Maintaining a competitive edge in the digital economy may demand a ‘pivot’ toward hard technical skills, but as Greg Pass, Chief Entrepreneurial Officer at Cornell Tech and former chief technology officer at Twitter, observes, demand also exists for ‘a more integrated, broader view of things.’ Pass added that interdisciplinary MBA programmes such as the one Cornell Tech offers are well positioned to ‘nurture people with those wider horizons, technical know-how and quick business reflexes,’ according to the Times article.\n\nWith MBA admissions offices releasing second-round interview invitations in a few weeks, we thought we should explore an issue that brings endless paranoia to business school candidates scheduling interviews. Many programmes will give applicants a significant window in which they schedule their interview. So, does scheduling an interview early convey that you are being too aggressive and do not have any other irons in the fire or instead that you are eager to act and impress the admission committee? Does scheduling an interview later imply that you are less interested in the programmes or rather that you are highly sought after and are interviewing at multiple schools? The reality is that scheduling your interview to occur during the early days of the school’s set time frame is really not different from scheduling it near the end. Neither option confers any advantage or disadvantage (nor does any day in between). The MBA admission committees recognise that you like all candidates, are busy and that your schedule is in flux as a result of work, community and personal commitments. The committees focus on the interviews themselves, not on when they are scheduled. So pick a date that works for you a day and/or time when you know you can be comfortable and relaxed, not distracted and start preparing.', q_range:'Q1–Q4' },
+  { id:'rc_068', label:'Passage 2', meta:'CAT 1998 · Humanities/Culture · Narrative/Descriptive · Moderate', text:'The highest priced words are ghost-written by gagmen who furnish the raw material for comedy over the air and on the screen. They have a word-lore all their own, which they practise for five to fifteen hundred dollar a week or fifteen dollars a gag at piece rates. That’s sizeable rate for confounding acrimony with matrimony or extracting atar of roses from the otter. Quite apart from the dollar sign on it, gagmen’s word-lore is worth a close look, if you are given to the popular American pastime of playing with words–or if you’re part of the 40 percent who make their living in the word trade.\n\nGag writers’ tricks with words point up the fact that we have two distinct levels of language : familiar ordinary words that everybody knows and more elaborate words that don’t turn up so often, buy many of which we need to know if we are to feel at home in listening and reading today. To be sure gagmen play hob with the big words, making not sense but fun of them. They keep on confusing bigotry with bigamy, illiterate with illegitimate, monotony with monogamy, osculation with oscillation. They trade on the fact that for many of their listeners, these fancy terms linger in a twilight zone of meaning. It’s their deliberate intent to make everybody feel cozy at hearing big words, jumbled up or smacked down. After all, such words loom up over-size in ordinary talk, so no wonder they get the bulldozer treatment from the gagmen. Their wrecking technique incidentally reveals our language as full of tricky words, some with 19 different meanings, others which sound alike but differ in sense. To ring good punning changes, gag writers have to know their way around in the language. They don’t get paid for ignorance, only for simulating it. Their trade is a hard one and they regard it as serious business. They never laugh at each other’s jokes; rarely at their own. Like comediennes, they are usually melancholy men in private life.\n\nFertile invention and ingenious fancy are required to clean up ‘ blue’ burlesque gags for radio use. These shady gags are the theoretically taboo on the air. However, a gag writer who can leave a faint trace of bluing when he lauders the joke is all the more admired–and more highly paid. A gag that keeps the blue tinge is called a ‘double intender’, gag-land jargon for double entendre. The double meaning makes the joke funny at two levels. Children and other innocents hearing the crack for the first time take it literally, laughing at the surface humour; listeners who remember the original as they head it in vaudeville or burlesque, laugh at the artfulness with which the blue tinge is disguised. Another name for a double meaning of this sort is ‘insinuendo’. This is a portmanteau word or ‘combo’, as the gagmen would lable it, thus abbreviating combination. By telescoping insinuation and innuendo, they get insinuendo, on the principle of blend words brought into vogue by Lewis Carollo ‘Shock logic’ is another favourite with gag writers. Supposedly, a speciality of women comediennes, it is illogical ligic more easily illustrated than defined. A high school girl has to turn down a boy’s proposal, she writes Dear Jerry I’m sorry, but I can’t get engaged to you. My mother thinks I am too young to be engaged and besides, I’m already engaged to another boy. Yours regretfully. Guess who.\n\nGag writers’ lingo is consistently funnier than their gags. It should interest the slang-fancier. And like much vivid jargon developed in specialised trades and sports, a few of the terms are making their way into general use. Gimmick, for instance, in the sense either of a trick devised or the point of a joke, is creeping into the vocabulary of columnists and feature writes. Even apart from the trade lingo, gagmen’s maneuvers are of real concern to anyone who follows words with a fully awakened interest. For the very fact that gag writers often use a long and unusual word as the hinge of a joke or as a peg for situation comedy, tells us something quite significant: they are well aware of the limitations of the average vocabulary and are quite willing to cash in on its shortcomings. When Fred Allens’ joke-smiths work out a fishing routine, they have Allen referring to the bait in his most arch and solemn tones : ‘‘I presume you mean the legless invertebrate.’’ This is the old minstrel tick, using a long fancy term, instead of calling a worm a worm. Chico Marx can stretch a pun over 500 feet of film, making it funnier all the time, as he did when he worried the work viaduct, which he rendered, "Why a duck ?" And even the high-brow radio writers have taken advantage of gagmen’s technique. You might never expect to hear on the air. Such words as lepidopterist and entomologist. Both occur in a very famous radio play by Norman Corvine, ‘My client Curly’, about an unusual caterpillar which would dance to the tune ‘yes, sir, she’s my bad’ but remained inert to all other music. The dancing caterpillar was given a real New York buildup, which involved calling in the experts on butterflies and insects which travel under the learned names above. | the same time explaining them unobtrusively. There are many similar occasions where anyone working with words can turn gagmen’s trade secrets to count. Just what words do they think outside the familiar range? How do they pick the words that they ‘kick around’? It is not hard to find out.', q_range:'Q5–Q11' },
+  { id:'rc_075', label:'Passage 3', meta:'CAT 1997 · India-Specific · Argumentative · Moderate', text:'I think that it would be wrong to ask whether 50 years of India’s Independence are an achievement or a failure. It would be better to see things as evolving. It’s not an either–or question. My idea of the history of India is slightly contrary to the Indian idea. India is a country that in the north outside Rajasthan was ravaged and intellectually destroyed to a large extent by the invasions that began in about AD 1000 by forces and religions that India had no means of understanding. The invasions are in all the schoolbooks. But I don’ t think that people understand that every invasion, every war, every campaign, was accompanied by slaughter, a slaughter always of the most talented people in the | a tremendous intellectual depletion of the country.\n\nI think that in the British period and in the 50 years after the British period, there has been a kind of regrouping or recovery, a very slow revival of energy and intellect. This isn’t an idea that goes with the vision of the grandeur of old India and all that sort of rubbish. That idea is a great simplification and it occurs because it is intellectually, philosophically easier for Indians to manage. What they cannot manage and what they have not yet come to terms with, is that ravaging of all the north of India by various conquerors. That was ruin not by the act of nature, but by the hand of man. It is so painful that few Indians have begun to deal with it. It is much easier to deal with British imperialism. That is a familiar topic, in India and Britain. What is much less familiar is the ravaging of India before the British. What happened from AD 1000 onwards, really, is such a wound that it is almost impossible to face. Certain wounds are so bad that they can’t be written about. You deal with that kind of pain by hiding from it. You retreat from reality. I do not think, for example, that the Incas of Peru or the native people of Mexico have ever got over their defeat by the Spaniards. In both places, the head was cut off. I think the pre-British ravaging of India was as bad as that. In the place of knowledge of history, you have various fantasies about the village republic and the Old Glory. There is one big fantasy that Indians have always found solace on : about India having the capacity for absorbing its conquerors. This is not so. India was laid low by its conquerors.\n\nI feel the past 150 years have been years of every kind of growth. I see the British period and what has continued after that as one period. In that time, there has been a very slow intellectual recruitment. I think every Indian should make the pilgrimage to the site of the capital of the Vijayanagar empire, just to see what the invasion of India led to. They will see a totally destroyed town. Religious wars are like that. People who see that might understand what the centuries of slaughter and plunder meant. War isn’t game. When you lost that kind of war, your town was destroyed, the people who built the towns were destroyed. You are left with a headless population. That’s where modern India starts from. The Vijayanagar capital was destroyed in 1565. It is only now that the surrounding region has begun to revive. A great chance has been given to India to start up again and I feel it has started up again.\n\nThe questions about whether 50 years of India since Independence have been a failure or an achievement are not the questions to ask. In fact, I think India is developing quite marvellously, people thought even Mr. Nehru thought that development and new institutions in a place like Bihar, for instance, would immediately lead to beauty. But it doesn’t happen like that when a country as ravaged as India, with all its layers of cruelty, begins to extend justice to people lower down, it’s a very messy business. It’s not beautiful, it’s extremely messy. And that’s what you have now, all these small politicians with small reputations and small parties. But this is part of growth, this is part of development. You must remember that these people and the people they represent, have never had rights before. When the oppressed have the power to assert themselves, they will behave badly. It will need a couple of generations of security and knowledge of institutions and the knowledge that you can trust institutions-it will take at least a couple of generations before people in that situation begin to behave well. People in India have known only tyranny. The very idea of liberty is a new idea. The rulers were tyrants. The tyrants were foreigners. And they were proud of being foreign. There’s story that anybody could run and pull a bell and the emperor would appear at his window and give justice. This is a child’s idea of history-the slave’s idea of the ruler’s mercy. When the people at the bottom discover that they hold justice in their own hands, the Earth moves a little. You have to expect these Earth movements in India. It will be like this for a hundred years. But it is the only way. It’s painful and messy and primitive and petty, but it’s better that it should begin. It has to begin. If we were to rule people according to what we think fit, that takes us back to the past when people had no voices. With self-awareness all else follows. People begin to make new demands on their leaders, their fellows, on themselves. They ask for more in everything. They have a higher idea of human possibilities. They are to content with what they did before or what their fathers did before. They want to move. That is marvellous. That is as it should be. I think that within every kind of disorder now in India there is a positive movement. But the future will be fairly chaotic. Politics will have to be at the level of the people now. People like Nehru were colonial—style politicians. They were to a large extent created and protected by the colonial order. They did not begin with the people. Politician now have to begin with the people. They cannot be too far above the level of the people. They are very much part of the people. It is important that self-criticism does not stop. The mind has to work, the mind has to be active, there has to be an exercise of the mind. I think it’s almost a definition of a living country that it looks at itself, analyses itself all times. Only countries that have ceased to live can say it’s all wonderful. | (a) India is gearing up for a new awakening (b) India is going back to its past status (c) India is yet to understand itself (d) India’s glorious past is a figment of the imagination', q_range:'Q12–Q21' }
+];
+
+let studentName = '', studentPin = '', studentBatch = '';
+let currentQ = 0;
+let userAnswers = new Array(TOTAL_Q).fill(null);
+let visitedQ = new Array(TOTAL_Q).fill(false);
+let markedQ = new Array(TOTAL_Q).fill(false);
+let questionTimes = new Array(TOTAL_Q).fill(0);
+let secondsLeft = TIMER_DURATION * 60;
+let timerInterval = null;
+let qStartTime = Date.now();
+let testSubmitted = false;
+
+function startTest() {
+  const name = document.getElementById('nameInput').value.trim();
+  const pin = document.getElementById('pinInput').value.trim().toUpperCase();
+  const batch = document.getElementById('batchSelect').value;
+  const pinRegex = /^(STU|IMS)\d{10}$/;
+  if (!name || !pinRegex.test(pin) || !batch) {
+    document.getElementById('loginError').style.display = 'block';
+    return;
+  }
+  studentName = name; studentPin = pin; studentBatch = batch;
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('testScreen').style.display = 'block';
+  document.getElementById('studentNameDisplay').textContent = name;
+  buildSectionTabs();
+  buildPalette();
+  buildJumpPills();
+  renderQuestion(0);
+  startTimer();
+}
+
+function buildSectionTabs() {
+  const tabs = document.getElementById('sectionTabs');
+  const sections = [...new Set(QUESTIONS.map(q => q.section))];
+  sections.forEach(sec => {
+    const first = QUESTIONS.findIndex(q => q.section === sec);
+    const last = QUESTIONS.map(q => q.section).lastIndexOf(sec);
+    const btn = document.createElement('button');
+    btn.className = 'sec-tab';
+    btn.dataset.section = sec;
+    btn.textContent = sec + ' · Q' + (first+1) + '–' + (last+1);
+    btn.onclick = () => renderQuestion(first);
+    tabs.appendChild(btn);
+  });
+}
+
+function buildPalette() {
+  const grid = document.getElementById('palette');
+  grid.innerHTML = '';
+  for (let i = 0; i < TOTAL_Q; i++) {
+    const btn = document.createElement('button');
+    btn.className = 'pal-btn';
+    btn.id = 'pal-' + i;
+    btn.textContent = i + 1;
+    btn.onclick = () => renderQuestion(i);
+    grid.appendChild(btn);
+  }
+}
+
+function buildJumpPills() {
+  const pills = document.getElementById('jumpPills');
+  const sections = [...new Set(QUESTIONS.map(q => q.section))];
+  sections.forEach(sec => {
+    const first = QUESTIONS.findIndex(q => q.section === sec);
+    const btn = document.createElement('button');
+    btn.className = 'jump-pill';
+    btn.textContent = sec;
+    btn.onclick = () => renderQuestion(first);
+    pills.appendChild(btn);
+  });
+}
+
+function renderQuestion(idx) {
+  if (qStartTime) questionTimes[currentQ] += Math.floor((Date.now() - qStartTime) / 1000);
+  qStartTime = Date.now();
+  currentQ = idx;
+  visitedQ[idx] = true;
+  updatePalette();
+  updateTabs();
+
+  const q = QUESTIONS[idx];
+  document.getElementById('qCounter').textContent = 'Q' + (idx+1) + ' / ' + TOTAL_Q;
+
+  const pNum = parseInt(q.section.replace('P','')) - 1;
+  const passage = PASSAGES[pNum];
+
+  const pp = document.getElementById('passagePane');
+  const ptext = passage.text.split('\n').map(line => line.trim() ? '<p>' + line + '</p>' : '').join('');
+  pp.innerHTML = `
+    <div class="passage-header">
+      <div class="passage-label">${passage.label}</div>
+      <div class="passage-meta">${passage.meta}</div>
+      <div class="passage-qrange">${passage.q_range}</div>
+    </div>
+    <div class="passage-text">${ptext}</div>
+  `;
+
+  const qp = document.getElementById('questionPane');
+  const labels = ['A','B','C','D'];
+  let optsHtml = q.options.map((opt, i) => `
+    <button class="option-btn${userAnswers[idx] === labels[i] ? ' selected' : ''}" onclick="selectAnswer('${labels[i]}')" id="opt-${labels[i]}">
+      <span class="opt-label">${labels[i]}</span>
+      <span class="opt-text">${opt}</span>
+    </button>
+  `).join('');
+
+  qp.innerHTML = `
+    <div class="q-header">
+      <span class="q-num">Q${idx+1}</span>
+      <span class="q-type">${q.q_type}</span>
+    </div>
+    <div class="q-stem">${q.stem}</div>
+    <div class="options-list">${optsHtml}</div>
+    <div class="explanation" id="expBox">
+      <div class="exp-label">Explanation</div>
+      <div>${q.explanation}</div>
+    </div>
+  `;
+
+  document.getElementById('submitBtn').style.display = (idx === TOTAL_Q - 1) ? 'block' : 'none';
+  document.getElementById('saveNextBtn').style.display = (idx === TOTAL_Q - 1) ? 'none' : 'block';
+}
+
+function selectAnswer(label) {
+  userAnswers[currentQ] = label;
+  updatePalette();
+  const labels = ['A','B','C','D'];
+  labels.forEach(l => {
+    const btn = document.getElementById('opt-' + l);
+    if (btn) btn.className = 'option-btn' + (l === label ? ' selected' : '');
+  });
+}
+
+function clearAnswer() {
+  userAnswers[currentQ] = null;
+  markedQ[currentQ] = false;
+  updatePalette();
+  renderQuestion(currentQ);
+}
+
+function markForReview() {
+  markedQ[currentQ] = !markedQ[currentQ];
+  updatePalette();
+}
+
+function navigate(dir) {
+  const next = currentQ + dir;
+  if (next >= 0 && next < TOTAL_Q) renderQuestion(next);
+}
+
+function updatePalette() {
+  for (let i = 0; i < TOTAL_Q; i++) {
+    const btn = document.getElementById('pal-' + i);
+    if (!btn) continue;
+    let cls = 'pal-btn';
+    if (markedQ[i]) cls += ' marked';
+    else if (userAnswers[i] !== null) cls += ' answered';
+    else if (visitedQ[i]) cls += ' unanswered';
+    if (i === currentQ) cls += ' current';
+    btn.className = cls;
+  }
+}
+
+function updateTabs() {
+  const q = QUESTIONS[currentQ];
+  document.querySelectorAll('.sec-tab').forEach(tab => {
+    tab.classList.toggle('active', tab.dataset.section === q.section);
+  });
+}
+
+function startTimer() {
+  timerInterval = setInterval(() => {
+    secondsLeft--;
+    if (secondsLeft <= 0) { clearInterval(timerInterval); submitTest(); return; }
+    const mm = String(Math.floor(secondsLeft/60)).padStart(2,'0');
+    const ss = String(secondsLeft%60).padStart(2,'0');
+    const td = document.getElementById('timerDisplay');
+    td.textContent = mm + ':' + ss;
+    td.className = secondsLeft <= 300 ? 'urgent' : '';
+  }, 1000);
+}
+
+function confirmSubmit() {
+  const answered = userAnswers.filter(a => a !== null).length;
+  const skipped = TOTAL_Q - answered;
+  if (skipped > 0 && !confirm(`${skipped} question(s) unanswered. Submit anyway?`)) return;
+  submitTest();
+}
+
+function submitTest() {
+  if (testSubmitted) return;
+  testSubmitted = true;
+  clearInterval(timerInterval);
+  questionTimes[currentQ] += Math.floor((Date.now() - qStartTime) / 1000);
+
+  const elapsed = TIMER_DURATION * 60 - secondsLeft;
+  const mm = String(Math.floor(elapsed/60)).padStart(2,'0');
+  const ss = String(elapsed%60).padStart(2,'0');
+  const timeTaken = mm + ':' + ss;
+
+  let correct = 0, wrong = 0, skipped = 0;
+  let sectionErrors = {};
+  let wrongQuestions = [];
+
+  QUESTIONS.forEach((q, i) => {
+    const ua = userAnswers[i];
+    if (ua === null) { skipped++; }
+    else if (ua === q.answer) { correct++; }
+    else {
+      wrong++;
+      wrongQuestions.push(i + 1);
+      const sec = q.section;
+      sectionErrors[sec] = (sectionErrors[sec] || 0) + 1;
+      sectionErrors[q.q_type] = (sectionErrors[q.q_type] || 0) + 1;
+    }
+  });
+
+  const score = correct * 4 - wrong * 1;
+
+  const payload = {
+    testName: TEST_NAME,
+    name: studentName,
+    pin: studentPin,
+    batch: studentBatch,
+    score: score,
+    correct: correct,
+    wrong: wrong,
+    skipped: skipped,
+    maxMarks: 84,
+    timeTaken: timeTaken,
+    timestamp: new Date().toLocaleString('en-IN', {timeZone:'Asia/Kolkata'}),
+    sectionErrors: JSON.stringify(sectionErrors),
+    wrongQuestions: JSON.stringify(wrongQuestions),
+    studentAnswers: userAnswers.map(a => a === null ? null : a),
+    questionTimes: JSON.stringify(questionTimes)
+  };
+
+  fetch(APPS_SCRIPT_URL, {
+    method: 'POST', mode: 'no-cors',
+    headers: {'Content-Type': 'text/plain'},
+    body: JSON.stringify(payload)
+  });
+
+  showResults(correct, wrong, skipped, score, timeTaken, sectionErrors, wrongQuestions);
+}
+
+function showResults(correct, wrong, skipped, score, timeTaken, sectionErrors, wrongQuestions) {
+  document.getElementById('testScreen').style.display = 'none';
+  const rs = document.getElementById('resultsScreen');
+  rs.style.display = 'block';
+
+  document.getElementById('resultsSubtitle').textContent = studentName + ' · ' + studentBatch + ' · ' + timeTaken;
+
+  const pct = Math.round(score / 84 * 100);
+  document.getElementById('statsGrid').innerHTML = `
+    <div class="stat-box"><div class="stat-label">Score</div><div class="stat-val">${score}</div><div class="stat-sub">out of 84</div></div>
+    <div class="stat-box"><div class="stat-label">Correct</div><div class="stat-val" style="color:var(--green)">${correct}</div><div class="stat-sub">+${correct*4} marks</div></div>
+    <div class="stat-box"><div class="stat-label">Wrong</div><div class="stat-val" style="color:var(--red)">${wrong}</div><div class="stat-sub">−${wrong} marks</div></div>
+    <div class="stat-box"><div class="stat-label">Skipped</div><div class="stat-val" style="color:var(--grey)">${skipped}</div><div class="stat-sub">0 marks</div></div>
+    <div class="stat-box"><div class="stat-label">Accuracy</div><div class="stat-val">${pct}%</div><div class="stat-sub">of max marks</div></div>
+    <div class="stat-box"><div class="stat-label">Time</div><div class="stat-val" style="font-size:20px">${timeTaken}</div><div class="stat-sub">of 25:00</div></div>
+  `;
+
+  const qtypes = Object.entries(sectionErrors).filter(([k]) => ['INFERENCE','MAIN IDEA','AUTHOR TONE','FACT RETRIEVAL','SPECIFIC DETAIL','VOCAB IN CONTEXT','STRUCTURE','LOGICAL FLOW','TRUE/FALSE/NOT'].includes(k));
+  if (qtypes.length > 0) {
+    let ebHtml = '<h3>Errors by Question Type</h3>';
+    qtypes.sort((a,b) => b[1]-a[1]).forEach(([type, count]) => {
+      ebHtml += `<div class="eb-row"><span class="eb-type">${type}</span><span class="eb-count">${count} wrong</span></div>`;
+    });
+    document.getElementById('errorBreakdown').innerHTML = ebHtml;
+  }
+
+  let reviewHtml = '';
+  QUESTIONS.forEach((q, i) => {
+    const ua = userAnswers[i];
+    const isCorrect = ua === q.answer;
+    const isSkipped = ua === null;
+    const cls = isSkipped ? 'ri-skipped' : isCorrect ? 'ri-correct' : 'ri-wrong';
+    const labels = ['A','B','C','D'];
+    let ansHtml = '';
+    if (isSkipped) ansHtml = '<div class="review-ans">Skipped &nbsp;·&nbsp; <span class="correct-ans">Correct: ' + q.answer + ') ' + q.options[labels.indexOf(q.answer)] + '</span></div>';
+    else if (isCorrect) ansHtml = '<div class="review-ans"><span class="correct-ans">✓ ' + ua + ') ' + q.options[labels.indexOf(ua)] + '</span></div>';
+    else ansHtml = '<div class="review-ans"><span class="wrong-ans">✗ Your answer: ' + ua + ') ' + q.options[labels.indexOf(ua)] + '</span></div><div class="review-ans"><span class="correct-ans">Correct: ' + q.answer + ') ' + q.options[labels.indexOf(q.answer)] + '</span></div>';
+    reviewHtml += `
+      <div class="review-item ${cls}">
+        <div class="review-qnum">Q${i+1} · ${q.section} · ${q.q_type}</div>
+        <div class="review-stem">${q.stem}</div>
+        ${ansHtml}
+        <div class="review-exp">${q.explanation}</div>
+      </div>`;
+  });
+  document.getElementById('reviewItems').innerHTML = reviewHtml;
+}
+</script>
+</body>
+</html>

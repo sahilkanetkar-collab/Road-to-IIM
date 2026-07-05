@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Road to IIM RC Series 04</title>
+<style>
+:root {
+  --navy: #0d1b2a;
+  --navy2: #1a2e45;
+  --gold: #c9a84c;
+  --gold2: #e8c76a;
+  --green: #2ecc71;
+  --red: #e74c3c;
+  --grey: #8899aa;
+  --white: #f0f4f8;
+  --purple: #8b5cf6;
+  --purple2: #7c3aed;
+  --panel: 300px;
+  --topbar: 56px;
+  --tabs: 42px;
+  --navbar: 62px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: "Segoe UI", sans-serif; background: var(--navy); color: var(--white); min-height: 100vh; }
+
+/* LOGIN */
+#loginScreen { display:flex; align-items:center; justify-content:center; min-height:100vh; padding:20px; }
+.login-box { background:var(--navy2); border:1px solid var(--gold); border-radius:10px; padding:40px; width:100%; max-width:420px; }
+.login-box h1 { color:var(--gold); font-size:22px; margin-bottom:6px; text-align:center; }
+.login-box .subtitle { color:var(--grey); font-size:13px; text-align:center; margin-bottom:28px; }
+.login-box label { display:block; font-size:13px; color:var(--grey); margin-bottom:5px; margin-top:16px; }
+.login-box input, .login-box select { width:100%; padding:10px 12px; background:var(--navy); border:1px solid #2a4a6a; border-radius:6px; color:var(--white); font-size:14px; font-family:"Segoe UI",sans-serif; }
+.login-box select option { background:var(--navy); }
+.login-box input:focus, .login-box select:focus { outline:none; border-color:var(--gold); }
+#loginError { color:var(--red); font-size:13px; margin-top:10px; display:none; }
+#startBtn { width:100%; margin-top:24px; padding:12px; background:var(--gold); color:var(--navy); font-size:15px; font-weight:700; border:none; border-radius:6px; cursor:pointer; }
+#startBtn:hover { background:var(--gold2); }
+
+/* TOP BAR */
+#topBar { position:sticky; top:0; z-index:200; height:var(--topbar); background:var(--navy2); border-bottom:1px solid #1e3a5a; display:flex; align-items:center; padding:0 16px; padding-right:calc(var(--panel) + 20px); }
+#topBar .brand { font-size:14px; font-weight:700; color:var(--gold); white-space:nowrap; }
+#topBar .badge { margin:0 auto; background:#0d2a3a; border:1px solid var(--gold); border-radius:20px; padding:4px 16px; font-size:12px; color:var(--gold2); white-space:nowrap; }
+#topBar .right { display:flex; align-items:center; gap:12px; white-space:nowrap; }
+#studentNameDisplay { font-size:13px; color:var(--grey); }
+#timerDisplay { background:var(--navy); border:1px solid var(--green); border-radius:20px; padding:4px 14px; font-size:13px; font-weight:700; color:var(--green); min-width:70px; text-align:center; }
+#timerDisplay.urgent { border-color:var(--red); color:var(--red); }
+#qCounter { font-size:12px; color:var(--grey); }
+
+/* SECTION TABS */
+#sectionTabs { position:sticky; top:var(--topbar); z-index:190; height:var(--tabs); background:var(--navy2); border-bottom:1px solid #1e3a5a; display:flex; align-items:center; padding:0 16px; gap:8px; overflow-x:auto; padding-right:calc(var(--panel) + 16px); }
+.sec-tab { padding:6px 14px; border-radius:20px; font-size:12px; font-weight:600; cursor:pointer; border:1px solid #2a4a6a; color:var(--grey); background:transparent; white-space:nowrap; }
+.sec-tab.active { background:var(--white); color:var(--navy); font-weight:700; border-color:var(--white); }
+.sec-tab:hover:not(.active) { border-color:var(--gold); color:var(--gold); }
+
+/* MAIN AREA - RC SPLIT */
+#mainArea { display:flex; height:calc(100vh - var(--topbar) - var(--tabs) - var(--navbar)); margin-right:var(--panel); }
+#passagePane { width:50%; min-width:280px; max-width:600px; overflow-y:auto; padding:20px 22px 20px 24px; border-right:1px solid #1e3a5a; flex-shrink:0; }
+#questionPane { flex:1; overflow-y:auto; padding:20px 20px 20px 22px; display:flex; flex-direction:column; }
+
+/* PASSAGE */
+.passage-header { margin-bottom:14px; }
+.passage-label { font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--gold); font-weight:700; margin-bottom:4px; }
+.passage-meta { font-size:11px; color:var(--grey); margin-bottom:10px; }
+.passage-qrange { font-size:11px; color:var(--grey); background:#0d2233; border:1px solid #1e3a5a; border-radius:4px; padding:3px 8px; display:inline-block; margin-bottom:12px; }
+.passage-text { font-size:14px; line-height:1.8; color:var(--white); }
+.passage-text p { margin-bottom:12px; }
+
+/* QUESTION */
+.q-header { font-size:11px; color:var(--grey); margin-bottom:8px; }
+.q-num { color:var(--gold); font-weight:700; }
+.q-type { color:var(--grey); font-size:10px; text-transform:uppercase; letter-spacing:0.5px; margin-left:8px; }
+.q-stem { font-size:15px; line-height:1.6; margin-bottom:16px; color:var(--white); }
+.options-list { display:flex; flex-direction:column; gap:8px; margin-bottom:16px; }
+.option-btn { display:flex; align-items:flex-start; gap:10px; padding:10px 14px; background:var(--navy2); border:1px solid #2a4a6a; border-radius:6px; cursor:pointer; text-align:left; width:100%; color:var(--white); font-family:"Segoe UI",sans-serif; font-size:14px; transition:border-color 0.15s; }
+.option-btn:hover { border-color:var(--gold); }
+.option-btn.selected { border-color:var(--gold); background:#1e3020; }
+.option-btn.correct { border-color:var(--green); background:#0d2a1a; }
+.option-btn.wrong { border-color:var(--red); background:#2a0d0d; }
+.opt-label { font-weight:700; color:var(--gold); flex-shrink:0; min-width:20px; }
+.opt-text { flex:1; line-height:1.5; }
+
+/* EXPLANATION */
+.explanation { display:none; background:#0d2233; border:1px solid #1e3a5a; border-radius:6px; padding:12px 14px; font-size:13px; line-height:1.6; color:#a0b4c8; margin-top:8px; }
+.explanation.show { display:block; }
+.exp-label { color:var(--gold); font-weight:700; font-size:11px; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px; }
+
+/* NAV BAR */
+#navBar { position:fixed; bottom:0; left:0; right:var(--panel); background:var(--navy2); border-top:1px solid #1e3a5a; display:flex; align-items:center; padding:0 16px; z-index:190; height:var(--navbar); gap:8px; }
+.nav-btn { padding:8px 16px; border-radius:6px; font-size:13px; font-weight:600; cursor:pointer; border:1px solid; font-family:"Segoe UI",sans-serif; }
+#prevBtn { background:transparent; border-color:#2a4a6a; color:var(--grey); }
+#prevBtn:hover { border-color:var(--grey); color:var(--white); }
+#markBtn { background:var(--purple2); border-color:var(--purple); color:var(--white); }
+#markBtn:hover { background:var(--purple); }
+#clearBtn { background:transparent; border-color:#b85c00; color:#e87c30; }
+#clearBtn:hover { background:#1a1200; }
+.nav-spacer { flex:1; }
+#saveNextBtn { background:var(--green); border-color:var(--green); color:var(--navy); }
+#saveNextBtn:hover { background:#27ae60; }
+#submitBtn { background:transparent; border-color:var(--gold); color:var(--gold); display:none; }
+#submitBtn:hover { background:#1a1200; }
+
+/* RIGHT PANEL */
+#rightPanel { position:fixed; right:0; top:0; width:var(--panel); height:100vh; background:var(--navy2); border-left:1px solid #1e3a5a; overflow-y:auto; padding-top:calc(var(--topbar) + var(--tabs) + 2px); padding-bottom:80px; z-index:180; }
+.panel-section { padding:12px 14px; border-bottom:1px solid #1e3a5a; }
+.panel-title { font-size:11px; text-transform:uppercase; letter-spacing:0.8px; color:var(--grey); font-weight:700; margin-bottom:8px; }
+.marking-row { display:flex; justify-content:space-between; font-size:12px; color:var(--white); margin-bottom:4px; }
+.marking-row span:last-child { color:var(--gold); font-weight:600; }
+.legend-row { display:flex; align-items:center; gap:8px; font-size:12px; color:var(--grey); margin-bottom:4px; }
+.legend-dot { width:14px; height:14px; border-radius:3px; flex-shrink:0; }
+.jump-pills { display:flex; flex-wrap:wrap; gap:6px; }
+.jump-pill { padding:4px 10px; border-radius:12px; font-size:11px; font-weight:600; cursor:pointer; border:1px solid #2a4a6a; color:var(--grey); background:transparent; }
+.jump-pill:hover { border-color:var(--gold); color:var(--gold); }
+.palette-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:5px; }
+.pal-btn { aspect-ratio:1; border-radius:4px; font-size:12px; font-weight:700; cursor:pointer; border:1px solid #2a4a6a; background:var(--navy); color:var(--grey); display:flex; align-items:center; justify-content:center; }
+.pal-btn.answered { background:var(--green); color:var(--navy); border-color:var(--green); }
+.pal-btn.unanswered { background:var(--red); color:var(--white); border-color:var(--red); }
+.pal-btn.marked { background:var(--purple); color:var(--white); border-color:var(--purple); }
+.pal-btn.current { outline:2px solid var(--gold); outline-offset:1px; }
+
+/* RESULTS */
+#resultsScreen { display:none; min-height:100vh; padding:30px 20px; }
+.results-header { text-align:center; margin-bottom:30px; }
+.results-header h2 { color:var(--gold); font-size:24px; margin-bottom:8px; }
+.results-header p { color:var(--grey); font-size:14px; }
+.stats-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:12px; max-width:700px; margin:0 auto 30px; }
+.stat-box { background:var(--navy2); border:1px solid #2a4a6a; border-radius:8px; padding:16px; text-align:center; }
+.stat-box .stat-label { font-size:11px; color:var(--grey); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px; }
+.stat-box .stat-val { font-size:28px; font-weight:700; color:var(--gold); }
+.stat-box .stat-sub { font-size:11px; color:var(--grey); margin-top:3px; }
+.review-section { max-width:800px; margin:0 auto; }
+.review-section h3 { color:var(--gold); font-size:16px; margin-bottom:16px; border-bottom:1px solid #1e3a5a; padding-bottom:8px; }
+.review-item { background:var(--navy2); border:1px solid #2a4a6a; border-radius:8px; padding:14px; margin-bottom:12px; }
+.review-item.ri-correct { border-left:3px solid var(--green); }
+.review-item.ri-wrong { border-left:3px solid var(--red); }
+.review-item.ri-skipped { border-left:3px solid var(--grey); }
+.review-qnum { font-size:11px; color:var(--grey); margin-bottom:6px; }
+.review-stem { font-size:13px; margin-bottom:8px; line-height:1.5; }
+.review-ans { font-size:12px; margin-bottom:4px; }
+.review-ans .correct-ans { color:var(--green); font-weight:700; }
+.review-ans .wrong-ans { color:var(--red); font-weight:700; }
+.review-exp { font-size:12px; color:#8aa0b4; margin-top:6px; line-height:1.5; }
+.error-breakdown { max-width:700px; margin:0 auto 20px; }
+.error-breakdown h3 { color:var(--gold); font-size:14px; margin-bottom:10px; }
+.eb-row { display:flex; justify-content:space-between; padding:6px 10px; background:var(--navy2); border-radius:4px; margin-bottom:4px; font-size:13px; }
+.eb-row .eb-type { color:var(--grey); }
+.eb-row .eb-count { color:var(--red); font-weight:700; }
+
+
+/* PDF / Print */
+.print-btn { display:block; margin:0 auto 24px; padding:10px 28px; background:transparent; border:1px solid var(--gold); color:var(--gold); border-radius:6px; font-size:13px; font-weight:600; cursor:pointer; font-family:"Segoe UI",sans-serif; }
+.print-btn:hover { background:#1a1200; }
+@media print {
+  #loginScreen, #testScreen, .print-btn { display:none !important; }
+  #resultsScreen { display:block !important; padding:10px; }
+  body { background:#fff; color:#000; }
+  .results-header h2 { color:#8a6200; }
+  .results-header p { color:#555; }
+  .stat-box { background:#f5f5f5; border:1px solid #ccc; }
+  .stat-box .stat-label { color:#555; }
+  .stat-box .stat-val { color:#8a6200; }
+  .stat-box .stat-sub { color:#777; }
+  .review-item { background:#f9f9f9; border:1px solid #ddd; break-inside:avoid; }
+  .review-item.ri-correct { border-left:3px solid #27ae60; }
+  .review-item.ri-wrong { border-left:3px solid #c0392b; }
+  .review-item.ri-skipped { border-left:3px solid #888; }
+  .review-qnum { color:#555; }
+  .review-ans .correct-ans { color:#27ae60; }
+  .review-ans .wrong-ans { color:#c0392b; }
+  .review-exp { color:#444; }
+  .error-breakdown .eb-row { background:#f5f5f5; }
+  .eb-type { color:#555 !important; }
+  .eb-count { color:#c0392b !important; }
+  .stats-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 768px) {
+  #mainArea { flex-direction:column; height:auto; margin-right:0; }
+  #passagePane { width:100%; max-width:100%; border-right:none; border-bottom:1px solid #1e3a5a; max-height:40vh; }
+  #questionPane { padding-bottom:80px; }
+  #rightPanel { display:none; }
+  #topBar { padding-right:16px; }
+  #sectionTabs { padding-right:16px; }
+  #navBar { right:0; }
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="login-box">
+    <h1>Road to IIM</h1>
+    <div class="subtitle">RC Series 04 &nbsp;·&nbsp; 18 Questions &nbsp;·&nbsp; 25 Minutes</div>
+    <label>Full Name</label>
+    <input type="text" id="nameInput" placeholder="Enter your full name" autocomplete="off">
+    <label>IMS PIN</label>
+    <input type="text" id="pinInput" placeholder="e.g. STU1234567890" autocomplete="off" maxlength="13">
+    <label>Batch</label>
+    <select id="batchSelect">
+      <option value="">— Select batch —</option>
+      
+        <optgroup label="Classroom">
+          <option value="A2701">A2701</option>
+          <option value="A2702">A2702</option>
+          <option value="A2703">A2703</option>
+          <option value="A2704">A2704</option>
+          <option value="A2705">A2705</option>
+          <option value="A2706">A2706</option>
+          <option value="A2707">A2707</option>
+          <option value="A2708">A2708</option>
+          <option value="A2709">A2709</option>
+          <option value="A2710">A2710</option>
+          <option value="A2711">A2711</option>
+          <option value="A2712">A2712</option>
+          <option value="A2713">A2713</option>
+          <option value="A2714">A2714</option>
+          <option value="A2715">A2715</option>
+          <option value="A2716">A2716</option>
+          <option value="A2717">A2717</option>
+          <option value="A2718">A2718</option>
+          <option value="A2719">A2719</option>
+          <option value="A2720">A2720</option>
+        </optgroup>
+        <optgroup label="IPMAT 28">
+          <option value="Z2801">Z2801</option>
+          <option value="S2801">S2801</option>
+          <option value="A2804">A2804</option>
+          <option value="PN2801">PN2801</option>
+        </optgroup>
+        <optgroup label="School">
+          <option value="Zebar">Zebar</option>
+        </optgroup>
+        <optgroup label="Admin">
+          <option value="Admin">Admin</option>
+        </optgroup>
+    </select>
+    <div id="loginError">Please fill all fields with a valid PIN (STU/IMS + 10 digits).</div>
+    <button id="startBtn" onclick="startTest()">Start Test</button>
+  </div>
+</div>
+
+<!-- TEST SCREEN -->
+<div id="testScreen" style="display:none;">
+  <div id="topBar">
+    <span class="brand">Road to IIM · RC 04</span>
+    <span class="badge">RC Drill &nbsp;|&nbsp; 18 Qs &nbsp;|&nbsp; 25 min &nbsp;|&nbsp; +4 / −1</span>
+    <div class="right">
+      <span id="studentNameDisplay"></span>
+      <span id="timerDisplay">25:00</span>
+      <span id="qCounter">Q1 / 18</span>
+    </div>
+  </div>
+  <div id="sectionTabs"></div>
+  <div id="mainArea">
+    <div id="passagePane"></div>
+    <div id="questionPane"></div>
+  </div>
+  <div id="navBar">
+    <button class="nav-btn" id="prevBtn" onclick="navigate(-1)">← Prev</button>
+    <button class="nav-btn" id="markBtn" onclick="markForReview()">★ Mark</button>
+    <button class="nav-btn" id="clearBtn" onclick="clearAnswer()">✕ Clear</button>
+    <div class="nav-spacer"></div>
+    <button class="nav-btn" id="saveNextBtn" onclick="navigate(1)">Save & Next →</button>
+    <button class="nav-btn" id="submitBtn" onclick="confirmSubmit()">Submit Test</button>
+  </div>
+  <div id="rightPanel">
+    <div class="panel-section">
+      <div class="panel-title">Marking Scheme</div>
+      <div class="marking-row"><span>Correct</span><span>+4</span></div>
+      <div class="marking-row"><span>Wrong</span><span>−1</span></div>
+      <div class="marking-row"><span>Skipped</span><span>0</span></div>
+      <div class="marking-row"><span>Max Marks</span><span>72</span></div>
+    </div>
+    <div class="panel-section">
+      <div class="panel-title">Status</div>
+      <div class="legend-row"><div class="legend-dot" style="background:var(--green)"></div>Answered</div>
+      <div class="legend-row"><div class="legend-dot" style="background:var(--red)"></div>Visited, unanswered</div>
+      <div class="legend-row"><div class="legend-dot" style="background:var(--purple)"></div>Marked for review</div>
+      <div class="legend-row"><div class="legend-dot" style="background:var(--navy);border:1px solid #2a4a6a"></div>Not visited</div>
+    </div>
+    <div class="panel-section">
+      <div class="panel-title">Jump to section</div>
+      <div class="jump-pills" id="jumpPills"></div>
+    </div>
+    <div class="panel-section">
+      <div class="panel-title">Question Palette</div>
+      <div class="palette-grid" id="palette"></div>
+    </div>
+  </div>
+</div>
+
+<!-- RESULTS SCREEN (sibling of testScreen, never child) -->
+<div id="resultsScreen">
+  <div class="results-header">
+    <h2>RC Series 04 — Results</h2>
+    <p id="resultsSubtitle"></p>
+  </div>
+  <button class="print-btn" onclick="window.print()">⬇ Download / Print Review</button>
+  <div class="stats-grid" id="statsGrid"></div>
+  <div class="error-breakdown" id="errorBreakdown"></div>
+  <div class="review-section">
+    <h3>Full Review</h3>
+    <div id="reviewItems"></div>
+  </div>
+</div>
+
+<script>
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx5Ojm_zp4LfsMeelx5e06KNjVH1wfsXdV0keS4407m4FO1HU4EpVb7GKj-ibAsxnspeA/exec';
+const TEST_NAME = 'Road to IIM RC Series 04';
+const TIMER_DURATION = 25;
+const TOTAL_Q = 18;
+
+const QUESTIONS = [
+  { section:'P1', stem:'What made the author revisit the underwater reef?', options:['Placid surface of the Red Sea', 'Glimpses of the sunlight', 'Clear blue sea water', 'Scenic beauty of the underwater world'], answer:'D', explanation:'The scenic beauty of the underwater world made the author revisit the underwater reef.', q_type:'SPECIFIC DETAIL' },
+  { section:'P1', stem:'What does the sentence “So I did” convey ? The author', options:['wore a face mask', 'slipped a pair of flippers onto his feet', 'saw glimpses of sunlight', 'None of the above'], answer:'D', explanation:'None of the options are relevant here.', q_type:'VOCAB IN CONTEXT' },
+  { section:'P1', stem:'What did the author do at the coast near Jeddah?', options:['He drowned in a minor accident', 'He drowned into the Red Sea', 'Dived into the Red Sea', 'He walked on the sandy coast'], answer:'C', explanation:'The author dived into the Red Sea at the coast near Jeddah.', q_type:'SPECIFIC DETAIL' },
+  { section:'P1', stem:'In what way, is the Red Sea similar to the Caribbean Sea, the South Sea etc?', options:['Variety of fish', 'Fantastic reefs', 'Clear and transparent water', 'Both (a) and (b)'], answer:'C', explanation:'The Red Sea is similar to the Caribbean Sea and the South Sea as it has clear and transparent water like them.', q_type:'SPECIFIC DETAIL' },
+  { section:'P1', stem:'What are ‘fringing reefs’?', options:['Calcareous deposit formation', 'Collection of fish', 'Sea-food accumulation', 'Collection of minute creatures other than fish'], answer:'A', explanation:'Option (a) is relevant here as fringing reefs are calcareous deposit formation.', q_type:'SPECIFIC DETAIL' },
+  { section:'P1', stem:'Fishing in the Red Sea off the coast near Jeddah was', options:['difficult because the water was transparent', 'risky because tanks are needed to spot the fish', 'easy because the fish are clearly visible near the surface itself', 'cumbersome because of the tools like mask, snorkel tube, flippers etc Directions (Q. Nos. 25-30) Read the following passage carefully and answer the questions that follow. (2015)'], answer:'C', explanation:'Fishing in the Red Sea was easy because the fish are clearly visible near the surface itself.', q_type:'SPECIFIC DETAIL' },
+  { section:'P2', stem:'According to the author, how could Uganda feed the whole Africa?', options:['It has much natural resources, ample fertile land, proper rainfall and deposits of minerals', 'It needs to change the economic policy with stability in price, personnel utilisation', 'Both ‘a’ and ‘b’', 'None of the above'], answer:'C', explanation:'With the plenty of resources and efficient economic policy, Uganda can feed whole Africa.', q_type:'FACT RETRIEVAL' },
+  { section:'P2', stem:'What consequence do you foresee, if Uganda lost the case against the Tullow Oil regarding the VAT?', options:['Tullow Oil will occupy the two oil blocks immediately after the positive verdict of the court', 'Uganda may lose its membership from the World Bank and then may face very severe financial crisis', 'Uganda will sign a new investment treaty alongwith the associated guarantee', 'Tullow Oil will recover all the previous taxes it has paid to the government'], answer:'B', explanation:'If Uganda loses the case against the Tullow Oil, then it would result into the loss of its membership from the World Bank and would soon find in the web of financial crisis.', q_type:'SPECIFIC DETAIL' },
+  { section:'P2', stem:'Downfall in the rate of inflation could be controlled by', options:['economic policy to restore price stability, sustainable balance of payments, proper utilisation of capacity', 'infrastructure development, giving producer a proper incentive by a reasonable pricing strategy', 'mobility and allocation of the resources in public sector efficiently', 'All of the above'], answer:'D', explanation:'All of the above given options contribute to downfall of the inflation.', q_type:'SPECIFIC DETAIL' },
+  { section:'P2', stem:'With what viewpoint, UCMP will hold meeting in the first days of October?', options:['Country needs to display the success of their industry at large', 'Country tries to procure some funds for its industry through investment', 'Country has a political and industrial vow with their investors', 'None of the above'], answer:'B', explanation:'Uganda intends to get some funds for its industry, so it is going to hold a meeting in the first days of October.', q_type:'SPECIFIC DETAIL' },
+  { section:'P3', stem:'Which broad ideology helped Newt Gingrich lead the Republican revolution of 1994?', options:['Tax cuts', 'Entitlement reform', 'Welfare reform', 'Welfare state dismantling'], answer:'D', explanation:'The dismentaling of the welfare state helped Gingrich lead to Republican revolution of 1994.', q_type:'SPECIFIC DETAIL' },
+  { section:'P3', stem:'Assuming the passage to be truthful, what does a party not need to win elections?', options:['Votes', 'Money', 'Constituencies', 'Ideas'], answer:'B', explanation:'Money has not been mentioned in the passage. The passage says to win elections, a party obviously need money.', q_type:'SPECIFIC DETAIL' },
+  { section:'P3', stem:'Which of the following is not a Republican?', options:['Newt Gingrich', 'Pat Buchanan', 'Bob Dole', 'None of the above'], answer:'D', explanation:'All of the above are republican.', q_type:'TRUE/FALSE/NOT' },
+  { section:'P3', stem:'The Republicans were tactically defeated by the Democrats because:', options:['of the shutdown of the government', 'the balanced budget plan failed', 'Steve Forbes led a revolution', 'Bill Clinton pre-empted them'], answer:'A', explanation:'The passage explains that republicans were tactically defeated by the democrates.', q_type:'SPECIFIC DETAIL' },
+  { section:'P3', stem:'Which of the following would be a suitable title for the passage ?', options:['The Democrats: Victory in Sight', 'Follies and Foibles of the Republican Party', 'Republicans: Are You Crazy?', 'Mutinies on the Republican Party'], answer:'B', explanation:'The passage basically deals with the mistakes committed by the Republicans and their odd ways of thinking.', q_type:'MAIN IDEA' },
+  { section:'P3', stem:'The word ‘obsolete’ in the context of the passage means:', options:['antiquated', 'absolute', 'boring', 'miasmic'], answer:'A', explanation:'Obsolete means old/antiquated in reference of the passage.', q_type:'VOCAB IN CONTEXT' },
+  { section:'P3', stem:'What according to the author, is the real danger for Republicans ?', options:['The fact that small government is being ground to dust', 'The fact that Bill Clinton is gaining popularity', 'The fact that it is axioms and not just policies that are under fire', 'The fact that the eventual nominee would be too tired of fight an election against Clinton'], answer:'C', explanation:'The passage states that real danger for republican 3 is philosophical and not tactical. It is axiom not just policies, which is under fire.', q_type:'FACT RETRIEVAL' },
+  { section:'P3', stem:'Which of the following, according to Buchanan, is not an enemy?', options:['Big government', 'Immigrants', 'Captains of industry', 'Foreign-aid requesters'], answer:'A', explanation:'The passage reveals that Buchananism holds that what is killing the little guy in America is big guy, not the big government.', q_type:'SPECIFIC DETAIL' }
+];
+
+const PASSAGES = [
+  { id:'rc_005', label:'Passage 1', meta:'CAT 2016 · Science/Environment · Narrative/Descriptive · Moderate', text:'Off the coast near Jeddah, about six years ago I slipped a pair of flippers onto my feet, put on a face mask and gingerly poked my head beneath the placid surface of the Red Sea. I am not sure, now, exactly what I saw in that first glimpse; shafts of sunlight, probably, slanting off through clear blue water : a coral reef of fantastic beauty and, no doubt, many fish. But I do recall that by the time I surfaced I had already developed a need to return to that incredibly lovely world below. So I did. Indeed, it would not be much of an exaggeration to say that except for such periods as were necessary to earn a living , I have rarely been anywhere else.\n\nDiving became a passion and then a way of life one, as you will gather, I totally endorse. For the first year after that initial experience I amused myself by hunting fish with a spear gun. It was not at all difficult. Fish are so abundant there that divers do not need to use tanks to get down to where the fish are; they find them near the surface. Furthermore, the water of the Red Sea like the Caribbean, the South Seas and parts of the Indian Ocean, is so transparent that you can see so to 150 feet away. Thus, all you really need are a mask, a snorkel tube to breathe through, flippers and a spear gun.\n\nHunting, however, began to pall on me. I began to wonder if it wouldn’t be more interesting— and more sporting—to photograph some of these magnificent creatures rather than kill them. It was certainly an ideal place for underwater photography.\n\nIn addition to hundreds of species of fish, the Red Sea coast offers thousands of miles of what they call ‘fringing reefs’—great barriers of coral 10 to 200 miles wide that wind along the African shore from Egypt to Djibouti and down the Asian shore from Aqaba to the Bab-al-Mandab at the gate of the Indian Ocean. Although, no more than the accumulation of billions of coral polyps—minute creatures that produce a calcareous deposits—the reef have grown to fantastic sizes, the largest being the 1200 mile-long Great Barrier Reef in Australia.', q_range:'Q1–Q6' },
+  { id:'rc_012', label:'Passage 2', meta:'CAT 2014 · Business/Economics · Expository · Moderate', text:'Endowed with significant natural resources, including ample fertile land, regular rainfall and mineral deposits, it is thought that Uganda could feed all of Africa if it was commercially farmed. The economy of Uganda has great potential and it appeared Uganda subsequently began implementing economic policies designed to restore price stability and sustainable balance of payments, improve capacity utilisation, rehabilitate infrastructure, restore producer incentives through proper price policies and improve resource mobilisation and allocation in the public sector.\n\nThese policies produced positive results. Inflation, which ran at 240% in 1987 and 42% in June 1992, was 5.4% for fiscal year 1995-96 and 7.3% in 2003 poised for rapid economic growth and development. The industrial sector is being rehabilitated to resume production of building and construction materials, such as cement, reinforcing rods, corrugated roofing sheets and paint. Domestically produced consumer goods include plastics, soap, cork and soft drinks. Major cement manufacturers like ‘Tororo Cement Limited’ caters to the need of building and construction material consumers across East Africa. Uganda will host its first biggest international Mining Conference in the first week of October as the country tries to revive the industry to its full potential. The Uganda Chamber of Mines and Petroleum (UCMP), the body that links investors to government departments will hold the Mineral Wealth Conference from 1st to 2nd October, drawing participants from East Africa and beyond.\n\nIn late 2012, the Government of Uganda was taken to court over Value Added Tax (VAT) that it placed on goods and services purchased by a foreign oil company operating in the country, Tullow Oil. The court case will be heard at an international court based in the United States and could have serious ramifications for Uganda if | its maintenance of ‘multi-lateral investments treaties and associated guarantees’. There is also a possibility that the country could not be sanctioned any financial help by the World Bank if found in breach of trade and the Uganda Government insists that Tullow cannot claim taxes on supplies as recoverable costs before oil production starts.\n\nSources from within the government reveal that the main concern at present is the manner in which millions of dollars have been lost in the past decade, money that could allegedly have stayed in Uganda for investment in the public sector; a Global Financial Integrity Report recently revealed that illicit money flows from Uganda between 2001 and 2012 totaled $ 680 million. The investment agreements signed Tullow Oil is being represented in the court case by Kampala Associated Advocates, whose founder is Elly Karuhanga, the President of Tullow Uganda’s. A partner at Kampala Associated Advocates, Peter Kabatsi, was also Uganda’s Solicitor General between 1990 and 2002 and he has denied claims that he negotiated contracts with foreign oil firms during his time in this role. The Uganda Government has yet to see any result from another tax dispute involving the Canadian oil firm Tullow Oil and British company Heritage Oil, this dispute dates back to Heritage Oil’s sale of rights to two oil blocks in Uganda’s Lake Albert region to Tullow Oil in July 2010. Uganda claims that Heritage Oil owes USD $ 435 million in capital gains tax arising from this sale, a claim that Heritage is currently disputing in a London-based court.', q_range:'Q7–Q10' },
+  { id:'rc_087', label:'Passage 3', meta:'CAT 1995 · Society/Politics · Argumentative · Moderate', text:'The Republican party has lost its mind. To Win elections, a party obviously needs votes and constituencies, However first, it needs an idea. In 1994-95, the Republican Party had after a long struggle advanced a coherent, compelling set of political ideas expressed in a specific legislative agenda. The political story of 1996 is that this same party, with in the space of six weeks, became totally, shockingly intellectually deranged. Think back. The singular achievement of House Speaker Newt Gingrich’s 1994 revolution was that it swept into power united behind one comprehensive ideological goal; dismantling the welfare state. Just about anything in the contract with America and the legislative agenda of the 104th Congress is a mere subheading; welfare reform, tax cuts entitlement reform, returning power to the states, the balanced budget (a supremely powerful means for keeping the growth of government in check). The central Republican idea was that the individual, the family, the church, the schools-civil society-were being systematically usurped and strangled by the federal behemoth Republicans who were riding into Washington to slay it.\n\nWith this idea they met Clinton head-on in late 1995. And although they were tactically defeated-the government shut down proved a disaster for Republicans-they won philosophically. Clinton conceded all their principles. He finally embraced their seven year balanced budget. Then, in a State of the union speech that might have been delivered by a moderate Republican, he declared, the era of Big Government is over, the dominant theme of the Gingrich Revolution. It seems so long ago. Because then, astonishingly, on the very morrow of their philosophical victory, just as the Republicans prepared to carry these ideas into battle in November, came aonnon fire from the rear.\n\nThe first Republican renegade to cry ‘Wrong !’ and charge was Steve Forbes. With his free-lunch, tax-cutting flat tax, he declared the balanced budget, the centre piece of the Republican revolution, unnecessary, Then, no sooner had the Forbes mutiny been put down than Pat Buchanan declared a general insurrection. He too declared war on the party’s central ideology in the name not supply side theory but of class welfare, the Democratic weapon of choice against Republicanism. The enemy, according to the Buchanan, in not welfare state. It is that conservative icon, capitalism, with its ruthless captains of industry. Greedy financiers and political elite (Republicans included, of course). All three groups collaborate to let foreigners-immigrants, traders, parasitic foreign-aid loafers-destroy the good life of the ordinary American worker. Buchananism holds that what is killing the little guy in America is the Big Guy, not big Government. It blames not an overreaching government that tries to insulate citizens from life’s buffeting to the point where it creates deeply destructive dependency, but an uncaring government that does not protect its victim-people enough from that buffeting. Buchanan would protect and wield a mighty government apparatus to do so, government that builds trade walls and immigrant-repelling fences, that imposes punitive taxes on imports, that policies that hiring and firing practices of business with the arrogance of the most zealous affirmative action enforcer. This is Reaganism standing on its head.\n\nRepublicans have focused too much on the mere technical dangers posed by this assault. Yes, it gives ammunition to the Democrats. Yes, it puts the eventual nominee through a bruising campaign and delivers him tarnished and drained into the ring against Bill Clinton. But the real danger is philosophical, not tactical. It is axioms, not just policies, that are under fire. The Republican idea of smaller government is being proud to dust-by Republicans. In the middle of an election year, when they should be honing their themes against Democratic liberalism, Buchanan’s rise is forcing a pointless rearguard battle against a philosophical corpse, the obsolete Palaeo conservatism-a mix of nativism, protectionism and isolationism of the 1930s. As the candidates’ debate in Arizona last week showed, the entire primary campaign will be fought on Buchanan’s grounds, fending off his Smoot-Hawley-Franco populism. And then what? After the convention, what does the nominee do ? Try to resurrect the anti welfare state themes of the historically successful 1994 congressional campaign? Well, yes but with a terrible loss of energy and focus and support. Buchanan’s constituency, by then convinced by their leader that the working man’s issue have been pushed aside, may simply walk on election day or, even worse, defect to the democrats. After all,dDemocrats fight class war very well. Political parties can survive bruising primary battles. They cannot survive ideological meltown. Dole and Buchanan say they are fighting for the heart and soul of the Republican party, heart and soul, however, will get you nowhere when you have lost your way and your mind. | the Republican revolution of 1994? (a) Tax cuts (b) Entitlement reform (c) Welfare reform (d) Welfare state dismantling', q_range:'Q11–Q18' }
+];
+
+let studentName = '', studentPin = '', studentBatch = '';
+let currentQ = 0;
+let userAnswers = new Array(TOTAL_Q).fill(null);
+let visitedQ = new Array(TOTAL_Q).fill(false);
+let markedQ = new Array(TOTAL_Q).fill(false);
+let questionTimes = new Array(TOTAL_Q).fill(0);
+let secondsLeft = TIMER_DURATION * 60;
+let timerInterval = null;
+let qStartTime = Date.now();
+let testSubmitted = false;
+
+function startTest() {
+  const name = document.getElementById('nameInput').value.trim();
+  const pin = document.getElementById('pinInput').value.trim().toUpperCase();
+  const batch = document.getElementById('batchSelect').value;
+  const pinRegex = /^(STU|IMS)\d{10}$/;
+  if (!name || !pinRegex.test(pin) || !batch) {
+    document.getElementById('loginError').style.display = 'block';
+    return;
+  }
+  studentName = name; studentPin = pin; studentBatch = batch;
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('testScreen').style.display = 'block';
+  document.getElementById('studentNameDisplay').textContent = name;
+  buildSectionTabs();
+  buildPalette();
+  buildJumpPills();
+  renderQuestion(0);
+  startTimer();
+}
+
+function buildSectionTabs() {
+  const tabs = document.getElementById('sectionTabs');
+  const sections = [...new Set(QUESTIONS.map(q => q.section))];
+  sections.forEach(sec => {
+    const qs = QUESTIONS.filter(q => q.section === sec);
+    const first = QUESTIONS.findIndex(q => q.section === sec);
+    const last = QUESTIONS.map(q => q.section).lastIndexOf(sec);
+    const btn = document.createElement('button');
+    btn.className = 'sec-tab';
+    btn.dataset.section = sec;
+    btn.textContent = sec + ' · Q' + (first+1) + '–' + (last+1);
+    btn.onclick = () => renderQuestion(first);
+    tabs.appendChild(btn);
+  });
+}
+
+function buildPalette() {
+  const grid = document.getElementById('palette');
+  grid.innerHTML = '';
+  for (let i = 0; i < TOTAL_Q; i++) {
+    const btn = document.createElement('button');
+    btn.className = 'pal-btn';
+    btn.id = 'pal-' + i;
+    btn.textContent = i + 1;
+    btn.onclick = () => renderQuestion(i);
+    grid.appendChild(btn);
+  }
+}
+
+function buildJumpPills() {
+  const pills = document.getElementById('jumpPills');
+  const sections = [...new Set(QUESTIONS.map(q => q.section))];
+  sections.forEach(sec => {
+    const first = QUESTIONS.findIndex(q => q.section === sec);
+    const btn = document.createElement('button');
+    btn.className = 'jump-pill';
+    btn.textContent = sec;
+    btn.onclick = () => renderQuestion(first);
+    pills.appendChild(btn);
+  });
+}
+
+function renderQuestion(idx) {
+  // Save time for previous question
+  if (qStartTime) {
+    questionTimes[currentQ] += Math.floor((Date.now() - qStartTime) / 1000);
+  }
+  qStartTime = Date.now();
+  currentQ = idx;
+  visitedQ[idx] = true;
+  updatePalette();
+  updateTabs();
+
+  const q = QUESTIONS[idx];
+  document.getElementById('qCounter').textContent = 'Q' + (idx+1) + ' / ' + TOTAL_Q;
+
+  // Find which passage this question belongs to
+  const passageId = q.section; // P1, P2, P3
+  const pIdx = PASSAGES.findIndex(p => p.label === 'Passage ' + passageId.replace('P',''));
+  const passage = PASSAGES[pIdx];
+
+  // Render passage pane
+  const pp = document.getElementById('passagePane');
+  const ptext = passage.text.split('\n').map(line => line.trim() ? '<p>' + line + '</p>' : '').join('');
+  pp.innerHTML = `
+    <div class="passage-header">
+      <div class="passage-label">${passage.label}</div>
+      <div class="passage-meta">${passage.meta}</div>
+      <div class="passage-qrange">${passage.q_range}</div>
+    </div>
+    <div class="passage-text">${ptext}</div>
+  `;
+
+  // Render question pane
+  const qp = document.getElementById('questionPane');
+  const labels = ['A','B','C','D'];
+  let optsHtml = q.options.map((opt, i) => `
+    <button class="option-btn${userAnswers[idx] === labels[i] ? ' selected' : ''}" onclick="selectAnswer('${labels[i]}')" id="opt-${labels[i]}">
+      <span class="opt-label">${labels[i]}</span>
+      <span class="opt-text">${opt}</span>
+    </button>
+  `).join('');
+
+  qp.innerHTML = `
+    <div class="q-header">
+      <span class="q-num">Q${idx+1}</span>
+      <span class="q-type">${q.q_type}</span>
+    </div>
+    <div class="q-stem">${q.stem}</div>
+    <div class="options-list">${optsHtml}</div>
+    <div class="explanation" id="expBox">
+      <div class="exp-label">Explanation</div>
+      <div>${q.explanation}</div>
+    </div>
+  `;
+
+  // Show/hide submit button
+  document.getElementById('submitBtn').style.display = (idx === TOTAL_Q - 1) ? 'block' : 'none';
+  document.getElementById('saveNextBtn').style.display = (idx === TOTAL_Q - 1) ? 'none' : 'block';
+}
+
+function selectAnswer(label) {
+  userAnswers[currentQ] = label;
+  updatePalette();
+  const labels = ['A','B','C','D'];
+  labels.forEach(l => {
+    const btn = document.getElementById('opt-' + l);
+    if (btn) btn.className = 'option-btn' + (l === label ? ' selected' : '');
+  });
+}
+
+function clearAnswer() {
+  userAnswers[currentQ] = null;
+  markedQ[currentQ] = false;
+  updatePalette();
+  renderQuestion(currentQ);
+}
+
+function markForReview() {
+  markedQ[currentQ] = !markedQ[currentQ];
+  updatePalette();
+}
+
+function navigate(dir) {
+  const next = currentQ + dir;
+  if (next >= 0 && next < TOTAL_Q) renderQuestion(next);
+}
+
+function updatePalette() {
+  for (let i = 0; i < TOTAL_Q; i++) {
+    const btn = document.getElementById('pal-' + i);
+    if (!btn) continue;
+    let cls = 'pal-btn';
+    if (markedQ[i]) cls += ' marked';
+    else if (userAnswers[i] !== null) cls += ' answered';
+    else if (visitedQ[i]) cls += ' unanswered';
+    if (i === currentQ) cls += ' current';
+    btn.className = cls;
+  }
+}
+
+function updateTabs() {
+  const q = QUESTIONS[currentQ];
+  document.querySelectorAll('.sec-tab').forEach(tab => {
+    tab.classList.toggle('active', tab.dataset.section === q.section);
+  });
+}
+
+function startTimer() {
+  timerInterval = setInterval(() => {
+    secondsLeft--;
+    if (secondsLeft <= 0) { clearInterval(timerInterval); submitTest(); return; }
+    const mm = String(Math.floor(secondsLeft/60)).padStart(2,'0');
+    const ss = String(secondsLeft%60).padStart(2,'0');
+    const td = document.getElementById('timerDisplay');
+    td.textContent = mm + ':' + ss;
+    td.className = secondsLeft <= 300 ? 'urgent' : '';
+  }, 1000);
+}
+
+function confirmSubmit() {
+  const answered = userAnswers.filter(a => a !== null).length;
+  const skipped = TOTAL_Q - answered;
+  if (skipped > 0 && !confirm(`${skipped} question(s) unanswered. Submit anyway?`)) return;
+  submitTest();
+}
+
+function submitTest() {
+  if (testSubmitted) return;
+  testSubmitted = true;
+  clearInterval(timerInterval);
+  // Save time for last question
+  questionTimes[currentQ] += Math.floor((Date.now() - qStartTime) / 1000);
+
+  const elapsed = TIMER_DURATION * 60 - secondsLeft;
+  const mm = String(Math.floor(elapsed/60)).padStart(2,'0');
+  const ss = String(elapsed%60).padStart(2,'0');
+  const timeTaken = mm + ':' + ss;
+
+  let correct = 0, wrong = 0, skipped = 0;
+  let sectionErrors = {};
+  let wrongQuestions = [];
+
+  QUESTIONS.forEach((q, i) => {
+    const ua = userAnswers[i];
+    if (ua === null) { skipped++; }
+    else if (ua === q.answer) { correct++; }
+    else {
+      wrong++;
+      wrongQuestions.push(i + 1);
+      const sec = q.section;
+      sectionErrors[sec] = (sectionErrors[sec] || 0) + 1;
+      // Also track by q_type
+      sectionErrors[q.q_type] = (sectionErrors[q.q_type] || 0) + 1;
+    }
+  });
+
+  const score = correct * 4 - wrong * 1;
+
+  const payload = {
+    testName: TEST_NAME,
+    name: studentName,
+    pin: studentPin,
+    batch: studentBatch,
+    score: score,
+    correct: correct,
+    wrong: wrong,
+    skipped: skipped,
+    maxMarks: 72,
+    timeTaken: timeTaken,
+    timestamp: new Date().toLocaleString('en-IN', {timeZone:'Asia/Kolkata'}),
+    sectionErrors: JSON.stringify(sectionErrors),
+    wrongQuestions: JSON.stringify(wrongQuestions),
+    studentAnswers: userAnswers.map(a => a === null ? null : a),
+    questionTimes: JSON.stringify(questionTimes)
+  };
+
+  fetch(APPS_SCRIPT_URL, {
+    method: 'POST', mode: 'no-cors',
+    headers: {'Content-Type': 'text/plain'},
+    body: JSON.stringify(payload)
+  });
+
+  showResults(correct, wrong, skipped, score, timeTaken, sectionErrors, wrongQuestions);
+}
+
+function showResults(correct, wrong, skipped, score, timeTaken, sectionErrors, wrongQuestions) {
+  document.getElementById('testScreen').style.display = 'none';
+  const rs = document.getElementById('resultsScreen');
+  rs.style.display = 'block';
+
+  document.getElementById('resultsSubtitle').textContent = studentName + ' · ' + studentBatch + ' · ' + timeTaken;
+
+  const pct = Math.round(score / 72 * 100);
+  document.getElementById('statsGrid').innerHTML = `
+    <div class="stat-box"><div class="stat-label">Score</div><div class="stat-val">${score}</div><div class="stat-sub">out of 72</div></div>
+    <div class="stat-box"><div class="stat-label">Correct</div><div class="stat-val" style="color:var(--green)">${correct}</div><div class="stat-sub">+${correct*4} marks</div></div>
+    <div class="stat-box"><div class="stat-label">Wrong</div><div class="stat-val" style="color:var(--red)">${wrong}</div><div class="stat-sub">−${wrong} marks</div></div>
+    <div class="stat-box"><div class="stat-label">Skipped</div><div class="stat-val" style="color:var(--grey)">${skipped}</div><div class="stat-sub">0 marks</div></div>
+    <div class="stat-box"><div class="stat-label">Accuracy</div><div class="stat-val">${pct}%</div><div class="stat-sub">of max marks</div></div>
+    <div class="stat-box"><div class="stat-label">Time</div><div class="stat-val" style="font-size:20px">${timeTaken}</div><div class="stat-sub">of 25:00</div></div>
+  `;
+
+  // Error breakdown by q_type
+  const qtypes = Object.entries(sectionErrors).filter(([k]) => k === k.toUpperCase() && k.includes(' ') || k === 'INFERENCE' || k === 'MAIN IDEA' || k === 'AUTHOR TONE' || k === 'FACT RETRIEVAL' || k === 'SPECIFIC DETAIL' || k === 'VOCAB IN CONTEXT' || k === 'STRUCTURE' || k === 'LOGICAL FLOW' || k === 'TRUE/FALSE/NOT');
+  if (qtypes.length > 0) {
+    let ebHtml = '<h3>Errors by Question Type</h3>';
+    qtypes.sort((a,b) => b[1]-a[1]).forEach(([type, count]) => {
+      ebHtml += `<div class="eb-row"><span class="eb-type">${type}</span><span class="eb-count">${count} wrong</span></div>`;
+    });
+    document.getElementById('errorBreakdown').innerHTML = ebHtml;
+  }
+
+  // Review
+  let reviewHtml = '';
+  QUESTIONS.forEach((q, i) => {
+    const ua = userAnswers[i];
+    const isCorrect = ua === q.answer;
+    const isSkipped = ua === null;
+    const cls = isSkipped ? 'ri-skipped' : isCorrect ? 'ri-correct' : 'ri-wrong';
+    const labels = ['A','B','C','D'];
+    let ansHtml = '';
+    if (isSkipped) ansHtml = '<div class="review-ans">Skipped &nbsp;·&nbsp; <span class="correct-ans">Correct: ' + q.answer + ') ' + q.options[labels.indexOf(q.answer)] + '</span></div>';
+    else if (isCorrect) ansHtml = '<div class="review-ans"><span class="correct-ans">✓ ' + ua + ') ' + q.options[labels.indexOf(ua)] + '</span></div>';
+    else ansHtml = '<div class="review-ans"><span class="wrong-ans">✗ Your answer: ' + ua + ') ' + q.options[labels.indexOf(ua)] + '</span></div><div class="review-ans"><span class="correct-ans">Correct: ' + q.answer + ') ' + q.options[labels.indexOf(q.answer)] + '</span></div>';
+    reviewHtml += `
+      <div class="review-item ${cls}">
+        <div class="review-qnum">Q${i+1} · ${q.section} · ${q.q_type}</div>
+        <div class="review-stem">${q.stem}</div>
+        ${ansHtml}
+        <div class="review-exp">${q.explanation}</div>
+      </div>`;
+  });
+  document.getElementById('reviewItems').innerHTML = reviewHtml;
+}
+</script>
+</body>
+</html>
