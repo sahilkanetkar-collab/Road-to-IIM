@@ -726,6 +726,12 @@
 .cv3-words-t{font-weight:700;font-size:.95rem}
 .cv3-words-m{font-size:.8rem;color:#a09880}
 .cv3-words-arrow{color:#c9a84c;font-size:1.2rem}
+.cv3-rx-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-bottom:26px}
+.cv3-rx{display:block;background:#161410;border:1px solid rgba(255,255,255,.08);border-left:3px solid #c9a84c;border-radius:12px;padding:16px 18px;text-decoration:none;color:inherit;transition:transform .18s,border-color .18s}
+.cv3-rx:hover{transform:translateY(-2px);border-color:#c9a84c}
+.cv3-rx-why{font-family:'DM Mono',monospace;font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:#d16a5a;margin-bottom:6px}
+.cv3-rx-t{font-weight:700;font-size:.98rem}
+.cv3-rx-d{font-size:.8rem;color:#a09880;margin-top:4px}
 </style>
 </head>
 <body>
@@ -955,7 +961,13 @@ function deltaHTML(curr, prev) {
 
 function timeTaken(t) {
   if (!t) return '–';
-  return t; // already stored as mm:ss string
+  t = String(t);
+  // Sheets may return "Sat Dec 30 1899 22:10:00 GMT+0521" for a stored "22:10"
+  if (/\d{4}/.test(t) || t.length > 9) {
+    const m = t.match(/\b(\d{1,2}):(\d{2})(?::\d{2})?\b/);
+    if (m) return m[1].padStart(2,'0') + ':' + m[2];
+  }
+  return t;
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -980,6 +992,7 @@ function renderStudent(data) {
 
   // ── core numbers ──
   const best   = Math.max(...rows.map(r => r.score));
+  const bestMax= (rows.find(r=>r.score===best)||{}).maxMarks || MAX_MARKS;
   const last5  = rows.slice(-5);
   const avg5   = Math.round(last5.reduce((s,r)=>s+r.score,0)/last5.length);
   const prev5  = rows.slice(-10,-5);
@@ -996,7 +1009,7 @@ function renderStudent(data) {
   let verdict, verdictSub;
   if(rows.length<3){
     verdict = `Good start, ${first} — ${rows.length} test${rows.length>1?'s':''} on the board.`;
-    verdictSub = `Your latest: ${latest.testName}, ${latest.score}/${MAX_MARKS}. Every test from here builds the picture.`;
+    verdictSub = `Your latest: ${latest.testName}, ${latest.score}/${latest.maxMarks||MAX_MARKS}. Every test from here builds the picture.`;
   } else if(b3!==null && a3-b3>=8){
     verdict = `You're climbing, ${first} — <span class="cv3-up">+${a3-b3} marks</span> over your last three tests.`;
     verdictSub = `Recent average ${a3} vs ${b3} before. Keep the rhythm.`;
@@ -1046,6 +1059,27 @@ function renderStudent(data) {
         </div>`).join('')}
     </div>`:'';
 
+  // ── Do this next: section-level prescriptions ──
+  const RX_MAP = [
+    [/critical|(^|\b)cr(\b|$)/i, {t:'Critical Reasoning practice', d:'Build a CR-only set in BYOT — pick Critical Reasoning, 10–15 questions.', href:'byot.html'}],
+    [/vocab/i,                     {t:'The Impostors — vocabulary', d:'Confusable words and tone traps, 30 minutes.', href:'RoadToIIM_ConceptTest03_TheImpostors.html'}],
+    [/grammar/i,                   {t:'Rapid Fire — grammar under the clock', d:'45 questions, 25 seconds each. Grammar sharpens fastest under pressure.', href:'RoadToIIM_SpeedTest05_VocabGrammar.html'}],
+    [/\brc\b|reading/i,          {t:'One RC passage, timed', d:'Hammer mindset. Mark and move on every yellow alert.', href:'RoadToIIM_RC_Series03.html'}],
+    [/word sel/i,                  {t:'Rapid Fire — word selection', d:'Speed drills are where word selection improves.', href:'RoadToIIM_SpeedTest04_VocabGrammar.html'}],
+    [/sentence|fitb|fill/i,        {t:'Sentence completion set in BYOT', d:'Pick Sentence Completion in BYOT, 10 questions.', href:'byot.html'}],
+  ];
+  const rxCards = secSorted.slice(0,2).map(([sec,w])=>{
+    const hit = RX_MAP.find(([re])=>re.test(sec));
+    const rx = hit ? hit[1] : {t:'Targeted practice: '+sec, d:'Build a custom set in BYOT for this area.', href:'byot.html'};
+    return `<a class="cv3-rx" href="${rx.href}">
+      <div class="cv3-rx-why">${sec} · ${w} error${w===1?'':'s'} recently</div>
+      <div class="cv3-rx-t">${rx.t}</div>
+      <div class="cv3-rx-d">${rx.d}</div></a>`;
+  }).join('');
+  const rxHtml = rxCards ? `
+    <div class="section-header">Do This Next <span class="cv3-subnote">picked from your error clusters</span></div>
+    <div class="cv3-rx-grid">${rxCards}</div>` : '';
+
   // ── Your Words card (device-local) ──
   let wordsDue=0, wordsTotal=0;
   try{const mb=JSON.parse(localStorage.getItem('riim_mistakes')||'[]');wordsTotal=mb.length;wordsDue=mb.filter(c=>!c.grad&&c.due<=Date.now()).length;}catch(e){}
@@ -1066,7 +1100,7 @@ function renderStudent(data) {
     tableRows+=`
       <tr>
         <td>${r.testName}</td>
-        <td><span class="score-pill ${sc}">${r.score} / ${MAX_MARKS}</span></td>
+        <td><span class="score-pill ${sc}">${r.score} / ${r.maxMarks||MAX_MARKS}</span></td>
         <td>${r.correct}</td><td>${r.wrong}</td><td>${r.skipped}</td>
         <td>${timeTaken(r.timeTaken)}</td>
         <td>${deltaHTML(r.score, prev)}</td>
@@ -1085,11 +1119,12 @@ function renderStudent(data) {
       ${trendSvg?`<div class="cv3-trend"><div class="cv3-trend-head">Last ${t8.length} test scores</div>${trendSvg}</div>`:''}
     </div>
     <div class="stats-grid">
-      <div class="stat-card"><div class="stat-label">Best Score</div><div class="stat-value">${best}</div><div class="stat-sub">/ ${MAX_MARKS}</div></div>
+      <div class="stat-card"><div class="stat-label">Best Score</div><div class="stat-value">${best}</div><div class="stat-sub">/ ${bestMax}</div></div>
       <div class="stat-card"><div class="stat-label">Average · last 5</div><div class="stat-value">${avg5}</div><div class="stat-sub">${avgPrev5!==null?(avg5>=avgPrev5?'up from ':'down from ')+avgPrev5+' the five before':'across your last tests'}</div></div>
       <div class="stat-card"><div class="stat-label">Accuracy · last 5</div><div class="stat-value">${acc5}%</div><div class="stat-sub">of attempted questions</div></div>
       <div class="stat-card"><div class="stat-label">Guessing tax · last 5</div><div class="stat-value cv3-taxnum">−${tax5}</div><div class="stat-sub">marks lost to wrong answers</div></div>
     </div>
+    ${rxHtml}
     ${focusHtml}
     ${flags}
     <div class="section-header">All Tests</div>
@@ -1967,7 +2002,7 @@ function renderRFStudent(rfRows) {
     tableRows += `
       <tr>
         <td>${r.testName}</td>
-        <td><span class="score-pill ${sc}">${r.score} / ${MAX_MARKS}</span></td>
+        <td><span class="score-pill ${sc}">${r.score} / ${r.maxMarks||MAX_MARKS}</span></td>
         <td>${r.correct}</td>
         <td>${r.wrong}</td>
         <td>${r.skipped}</td>
