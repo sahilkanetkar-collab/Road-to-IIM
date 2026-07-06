@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Your Words — Road to IIM</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=DM+Sans:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0d0c0a;--tar:#161410;--tar2:#1e1b15;--stone:#f2ede0;
+  --gold:#c9a84c;--gold2:#e8c97a;--gold-dim:rgba(201,168,76,.12);
+  --green:#4caf82;--green-dim:rgba(76,175,130,.12);
+  --red:#d16a5a;--red-dim:rgba(209,106,90,.12);
+  --text:#f0ece3;--text2:#a09880;--text3:#6a6452;
+  --line:rgba(255,255,255,.08);--r:12px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--ink);color:var(--text);font-family:'DM Sans',sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased;min-height:100vh}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--gold2);outline-offset:3px;border-radius:4px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+header{display:flex;align-items:center;justify-content:space-between;padding:18px clamp(18px,5vw,56px);border-bottom:1px solid var(--line)}
+.brand{font-family:'Fraunces',serif;font-weight:700;font-size:1.05rem}
+.brand em{color:var(--gold);font-style:normal}
+.hdr-link{font-size:.85rem;color:var(--text2)}
+.hdr-link:hover{color:var(--gold2)}
+
+main{max-width:720px;margin:0 auto;padding:clamp(26px,5vw,48px) clamp(18px,5vw,32px) 70px}
+.eyebrow{font-family:'DM Mono',monospace;font-size:.7rem;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
+h1{font-family:'Fraunces',serif;font-weight:600;font-size:clamp(1.5rem,4vw,2.1rem);line-height:1.2}
+.sub{color:var(--text2);margin-top:8px;font-size:.93rem}
+
+/* stat strip */
+.strip{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:26px 0 34px}
+.st{background:var(--tar);border:1px solid var(--line);border-radius:10px;padding:12px 14px;text-align:center}
+.st .n{font-family:'DM Mono',monospace;font-size:1.25rem;color:var(--gold2)}
+.st .l{font-size:.68rem;color:var(--text2);margin-top:2px}
+@media(max-width:520px){.strip{grid-template-columns:repeat(2,1fr)}}
+
+/* card */
+.deck{position:relative}
+.qcard{background:var(--tar);border:1px solid var(--line);border-radius:var(--r);padding:clamp(20px,4vw,30px)}
+.q-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.q-tag{font-family:'DM Mono',monospace;font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);background:var(--gold-dim);padding:3px 10px;border-radius:20px}
+.q-count{font-family:'DM Mono',monospace;font-size:.74rem;color:var(--text3)}
+.q-stem{font-family:'Fraunces',serif;font-size:clamp(1.05rem,2.6vw,1.3rem);font-weight:500;line-height:1.45;margin-bottom:20px}
+.opts{display:grid;gap:10px}
+.opt{display:flex;gap:12px;align-items:baseline;text-align:left;background:var(--tar2);border:1px solid var(--line);border-radius:10px;padding:13px 16px;color:var(--text);font-size:.92rem;transition:border-color .15s,transform .12s}
+.opt:hover{border-color:var(--gold);transform:translateX(2px)}
+.opt .ol{font-family:'DM Mono',monospace;font-size:.78rem;color:var(--gold)}
+.opt.right{border-color:var(--green);background:var(--green-dim)}
+.opt.wrong{border-color:var(--red);background:var(--red-dim)}
+.opt:disabled{cursor:default;transform:none}
+.exp{display:none;margin-top:18px;padding:14px 16px;background:var(--tar2);border-left:3px solid var(--gold);border-radius:8px;font-size:.86rem;color:var(--text2);white-space:pre-line}
+.exp.show{display:block}
+.exp .ex-src{font-family:'DM Mono',monospace;font-size:.68rem;color:var(--text3);margin-top:10px}
+.nextbtn{display:none;margin-top:18px;width:100%;background:var(--gold);color:#191510;border:none;border-radius:10px;padding:14px;font-weight:700;font-size:.95rem}
+.nextbtn.show{display:block}
+.nextbtn:hover{background:var(--gold2)}
+
+/* done + empty states */
+.done,.empty{text-align:center;padding:56px 20px;background:var(--tar);border:1px solid var(--line);border-radius:var(--r)}
+.done .big{font-family:'Fraunces',serif;font-size:1.7rem;font-weight:600;margin-bottom:8px}
+.done .d-sub,.empty .d-sub{color:var(--text2);font-size:.92rem;max-width:40ch;margin:0 auto}
+.done .d-stats{font-family:'DM Mono',monospace;font-size:.85rem;color:var(--gold2);margin:16px 0 4px}
+.empty .e-ico{font-size:2rem;margin-bottom:12px}
+
+.demo-bar{position:fixed;bottom:16px;right:16px;z-index:50}
+.demo-btn{font-family:'DM Mono',monospace;font-size:.72rem;letter-spacing:.1em;background:var(--tar2);border:1px dashed var(--gold);color:var(--gold2);border-radius:30px;padding:9px 16px}
+.demo-btn:hover{background:var(--gold-dim)}
+footer{border-top:1px solid var(--line);padding:24px;text-align:center;color:var(--text3);font-size:.8rem}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">Road to <em>IIM</em> · Your Words</div>
+  <a class="hdr-link" href="index.html">← Portal</a>
+</header>
+
+<main>
+  <div class="eyebrow">The mistake bank</div>
+  <h1 id="pageTitle">Words that beat you once.</h1>
+  <p class="sub" id="pageSub">Every question you get wrong in a test lands here — and keeps coming back until it can't beat you anymore.</p>
+
+  <div class="strip" id="statStrip"></div>
+  <div class="deck" id="deck"></div>
+</main>
+
+<div class="demo-bar"><button class="demo-btn" id="demoBtn">▶ Demo: show with sample mistakes</button></div>
+<footer>Road to IIM · Your Words · IMS Ahmedabad</footer>
+
+<script>
+const DAY=86400000;
+const BOX_GAP={1:1,2:3,3:7,4:14};           /* days until next appearance per box */
+const GRAD_BOX=4;                            /* answer right in box 4 → graduated  */
+let BANK=[], QUEUE=[], idx=0, sessRight=0, sessWrong=0, demo=false;
+
+function load(){try{BANK=JSON.parse(localStorage.getItem('riim_mistakes')||'[]')}catch(e){BANK=[]}}
+function save(){if(demo)return;try{localStorage.setItem('riim_mistakes',JSON.stringify(BANK))}catch(e){}}
+
+const DEMO=[
+ {k:'d1',stem:'The committee dismissed the offence as ______ — a minor lapse, not a firing matter.',opts:['venal','venial','vernal','venerable'],ans:1,chosen:0,exp:'Venial = forgivable, minor. Venal = corrupt, open to bribery — the trap. Vernal = of spring.',sub:'Confusables',src:'The Impostors',box:1,due:Date.now()-DAY,ts:Date.now()-6*DAY},
+ {k:'d2',stem:'His speech was pure ______: grand words, zero substance.',opts:['bombast','ballast','bulwark','bastion'],ans:0,chosen:1,exp:'Bombast = inflated, pretentious language. Ballast keeps ships steady — wrong register entirely.',sub:'Vocabulary · FITB',src:'Test 17',box:1,due:Date.now()-DAY,ts:Date.now()-9*DAY},
+ {k:'d3',stem:'Choose the odd one out.',opts:['laconic','terse','pithy','prolix'],ans:3,chosen:2,exp:'Laconic, terse, pithy all mean brief. Prolix = tediously wordy — the opposite.',sub:'Odd one out',src:'Test 18',box:2,due:Date.now()-DAY,ts:Date.now()-12*DAY},
+ {k:'d4',stem:'______ by years of drought, the village finally received rain. Identify the correct participle usage.',opts:['Being parched','Parched','Having parched','To parch'],ans:1,chosen:2,exp:'The village was parched (passive) — "Having parched" would mean the village did the parching. Classic dangling-modifier territory.',sub:'Grammar · Modifiers',src:'Test 16',box:1,due:Date.now()-2*DAY,ts:Date.now()-4*DAY},
+ {k:'d5',stem:'To "throw down the gauntlet" is to:',opts:['surrender a fight','issue a challenge','abandon a task','reveal a secret'],ans:1,chosen:0,exp:'From medieval duels — throwing your armored glove down challenged someone. Picking it up accepted.',sub:'Idioms',src:'Test 18',box:3,due:Date.now()-DAY,ts:Date.now()-20*DAY}
+];
+
+function dueCards(){const now=Date.now();return BANK.filter(c=>!c.grad&&c.due<=now).sort((a,b)=>a.due-b.due)}
+
+function stats(){
+  const total=BANK.length, grad=BANK.filter(c=>c.grad).length, due=dueCards().length;
+  const learning=total-grad;
+  document.getElementById('statStrip').innerHTML=
+    '<div class="st"><div class="n">'+due+'</div><div class="l">due today</div></div>'
+   +'<div class="st"><div class="n">'+learning+'</div><div class="l">in training</div></div>'
+   +'<div class="st"><div class="n" style="color:var(--green)">'+grad+'</div><div class="l">defeated</div></div>'
+   +'<div class="st"><div class="n">'+total+'</div><div class="l">banked total</div></div>';
+}
+
+function render(){
+  stats();
+  const deck=document.getElementById('deck');
+  if(!BANK.length){
+    deck.innerHTML='<div class="empty"><div class="e-ico">🏦</div><div class="d-sub">Nothing banked yet. Take any test — every question that beats you shows up here automatically, ready for a rematch.</div></div>';
+    return;
+  }
+  if(!QUEUE.length||idx>=QUEUE.length){
+    if(sessRight+sessWrong>0){
+      const nextDue=BANK.filter(c=>!c.grad).map(c=>c.due).sort()[0];
+      const days=nextDue?Math.max(0,Math.ceil((nextDue-Date.now())/DAY)):null;
+      deck.innerHTML='<div class="done"><div class="big">Rematch over.</div>'
+        +'<div class="d-stats">'+sessRight+' defeated · '+sessWrong+' coming back tomorrow</div>'
+        +'<div class="d-sub">'+(days===null?'The bank is empty — go earn some new mistakes.':(days===0?'More cards are already due — refresh to keep going.':'Next cards return in '+days+' day'+(days===1?'':'s')+'. Consistency beats cramming.'))+'</div></div>';
+    }else{
+      deck.innerHTML='<div class="done"><div class="big">All clear for today.</div><div class="d-sub">No cards due. They\'ll return on schedule — the longer a word survives, the longer it stays away.</div></div>';
+    }
+    return;
+  }
+  const c=QUEUE[idx];
+  deck.innerHTML='<div class="qcard">'
+    +'<div class="q-top"><span class="q-tag">'+(c.sub||'Review')+'</span><span class="q-count">'+(idx+1)+' / '+QUEUE.length+'</span></div>'
+    +'<div class="q-stem">'+c.stem+'</div>'
+    +'<div class="opts">'+c.opts.map((o,i)=>'<button class="opt" data-i="'+i+'"><span class="ol">'+String.fromCharCode(65+i)+'</span><span>'+o+'</span></button>').join('')+'</div>'
+    +'<div class="exp" id="exp">'+(c.exp||'')+'<div class="ex-src">first missed in '+c.src+'</div></div>'
+    +'<button class="nextbtn" id="nextBtn">Next →</button></div>';
+  deck.querySelectorAll('.opt').forEach(btn=>{
+    btn.addEventListener('click',()=>answer(parseInt(btn.dataset.i,10)));
+  });
+}
+
+function answer(i){
+  const c=QUEUE[idx];
+  const deck=document.getElementById('deck');
+  deck.querySelectorAll('.opt').forEach((b,j)=>{
+    b.disabled=true;
+    if(j===c.ans)b.classList.add('right');
+    else if(j===i)b.classList.add('wrong');
+  });
+  const bankCard=BANK.find(b=>b.k===c.k);
+  if(i===c.ans){
+    sessRight++;
+    if(bankCard){
+      if(bankCard.box>=GRAD_BOX){bankCard.grad=true;}
+      else{bankCard.box++;bankCard.due=Date.now()+BOX_GAP[bankCard.box]*DAY;}
+    }
+  }else{
+    sessWrong++;
+    if(bankCard){bankCard.box=1;bankCard.due=Date.now()+DAY;}
+  }
+  save();stats();
+  document.getElementById('exp').classList.add('show');
+  const nb=document.getElementById('nextBtn');
+  nb.classList.add('show');
+  nb.addEventListener('click',()=>{idx++;render();});
+}
+
+document.getElementById('demoBtn').addEventListener('click',function(){
+  demo=!demo;
+  if(demo){BANK=JSON.parse(JSON.stringify(DEMO));this.textContent='■ Demo: back to my words'}
+  else{load();this.textContent='▶ Demo: show with sample mistakes'}
+  QUEUE=dueCards();idx=0;sessRight=0;sessWrong=0;render();
+});
+
+load();QUEUE=dueCards();render();
+</script>
+</body>
+</html>

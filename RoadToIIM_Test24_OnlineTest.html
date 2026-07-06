@@ -622,6 +622,29 @@ function flushPending(){
 }
 window.addEventListener('load',function(){flushPending();tryResume();});
 
+// ── MISTAKE BANK: wrong answers become flashcards ──────────────────────────
+function bankMistakes(){
+  try{
+    let bank=JSON.parse(localStorage.getItem('riim_mistakes')||'[]');
+    const now=Date.now(), day=86400000;
+    QUESTIONS.forEach((q,i)=>{
+      const ua=userAnswers[i];
+      if(ua===null) return;                       // skipped ≠ mistake
+      if(q.passage) return;                       // RC needs its passage — not bankable
+      const correctIdx=LABELS.indexOf(q.answer);
+      if(ua===correctIdx) return;
+      const key='T24-'+q.id;
+      const card={k:key,stem:q.stem,opts:q.opts,ans:correctIdx,chosen:ua,
+        exp:q.exp||'',sub:q.qtype||q.section||'',src:'Test 24',ts:now,box:1,due:now+day};
+      const idx=bank.findIndex(c=>c.k===key);
+      if(idx>=0){card.ts=bank[idx].ts;bank[idx]=card;}   // repeat offender → back to box 1
+      else bank.push(card);
+    });
+    if(bank.length>300) bank=bank.slice(bank.length-300);
+    localStorage.setItem('riim_mistakes',JSON.stringify(bank));
+  }catch(e){}
+}
+
 // ── SECTIONS ──────────────────────────────────────────────────────────────
 const SECTIONS=[];
 QUESTIONS.forEach((q,i)=>{
@@ -795,6 +818,7 @@ function submitTest(){
     }
   });
   const score=correct*4-wrong;
+  bankMistakes();
   showResults(score,correct,wrong,skipped);
   saveToTracker(score,correct,wrong,skipped);
   logToSheet(score,correct,wrong,skipped,sectionErrors,wrongQuestions);
