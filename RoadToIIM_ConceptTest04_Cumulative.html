@@ -256,6 +256,90 @@ let secondsLeft = timer_duration * 60;
 let timerInterval = null;
 let studentName = '', studentPin = '', studentBatch = '';
 let submitted = false;
+/* ── SAFETY NET + MISTAKE BANK (concept-test adapter) ── */
+const SESSION_KEY='riim_session_ConceptTest04';
+const PENDING_KEY='riim_pending';
+const STRICT_CLOCK=true;
+
+function saveSession(){
+  if(submitted||!studentName)return;
+  try{localStorage.setItem(SESSION_KEY,JSON.stringify({
+    name:studentName,pin:studentPin,batch:studentBatch,
+    userAnswers:userAnswers,marked:marked,questionTimes:questionTimes,
+    currentQ:currentQ,secondsLeft:secondsLeft,savedAt:Date.now(),
+    file:location.pathname.split('/').pop()
+  }));}catch(e){}
+}
+function clearSession(){try{localStorage.removeItem(SESSION_KEY);}catch(e){}}
+
+function tryResume(){
+  let s=null;
+  try{s=JSON.parse(localStorage.getItem(SESSION_KEY)||'null');}catch(e){}
+  if(!s)return;
+  let remaining=s.secondsLeft;
+  if(STRICT_CLOCK) remaining-=Math.floor((Date.now()-s.savedAt)/1000);
+  if(remaining>0){
+    const m=String(Math.floor(remaining/60)).padStart(2,'0');
+    const sec=String(remaining%60).padStart(2,'0');
+    if(!confirm('An unfinished attempt by '+s.name+' was found.\n\nOK = Resume with '+m+':'+sec+' remaining\nCancel = Discard it and start fresh')){clearSession();return;}
+  }else{
+    alert('An unfinished attempt by '+s.name+' was found, but its time has run out. It will be submitted as-is.');
+  }
+  studentName=s.name;studentPin=s.pin;studentBatch=s.batch;
+  userAnswers=s.userAnswers;marked=s.marked;questionTimes=s.questionTimes;
+  currentQ=s.currentQ;secondsLeft=Math.max(0,remaining);
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('testScreen').style.display='block';
+  document.getElementById('tbStudent').textContent=studentName+' \u00b7 '+studentPin+' \u00b7 '+studentBatch;
+  buildPalette();qEnterTime=Date.now();renderQuestion(currentQ);
+  if(secondsLeft<=0){submitTest();}else{startTimer();}
+}
+
+function queuePending(payload){
+  try{
+    const q=JSON.parse(localStorage.getItem(PENDING_KEY)||'[]');
+    const qid=Date.now()+'_'+Math.random().toString(36).slice(2,8);
+    q.push(Object.assign({_qid:qid},payload));
+    localStorage.setItem(PENDING_KEY,JSON.stringify(q));
+    return qid;
+  }catch(e){return null;}
+}
+function unqueuePending(qid){
+  try{
+    const q=JSON.parse(localStorage.getItem(PENDING_KEY)||'[]');
+    localStorage.setItem(PENDING_KEY,JSON.stringify(q.filter(p=>p._qid!==qid)));
+  }catch(e){}
+}
+function flushPending(){
+  let q=[];
+  try{q=JSON.parse(localStorage.getItem(PENDING_KEY)||'[]');}catch(e){}
+  q.forEach(p=>{
+    const body=Object.assign({},p); delete body._qid;
+    fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(body)})
+      .then(()=>unqueuePending(p._qid)).catch(()=>{});
+  });
+}
+
+function bankMistakes(){
+  try{
+    let bank=JSON.parse(localStorage.getItem('riim_mistakes')||'[]');
+    const now=Date.now(), day=86400000;
+    QUESTIONS.forEach((q,i)=>{
+      const ua=userAnswers[i];
+      if(ua===null||ua===q.a) return;
+      const key='ConceptTest04-q'+(i+1);
+      const card={k:key,stem:q.q,opts:q.o,ans:q.a,chosen:ua,
+        exp:q.e||'',sub:(q.tag&&(q.tag.sub||q.tag.area))||q.sec||'',src:'Concept Cumulative',ts:now,box:1,due:now+day};
+      const idx=bank.findIndex(c=>c.k===key);
+      if(idx>=0){card.ts=bank[idx].ts;bank[idx]=card;}
+      else bank.push(card);
+    });
+    if(bank.length>300) bank=bank.slice(bank.length-300);
+    localStorage.setItem('riim_mistakes',JSON.stringify(bank));
+  }catch(e){}
+}
+window.addEventListener('load',function(){flushPending();tryResume();});
+
 
 /* ================= LOGIN ================= */
 function startTest(){
@@ -283,6 +367,7 @@ function startTimer(){
   timerInterval = setInterval(()=>{
     secondsLeft--;
     updateTimerDisplay();
+    if(secondsLeft%10===0) saveSession();
     if(secondsLeft <= 0){
       clearInterval(timerInterval);
       submitTest();
@@ -349,7 +434,7 @@ function updatePalette(){
   });
 }
 function selectOption(oi){
-  userAnswers[currentQ] = oi;
+  userAnswers[currentQ] = oi; saveSession();
   const opts = document.querySelectorAll('#qOpts .opt');
   opts.forEach((el,idx)=>el.classList.toggle('selected', idx===oi));
   updatePalette();
@@ -389,6 +474,8 @@ function submitTest(){
   if(submitted) return;
   submitted = true;
   clearInterval(timerInterval);
+  clearSession();
+  bankMistakes();
 
   let correct=0, wrong=0, skipped=0;
   const wrongQuestions = [];
@@ -436,12 +523,14 @@ function submitTest(){
     topicErrors: JSON.stringify(topicErr)
   };
 
+  const _qid=queuePending(payload);
   fetch(APPS_SCRIPT_URL,{
     method:"POST",
     mode:"no-cors",
     headers:{"Content-Type":"text/plain"},
     body:JSON.stringify(payload)
   }).then(()=>{
+    if(_qid)unqueuePending(_qid);
     showResults(score,correct,wrong,skipped);
   }).catch(()=>{
     showResults(score,correct,wrong,skipped);
