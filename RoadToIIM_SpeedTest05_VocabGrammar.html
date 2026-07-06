@@ -647,7 +647,7 @@ function onTimerExpire(){
   advanceQuestion();
 }
 
-function handleOptClick(){
+function handleOptClick(){ try{saveSession();}catch(e){}
   if(locked) return;
   var idx=parseInt(this.dataset.idx);
   userAnswers[currentQ]=idx;
@@ -668,7 +668,7 @@ document.getElementById("btnNext").addEventListener("click", function(){
   }
 });
 
-function advanceQuestion(){
+function advanceQuestion(){ try{saveSession();}catch(e){}
   currentQ++;
   if(currentQ<45) renderQuestion();
 }
@@ -693,7 +693,99 @@ function computeScore(){
 }
 
 // ── SUBMIT ──
-function submitTest(){
+
+/* ── SAFETY NET + MISTAKE BANK (rapid-fire adapter: SpeedTest05) ── */
+var SN_SESSION_KEY='riim_session_SpeedTest05';
+var SN_PENDING_KEY='riim_pending';
+var snDone=false;
+function saveSession(){
+  if(snDone||!studentName)return;
+  try{localStorage.setItem(SN_SESSION_KEY,JSON.stringify({
+    name:studentName,pin:studentPin,batch:studentBatch,
+    answers:userAnswers,cur:currentQ,times:questionTimes,
+    savedAt:Date.now(),file:location.pathname.split('/').pop()
+  }));}catch(e){}
+}
+function clearSession(){try{localStorage.removeItem(SN_SESSION_KEY);}catch(e){}}
+function tryResume(){
+  var s=null;
+  try{s=JSON.parse(localStorage.getItem(SN_SESSION_KEY)||'null');}catch(e){}
+  if(!s)return;
+  var done=0; for(var i=0;i<s.answers.length;i++)if(s.answers[i]!==null)done++;
+  if(!confirm('An unfinished rapid-fire attempt by '+s.name+' was found ('+done+' answered).\n\nOK = Resume where you left off\nCancel = Discard it and start fresh')){clearSession();return;}
+  document.getElementById('inName').value=s.name;
+  document.getElementById('inPin').value=s.pin;
+  document.getElementById('inBatch').value=s.batch;
+  document.getElementById('btnStart').click();
+  var ts=document.getElementById('testScreen');
+  if(!ts||(ts.style.display!=='block'&&ts.style.display!=='flex'))return;
+  userAnswers=s.answers;currentQ=s.cur;questionTimes=s.times;
+  try{if(typeof buildPalette==='function')buildPalette();}catch(e){}
+  try{if(typeof updatePalette==='function')updatePalette();}catch(e){}
+  renderQuestion(currentQ);
+  saveSession();
+}
+function queuePending(payload){
+  try{
+    var q=JSON.parse(localStorage.getItem(SN_PENDING_KEY)||'[]');
+    var qid=Date.now()+'_'+Math.random().toString(36).slice(2,8);
+    q.push(Object.assign({_qid:qid},payload));
+    localStorage.setItem(SN_PENDING_KEY,JSON.stringify(q));
+    return qid;
+  }catch(e){return null;}
+}
+function unqueuePending(qid){
+  try{
+    var q=JSON.parse(localStorage.getItem(SN_PENDING_KEY)||'[]');
+    localStorage.setItem(SN_PENDING_KEY,JSON.stringify(q.filter(function(p){return p._qid!==qid;})));
+  }catch(e){}
+}
+function snSendWithQueue(opts){
+  var qid=null;
+  try{qid=queuePending(JSON.parse(opts.body));}catch(e){}
+  var p=fetch(APPS_SCRIPT_URL,opts);
+  p.then(function(){if(qid)unqueuePending(qid);}).catch(function(){});
+  return p;
+}
+function flushPending(){
+  var q=[];
+  try{q=JSON.parse(localStorage.getItem(SN_PENDING_KEY)||'[]');}catch(e){}
+  q.forEach(function(p){
+    var body=Object.assign({},p); delete body._qid;
+    fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(body)})
+      .then(function(){unqueuePending(p._qid);}).catch(function(){});
+  });
+}
+function bankMistakes(){
+  try{
+    var bank=JSON.parse(localStorage.getItem('riim_mistakes')||'[]');
+    var now=Date.now(), day=86400000;
+    var L=(typeof LABELS!=='undefined')?LABELS:((typeof OPTS!=='undefined')?OPTS:['A','B','C','D']);
+    var QQ=(typeof QUESTIONS!=='undefined')?QUESTIONS:Q;
+    QQ.forEach(function(q,i){
+      var ua=userAnswers[i];
+      if(ua===null||ua===undefined) return;
+      if(q.passage) return;
+      var stem=q.stem||q.q; var opts=q.opts||q.options||q.o;
+      if(!stem||!opts) return;
+      var cand=(q.answer!==undefined)?q.answer:((q.ans!==undefined)?q.ans:q.a);
+      var ci=-1;
+      if(typeof cand==='number')ci=cand; else if(typeof cand==='string')ci=L.indexOf(cand);
+      if(ci<0||ua===ci) return;
+      var key='SpeedTest05-q'+(q.id||i+1);
+      var card={k:key,stem:stem,opts:opts,ans:ci,chosen:ua,
+        exp:q.exp||q.e||'',sub:(q.tag&&(q.tag.sub||q.tag.area))||q.qtype||q.sub||q.sec||q.section||'',src:'Rapid Fire 05',ts:now,box:1,due:now+day};
+      var idx=-1; for(var j=0;j<bank.length;j++)if(bank[j].k===key){idx=j;break;}
+      if(idx>=0){card.ts=bank[idx].ts;bank[idx]=card;}
+      else bank.push(card);
+    });
+    if(bank.length>300) bank=bank.slice(bank.length-300);
+    localStorage.setItem('riim_mistakes',JSON.stringify(bank));
+  }catch(e){}
+}
+window.addEventListener('load',function(){flushPending();tryResume();});
+
+function submitTest(){ if(snDone)return; snDone=true; clearSession(); bankMistakes();
   clearInterval(qTimer);
   var res=computeScore();
   var totalSecs=questionTimes.reduce(function(a,b){return a+b;},0);
@@ -720,7 +812,7 @@ function submitTest(){
     topicErrors:JSON.stringify(res.topicErr)
   };
 
-  fetch(APPS_SCRIPT_URL,{method:"POST",mode:"no-cors",
+  snSendWithQueue({method:"POST",mode:"no-cors",
     headers:{"Content-Type":"text/plain"},body:JSON.stringify(payload)})
     .then(function(){console.log("Submitted.");})
     .catch(function(e){console.warn("Submit error:",e);});

@@ -390,7 +390,7 @@ function renderQuestion(qi){
   startPerQTimer(item.td);
 }
 
-function onSelect(e){
+function onSelect(e){ try{saveSession();}catch(e){}
   var btn=e.currentTarget;
   var idx=parseInt(btn.getAttribute("data-idx"),10);
   answers[currentQ]=idx;
@@ -432,7 +432,7 @@ function paintTimer(left, total){
   else { bar.style.background="var(--green)"; bar.classList.remove("crit"); }
 }
 
-function advance(){
+function advance(){ try{saveSession();}catch(e){}
   var spent=Q[currentQ].td - (perQSecondsLeft<0?0:perQSecondsLeft);
   qTimes[currentQ]=spent;
   if(perQTimer){ clearInterval(perQTimer); perQTimer=null; }
@@ -440,7 +440,99 @@ function advance(){
   else { renderQuestion(currentQ+1); }
 }
 
-function submitTest(){
+
+/* ── SAFETY NET + MISTAKE BANK (rapid-fire adapter: SpeedTest03) ── */
+var SN_SESSION_KEY='riim_session_SpeedTest03';
+var SN_PENDING_KEY='riim_pending';
+var snDone=false;
+function saveSession(){
+  if(snDone||!sName)return;
+  try{localStorage.setItem(SN_SESSION_KEY,JSON.stringify({
+    name:sName,pin:sPin,batch:sBatch,
+    answers:answers,cur:currentQ,times:qTimes,visitedQ:visitedQ,
+    savedAt:Date.now(),file:location.pathname.split('/').pop()
+  }));}catch(e){}
+}
+function clearSession(){try{localStorage.removeItem(SN_SESSION_KEY);}catch(e){}}
+function tryResume(){
+  var s=null;
+  try{s=JSON.parse(localStorage.getItem(SN_SESSION_KEY)||'null');}catch(e){}
+  if(!s)return;
+  var done=0; for(var i=0;i<s.answers.length;i++)if(s.answers[i]!==null)done++;
+  if(!confirm('An unfinished rapid-fire attempt by '+s.name+' was found ('+done+' answered).\n\nOK = Resume where you left off\nCancel = Discard it and start fresh')){clearSession();return;}
+  document.getElementById('inName').value=s.name;
+  document.getElementById('inPin').value=s.pin;
+  document.getElementById('inBatch').value=s.batch;
+  doLogin();
+  var ts=document.getElementById('testScreen');
+  if(!ts||(ts.style.display!=='block'&&ts.style.display!=='flex'))return;
+  answers=s.answers;currentQ=s.cur;qTimes=s.times;if(s.visitedQ)visitedQ=s.visitedQ;
+  try{if(typeof buildPalette==='function')buildPalette();}catch(e){}
+  try{if(typeof updatePalette==='function')updatePalette();}catch(e){}
+  renderQuestion(currentQ);
+  saveSession();
+}
+function queuePending(payload){
+  try{
+    var q=JSON.parse(localStorage.getItem(SN_PENDING_KEY)||'[]');
+    var qid=Date.now()+'_'+Math.random().toString(36).slice(2,8);
+    q.push(Object.assign({_qid:qid},payload));
+    localStorage.setItem(SN_PENDING_KEY,JSON.stringify(q));
+    return qid;
+  }catch(e){return null;}
+}
+function unqueuePending(qid){
+  try{
+    var q=JSON.parse(localStorage.getItem(SN_PENDING_KEY)||'[]');
+    localStorage.setItem(SN_PENDING_KEY,JSON.stringify(q.filter(function(p){return p._qid!==qid;})));
+  }catch(e){}
+}
+function snSendWithQueue(opts){
+  var qid=null;
+  try{qid=queuePending(JSON.parse(opts.body));}catch(e){}
+  var p=fetch(APPS_SCRIPT_URL,opts);
+  p.then(function(){if(qid)unqueuePending(qid);}).catch(function(){});
+  return p;
+}
+function flushPending(){
+  var q=[];
+  try{q=JSON.parse(localStorage.getItem(SN_PENDING_KEY)||'[]');}catch(e){}
+  q.forEach(function(p){
+    var body=Object.assign({},p); delete body._qid;
+    fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(body)})
+      .then(function(){unqueuePending(p._qid);}).catch(function(){});
+  });
+}
+function bankMistakes(){
+  try{
+    var bank=JSON.parse(localStorage.getItem('riim_mistakes')||'[]');
+    var now=Date.now(), day=86400000;
+    var L=(typeof LABELS!=='undefined')?LABELS:((typeof OPTS!=='undefined')?OPTS:['A','B','C','D']);
+    var QQ=(typeof QUESTIONS!=='undefined')?QUESTIONS:Q;
+    QQ.forEach(function(q,i){
+      var ua=answers[i];
+      if(ua===null||ua===undefined) return;
+      if(q.passage) return;
+      var stem=q.stem||q.q; var opts=q.opts||q.options||q.o;
+      if(!stem||!opts) return;
+      var cand=(q.answer!==undefined)?q.answer:((q.ans!==undefined)?q.ans:q.a);
+      var ci=-1;
+      if(typeof cand==='number')ci=cand; else if(typeof cand==='string')ci=L.indexOf(cand);
+      if(ci<0||ua===ci) return;
+      var key='SpeedTest03-q'+(q.id||i+1);
+      var card={k:key,stem:stem,opts:opts,ans:ci,chosen:ua,
+        exp:q.exp||q.e||'',sub:(q.tag&&(q.tag.sub||q.tag.area))||q.qtype||q.sub||q.sec||q.section||'',src:'Rapid Fire 03',ts:now,box:1,due:now+day};
+      var idx=-1; for(var j=0;j<bank.length;j++)if(bank[j].k===key){idx=j;break;}
+      if(idx>=0){card.ts=bank[idx].ts;bank[idx]=card;}
+      else bank.push(card);
+    });
+    if(bank.length>300) bank=bank.slice(bank.length-300);
+    localStorage.setItem('riim_mistakes',JSON.stringify(bank));
+  }catch(e){}
+}
+window.addEventListener('load',function(){flushPending();tryResume();});
+
+function submitTest(){ if(snDone)return; snDone=true; clearSession(); bankMistakes();
   if(perQTimer){ clearInterval(perQTimer); perQTimer=null; }
   // ensure final question's time is recorded if reached via submit button
   if(qTimes[currentQ]===0 && visitedQ[currentQ]){
@@ -492,7 +584,7 @@ function submitTest(){
     topicErrors:JSON.stringify(topicErr)
   };
 
-  fetch(APPS_SCRIPT_URL,{
+  snSendWithQueue({
     method:"POST", mode:"no-cors",
     headers:{"Content-Type":"text/plain"},
     body:JSON.stringify(payload)
