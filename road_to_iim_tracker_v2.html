@@ -1793,7 +1793,7 @@ function renderPatterns(el, testRows, tags) {
   // LEGACY (Tests 16-21): use studentAnswers + riim_tags.json — per-question cross-reference
   // NEW (RF01+): topicErrors field in row — pre-aggregated {sub: wrongCount}, area inferred from TOPIC_AREA map
 
-  const TRACKABLE_LEGACY = new Set(['16','17','18','19','21']);
+  const TRACKABLE_LEGACY = new Set(['16','17','18','19','20','21','23','24']);
 
   // Map sub → area for new tests (avoids needing JSON for new tests)
   const TOPIC_AREA = {
