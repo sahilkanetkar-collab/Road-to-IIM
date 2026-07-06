@@ -247,26 +247,22 @@ body{background:var(--navy);color:var(--white);font-family:'Segoe UI',system-ui,
   <input type="text" id="inputPin" placeholder="STU or IMS followed by 10 digits" autocomplete="off">
   <label for="inputBatch">Batch</label>
   <select id="inputBatch">
-    <option value="">— Select your batch —</option>
-    <option value="Classroom A2701">Classroom A2701</option>
-    <option value="Classroom A2702">Classroom A2702</option>
-    <option value="Classroom A2703">Classroom A2703</option>
-    <option value="Classroom A2704">Classroom A2704</option>
-    <option value="Classroom A2705">Classroom A2705</option>
-    <option value="Classroom A2706">Classroom A2706</option>
-    <option value="Classroom A2707">Classroom A2707</option>
-    <option value="Classroom A2708">Classroom A2708</option>
-    <option value="Classroom A2709">Classroom A2709</option>
-    <option value="Classroom A2710">Classroom A2710</option>
-    <option value="Classroom A2711">Classroom A2711</option>
-    <option value="Classroom A2712">Classroom A2712</option>
-    <option value="School Zebar">School Zebar</option>
-    <option value="Online 27E101">Online 27E101</option>
-    <option value="Online 27E102">Online 27E102</option>
-    <option value="Online 27E103">Online 27E103</option>
-    <option value="Online 27E104">Online 27E104</option>
-    <option value="Online 27E105">Online 27E105</option>
-    <option value="Admin">Admin</option>
+    <option value="">-- Select batch --</option>
+    <optgroup label="Classroom">
+      <option>A2701</option><option>A2702</option><option>A2703</option>
+      <option>A2704</option><option>A2705</option><option>A2706</option>
+      <option>A2707</option><option>A2708</option><option>A2709</option>
+      <option>A2710</option><option>A2711</option><option>A2712</option>
+      <option>A2714</option><option>A2715</option><option>A2716</option>
+      <option>A2717</option><option>A2718</option><option>A2719</option>
+      <option>A2720</option>
+    </optgroup>
+    <optgroup label="School"><option>Zebar</option></optgroup>
+    <optgroup label="IPMAT 28">
+      <option>Z2801</option><option>S2801</option>
+      <option>A2804</option><option>PN2801</option>
+    </optgroup>
+    <optgroup label="Admin"><option>Admin</option></optgroup>
   </select>
   <div id="loginErr"></div>
   <button id="startBtn" onclick="startTest()">Begin Test</button>
@@ -558,6 +554,74 @@ let testSubmitted=false;
 let questionTimestamps=new Array(Q_COUNT).fill(null);
 let questionTimes=new Array(Q_COUNT).fill(null);
 
+// ── SAFETY NET: autosave + submission retry ───────────────────────────────
+const SESSION_KEY='riim_session_Test24';
+const PENDING_KEY='riim_pending';
+const STRICT_CLOCK=true; // true = timer keeps running while the page is closed
+
+function saveSession(){
+  if(testSubmitted||!studentName)return;
+  try{localStorage.setItem(SESSION_KEY,JSON.stringify({
+    name:studentName,pin:studentPin,batch:studentBatch,
+    userAnswers:userAnswers,markedForReview:markedForReview,visitedQ:visitedQ,
+    questionTimes:questionTimes,currentQ:currentQ,secondsLeft:secondsLeft,savedAt:Date.now()
+  }));}catch(e){}
+}
+function clearSession(){try{localStorage.removeItem(SESSION_KEY);}catch(e){}}
+
+function tryResume(){
+  let s=null;
+  try{s=JSON.parse(localStorage.getItem(SESSION_KEY)||'null');}catch(e){}
+  if(!s)return;
+  let remaining=s.secondsLeft;
+  if(STRICT_CLOCK) remaining-=Math.floor((Date.now()-s.savedAt)/1000);
+  if(remaining>0){
+    const m=String(Math.floor(remaining/60)).padStart(2,'0');
+    const sec=String(remaining%60).padStart(2,'0');
+    const ok=confirm('An unfinished attempt by '+s.name+' was found.\n\nOK = Resume with '+m+':'+sec+' remaining\nCancel = Discard it and start fresh');
+    if(!ok){clearSession();return;}
+  }else{
+    alert('An unfinished attempt by '+s.name+' was found, but its time has run out. It will be submitted as-is.');
+  }
+  studentName=s.name;studentPin=s.pin;studentBatch=s.batch;
+  userAnswers=s.userAnswers;markedForReview=s.markedForReview;
+  visitedQ=s.visitedQ;questionTimes=s.questionTimes;
+  currentQ=s.currentQ;secondsLeft=Math.max(0,remaining);
+  document.getElementById('tbStudentName').textContent=studentName;
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('testScreen').style.display='block';
+  if(window.innerWidth>768) document.getElementById('rightPanel').style.display='block';
+  buildSectionTabs();buildPalette();renderQuestion(currentQ);
+  if(secondsLeft<=0){submitTest();}else{startTimer();}
+}
+
+function queuePending(payload){
+  try{
+    const q=JSON.parse(localStorage.getItem(PENDING_KEY)||'[]');
+    const qid=Date.now()+'_'+Math.random().toString(36).slice(2,8);
+    q.push(Object.assign({_qid:qid},payload));
+    localStorage.setItem(PENDING_KEY,JSON.stringify(q));
+    return qid;
+  }catch(e){return null;}
+}
+function unqueuePending(qid){
+  try{
+    const q=JSON.parse(localStorage.getItem(PENDING_KEY)||'[]');
+    localStorage.setItem(PENDING_KEY,JSON.stringify(q.filter(p=>p._qid!==qid)));
+  }catch(e){}
+}
+function flushPending(){
+  let q=[];
+  try{q=JSON.parse(localStorage.getItem(PENDING_KEY)||'[]');}catch(e){}
+  q.forEach(p=>{
+    const body=Object.assign({},p); delete body._qid;
+    fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(body)})
+      .then(()=>unqueuePending(p._qid))
+      .catch(()=>{});
+  });
+}
+window.addEventListener('load',function(){flushPending();tryResume();});
+
 // ── SECTIONS ──────────────────────────────────────────────────────────────
 const SECTIONS=[];
 QUESTIONS.forEach((q,i)=>{
@@ -622,6 +686,7 @@ function startTimer(){
     const m=Math.floor(secondsLeft/60),s=secondsLeft%60;
     disp.textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
     if(secondsLeft<=300) disp.classList.add('urgent');
+    if(secondsLeft%10===0) saveSession();
     if(secondsLeft<=0){clearInterval(timerInterval);if(!testSubmitted)submitTest();}
   },1000);
 }
@@ -674,7 +739,7 @@ function renderQuestion(idx){
   updatePalette();
 }
 
-function selectAnswer(idx,i){userAnswers[idx]=i;renderQuestion(idx);}
+function selectAnswer(idx,i){userAnswers[idx]=i;renderQuestion(idx);saveSession();}
 function clearAnswer(){userAnswers[currentQ]=null;renderQuestion(currentQ);}
 function navigate(dir){const n=currentQ+dir;if(n>=0&&n<Q_COUNT)renderQuestion(n);}
 function markForReview(){markedForReview[currentQ]=!markedForReview[currentQ];renderQuestion(currentQ);}
@@ -711,7 +776,7 @@ function confirmSubmit(){
 
 function submitTest(){
   if(testSubmitted)return;
-  testSubmitted=true; clearInterval(timerInterval);
+  testSubmitted=true; clearInterval(timerInterval); clearSession();
   if(questionTimestamps[currentQ]!==null){
     const elapsed=Math.round((Date.now()-questionTimestamps[currentQ])/1000);
     questionTimes[currentQ]=(questionTimes[currentQ]||0)+elapsed;
@@ -851,9 +916,10 @@ function logToSheet(score,correct,wrong,skipped,sectionErrors,wrongQuestions){
   const mm=String(Math.floor(s/60)).padStart(2,'0');
   const ss=String(s%60).padStart(2,'0');
   const payload={testName:'Road to IIM Test 24',name:studentName,pin:studentPin,batch:studentBatch,score:score,correct:correct,wrong:wrong,skipped:skipped,maxMarks:80,timeTaken:mm+':'+ss,timestamp:new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'}),sectionErrors:JSON.stringify(sectionErrors),wrongQuestions:JSON.stringify(wrongQuestions),studentAnswers:JSON.stringify(userAnswers.map(a=>a===null?null:a)),questionTimes:JSON.stringify(questionTimes)};
+  const qid=queuePending(payload);
   fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)})
-    .then(()=>{notice.className='success';notice.textContent='Results saved successfully.';})
-    .catch(()=>{notice.className='failure';notice.textContent='Could not reach server. Results saved locally.';});
+    .then(()=>{if(qid)unqueuePending(qid);notice.className='success';notice.textContent='Results saved successfully.';})
+    .catch(()=>{notice.className='failure';notice.textContent='No internet right now — your result is saved on this device and will be sent automatically the next time you open this test page.';});
 }
 
 function generatePDF(){
