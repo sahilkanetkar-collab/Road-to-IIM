@@ -392,6 +392,112 @@ let markedForReview=new Array(20).fill(false);
 let questionTimes=new Array(20).fill(0);
 let qStartTime=Date.now();
 let testSubmitted=false;
+/* ── SAFETY NET + MISTAKE BANK (numbered-family adapter v2) ── */
+const SN_SESSION_KEY='riim_session_RCSeries03';
+const SN_PENDING_KEY='riim_pending';
+const SN_STRICT_CLOCK=true;
+function saveSession(){
+  if(testSubmitted||!studentName)return;
+  try{localStorage.setItem(SN_SESSION_KEY,JSON.stringify({
+    name:studentName,pin:studentPin,batch:studentBatch,
+    userAnswers:userAnswers,currentQ:currentQ,secondsLeft:secondsLeft,
+    marked:(typeof markedForReview!=='undefined')?markedForReview:((typeof marked!=='undefined')?marked:null),
+    visited:(typeof visitedQ!=='undefined')?visitedQ:null,
+    qTimes:(typeof questionTimes!=='undefined')?questionTimes:null,
+    savedAt:Date.now(),file:location.pathname.split('/').pop()
+  }));}catch(e){}
+}
+function clearSession(){try{localStorage.removeItem(SN_SESSION_KEY);}catch(e){}}
+function tryResume(){
+  let s=null;
+  try{s=JSON.parse(localStorage.getItem(SN_SESSION_KEY)||'null');}catch(e){}
+  if(!s)return;
+  let remaining=s.secondsLeft;
+  if(SN_STRICT_CLOCK) remaining-=Math.floor((Date.now()-s.savedAt)/1000);
+  if(remaining>0){
+    const m=String(Math.floor(remaining/60)).padStart(2,'0');
+    const sec=String(remaining%60).padStart(2,'0');
+    if(!confirm('An unfinished attempt by '+s.name+' was found.\n\nOK = Resume with '+m+':'+sec+' remaining\nCancel = Discard it and start fresh')){clearSession();return;}
+  }else{
+    alert('An unfinished attempt by '+s.name+' was found, but its time has run out. It will be submitted as-is.');
+  }
+  document.getElementById('inputName').value=s.name;
+  document.getElementById('inputPin').value=s.pin;
+  document.getElementById('inputBatch').value=s.batch;
+  startTest();
+  const ts=document.getElementById('testScreen');
+  if(!ts||ts.style.display!=='block')return;
+  userAnswers=s.userAnswers;currentQ=s.currentQ;
+  try{if(s.marked&&typeof markedForReview!=='undefined')markedForReview=s.marked;}catch(e){}
+  try{if(s.marked&&typeof marked!=='undefined')marked=s.marked;}catch(e){}
+  try{if(s.visited&&typeof visitedQ!=='undefined')visitedQ=s.visited;}catch(e){}
+  try{if(s.qTimes&&typeof questionTimes!=='undefined')questionTimes=s.qTimes;}catch(e){}
+  secondsLeft=Math.max(0,remaining);
+  try{if(typeof buildSectionTabs==='function')buildSectionTabs();}catch(e){}
+  try{if(typeof buildPalette==='function')buildPalette();}catch(e){}
+  renderQuestion(currentQ);
+  saveSession();
+  if(secondsLeft<=0){submitTest();}
+}
+function queuePending(payload){
+  try{
+    const q=JSON.parse(localStorage.getItem(SN_PENDING_KEY)||'[]');
+    const qid=Date.now()+'_'+Math.random().toString(36).slice(2,8);
+    q.push(Object.assign({_qid:qid},payload));
+    localStorage.setItem(SN_PENDING_KEY,JSON.stringify(q));
+    return qid;
+  }catch(e){return null;}
+}
+function unqueuePending(qid){
+  try{
+    const q=JSON.parse(localStorage.getItem(SN_PENDING_KEY)||'[]');
+    localStorage.setItem(SN_PENDING_KEY,JSON.stringify(q.filter(p=>p._qid!==qid)));
+  }catch(e){}
+}
+function snSendWithQueue(opts){
+  let qid=null;
+  try{qid=queuePending(JSON.parse(opts.body));}catch(e){}
+  const p=fetch(APPS_SCRIPT_URL,opts);
+  p.then(()=>{if(qid)unqueuePending(qid);}).catch(()=>{});
+  return p;
+}
+function flushPending(){
+  let q=[];
+  try{q=JSON.parse(localStorage.getItem(SN_PENDING_KEY)||'[]');}catch(e){}
+  q.forEach(p=>{
+    const body=Object.assign({},p); delete body._qid;
+    fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(body)})
+      .then(()=>unqueuePending(p._qid)).catch(()=>{});
+  });
+}
+function bankMistakes(){
+  try{
+    let bank=JSON.parse(localStorage.getItem('riim_mistakes')||'[]');
+    const now=Date.now(), day=86400000;
+    const L=(typeof LABELS!=='undefined')?LABELS:['A','B','C','D'];
+    QUESTIONS.forEach((q,i)=>{
+      const ua=userAnswers[i];
+      if(ua===null||ua===undefined) return;
+      if(q.passage) return;
+      const stem=q.stem||q.q; const opts=q.opts||q.options||q.o;
+      if(!stem||!opts) return;
+      const cand=(q.answer!==undefined)?q.answer:((q.ans!==undefined)?q.ans:q.a);
+      let ci=-1;
+      if(typeof cand==='number')ci=cand; else if(typeof cand==='string')ci=L.indexOf(cand);
+      if(ci<0||ua===ci) return;
+      const key='RCSeries03-q'+(q.id||i+1);
+      const card={k:key,stem:stem,opts:opts,ans:ci,chosen:ua,
+        exp:q.exp||q.e||'',sub:q.qtype||q.sub||q.section||'',src:'RC Series 03',ts:now,box:1,due:now+day};
+      const idx=bank.findIndex(c=>c.k===key);
+      if(idx>=0){card.ts=bank[idx].ts;bank[idx]=card;}
+      else bank.push(card);
+    });
+    if(bank.length>300) bank=bank.slice(bank.length-300);
+    localStorage.setItem('riim_mistakes',JSON.stringify(bank));
+  }catch(e){}
+}
+window.addEventListener('load',function(){flushPending();tryResume();});
+
 
 function startTest(){
   const name=document.getElementById('inputName').value.trim();
@@ -413,7 +519,7 @@ function startTest(){
 
 function startTimer(){
   timerInterval=setInterval(()=>{
-    secondsLeft--;
+    secondsLeft--; if(secondsLeft%10===0)saveSession();
     const m=String(Math.floor(secondsLeft/60)).padStart(2,'0');
     const s=String(secondsLeft%60).padStart(2,'0');
     const el=document.getElementById('timerDisplay');
@@ -423,7 +529,7 @@ function startTimer(){
   },1000);
 }
 
-function renderQuestion(){
+function renderQuestion(){saveSession();
   const q=QUESTIONS[currentQ];
   const p=PASSAGES[q.passage-1];
   document.getElementById('passageTitle').textContent=p.title;
@@ -492,7 +598,7 @@ function confirmSubmit(){
 }
 
 function submitTest(){
-  if(testSubmitted)return;testSubmitted=true;recordTime();clearInterval(timerInterval);
+  if(testSubmitted)return;testSubmitted=true; clearSession(); bankMistakes();recordTime();clearInterval(timerInterval);
   let correct=0,wrong=0,skipped=0;const sectionErrors={};const wrongQuestions=[];
   const LETTERS=['A','B','C','D'];
   QUESTIONS.forEach((q,i)=>{
@@ -555,7 +661,7 @@ function logToSheet(score,correct,wrong,skipped,sectionErrors,wrongQuestions){
   const elapsed=timer_duration*60-secondsLeft;const mm=String(Math.floor(elapsed/60)).padStart(2,'0');const ss=String(elapsed%60).padStart(2,'0');
   const LETTERS=['A','B','C','D'];
   const payload={testName:'RC Series 03',name:studentName,pin:studentPin,batch:studentBatch,score:score,correct:correct,wrong:wrong,skipped:skipped,maxMarks:80,timeTaken:mm+':'+ss,timestamp:new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'}),sectionErrors:JSON.stringify(sectionErrors),wrongQuestions:JSON.stringify(wrongQuestions),studentAnswers:JSON.stringify(userAnswers.map(a=>a===null?null:LETTERS[a])),questionTimes:JSON.stringify(questionTimes.map(t=>Math.round(t/1000)))};
-  fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)})
+  snSendWithQueue({method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)})
     .then(()=>{notice.className='success';notice.textContent='Results saved successfully.';})
     .catch(()=>{notice.className='failure';notice.textContent='Could not reach server. Results saved locally.';});
 }
