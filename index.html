@@ -126,6 +126,14 @@ footer{border-top:1px solid var(--line);padding:26px clamp(18px,5vw,56px);text-a
 .road-toggle:hover{border-color:var(--gold);color:var(--gold2)}
 .more-card{background:var(--tar2);border:1px dashed var(--line);color:var(--text2);font-family:'DM Mono',monospace;font-size:.78rem;letter-spacing:.06em;cursor:pointer;align-items:center;justify-content:center;display:flex}
 .more-card:hover{border-color:var(--gold);color:var(--gold2)}
+
+.sync-row{margin:2px 0 4px}
+.sync-note{font-size:.78rem;color:var(--text2);margin-left:10px}
+.sync-form{display:flex;gap:8px;margin:8px 0 4px;flex-wrap:wrap}
+.sync-form input{background:var(--tar);border:1px solid var(--line);border-radius:8px;color:var(--text);padding:9px 12px;font-family:'DM Mono',monospace;font-size:.8rem;width:170px}
+.sync-form input:focus{outline:none;border-color:var(--gold)}
+.sync-go{background:var(--gold);color:#191510;border:none;border-radius:8px;padding:9px 18px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif}
+.sync-go:hover{background:var(--gold2)}
 </style>
 </head>
 <body>
@@ -169,6 +177,15 @@ footer{border-top:1px solid var(--line);padding:26px clamp(18px,5vw,56px);text-a
   <div class="road-head">
     <div class="sec-label">The road · Full-length tests</div>
     <div><span class="road-progress" id="roadProgress">0 of 15 complete</span><button class="road-toggle" id="roadToggle" style="display:none">Show full road</button></div>
+  </div>
+  <div class="sync-row" id="syncRow" style="display:none">
+    <button class="road-toggle" id="syncBtn">Taken tests before? Load my history</button>
+    <span class="sync-note" id="syncNote"></span>
+  </div>
+  <div class="sync-form" id="syncForm" style="display:none">
+    <input id="syncPin" placeholder="Your PIN (STU…)" maxlength="13" autocapitalize="characters">
+    <input id="syncBatch" placeholder="Batch (e.g. A2705)" maxlength="8" autocapitalize="characters">
+    <button class="sync-go" id="syncGo">Load</button>
   </div>
   <div class="road-scroll">
     <div class="road" id="roadStrip"></div>
@@ -233,6 +250,7 @@ footer{border-top:1px solid var(--line);padding:26px clamp(18px,5vw,56px);text-a
    repo and is loaded with:  fetch('tests.json').then(r=>r.json())
    Adding a new test = adding one entry here. The UI never changes.
    ════════════════════════════════════════════════════════════════ */
+const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbx5Ojm_zp4LfsMeelx5e06KNjVH1wfsXdV0keS4407m4FO1HU4EpVb7GKj-ibAsxnspeA/exec';
 let MANIFEST={
  road:[ /* full-length tests — the road itself */
   {n:9, href:'RoadToIIM_Test9_OnlineTest.html', added:'2026-04'},
@@ -425,8 +443,43 @@ function render(){
   document.getElementById('gridTools').innerHTML=MANIFEST.tools.map(x=>'<a class="card tool" href="'+x.href+'">'+(x.id==='toolWords'&&dueWords>0?'<span class="k-done" style="color:var(--gold2);background:var(--gold-dim);border-color:rgba(201,168,76,.4)">'+dueWords+' due</span>':'')+'<div class="k-title">'+x.t+'</div><div class="k-meta">'+x.meta+'</div></a>').join('');
 }
 
-readLocal();render();
-fetch('tests.json',{cache:'no-cache'}).then(r=>r.json()).then(mf=>{MANIFEST=mf;render();}).catch(()=>{/* fallback already rendered */});
+function initSync(){
+  const row=document.getElementById('syncRow');
+  row.style.display=(RESULTS.length===0&&!localStorage.getItem('riim_synced'))?'block':'none';
+}
+document.getElementById('syncBtn').addEventListener('click',function(){
+  document.getElementById('syncForm').style.display='flex';
+  this.style.display='none';
+});
+document.getElementById('syncGo').addEventListener('click',function(){
+  const pin=(document.getElementById('syncPin').value||'').trim().toUpperCase();
+  const batch=(document.getElementById('syncBatch').value||'').trim();
+  const note=document.getElementById('syncNote');
+  if(!/^(STU|IMS)\d{10}$/.test(pin)||!batch){note.textContent='Check PIN (STU + 10 digits) and batch.';return;}
+  note.textContent='Loading your history…';
+  fetch(APPS_SCRIPT_URL+'?'+new URLSearchParams({pin:pin,batch:batch,admin:'0'}).toString())
+    .then(r=>r.json())
+    .then(data=>{
+      const rows=(data.rows||data.data||[]);
+      if(!rows.length){note.textContent='No tests found for that PIN + batch. Double-check and try again.';return;}
+      const hist=rows.map(r=>({testName:r.testName,name:r.name,pin:pin,batch:batch,
+        score:+r.score||0,correct:+r.correct||0,wrong:+r.wrong||0,skipped:+r.skipped||0,
+        maxMarks:+r.maxMarks||180,timeTaken:r.timeTaken||'',timestamp:r.timestamp||''}));
+      hist.reverse(); /* newest first */
+      try{
+        const existing=JSON.parse(localStorage.getItem('riim_results')||'[]');
+        const merged=hist.concat(existing).slice(0,200);
+        localStorage.setItem('riim_results',JSON.stringify(merged));
+        localStorage.setItem('riim_synced',pin);
+      }catch(e){}
+      document.getElementById('syncForm').style.display='none';
+      note.textContent='';
+      readLocal();render();initSync();
+    })
+    .catch(()=>{note.textContent='Could not reach the server — try again in a minute.';});
+});
+readLocal();render();initSync();
+fetch('tests.json',{cache:'no-cache'}).then(r=>r.json()).then(mf=>{MANIFEST=mf;render();initSync();}).catch(()=>{/* fallback already rendered */});
 </script>
 </body>
 </html>
