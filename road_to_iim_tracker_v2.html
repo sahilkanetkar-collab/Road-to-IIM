@@ -702,6 +702,31 @@
     .modal-box { padding: 24px 20px; }
   }
 </style>
+
+<style id="cv3-styles">
+.cv3-verdict{display:grid;grid-template-columns:1.25fr 1fr;gap:26px;align-items:start;margin-bottom:26px}
+@media(max-width:720px){.cv3-verdict{grid-template-columns:1fr}}
+.cv3-eyebrow{font-family:'DM Mono',monospace;font-size:.68rem;letter-spacing:.22em;text-transform:uppercase;color:#c9a84c;margin-bottom:8px}
+.cv3-verdict-h{font-family:'Fraunces',serif;font-weight:600;font-size:clamp(1.25rem,3vw,1.7rem);line-height:1.25}
+.cv3-verdict-sub{color:#a09880;margin-top:8px;font-size:.9rem;max-width:48ch}
+.cv3-up{color:#4caf82}.cv3-down{color:#d16a5a}.cv3-gold{color:#e8c97a}
+.cv3-trend{background:#161410;border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:14px 16px 6px}
+.cv3-trend-head{font-size:.76rem;color:#a09880;margin-bottom:4px}
+.cv3-trend svg{display:block;width:100%}
+.cv3-taxnum{color:#d16a5a!important}
+.cv3-subnote{font-size:.75rem;color:#6a6452;font-weight:400;font-style:italic;margin-left:8px}
+.cv3-focus{margin-bottom:26px}
+.cv3-bar-row{margin-bottom:12px}
+.cv3-bar-top{display:flex;justify-content:space-between;font-size:.85rem;margin-bottom:5px}
+.cv3-bar-val{font-family:'DM Mono',monospace;color:#a09880;font-size:.75rem}
+.cv3-bar{height:8px;border-radius:6px;background:#1e1b15;overflow:hidden}
+.cv3-bar i{display:block;height:100%;border-radius:6px;background:linear-gradient(90deg,#d16a5a,#e09a6a)}
+.cv3-words{display:inline-flex;align-items:center;gap:16px;margin-top:16px;background:#161410;border:1px solid rgba(255,255,255,.08);border-left:3px solid #c9a84c;border-radius:12px;padding:12px 18px 12px 14px;text-decoration:none;color:inherit;transition:border-color .2s}
+.cv3-words:hover{border-color:#c9a84c}
+.cv3-words-t{font-weight:700;font-size:.95rem}
+.cv3-words-m{font-size:.8rem;color:#a09880}
+.cv3-words-arrow{color:#c9a84c;font-size:1.2rem}
+</style>
 </head>
 <body>
 
@@ -938,8 +963,6 @@ function timeTaken(t) {
 // ══════════════════════════════════════════════════════════════
 function renderStudent(data) {
   const allRows = data.rows || data.data || [];
-
-  // Split regular tests vs Rapid Fire
   const rows    = allRows.filter(r => !isRapidFire(r.testName));
   const rfRows  = allRows.filter(r =>  isRapidFire(r.testName));
 
@@ -950,155 +973,130 @@ function renderStudent(data) {
         <div>No submissions found for PIN <strong style="font-family:'DM Mono',monospace">${currentUser.pin}</strong> in batch <strong>${currentUser.batch}</strong>.</div>
         <div style="margin-top:8px;font-size:13px;">Take a test first, then come back here!</div>
       </div>`;
-    renderRFStudent(rfRows); // still show RF section if they've taken rapid fire tests
+    renderRFStudent(rfRows);
     return;
   }
-
-  // Sort by test number
   rows.sort((a, b) => extractTestNum(a.testName) - extractTestNum(b.testName));
 
-  const best    = Math.max(...rows.map(r => r.score));
-  const avg     = Math.round(rows.reduce((s,r) => s + r.score, 0) / rows.length);
-  const latest  = rows[rows.length - 1];
-  const tests   = rows.length;
+  // ── core numbers ──
+  const best   = Math.max(...rows.map(r => r.score));
+  const last5  = rows.slice(-5);
+  const avg5   = Math.round(last5.reduce((s,r)=>s+r.score,0)/last5.length);
+  const prev5  = rows.slice(-10,-5);
+  const avgPrev5 = prev5.length ? Math.round(prev5.reduce((s,r)=>s+r.score,0)/prev5.length) : null;
+  const acc5   = (()=>{const c=last5.reduce((s,r)=>s+(+r.correct||0),0), w=last5.reduce((s,r)=>s+(+r.wrong||0),0);return (c+w)?Math.round(c/(c+w)*100):0;})();
+  const tax5   = last5.reduce((s,r)=>s+(+r.wrong||0),0);
+  const latest = rows[rows.length-1];
 
-  // Participation chips: Tests 1–20 (expand as needed)
-  const takenSet = new Set(rows.map(r => extractTestNum(r.testName)));
-  const maxTest  = Math.max(20, ...takenSet);
-  let chips = '';
-  for (let i = 1; i <= maxTest; i++) {
-    chips += `<div class="chip ${takenSet.has(i) ? 'taken' : ''}">T${i}</div>`;
+  // ── verdict ──
+  const l3=rows.slice(-3), p3=rows.slice(-6,-3);
+  const a3=Math.round(l3.reduce((s,r)=>s+r.score,0)/l3.length);
+  const b3=p3.length?Math.round(p3.reduce((s,r)=>s+r.score,0)/p3.length):null;
+  const first=(currentUser.name||latest.name||'').split(' ')[0]||'there';
+  let verdict, verdictSub;
+  if(rows.length<3){
+    verdict = `Good start, ${first} — ${rows.length} test${rows.length>1?'s':''} on the board.`;
+    verdictSub = `Your latest: ${latest.testName}, ${latest.score}/${MAX_MARKS}. Every test from here builds the picture.`;
+  } else if(b3!==null && a3-b3>=8){
+    verdict = `You're climbing, ${first} — <span class="cv3-up">+${a3-b3} marks</span> over your last three tests.`;
+    verdictSub = `Recent average ${a3} vs ${b3} before. Keep the rhythm.`;
+  } else if(b3!==null && b3-a3>=8){
+    verdict = `A dip, ${first} — <span class="cv3-down">−${b3-a3} marks</span> across your last three.`;
+    verdictSub = `Dips happen. The focus areas below show exactly where the marks went.`;
+  } else {
+    verdict = `Holding steady, ${first} — recent average <span class="cv3-gold">${a3}</span>.`;
+    verdictSub = `Consistency is underrated. The next jump comes from the focus areas below.`;
   }
 
-  // Section weakness (from sectionErrors, Tests 14+)
-  const sectionTotals = {};
-  const sectionCounts = {};
-  rows.forEach(r => {
-    if (!r.sectionErrors) return;
-    if (typeof r.sectionErrors === 'string') {
-      try { r.sectionErrors = JSON.parse(r.sectionErrors); } catch(e) { r.sectionErrors = {}; }
+  // ── trend sparkline (last 8) ──
+  const t8=rows.slice(-8);
+  let trendSvg='';
+  if(t8.length>=2){
+    const vals=t8.map(r=>+r.score||0);
+    const mn=Math.min(...vals), mx=Math.max(...vals), span=(mx-mn)||1;
+    const W=300,H=84,P=10;
+    const pts=vals.map((v,i)=>[P+i*(W-2*P)/(vals.length-1), H-P-(v-mn)/span*(H-2*P)]);
+    trendSvg=`<svg viewBox="0 0 ${W} ${H+18}" aria-label="Score trend">
+      <polyline points="${pts.map(p=>p.map(n=>Math.round(n)).join(',')).join(' ')}" fill="none" stroke="#c9a84c" stroke-width="2.5" stroke-linecap="round"/>
+      ${pts.map((p,i)=>`<circle cx="${Math.round(p[0])}" cy="${Math.round(p[1])}" r="${i===pts.length-1?4:3}" fill="#e8c97a"/>`).join('')}
+      <text x="${Math.round(pts[pts.length-1][0])}" y="${Math.round(pts[pts.length-1][1])-8}" fill="#e8c97a" font-family="DM Mono" font-size="11" text-anchor="end">${vals[vals.length-1]}</text>
+      <text x="${P}" y="${H+12}" fill="#6a6452" font-family="DM Mono" font-size="10">T${extractTestNum(t8[0].testName)}</text>
+      <text x="${W-P}" y="${H+12}" fill="#6a6452" font-family="DM Mono" font-size="10" text-anchor="end">T${extractTestNum(t8[t8.length-1].testName)}</text>
+    </svg>`;
+  }
+
+  // ── focus areas from sectionErrors ──
+  const sectionTotals={};
+  rows.forEach(r=>{
+    let se=r.sectionErrors;
+    if(typeof se==='string'){try{se=JSON.parse(se);}catch(e){se=null;}}
+    if(se&&typeof se==='object'&&!Array.isArray(se)){
+      Object.entries(se).forEach(([sec,w])=>{sectionTotals[sec]=(sectionTotals[sec]||0)+(+w||0);});
     }
-    if (typeof r.sectionErrors !== 'object' || Array.isArray(r.sectionErrors)) { r.sectionErrors = {}; }
-    Object.entries(r.sectionErrors).forEach(([sec, wrong]) => {
-      sectionTotals[sec] = (sectionTotals[sec] || 0) + wrong;
-      sectionCounts[sec] = (sectionCounts[sec] || 0) + 1;
-    });
   });
-  const sectionKeys = Object.keys(sectionTotals);
+  const secSorted=Object.entries(sectionTotals).sort((a,b)=>b[1]-a[1]).slice(0,4);
+  const maxErr=secSorted.length?secSorted[0][1]:1;
+  const focusHtml=secSorted.length?`
+    <div class="section-header">Focus Areas <span class="cv3-subnote">where your errors cluster</span></div>
+    <div class="cv3-focus">
+      ${secSorted.map(([sec,w])=>`
+        <div class="cv3-bar-row">
+          <div class="cv3-bar-top"><span>${sec}</span><span class="cv3-bar-val">${w} error${w===1?'':'s'}</span></div>
+          <div class="cv3-bar"><i style="width:${Math.round(w/maxErr*100)}%"></i></div>
+        </div>`).join('')}
+    </div>`:'';
 
-  let barsHtml = '';
-  if (sectionKeys.length) {
-    const maxWrong = Math.max(...Object.values(sectionTotals)) || 1;
-    const sorted = sectionKeys.sort((a,b) => sectionTotals[b] - sectionTotals[a]);
-    barsHtml = `
-      <div class="section-header">Section Weakness</div>
-      <div class="bars-grid" style="margin-bottom:28px;">
-        ${sorted.map(sec => {
-          const pct = Math.round((sectionTotals[sec] / (sectionCounts[sec] * 10)) * 100);
-          const fill = Math.round((sectionTotals[sec] / maxWrong) * 100);
-          return `
-            <div class="bar-row">
-              <div class="bar-label">${sec}</div>
-              <div class="bar-track"><div class="bar-fill" style="width:${fill}%"></div></div>
-              <div class="bar-pct">${pct}%</div>
-            </div>`;
-        }).join('')}
-      </div>`;
-  }
+  // ── Your Words card (device-local) ──
+  let wordsDue=0, wordsTotal=0;
+  try{const mb=JSON.parse(localStorage.getItem('riim_mistakes')||'[]');wordsTotal=mb.length;wordsDue=mb.filter(c=>!c.grad&&c.due<=Date.now()).length;}catch(e){}
+  const wordsHtml = wordsTotal>0 ? `
+    <a class="cv3-words" href="mistake_bank.html">
+      <div><div class="cv3-words-t">Your Words</div>
+      <div class="cv3-words-m">${wordsDue>0?wordsDue+' word'+(wordsDue===1?'':'s')+' due for a rematch':'All clear today — '+wordsTotal+' banked'}</div></div>
+      <div class="cv3-words-arrow">→</div>
+    </a>` : '';
 
-  // Behaviour flags
+  // ── behaviour flags + table (existing helpers) ──
   const flags = buildBehaviourFlags(rows);
-
-  // All tests table
-  let tableRows = '';
-  rows.forEach((r, i) => {
-    const prev = i > 0 ? rows[i-1].score : null;
-    const sc   = scoreClass(r.score);
-    const hasSA = r.studentAnswers && r.studentAnswers.length > 0;
-    const testNum = extractTestNum(r.testName);
-
-    tableRows += `
+  let tableRows='';
+  rows.forEach((r,i)=>{
+    const prev=i>0?rows[i-1].score:null;
+    const sc=scoreClass(r.score);
+    const testNum=extractTestNum(r.testName);
+    tableRows+=`
       <tr>
         <td>${r.testName}</td>
         <td><span class="score-pill ${sc}">${r.score} / ${MAX_MARKS}</span></td>
-        <td>${r.correct}</td>
-        <td>${r.wrong}</td>
-        <td>${r.skipped}</td>
+        <td>${r.correct}</td><td>${r.wrong}</td><td>${r.skipped}</td>
         <td>${timeTaken(r.timeTaken)}</td>
         <td>${deltaHTML(r.score, prev)}</td>
-        <td>
-          <button class="review-btn" onclick='openReview(${JSON.stringify(r)}, ${testNum})'>
-            Review
-          </button>
-        </td>
+        <td><button class="review-btn" onclick='openReview(${JSON.stringify(r)}, ${testNum})'>Review</button></td>
       </tr>`;
   });
 
   document.getElementById('dashContent').innerHTML = `
-    <!-- Stats -->
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-label">Tests Taken</div>
-        <div class="stat-value">${tests}</div>
-        <div class="stat-sub">out of all tests</div>
+    <div class="cv3-verdict">
+      <div>
+        <div class="cv3-eyebrow">Your verdict</div>
+        <div class="cv3-verdict-h">${verdict}</div>
+        <div class="cv3-verdict-sub">${verdictSub}</div>
+        ${wordsHtml}
       </div>
-      <div class="stat-card">
-        <div class="stat-label">Best Score</div>
-        <div class="stat-value">${best}</div>
-        <div class="stat-sub">/ ${MAX_MARKS}</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Average</div>
-        <div class="stat-value">${avg}</div>
-        <div class="stat-sub">across all tests</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Latest Score</div>
-        <div class="stat-value">${latest.score}</div>
-        <div class="stat-sub">${latest.testName}</div>
-      </div>
+      ${trendSvg?`<div class="cv3-trend"><div class="cv3-trend-head">Last ${t8.length} test scores</div>${trendSvg}</div>`:''}
     </div>
-
-    <!-- Participation -->
-    <div class="section-header">Test Participation</div>
-    <div class="chips-wrap" style="margin-bottom:28px;">${chips}</div>
-
-    ${barsHtml}
-
-    <!-- Behaviour flags -->
-    ${flags.length ? `
-      <div class="section-header">Behaviour Flags</div>
-      <div style="margin-bottom:28px;">${flags.map(f => `
-        <div class="flag-card">
-          <div class="flag-icon">${f.icon}</div>
-          <div>
-            <div class="flag-title">${f.title}</div>
-            <div class="flag-desc">${f.desc}</div>
-          </div>
-        </div>`).join('')}
-      </div>` : ''}
-
-    <!-- All tests table -->
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-label">Best Score</div><div class="stat-value">${best}</div><div class="stat-sub">/ ${MAX_MARKS}</div></div>
+      <div class="stat-card"><div class="stat-label">Average · last 5</div><div class="stat-value">${avg5}</div><div class="stat-sub">${avgPrev5!==null?(avg5>=avgPrev5?'up from ':'down from ')+avgPrev5+' the five before':'across your last tests'}</div></div>
+      <div class="stat-card"><div class="stat-label">Accuracy · last 5</div><div class="stat-value">${acc5}%</div><div class="stat-sub">of attempted questions</div></div>
+      <div class="stat-card"><div class="stat-label">Guessing tax · last 5</div><div class="stat-value cv3-taxnum">−${tax5}</div><div class="stat-sub">marks lost to wrong answers</div></div>
+    </div>
+    ${focusHtml}
+    ${flags}
     <div class="section-header">All Tests</div>
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Test</th>
-            <th>Score</th>
-            <th>Correct</th>
-            <th>Wrong</th>
-            <th>Skipped</th>
-            <th>Time</th>
-            <th>Change</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>${tableRows}</tbody>
-      </table>
-    </div>`;
-
-  // Render Rapid Fire section separately
+    <div class="table-wrap"><table>
+      <thead><tr><th>Test</th><th>Score</th><th>✓</th><th>✗</th><th>—</th><th>Time</th><th>vs prev</th><th></th></tr></thead>
+      <tbody>${tableRows}</tbody>
+    </table></div>`;
   renderRFStudent(rfRows);
 }
 
