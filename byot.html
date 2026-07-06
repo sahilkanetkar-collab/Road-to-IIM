@@ -1152,6 +1152,34 @@ const STATE = {
 // ══════════════════════════════════
 // BUILDER LOGIC
 // ══════════════════════════════════
+/* ── URL preset: byot.html?preset=cr&count=15&type=Assumption ── */
+function applyUrlPreset(){
+  try{
+    const p=new URLSearchParams(location.search);
+    const preset=(p.get('preset')||'').toLowerCase();
+    if(['cr','rc','sc','gr'].indexOf(preset)===-1) return;
+    ['cr','rc','sc','gr'].forEach(function(cat){
+      if(STATE.cats[cat]!==(cat===preset)) toggleCat(cat);
+    });
+    const n=parseInt(p.get('count')||'',10);
+    if(preset!=='rc'&&n){
+      const key=preset+'Count';
+      const mx=(typeof CONFIG!=='undefined'&&CONFIG['MAX_'+preset.toUpperCase()])||20;
+      STATE[key]=Math.max(5,Math.min(mx,n));
+      const el=document.getElementById(preset+'-count'); if(el)el.textContent=STATE[key];
+      updateTotal();
+    }
+    const type=p.get('type');
+    if(type&&(preset==='cr'||preset==='gr')){
+      const chip=document.querySelector('#'+preset+'-subtypes .subtype-chip[data-type="'+type+'"]');
+      if(chip) toggleSubtype(chip,preset);
+    }
+    const card=document.getElementById(preset+'-card');
+    if(card&&card.scrollIntoView) card.scrollIntoView({behavior:'smooth',block:'center'});
+  }catch(e){}
+}
+window.addEventListener('load',applyUrlPreset);
+
 function toggleCat(cat) {
   STATE.cats[cat] = !STATE.cats[cat];
   document.getElementById(`${cat}-card`).classList.toggle('active', STATE.cats[cat]);

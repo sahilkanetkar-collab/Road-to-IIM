@@ -1061,12 +1061,12 @@ function renderStudent(data) {
 
   // ── Do this next: section-level prescriptions ──
   const RX_MAP = [
-    [/critical|(^|\b)cr(\b|$)/i, {t:'Critical Reasoning practice', d:'Build a CR-only set in BYOT — pick Critical Reasoning, 10–15 questions.', href:'byot.html'}],
+    [/critical|(^|\b)cr(\b|$)/i, {t:'Critical Reasoning practice', d:'A CR-only set, ready to start — 15 questions.', href:'byot.html?preset=cr&count=15'}],
     [/vocab/i,                     {t:'The Impostors — vocabulary', d:'Confusable words and tone traps, 30 minutes.', href:'RoadToIIM_ConceptTest03_TheImpostors.html'}],
     [/grammar/i,                   {t:'Rapid Fire — grammar under the clock', d:'45 questions, 25 seconds each. Grammar sharpens fastest under pressure.', href:'RoadToIIM_SpeedTest05_VocabGrammar.html'}],
     [/\brc\b|reading/i,          {t:'One RC passage, timed', d:'Hammer mindset. Mark and move on every yellow alert.', href:'RoadToIIM_RC_Series03.html'}],
     [/word sel/i,                  {t:'Rapid Fire — word selection', d:'Speed drills are where word selection improves.', href:'RoadToIIM_SpeedTest04_VocabGrammar.html'}],
-    [/sentence|fitb|fill/i,        {t:'Sentence completion set in BYOT', d:'Pick Sentence Completion in BYOT, 10 questions.', href:'byot.html'}],
+    [/sentence|fitb|fill/i,        {t:'Sentence completion set in BYOT', d:'A sentence-completion set, ready to start — 10 questions.', href:'byot.html?preset=sc&count=10'}],
   ];
   const rxCards = secSorted.slice(0,2).map(([sec,w])=>{
     const hit = RX_MAP.find(([re])=>re.test(sec));
