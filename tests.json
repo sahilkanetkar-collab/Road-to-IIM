@@ -1,0 +1,289 @@
+{
+ "_readme": "Road to IIM test catalogue. To add a test: add one entry to the right list. The homepage reads this file \u2014 no HTML edits needed.",
+ "road": [
+  {
+   "n": 9,
+   "href": "RoadToIIM_Test9_OnlineTest.html",
+   "added": "2026-04"
+  },
+  {
+   "n": 11,
+   "href": "RoadToIIM_Test11_OnlineTest.html",
+   "added": "2026-04"
+  },
+  {
+   "n": 12,
+   "href": "RoadToIIM_Test12_OnlineTest.html",
+   "added": "2026-04"
+  },
+  {
+   "n": 13,
+   "href": "RoadToIIM_Test13_OnlineTest.html",
+   "added": "2026-05"
+  },
+  {
+   "n": 14,
+   "href": "RoadToIIM_Test14_OnlineTest.html",
+   "added": "2026-05"
+  },
+  {
+   "n": 15,
+   "href": "RoadToIIM_Test15_OnlineTest.html",
+   "added": "2026-05"
+  },
+  {
+   "n": 16,
+   "href": "RoadToIIM_Test16_OnlineTest.html",
+   "added": "2026-05"
+  },
+  {
+   "n": 17,
+   "href": "RoadToIIM_Test17_OnlineTest.html",
+   "added": "2026-06"
+  },
+  {
+   "n": 18,
+   "href": "RoadToIIM_Test18_OnlineTest.html",
+   "added": "2026-06"
+  },
+  {
+   "n": 19,
+   "href": "RoadToIIM_Test19_OnlineTest.html",
+   "added": "2026-06"
+  },
+  {
+   "n": 20,
+   "href": "RoadToIIM_Test20_OnlineTest.html",
+   "added": "2026-06"
+  },
+  {
+   "n": 21,
+   "href": "RoadToIIM_Test21_OnlineTest.html",
+   "added": "2026-06"
+  },
+  {
+   "n": 22,
+   "href": "RoadToIIM_Test22_OnlineTest.html",
+   "added": "2026-07"
+  },
+  {
+   "n": 23,
+   "href": "RoadToIIM_Test23_OnlineTest.html",
+   "added": "2026-07"
+  },
+  {
+   "n": 24,
+   "href": "RoadToIIM_Test24_OnlineTest.html",
+   "added": "2026-07"
+  }
+ ],
+ "sections": [
+  {
+   "id": "gridSpeed",
+   "items": [
+    {
+     "t": "Rapid Fire 01",
+     "href": "RoadToIIM_SpeedTest01_VocabGrammar.html",
+     "meta": "45 Qs \u00b7 25 sec per question \u00b7 +4 / \u22121",
+     "key": "(Rapid|Speed).*0?1\\b"
+    },
+    {
+     "t": "Rapid Fire 02",
+     "href": "RoadToIIM_SpeedTest02_VocabGrammar.html",
+     "meta": "45 Qs \u00b7 25 sec per question \u00b7 +4 / \u22121",
+     "key": "(Rapid|Speed).*0?2\\b"
+    },
+    {
+     "t": "Rapid Fire 03",
+     "href": "RoadToIIM_SpeedTest03_VocabGrammar.html",
+     "meta": "45 Qs \u00b7 25 sec per question \u00b7 +4 / \u22121",
+     "key": "(Rapid|Speed).*0?3\\b"
+    },
+    {
+     "t": "Rapid Fire 04",
+     "href": "RoadToIIM_SpeedTest04_VocabGrammar.html",
+     "meta": "45 Qs \u00b7 25 sec per question \u00b7 +4 / \u22121",
+     "key": "(Rapid|Speed).*0?4\\b"
+    },
+    {
+     "t": "Rapid Fire 05",
+     "href": "RoadToIIM_SpeedTest05_VocabGrammar.html",
+     "meta": "45 Qs \u00b7 25 sec per question \u00b7 +4 / \u22121",
+     "key": "(Rapid|Speed).*0?5\\b"
+    }
+   ]
+  },
+  {
+   "id": "gridRC",
+   "items": [
+    {
+     "t": "RC Series 01",
+     "href": "RoadToIIM_RC_Series01.html",
+     "meta": "Inference \u00b7 tone \u00b7 structure",
+     "key": "RC.*0?1\\b"
+    },
+    {
+     "t": "RC Series 02",
+     "href": "RoadToIIM_RC_Series02.html",
+     "meta": "Inference \u00b7 tone \u00b7 structure",
+     "key": "RC.*0?2\\b"
+    },
+    {
+     "t": "RC Series 03",
+     "href": "RoadToIIM_RC_Series03.html",
+     "meta": "Inference \u00b7 tone \u00b7 structure",
+     "key": "RC.*0?3\\b"
+    },
+    {
+     "t": "RC Drill 04",
+     "href": "RoadToIIM_RC_Series04_RCDrill.html",
+     "meta": "Inference \u00b7 tone \u00b7 structure",
+     "key": "RC.*0?4\\b"
+    },
+    {
+     "t": "RC Drill 05",
+     "href": "RoadToIIM_RC_Series05_RCDrill.html",
+     "meta": "Inference \u00b7 tone \u00b7 structure",
+     "key": "RC.*0?5\\b"
+    }
+   ]
+  },
+  {
+   "id": "gridConcept",
+   "items": [
+    {
+     "t": "Word Web I",
+     "href": "RoadToIIM_ConceptTest01_WordWebI.html",
+     "meta": "Vocabulary only \u00b7 30 min",
+     "key": "Word Web I$|Concept.*0?1"
+    },
+    {
+     "t": "Word Web II",
+     "href": "RoadToIIM_ConceptTest02_WordWebII.html",
+     "meta": "Vocabulary only \u00b7 30 min",
+     "key": "Word Web II|Concept.*0?2"
+    },
+    {
+     "t": "The Impostors",
+     "href": "RoadToIIM_ConceptTest03_TheImpostors.html",
+     "meta": "Confusables & tone traps \u00b7 30 min",
+     "key": "Impostors|Concept.*0?3"
+    },
+    {
+     "t": "Cumulative",
+     "href": "RoadToIIM_ConceptTest04_Cumulative.html",
+     "meta": "Everything so far \u00b7 30 min",
+     "key": "Cumulative|Concept.*0?4"
+    }
+   ]
+  },
+  {
+   "id": "gridIWP",
+   "items": [
+    {
+     "t": "Week 1",
+     "href": "iwp_week1_session.html",
+     "meta": "Root family \u00b7 exit slip"
+    },
+    {
+     "t": "Week 2",
+     "href": "iwp_week2_session.html",
+     "meta": "Root family \u00b7 exit slip"
+    },
+    {
+     "t": "Week 3",
+     "href": "iwp_week3_session.html",
+     "meta": "Root family \u00b7 exit slip"
+    },
+    {
+     "t": "Week 4",
+     "href": "iwp_week4_session.html",
+     "meta": "Root family \u00b7 exit slip"
+    },
+    {
+     "t": "Week 5",
+     "href": "iwp_week5_session.html",
+     "meta": "Root family \u00b7 exit slip"
+    },
+    {
+     "t": "Week 6",
+     "href": "iwp_week6_session.html",
+     "meta": "Root family \u00b7 exit slip"
+    },
+    {
+     "t": "Week 7",
+     "href": "iwp_week7_session.html",
+     "meta": "Root family \u00b7 exit slip"
+    },
+    {
+     "t": "Week 8",
+     "href": "iwp_week8_session.html",
+     "meta": "Root family \u00b7 exit slip"
+    },
+    {
+     "t": "Week 9",
+     "href": "iwp_week9_session.html",
+     "meta": "Root family \u00b7 exit slip"
+    },
+    {
+     "t": "Collocations",
+     "href": "iwp_collocations_session.html",
+     "meta": "Preposition families"
+    }
+   ]
+  },
+  {
+   "id": "gridRLS",
+   "items": [
+    {
+     "t": "Week 1",
+     "href": "RLS_Week1.html",
+     "meta": "Reading & logic skills"
+    },
+    {
+     "t": "Week 2",
+     "href": "RLS_Week2.html",
+     "meta": "Reading & logic skills"
+    },
+    {
+     "t": "Week 3",
+     "href": "RLS_Week3.html",
+     "meta": "Reading & logic skills"
+    },
+    {
+     "t": "Week 4",
+     "href": "RLS_Week4.html",
+     "meta": "Reading & logic skills"
+    }
+   ]
+  }
+ ],
+ "tools": [
+  {
+   "t": "Your Words",
+   "href": "mistake_bank.html",
+   "meta": "Every word that beat you, back for a rematch",
+   "id": "toolWords"
+  },
+  {
+   "t": "Build your own test",
+   "href": "byot.html",
+   "meta": "5,000+ question pool \u2014 you choose the mix"
+  },
+  {
+   "t": "My tracker",
+   "href": "road_to_iim_tracker_v2.html",
+   "meta": "Every score, every topic, one view"
+  },
+  {
+   "t": "Essay condenser",
+   "href": "aeon_condenser.html",
+   "meta": "Turn long reads into RC practice"
+  },
+  {
+   "t": "Downloads",
+   "href": "downloads.html",
+   "meta": "PDFs, decks and references"
+  }
+ ]
+}
