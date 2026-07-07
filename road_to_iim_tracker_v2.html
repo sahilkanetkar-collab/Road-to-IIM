@@ -1793,7 +1793,7 @@ function renderPatterns(el, testRows, tags) {
   // LEGACY (Tests 16-21): use studentAnswers + riim_tags.json — per-question cross-reference
   // NEW (RF01+): topicErrors field in row — pre-aggregated {sub: wrongCount}, area inferred from TOPIC_AREA map
 
-  const TRACKABLE_LEGACY = new Set(['16','17','18','19','20','21','23','24']);
+  const TRACKABLE_LEGACY = new Set(['1','2','3','4','5','16','17','18','19','20','21','23','24']);
 
   // Map sub → area for new tests (avoids needing JSON for new tests)
   const TOPIC_AREA = {
@@ -1828,7 +1828,9 @@ function renderPatterns(el, testRows, tags) {
 
   legacyRows.forEach(row => {
     const testTags = tags.tests[String(row.test)].q;
-    const wrongSet = new Set((row.wrongQuestions || []).map(Number));
+    // RF04 & RF05 historically stored wrongQuestions as 0-based indices — normalise to 1-based
+    const zeroBased = /Rapid Fire Test 0?(4|5)\b/i.test(row.testName || '');
+    const wrongSet = new Set((row.wrongQuestions || []).map(n => Number(n) + (zeroBased ? 1 : 0)));
     row.studentAnswers.forEach((ans, idx) => {
       const tag = testTags[String(idx + 1)];
       if (!tag) return;

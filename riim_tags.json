@@ -3,6 +3,926 @@
  "generated": "2026-06-14",
  "note": "Tags for Road to IIM verbal test series. Area: Grammar | Vocabulary. Each question maps to area + sub.",
  "tests": {
+  "1": {
+   "q": {
+    "1": {
+     "area": "Vocabulary",
+     "sub": "Idiom"
+    },
+    "2": {
+     "area": "Vocabulary",
+     "sub": "Synonym"
+    },
+    "3": {
+     "area": "Grammar",
+     "sub": "Direct-Indirect Speech"
+    },
+    "4": {
+     "area": "Vocabulary",
+     "sub": "Word Meaning"
+    },
+    "5": {
+     "area": "Grammar",
+     "sub": "Subject-Verb Agreement"
+    },
+    "6": {
+     "area": "Vocabulary",
+     "sub": "Fill in the Blank"
+    },
+    "7": {
+     "area": "Grammar",
+     "sub": "Active-Passive Voice"
+    },
+    "8": {
+     "area": "Grammar",
+     "sub": "Subject-Verb Agreement"
+    },
+    "9": {
+     "area": "Vocabulary",
+     "sub": "Contextual Usage"
+    },
+    "10": {
+     "area": "Vocabulary",
+     "sub": "Contextual Usage"
+    },
+    "11": {
+     "area": "Grammar",
+     "sub": "Sentence Correction"
+    },
+    "12": {
+     "area": "Vocabulary",
+     "sub": "Antonym"
+    },
+    "13": {
+     "area": "Grammar",
+     "sub": "Direct-Indirect Speech"
+    },
+    "14": {
+     "area": "Grammar",
+     "sub": "Error Spotting"
+    },
+    "15": {
+     "area": "Vocabulary",
+     "sub": "Idiom"
+    },
+    "16": {
+     "area": "Grammar",
+     "sub": "Fill in the Blank"
+    },
+    "17": {
+     "area": "Grammar",
+     "sub": "Dangling Modifier"
+    },
+    "18": {
+     "area": "Grammar",
+     "sub": "Article Usage"
+    },
+    "19": {
+     "area": "Grammar",
+     "sub": "Error Spotting"
+    },
+    "20": {
+     "area": "Grammar",
+     "sub": "Subject-Verb Agreement"
+    },
+    "21": {
+     "area": "Vocabulary",
+     "sub": "One Word Substitution"
+    },
+    "22": {
+     "area": "Grammar",
+     "sub": "Sentence Correction"
+    },
+    "23": {
+     "area": "Vocabulary",
+     "sub": "Double Blank"
+    },
+    "24": {
+     "area": "Vocabulary",
+     "sub": "Contextual Usage"
+    },
+    "25": {
+     "area": "Grammar",
+     "sub": "Parallelism"
+    },
+    "26": {
+     "area": "Grammar",
+     "sub": "Fill in the Blank"
+    },
+    "27": {
+     "area": "Vocabulary",
+     "sub": "Word Meaning"
+    },
+    "28": {
+     "area": "Vocabulary",
+     "sub": "Fill in the Blank"
+    },
+    "29": {
+     "area": "Vocabulary",
+     "sub": "Analogy"
+    },
+    "30": {
+     "area": "Vocabulary",
+     "sub": "Antonym"
+    },
+    "31": {
+     "area": "Grammar",
+     "sub": "Error Spotting"
+    },
+    "32": {
+     "area": "Grammar",
+     "sub": "Error Spotting"
+    },
+    "33": {
+     "area": "Grammar",
+     "sub": "Parallelism"
+    },
+    "34": {
+     "area": "Grammar",
+     "sub": "Sentence Correction"
+    },
+    "35": {
+     "area": "Vocabulary",
+     "sub": "Synonym"
+    },
+    "36": {
+     "area": "Grammar",
+     "sub": "Tense Usage"
+    },
+    "37": {
+     "area": "Vocabulary",
+     "sub": "One Word Substitution"
+    },
+    "38": {
+     "area": "Grammar",
+     "sub": "Tense Usage"
+    },
+    "39": {
+     "area": "Vocabulary",
+     "sub": "Odd One Out"
+    },
+    "40": {
+     "area": "Vocabulary",
+     "sub": "Analogy"
+    },
+    "41": {
+     "area": "Vocabulary",
+     "sub": "Fill in the Blank"
+    },
+    "42": {
+     "area": "Vocabulary",
+     "sub": "Synonym"
+    },
+    "43": {
+     "area": "Vocabulary",
+     "sub": "Odd One Out"
+    },
+    "44": {
+     "area": "Vocabulary",
+     "sub": "Double Blank"
+    },
+    "45": {
+     "area": "Grammar",
+     "sub": "Conditional"
+    }
+   }
+  },
+  "2": {
+   "q": {
+    "1": {
+     "area": "Vocabulary",
+     "sub": "Synonym"
+    },
+    "2": {
+     "area": "Grammar",
+     "sub": "Subject-Verb Agreement"
+    },
+    "3": {
+     "area": "Vocabulary",
+     "sub": "Fill in the Blank"
+    },
+    "4": {
+     "area": "Grammar",
+     "sub": "Subject-Verb Agreement"
+    },
+    "5": {
+     "area": "Vocabulary",
+     "sub": "Synonym"
+    },
+    "6": {
+     "area": "Grammar",
+     "sub": "Fill in the Blank"
+    },
+    "7": {
+     "area": "Vocabulary",
+     "sub": "Fill in the Blank"
+    },
+    "8": {
+     "area": "Grammar",
+     "sub": "Subject-Verb Agreement"
+    },
+    "9": {
+     "area": "Vocabulary",
+     "sub": "Antonym"
+    },
+    "10": {
+     "area": "Grammar",
+     "sub": "Error Spotting"
+    },
+    "11": {
+     "area": "Vocabulary",
+     "sub": "Word Meaning"
+    },
+    "12": {
+     "area": "Grammar",
+     "sub": "Subject-Verb Agreement"
+    },
+    "13": {
+     "area": "Vocabulary",
+     "sub": "Synonym"
+    },
+    "14": {
+     "area": "Grammar",
+     "sub": "Tense Usage"
+    },
+    "15": {
+     "area": "Vocabulary",
+     "sub": "Fill in the Blank"
+    },
+    "16": {
+     "area": "Grammar",
+     "sub": "Subject-Verb Agreement"
+    },
+    "17": {
+     "area": "Vocabulary",
+     "sub": "Synonym"
+    },
+    "18": {
+     "area": "Grammar",
+     "sub": "Sentence Correction"
+    },
+    "19": {
+     "area": "Vocabulary",
+     "sub": "One Word Substitution"
+    },
+    "20": {
+     "area": "Grammar",
+     "sub": "Subject-Verb Agreement"
+    },
+    "21": {
+     "area": "Vocabulary",
+     "sub": "Idiom"
+    },
+    "22": {
+     "area": "Grammar",
+     "sub": "Active-Passive Voice"
+    },
+    "23": {
+     "area": "Vocabulary",
+     "sub": "Synonym"
+    },
+    "24": {
+     "area": "Grammar",
+     "sub": "Article Usage"
+    },
+    "25": {
+     "area": "Vocabulary",
+     "sub": "Fill in the Blank"
+    },
+    "26": {
+     "area": "Grammar",
+     "sub": "Fill in the Blank"
+    },
+    "27": {
+     "area": "Vocabulary",
+     "sub": "Antonym"
+    },
+    "28": {
+     "area": "Grammar",
+     "sub": "Error Spotting"
+    },
+    "29": {
+     "area": "Vocabulary",
+     "sub": "Contextual Usage"
+    },
+    "30": {
+     "area": "Grammar",
+     "sub": "Tense Usage"
+    },
+    "31": {
+     "area": "Vocabulary",
+     "sub": "Synonym"
+    },
+    "32": {
+     "area": "Grammar",
+     "sub": "Parallelism"
+    },
+    "33": {
+     "area": "Vocabulary",
+     "sub": "Double Blank"
+    },
+    "34": {
+     "area": "Grammar",
+     "sub": "Subject-Verb Agreement"
+    },
+    "35": {
+     "area": "Vocabulary",
+     "sub": "Analogy"
+    },
+    "36": {
+     "area": "Grammar",
+     "sub": "Subject-Verb Agreement"
+    },
+    "37": {
+     "area": "Vocabulary",
+     "sub": "Fill in the Blank"
+    },
+    "38": {
+     "area": "Grammar",
+     "sub": "Direct-Indirect Speech"
+    },
+    "39": {
+     "area": "Vocabulary",
+     "sub": "One Word Substitution"
+    },
+    "40": {
+     "area": "Grammar",
+     "sub": "Dangling Modifier"
+    },
+    "41": {
+     "area": "Vocabulary",
+     "sub": "Odd One Out"
+    },
+    "42": {
+     "area": "Grammar",
+     "sub": "Sentence Correction"
+    },
+    "43": {
+     "area": "Vocabulary",
+     "sub": "Synonym"
+    },
+    "44": {
+     "area": "Grammar",
+     "sub": "Subject-Verb Agreement"
+    },
+    "45": {
+     "area": "Vocabulary",
+     "sub": "Word Meaning"
+    }
+   }
+  },
+  "3": {
+   "q": {
+    "1": {
+     "area": "Vocabulary",
+     "sub": "Fill in the Blank"
+    },
+    "2": {
+     "area": "Vocabulary",
+     "sub": "Fill in the Blank"
+    },
+    "3": {
+     "area": "Vocabulary",
+     "sub": "Word Meaning"
+    },
+    "4": {
+     "area": "Vocabulary",
+     "sub": "Fill in the Blank"
+    },
+    "5": {
+     "area": "Vocabulary",
+     "sub": "Fill in the Blank"
+    },
+    "6": {
+     "area": "Vocabulary",
+     "sub": "Odd One Out"
+    },
+    "7": {
+     "area": "Vocabulary",
+     "sub": "Odd One Out"
+    },
+    "8": {
+     "area": "Vocabulary",
+     "sub": "Fill in the Blank"
+    },
+    "9": {
+     "area": "Vocabulary",
+     "sub": "Fill in the Blank"
+    },
+    "10": {
+     "area": "Vocabulary",
+     "sub": "Contextual Usage"
+    },
+    "11": {
+     "area": "Vocabulary",
+     "sub": "Contextual Usage"
+    },
+    "12": {
+     "area": "Vocabulary",
+     "sub": "Fill in the Blank"
+    },
+    "13": {
+     "area": "Vocabulary",
+     "sub": "Fill in the Blank"
+    },
+    "14": {
+     "area": "Vocabulary",
+     "sub": "Double Blank"
+    },
+    "15": {
+     "area": "Vocabulary",
+     "sub": "Fill in the Blank"
+    },
+    "16": {
+     "area": "Vocabulary",
+     "sub": "Fill in the Blank"
+    },
+    "17": {
+     "area": "Vocabulary",
+     "sub": "Word Meaning"
+    },
+    "18": {
+     "area": "Vocabulary",
+     "sub": "Fill in the Blank"
+    },
+    "19": {
+     "area": "Vocabulary",
+     "sub": "Fill in the Blank"
+    },
+    "20": {
+     "area": "Vocabulary",
+     "sub": "Contextual Usage"
+    },
+    "21": {
+     "area": "Vocabulary",
+     "sub": "Fill in the Blank"
+    },
+    "22": {
+     "area": "Vocabulary",
+     "sub": "Double Blank"
+    },
+    "23": {
+     "area": "Vocabulary",
+     "sub": "Word Meaning"
+    },
+    "24": {
+     "area": "Vocabulary",
+     "sub": "Fill in the Blank"
+    },
+    "25": {
+     "area": "Vocabulary",
+     "sub": "Fill in the Blank"
+    },
+    "26": {
+     "area": "Vocabulary",
+     "sub": "Odd One Out"
+    },
+    "27": {
+     "area": "Vocabulary",
+     "sub": "Fill in the Blank"
+    },
+    "28": {
+     "area": "Vocabulary",
+     "sub": "Fill in the Blank"
+    },
+    "29": {
+     "area": "Vocabulary",
+     "sub": "Contextual Usage"
+    },
+    "30": {
+     "area": "Vocabulary",
+     "sub": "Odd One Out"
+    },
+    "31": {
+     "area": "Vocabulary",
+     "sub": "Fill in the Blank"
+    },
+    "32": {
+     "area": "Vocabulary",
+     "sub": "Contextual Usage"
+    },
+    "33": {
+     "area": "Vocabulary",
+     "sub": "Fill in the Blank"
+    },
+    "34": {
+     "area": "Vocabulary",
+     "sub": "Fill in the Blank"
+    },
+    "35": {
+     "area": "Vocabulary",
+     "sub": "Word Meaning"
+    },
+    "36": {
+     "area": "Vocabulary",
+     "sub": "Fill in the Blank"
+    },
+    "37": {
+     "area": "Vocabulary",
+     "sub": "Fill in the Blank"
+    },
+    "38": {
+     "area": "Vocabulary",
+     "sub": "Odd One Out"
+    },
+    "39": {
+     "area": "Vocabulary",
+     "sub": "Fill in the Blank"
+    },
+    "40": {
+     "area": "Vocabulary",
+     "sub": "Contextual Usage"
+    },
+    "41": {
+     "area": "Vocabulary",
+     "sub": "Odd One Out"
+    },
+    "42": {
+     "area": "Vocabulary",
+     "sub": "Fill in the Blank"
+    },
+    "43": {
+     "area": "Vocabulary",
+     "sub": "Double Blank"
+    },
+    "44": {
+     "area": "Vocabulary",
+     "sub": "Double Blank"
+    },
+    "45": {
+     "area": "Vocabulary",
+     "sub": "Fill in the Blank"
+    }
+   }
+  },
+  "4": {
+   "q": {
+    "1": {
+     "area": "Vocabulary",
+     "sub": "Word Meaning"
+    },
+    "2": {
+     "area": "Grammar",
+     "sub": "Subject-Verb Agreement"
+    },
+    "3": {
+     "area": "Vocabulary",
+     "sub": "Synonym"
+    },
+    "4": {
+     "area": "Grammar",
+     "sub": "Tense Usage"
+    },
+    "5": {
+     "area": "Vocabulary",
+     "sub": "Contextual Usage"
+    },
+    "6": {
+     "area": "Grammar",
+     "sub": "Conditional"
+    },
+    "7": {
+     "area": "Vocabulary",
+     "sub": "Antonym"
+    },
+    "8": {
+     "area": "Grammar",
+     "sub": "Parallelism"
+    },
+    "9": {
+     "area": "Vocabulary",
+     "sub": "Fill in the Blank"
+    },
+    "10": {
+     "area": "Grammar",
+     "sub": "Subject-Verb Agreement"
+    },
+    "11": {
+     "area": "Vocabulary",
+     "sub": "Contextual Usage"
+    },
+    "12": {
+     "area": "Grammar",
+     "sub": "Tense Usage"
+    },
+    "13": {
+     "area": "Vocabulary",
+     "sub": "One Word Substitution"
+    },
+    "14": {
+     "area": "Grammar",
+     "sub": "Active-Passive Voice"
+    },
+    "15": {
+     "area": "Vocabulary",
+     "sub": "Antonym"
+    },
+    "16": {
+     "area": "Grammar",
+     "sub": "Dangling Modifier"
+    },
+    "17": {
+     "area": "Vocabulary",
+     "sub": "Word Meaning"
+    },
+    "18": {
+     "area": "Grammar",
+     "sub": "Direct-Indirect Speech"
+    },
+    "19": {
+     "area": "Vocabulary",
+     "sub": "Synonym"
+    },
+    "20": {
+     "area": "Grammar",
+     "sub": "Article Usage"
+    },
+    "21": {
+     "area": "Vocabulary",
+     "sub": "Odd One Out"
+    },
+    "22": {
+     "area": "Grammar",
+     "sub": "Error Spotting"
+    },
+    "23": {
+     "area": "Vocabulary",
+     "sub": "Contextual Usage"
+    },
+    "24": {
+     "area": "Grammar",
+     "sub": "Conditional"
+    },
+    "25": {
+     "area": "Vocabulary",
+     "sub": "Fill in the Blank"
+    },
+    "26": {
+     "area": "Grammar",
+     "sub": "Parallelism"
+    },
+    "27": {
+     "area": "Vocabulary",
+     "sub": "Double Blank"
+    },
+    "28": {
+     "area": "Grammar",
+     "sub": "Subject-Verb Agreement"
+    },
+    "29": {
+     "area": "Vocabulary",
+     "sub": "Antonym"
+    },
+    "30": {
+     "area": "Grammar",
+     "sub": "Active-Passive Voice"
+    },
+    "31": {
+     "area": "Vocabulary",
+     "sub": "Contextual Usage"
+    },
+    "32": {
+     "area": "Grammar",
+     "sub": "Tense Usage"
+    },
+    "33": {
+     "area": "Vocabulary",
+     "sub": "Word Meaning"
+    },
+    "34": {
+     "area": "Grammar",
+     "sub": "Tense Usage"
+    },
+    "35": {
+     "area": "Vocabulary",
+     "sub": "Synonym"
+    },
+    "36": {
+     "area": "Grammar",
+     "sub": "Error Spotting"
+    },
+    "37": {
+     "area": "Vocabulary",
+     "sub": "One Word Substitution"
+    },
+    "38": {
+     "area": "Grammar",
+     "sub": "Dangling Modifier"
+    },
+    "39": {
+     "area": "Vocabulary",
+     "sub": "Contextual Usage"
+    },
+    "40": {
+     "area": "Grammar",
+     "sub": "Subject-Verb Agreement"
+    },
+    "41": {
+     "area": "Vocabulary",
+     "sub": "Fill in the Blank"
+    },
+    "42": {
+     "area": "Grammar",
+     "sub": "Tense Usage"
+    },
+    "43": {
+     "area": "Vocabulary",
+     "sub": "Antonym"
+    },
+    "44": {
+     "area": "Grammar",
+     "sub": "Subject-Verb Agreement"
+    },
+    "45": {
+     "area": "Vocabulary",
+     "sub": "Contextual Usage"
+    }
+   }
+  },
+  "5": {
+   "q": {
+    "1": {
+     "area": "Vocabulary",
+     "sub": "Contextual Usage"
+    },
+    "2": {
+     "area": "Grammar",
+     "sub": "Subject-Verb Agreement"
+    },
+    "3": {
+     "area": "Vocabulary",
+     "sub": "Contextual Usage"
+    },
+    "4": {
+     "area": "Grammar",
+     "sub": "Modifiers"
+    },
+    "5": {
+     "area": "Vocabulary",
+     "sub": "Contextual Usage"
+    },
+    "6": {
+     "area": "Grammar",
+     "sub": "Pronouns"
+    },
+    "7": {
+     "area": "Vocabulary",
+     "sub": "Contextual Usage"
+    },
+    "8": {
+     "area": "Grammar",
+     "sub": "Subject-Verb Agreement"
+    },
+    "9": {
+     "area": "Vocabulary",
+     "sub": "Contextual Usage"
+    },
+    "10": {
+     "area": "Grammar",
+     "sub": "Modifiers"
+    },
+    "11": {
+     "area": "Vocabulary",
+     "sub": "Word Meaning"
+    },
+    "12": {
+     "area": "Grammar",
+     "sub": "Pronouns"
+    },
+    "13": {
+     "area": "Vocabulary",
+     "sub": "Contextual Usage"
+    },
+    "14": {
+     "area": "Grammar",
+     "sub": "Subject-Verb Agreement"
+    },
+    "15": {
+     "area": "Vocabulary",
+     "sub": "Word Meaning"
+    },
+    "16": {
+     "area": "Grammar",
+     "sub": "Modifiers"
+    },
+    "17": {
+     "area": "Vocabulary",
+     "sub": "Contextual Usage"
+    },
+    "18": {
+     "area": "Grammar",
+     "sub": "Subject-Verb Agreement"
+    },
+    "19": {
+     "area": "Vocabulary",
+     "sub": "Word Meaning"
+    },
+    "20": {
+     "area": "Grammar",
+     "sub": "Pronouns"
+    },
+    "21": {
+     "area": "Vocabulary",
+     "sub": "Contextual Usage"
+    },
+    "22": {
+     "area": "Grammar",
+     "sub": "Modifiers"
+    },
+    "23": {
+     "area": "Vocabulary",
+     "sub": "Word Meaning"
+    },
+    "24": {
+     "area": "Grammar",
+     "sub": "Subject-Verb Agreement"
+    },
+    "25": {
+     "area": "Vocabulary",
+     "sub": "Contextual Usage"
+    },
+    "26": {
+     "area": "Grammar",
+     "sub": "Pronouns"
+    },
+    "27": {
+     "area": "Vocabulary",
+     "sub": "Word Meaning"
+    },
+    "28": {
+     "area": "Grammar",
+     "sub": "Modifiers"
+    },
+    "29": {
+     "area": "Vocabulary",
+     "sub": "Contextual Usage"
+    },
+    "30": {
+     "area": "Grammar",
+     "sub": "Subject-Verb Agreement"
+    },
+    "31": {
+     "area": "Vocabulary",
+     "sub": "Word Meaning"
+    },
+    "32": {
+     "area": "Grammar",
+     "sub": "Pronouns"
+    },
+    "33": {
+     "area": "Vocabulary",
+     "sub": "Contextual Usage"
+    },
+    "34": {
+     "area": "Grammar",
+     "sub": "Subject-Verb Agreement"
+    },
+    "35": {
+     "area": "Vocabulary",
+     "sub": "Word Meaning"
+    },
+    "36": {
+     "area": "Grammar",
+     "sub": "Modifiers"
+    },
+    "37": {
+     "area": "Vocabulary",
+     "sub": "Contextual Usage"
+    },
+    "38": {
+     "area": "Vocabulary",
+     "sub": "Word Meaning"
+    },
+    "39": {
+     "area": "Grammar",
+     "sub": "Subject-Verb Agreement"
+    },
+    "40": {
+     "area": "Vocabulary",
+     "sub": "Word Meaning"
+    },
+    "41": {
+     "area": "Grammar",
+     "sub": "Pronouns"
+    },
+    "42": {
+     "area": "Vocabulary",
+     "sub": "Word Meaning"
+    },
+    "43": {
+     "area": "Grammar",
+     "sub": "Modifiers"
+    },
+    "44": {
+     "area": "Vocabulary",
+     "sub": "Word Meaning"
+    },
+    "45": {
+     "area": "Vocabulary",
+     "sub": "Word Meaning"
+    }
+   }
+  },
   "9": {
    "q": {
     "1": {
