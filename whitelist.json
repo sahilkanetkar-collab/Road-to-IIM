@@ -1,12 +1,7 @@
 {
  "updated": "2026-07-08",
  "note": "Digits-only, leading zeros stripped. Compare after same normalization.",
- "bypass_batches": [
-  "Z2801",
-  "S2801",
-  "A2804",
-  "PN2801"
- ],
+ "bypass_batches": ["Z2801", "S2801", "A2804", "PN2801", "A2714"],
  "admin_pins": [
   "1111111111",
   "2222222222",
