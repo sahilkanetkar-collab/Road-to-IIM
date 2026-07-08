@@ -342,7 +342,18 @@ window.addEventListener('load',function(){flushPending();tryResume();});
 
 
 /* ================= LOGIN ================= */
-function startTest(){
+
+/* ── LOGIN WHITELIST (added 8 Jul 2026) ─────────────────────
+   List lives in whitelist.json at repo root. Fail-open on
+   network error. PINs compared digits-only, no leading zeros. */
+const WHITELIST_URL="https://sahilkanetkar-collab.github.io/Road-to-IIM/whitelist.json";
+let __wl=null,__wlFetch=null;
+function normPin(p){const d=String(p||"").replace(/\D/g,"");return d.replace(/^0+/,"");}
+function loadWhitelist(){if(__wlFetch)return __wlFetch;__wlFetch=fetch(WHITELIST_URL,{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{__wl=j;return j;}).catch(()=>null);return __wlFetch;}
+loadWhitelist();
+async function isWhitelisted(pin,batch){const wl=__wl||(await loadWhitelist());if(!wl||!Array.isArray(wl.pins))return true;const b=String(batch||"").trim().toUpperCase();if((wl.bypass_batches||[]).includes(b))return true;const key=normPin(pin);if(!key)return false;if((wl.admin_pins||[]).includes(key))return true;return wl.pins.includes(key);}
+/* ──────────────────────────────────────────────────────────── */
+async function startTest(){
   studentName = document.getElementById('loginName').value.trim();
   studentPin = document.getElementById('loginPin').value.trim().toUpperCase();
   studentBatch = document.getElementById('loginBatch').value;
@@ -351,6 +362,7 @@ function startTest(){
     document.getElementById('loginError').style.display = 'block';
     return;
   }
+  if(!(await isWhitelisted(studentPin, studentBatch))){ alert("This PIN isn't on the active student list. Message Sahil Sir if you think this is a mistake."); return; }
   document.getElementById('loginError').style.display = 'none';
   document.getElementById('loginScreen').style.display = 'none';
   document.getElementById('testScreen').style.display = 'block';

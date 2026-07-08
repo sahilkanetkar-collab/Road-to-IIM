@@ -369,7 +369,18 @@ function bankMistakes(){
 window.addEventListener('load',function(){flushPending();tryResume();});
 
 
-function startTest(){
+
+/* ── LOGIN WHITELIST (added 8 Jul 2026) ─────────────────────
+   List lives in whitelist.json at repo root. Fail-open on
+   network error. PINs compared digits-only, no leading zeros. */
+const WHITELIST_URL="https://sahilkanetkar-collab.github.io/Road-to-IIM/whitelist.json";
+let __wl=null,__wlFetch=null;
+function normPin(p){const d=String(p||"").replace(/\D/g,"");return d.replace(/^0+/,"");}
+function loadWhitelist(){if(__wlFetch)return __wlFetch;__wlFetch=fetch(WHITELIST_URL,{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=>{__wl=j;return j;}).catch(()=>null);return __wlFetch;}
+loadWhitelist();
+async function isWhitelisted(pin,batch){const wl=__wl||(await loadWhitelist());if(!wl||!Array.isArray(wl.pins))return true;const b=String(batch||"").trim().toUpperCase();if((wl.bypass_batches||[]).includes(b))return true;const key=normPin(pin);if(!key)return false;if((wl.admin_pins||[]).includes(key))return true;return wl.pins.includes(key);}
+/* ──────────────────────────────────────────────────────────── */
+async function startTest(){
   const name=document.getElementById('inputName').value.trim();
   const pin=document.getElementById('inputPin').value.trim().toUpperCase();
   const batch=document.getElementById('inputBatch').value;
@@ -379,6 +390,7 @@ function startTest(){
   const isAdmin=ADMIN_PINS.includes(pin);
   if(isAdmin&&batch!=='Admin'){err.textContent='Admin PIN must be used with the Admin batch only.';err.style.display='block';return;}
   if(!isAdmin&&batch==='Admin'){err.textContent='Only Admin PINs may select the Admin batch.';err.style.display='block';return;}
+  if(!(await isWhitelisted(pin,batch))){err.textContent="This PIN isn't on the active student list. Message Sahil Sir if you think this is a mistake.";err.style.display='block';return;}
   studentName=name;studentPin=pin;studentBatch=batch;
   document.getElementById('loginScreen').style.display='none';
   document.getElementById('testScreen').style.display='block';
