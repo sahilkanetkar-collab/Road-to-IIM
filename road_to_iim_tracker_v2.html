@@ -733,6 +733,38 @@
 .cv3-rx-t{font-weight:700;font-size:.98rem}
 .cv3-rx-d{font-size:.8rem;color:#a09880;margin-top:4px}
 </style>
+
+<style id="att-styles">
+/* ── NEEDS ATTENTION MODULE (admin) — additive styles ── */
+.att-rollup{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.att-batch-chip{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:6px 12px;font-size:12px;cursor:pointer;transition:border-color .15s}
+.att-batch-chip:hover{border-color:var(--gold)}
+.att-batch-chip b{font-family:'DM Mono',monospace;font-size:11px;color:var(--text-dim)}
+.att-r{color:#f08080}.att-y{color:var(--gold)}.att-g{color:var(--green)}.att-d{color:var(--text-dim)}
+.att-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:14px;margin-bottom:28px}
+.att-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;cursor:pointer;transition:transform .15s,border-color .15s}
+.att-card:hover{transform:translateY(-2px)}
+.att-card-red{border-left:3px solid var(--red)}
+.att-card-yellow{border-left:3px solid var(--gold)}
+.att-card-top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}
+.att-name{font-weight:600;font-size:14px}
+.att-batch{font-family:'DM Mono',monospace;font-size:11px;color:var(--text-dim);margin-left:6px}
+.att-spark{width:120px;height:30px;flex:none}
+.att-flag{display:flex;align-items:flex-start;gap:8px;font-size:12.5px;padding:6px 0;border-top:1px solid rgba(255,255,255,0.05)}
+.att-flag-txt{flex:1;color:var(--text-dim)}
+.att-flag-txt b{color:var(--text)}
+.att-flag-dot{width:8px;height:8px;border-radius:50%;flex:none;margin-top:4px}
+.att-dot-red{background:var(--red)}
+.att-dot-yellow{background:var(--gold)}
+.att-rev-btn{background:none;border:1px solid var(--border);color:var(--text-dim);border-radius:6px;padding:2px 8px;font-size:10px;cursor:pointer;font-family:'DM Sans',sans-serif;flex:none;transition:all .15s}
+.att-rev-btn:hover{border-color:var(--green);color:var(--green)}
+.att-empty{background:var(--card);border:1px dashed var(--border);border-radius:12px;padding:18px;font-size:13px;color:var(--text-dim);margin-bottom:28px}
+.att-chip{display:inline-block;padding:2px 9px;border-radius:20px;font-size:10.5px;font-weight:600;letter-spacing:.3px;white-space:nowrap}
+.att-chip-red{background:rgba(224,82,82,.14);color:#f08080;border:1px solid rgba(224,82,82,.3)}
+.att-chip-yellow{background:rgba(232,200,74,.12);color:var(--gold);border:1px solid rgba(232,200,74,.3)}
+.att-chip-green{background:rgba(76,175,135,.12);color:var(--green);border:1px solid rgba(76,175,135,.3)}
+.att-chip-dim{background:rgba(255,255,255,.05);color:var(--text-dim);border:1px solid var(--border)}
+</style>
 </head>
 <body>
 
@@ -1209,6 +1241,7 @@ function renderAdmin(data) {
   const allData = (data.data || data.allRows || []).filter(r => r.batch !== 'Admin');
   adminAllRows  = allData.filter(r => !isRapidFire(r.testName));
   adminRFRows   = allData.filter(r =>  isRapidFire(r.testName));
+  attComputeAll(); // NEEDS ATTENTION: build per-student baseline profiles
 
   if (!adminAllRows.length) {
     document.getElementById('dashContent').innerHTML = `
@@ -1225,7 +1258,9 @@ function renderAdmin(data) {
   renderAdminView('All Batches', 'All Tests');
 }
 
-function renderAdminView(batchFilter, testFilter) {
+function renderAdminView(batchFilter, testFilter, statusFilter) {
+  statusFilter = statusFilter || 'All Status';
+  attCur = { b: batchFilter, t: testFilter, s: statusFilter }; // NEEDS ATTENTION: remember filters for re-render
   let rows = adminAllRows;
   if (batchFilter !== 'All Batches') rows = rows.filter(r => r.batch === batchFilter);
   if (testFilter  !== 'All Tests')   rows = rows.filter(r => r.testName === testFilter);
@@ -1275,11 +1310,16 @@ function renderAdminView(batchFilter, testFilter) {
   });
   let leaderboard = Object.values(studentMap);
   if (batchFilter !== 'All Batches') leaderboard = leaderboard.filter(r => r.batch === batchFilter);
+  // NEEDS ATTENTION: filter leaderboard by flag status
+  if (statusFilter !== 'All Status') {
+    leaderboard = leaderboard.filter(r => (attProfiles[r.pin||r.name]||{status:'building'}).status === statusFilter);
+  }
   leaderboard.sort((a,b) => b.score - a.score);
 
   let lbRows = '';
   leaderboard.forEach((r, i) => {
     const sc = scoreClass(r.score);
+    const prof = attProfiles[r.pin||r.name] || {status:'building'}; // NEEDS ATTENTION
     lbRows += `
       <tr class="student-row" onclick="openStudentDrill('${r.pin||''}','${r.name}','${r.batch}')">
         <td style="color:var(--text-dim);font-family:'DM Mono',monospace">${i+1}</td>
@@ -1287,6 +1327,7 @@ function renderAdminView(batchFilter, testFilter) {
         <td><span style="font-family:'DM Mono',monospace;font-size:12px;color:var(--text-dim)">${r.batch}</span></td>
         <td>${r.testName}</td>
         <td><span class="score-pill ${sc}">${r.score}</span></td>
+        <td>${attChip(prof.status)}</td>
       </tr>`;
   });
 
@@ -1310,6 +1351,9 @@ function renderAdminView(batchFilter, testFilter) {
       <span style="font-family:'Fraunces',serif;font-size:22px;">Admin Dashboard</span>
       <span class="admin-badge">Admin</span>
     </div>
+
+    <!-- NEEDS ATTENTION: baseline-deviation strip + batch rollup -->
+    ${attStripHTML(batchFilter)}
 
     <!-- Stats -->
     <div class="stats-grid">
@@ -1363,12 +1407,19 @@ function renderAdminView(batchFilter, testFilter) {
         <option value="All Tests">All Tests</option>
         ${testNames.map(t => `<option value="${t}" ${t===testFilter?'selected':''}>${t}</option>`).join('')}
       </select>
+      <select class="filter-select" id="statusFilterSel" onchange="applyFilters()">
+        <option value="All Status" ${statusFilter==='All Status'?'selected':''}>All Status</option>
+        <option value="red"      ${statusFilter==='red'?'selected':''}>🔴 Urgent</option>
+        <option value="yellow"   ${statusFilter==='yellow'?'selected':''}>🟡 Watch</option>
+        <option value="green"    ${statusFilter==='green'?'selected':''}>✅ Steady</option>
+        <option value="building" ${statusFilter==='building'?'selected':''}>⏳ Building baseline</option>
+      </select>
     </div>
     <div class="table-wrap">
       <table>
         <thead>
           <tr>
-            <th>#</th><th>Name</th><th>Batch</th><th>${testFilter !== 'All Tests' ? 'Test' : 'Latest Test'}</th><th>${testFilter !== 'All Tests' ? 'Score' : 'Latest Score'}</th>
+            <th>#</th><th>Name</th><th>Batch</th><th>${testFilter !== 'All Tests' ? 'Test' : 'Latest Test'}</th><th>${testFilter !== 'All Tests' ? 'Score' : 'Latest Score'}</th><th>Status</th>
           </tr>
         </thead>
         <tbody>${lbRows}</tbody>
@@ -1382,7 +1433,9 @@ function renderAdminView(batchFilter, testFilter) {
 function applyFilters() {
   const b = document.getElementById('batchFilterSel').value;
   const t = document.getElementById('testFilterSel').value;
-  renderAdminView(b, t);
+  const sEl = document.getElementById('statusFilterSel'); // NEEDS ATTENTION
+  const s = sEl ? sEl.value : 'All Status';
+  renderAdminView(b, t, s);
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -1416,6 +1469,7 @@ function openStudentDrill(pin, name, batch) {
     </tr>`).join('');
 
   let html = `
+    ${attDrillPanelHTML(pin, name)}
     <div class="table-wrap">
       <table>
         <thead>
@@ -2147,6 +2201,261 @@ function extractTestNum(testName) {
   if (!testName) return 0;
   const m = testName.match(/\d+/);
   return m ? parseInt(m[0]) : 0;
+}
+
+// ══════════════════════════════════════════════════════════════
+//  NEEDS ATTENTION MODULE (admin) — additive
+//  Per-student baselines + deviation flags, computed client-side
+//  from adminAllRows at render time. No Apps Script changes, no
+//  new sheet columns. Old rows without questionTimes/topicErrors
+//  degrade gracefully to score/accuracy/skip signals.
+//  "Reviewed" state is stored in localStorage on THIS device only
+//  and suppresses that flag for the next 2 tests.
+// ══════════════════════════════════════════════════════════════
+const ATT_MIN_TESTS = 3;                 // below this → "building baseline"
+const ATT_LS_KEY    = 'riim_att_reviews';
+let attProfiles = {};                    // stuKey → profile
+let attCur = { b:'All Batches', t:'All Tests', s:'All Status' };
+
+function attParseJSON(v) {
+  if (v == null || v === '') return null;
+  if (typeof v === 'object') return v;
+  try { return JSON.parse(v); } catch(e) { return null; }
+}
+
+function attMedian(arr) {
+  if (!arr || !arr.length) return null;
+  const s = [...arr].sort((a,b)=>a-b);
+  const mid = Math.floor(s.length/2);
+  return s.length % 2 ? s[mid] : (s[mid-1]+s[mid])/2;
+}
+
+// Median per-question seconds for one row, if questionTimes exists (Test 16+)
+function attQMedian(row) {
+  const qt = attParseJSON(row.questionTimes);
+  if (!Array.isArray(qt) || !qt.length) return null;
+  const nums = qt.map(Number).filter(n => isFinite(n) && n > 0);
+  return nums.length >= 5 ? attMedian(nums) : null;
+}
+
+function attAcc(row) {
+  const c = +row.correct||0, w = +row.wrong||0;
+  return (c+w) > 0 ? Math.round(100*c/(c+w)) : null;
+}
+
+// ── Reviewed-state (device-local) ──
+function attReviews() {
+  try { return JSON.parse(localStorage.getItem(ATT_LS_KEY)||'{}'); } catch(e){ return {}; }
+}
+function attIsReviewed(stuKey, flagKey, latestNum) {
+  const until = attReviews()[stuKey+'|'+flagKey];
+  return until !== undefined && latestNum < until;
+}
+function attMarkReviewed(stuKey, flagKey, latestNum, ev) {
+  if (ev) ev.stopPropagation();
+  const r = attReviews();
+  r[stuKey+'|'+flagKey] = latestNum + 2;   // suppress this signal for the next 2 tests
+  try { localStorage.setItem(ATT_LS_KEY, JSON.stringify(r)); } catch(e){}
+  attComputeAll();
+  renderAdminView(attCur.b, attCur.t, attCur.s);
+}
+
+// ── Per-student profile: baseline vs latest ──
+function attProfileFor(stuRows) {
+  const rows = [...stuRows].sort((a,b)=>extractTestNum(a.testName)-extractTestNum(b.testName));
+  const latest    = rows[rows.length-1];
+  const latestNum = extractTestNum(latest.testName);
+  const prof = { flags: [], status: 'green', latestNum, spark: rows.slice(-8).map(r=>+r.score||0) };
+
+  if (rows.length < ATT_MIN_TESTS) { prof.status = 'building'; return prof; }
+
+  const prev    = rows.slice(0,-1);
+  const base3   = prev.slice(-3);
+  const baseAvg = Math.round(base3.reduce((s,r)=>s+(+r.score||0),0)/base3.length);
+
+  // 1. Score crash (red): latest well below own recent average
+  const dropAbs = baseAvg - (+latest.score||0);
+  if (dropAbs >= Math.max(15, Math.round(0.2*Math.abs(baseAvg)))) {
+    prof.flags.push({ key:'crash', sev:'red', label:'Score crash',
+      detail:`${latest.score} vs recent avg ${baseAvg} (−${dropAbs})` });
+  }
+
+  // 2. Sustained decline (red): three falling scores in a row
+  const l3 = rows.slice(-3).map(r=>+r.score||0);
+  if (l3[0] > l3[1] && l3[1] > l3[2] && (l3[0]-l3[2]) >= 12) {
+    prof.flags.push({ key:'decline', sev:'red', label:'Sustained decline',
+      detail:`${l3[0]} → ${l3[1]} → ${l3[2]} across the last three tests` });
+  }
+
+  // 3. Accuracy drop (yellow)
+  const accLatest = attAcc(latest);
+  const accArr    = base3.map(attAcc).filter(v=>v!==null);
+  const accBase   = accArr.length ? Math.round(accArr.reduce((s,v)=>s+v,0)/accArr.length) : null;
+  if (accLatest !== null && accBase !== null && accBase - accLatest >= 15) {
+    prof.flags.push({ key:'accdrop', sev:'yellow', label:'Accuracy drop',
+      detail:`${accLatest}% vs ${accBase}% baseline — likely rushing or guessing` });
+  }
+
+  // 4. Skip spike (yellow): avoidance pattern
+  const skipLatest = +latest.skipped||0;
+  const skipBase   = base3.reduce((s,r)=>s+(+r.skipped||0),0)/base3.length;
+  if (skipLatest >= 5 && skipLatest >= 2*Math.max(1,skipBase)) {
+    prof.flags.push({ key:'skips', sev:'yellow', label:'Skip spike',
+      detail:`${skipLatest} skipped vs ~${Math.round(skipBase)} usual` });
+  }
+
+  // 5. Slowing down (yellow): per-question time vs own baseline (Test 16+ rows only)
+  const qLatest = attQMedian(latest);
+  const qPrev   = prev.map(attQMedian).filter(v=>v!==null);
+  if (qLatest !== null && qPrev.length >= 2) {
+    const qBase = attMedian(qPrev);
+    if (qBase > 0 && qLatest >= 1.5*qBase) {
+      prof.flags.push({ key:'slow', sev:'yellow', label:'Slowing down',
+        detail:`~${Math.round(qLatest)}s per question vs ~${Math.round(qBase)}s baseline (+${Math.round(100*(qLatest-qBase)/qBase)}%)` });
+    }
+  }
+
+  // 6. Topic regression (red): errors spiking in a previously near-clean topic
+  const teLatest = attParseJSON(latest.topicErrors);
+  const tePrev   = prev.map(r=>attParseJSON(r.topicErrors))
+                       .filter(o=>o && typeof o==='object' && !Array.isArray(o));
+  if (teLatest && typeof teLatest==='object' && !Array.isArray(teLatest) && tePrev.length >= 2) {
+    Object.entries(teLatest).forEach(([topic, n])=>{
+      n = +n||0;
+      if (n < 3) return;
+      const baseT = tePrev.reduce((s,o)=>s+(+o[topic]||0),0)/tePrev.length;
+      if (baseT <= 0.5) {
+        prof.flags.push({ key:'topic:'+topic, sev:'red', label:'Regression: '+topic,
+          detail:`${n} errors here in the latest test — was near-clean before` });
+      }
+    });
+  }
+
+  return prof;
+}
+
+function attComputeAll() {
+  attProfiles = {};
+  const byStu = {};
+  adminAllRows.forEach(r => {
+    const key = r.pin || r.name;
+    (byStu[key] = byStu[key] || []).push(r);
+  });
+  Object.entries(byStu).forEach(([key, rows]) => {
+    const prof = attProfileFor(rows);
+    const last = rows[rows.length-1];
+    prof.name  = last.name;
+    prof.batch = last.batch;
+    prof.pin   = last.pin || '';
+    prof.key   = key;
+    // suppress reviewed flags, then derive status
+    prof.active = prof.flags.filter(f => !attIsReviewed(key, f.key, prof.latestNum));
+    if (prof.status !== 'building') {
+      prof.status = prof.active.some(f=>f.sev==='red')    ? 'red'
+                  : prof.active.some(f=>f.sev==='yellow') ? 'yellow' : 'green';
+    }
+    attProfiles[key] = prof;
+  });
+}
+
+function attChip(status) {
+  const map = {
+    red:      ['att-chip-red',    '🔴 Urgent'],
+    yellow:   ['att-chip-yellow', '🟡 Watch'],
+    green:    ['att-chip-green',  '✅ Steady'],
+    building: ['att-chip-dim',    '⏳ Baseline']
+  };
+  const m = map[status] || map.building;
+  return `<span class="att-chip ${m[0]}">${m[1]}</span>`;
+}
+
+function attSpark(vals) {
+  if (!vals || vals.length < 2) return '';
+  const mn=Math.min(...vals), mx=Math.max(...vals), span=(mx-mn)||1;
+  const W=120,H=30,P=3;
+  const pts=vals.map((v,i)=>[P+i*(W-2*P)/(vals.length-1), H-P-(v-mn)/span*(H-2*P)]);
+  return `<svg class="att-spark" viewBox="0 0 ${W} ${H}"><polyline points="${pts.map(p=>p.map(n=>Math.round(n)).join(',')).join(' ')}" fill="none" stroke="#c9a84c" stroke-width="1.6"/><circle cx="${Math.round(pts[pts.length-1][0])}" cy="${Math.round(pts[pts.length-1][1])}" r="2.4" fill="#e8c97a"/></svg>`;
+}
+
+function attEsc(s) { return String(s||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
+
+function attSetBatch(b) {
+  const sel = document.getElementById('batchFilterSel');
+  if (sel) { sel.value = b; applyFilters(); }
+}
+
+// ── The "Needs Attention" strip + batch rollup ──
+function attStripHTML(batchFilter) {
+  const all = Object.values(attProfiles);
+
+  // Batch rollup: always across ALL batches so you can jump between them
+  const byBatch = {};
+  all.forEach(p=>{
+    const b = byBatch[p.batch] = byBatch[p.batch] || {red:0,yellow:0,green:0,building:0};
+    b[p.status]++;
+  });
+  const rollup = Object.keys(byBatch).sort().map(b=>{
+    const c = byBatch[b];
+    return `<div class="att-batch-chip" onclick="attSetBatch('${attEsc(b)}')" title="Filter to ${b}">
+      <b>${b}</b>&nbsp;
+      ${c.red    ? `<span class="att-r">${c.red}🔴</span> `    : ''}
+      ${c.yellow ? `<span class="att-y">${c.yellow}🟡</span> ` : ''}
+      <span class="att-g">${c.green}✅</span>
+      ${c.building ? ` <span class="att-d">${c.building}⏳</span>` : ''}
+    </div>`;
+  }).join('');
+
+  // Cards: respect the batch filter
+  let profs = all;
+  if (batchFilter && batchFilter !== 'All Batches') profs = profs.filter(p=>p.batch===batchFilter);
+
+  const flagged = profs.filter(p=>p.status==='red'||p.status==='yellow')
+    .sort((a,b)=>{
+      const w = s => s==='red'?2:1;
+      return (w(b.status)-w(a.status)) || (b.active.length - a.active.length);
+    });
+
+  const cards = flagged.map(p=>{
+    const flagLines = p.active.map(f=>`
+      <div class="att-flag">
+        <span class="att-flag-dot ${f.sev==='red'?'att-dot-red':'att-dot-yellow'}"></span>
+        <span class="att-flag-txt"><b>${f.label}</b> — ${f.detail}</span>
+        <button class="att-rev-btn" onclick="attMarkReviewed('${attEsc(p.key)}','${attEsc(f.key)}',${p.latestNum},event)" title="Mark reviewed — hides this flag for the next 2 tests">Reviewed</button>
+      </div>`).join('');
+    return `<div class="att-card ${p.status==='red'?'att-card-red':'att-card-yellow'}" onclick="openStudentDrill('${attEsc(p.pin)}','${attEsc(p.name)}','${attEsc(p.batch)}')">
+      <div class="att-card-top">
+        <div><span class="att-name">${p.name}</span><span class="att-batch">${p.batch}</span></div>
+        ${attSpark(p.spark)}
+      </div>
+      ${flagLines}
+    </div>`;
+  }).join('');
+
+  return `
+    <div class="section-header">Needs Attention
+      <span style="font-size:12px;color:var(--text-dim)">${flagged.length ? flagged.length+' student'+(flagged.length===1?'':'s')+' flagged vs their own baseline · click a card to drill down' : 'all steady vs personal baselines'}</span>
+    </div>
+    <div class="att-rollup">${rollup}</div>
+    ${cards ? `<div class="att-grid">${cards}</div>`
+            : `<div class="att-empty">No deviations from personal baselines right now. Flags appear when a student drops sharply against their own last three tests — score, accuracy, skips, pace, or topic regression.</div>`}
+  `;
+}
+
+// Read-only flag panel for the student drill-down modal
+function attDrillPanelHTML(pin, name) {
+  const prof = attProfiles[pin || name];
+  if (!prof) return '';
+  if (prof.status === 'building')
+    return `<div class="att-empty" style="margin-bottom:20px;">⏳ Building baseline — fewer than ${ATT_MIN_TESTS} tests on record. Flags activate from test ${ATT_MIN_TESTS}.</div>`;
+  if (!prof.active.length)
+    return `<div class="att-empty" style="margin-bottom:20px;">✅ Steady — no deviations from this student's own recent baseline.</div>`;
+  return `<div style="margin-bottom:20px;">
+    ${prof.active.map(f=>`
+      <div class="att-flag">
+        <span class="att-flag-dot ${f.sev==='red'?'att-dot-red':'att-dot-yellow'}"></span>
+        <span class="att-flag-txt"><b>${f.label}</b> — ${f.detail}</span>
+      </div>`).join('')}
+  </div>`;
 }
 
 // Enter key on login
