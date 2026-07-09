@@ -976,12 +976,16 @@ function fetchAndRender() {
 // ══════════════════════════════════════════════════════════════
 //  HELPERS
 // ══════════════════════════════════════════════════════════════
-function scoreClass(score) {
-  const pct = (score / MAX_MARKS) * 100;
+function scoreClass(score, max) {
+  const pct = (score / (max || MAX_MARKS)) * 100;
   if (pct >= 70) return 'score-high';
   if (pct >= 40) return 'score-mid';
   return 'score-low';
 }
+
+// Percentage of a row's own maxMarks — the only fair way to compare across
+// 180-mark tests, 120-mark Concept Tests and 80-mark RC Series rows.
+function rowPct(r) { return (+r.score || 0) / (+r.maxMarks || MAX_MARKS) * 100; }
 
 function deltaHTML(curr, prev) {
   if (prev === null || prev === undefined) return '<span class="delta-same">–</span>';
@@ -993,13 +997,47 @@ function deltaHTML(curr, prev) {
 
 function timeTaken(t) {
   if (!t) return '–';
-  t = String(t);
+  t = String(t).trim();
+  // Some rows arrive as "19 mins" / "19 min" — normalise to mm:ss
+  const mMin = t.match(/^(\d{1,3})\s*min/i);
+  if (mMin) return mMin[1].padStart(2,'0') + ':00';
   // Sheets may return "Sat Dec 30 1899 22:10:00 GMT+0521" for a stored "22:10"
   if (/\d{4}/.test(t) || t.length > 9) {
     const m = t.match(/\b(\d{1,2}):(\d{2})(?::\d{2})?\b/);
     if (m) return m[1].padStart(2,'0') + ':' + m[2];
   }
   return t;
+}
+
+// ── chronological ordering ──
+// Timestamps are written client-side as en-IN locale strings (DD/MM/YYYY, h:mm:ss am/pm);
+// Sheets can also hand back ISO datetimes. Parse both; 0 = unparseable.
+function parseRowTs(t) {
+  if (!t) return 0;
+  t = String(t).trim();
+  if (/\d{4}-\d{2}-\d{2}/.test(t)) {           // ISO from Sheets
+    const iso = Date.parse(t);
+    if (!isNaN(iso)) return iso;
+  }
+  const m = t.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})[,\s]+(\d{1,2}):(\d{2})(?::(\d{2}))?\s*(am|pm)?/i);
+  if (m) {
+    let h = +m[4]; const ap = (m[7]||'').toLowerCase();
+    if (ap === 'pm' && h < 12) h += 12;
+    if (ap === 'am' && h === 12) h = 0;
+    return new Date(+m[3], +m[2]-1, +m[1], h, +m[5], +(m[6]||0)).getTime();
+  }
+  const fallback = Date.parse(t);
+  return isNaN(fallback) ? 0 : fallback;
+}
+
+// Sort by when the test was actually taken; test number only as tiebreak/fallback.
+function sortRowsChrono(arr) {
+  arr.sort((a, b) => {
+    const ta = parseRowTs(a.timestamp), tb = parseRowTs(b.timestamp);
+    if (ta && tb && ta !== tb) return ta - tb;
+    return extractTestNum(a.testName) - extractTestNum(b.testName);
+  });
+  return arr;
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -1020,36 +1058,40 @@ function renderStudent(data) {
     renderRFStudent(rfRows);
     return;
   }
-  rows.sort((a, b) => extractTestNum(a.testName) - extractTestNum(b.testName));
+  sortRowsChrono(rows);
 
   // ── core numbers ──
-  const best   = Math.max(...rows.map(r => r.score));
-  const bestMax= (rows.find(r=>r.score===best)||{}).maxMarks || MAX_MARKS;
+  // Computed on PERCENTAGES so 180-mark tests, 120-mark Concept Tests and
+  // 80-mark RC Series rows can sit in the same window without lying.
+  const pctOf  = r => (+r.score || 0) / (+r.maxMarks || MAX_MARKS) * 100;
+  const bestRow= rows.reduce((a,b)=>pctOf(b)>=pctOf(a)?b:a, rows[0]);
+  const best   = bestRow.score;
+  const bestMax= bestRow.maxMarks || MAX_MARKS;
   const last5  = rows.slice(-5);
-  const avg5   = Math.round(last5.reduce((s,r)=>s+r.score,0)/last5.length);
+  const avg5   = Math.round(last5.reduce((s,r)=>s+pctOf(r),0)/last5.length);
   const prev5  = rows.slice(-10,-5);
-  const avgPrev5 = prev5.length ? Math.round(prev5.reduce((s,r)=>s+r.score,0)/prev5.length) : null;
+  const avgPrev5 = prev5.length ? Math.round(prev5.reduce((s,r)=>s+pctOf(r),0)/prev5.length) : null;
   const acc5   = (()=>{const c=last5.reduce((s,r)=>s+(+r.correct||0),0), w=last5.reduce((s,r)=>s+(+r.wrong||0),0);return (c+w)?Math.round(c/(c+w)*100):0;})();
   const tax5   = last5.reduce((s,r)=>s+(+r.wrong||0),0);
   const latest = rows[rows.length-1];
 
   // ── verdict ──
   const l3=rows.slice(-3), p3=rows.slice(-6,-3);
-  const a3=Math.round(l3.reduce((s,r)=>s+r.score,0)/l3.length);
-  const b3=p3.length?Math.round(p3.reduce((s,r)=>s+r.score,0)/p3.length):null;
+  const a3=Math.round(l3.reduce((s,r)=>s+pctOf(r),0)/l3.length);
+  const b3=p3.length?Math.round(p3.reduce((s,r)=>s+pctOf(r),0)/p3.length):null;
   const first=(currentUser.name||latest.name||'').split(' ')[0]||'there';
   let verdict, verdictSub;
   if(rows.length<3){
     verdict = `Good start, ${first} — ${rows.length} test${rows.length>1?'s':''} on the board.`;
     verdictSub = `Your latest: ${latest.testName}, ${latest.score}/${latest.maxMarks||MAX_MARKS}. Every test from here builds the picture.`;
-  } else if(b3!==null && a3-b3>=8){
-    verdict = `You're climbing, ${first} — <span class="cv3-up">+${a3-b3} marks</span> over your last three tests.`;
-    verdictSub = `Recent average ${a3} vs ${b3} before. Keep the rhythm.`;
-  } else if(b3!==null && b3-a3>=8){
-    verdict = `A dip, ${first} — <span class="cv3-down">−${b3-a3} marks</span> across your last three.`;
+  } else if(b3!==null && a3-b3>=5){
+    verdict = `You're climbing, ${first} — <span class="cv3-up">+${a3-b3} points</span> over your last three tests.`;
+    verdictSub = `Recent average ${a3}% vs ${b3}% before. Keep the rhythm.`;
+  } else if(b3!==null && b3-a3>=5){
+    verdict = `A dip, ${first} — <span class="cv3-down">−${b3-a3} points</span> across your last three.`;
     verdictSub = `Dips happen. The focus areas below show exactly where the marks went.`;
   } else {
-    verdict = `Holding steady, ${first} — recent average <span class="cv3-gold">${a3}</span>.`;
+    verdict = `Holding steady, ${first} — recent average <span class="cv3-gold">${a3}%</span>.`;
     verdictSub = `Consistency is underrated. The next jump comes from the focus areas below.`;
   }
 
@@ -1057,14 +1099,14 @@ function renderStudent(data) {
   const t8=rows.slice(-8);
   let trendSvg='';
   if(t8.length>=2){
-    const vals=t8.map(r=>+r.score||0);
+    const vals=t8.map(r=>Math.round(pctOf(r)));
     const mn=Math.min(...vals), mx=Math.max(...vals), span=(mx-mn)||1;
     const W=300,H=84,P=10;
     const pts=vals.map((v,i)=>[P+i*(W-2*P)/(vals.length-1), H-P-(v-mn)/span*(H-2*P)]);
     trendSvg=`<svg viewBox="0 0 ${W} ${H+18}" aria-label="Score trend">
       <polyline points="${pts.map(p=>p.map(n=>Math.round(n)).join(',')).join(' ')}" fill="none" stroke="#c9a84c" stroke-width="2.5" stroke-linecap="round"/>
       ${pts.map((p,i)=>`<circle cx="${Math.round(p[0])}" cy="${Math.round(p[1])}" r="${i===pts.length-1?4:3}" fill="#e8c97a"/>`).join('')}
-      <text x="${Math.round(pts[pts.length-1][0])}" y="${Math.round(pts[pts.length-1][1])-8}" fill="#e8c97a" font-family="DM Mono" font-size="11" text-anchor="end">${vals[vals.length-1]}</text>
+      <text x="${Math.round(pts[pts.length-1][0])}" y="${Math.round(pts[pts.length-1][1])-8}" fill="#e8c97a" font-family="DM Mono" font-size="11" text-anchor="end">${vals[vals.length-1]}%</text>
       <text x="${P}" y="${H+12}" fill="#6a6452" font-family="DM Mono" font-size="10">T${extractTestNum(t8[0].testName)}</text>
       <text x="${W-P}" y="${H+12}" fill="#6a6452" font-family="DM Mono" font-size="10" text-anchor="end">T${extractTestNum(t8[t8.length-1].testName)}</text>
     </svg>`;
@@ -1126,8 +1168,12 @@ function renderStudent(data) {
   const flags = buildBehaviourFlags(rows);
   let tableRows='';
   rows.forEach((r,i)=>{
-    const prev=i>0?rows[i-1].score:null;
-    const sc=scoreClass(r.score);
+    // compare like with like: previous test on the SAME mark scale (180 vs 180, 80 vs 80)
+    let prev=null;
+    for(let j=i-1;j>=0;j--){
+      if((rows[j].maxMarks||MAX_MARKS)===(r.maxMarks||MAX_MARKS)){prev=rows[j].score;break;}
+    }
+    const sc=scoreClass(r.score, r.maxMarks);
     const testNum=extractTestNum(r.testName);
     tableRows+=`
       <tr>
@@ -1148,11 +1194,11 @@ function renderStudent(data) {
         <div class="cv3-verdict-sub">${verdictSub}</div>
         ${wordsHtml}
       </div>
-      ${trendSvg?`<div class="cv3-trend"><div class="cv3-trend-head">Last ${t8.length} test scores</div>${trendSvg}</div>`:''}
+      ${trendSvg?`<div class="cv3-trend"><div class="cv3-trend-head">Last ${t8.length} tests · score %</div>${trendSvg}</div>`:''}
     </div>
     <div class="stats-grid">
       <div class="stat-card"><div class="stat-label">Best Score</div><div class="stat-value">${best}</div><div class="stat-sub">/ ${bestMax}</div></div>
-      <div class="stat-card"><div class="stat-label">Average · last 5</div><div class="stat-value">${avg5}</div><div class="stat-sub">${avgPrev5!==null?(avg5>=avgPrev5?'up from ':'down from ')+avgPrev5+' the five before':'across your last tests'}</div></div>
+      <div class="stat-card"><div class="stat-label">Average · last 5</div><div class="stat-value">${avg5}%</div><div class="stat-sub">${avgPrev5!==null?(avg5>=avgPrev5?'up from ':'down from ')+avgPrev5+'% the five before':'across your last tests'}</div></div>
       <div class="stat-card"><div class="stat-label">Accuracy · last 5</div><div class="stat-value">${acc5}%</div><div class="stat-sub">of attempted questions</div></div>
       <div class="stat-card"><div class="stat-label">Guessing tax · last 5</div><div class="stat-value cv3-taxnum">−${tax5}</div><div class="stat-sub">marks lost to wrong answers</div></div>
     </div>
@@ -1304,9 +1350,13 @@ function renderAdminView(batchFilter, testFilter, statusFilter) {
     : adminAllRows;
   leaderboardSource.forEach(r => {
     const key = r.pin || r.name;
-    if (!studentMap[key] || extractTestNum(r.testName) > extractTestNum(studentMap[key].testName)) {
-      studentMap[key] = r;
-    }
+    if (!studentMap[key]) { studentMap[key] = r; return; }
+    // "latest" decided by when the test was taken, not by test number
+    const tNew = parseRowTs(r.timestamp), tOld = parseRowTs(studentMap[key].timestamp);
+    const isNewer = (tNew && tOld)
+      ? tNew > tOld
+      : extractTestNum(r.testName) > extractTestNum(studentMap[key].testName);
+    if (isNewer) studentMap[key] = r;
   });
   let leaderboard = Object.values(studentMap);
   if (batchFilter !== 'All Batches') leaderboard = leaderboard.filter(r => r.batch === batchFilter);
@@ -1314,11 +1364,13 @@ function renderAdminView(batchFilter, testFilter, statusFilter) {
   if (statusFilter !== 'All Status') {
     leaderboard = leaderboard.filter(r => (attProfiles[r.pin||r.name]||{status:'building'}).status === statusFilter);
   }
-  leaderboard.sort((a,b) => b.score - a.score);
+  // Rank by percentage of each row's own maxMarks (identical to raw-score
+  // ranking when a single test is selected; honest when scales are mixed)
+  leaderboard.sort((a,b) => rowPct(b) - rowPct(a));
 
   let lbRows = '';
   leaderboard.forEach((r, i) => {
-    const sc = scoreClass(r.score);
+    const sc = scoreClass(r.score, r.maxMarks);
     const prof = attProfiles[r.pin||r.name] || {status:'building'}; // NEEDS ATTENTION
     lbRows += `
       <tr class="student-row" onclick="openStudentDrill('${r.pin||''}','${r.name}','${r.batch}')">
@@ -1326,7 +1378,7 @@ function renderAdminView(batchFilter, testFilter, statusFilter) {
         <td>${r.name}</td>
         <td><span style="font-family:'DM Mono',monospace;font-size:12px;color:var(--text-dim)">${r.batch}</span></td>
         <td>${r.testName}</td>
-        <td><span class="score-pill ${sc}">${r.score}</span></td>
+        <td><span class="score-pill ${sc}">${r.score} / ${r.maxMarks||MAX_MARKS}</span></td>
         <td>${attChip(prof.status)}</td>
       </tr>`;
   });
@@ -1446,7 +1498,7 @@ function openStudentDrill(pin, name, batch) {
     if (pin) return r.pin === pin;
     return r.name === name && r.batch === batch;
   });
-  stuRows.sort((a,b) => extractTestNum(a.testName) - extractTestNum(b.testName));
+  sortRowsChrono(stuRows);
 
   // Also grab this student's RF rows
   let stuRFRows = adminRFRows.filter(r => {
@@ -1461,7 +1513,7 @@ function openStudentDrill(pin, name, batch) {
   const makeTable = (rowsArr) => rowsArr.map(r => `
     <tr>
       <td>${r.testName}</td>
-      <td><span class="score-pill ${scoreClass(r.score)}">${r.score}</span></td>
+      <td><span class="score-pill ${scoreClass(r.score, r.maxMarks)}">${r.score}</span></td>
       <td>${r.correct}</td>
       <td>${r.wrong}</td>
       <td>${r.skipped}</td>
@@ -1506,9 +1558,17 @@ function openStudentDrill(pin, name, batch) {
 function openReview(rowData, testNum) {
   document.getElementById('modalTitle').textContent = rowData.testName + ' — Review';
   document.getElementById('modalSubtitle').textContent =
-    `Score: ${rowData.score} / ${MAX_MARKS}  ·  Correct: ${rowData.correct}  ·  Wrong: ${rowData.wrong}  ·  Skipped: ${rowData.skipped}`;
+    `Score: ${rowData.score} / ${rowData.maxMarks || MAX_MARKS}  ·  Correct: ${rowData.correct}  ·  Wrong: ${rowData.wrong}  ·  Skipped: ${rowData.skipped}`;
 
-  const sa = rowData.studentAnswers;
+  // Sheet rows for newer tests (18+) deliver studentAnswers / wrongQuestions as
+  // JSON *strings*, not arrays — same quirk the Patterns section already handles.
+  // Normalise here so every entry point to this modal is safe.
+  const normArr = v => {
+    if (typeof v === 'string') { try { v = JSON.parse(v); } catch(e) { v = []; } }
+    return Array.isArray(v) ? v : [];
+  };
+  const sa = normArr(rowData.studentAnswers);
+  rowData.wrongQuestions = normArr(rowData.wrongQuestions).map(Number);
 
   if (!sa || sa.length === 0) {
     // Tests 1–15: no answer data
@@ -2053,8 +2113,11 @@ function renderRFStudent(rfRows) {
 
   let tableRows = '';
   rfRows.forEach((r, i) => {
-    const prev = i > 0 ? rfRows[i - 1].score : null;
-    const sc   = scoreClass(r.score);
+    let prev = null;
+    for (let j = i - 1; j >= 0; j--) {
+      if ((rfRows[j].maxMarks||MAX_MARKS) === (r.maxMarks||MAX_MARKS)) { prev = rfRows[j].score; break; }
+    }
+    const sc   = scoreClass(r.score, r.maxMarks);
     tableRows += `
       <tr>
         <td>${r.testName}</td>
@@ -2136,24 +2199,24 @@ function renderRFAdmin(rfRows, batchFilter) {
     return `<div class="chip taken" style="cursor:default">${t}<br><span style="font-size:10px;opacity:0.7">${n} stu</span></div>`;
   }).join('');
 
-  // Leaderboard: best RF score per student
+  // Leaderboard: best RF score per student (by percentage of that test's max)
   const stuMap = {};
   rows.forEach(r => {
     const key = r.pin || r.name;
-    if (!stuMap[key] || r.score > stuMap[key].score) stuMap[key] = r;
+    if (!stuMap[key] || rowPct(r) > rowPct(stuMap[key])) stuMap[key] = r;
   });
-  const leaderboard = Object.values(stuMap).sort((a, b) => b.score - a.score);
+  const leaderboard = Object.values(stuMap).sort((a, b) => rowPct(b) - rowPct(a));
 
   let lbRows = '';
   leaderboard.forEach((r, i) => {
-    const sc = scoreClass(r.score);
+    const sc = scoreClass(r.score, r.maxMarks);
     lbRows += `
       <tr class="student-row" onclick="openStudentDrill('${r.pin || ''}','${r.name}','${r.batch}')">
         <td style="color:var(--text-dim);font-family:'DM Mono',monospace">${i + 1}</td>
         <td>${r.name}</td>
         <td><span style="font-family:'DM Mono',monospace;font-size:12px;color:var(--text-dim)">${r.batch}</span></td>
         <td>${r.testName}</td>
-        <td><span class="score-pill ${sc}">${r.score}</span></td>
+        <td><span class="score-pill ${sc}">${r.score} / ${r.maxMarks||MAX_MARKS}</span></td>
       </tr>`;
   });
 
@@ -2262,7 +2325,7 @@ function attMarkReviewed(stuKey, flagKey, latestNum, ev) {
 
 // ── Per-student profile: baseline vs latest ──
 function attProfileFor(stuRows) {
-  const rows = [...stuRows].sort((a,b)=>extractTestNum(a.testName)-extractTestNum(b.testName));
+  const rows = sortRowsChrono([...stuRows]);
   const latest    = rows[rows.length-1];
   const latestNum = extractTestNum(latest.testName);
   const prof = { flags: [], status: 'green', latestNum, spark: rows.slice(-8).map(r=>+r.score||0) };
