@@ -1,5 +1,5 @@
 {
- "_readme": "Road to IIM test catalogue. To add a test: add one entry to the right list. The homepage reads this file \u2014 no HTML edits needed.",
+ "_readme": "Road to IIM test catalogue. To add a test: add one entry to the right list. The homepage reads this file — no HTML edits needed.",
  "road": [
   {
    "n": 9,
@@ -84,32 +84,39 @@
     {
      "t": "Rapid Fire 01",
      "href": "RoadToIIM_SpeedTest01_VocabGrammar.html",
-     "meta": "45 Qs \u00b7 25 sec per question \u00b7 +4 / \u22121",
+     "meta": "45 Qs · 25 sec per question · +4 / −1",
      "key": "(Rapid|Speed).*0?1\\b"
     },
     {
      "t": "Rapid Fire 02",
      "href": "RoadToIIM_SpeedTest02_VocabGrammar.html",
-     "meta": "45 Qs \u00b7 25 sec per question \u00b7 +4 / \u22121",
+     "meta": "45 Qs · 25 sec per question · +4 / −1",
      "key": "(Rapid|Speed).*0?2\\b"
     },
     {
      "t": "Rapid Fire 03",
      "href": "RoadToIIM_SpeedTest03_VocabGrammar.html",
-     "meta": "45 Qs \u00b7 25 sec per question \u00b7 +4 / \u22121",
+     "meta": "45 Qs · 25 sec per question · +4 / −1",
      "key": "(Rapid|Speed).*0?3\\b"
     },
     {
      "t": "Rapid Fire 04",
      "href": "RoadToIIM_SpeedTest04_VocabGrammar.html",
-     "meta": "45 Qs \u00b7 25 sec per question \u00b7 +4 / \u22121",
+     "meta": "45 Qs · 25 sec per question · +4 / −1",
      "key": "(Rapid|Speed).*0?4\\b"
     },
     {
      "t": "Rapid Fire 05",
      "href": "RoadToIIM_SpeedTest05_VocabGrammar.html",
-     "meta": "45 Qs \u00b7 25 sec per question \u00b7 +4 / \u22121",
+     "meta": "45 Qs · 25 sec per question · +4 / −1",
      "key": "(Rapid|Speed).*0?5\\b"
+    },
+    {
+     "t": "Rapid Fire 06",
+     "href": "RoadToIIM_SpeedTest06_VocabGrammar.html",
+     "meta": "45 Qs · Vocab + Tenses · +4 / −1",
+     "key": "(Rapid|Speed).*\\b0?6\\b",
+     "added": "2026-07"
     }
    ]
   },
@@ -119,31 +126,31 @@
     {
      "t": "RC Series 01",
      "href": "RoadToIIM_RC_Series01.html",
-     "meta": "Inference \u00b7 tone \u00b7 structure",
+     "meta": "Inference · tone · structure",
      "key": "RC.*0?1\\b"
     },
     {
      "t": "RC Series 02",
      "href": "RoadToIIM_RC_Series02.html",
-     "meta": "Inference \u00b7 tone \u00b7 structure",
+     "meta": "Inference · tone · structure",
      "key": "RC.*0?2\\b"
     },
     {
      "t": "RC Series 03",
      "href": "RoadToIIM_RC_Series03.html",
-     "meta": "Inference \u00b7 tone \u00b7 structure",
+     "meta": "Inference · tone · structure",
      "key": "RC.*0?3\\b"
     },
     {
      "t": "RC Drill 04",
      "href": "RoadToIIM_RC_Series04_RCDrill.html",
-     "meta": "Inference \u00b7 tone \u00b7 structure",
+     "meta": "Inference · tone · structure",
      "key": "RC.*0?4\\b"
     },
     {
      "t": "RC Drill 05",
      "href": "RoadToIIM_RC_Series05_RCDrill.html",
-     "meta": "Inference \u00b7 tone \u00b7 structure",
+     "meta": "Inference · tone · structure",
      "key": "RC.*0?5\\b"
     }
    ]
@@ -154,25 +161,25 @@
     {
      "t": "Word Web I",
      "href": "RoadToIIM_ConceptTest01_WordWebI.html",
-     "meta": "Vocabulary only \u00b7 30 min",
+     "meta": "Vocabulary only · 30 min",
      "key": "Word Web I$|Concept.*0?1"
     },
     {
      "t": "Word Web II",
      "href": "RoadToIIM_ConceptTest02_WordWebII.html",
-     "meta": "Vocabulary only \u00b7 30 min",
+     "meta": "Vocabulary only · 30 min",
      "key": "Word Web II|Concept.*0?2"
     },
     {
      "t": "The Impostors",
      "href": "RoadToIIM_ConceptTest03_TheImpostors.html",
-     "meta": "Confusables & tone traps \u00b7 30 min",
+     "meta": "Confusables & tone traps · 30 min",
      "key": "Impostors|Concept.*0?3"
     },
     {
      "t": "Cumulative",
      "href": "RoadToIIM_ConceptTest04_Cumulative.html",
-     "meta": "Everything so far \u00b7 30 min",
+     "meta": "Everything so far · 30 min",
      "key": "Cumulative|Concept.*0?4"
     }
    ]
@@ -183,47 +190,47 @@
     {
      "t": "Week 1",
      "href": "iwp_week1_session.html",
-     "meta": "Root family \u00b7 exit slip"
+     "meta": "Root family · exit slip"
     },
     {
      "t": "Week 2",
      "href": "iwp_week2_session.html",
-     "meta": "Root family \u00b7 exit slip"
+     "meta": "Root family · exit slip"
     },
     {
      "t": "Week 3",
      "href": "iwp_week3_session.html",
-     "meta": "Root family \u00b7 exit slip"
+     "meta": "Root family · exit slip"
     },
     {
      "t": "Week 4",
      "href": "iwp_week4_session.html",
-     "meta": "Root family \u00b7 exit slip"
+     "meta": "Root family · exit slip"
     },
     {
      "t": "Week 5",
      "href": "iwp_week5_session.html",
-     "meta": "Root family \u00b7 exit slip"
+     "meta": "Root family · exit slip"
     },
     {
      "t": "Week 6",
      "href": "iwp_week6_session.html",
-     "meta": "Root family \u00b7 exit slip"
+     "meta": "Root family · exit slip"
     },
     {
      "t": "Week 7",
      "href": "iwp_week7_session.html",
-     "meta": "Root family \u00b7 exit slip"
+     "meta": "Root family · exit slip"
     },
     {
      "t": "Week 8",
      "href": "iwp_week8_session.html",
-     "meta": "Root family \u00b7 exit slip"
+     "meta": "Root family · exit slip"
     },
     {
      "t": "Week 9",
      "href": "iwp_week9_session.html",
-     "meta": "Root family \u00b7 exit slip"
+     "meta": "Root family · exit slip"
     },
     {
      "t": "Collocations",
@@ -268,7 +275,7 @@
   {
    "t": "Build your own test",
    "href": "byot.html",
-   "meta": "5,000+ question pool \u2014 you choose the mix"
+   "meta": "5,000+ question pool — you choose the mix"
   },
   {
    "t": "My tracker",

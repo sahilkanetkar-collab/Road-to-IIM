@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rapid Fire Test 6 | Road to IIM</title>
+<style>
+:root{
+  --navy:#0d1b2a; --navy2:#1a2e45; --gold:#c9a84c; --gold2:#e8c76a;
+  --green:#2ecc71; --red:#e74c3c; --grey:#8899aa; --white:#f0f4f8;
+  --purple:#8b5cf6; --purple2:#7c3aed;
+  --panel:300px; --topbar:56px; --navbar:62px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:var(--navy);color:var(--white);min-height:100vh;}
+.hidden{display:none !important;}
+
+/* ---------- LOGIN ---------- */
+#loginScreen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;}
+.loginBox{background:var(--navy2);border:1px solid rgba(201,168,76,.35);border-radius:14px;padding:36px 32px;width:100%;max-width:440px;box-shadow:0 10px 40px rgba(0,0,0,.45);}
+.loginBox h1{font-size:1.45rem;color:var(--gold2);margin-bottom:4px;}
+.loginBox .sub{color:var(--grey);font-size:.85rem;margin-bottom:24px;}
+.loginBox label{display:block;font-size:.8rem;color:var(--grey);margin:14px 0 5px;letter-spacing:.4px;text-transform:uppercase;}
+.loginBox input,.loginBox select{width:100%;padding:11px 12px;border-radius:8px;border:1px solid rgba(136,153,170,.35);background:var(--navy);color:var(--white);font-size:.95rem;font-family:inherit;}
+.loginBox input:focus,.loginBox select:focus{outline:none;border-color:var(--gold);}
+#loginErr{color:var(--red);font-size:.85rem;margin-top:12px;min-height:18px;}
+#startBtn{width:100%;margin-top:18px;padding:13px;border:none;border-radius:8px;background:var(--gold);color:var(--navy);font-size:1rem;font-weight:700;cursor:pointer;font-family:inherit;}
+#startBtn:hover{background:var(--gold2);}
+.rules{margin-top:18px;border-top:1px solid rgba(136,153,170,.2);padding-top:12px;font-size:.78rem;color:var(--grey);line-height:1.6;}
+
+/* ---------- TEST ---------- */
+#testScreen{min-height:100vh;}
+#topBar{height:var(--topbar);background:var(--navy2);display:flex;align-items:center;justify-content:space-between;padding:0 18px;border-bottom:1px solid rgba(201,168,76,.25);position:sticky;top:0;z-index:5;}
+#topBar .tName{color:var(--gold2);font-weight:700;font-size:.95rem;}
+#qCounter{color:var(--grey);font-size:.9rem;}
+#qTimerDigits{font-weight:700;font-size:1.05rem;color:var(--white);min-width:46px;text-align:right;}
+#timerBarWrap{height:6px;background:rgba(136,153,170,.25);width:100%;}
+#timerBar{height:100%;width:100%;background:var(--green);}
+#timerBar.warn{background:var(--gold);}
+#timerBar.danger{background:var(--red);}
+#layout{display:flex;align-items:flex-start;}
+#mainContent{flex:1;min-width:0;max-width:calc(100vw - var(--panel));padding:26px 30px 120px;}
+.secBadge{display:inline-block;font-size:.72rem;letter-spacing:1px;text-transform:uppercase;color:var(--navy);background:var(--gold);padding:3px 10px;border-radius:20px;font-weight:700;margin-bottom:14px;}
+.qtext{font-size:1.12rem;line-height:1.65;margin-bottom:22px;overflow-wrap:break-word;word-break:break-word;min-width:0;}
+.opt{display:flex;gap:12px;align-items:flex-start;width:100%;text-align:left;background:var(--navy2);border:1px solid rgba(136,153,170,.3);border-radius:10px;padding:13px 15px;margin-bottom:11px;cursor:pointer;color:var(--white);font-size:.98rem;font-family:inherit;line-height:1.5;}
+.opt:hover{border-color:var(--gold);}
+.opt.selected{border-color:var(--gold);background:rgba(201,168,76,.16);}
+.opt .ol{font-weight:700;color:var(--gold2);flex:0 0 auto;}
+.otext{overflow-wrap:break-word;word-break:break-word;min-width:0;}
+#nextWrap{position:fixed;bottom:0;left:0;right:var(--panel);background:linear-gradient(transparent,var(--navy) 40%);padding:18px 30px 20px;display:flex;justify-content:flex-end;}
+#nextBtn{padding:13px 34px;border:none;border-radius:8px;background:var(--gold);color:var(--navy);font-weight:700;font-size:1rem;cursor:pointer;font-family:inherit;}
+#nextBtn:hover{background:var(--gold2);}
+#sidePanel{width:var(--panel);flex:0 0 var(--panel);background:var(--navy2);min-height:calc(100vh - var(--topbar) - 6px);padding:22px 18px;border-left:1px solid rgba(201,168,76,.2);position:sticky;top:calc(var(--topbar) + 6px);}
+#sidePanel h3{font-size:.85rem;color:var(--gold2);letter-spacing:.6px;text-transform:uppercase;margin-bottom:14px;}
+#palette{display:grid;grid-template-columns:repeat(6,1fr);gap:7px;}
+.pcell{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:7px;font-size:.78rem;background:var(--navy);border:1px solid rgba(136,153,170,.3);color:var(--grey);pointer-events:none;user-select:none;}
+.pcell.answered{background:var(--gold);color:var(--navy);border-color:var(--gold);font-weight:700;}
+.pcell.skipped{background:rgba(136,153,170,.3);color:var(--white);}
+.pcell.current{border:2px solid var(--gold2);color:var(--gold2);}
+.legend{margin-top:18px;font-size:.75rem;color:var(--grey);line-height:1.9;}
+.lg{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:7px;vertical-align:middle;}
+.lg.a{background:var(--gold);} .lg.s{background:rgba(136,153,170,.5);} .lg.c{border:2px solid var(--gold2);}
+
+/* ---------- RESULTS ---------- */
+#resultsScreen{max-width:900px;margin:0 auto;padding:40px 24px 80px;}
+#resultsScreen h1{color:var(--gold2);font-size:1.5rem;margin-bottom:6px;}
+#resultsScreen .sub{color:var(--grey);margin-bottom:26px;font-size:.9rem;}
+.scoreCard{background:var(--navy2);border:1px solid rgba(201,168,76,.35);border-radius:14px;padding:26px;display:flex;flex-wrap:wrap;gap:26px;margin-bottom:26px;}
+.stat{min-width:110px;}
+.stat .v{font-size:1.7rem;font-weight:700;color:var(--gold2);}
+.stat .l{font-size:.75rem;color:var(--grey);text-transform:uppercase;letter-spacing:.6px;margin-top:3px;}
+.stat .v.g{color:var(--green);} .stat .v.r{color:var(--red);} .stat .v.gr{color:var(--grey);}
+.secErrRow{background:var(--navy2);border-radius:10px;padding:14px 18px;margin-bottom:26px;font-size:.9rem;color:var(--grey);}
+#pdfBtn{padding:11px 26px;border:none;border-radius:8px;background:var(--purple);color:#fff;font-weight:700;cursor:pointer;font-family:inherit;font-size:.9rem;margin-bottom:30px;}
+#pdfBtn:hover{background:var(--purple2);}
+.rev{background:var(--navy2);border-radius:12px;padding:18px 20px;margin-bottom:16px;border-left:4px solid var(--grey);}
+.rev.ok{border-left-color:var(--green);} .rev.bad{border-left-color:var(--red);} .rev.skip{border-left-color:var(--grey);}
+.rev .rq{font-size:.98rem;line-height:1.6;margin-bottom:10px;overflow-wrap:break-word;word-break:break-word;}
+.rev .rmeta{font-size:.78rem;color:var(--grey);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px;}
+.rev .ro{font-size:.88rem;margin:4px 0;padding:6px 10px;border-radius:6px;overflow-wrap:break-word;word-break:break-word;}
+.rev .ro.correct{background:rgba(46,204,113,.14);color:var(--green);}
+.rev .ro.chosen{background:rgba(231,76,60,.14);color:var(--red);}
+.rev .rexp{font-size:.85rem;color:var(--grey);margin-top:10px;line-height:1.6;border-top:1px solid rgba(136,153,170,.2);padding-top:10px;}
+
+@media(max-width:820px){
+  #sidePanel{display:none;}
+  #mainContent{max-width:100vw;padding:20px 16px 120px;}
+  #nextWrap{right:0;}
+}
+@media print{
+  body{background:#fff;color:#000;}
+  #loginScreen,#testScreen,#pdfBtn{display:none !important;}
+  #resultsScreen{display:block !important;}
+  .scoreCard,.rev,.secErrRow{background:#fff;border:1px solid #ccc;color:#000;}
+  .rev .rq{color:#000;}
+}
+</style>
+</head>
+<body>
+
+<!-- ============ LOGIN ============ -->
+<div id="loginScreen">
+  <div class="loginBox">
+    <h1>Rapid Fire Test 6</h1>
+    <div class="sub">Road to IIM &middot; Vocab + Grammar Speed Test &middot; 45 Questions</div>
+    <label for="inName">Full Name</label>
+    <input id="inName" type="text" autocomplete="off" placeholder="Your full name">
+    <label for="inPin">PIN</label>
+    <input id="inPin" type="text" autocomplete="off" placeholder="STU / IMS + 10 digits" maxlength="13">
+    <label for="inBatch">Batch</label>
+    <select id="inBatch">
+      <option value="">Select your batch</option>
+      <optgroup label="Classroom">
+        <option>A2701</option><option>A2702</option><option>A2703</option><option>A2704</option>
+        <option>A2705</option><option>A2706</option><option>A2707</option><option>A2708</option>
+        <option>A2709</option><option>A2710</option><option>A2711</option><option>A2712</option>
+        <option>A2714</option><option>A2715</option><option>A2716</option><option>A2717</option>
+        <option>A2718</option><option>A2719</option><option>A2720</option>
+      </optgroup>
+      <optgroup label="School">
+        <option>Zebar</option>
+      </optgroup>
+      <optgroup label="IPMAT 28">
+        <option>Z2801</option><option>S2801</option><option>A2804</option><option>PN2801</option>
+      </optgroup>
+      <optgroup label="Admin">
+        <option>Admin</option>
+      </optgroup>
+    </select>
+    <div id="loginErr"></div>
+    <button id="startBtn">Start Test</button>
+    <div class="rules">
+      45 questions &middot; +4 correct / &minus;1 wrong &middot; Max 180<br>
+      Per-question timer: 25s Vocabulary &middot; 35s Grammar<br>
+      No going back. Timer expiry locks and advances automatically.
+    </div>
+  </div>
+</div>
+
+<!-- ============ TEST ============ -->
+<div id="testScreen" class="hidden">
+  <div id="topBar">
+    <span class="tName">Rapid Fire Test 6</span>
+    <span id="qCounter">Q 1 / 45</span>
+    <span id="qTimerDigits">25</span>
+  </div>
+  <div id="timerBarWrap"><div id="timerBar"></div></div>
+  <div id="layout">
+    <div id="mainContent">
+      <span class="secBadge" id="secBadge">Vocabulary</span>
+      <div class="qtext" id="qText"></div>
+      <div id="optWrap"></div>
+    </div>
+    <div id="sidePanel">
+      <h3>Palette</h3>
+      <div id="palette"></div>
+      <div class="legend">
+        <span class="lg a"></span>Answered<br>
+        <span class="lg s"></span>Skipped<br>
+        <span class="lg c"></span>Current
+      </div>
+    </div>
+  </div>
+  <div id="nextWrap"><button id="nextBtn">Save &amp; Next</button></div>
+</div>
+
+<!-- ============ RESULTS (sibling of #testScreen — never nest) ============ -->
+<div id="resultsScreen" class="hidden">
+  <h1>Rapid Fire Test 6 — Results</h1>
+  <div class="sub" id="resStudent"></div>
+  <div class="scoreCard">
+    <div class="stat"><div class="v" id="rScore"></div><div class="l">Score / 180</div></div>
+    <div class="stat"><div class="v g" id="rCorrect"></div><div class="l">Correct</div></div>
+    <div class="stat"><div class="v r" id="rWrong"></div><div class="l">Wrong</div></div>
+    <div class="stat"><div class="v gr" id="rSkipped"></div><div class="l">Skipped</div></div>
+    <div class="stat"><div class="v" id="rTime"></div><div class="l">Time Taken</div></div>
+  </div>
+  <div class="secErrRow" id="rSecErr"></div>
+  <button id="pdfBtn" onclick="window.print()">Download PDF</button>
+  <div id="reviewWrap"></div>
+</div>
+
+<script>
+/* =====================================================
+   Rapid Fire Test 6 — Road to IIM
+   45Q · 24V/21G · +4/−1 · 180 · 25s/35s per question
+   ===================================================== */
+var APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbx5Ojm_zp4LfsMeelx5e06KNjVH1wfsXdV0keS4407m4FO1HU4EpVb7GKj-ibAsxnspeA/exec';
+var TEST_NAME='Rapid Fire Test 6';
+var TEST_KEY='RF06';
+var FILE_NAME='RoadToIIM_SpeedTest06_VocabGrammar.html';
+var MAX_MARKS=180;
+var SN_SESSION='riim_session_'+TEST_KEY;
+
+var QUESTIONS=[
+/* Q1 */ {sec:'Vocabulary',td:25,q:"Convinced he could end corruption single-handedly before the elections, the young officer launched a ______ campaign that colleagues admired but nobody expected to succeed.",o:["pragmatic","quixotic","draconian","halfhearted"],a:1,e:"Quixotic (from Don Quixote) = idealistic but hopelessly impractical; admired yet doomed fits exactly. Draconian = excessively harsh; pragmatic contradicts the stem.",tag:{area:'Vocabulary',sub:'Contextual Usage'}},
+/* Q2 */ {sec:'Grammar',td:35,q:"By the time the auditors ______ the discrepancies in the June ledger, the accountant who had recorded the entries had already resigned and left the country.",o:["had discovered","discover","were discovering","discovered"],a:3,e:"With 'by the time', the later of the two past events takes the simple past; the earlier event (the resignation) already carries the past perfect. 'Had discovered' would wrongly mark the discovery as the earlier event.",tag:{area:'Grammar',sub:'Tense Usage'}},
+/* Q3 */ {sec:'Vocabulary',td:25,q:"The startup won the patent lawsuit, but the legal fees consumed its entire funding: a ______ victory if there ever was one.",o:["pyrrhic","serendipitous","decisive","vicarious"],a:0,e:"A pyrrhic victory (after King Pyrrhus) is won at a cost that cancels the gain. 'Decisive' contradicts the ruinous fees; serendipitous = lucky accident.",tag:{area:'Vocabulary',sub:'Contextual Usage'}},
+/* Q4 */ {sec:'Grammar',td:35,q:"Choose the correct sentence.",o:["She has submitted the thesis last Friday, well before the deadline.","She had submitted the thesis last Friday, well before the deadline.","She submitted the thesis last Friday, well before the deadline the department had announced.","She submits the thesis last Friday, well before the deadline."],a:2,e:"'Last Friday' is a finished-time adverb, which rules out the present perfect in A. The past perfect in B needs a later past reference point. C uses the simple past correctly.",tag:{area:'Grammar',sub:'Tense Usage'}},
+/* Q5 */ {sec:'Vocabulary',td:25,q:"Rather than confronting his rival openly, the minister used leaks, false promises, and staged alliances: a thoroughly ______ route to the top.",o:["sardonic","Machiavellian","debonair","sycophantic"],a:1,e:"Machiavellian = scheming and deceptive in pursuit of power. Leaks, false promises and staged alliances are the textbook picture. Sardonic = mockingly cynical; sycophantic = fawning; neither describes scheming.",tag:{area:'Vocabulary',sub:'Contextual Usage'}},
+/* Q6 */ {sec:'Grammar',td:35,q:"Ever since the regulator ______ the new disclosure norms, smaller brokerages have been struggling to meet the quarterly filing requirements.",o:["introduced","has introduced","had introduced","introduces"],a:0,e:"The clause after 'since' takes the simple past; the main clause carries the present perfect ('have been struggling').",tag:{area:'Grammar',sub:'Tense Usage'}},
+/* Q7 */ {sec:'Vocabulary',td:25,q:"Famed for never using two words where one would do, she answered the panel's ten questions with a ______ \"Yes,\" \"No,\" or \"Perhaps.\"",o:["verbose","grandiloquent","garrulous","laconic"],a:3,e:"Laconic (from Laconia, home of the Spartans) = using very few words. Verbose, grandiloquent and garrulous all mean wordy, the opposite.",tag:{area:'Vocabulary',sub:'Contextual Usage'}},
+/* Q8 */ {sec:'Grammar',td:35,q:"The witness told the court that she ______ the accused twice before the night of the incident, once at a wedding and once outside her office.",o:["has seen","sees","had seen","saw"],a:2,e:"In reported speech, an event earlier than the past reporting verb backshifts to the past perfect: she had seen him before that night. The simple past in D loses the anteriority.",tag:{area:'Grammar',sub:'Tense Usage'}},
+/* Q9 */ {sec:'Vocabulary',td:25,q:"The new grading policy forced every department, from fine arts to physics, into one identical rubric, a ______ system that ignored how differently the disciplines work.",o:["procrustean","draconian","serendipitous","sybaritic"],a:0,e:"Procrustean (from Procrustes' bed) = forcing everything into one rigid, arbitrary standard. The cue is 'identical rubric…ignored differences': uniformity, not harshness (draconian).",tag:{area:'Vocabulary',sub:'Contextual Usage'}},
+/* Q10 */ {sec:'Vocabulary',td:25,q:"Nobody could predict the coach's mood: euphoric at breakfast, furious by noon, affectionate by evening: utterly ______.",o:["stoic","phlegmatic","debonair","mercurial"],a:3,e:"Mercurial = unpredictably changeable in mood (after the god Mercury). Stoic and phlegmatic mean the opposite, calm and unemotional; debonair = suavely charming.",tag:{area:'Vocabulary',sub:'Contextual Usage'}},
+/* Q11 */ {sec:'Grammar',td:35,q:"Choose the correct sentence.",o:["I am knowing the answer to the third question since the moment the paper was distributed.","I have known the answer to the third question since the moment the paper was distributed.","I know the answer to the third question since the moment the paper was distributed.","I am having known the answer to the third question since the paper was distributed."],a:1,e:"'Know' is a stative verb and resists the continuous; with 'since', the present perfect 'have known' is required.",tag:{area:'Grammar',sub:'Tense Usage'}},
+/* Q12 */ {sec:'Vocabulary',td:25,q:"The auditors praised the report's rigour but pointed to serious ______ in the data for 2019–2021, years for which no records had been kept.",o:["embellishments","redundancies","lacunae","fabrications"],a:2,e:"Lacunae = gaps or missing sections. 'No records had been kept' signals gaps, not falsehoods (fabrications) or excess (redundancies).",tag:{area:'Vocabulary',sub:'Contextual Usage'}},
+/* Q13 */ {sec:'Grammar',td:35,q:"The committee ______ over forty applications by the end of this month, which is more than it reviewed in the whole of last year.",o:["will have screened","will screen","has screened","had screened"],a:0,e:"'By the end of this month' sets a future deadline, so the future perfect 'will have screened' is needed.",tag:{area:'Grammar',sub:'Tense Usage'}},
+/* Q14 */ {sec:'Vocabulary',td:25,q:"After he testified against the union, former colleagues began to ______ him: no greetings, no invitations, no acknowledgment that he existed.",o:["tantalize","ostracise","mesmerise","patronise"],a:1,e:"Ostracise (from the Greek ostrakon voting shard) = exclude or shut out from a group. Patronise = talk down to, still engagement, not exclusion.",tag:{area:'Vocabulary',sub:'Contextual Usage'}},
+/* Q15 */ {sec:'Grammar',td:35,q:"When the inspectors finally reached the site, it was obvious that someone ______ with the seals on the storage units days earlier.",o:["tampers","has tampered","was tampering","had tampered"],a:3,e:"'Days earlier' places the tampering before the past arrival of the inspectors, requiring the past perfect.",tag:{area:'Grammar',sub:'Tense Usage'}},
+/* Q16 */ {sec:'Vocabulary',td:25,q:"By publicly resigning from the party and campaigning for its rival, she ______; there was no way back into its ranks now.",o:["rested on her laurels","let the cat out of the bag","crossed the Rubicon","read the riot act"],a:2,e:"To cross the Rubicon (after Caesar's crossing in 49 BC) = take an irreversible step. 'No way back' is the defining cue.",tag:{area:'Vocabulary',sub:'Contextual Usage'}},
+/* Q17 */ {sec:'Grammar',td:35,q:"Choose the correct sentence.",o:["Hardly had the minister finished his statement when reporters began shouting questions about the leaked memo.","Hardly the minister had finished his statement when reporters began shouting questions.","Hardly had the minister finished his statement than reporters began shouting questions.","Hardly did the minister finish his statement when reporters had begun shouting questions."],a:0,e:"'Hardly had X finished... when' is the correct inverted pattern. B loses the inversion; C wrongly pairs 'hardly' with 'than' (that pairing belongs to 'no sooner'); D misplaces the past perfect.",tag:{area:'Grammar',sub:'Tense Usage'}},
+/* Q18 */ {sec:'Vocabulary',td:25,q:"With the merger review still pending, the threat of mass layoffs hung over the staff like ______.",o:["a white elephant","crocodile tears","a red herring","a sword of Damocles"],a:3,e:"A sword of Damocles = an ever-present, imminent danger suspended over someone. 'Hung over…threat' collocates only with the sword.",tag:{area:'Vocabulary',sub:'Contextual Usage'}},
+/* Q19 */ {sec:'Grammar',td:35,q:"She ______ for the same publishing house for eleven years when the merger was announced, and she stayed on for two more after it.",o:["has been working","had been working","was working","worked"],a:1,e:"A duration running up to a past point ('when the merger was announced') takes the past perfect continuous: had been working.",tag:{area:'Grammar',sub:'Tense Usage'}},
+/* Q20 */ {sec:'Vocabulary',td:25,q:"The eight-lane expressway to the abandoned port cost billions to build and crores each year to maintain, yet carries almost no traffic: a classic ______.",o:["red herring","Trojan horse","white elephant","sacred cow"],a:2,e:"A white elephant = a costly possession that is useless or wildly disproportionate to its value. A sacred cow is something immune to criticism; a Trojan horse hides a threat; a red herring is a misleading distraction.",tag:{area:'Vocabulary',sub:'Contextual Usage'}},
+/* Q21 */ {sec:'Grammar',td:35,q:"By this time next year, the two firms ______ operating under a single brand for a full six months.",o:["will be","will have been","are","have been"],a:1,e:"A duration measured up to a future point takes the future perfect continuous: will have been operating for six months.",tag:{area:'Grammar',sub:'Tense Usage'}},
+/* Q22 */ {sec:'Vocabulary',td:25,q:"The editor who fabricated quotes to destroy rivals was finally ______ when a forged letter he planted was traced back to his own laptop.",o:["hoist with his own petard","resting on his laurels","biting the bullet","burning his boats"],a:0,e:"Hoist with one's own petard (Hamlet) = harmed by one's own scheme. His own forged letter destroying him is the exact picture.",tag:{area:'Vocabulary',sub:'Contextual Usage'}},
+/* Q23 */ {sec:'Grammar',td:35,q:"The historian pointed out that the treaty ______ into force only after both parliaments had ratified it, a detail most textbooks gloss over.",o:["has come","comes","would have come","came"],a:3,e:"A single completed historical event takes the simple past. The general-truth present in B suits standing facts, not a one-time ratification.",tag:{area:'Grammar',sub:'Tense Usage'}},
+/* Q24 */ {sec:'Vocabulary',td:25,q:"Which situation is best described as quixotic?",o:["A minister delaying reform until public opinion shifts","A tycoon funding a profitable solar venture","A retired clerk suing to abolish poverty itself through one court petition","A student cheating to top an exam"],a:2,e:"Quixotic = nobly idealistic but hopelessly impractical. One petition to abolish poverty is noble and doomed. A is caution, B is practical, D is dishonest; none is quixotic.",tag:{area:'Vocabulary',sub:'Word Meaning'}},
+/* Q25 */ {sec:'Grammar',td:35,q:"No sooner ______ the results declared than the coaching institutes began claiming credit for the top ranks.",o:["were","had","have","was"],a:0,e:"The inversion works with the passive: 'No sooner were the results declared than...'. B would need 'had the results been declared' to be grammatical.",tag:{area:'Grammar',sub:'Tense Usage'}},
+/* Q26 */ {sec:'Vocabulary',td:25,q:"A victory is pyrrhic only when:",o:["it is won by deception","its cost effectively cancels the gain","it is won against a weaker opponent","it is later reversed on appeal"],a:1,e:"The defining condition is cost cancelling gain: 'another such victory and we are undone.' Deception, opponent strength and later reversal are all irrelevant to the term.",tag:{area:'Vocabulary',sub:'Word Meaning'}},
+/* Q27 */ {sec:'Grammar',td:35,q:"Choose the correct sentence.",o:["The board is believing that the pilot project succeeded because of the new incentives.","The board believed that the pilot project has succeeded because of the new incentives.","The board believes that the pilot project had succeeded because of the new incentives.","The board believes that the pilot project succeeded because of the incentives it introduced in March."],a:3,e:"'Believe' is stative, ruling out A. The March pilot is a finished past event, so the simple past follows the present-tense main verb; B and C mis-sequence the tenses.",tag:{area:'Grammar',sub:'Tense Usage'}},
+/* Q28 */ {sec:'Vocabulary',td:25,q:"Best OPPOSITE of Machiavellian in political conduct:",o:["ruthless","calculating","scrupulous","ambitious"],a:2,e:"Scrupulous = principled and honest, the reverse of Machiavellian scheming. Ruthless and calculating are near-synonyms; ambitious is neutral.",tag:{area:'Vocabulary',sub:'Word Meaning'}},
+/* Q29 */ {sec:'Grammar',td:35,q:"If the courier ______ the documents before noon tomorrow, the registration can still be completed within this financial year.",o:["delivers","will deliver","delivered","would deliver"],a:0,e:"A real future condition takes the simple present in the if-clause: 'if the courier delivers'. 'Will' never enters the if-clause.",tag:{area:'Grammar',sub:'Tense Usage'}},
+/* Q30 */ {sec:'Vocabulary',td:25,q:"In which sentence is laconic used correctly?",o:["The laconic lecture ran four hours without pause.","His laconic \"No.\" ended a debate the committee had stretched over three meetings.","She was laconic with money, refusing to spend on anything.","The laconic crowd roared for an encore."],a:1,e:"Laconic describes extreme brevity of speech: a one-word 'No.' A four-hour lecture is the opposite; thrift with money and a roaring crowd misuse the word entirely.",tag:{area:'Vocabulary',sub:'Word Meaning'}},
+/* Q31 */ {sec:'Grammar',td:35,q:"She assured the panel that she ______ the missing annexures as soon as her office reopened after the audit freeze.",o:["submits","will submit","has submitted","would submit"],a:3,e:"A promise made in the past about a then-future act takes the future-in-past: would submit.",tag:{area:'Grammar',sub:'Tense Usage'}},
+/* Q32 */ {sec:'Vocabulary',td:25,q:"The defining feature of a procrustean approach is that it:",o:["forces varied cases to fit one arbitrary standard","punishes more harshly than the law allows","changes constantly to suit the powerful","rejects all standards whatsoever"],a:0,e:"Procrustes stretched or amputated guests to fit one bed; the essence is forcing variety into one arbitrary standard. Mere harshness is draconian, not procrustean.",tag:{area:'Vocabulary',sub:'Word Meaning'}},
+/* Q33 */ {sec:'Grammar',td:35,q:"Choose the correct sentence.",o:["After he had been finishing the internship, he applied for the analyst role.","After he has finished the internship, he applied for the analyst role.","After he finished the internship, he applied for the analyst role his mentor had recommended.","After he will finish the internship, he applied for the analyst role."],a:2,e:"An 'after' clause with the simple past is sufficient; the sequence is already clear. A's continuous perfect is wrong for a completed act, and D puts 'will' inside a time clause.",tag:{area:'Grammar',sub:'Tense Usage'}},
+/* Q34 */ {sec:'Vocabulary',td:25,q:"Best ANTONYM of mercurial:",o:["volatile","steadfast","impulsive","vivacious"],a:1,e:"Steadfast = constant and unwavering, the opposite of mercurial changeability. Volatile and impulsive are synonyms; vivacious = lively, unrelated.",tag:{area:'Vocabulary',sub:'Word Meaning'}},
+/* Q35 */ {sec:'Grammar',td:35,q:"The village ______ its drinking water from the same reservoir for three generations before the pipeline scheme changed everything in 2021.",o:["draws","has drawn","is drawing","had drawn"],a:3,e:"The pipeline scheme in 2021 is a past cutoff, so the duration before it takes the past perfect: had drawn. The present perfect in B would need the arrangement to continue to now.",tag:{area:'Grammar',sub:'Tense Usage'}},
+/* Q36 */ {sec:'Vocabulary',td:25,q:"Which sentence uses the word correctly?",o:["The single lacunae in the manuscript was restored.","Her memoir is riddled with lacuna about her years abroad.","Scholars have long debated how to fill the lacunae, the missing leaves, in the codex.","The lacunae overflowed with excessive detail."],a:2,e:"Lacunae is the plural of lacuna. C uses the plural correctly for multiple missing leaves. A pairs 'single' with a plural; B needs the plural; D contradicts the meaning (gaps cannot overflow with detail).",tag:{area:'Vocabulary',sub:'Word Meaning'}},
+/* Q37 */ {sec:'Grammar',td:35,q:"The report notes that sea levels ______ steadily since systematic measurements began in the nineteenth century, though the pace has varied by decade.",o:["have been rising","are rising","rose","had been rising"],a:0,e:"'Since measurements began' with an action continuing to the present takes the present perfect continuous: have been rising.",tag:{area:'Grammar',sub:'Tense Usage'}},
+/* Q38 */ {sec:'Vocabulary',td:25,q:"Ostracise is closest in meaning to:",o:["criticise","demote","imprison","blackball"],a:3,e:"To blackball = to vote to exclude someone from a group, the same exclusion sense as ostracise. Criticising, demoting and imprisoning are not exclusion from a community.",tag:{area:'Vocabulary',sub:'Word Meaning'}},
+/* Q39 */ {sec:'Grammar',td:35,q:"Choose the correct sentence.",o:["By the time the bus arrived, most passengers waited for over an hour in the rain.","By the time the bus arrived, most passengers had been waiting for over an hour in the rain.","By the time the bus arrived, most passengers have been waiting for over an hour.","By the time the bus had arrived, most passengers were waiting since an hour."],a:1,e:"Waiting that extended up to a past moment (the bus's arrival) takes the past perfect continuous. A undersells the duration; C uses the present perfect; D combines a wrong 'had arrived' with 'since an hour'.",tag:{area:'Grammar',sub:'Tense Usage'}},
+/* Q40 */ {sec:'Vocabulary',td:25,q:"The idiom 'cross the Rubicon' emphasises above all:",o:["irreversibility of a decision","secrecy of a plan","courage under pain","betrayal of an ally"],a:0,e:"Caesar's crossing made civil war unavoidable: the point of no return. Irreversibility is the core; courage under pain is 'bite the bullet'.",tag:{area:'Vocabulary',sub:'Word Meaning'}},
+/* Q41 */ {sec:'Grammar',td:35,q:"The spokesperson confirmed that the CEO ______ the resignation letter the previous evening, hours before the story broke online.",o:["signs","has signed","had signed","will have signed"],a:2,e:"'The previous evening' marks the signing as earlier than the past confirmation, so the past perfect 'had signed' is required.",tag:{area:'Grammar',sub:'Tense Usage'}},
+/* Q42 */ {sec:'Vocabulary',td:25,q:"Which situation matches 'a sword of Damocles' most precisely?",o:["A CEO mourning publicly while privately celebrating a rival's fall","An official ignoring reports of bribery in his office","An heiress spending her fortune on an unused mansion","An employee working daily knowing one pending inquiry could end his career at any moment"],a:3,e:"One suspended threat that could fall at any moment: the pending inquiry. A is crocodile tears; B is turning a blind eye; C is a white elephant.",tag:{area:'Vocabulary',sub:'Word Meaning'}},
+/* Q43 */ {sec:'Grammar',td:35,q:"She ______ as the department's informal translator ever since the foreign collaborations began, though the role has never appeared in her contract.",o:["served","has been serving","had served","serves"],a:1,e:"'Ever since' with a role continuing into the present takes the present perfect continuous: has been serving.",tag:{area:'Grammar',sub:'Tense Usage'}},
+/* Q44 */ {sec:'Vocabulary',td:25,q:"The idiom 'white elephant' originally referred to:",o:["a rare animal hunted for ivory","a ghost said to guard temples","a royal gift so costly to maintain it ruined the receiver","a circus attraction that drew no visitors"],a:2,e:"Kings of Siam reputedly gifted sacred white elephants to courtiers they wished to ruin; the animal could not be worked or given away, only ruinously maintained.",tag:{area:'Vocabulary',sub:'Word Meaning'}},
+/* Q45 */ {sec:'Vocabulary',td:25,q:"In the idiom 'hoist with one's own petard', the petard was originally:",o:["a small bomb for breaching gates","a hangman's rope","a ship's anchor","a battering ram"],a:0,e:"A petard was a small explosive charge for blowing open gates; to be 'hoist' was to be blown upward by your own device; Shakespeare's image in Hamlet for a schemer destroyed by his own scheme.",tag:{area:'Vocabulary',sub:'Word Meaning'}}
+];
+
+/* ---------- LOGIN WHITELIST (runtime block) ---------- */
+var WL=null;
+var WL_URL='whitelist.json';
+function normPin(p){return String(p).replace(/\D/g,'').replace(/^0+/,'');}
+async function isWhitelisted(pin,batch){
+  if(WL===null){
+    try{
+      var r=await fetch(WL_URL,{cache:'no-store'});
+      WL=await r.json();
+    }catch(e){
+      return true; /* FAIL-OPEN: never lock out a regular over a network hiccup */
+    }
+  }
+  if(!WL||typeof WL!=='object'||!WL.pins){return true;} /* fail-open on malformed */
+  if(WL.bypass_batches&&WL.bypass_batches.indexOf(batch)!==-1){return true;}
+  var k=normPin(pin);
+  if(WL.admin_pins&&WL.admin_pins.indexOf(k)!==-1){return true;}
+  return Object.prototype.hasOwnProperty.call(WL.pins,k);
+}
+/* prefetch (non-blocking) */
+fetch(WL_URL,{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){WL=j;}).catch(function(){WL=null;});
+
+/* ---------- SAFETY NET: retry queue ---------- */
+function snQueueGet(){try{return JSON.parse(localStorage.getItem('riim_pending')||'[]');}catch(e){return [];}}
+function snQueueSet(q){try{localStorage.setItem('riim_pending',JSON.stringify(q));}catch(e){}}
+function snUnqueue(id){snQueueSet(snQueueGet().filter(function(p){return p.id!==id;}));}
+function snSendWithQueue(opts){
+  var id=Date.now()+'_'+Math.random().toString(36).slice(2);
+  var q=snQueueGet(); q.push({id:id,body:opts.body}); snQueueSet(q); /* queue BEFORE fetch */
+  return fetch(APPS_SCRIPT_URL,opts).then(function(){snUnqueue(id);}).catch(function(){/* stays queued */});
+}
+function snFlush(){
+  snQueueGet().forEach(function(p){
+    fetch(APPS_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:p.body})
+      .then(function(){snUnqueue(p.id);}).catch(function(){});
+  });
+}
+
+/* ---------- STATE ---------- */
+var studentName='',studentPin='',studentBatch='';
+var currentQ=0;
+var answers=new Array(45).fill(null);
+var lockedArr=new Array(45).fill(false);
+var questionTimes=new Array(45).fill(0);
+var qSecondsLeft=0,qTimerInterval=null,qStartTs=0,testStartTs=0;
+var submitted=false;
+
+/* ---------- SAFETY NET: autosave / resume ---------- */
+function snSave(){
+  if(submitted)return;
+  try{
+    localStorage.setItem(SN_SESSION,JSON.stringify({
+      file:FILE_NAME,test:TEST_NAME,name:studentName,pin:studentPin,batch:studentBatch,
+      currentQ:currentQ,answers:answers,locked:lockedArr,questionTimes:questionTimes,
+      startTs:testStartTs,savedTs:Date.now()
+    }));
+  }catch(e){}
+}
+function snClear(){try{localStorage.removeItem(SN_SESSION);}catch(e){}}
+
+/* ---------- DOM helpers ---------- */
+function $(id){return document.getElementById(id);}
+function showLoginError(msg){$('loginErr').textContent=msg;}
+
+/* ---------- LOGIN (async handler — awaits whitelist) ---------- */
+function initLogin(){
+  $('inPin').addEventListener('input',function(){this.value=this.value.toUpperCase();});
+  $('startBtn').addEventListener('click',async function(){
+    showLoginError('');
+    var name=$('inName').value.trim();
+    var pin=$('inPin').value.trim().toUpperCase();
+    var batch=$('inBatch').value;
+    if(!name){showLoginError('Please enter your full name.');return;}
+    if(!/^(STU|IMS)\d{10}$/.test(pin)){showLoginError('Invalid PIN. Format: STU or IMS followed by 10 digits.');return;}
+    if(!batch){showLoginError('Please select your batch.');return;}
+    var ok=await isWhitelisted(pin,batch);
+    if(!ok){showLoginError("This PIN isn't on the active student list. Message Sahil Sir if you think this is a mistake.");return;}
+    studentName=name;studentPin=pin;studentBatch=batch;
+    startTest(false);
+  });
+}
+
+/* ---------- TEST FLOW ---------- */
+function startTest(isResume){
+  $('loginScreen').classList.add('hidden');
+  $('resultsScreen').classList.add('hidden');
+  $('testScreen').classList.remove('hidden');
+  if(!isResume){testStartTs=Date.now();}
+  buildPalette();
+  renderQuestion();
+}
+function buildPalette(){
+  var pal=$('palette');pal.innerHTML='';
+  for(var i=0;i<45;i++){
+    var c=document.createElement('div');
+    c.className='pcell';c.id='pc'+i;c.textContent=i+1;
+    pal.appendChild(c);
+  }
+}
+function updatePalette(){
+  for(var i=0;i<45;i++){
+    var c=$('pc'+i);if(!c)continue;
+    c.className='pcell';
+    if(lockedArr[i]){c.classList.add(answers[i]!==null?'answered':'skipped');}
+    if(i===currentQ){c.classList.add('current');}
+  }
+}
+function renderQuestion(){
+  var q=QUESTIONS[currentQ];
+  $('qCounter').textContent='Q '+(currentQ+1)+' / 45';
+  $('secBadge').textContent=q.sec;
+  $('qText').innerHTML=q.q.replace(/\n/g,'<br>');
+  var wrap=$('optWrap');wrap.innerHTML='';
+  var letters=['A','B','C','D'];
+  q.o.forEach(function(opt,idx){
+    var b=document.createElement('button');
+    b.className='opt'+(answers[currentQ]===idx?' selected':'');
+    b.innerHTML='<span class="ol">'+letters[idx]+'</span><span class="otext"></span>';
+    b.querySelector('.otext').textContent=opt;
+    b.addEventListener('click',function(){selectOption(idx);});
+    wrap.appendChild(b);
+  });
+  $('nextBtn').textContent=(currentQ===44)?'Submit':'Save & Next';
+  updatePalette();
+  startQTimer(q.td);
+}
+function selectOption(idx){
+  if(lockedArr[currentQ]||submitted)return;
+  answers[currentQ]=idx;
+  var opts=$('optWrap').querySelectorAll('.opt');
+  opts.forEach(function(o,i){o.classList.toggle('selected',i===idx);});
+  snSave(); /* autosave on answer */
+}
+function startQTimer(td){
+  if(qTimerInterval){clearInterval(qTimerInterval);}
+  qSecondsLeft=td;qStartTs=Date.now();
+  $('qTimerDigits').textContent=qSecondsLeft;
+  /* timer bar reset sequence: none → 100% → reflow → linear → 0% */
+  var bar=$('timerBar');
+  bar.className='';
+  bar.style.transition='none';
+  bar.style.width='100%';
+  void bar.offsetWidth; /* force reflow */
+  bar.style.transition='width '+td+'s linear';
+  bar.style.width='0%';
+  qTimerInterval=setInterval(function(){
+    qSecondsLeft--;
+    if(qSecondsLeft<0)qSecondsLeft=0;
+    $('qTimerDigits').textContent=qSecondsLeft;
+    var ratio=qSecondsLeft/td;
+    var bar2=$('timerBar');
+    if(ratio<=0.25){bar2.className='danger';}
+    else if(ratio<=0.5){bar2.className='warn';}
+    if(qSecondsLeft<=0){onTimerExpiry();}
+  },1000);
+}
+function recordQTime(){
+  var q=QUESTIONS[currentQ];
+  var el=Math.round((Date.now()-qStartTs)/1000);
+  questionTimes[currentQ]=Math.min(q.td,el);
+}
+function advance(){
+  if(submitted)return;
+  if(qTimerInterval){clearInterval(qTimerInterval);qTimerInterval=null;}
+  recordQTime();
+  lockedArr[currentQ]=true;
+  if(currentQ===44){doSubmit();return;} /* submit condition: currentQ===44 */
+  currentQ++;
+  snSave(); /* autosave on advance — after pointer moves, so resume lands on the next unlocked question */
+  renderQuestion();
+}
+function onTimerExpiry(){
+  /* selected → lock + advance; none → skip + advance; Q45 → auto-submit (advance handles it) */
+  advance();
+}
+function initNext(){
+  $('nextBtn').addEventListener('click',function(){advance();});
+}
+
+/* ---------- SUBMIT ---------- */
+function pad2(n){return (n<10?'0':'')+n;}
+function doSubmit(){
+  if(submitted)return;
+  submitted=true;
+  if(qTimerInterval){clearInterval(qTimerInterval);qTimerInterval=null;}
+  var letters=['A','B','C','D'];
+  var numCorrect=0,numWrong=0,numSkipped=0;
+  var sectionErrorsObj={},topicErrorsObj={},wrongQuestionNums=[];
+  var studentAnswerLetters=[];
+  QUESTIONS.forEach(function(q,i){
+    var a=answers[i];
+    studentAnswerLetters.push(a===null?null:letters[a]);
+    if(a===null){numSkipped++;return;}
+    if(a===q.a){numCorrect++;return;}
+    numWrong++;
+    wrongQuestionNums.push(i+1);
+    sectionErrorsObj[q.sec]=(sectionErrorsObj[q.sec]||0)+1;
+    topicErrorsObj[q.tag.sub]=(topicErrorsObj[q.tag.sub]||0)+1;
+  });
+  var finalScore=numCorrect*4-numWrong*1;
+  var totalSecs=Math.max(0,Math.round((Date.now()-testStartTs)/1000));
+  var timeTakenStr=pad2(Math.floor(totalSecs/60))+':'+pad2(totalSecs%60);
+  var submitTimestamp=new Date().toLocaleString('en-IN',{timeZone:'Asia/Kolkata'});
+  var payload={
+    testName: TEST_NAME,
+    name: studentName,
+    pin: studentPin,
+    batch: studentBatch,
+    score: finalScore,
+    correct: numCorrect,
+    wrong: numWrong,
+    skipped: numSkipped,
+    maxMarks: MAX_MARKS,
+    timeTaken: timeTakenStr,
+    timestamp: submitTimestamp,
+    sectionErrors: JSON.stringify(sectionErrorsObj),
+    wrongQuestions: JSON.stringify(wrongQuestionNums),
+    studentAnswers: JSON.stringify(studentAnswerLetters),
+    questionTimes: JSON.stringify(questionTimes),
+    topicErrors: JSON.stringify(topicErrorsObj)
+  };
+  snSendWithQueue({method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)});
+  snClear(); /* session cleared on submit */
+  bankMistakes();
+  archiveResult(finalScore,numCorrect,numWrong,numSkipped,timeTakenStr);
+  showResults(finalScore,numCorrect,numWrong,numSkipped,timeTakenStr,sectionErrorsObj);
+}
+
+/* ---------- MISTAKE BANK capture ---------- */
+function bankMistakes(){
+  try{
+    var bank=JSON.parse(localStorage.getItem('riim_mistakes')||'[]');
+    QUESTIONS.forEach(function(q,i){
+      var a=answers[i];
+      if(a===null||a===q.a)return; /* only WRONG standalone answers */
+      var k=TEST_KEY+'_Q'+(i+1);
+      var card={k:k,stem:q.q,opts:q.o,ans:q.a,chosen:a,exp:q.e,sub:q.tag.sub,src:TEST_NAME,box:1,due:Date.now()+86400000};
+      var ex=-1;
+      for(var j=0;j<bank.length;j++){if(bank[j].k===k){ex=j;break;}}
+      if(ex>=0){bank[ex]=card;} /* repeat offender → box resets to 1 */
+      else{bank.push(card);}
+    });
+    if(bank.length>300){bank=bank.slice(bank.length-300);} /* cap 300 */
+    localStorage.setItem('riim_mistakes',JSON.stringify(bank));
+  }catch(e){}
+}
+
+/* ---------- RESULTS ARCHIVE ---------- */
+function archiveResult(score,c,w,s,tt){
+  try{
+    var res=JSON.parse(localStorage.getItem('riim_results')||'[]');
+    res.push({test:TEST_NAME,file:FILE_NAME,score:score,correct:c,wrong:w,skipped:s,maxMarks:MAX_MARKS,timeTaken:tt,ts:Date.now()});
+    if(res.length>200){res=res.slice(res.length-200);}
+    localStorage.setItem('riim_results',JSON.stringify(res));
+  }catch(e){}
+}
+
+/* ---------- RESULTS SCREEN ---------- */
+function showResults(score,c,w,s,tt,secErr){
+  $('testScreen').classList.add('hidden');
+  $('resultsScreen').classList.remove('hidden');
+  $('resStudent').textContent=studentName+' · '+studentPin+' · '+studentBatch;
+  $('rScore').textContent=score;
+  $('rCorrect').textContent=c;
+  $('rWrong').textContent=w;
+  $('rSkipped').textContent=s;
+  $('rTime').textContent=tt;
+  var se=[];
+  se.push('Vocabulary errors: '+(secErr['Vocabulary']||0));
+  se.push('Grammar errors: '+(secErr['Grammar']||0));
+  $('rSecErr').textContent=se.join('  ·  ');
+  var wrap=$('reviewWrap');wrap.innerHTML='';
+  var letters=['A','B','C','D'];
+  QUESTIONS.forEach(function(q,i){
+    var a=answers[i];
+    var cls=(a===null)?'skip':(a===q.a?'ok':'bad');
+    var div=document.createElement('div');
+    div.className='rev '+cls;
+    var meta=document.createElement('div');meta.className='rmeta';
+    meta.textContent='Q'+(i+1)+' · '+q.sec+' · '+q.tag.sub+' · '+(a===null?'Skipped':(a===q.a?'Correct':'Wrong'));
+    div.appendChild(meta);
+    var rq=document.createElement('div');rq.className='rq';rq.innerHTML=q.q.replace(/\n/g,'<br>');
+    div.appendChild(rq);
+    q.o.forEach(function(optText,oi){
+      var ro=document.createElement('div');
+      ro.className='ro';
+      var suffix='';
+      if(oi===q.a){ro.classList.add('correct');suffix=' \u2713 Correct answer';}
+      if(a!==null&&oi===a&&a!==q.a){ro.classList.add('chosen');suffix=' \u2717 Your answer';}
+      if(a!==null&&oi===a&&a===q.a){suffix=' \u2713 Your answer';}
+      ro.textContent=letters[oi]+'. '+optText+suffix;
+      div.appendChild(ro);
+    });
+    var ex=document.createElement('div');ex.className='rexp';ex.textContent=q.e;
+    div.appendChild(ex);
+    wrap.appendChild(div);
+  });
+  window.scrollTo(0,0);
+}
+
+/* ---------- BOOT: flush queue + resume check ---------- */
+function boot(){
+  initLogin();
+  initNext();
+  snFlush(); /* flush pending payloads on every page load */
+  var raw=null;
+  try{raw=localStorage.getItem(SN_SESSION);}catch(e){}
+  if(raw){
+    var s=null;
+    try{s=JSON.parse(raw);}catch(e){s=null;}
+    if(s&&s.answers&&typeof s.currentQ==='number'){
+      var answered=s.answers.filter(function(a){return a!==null;}).length;
+      var msg='An unfinished '+TEST_NAME+' session was found ('+answered+' of 45 questions answered). Resume where you left off?';
+      if(confirm(msg)){
+        studentName=s.name;studentPin=s.pin;studentBatch=s.batch;
+        currentQ=s.currentQ;
+        answers=s.answers;
+        lockedArr=s.locked||new Array(45).fill(false);
+        questionTimes=s.questionTimes||new Array(45).fill(0);
+        testStartTs=s.startTs||Date.now();
+        startTest(true); /* restarts CURRENT question's per-question timer */
+        return;
+      }
+      snClear();
+    }
+  }
+}
+if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',boot);}
+else{boot();}
+</script>
+</body>
+</html>
