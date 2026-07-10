@@ -1,0 +1,1135 @@
+{
+ "version": 1,
+ "updated": "2026-07-10",
+ "days": [
+  {
+   "words": [
+    {
+     "word": "Ephemeral",
+     "pos": "adj.",
+     "options": [
+      "Lasting a very short time",
+      "Extremely valuable",
+      "Related to the sky",
+      "Difficult to understand"
+     ],
+     "correct": 0,
+     "usage": "Fame on social media is often ephemeral — viral today, forgotten by Friday.",
+     "note": "Greek hēmera = day. Literally 'lasting a day'.",
+     "synonyms": [
+      "fleeting",
+      "transient",
+      "evanescent",
+      "short-lived"
+     ]
+    },
+    {
+     "word": "Laconic",
+     "pos": "adj.",
+     "options": [
+      "Using very few words",
+      "Lazy and sluggish",
+      "Full of sorrow",
+      "Overly decorative"
+     ],
+     "correct": 0,
+     "usage": "His laconic reply — 'Fine.' — ended the negotiation in one word.",
+     "note": "From Laconia (Sparta). Spartans were famously brief.",
+     "synonyms": [
+      "terse",
+      "pithy",
+      "curt"
+     ]
+    },
+    {
+     "word": "Sanguine",
+     "pos": "adj.",
+     "options": [
+      "Optimistic, cheerfully confident",
+      "Bloodthirsty and cruel",
+      "Extremely cautious",
+      "Pale and sickly"
+     ],
+     "correct": 0,
+     "usage": "Despite the mock-test dip, she remained sanguine about her percentile.",
+     "note": "Latin sanguis = blood. Old medicine linked blood to cheerfulness.",
+     "synonyms": [
+      "optimistic",
+      "hopeful",
+      "buoyant",
+      "upbeat"
+     ]
+    },
+    {
+     "word": "Obfuscate",
+     "pos": "verb",
+     "options": [
+      "To deliberately make unclear",
+      "To clean thoroughly",
+      "To argue loudly",
+      "To officially approve"
+     ],
+     "correct": 0,
+     "usage": "The fine print seemed designed to obfuscate the actual interest rate.",
+     "note": "Latin fuscus = dark. To darken the meaning.",
+     "synonyms": [
+      "obscure",
+      "muddle",
+      "cloud",
+      "befog"
+     ]
+    },
+    {
+     "word": "Gregarious",
+     "pos": "adj.",
+     "options": [
+      "Sociable, fond of company",
+      "Greedy and grasping",
+      "Enormously large",
+      "Easily frightened"
+     ],
+     "correct": 0,
+     "usage": "A gregarious student, he knew every batch from A2701 to Zebar.",
+     "note": "Latin grex = flock. One who stays with the herd.",
+     "synonyms": [
+      "sociable",
+      "convivial",
+      "affable",
+      "outgoing"
+     ]
+    }
+   ],
+   "idioms": [
+    {
+     "idiom": "Raining cats and dogs",
+     "scene": [
+      [
+       "☁️",
+       "floaty",
+       0
+      ],
+      [
+       "🐱",
+       "fall",
+       0
+      ],
+      [
+       "🐶",
+       "fall",
+       0.5
+      ],
+      [
+       "🐱",
+       "fall",
+       1
+      ]
+     ],
+     "caption": "Take it literally and you'd need a very strong umbrella.",
+     "options": [
+      "Raining very heavily",
+      "A chaotic argument",
+      "Animals fighting",
+      "Unpredictable weather all week"
+     ],
+     "correct": 0,
+     "origin": "Origin is murky — one theory points to 17th-century storms washing stray animals through London streets.",
+     "usage": "The match was abandoned because it was raining cats and dogs."
+    },
+    {
+     "idiom": "Spill the beans",
+     "scene": [
+      [
+       "🫙",
+       "shake",
+       0
+      ],
+      [
+       "🫘",
+       "fall",
+       0.2
+      ],
+      [
+       "🫘",
+       "fall",
+       0.6
+      ],
+      [
+       "🫘",
+       "fall",
+       1
+      ]
+     ],
+     "caption": "One clumsy jar, and every bean is public knowledge.",
+     "options": [
+      "To reveal a secret",
+      "To waste food",
+      "To make a mess",
+      "To start a quarrel"
+     ],
+     "correct": 0,
+     "origin": "Possibly from ancient Greek voting with beans — a tipped jar revealed the result early.",
+     "usage": "Under pressure from the class, he finally spilled the beans about the surprise test."
+    }
+   ]
+  },
+  {
+   "words": [
+    {
+     "word": "Quixotic",
+     "pos": "adj.",
+     "options": [
+      "Idealistic but impractical",
+      "Fast and efficient",
+      "Strangely quiet",
+      "Mathematically precise"
+     ],
+     "correct": 0,
+     "usage": "His quixotic plan to finish all 31 tests in one weekend collapsed by Sunday noon.",
+     "note": "From Don Quixote — the knight who fought windmills.",
+     "synonyms": [
+      "idealistic",
+      "impractical",
+      "utopian",
+      "romantic"
+     ]
+    },
+    {
+     "word": "Taciturn",
+     "pos": "adj.",
+     "options": [
+      "Habitually silent, reserved",
+      "Quick-tempered",
+      "Sticky or adhesive",
+      "Skilled with tools"
+     ],
+     "correct": 0,
+     "usage": "The taciturn topper let her scorecard do the talking.",
+     "note": "Latin tacere = to be silent. Cousin of 'tacit'.",
+     "synonyms": [
+      "reticent",
+      "reserved",
+      "uncommunicative"
+     ]
+    },
+    {
+     "word": "Ubiquitous",
+     "pos": "adj.",
+     "options": [
+      "Present everywhere at once",
+      "Extremely rare",
+      "Uniquely shaped",
+      "Loudly obvious"
+     ],
+     "correct": 0,
+     "usage": "Smartphones are so ubiquitous that a no-phone classroom feels historic.",
+     "note": "Latin ubique = everywhere.",
+     "synonyms": [
+      "omnipresent",
+      "pervasive",
+      "universal"
+     ]
+    },
+    {
+     "word": "Magnanimous",
+     "pos": "adj.",
+     "options": [
+      "Generous and noble in spirit",
+      "Enormous in size",
+      "Attracted to metal",
+      "Boastful and proud"
+     ],
+     "correct": 0,
+     "usage": "Magnanimous in victory, she coached the very students who had beaten her last year.",
+     "note": "Latin magnus (great) + animus (spirit) = great-souled.",
+     "synonyms": [
+      "generous",
+      "noble",
+      "big-hearted",
+      "forgiving"
+     ]
+    },
+    {
+     "word": "Harbinger",
+     "pos": "noun",
+     "options": [
+      "A sign of things to come",
+      "A safe harbour",
+      "A loud complainer",
+      "A skilled craftsman"
+     ],
+     "correct": 0,
+     "usage": "Falling accuracy in RC is often a harbinger of burnout, not weakness.",
+     "note": "Originally a scout sent ahead to book lodgings for an army.",
+     "synonyms": [
+      "forerunner",
+      "herald",
+      "precursor",
+      "omen"
+     ]
+    }
+   ],
+   "idioms": [
+    {
+     "idiom": "Break the ice",
+     "scene": [
+      [
+       "🧊",
+       "shake",
+       0
+      ],
+      [
+       "🔨",
+       "pop",
+       0.3
+      ],
+      [
+       "✨",
+       "flicker",
+       0.6
+      ]
+     ],
+     "caption": "A hammer, a block of ice, and suddenly everyone can swim.",
+     "options": [
+      "To ease initial awkwardness",
+      "To destroy something valuable",
+      "To cool down an argument",
+      "To start a fight"
+     ],
+     "correct": 0,
+     "origin": "From ships that broke frozen rivers so trade could begin — clearing the way for others.",
+     "usage": "A quick round of introductions broke the ice on the first day of the IPMAT batch."
+    },
+    {
+     "idiom": "Cold feet",
+     "scene": [
+      [
+       "🦶",
+       "shake",
+       0
+      ],
+      [
+       "❄️",
+       "fall",
+       0.2
+      ],
+      [
+       "🥶",
+       "pop",
+       0.6
+      ]
+     ],
+     "caption": "Feet so cold they refuse to walk you into the exam hall.",
+     "options": [
+      "Sudden loss of nerve before something",
+      "A minor illness",
+      "Poor blood circulation",
+      "Fear of winter"
+     ],
+     "correct": 0,
+     "origin": "Likely from 19th-century gamblers who claimed frozen feet to escape a losing table.",
+     "usage": "He had the application ready but got cold feet just before hitting submit."
+    }
+   ]
+  },
+  {
+   "words": [
+    {
+     "word": "Insipid",
+     "pos": "adj.",
+     "options": [
+      "Dull, lacking flavour or interest",
+      "Slightly wet",
+      "Secretly planned",
+      "Rudely direct"
+     ],
+     "correct": 0,
+     "usage": "The essay was grammatically perfect but insipid — not one memorable line.",
+     "note": "Latin in (not) + sapidus (tasty). Literally flavourless.",
+     "synonyms": [
+      "bland",
+      "vapid",
+      "dull",
+      "flat"
+     ]
+    },
+    {
+     "word": "Garrulous",
+     "pos": "adj.",
+     "options": [
+      "Excessively talkative",
+      "Easily angered",
+      "Physically strong",
+      "Dressed shabbily"
+     ],
+     "correct": 0,
+     "usage": "A garrulous seatmate can cost you two RC passages' worth of focus.",
+     "note": "Latin garrire = to chatter. Opposite of Day 2's taciturn.",
+     "synonyms": [
+      "loquacious",
+      "voluble",
+      "chatty"
+     ]
+    },
+    {
+     "word": "Capricious",
+     "pos": "adj.",
+     "options": [
+      "Given to sudden changes of mood",
+      "Very careful",
+      "Full of energy",
+      "Extremely capable"
+     ],
+     "correct": 0,
+     "usage": "The capricious paper-setters swung from easy vocab to brutal RC in one year.",
+     "note": "From Italian capriccio — a sudden start, like a goat's leap.",
+     "synonyms": [
+      "fickle",
+      "whimsical",
+      "mercurial",
+      "erratic"
+     ]
+    },
+    {
+     "word": "Esoteric",
+     "pos": "adj.",
+     "options": [
+      "Understood by only a select few",
+      "Foreign or exotic",
+      "Highly emotional",
+      "Openly published"
+     ],
+     "correct": 0,
+     "usage": "Weinstein Stage Analysis sounds esoteric until someone draws you the four stages.",
+     "note": "Greek esōterikos = inner circle. Knowledge for insiders.",
+     "synonyms": [
+      "arcane",
+      "abstruse",
+      "recondite",
+      "cryptic"
+     ]
+    },
+    {
+     "word": "Panacea",
+     "pos": "noun",
+     "options": [
+      "A cure-all remedy",
+      "A widespread disease",
+      "A grand celebration",
+      "A type of bread"
+     ],
+     "correct": 0,
+     "usage": "More mock tests are useful, but they're no panacea for weak fundamentals.",
+     "note": "Greek goddess Panakeia — 'all-healing'.",
+     "synonyms": [
+      "cure-all",
+      "elixir",
+      "universal remedy"
+     ]
+    }
+   ],
+   "idioms": [
+    {
+     "idiom": "Let the cat out of the bag",
+     "scene": [
+      [
+       "👜",
+       "shake",
+       0
+      ],
+      [
+       "🐱",
+       "pop",
+       0.4
+      ],
+      [
+       "💨",
+       "flicker",
+       0.8
+      ]
+     ],
+     "caption": "The bag had one job.",
+     "options": [
+      "To reveal a secret by mistake",
+      "To free a trapped animal",
+      "To cause deliberate chaos",
+      "To abandon a plan"
+     ],
+     "correct": 0,
+     "origin": "One theory: market cheats sold 'pigs' in sacks that turned out to be cats — until someone opened the bag.",
+     "usage": "The surprise farewell was ruined when Rohan let the cat out of the bag in the group chat."
+    },
+    {
+     "idiom": "Burn the midnight oil",
+     "scene": [
+      [
+       "🕯️",
+       "flicker",
+       0
+      ],
+      [
+       "🌙",
+       "floaty",
+       0.3
+      ],
+      [
+       "📚",
+       "pop",
+       0.6
+      ]
+     ],
+     "caption": "Before electricity, late-night study literally burned oil.",
+     "options": [
+      "To work or study late into the night",
+      "To waste resources",
+      "To destroy evidence",
+      "To cook a late dinner"
+     ],
+     "correct": 0,
+     "origin": "From the era of oil lamps — staying up late meant literally spending oil.",
+     "usage": "The week before IPMAT, half the batch was burning the midnight oil."
+    }
+   ]
+  },
+  {
+   "words": [
+    {
+     "word": "Perfunctory",
+     "pos": "adj.",
+     "options": [
+      "Done carelessly, as routine",
+      "Perfectly executed",
+      "Deeply religious",
+      "Highly official"
+     ],
+     "correct": 0,
+     "usage": "A perfunctory revision — flipping pages without testing yourself — fools no exam.",
+     "note": "Latin perfungi = to get through. Just getting it done.",
+     "synonyms": [
+      "cursory",
+      "mechanical",
+      "half-hearted"
+     ]
+    },
+    {
+     "word": "Obsequious",
+     "pos": "adj.",
+     "options": [
+      "Excessively eager to please",
+      "Stubbornly resistant",
+      "Dark and gloomy",
+      "Extremely obvious"
+     ],
+     "correct": 0,
+     "usage": "His obsequious praise of the interviewer earned a raised eyebrow, not a seat.",
+     "note": "Latin obsequi = to comply. Fawning like a courtier.",
+     "synonyms": [
+      "sycophantic",
+      "fawning",
+      "servile",
+      "unctuous"
+     ]
+    },
+    {
+     "word": "Cacophony",
+     "pos": "noun",
+     "options": [
+      "A harsh mixture of sounds",
+      "A large gathering",
+      "A beautiful melody",
+      "A secret code"
+     ],
+     "correct": 0,
+     "usage": "The exam hall's cacophony of coughs and clicking pens tested everyone's focus.",
+     "note": "Greek kakos (bad) + phōnē (sound). Opposite: euphony.",
+     "synonyms": [
+      "din",
+      "discord",
+      "racket",
+      "clamour"
+     ]
+    },
+    {
+     "word": "Iconoclast",
+     "pos": "noun",
+     "options": [
+      "One who attacks established beliefs",
+      "A religious painter",
+      "A loyal follower",
+      "A collector of images"
+     ],
+     "correct": 0,
+     "usage": "An iconoclast in the coaching world, she banned rote word-lists entirely.",
+     "note": "Greek 'image-breaker' — literally destroyers of religious icons.",
+     "synonyms": [
+      "rebel",
+      "heretic",
+      "dissenter",
+      "maverick"
+     ]
+    },
+    {
+     "word": "Penchant",
+     "pos": "noun",
+     "options": [
+      "A strong liking or inclination",
+      "A hanging ornament",
+      "A sudden fear",
+      "A written apology"
+     ],
+     "correct": 0,
+     "usage": "Her penchant for etymology turned every new word into a detective case.",
+     "note": "French pencher = to lean. What you lean towards.",
+     "synonyms": [
+      "fondness",
+      "proclivity",
+      "predilection",
+      "inclination"
+     ]
+    }
+   ],
+   "idioms": [
+    {
+     "idiom": "Once in a blue moon",
+     "scene": [
+      [
+       "🌕",
+       "floaty",
+       0
+      ],
+      [
+       "🔵",
+       "pop",
+       0.5
+      ],
+      [
+       "✨",
+       "flicker",
+       0.9
+      ]
+     ],
+     "caption": "The moon, feeling experimental.",
+     "options": [
+      "Very rarely",
+      "Every month",
+      "During an eclipse",
+      "At an unlucky time"
+     ],
+     "correct": 0,
+     "origin": "A 'blue moon' is the rare second full moon in one calendar month.",
+     "usage": "He checks the leaderboard once in a blue moon — the toppers check it hourly."
+    },
+    {
+     "idiom": "Cost an arm and a leg",
+     "scene": [
+      [
+       "🏷️",
+       "shake",
+       0
+      ],
+      [
+       "💪",
+       "pop",
+       0.3
+      ],
+      [
+       "🦵",
+       "pop",
+       0.6
+      ],
+      [
+       "💸",
+       "fall",
+       0.9
+      ]
+     ],
+     "caption": "The price tag nobody wants to pay in body parts.",
+     "options": [
+      "To be extremely expensive",
+      "To cause an injury",
+      "To require hard labour",
+      "To be a fair trade"
+     ],
+     "correct": 0,
+     "origin": "Popularised after WWII, when losing limbs was the ultimate price a soldier could pay.",
+     "usage": "Good coaching shouldn't cost an arm and a leg — that's half the point of this portal."
+    }
+   ]
+  },
+  {
+   "words": [
+    {
+     "word": "Intransigent",
+     "pos": "adj.",
+     "options": [
+      "Refusing to compromise",
+      "Constantly travelling",
+      "Impossible to see",
+      "Briefly present"
+     ],
+     "correct": 0,
+     "usage": "Both sides stayed intransigent, and the group project quietly died.",
+     "note": "Latin in + transigere (to settle) — one who won't settle.",
+     "synonyms": [
+      "unyielding",
+      "obdurate",
+      "inflexible",
+      "adamant"
+     ]
+    },
+    {
+     "word": "Mellifluous",
+     "pos": "adj.",
+     "options": [
+      "Sweetly, smoothly flowing (of sound)",
+      "Overly sentimental",
+      "Rich and wealthy",
+      "Sticky like honey"
+     ],
+     "correct": 0,
+     "usage": "The RJ's mellifluous voice made even traffic updates sound like poetry.",
+     "note": "Latin mel (honey) + fluere (to flow). Honey-flowing.",
+     "synonyms": [
+      "dulcet",
+      "euphonious",
+      "honeyed",
+      "melodious"
+     ]
+    },
+    {
+     "word": "Soporific",
+     "pos": "adj.",
+     "options": [
+      "Inducing sleep",
+      "Highly sophisticated",
+      "Extremely absorbent",
+      "Full of wisdom"
+     ],
+     "correct": 0,
+     "usage": "The 3 p.m. lecture on clauses proved dangerously soporific.",
+     "note": "Latin sopor = deep sleep. A lullaby in adjective form.",
+     "synonyms": [
+      "sleep-inducing",
+      "somnolent",
+      "sedative"
+     ]
+    },
+    {
+     "word": "Anathema",
+     "pos": "noun",
+     "options": [
+      "Something intensely disliked",
+      "A national anthem",
+      "A miracle cure",
+      "A formal blessing"
+     ],
+     "correct": 0,
+     "usage": "Guesswork without elimination is anathema to a serious test-taker.",
+     "note": "Greek — originally a formal curse of the church.",
+     "synonyms": [
+      "abomination",
+      "bane",
+      "abhorrence"
+     ]
+    },
+    {
+     "word": "Dilettante",
+     "pos": "noun",
+     "options": [
+      "A dabbler without real commitment",
+      "A skilled professional",
+      "A wealthy patron",
+      "A strict examiner"
+     ],
+     "correct": 0,
+     "usage": "In investing, the dilettante buys tips; the student of charts buys stages.",
+     "note": "Italian dilettare = to delight. One who dabbles for pleasure.",
+     "synonyms": [
+      "dabbler",
+      "amateur",
+      "hobbyist",
+      "trifler"
+     ]
+    }
+   ],
+   "idioms": [
+    {
+     "idiom": "Hit the nail on the head",
+     "scene": [
+      [
+       "🔨",
+       "shake",
+       0
+      ],
+      [
+       "📌",
+       "pop",
+       0.4
+      ],
+      [
+       "🎯",
+       "flicker",
+       0.8
+      ]
+     ],
+     "caption": "One clean strike. No bent nails, no bruised thumbs.",
+     "options": [
+      "To be exactly right",
+      "To finish a task",
+      "To hurt someone accidentally",
+      "To build something new"
+     ],
+     "correct": 0,
+     "origin": "From carpentry — the perfect strike drives the nail straight home.",
+     "usage": "When she said the para's tone was 'wry, not bitter', she hit the nail on the head."
+    },
+    {
+     "idiom": "Barking up the wrong tree",
+     "scene": [
+      [
+       "🐕",
+       "shake",
+       0
+      ],
+      [
+       "🌳",
+       "floaty",
+       0.3
+      ],
+      [
+       "🐿️",
+       "pop",
+       0.7
+      ]
+     ],
+     "caption": "The squirrel left this tree twenty minutes ago.",
+     "options": [
+      "Pursuing a mistaken line of thought",
+      "Complaining loudly",
+      "Choosing the harder path",
+      "Warning someone of danger"
+     ],
+     "correct": 0,
+     "origin": "From hunting dogs that cornered prey — and kept barking at trees the animal had already fled.",
+     "usage": "If you're blaming vocabulary for your RC score, you may be barking up the wrong tree."
+    }
+   ]
+  },
+  {
+   "words": [
+    {
+     "word": "Truculent",
+     "pos": "adj.",
+     "options": [
+      "Aggressively defiant",
+      "Truthful and honest",
+      "Heavy and slow",
+      "Deeply loyal"
+     ],
+     "correct": 0,
+     "usage": "The truculent debater attacked every question instead of answering any.",
+     "note": "Latin trux = fierce, savage.",
+     "synonyms": [
+      "belligerent",
+      "combative",
+      "pugnacious"
+     ]
+    },
+    {
+     "word": "Sycophant",
+     "pos": "noun",
+     "options": [
+      "A servile flatterer",
+      "A wind instrument",
+      "A qualified doctor",
+      "A silent observer"
+     ],
+     "correct": 0,
+     "usage": "A sycophant agrees with the boss's typo; a colleague quietly fixes it.",
+     "note": "Greek sykophantēs — originally an informer in Athens.",
+     "synonyms": [
+      "flatterer",
+      "toady",
+      "bootlicker",
+      "yes-man"
+     ]
+    },
+    {
+     "word": "Recalcitrant",
+     "pos": "adj.",
+     "options": [
+      "Stubbornly disobedient",
+      "Freshly calculated",
+      "Easily persuaded",
+      "Warm and welcoming"
+     ],
+     "correct": 0,
+     "usage": "The recalcitrant printer chose exam morning to reject every command.",
+     "note": "Latin recalcitrare = to kick back, like a mule.",
+     "synonyms": [
+      "defiant",
+      "unruly",
+      "obstinate",
+      "wayward"
+     ]
+    },
+    {
+     "word": "Pellucid",
+     "pos": "adj.",
+     "options": [
+      "Transparently clear",
+      "Softly glowing",
+      "Thick and cloudy",
+      "Small and precious"
+     ],
+     "correct": 0,
+     "usage": "A pellucid argument needs no second reading — the logic shows straight through.",
+     "note": "Latin per + lucere (to shine). Light passes through.",
+     "synonyms": [
+      "limpid",
+      "lucid",
+      "crystal-clear"
+     ]
+    },
+    {
+     "word": "Misanthrope",
+     "pos": "noun",
+     "options": [
+      "One who dislikes humankind",
+      "A careless spender",
+      "A skilled imitator",
+      "A lover of solitude by faith"
+     ],
+     "correct": 0,
+     "usage": "He plays the misanthrope online but remembers every student's birthday.",
+     "note": "Greek misein (hate) + anthrōpos (human).",
+     "synonyms": [
+      "cynic",
+      "people-hater",
+      "recluse"
+     ]
+    }
+   ],
+   "idioms": [
+    {
+     "idiom": "Beat around the bush",
+     "scene": [
+      [
+       "🌳",
+       "shake",
+       0
+      ],
+      [
+       "🥢",
+       "pop",
+       0.3
+      ],
+      [
+       "🐦",
+       "fall",
+       0.7
+      ]
+     ],
+     "caption": "Hitting everything except the point.",
+     "options": [
+      "To avoid the main topic",
+      "To search thoroughly",
+      "To waste effort gardening",
+      "To scare away birds"
+     ],
+     "correct": 0,
+     "origin": "From bird hunting — beaters struck around bushes to flush birds out, while others made the actual catch.",
+     "usage": "Stop beating around the bush and tell me: did the mock go badly?"
+    },
+    {
+     "idiom": "Under the weather",
+     "scene": [
+      [
+       "⛈️",
+       "floaty",
+       0
+      ],
+      [
+       "🙂",
+       "shake",
+       0.3
+      ],
+      [
+       "🤧",
+       "pop",
+       0.7
+      ]
+     ],
+     "caption": "A personal rain cloud with excellent aim.",
+     "options": [
+      "Feeling slightly unwell",
+      "Caught in a storm",
+      "Feeling sad about news",
+      "Hiding from trouble"
+     ],
+     "correct": 0,
+     "origin": "Nautical origin — sick sailors were sent below deck, literally under the weather.",
+     "usage": "She skipped the speed test because she was feeling under the weather."
+    }
+   ]
+  },
+  {
+   "words": [
+    {
+     "word": "Vociferous",
+     "pos": "adj.",
+     "options": [
+      "Loudly and forcefully expressed",
+      "Full of nutrients",
+      "Quick to forgive",
+      "Carefully hidden"
+     ],
+     "correct": 0,
+     "usage": "The vociferous protests over the answer key forced a re-evaluation.",
+     "note": "Latin vox (voice) + ferre (to carry). Voice-carrying.",
+     "synonyms": [
+      "clamorous",
+      "strident",
+      "vehement"
+     ]
+    },
+    {
+     "word": "Ambivalent",
+     "pos": "adj.",
+     "options": [
+      "Having mixed, contradictory feelings",
+      "Able to use both hands",
+      "Completely indifferent",
+      "Openly hostile"
+     ],
+     "correct": 0,
+     "usage": "She felt ambivalent about the drop year — freedom and fear in equal parts.",
+     "note": "Latin ambi (both) + valere (to be strong). Pulled both ways.",
+     "synonyms": [
+      "conflicted",
+      "torn",
+      "equivocal"
+     ]
+    },
+    {
+     "word": "Ostracize",
+     "pos": "verb",
+     "options": [
+      "To exclude from a group",
+      "To decorate lavishly",
+      "To officially promote",
+      "To speak formally"
+     ],
+     "correct": 0,
+     "usage": "Fear of being ostracized keeps many students from asking 'basic' doubts.",
+     "note": "From Greek ostrakon — pottery shards used to vote citizens into exile.",
+     "synonyms": [
+      "exclude",
+      "shun",
+      "blackball",
+      "banish"
+     ]
+    },
+    {
+     "word": "Ameliorate",
+     "pos": "verb",
+     "options": [
+      "To make better, improve",
+      "To make worse",
+      "To measure precisely",
+      "To delay deliberately"
+     ],
+     "correct": 0,
+     "usage": "A ten-minute error-log review does more to ameliorate scores than three fresh mocks.",
+     "note": "Latin melior = better. Same root as 'meliorism'.",
+     "synonyms": [
+      "improve",
+      "alleviate",
+      "enhance",
+      "mitigate"
+     ]
+    },
+    {
+     "word": "Pragmatic",
+     "pos": "adj.",
+     "options": [
+      "Practical, focused on results",
+      "Rigidly theoretical",
+      "Boastfully proud",
+      "Naturally gifted"
+     ],
+     "correct": 0,
+     "usage": "The pragmatic move isn't the perfect plan — it's the one you'll actually follow.",
+     "note": "Greek pragma = deed, action.",
+     "synonyms": [
+      "practical",
+      "realistic",
+      "hard-headed",
+      "sensible"
+     ]
+    }
+   ],
+   "idioms": [
+    {
+     "idiom": "A blessing in disguise",
+     "scene": [
+      [
+       "🎁",
+       "floaty",
+       0
+      ],
+      [
+       "🥸",
+       "pop",
+       0.4
+      ],
+      [
+       "✨",
+       "flicker",
+       0.8
+      ]
+     ],
+     "caption": "Good news wearing a very unconvincing moustache.",
+     "options": [
+      "A misfortune that turns out beneficial",
+      "A hidden danger",
+      "An anonymous gift",
+      "A pleasant surprise ruined"
+     ],
+     "correct": 0,
+     "origin": "The phrase appears in an 18th-century hymn — hardship as heaven's hidden favour.",
+     "usage": "Missing that college was a blessing in disguise; the drop year rebuilt her fundamentals."
+    },
+    {
+     "idiom": "The ball is in your court",
+     "scene": [
+      [
+       "🎾",
+       "fall",
+       0
+      ],
+      [
+       "🏸",
+       "shake",
+       0.4
+      ],
+      [
+       "👀",
+       "pop",
+       0.8
+      ]
+     ],
+     "caption": "The ball has crossed the net. Everyone is watching you.",
+     "options": [
+      "It's now your turn to act or decide",
+      "You are winning the game",
+      "You must apologise first",
+      "The pressure is unfair"
+     ],
+     "correct": 0,
+     "origin": "Straight from tennis — once the ball lands on your side, only you can play it.",
+     "usage": "I've shared the study plan and the portal login. The ball is in your court now."
+    }
+   ]
+  }
+ ]
+}
