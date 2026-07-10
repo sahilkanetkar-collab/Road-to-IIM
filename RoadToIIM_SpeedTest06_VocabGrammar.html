@@ -257,7 +257,8 @@ async function isWhitelisted(pin,batch){
   if(WL.bypass_batches&&WL.bypass_batches.indexOf(batch)!==-1){return true;}
   var k=normPin(pin);
   if(WL.admin_pins&&WL.admin_pins.indexOf(k)!==-1){return true;}
-  return Object.prototype.hasOwnProperty.call(WL.pins,k);
+  if(Array.isArray(WL.pins)){return WL.pins.indexOf(k)!==-1;} /* live format: array of normalized digit strings */
+  return Object.prototype.hasOwnProperty.call(WL.pins,k); /* tolerate object format too */
 }
 /* prefetch (non-blocking) */
 fetch(WL_URL,{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){WL=j;}).catch(function(){WL=null;});
