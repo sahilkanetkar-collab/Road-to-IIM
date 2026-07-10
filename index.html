@@ -134,6 +134,15 @@ footer{border-top:1px solid var(--line);padding:26px clamp(18px,5vw,56px);text-a
 .sync-form input:focus{outline:none;border-color:var(--gold)}
 .sync-go{background:var(--gold);color:#191510;border:none;border-radius:8px;padding:9px 18px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif}
 .sync-go:hover{background:var(--gold2)}
+
+/* ═══ VAULT BANNER ═══ */
+.vault-banner{display:flex;align-items:center;gap:16px;margin:6px auto 30px;max-width:var(--maxw,1080px);background:linear-gradient(120deg,var(--gold-dim),rgba(201,168,76,.04));border:1px solid var(--gold);border-radius:var(--r,12px);padding:16px 20px;transition:transform .2s,box-shadow .2s;text-decoration:none;color:var(--text)}
+.vault-banner:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(0,0,0,.35)}
+.vb-key{font-size:1.6rem}
+.vb-title{font-family:'Fraunces',serif;font-size:1.05rem;color:var(--gold2)}
+.vb-sub{font-size:.82rem;color:var(--text2);margin-top:2px}
+.vb-arrow{margin-left:auto;color:var(--gold2);font-size:1.2rem}
+@media(max-width:560px){.vault-banner{margin-left:16px;margin-right:16px}}
 </style>
 </head>
 <body>
@@ -171,6 +180,17 @@ footer{border-top:1px solid var(--line);padding:26px clamp(18px,5vw,56px);text-a
     <div class="stone-base"></div>
   </div>
 </section>
+
+
+<!-- ═══ TODAY'S VAULT ═══ -->
+<a class="vault-banner" href="the_vault.html">
+  <span class="vb-key">🗝️</span>
+  <span>
+    <span class="vb-title">Today's Vault</span>
+    <span class="vb-sub" style="display:block">A fresh drop every day — 5 words, 2 idioms, one streak. About two minutes.</span>
+  </span>
+  <span class="vb-arrow">→</span>
+</a>
 
 <!-- ═══ THE ROAD ═══ -->
 <div class="road-wrap" id="road">
