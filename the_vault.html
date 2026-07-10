@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Vault · Camp Verbal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0A1220;
+  --panel:#101C30;
+  --panel2:#152438;
+  --gold:#C9A227;
+  --gold-hi:#E8C55B;
+  --crimson:#8E2A35;
+  --crimson-deep:#5E1B23;
+  --parchment:#F2EAD8;
+  --muted:#8FA0B8;
+  --good:#4EA082;
+  --bad:#C05252;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{
+  background:radial-gradient(1200px 800px at 50% -10%, #142440 0%, var(--ink) 55%);
+  color:var(--parchment);
+  font-family:'DM Sans',system-ui,sans-serif;
+  min-height:100vh;
+  overflow-x:hidden;
+}
+.screen{display:none;min-height:100vh;flex-direction:column;align-items:center;padding:24px 18px 48px}
+.screen.on{display:flex}
+.brand{font-family:'Fraunces',serif;font-size:.8rem;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);opacity:.85}
+h1,h2{font-family:'Fraunces',serif;font-weight:600}
+
+/* ---------- streak bar ---------- */
+.streakbar{display:flex;align-items:center;gap:10px;margin-top:14px;background:rgba(201,162,39,.08);border:1px solid rgba(201,162,39,.25);border-radius:999px;padding:8px 18px}
+.streakbar .flame{font-size:1.1rem}
+.streakbar b{color:var(--gold-hi);font-size:1.05rem}
+.streakbar span{color:var(--muted);font-size:.85rem}
+
+/* ---------- vault ---------- */
+#vaultScreen{justify-content:center;text-align:center;gap:8px}
+.daylabel{color:var(--muted);letter-spacing:.14em;text-transform:uppercase;font-size:.78rem;margin-top:26px}
+.daytitle{font-size:clamp(1.9rem,6vw,2.6rem);color:var(--parchment);margin:4px 0 30px}
+.daytitle em{color:var(--gold-hi);font-style:normal}
+.vault{
+  --size:min(64vw,290px);
+  width:var(--size);height:var(--size);border-radius:50%;position:relative;cursor:pointer;
+  background:radial-gradient(circle at 38% 32%, #22344f 0%, #0e1a2c 62%, #08101d 100%);
+  box-shadow:0 0 0 6px #0c1626,0 0 0 8px rgba(201,162,39,.55),0 24px 60px rgba(0,0,0,.6), inset 0 2px 14px rgba(232,197,91,.12);
+  transition:transform .25s ease;
+  border:none;
+}
+.vault:hover{transform:scale(1.02)}
+.vault:focus-visible{outline:3px solid var(--gold-hi);outline-offset:6px}
+.vault::before{ /* inner gold ring */
+  content:"";position:absolute;inset:11%;border-radius:50%;
+  border:2px solid rgba(201,162,39,.7);
+  box-shadow:inset 0 0 24px rgba(0,0,0,.55);
+}
+.rivet{position:absolute;width:9px;height:9px;border-radius:50%;background:linear-gradient(145deg,var(--gold-hi),#8a6d14);top:50%;left:50%;
+  transform:rotate(var(--a)) translateY(calc(var(--size)/-2 + 15px)) }
+.handle{
+  position:absolute;inset:31%;border-radius:50%;
+  border:5px solid var(--gold);
+  background:radial-gradient(circle at 40% 35%, #1b2c46, #0a1424 70%);
+  transition:transform 1.1s cubic-bezier(.6,.05,.2,1);
+  box-shadow:0 4px 18px rgba(0,0,0,.5);
+}
+.spoke{position:absolute;top:50%;left:50%;width:8px;height:calc(50% + 14px);background:linear-gradient(180deg,var(--gold-hi),var(--gold));border-radius:4px;transform-origin:top center;transform:translate(-50%,0) rotate(var(--a))}
+.hub{position:absolute;top:50%;left:50%;width:26%;height:26%;border-radius:50%;transform:translate(-50%,-50%);
+  background:radial-gradient(circle at 38% 32%,var(--gold-hi),#8a6d14 75%);box-shadow:0 2px 10px rgba(0,0,0,.5)}
+.vault.opening .handle{transform:rotate(540deg)}
+.vault.opening{animation:doorOpen .9s ease .95s forwards}
+@keyframes doorOpen{
+  to{transform:perspective(900px) rotateY(-84deg) translateX(-16%);opacity:0}
+}
+.hint{color:var(--muted);font-size:.9rem;margin-top:26px;animation:pulse 2.4s ease infinite}
+@keyframes pulse{0%,100%{opacity:.55}50%{opacity:1}}
+.glow{position:absolute;inset:-14%;border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle,rgba(232,197,91,.14),transparent 60%);animation:pulse 3s ease infinite}
+
+/* ---------- deck ---------- */
+#deckScreen{gap:10px}
+.deckhead{text-align:center;margin-top:8px}
+.deckhead h2{font-size:1.6rem}
+.deckhead p{color:var(--muted);font-size:.9rem;margin-top:4px}
+.progress{display:flex;gap:7px;margin:14px 0 20px}
+.pip{width:26px;height:6px;border-radius:3px;background:rgba(143,160,184,.25);transition:background .3s}
+.pip.done{background:var(--gold)}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;width:100%;max-width:520px}
+@media(min-width:560px){.grid{grid-template-columns:repeat(3,1fr)}}
+.card{
+  position:relative;border:none;border-radius:14px;padding:22px 12px 18px;cursor:pointer;text-align:center;
+  background:linear-gradient(165deg,var(--panel2),var(--panel));
+  border:1px solid rgba(201,162,39,.28);
+  color:var(--parchment);font-family:'DM Sans',sans-serif;
+  transition:transform .22s ease, box-shadow .22s ease;
+  animation:dealIn .5s ease backwards;
+}
+.card:hover{transform:translateY(-4px);box-shadow:0 12px 26px rgba(0,0,0,.45)}
+.card:focus-visible{outline:2px solid var(--gold-hi);outline-offset:3px}
+@keyframes dealIn{from{transform:translateY(26px) scale(.9);opacity:0}}
+.card .icon{font-size:1.7rem;display:block;margin-bottom:8px}
+.card .label{font-family:'Fraunces',serif;font-size:1.02rem;letter-spacing:.02em}
+.card .kind{display:block;font-size:.66rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-top:7px}
+.card.idiom{border-color:rgba(142,42,53,.85);background:linear-gradient(165deg,#2a1520,#170c12)}
+.card.idiom .kind{color:#d98a94}
+.card.played{opacity:.55;cursor:default;transform:none}
+.card .mark{position:absolute;top:8px;right:10px;font-size:1rem}
+.mark.ok{color:var(--good)}.mark.no{color:var(--bad)}
+
+/* ---------- play overlay ---------- */
+#play{
+  position:fixed;inset:0;display:none;align-items:center;justify-content:center;
+  background:rgba(6,10,18,.86);backdrop-filter:blur(6px);z-index:50;padding:16px;
+}
+#play.on{display:flex}
+.stage{
+  position:relative;width:100%;max-width:560px;border-radius:18px;overflow:hidden;
+  background:linear-gradient(180deg,var(--panel2),var(--panel));
+  border:1px solid rgba(201,162,39,.35);
+  animation:stageIn .35s ease;
+  max-height:92vh;overflow-y:auto;
+}
+@keyframes stageIn{from{transform:scale(.94);opacity:0}}
+.stage.idiomStage{border-color:rgba(142,42,53,.7)}
+.curtain{position:absolute;top:0;bottom:0;width:52%;z-index:6;
+  background:repeating-linear-gradient(90deg,var(--crimson) 0 26px,var(--crimson-deep) 26px 44px);
+  box-shadow:inset 0 -30px 50px rgba(0,0,0,.5);
+  transition:transform 1.3s cubic-bezier(.65,.02,.25,1)}
+.curtain.L{left:0;border-right:6px solid var(--gold)}
+.curtain.R{right:0;border-left:6px solid var(--gold)}
+.idiomStage.open .curtain.L{transform:translateX(-103%)}
+.idiomStage.open .curtain.R{transform:translateX(103%)}
+.pediment{height:10px;background:linear-gradient(90deg,var(--gold),var(--gold-hi),var(--gold));position:relative;z-index:7}
+.inner{padding:26px 24px 28px}
+.qkind{font-size:.68rem;letter-spacing:.24em;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
+.idiomStage .qkind{color:#d98a94}
+.bigword{font-family:'Fraunces',serif;font-size:clamp(1.6rem,5.4vw,2.2rem);margin-bottom:2px}
+.pos{color:var(--muted);font-style:italic;font-size:.85rem;margin-bottom:18px}
+
+/* literal scene */
+.scene{
+  height:120px;border-radius:12px;margin:4px 0 18px;position:relative;overflow:hidden;
+  background:radial-gradient(300px 120px at 50% 110%, #23384f, #0b1526 80%);
+  border:1px solid rgba(201,162,39,.2);
+  display:flex;align-items:center;justify-content:center;gap:14px;
+}
+.scene .floor{position:absolute;bottom:0;left:0;right:0;height:16px;background:linear-gradient(180deg,rgba(201,162,39,.25),rgba(201,162,39,.05))}
+.si{font-size:2rem;display:inline-block;animation-duration:1.6s;animation-iteration-count:infinite;animation-timing-function:ease-in-out}
+.si.fall{animation-name:fall;animation-timing-function:linear}
+@keyframes fall{0%{transform:translateY(-90px);opacity:0}15%{opacity:1}100%{transform:translateY(70px);opacity:0}}
+.si.pop{animation-name:pop}
+@keyframes pop{0%,100%{transform:scale(1)}50%{transform:scale(1.35)}}
+.si.shake{animation-name:shk}
+@keyframes shk{0%,100%{transform:rotate(0)}25%{transform:rotate(-14deg)}75%{transform:rotate(14deg)}}
+.si.flicker{animation-name:flk;animation-duration:1s}
+@keyframes flk{0%,100%{opacity:1}50%{opacity:.35}}
+.si.floaty{animation-name:flo;animation-duration:2.4s}
+@keyframes flo{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+.si.spin{animation-name:spn;animation-duration:2.6s;animation-timing-function:linear}
+@keyframes spn{to{transform:rotate(360deg)}}
+.scenecap{font-size:.78rem;color:var(--muted);text-align:center;margin:-8px 0 14px;font-style:italic}
+
+/* options */
+.opts{display:grid;gap:10px}
+.opt{
+  text-align:left;padding:13px 15px;border-radius:11px;font-size:.95rem;cursor:pointer;
+  background:rgba(255,255,255,.045);border:1px solid rgba(143,160,184,.28);color:var(--parchment);
+  font-family:'DM Sans',sans-serif;transition:border-color .15s, background .15s, transform .15s;
+}
+.opt:hover{border-color:var(--gold);transform:translateX(3px)}
+.opt:focus-visible{outline:2px solid var(--gold-hi)}
+.opt.right{background:rgba(78,160,130,.18);border-color:var(--good)}
+.opt.wrong{background:rgba(192,82,82,.16);border-color:var(--bad);animation:wob .35s ease}
+@keyframes wob{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.opt:disabled{cursor:default}
+
+/* reveal */
+.reveal{display:none;margin-top:18px;border-top:1px dashed rgba(201,162,39,.4);padding-top:16px;animation:rise .45s ease}
+.reveal.on{display:block}
+@keyframes rise{from{transform:translateY(12px);opacity:0}}
+.reveal .verdict{font-family:'Fraunces',serif;font-size:1.15rem;margin-bottom:8px}
+.verdict.g{color:var(--good)}.verdict.b{color:var(--bad)}
+.reveal p{font-size:.92rem;line-height:1.55;color:#D8DEE9;margin-bottom:9px}
+.reveal p b{color:var(--gold-hi)}
+.tag{display:inline-block;font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);border:1px solid rgba(201,162,39,.4);border-radius:999px;padding:3px 10px;margin-bottom:8px}
+.nextbtn{
+  margin-top:16px;width:100%;padding:13px;border-radius:11px;border:none;cursor:pointer;
+  background:linear-gradient(120deg,var(--gold),var(--gold-hi));color:#231a04;font-weight:700;font-size:.95rem;font-family:'DM Sans',sans-serif;
+}
+.nextbtn:hover{filter:brightness(1.07)}
+
+/* ---------- done ---------- */
+#doneScreen{justify-content:center;text-align:center}
+.scorering{
+  width:150px;height:150px;border-radius:50%;margin:26px auto 10px;display:flex;align-items:center;justify-content:center;flex-direction:column;
+  background:conic-gradient(var(--gold) calc(var(--p)*1%), rgba(143,160,184,.18) 0);
+  animation:pop .8s ease;
+}
+.scorering .inner2{width:122px;height:122px;border-radius:50%;background:var(--panel);display:flex;flex-direction:column;align-items:center;justify-content:center}
+.scorering b{font-family:'Fraunces',serif;font-size:2rem;color:var(--gold-hi)}
+.scorering span{font-size:.72rem;color:var(--muted);letter-spacing:.12em;text-transform:uppercase}
+.chain{font-size:1.6rem;margin:12px 0 4px;letter-spacing:4px}
+.donemsg{color:var(--muted);max-width:330px;margin:8px auto 22px;font-size:.92rem;line-height:1.5}
+.confetti{position:fixed;top:-14px;font-size:1rem;z-index:99;animation:cfall linear forwards;pointer-events:none}
+@keyframes cfall{to{transform:translateY(105vh) rotate(720deg)}}
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body>
+
+<!-- VAULT -->
+<section id="vaultScreen" class="screen on">
+  <div class="brand">Camp Verbal</div>
+  <div class="streakbar"><span class="flame">🔥</span><b id="streakN">0</b><span>day streak</span></div>
+  <div class="daylabel" id="dateLine"></div>
+  <h1 class="daytitle">The <em>Vault</em></h1>
+  <button class="vault" id="vaultBtn" aria-label="Unlock today's vault">
+    <div class="glow"></div>
+    <span class="rivet" style="--a:0deg"></span><span class="rivet" style="--a:45deg"></span>
+    <span class="rivet" style="--a:90deg"></span><span class="rivet" style="--a:135deg"></span>
+    <span class="rivet" style="--a:180deg"></span><span class="rivet" style="--a:225deg"></span>
+    <span class="rivet" style="--a:270deg"></span><span class="rivet" style="--a:315deg"></span>
+    <div class="handle">
+      <span class="spoke" style="--a:0deg"></span><span class="spoke" style="--a:90deg"></span>
+      <span class="spoke" style="--a:180deg"></span><span class="spoke" style="--a:270deg"></span>
+      <div class="hub"></div>
+    </div>
+  </button>
+  <div class="hint">Tap the vault to unlock today's drop — 5 words · 2 idioms</div>
+</section>
+
+<!-- DECK -->
+<section id="deckScreen" class="screen">
+  <div class="brand">Camp Verbal · The Vault</div>
+  <div class="deckhead">
+    <h2 id="deckTitle">Today's Drop</h2>
+    <p>Clear all seven cards to bank your streak.</p>
+  </div>
+  <div class="progress" id="pips"></div>
+  <div class="grid" id="grid"></div>
+</section>
+
+<!-- PLAY OVERLAY -->
+<div id="play">
+  <div class="stage" id="stage"></div>
+</div>
+
+<!-- DONE -->
+<section id="doneScreen" class="screen">
+  <div class="brand">Camp Verbal · The Vault</div>
+  <h2 style="margin-top:34px">Vault Cleared</h2>
+  <div class="scorering" id="ring"><div class="inner2"><b id="scoreTxt">0/7</b><span>today</span></div></div>
+  <div class="chain" id="chainTxt"></div>
+  <p class="donemsg" id="doneMsg"></p>
+  <button class="nextbtn" style="max-width:280px" onclick="location.reload()">Back to the vault</button>
+</section>
+
+<script>
+/* ===== The Vault · Camp Verbal — engine (content lives in vault_content.json) ===== */
+const store={m:{},get(k){try{return localStorage.getItem(k)}catch(e){return this.m[k]??null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){this.m[k]=v}}};
+const $=id=>document.getElementById(id);
+const todayStr=new Date().toDateString();
+let deck=[],results=[],current=-1,dayIdx=0,ready=false;
+
+$("streakN").textContent=store.get("cv_vault_streak")||0;
+$("dateLine").textContent="Loading today's drop…";
+
+fetch("vault_content.json")
+ .then(r=>{if(!r.ok)throw new Error(r.status);return r.json()})
+ .then(data=>{
+   const days=data.days;
+   const n=new Date(),s=new Date(n.getFullYear(),0,0);
+   dayIdx=Math.floor((n-s)/864e5)%days.length;
+   const d=days[dayIdx];
+   const w=d.words.map(x=>({t:"w",...x})),i=d.idioms.map(x=>({t:"i",...x}));
+   deck=[w[0],w[1],w[2],i[0],w[3],w[4],i[1]];
+   results=Array(deck.length).fill(null);
+   $("dateLine").textContent=new Date().toLocaleDateString("en-IN",{weekday:"long",day:"numeric",month:"long"})+" · Drop "+(dayIdx+1)+" of "+days.length;
+   ready=true;
+ })
+ .catch(e=>{
+   $("dateLine").textContent="Couldn't load today's drop.";
+   document.querySelector(".hint").textContent="Check your connection and refresh. (The vault needs vault_content.json — it loads only when hosted, not from a double-clicked file.)";
+ });
+
+$("vaultBtn").addEventListener("click",function(){
+  if(!ready||this.classList.contains("opening"))return;
+  this.classList.add("opening");
+  setTimeout(()=>{show("deckScreen");renderDeck()},1900);
+});
+
+function show(id){document.querySelectorAll(".screen").forEach(s=>s.classList.remove("on"));$(id).classList.add("on");window.scrollTo(0,0)}
+
+function title(c){return c.t==="i"?c.idiom:c.word}
+
+function renderDeck(){
+  const g=$("grid");g.innerHTML="";
+  $("pips").innerHTML=deck.map((_,i)=>`<div class="pip ${results[i]!==null?"done":""}"></div>`).join("");
+  deck.forEach((c,i)=>{
+    const b=document.createElement("button");
+    b.className="card"+(c.t==="i"?" idiom":"")+(results[i]!==null?" played":"");
+    b.style.animationDelay=(i*0.07)+"s";
+    const num=deck.slice(0,i+1).filter(x=>x.t===c.t).length;
+    b.innerHTML=`<span class="icon">${c.t==="i"?"🎭":"🗝️"}</span>
+      <span class="label">${results[i]!==null?title(c):(c.t==="i"?"Idiom "+num:"Word "+num)}</span>
+      <span class="kind">${c.t==="i"?"Theatre":"Vocabulary"}</span>
+      ${results[i]!==null?`<span class="mark ${results[i]?"ok":"no"}">${results[i]?"✓":"✗"}</span>`:""}`;
+    if(results[i]===null)b.addEventListener("click",()=>openCard(i));
+    g.appendChild(b);
+  });
+}
+
+function openCard(i){
+  current=i;const c=deck[i],st=$("stage");
+  const opts=c.options.map((o,j)=>`<button class="opt" onclick="answer(this,${j})">${String.fromCharCode(65+j)}. ${o}</button>`).join("");
+  if(c.t==="w"){
+    st.className="stage";
+    st.innerHTML=`<div class="pediment"></div><div class="inner">
+      <div class="qkind">🗝️ From the vault</div>
+      <div class="bigword">${c.word}</div><div class="pos">${c.pos}</div>
+      <div class="opts">${opts}</div>
+      <div class="reveal" id="rev"></div></div>`;
+  }else{
+    st.className="stage idiomStage";
+    const items=c.scene.map(s=>`<span class="si ${s[1]}" style="animation-delay:${s[2]}s">${s[0]}</span>`).join("");
+    st.innerHTML=`<div class="pediment"></div>
+      <div class="curtain L"></div><div class="curtain R"></div>
+      <div class="inner">
+      <div class="qkind">🎭 Idiom Theatre</div>
+      <div class="bigword">“${c.idiom}”</div>
+      <div class="scene"><div class="floor"></div>${items}</div>
+      <div class="scenecap">${c.caption}</div>
+      <div class="opts">${opts}</div>
+      <div class="reveal" id="rev"></div></div>`;
+    setTimeout(()=>st.classList.add("open"),350);
+  }
+  $("play").classList.add("on");
+}
+
+window.answer=function(btn,j){
+  const c=deck[current],ok=j===c.correct;
+  document.querySelectorAll(".opt").forEach((o,k)=>{o.disabled=true;if(k===c.correct)o.classList.add("right")});
+  if(!ok)btn.classList.add("wrong");
+  results[current]=ok;
+  const r=$("rev");
+  r.innerHTML=(c.t==="w")
+    ?`<div class="verdict ${ok?"g":"b"}">${ok?"Cracked it.":"Not quite — locked in now."}</div>
+      <span class="tag">Meaning</span><p>${c.options[c.correct]}</p>
+      <span class="tag">Synonyms</span><p>${c.synonyms.join(" · ")}</p>
+      <span class="tag">In use</span><p>${c.usage}</p>
+      <span class="tag">Root note</span><p>${c.note}</p>
+      <button class="nextbtn" onclick="closeCard()">Return to the vault</button>`
+    :`<div class="verdict ${ok?"g":"b"}">${ok?"Standing ovation. 👏":"The curtain falls — but now you know."}</div>
+      <span class="tag">Figurative meaning</span><p>${c.options[c.correct]}</p>
+      <span class="tag">Origin</span><p>${c.origin}</p>
+      <span class="tag">In use</span><p>${c.usage}</p>
+      <button class="nextbtn" onclick="closeCard()">Return to the vault</button>`;
+  r.classList.add("on");
+};
+
+window.closeCard=function(){
+  $("play").classList.remove("on");
+  if(results.every(r=>r!==null)){finishDay()}else{renderDeck();show("deckScreen")}
+};
+
+function finishDay(){
+  const score=results.filter(Boolean).length,total=deck.length;
+  let streak=parseInt(store.get("cv_vault_streak")||"0",10);
+  const last=store.get("cv_vault_last");
+  if(last!==todayStr){
+    const y=new Date(Date.now()-864e5).toDateString();
+    streak=(last===y)?streak+1:1;
+    store.set("cv_vault_streak",streak);store.set("cv_vault_last",todayStr);
+  }
+  $("scoreTxt").textContent=score+"/"+total;
+  $("ring").style.setProperty("--p",Math.round(score/total*100));
+  $("chainTxt").textContent="🔥".repeat(Math.min(streak,10))+(streak>10?" +"+(streak-10):"");
+  $("doneMsg").textContent=score===total
+    ?`Perfect clear. ${streak}-day streak banked. The vault resets at midnight — come back for the next drop.`
+    :`${score} of ${total} banked, streak at ${streak}. Revisit the missed cards mentally — the vault resets at midnight.`;
+  show("doneScreen");
+  confetti(score===total?60:25);
+}
+
+function confetti(n){
+  const glyphs=["✦","●","▮","✧"],cols=["#C9A227","#E8C55B","#F2EAD8","#8E2A35"];
+  for(let i=0;i<n;i++){
+    const d=document.createElement("div");d.className="confetti";
+    d.textContent=glyphs[i%4];d.style.color=cols[i%4];
+    d.style.left=Math.random()*100+"vw";
+    d.style.animationDuration=(2.2+Math.random()*2.5)+"s";
+    d.style.animationDelay=(Math.random()*0.9)+"s";
+    d.style.fontSize=(0.6+Math.random()*0.9)+"rem";
+    document.body.appendChild(d);setTimeout(()=>d.remove(),6000);
+  }
+}
+
+</script>
+</body>
+</html>
