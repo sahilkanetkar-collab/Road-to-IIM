@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Road to IIM — Your Sky</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=DM+Sans:wght@400;500;700&family=Grenze+Gotisch:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --sky:#0c1022; --sky-deep:#070a18;
+  --ivory:#f2eede; --dim:#8b90a8;
+  --gold:#d9b96a; --gold-deep:#b8892e;
+  --done:#6fc39a; --node:#1d2340;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  background:radial-gradient(ellipse at 50% -10%, #16204a 0%, var(--sky) 45%, var(--sky-deep) 100%);
+  color:var(--ivory); font-family:'DM Sans',sans-serif; min-height:100vh; overflow-x:hidden;
+}
+canvas#stars{position:fixed;inset:0;width:100vw;height:100vh;z-index:0;pointer-events:none;}
+.watermark{
+  position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+  font-family:'Grenze Gotisch',serif;font-weight:700;white-space:nowrap;
+  font-size:clamp(4.2rem,14vw,12rem); color:transparent;
+  -webkit-text-stroke:1.2px rgba(217,185,106,.16);
+  text-shadow:0 0 45px rgba(217,185,106,.18), 0 0 100px rgba(217,185,106,.09);
+  z-index:0;pointer-events:none;user-select:none;
+  animation:breathe 7s ease-in-out infinite;
+}
+@keyframes breathe{0%,100%{opacity:.75;}50%{opacity:1;text-shadow:0 0 55px rgba(217,185,106,.24),0 0 110px rgba(217,185,106,.12);}}
+
+/* ── login overlay ─────────────────────── */
+.login-veil{
+  position:fixed;inset:0;z-index:40;
+  background:rgba(7,10,24,.82);backdrop-filter:blur(6px);
+  display:flex;align-items:center;justify-content:center;padding:20px;
+}
+.login-card{
+  background:linear-gradient(160deg,#141a33,#0e1226);
+  border:1px solid rgba(217,185,106,.3);border-radius:16px;
+  padding:34px 30px;max-width:380px;width:100%;
+  box-shadow:0 0 60px rgba(217,185,106,.12);
+}
+.login-card h1{font-family:'Fraunces',serif;font-size:1.4rem;margin-bottom:4px;}
+.login-card h1 em{font-style:normal;color:var(--gold);}
+.login-card p{font-size:.82rem;color:var(--dim);margin-bottom:20px;}
+.login-card label{display:block;font-size:.72rem;font-weight:700;letter-spacing:.05em;color:var(--dim);margin:14px 0 6px;}
+.login-card input{
+  width:100%;padding:11px 13px;border-radius:9px;
+  border:1px solid rgba(242,238,222,.2);background:rgba(242,238,222,.05);
+  color:var(--ivory);font-family:'DM Sans',sans-serif;font-size:.95rem;
+}
+.login-card input:focus{outline:2px solid var(--gold);outline-offset:1px;border-color:transparent;}
+.login-card button{
+  width:100%;margin-top:22px;padding:12px;border:none;border-radius:9px;
+  background:linear-gradient(135deg,var(--gold),var(--gold-deep));color:var(--sky-deep);
+  font-family:'DM Sans',sans-serif;font-weight:700;font-size:.95rem;cursor:pointer;
+  transition:transform .15s ease, box-shadow .15s ease;
+}
+.login-card button:hover{transform:translateY(-1px);box-shadow:0 0 22px rgba(217,185,106,.4);}
+.login-err{color:#e08a8a;font-size:.78rem;margin-top:12px;display:none;}
+
+/* ── header ─────────────────────────────── */
+header{
+  position:relative;z-index:2;
+  padding:30px clamp(20px,6vw,72px) 6px;
+  display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+}
+.brand{font-family:'Fraunces',serif;font-weight:700;font-size:clamp(1.5rem,3vw,2.1rem);}
+.brand em{font-style:normal;color:var(--gold);text-shadow:0 0 14px rgba(217,185,106,.5);}
+.right-cluster{display:flex;align-items:center;gap:18px;}
+.northstar{
+  display:flex;align-items:center;gap:8px;
+  font-size:.8rem;color:var(--dim);
+}
+.northstar .flame{
+  width:30px;height:30px;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%, #ffe9b0, var(--gold-deep) 75%);
+  box-shadow:0 0 14px rgba(217,185,106,.55);
+  display:flex;align-items:center;justify-content:center;
+  font-weight:700;color:var(--sky-deep);font-size:.8rem;
+  animation:starpulse 3s ease-in-out infinite;
+}
+.northstar .flame.dim{background:radial-gradient(circle at 35% 30%, #3a4062, #232946 75%);color:var(--dim);box-shadow:none;animation:none;}
+@keyframes starpulse{0%,100%{box-shadow:0 0 12px rgba(217,185,106,.45);}50%{box-shadow:0 0 22px rgba(217,185,106,.8);}}
+.student{font-size:.82rem;color:var(--dim);}
+.student b{color:var(--ivory);}
+.student .signout{color:var(--gold);cursor:pointer;text-decoration:underline;font-size:.72rem;margin-left:8px;}
+.tagline{
+  position:relative;z-index:2;
+  padding:0 clamp(20px,6vw,72px) 26px;
+  font-family:'Fraunces',serif;font-size:clamp(.95rem,2vw,1.2rem);color:var(--dim);
+}
+.tagline .stroke{color:var(--gold);}
+
+/* ── canopy ─────────────────────────────── */
+.canopy{position:relative;z-index:2;padding-bottom:80px;}
+svg.wires{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible;z-index:1;}
+svg.wires path{
+  fill:none;stroke:rgba(217,185,106,.4);stroke-width:1.4;stroke-linecap:round;
+  stroke-dasharray:420;stroke-dashoffset:420;animation:draw .5s ease forwards;
+  filter:drop-shadow(0 0 3px rgba(217,185,106,.35));
+}
+svg.wires path.gold{stroke:var(--gold);filter:drop-shadow(0 0 5px rgba(217,185,106,.6));}
+@keyframes draw{to{stroke-dashoffset:0;}}
+.hubs{
+  display:flex;justify-content:center;gap:clamp(10px,3.4vw,54px);
+  padding:8px clamp(10px,4vw,60px) 34px;
+  position:relative;z-index:2;
+}
+.hub-wrap{
+  display:flex;flex-direction:column;align-items:center;gap:9px;cursor:pointer;
+  user-select:none;-webkit-tap-highlight-color:transparent;background:none;border:none;
+  font-family:'DM Sans',sans-serif;color:var(--ivory);
+}
+.hub{
+  width:clamp(48px,6.4vw,80px);height:clamp(48px,6.4vw,80px);border-radius:50%;
+  background:radial-gradient(circle at 32% 28%, #2b3358, var(--node) 70%);
+  border:1.5px solid rgba(217,185,106,.35);
+  color:var(--ivory);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Fraunces',serif;font-weight:600;font-size:clamp(.9rem,1.5vw,1.3rem);
+  box-shadow:0 0 18px rgba(217,185,106,.12), inset 0 0 12px rgba(0,0,0,.4);
+  transition:transform .25s ease, box-shadow .25s ease, background .25s ease;
+  animation:floaty 5.2s ease-in-out infinite;
+  animation-delay:var(--phase);
+  position:relative;
+}
+.hub .prog{
+  position:absolute;bottom:-4px;right:-4px;
+  min-width:20px;height:20px;padding:0 4px;border-radius:10px;
+  background:var(--sky-deep);border:1px solid rgba(217,185,106,.5);
+  color:var(--gold);font-size:.58rem;font-weight:700;
+  display:flex;align-items:center;justify-content:center;font-family:'DM Sans',sans-serif;
+}
+@keyframes floaty{0%,100%{transform:translateY(0);}50%{transform:translateY(-7px);}}
+.hub-wrap:hover .hub{transform:translateY(-4px) scale(1.09);box-shadow:0 0 26px rgba(217,185,106,.35), inset 0 0 12px rgba(0,0,0,.4);animation-play-state:paused;}
+.hub-wrap:focus-visible{outline:none;}
+.hub-wrap:focus-visible .hub{outline:2px solid var(--gold);outline-offset:3px;}
+.hub-wrap.open .hub{
+  background:radial-gradient(circle at 32% 28%, #f0d896, var(--gold-deep) 75%);
+  color:var(--sky-deep);border-color:var(--gold);
+  box-shadow:0 0 30px rgba(217,185,106,.55), 0 0 70px rgba(217,185,106,.2);
+  animation:floaty 5.2s ease-in-out infinite, pulse 2.6s ease-in-out infinite;
+  animation-delay:var(--phase), 0s;
+}
+@keyframes pulse{0%,100%{box-shadow:0 0 30px rgba(217,185,106,.55),0 0 70px rgba(217,185,106,.2);}50%{box-shadow:0 0 42px rgba(217,185,106,.75),0 0 95px rgba(217,185,106,.3);}}
+.hub-wrap.complete .hub{border-color:var(--done);box-shadow:0 0 22px rgba(111,195,154,.4), inset 0 0 12px rgba(0,0,0,.4);}
+.hub-name{font-size:clamp(.6rem,1.15vw,.78rem);font-weight:700;text-align:center;max-width:100px;line-height:1.25;}
+.hub-count{font-size:.62rem;color:var(--gold);font-weight:700;}
+
+/* ── leaves ─────────────────────────────── */
+.panel{position:relative;z-index:2;max-width:880px;margin:0 auto;padding:26px clamp(20px,5vw,50px) 0;}
+.panel-head{font-family:'Fraunces',serif;font-size:1.05rem;color:var(--dim);padding-bottom:16px;}
+.panel-head b{color:var(--ivory);}
+.leaves{display:flex;flex-wrap:wrap;justify-content:center;gap:14px 20px;}
+.leaf{
+  display:flex;align-items:center;gap:10px;
+  border:none;background:none;cursor:pointer;font-family:'DM Sans',sans-serif;
+  padding:6px 12px 6px 6px;border-radius:999px;
+  transition:background .15s ease;
+  opacity:0;transform:translateY(-8px);
+  animation:drop .3s ease forwards;
+  animation-delay:calc(var(--i) * 45ms);
+}
+@keyframes drop{to{opacity:1;transform:none;}}
+.leaf:hover,.leaf:focus-visible{background:rgba(242,238,222,.07);}
+.leaf:focus-visible{outline:2px solid var(--gold);outline-offset:2px;}
+.dot{
+  width:26px;height:26px;flex:0 0 26px;border-radius:50%;
+  border:2px solid var(--dim);background:transparent;position:relative;
+  transition:box-shadow .2s ease;
+}
+.leaf:hover .dot{box-shadow:0 0 10px rgba(217,185,106,.4);}
+.leaf.done .dot{background:var(--done);border-color:var(--done);box-shadow:0 0 10px rgba(111,195,154,.5);}
+.leaf.done .dot::after{content:'✓';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--sky-deep);font-size:.7rem;font-weight:700;}
+.leaf.new .dot{border-color:var(--gold);box-shadow:0 0 12px rgba(217,185,106,.55);animation:twinkle 2.2s ease-in-out infinite;}
+@keyframes twinkle{0%,100%{box-shadow:0 0 8px rgba(217,185,106,.4);}50%{box-shadow:0 0 16px rgba(217,185,106,.8);}}
+.leaf .lbl{font-size:.86rem;font-weight:500;color:var(--ivory);text-align:left;}
+.leaf .sub{display:block;font-size:.68rem;color:var(--dim);font-weight:400;}
+.leaf .score{color:var(--done);font-weight:700;}
+.badge-new{font-size:.6rem;font-weight:700;letter-spacing:.08em;color:var(--gold);border:1px solid rgba(217,185,106,.5);border-radius:4px;padding:1px 5px;}
+
+footer{position:relative;z-index:2;padding:20px clamp(20px,6vw,72px) 40px;font-size:.72rem;color:var(--dim);opacity:.8;text-align:center;}
+
+@media (max-width:560px){.hub-name{max-width:58px;}}
+@media (prefers-reduced-motion:reduce){
+  .hub,.hub-wrap.open .hub,.watermark,.leaf,.leaf.new .dot,.northstar .flame{animation:none !important;}
+  .leaf{opacity:1;transform:none;}
+  svg.wires path{animation:none;stroke-dashoffset:0;}
+}
+</style>
+</head>
+<body>
+
+<canvas id="stars"></canvas>
+<div class="watermark" aria-hidden="true">Road to IIM</div>
+
+<!-- login -->
+<div class="login-veil" id="loginVeil">
+  <div class="login-card">
+    <h1>Road to <em>IIM</em></h1>
+    <p>Enter your PIN once — your sky remembers you on this device.</p>
+    <label for="pinInput">IMS PIN</label>
+    <input id="pinInput" type="text" inputmode="text" autocomplete="off" placeholder="STU0001234567">
+    <button id="enterBtn">Enter the sky</button>
+    <div class="login-err" id="loginErr"></div>
+  </div>
+</div>
+
+<header>
+  <div class="brand">Road to <em>IIM</em></div>
+  <div class="right-cluster">
+    <div class="northstar" id="northstar" title="Daily streak" style="display:none">
+      <div class="flame dim" id="streakFlame">0</div>
+      <span id="streakLabel">day streak</span>
+    </div>
+    <div class="student" id="studentBox" style="display:none">
+      <b id="studentName"></b> · <span id="studentBatch"></span>
+      <span class="signout" id="signOut">switch</span>
+    </div>
+  </div>
+</header>
+<div class="tagline">Every test is a star. <span class="stroke">Light them up, one by one.</span></div>
+
+<div class="canopy" id="canopy">
+  <svg class="wires" id="wires"></svg>
+  <div class="hubs" id="hubs"></div>
+  <div class="panel">
+    <div class="panel-head" id="panelHead"></div>
+    <div class="leaves" id="leaves"></div>
+  </div>
+</div>
+
+<footer id="foot">Scores refresh automatically. A completed constellation glows green.</footer>
+
+<script>
+/* ═══ CONFIG ═══ */
+const EXEC_URL = "https://script.google.com/macros/s/AKfycbx5Ojm_zp4LfsMeelx5e06KNjVH1wfsXdV0keS4407m4FO1HU4EpVb7GKj-ibAsxnspeA/exec";
+const PORTAL_BASE = ""; // same directory as the test files
+
+/* ═══ MANIFEST ═══
+   sheetName matches the exact testName written to All Responses.
+   matchNum lets "Road to IIM Test 19" and "Road to IIM Paper 19" both count. */
+const MANIFEST = [
+  { id:"standard", glyph:"St", name:"Standard Tests", desc:"Full 30-minute mixed VA papers · +4 / −1",
+    tests:[
+      {t:"Test 9",  url:"RoadToIIM_Test9_OnlineTest.html",  matchNum:9},
+      {t:"Test 11", url:"RoadToIIM_Test11_OnlineTest.html", matchNum:11},
+      {t:"Test 12", url:"RoadToIIM_Test12_OnlineTest.html", matchNum:12},
+      {t:"Test 13", url:"RoadToIIM_Test13_OnlineTest.html", matchNum:13},
+      {t:"Test 14", url:"RoadToIIM_Test14_OnlineTest.html", matchNum:14},
+      {t:"Test 15", url:"RoadToIIM_Test15_OnlineTest.html", matchNum:15},
+      {t:"Test 16", url:"RoadToIIM_Test16_OnlineTest.html", matchNum:16},
+      {t:"Test 17", url:"RoadToIIM_Test17_OnlineTest.html", matchNum:17},
+      {t:"Test 18", url:"RoadToIIM_Test18_OnlineTest.html", matchNum:18},
+      {t:"Test 19", url:"RoadToIIM_Test19_OnlineTest.html", matchNum:19},
+      {t:"Test 20", url:"RoadToIIM_Test20_OnlineTest.html", matchNum:20},
+      {t:"Test 21", url:"RoadToIIM_Test21_OnlineTest.html", matchNum:21},
+      {t:"Test 22", url:"RoadToIIM_Test22_OnlineTest.html", matchNum:22},
+      {t:"Test 23", url:"RoadToIIM_Test23_OnlineTest.html", matchNum:23},
+      {t:"Test 24", url:"RoadToIIM_Test24_OnlineTest.html", matchNum:24, isNew:true},
+    ]},
+  { id:"speed", glyph:"Sp", name:"Speed Tests", desc:"Short bursts against the clock",
+    tests:[
+      {t:"Speed 01", url:"RoadToIIM_SpeedTest01_VocabGrammar.html", sheetName:"Speed Test 01"},
+      {t:"Speed 02", url:"RoadToIIM_SpeedTest02_VocabGrammar.html", sheetName:"Speed Test 02"},
+      {t:"Speed 03", url:"RoadToIIM_SpeedTest03_VocabGrammar.html", sheetName:"Speed Test 03"},
+      {t:"Speed 04", url:"RoadToIIM_SpeedTest04_VocabGrammar.html", sheetName:"Speed Test 04"},
+      {t:"Speed 05", url:"RoadToIIM_SpeedTest05_VocabGrammar.html", sheetName:"Speed Test 05"},
+      {t:"Speed 06", url:"RoadToIIM_SpeedTest06_VocabGrammar.html", sheetName:"Speed Test 06", isNew:true},
+    ]},
+  { id:"rc", glyph:"RC", name:"RC Series & Drills", desc:"Passages, alerts, skeletons",
+    tests:[
+      {t:"RC Series 01", url:"RoadToIIM_RC_Series01.html", sheetName:"RC Series 01"},
+      {t:"RC Series 02", url:"RoadToIIM_RC_Series02.html", sheetName:"RC Series 02"},
+      {t:"RC Series 03", url:"RoadToIIM_RC_Series03.html", sheetName:"RC Series 03"},
+      {t:"RC Drill 04",  url:"RoadToIIM_RC_Series04_RCDrill.html", sheetName:"RC Drill 04"},
+      {t:"RC Drill 05",  url:"RoadToIIM_RC_Series05_RCDrill.html", sheetName:"RC Drill 05", isNew:true},
+    ]},
+  { id:"concept", glyph:"Co", name:"Concept Tests", desc:"Straight from class decks",
+    tests:[
+      {t:"Word Web I",    url:"RoadToIIM_ConceptTest01_WordWebI.html",     sheetName:"Concept Test 01"},
+      {t:"Word Web II",   url:"RoadToIIM_ConceptTest02_WordWebII.html",    sheetName:"Concept Test 02"},
+      {t:"The Impostors", url:"RoadToIIM_ConceptTest03_TheImpostors.html", sheetName:"Concept Test 03"},
+      {t:"Cumulative",    url:"RoadToIIM_ConceptTest04_Cumulative.html",   sheetName:"Concept Test 04", isNew:true},
+    ]},
+  { id:"rapid", glyph:"RF", name:"Rapid Fire", desc:"No feedback till the end. Pure nerve.",
+    tests:[
+      {t:"Rapid Fire 01", url:"", sheetName:"Rapid Fire Test 01"},
+    ]},
+  { id:"vault", glyph:"Va", name:"The Vault", desc:"Your words and your mistakes, banked daily",
+    tests:[
+      {t:"The Vault",    url:"the_vault.html",   sheetName:"__vault__"},
+      {t:"Mistake Bank", url:"mistake_bank.html", sheetName:"__mistakes__"},
+    ]},
+  { id:"skills", glyph:"Sk", name:"Skill Building", desc:"Daily habits that compound",
+    tests:[
+      {t:"IWP", url:"iwp_week1_session.html", sheetName:"__iwp__"},
+      {t:"RLS", url:"RLS_Week1.html",         sheetName:"__rls__"},
+      {t:"BYOT",url:"byot.html",              sheetName:"__byot__"},
+      {t:"Aeon Condenser", url:"aeon_condenser.html", sheetName:"__aeon__"},
+    ]},
+];
+
+/* ═══ STARFIELD ═══ */
+const cv=document.getElementById('stars'),cx=cv.getContext('2d');
+let stars=[];const REDUCED=matchMedia('(prefers-reduced-motion: reduce)').matches;
+function seedStars(){const n=Math.min(160,Math.floor(innerWidth*innerHeight/9000));
+  stars=Array.from({length:n},()=>({x:Math.random()*innerWidth,y:Math.random()*innerHeight,r:Math.random()*1.3+.3,p:Math.random()*Math.PI*2,v:.4+Math.random()*.9,gold:Math.random()<.12}));}
+function sizeCanvas(){cv.width=innerWidth*devicePixelRatio;cv.height=innerHeight*devicePixelRatio;cx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);seedStars();}
+sizeCanvas();addEventListener('resize',sizeCanvas);
+function paintStars(t){cx.clearRect(0,0,innerWidth,innerHeight);
+  for(const s of stars){const tw=REDUCED?.8:.5+.5*Math.sin(t/900*s.v+s.p);cx.globalAlpha=.25+.6*tw;cx.fillStyle=s.gold?'#d9b96a':'#e8ecff';cx.beginPath();cx.arc(s.x,s.y,s.r,0,7);cx.fill();}
+  cx.globalAlpha=1;if(!REDUCED)requestAnimationFrame(paintStars);}
+requestAnimationFrame(paintStars);
+
+/* ═══ PROFILE ═══ */
+const PROFILE_TTL = 6*60*60*1000;
+function pkey(pin){return 'riim_profile_'+pin;}
+async function fetchProfile(pin){
+  const res = await fetch(EXEC_URL+'?mode=profile&pin='+encodeURIComponent(pin));
+  const data = await res.json();
+  if(data.status!=='success') throw new Error(data.message||'profile error');
+  data._fetchedAt=Date.now();
+  try{localStorage.setItem(pkey(pin),JSON.stringify(data));}catch(e){}
+  return data;
+}
+async function getProfile(pin){
+  let cached=null;
+  try{cached=JSON.parse(localStorage.getItem(pkey(pin)));}catch(e){}
+  if(cached && Date.now()-cached._fetchedAt<PROFILE_TTL){
+    fetchProfile(pin).then(fresh=>{applyProfile(fresh);}).catch(()=>{});
+    return cached;
+  }
+  try{return await fetchProfile(pin);}catch(e){return cached;}
+}
+
+/* match a manifest test to sheet testNames */
+function isDone(test, profile){
+  if(!profile||!profile.tests) return {done:false};
+  const names=Object.keys(profile.tests);
+  // 1) exact sheetName
+  if(test.sheetName && profile.tests[test.sheetName]) return {done:true, best:profile.tests[test.sheetName].best};
+  // 2) number match against "Road to IIM Test N" / "Road to IIM Paper N"
+  if(test.matchNum!=null){
+    const re=new RegExp('^Road to IIM (Test|Paper)\\s*0*'+test.matchNum+'$','i');
+    for(const n of names){ if(re.test(n.trim())) return {done:true, best:profile.tests[n].best}; }
+  }
+  // 3) loose contains (e.g. sheetName "Speed Test 01" vs "Road to IIM Speed Test 01")
+  if(test.sheetName && !test.sheetName.startsWith('__')){
+    for(const n of names){ if(n.toLowerCase().includes(test.sheetName.toLowerCase())) return {done:true, best:profile.tests[n].best}; }
+  }
+  return {done:false};
+}
+
+/* ═══ RENDER ═══ */
+const hubsEl=document.getElementById('hubs'),leavesEl=document.getElementById('leaves'),
+      panelHead=document.getElementById('panelHead'),wires=document.getElementById('wires'),
+      canopy=document.getElementById('canopy');
+let openId=MANIFEST[0].id, PROFILE=null, PIN=null;
+
+function buildHubs(){
+  hubsEl.innerHTML='';
+  MANIFEST.forEach((fam,idx)=>{
+    const doneCount=fam.tests.filter(t=>isDone(t,PROFILE).done).length;
+    const b=document.createElement('button');
+    b.className='hub-wrap'+(doneCount===fam.tests.length&&doneCount>0?' complete':'');
+    b.dataset.id=fam.id;b.setAttribute('aria-label',fam.name);
+    b.innerHTML=`<div class="hub" style="--phase:${-(idx*0.9)}s">${fam.glyph}<span class="prog">${doneCount}/${fam.tests.length}</span></div>
+      <div class="hub-name">${fam.name}</div>`;
+    b.addEventListener('click',()=>{openId=fam.id;render();});
+    hubsEl.appendChild(b);
+  });
+}
+
+function render(){
+  document.querySelectorAll('.hub-wrap').forEach(h=>h.classList.toggle('open',h.dataset.id===openId));
+  const fam=MANIFEST.find(f=>f.id===openId);
+  panelHead.innerHTML=`<b>${fam.name}</b> — ${fam.desc}`;
+  leavesEl.innerHTML='';
+  fam.tests.forEach((test,i)=>{
+    const st=isDone(test,PROFILE);
+    const l=document.createElement('button');
+    l.className='leaf'+(st.done?' done':'')+(test.isNew&&!st.done?' new':'');
+    l.style.setProperty('--i',i);
+    const scoreBit = st.done && typeof st.best==='number' ? ` · <span class="score">${st.best}</span>` : '';
+    l.innerHTML=`<span class="dot"></span><span class="lbl">${test.t}${test.isNew&&!st.done?' <span class="badge-new">NEW</span>':''}<span class="sub">${st.done?'Best'+scoreBit:'Not yet lit'}</span></span>`;
+    l.addEventListener('click',()=>{ if(test.url){ location.href = PORTAL_BASE + test.url; } });
+    leavesEl.appendChild(l);
+  });
+  requestAnimationFrame(drawWires);
+}
+
+function drawWires(){
+  wires.innerHTML='';
+  const cRect=canopy.getBoundingClientRect();
+  const hub=document.querySelector('.hub-wrap.open .hub');
+  if(!hub)return;
+  const h=hub.getBoundingClientRect();
+  const hx=h.left+h.width/2-cRect.left,hy=h.bottom-cRect.top-4;
+  document.querySelectorAll('.leaf').forEach((leaf,i)=>{
+    const d=leaf.querySelector('.dot').getBoundingClientRect();
+    const lx=d.left+d.width/2-cRect.left,ly=d.top+d.height/2-cRect.top;
+    const mx=(hx+lx)/2+(i%2?12:-12),my=hy+(ly-hy)*0.45;
+    const p=document.createElementNS('http://www.w3.org/2000/svg','path');
+    p.setAttribute('d',`M ${hx} ${hy} Q ${mx} ${my} ${lx} ${ly}`);
+    if(leaf.classList.contains('new'))p.classList.add('gold');
+    p.style.animationDelay=(i*45)+'ms';
+    wires.appendChild(p);
+  });
+}
+addEventListener('resize',()=>requestAnimationFrame(drawWires));
+
+function applyProfile(profile){
+  PROFILE=profile;
+  if(!profile) return;
+  document.getElementById('studentBox').style.display='';
+  document.getElementById('studentName').textContent=profile.name||'Student';
+  document.getElementById('studentBatch').textContent=profile.batch||'';
+  const ns=document.getElementById('northstar');
+  ns.style.display='flex';
+  const flame=document.getElementById('streakFlame');
+  flame.textContent=profile.streak||0;
+  flame.classList.toggle('dim',!(profile.streak>0));
+  document.getElementById('streakLabel').textContent=(profile.streak===1?'day streak':'day streak');
+  buildHubs();render();
+}
+
+/* ═══ LOGIN ═══ */
+const veil=document.getElementById('loginVeil');
+async function enter(pin){
+  PIN=pin;
+  try{localStorage.setItem('riim_pin',pin);}catch(e){}
+  veil.style.display='none';
+  buildHubs();render(); // paint immediately (all unlit)
+  const profile=await getProfile(pin);
+  if(profile){ applyProfile(profile); }
+  else {
+    document.getElementById('foot').textContent='Could not reach the tracker — showing the sky without your progress. It will light up next time you are online.';
+  }
+}
+document.getElementById('enterBtn').addEventListener('click',()=>{
+  const pin=document.getElementById('pinInput').value.trim();
+  const err=document.getElementById('loginErr');
+  if(!/\d{4,}/.test(pin.replace(/\D/g,''))){err.textContent='That PIN looks too short — check and try again.';err.style.display='block';return;}
+  err.style.display='none';
+  enter(pin.toUpperCase());
+});
+document.getElementById('pinInput').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('enterBtn').click();});
+document.getElementById('signOut').addEventListener('click',()=>{
+  try{localStorage.removeItem('riim_pin');}catch(e){}
+  location.reload();
+});
+
+/* auto-login if remembered */
+(function(){
+  let saved=null;
+  try{saved=localStorage.getItem('riim_pin');}catch(e){}
+  if(saved){ enter(saved); }
+})();
+</script>
+</body>
+</html>
