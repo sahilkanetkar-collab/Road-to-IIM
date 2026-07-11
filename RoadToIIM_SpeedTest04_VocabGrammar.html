@@ -126,26 +126,38 @@ body{background:var(--navy);color:var(--white);font-family:'Segoe UI',sans-serif
     <input type="text" id="inPin" placeholder="IMS / STU followed by 10 digits" maxlength="13"/>
     <label>Batch</label>
     <select id="inBatch">
-      <option value="">— Select Batch —</option>
-      <optgroup label="Classroom">
-        <option>A2701</option><option>A2702</option><option>A2703</option>
-        <option>A2704</option><option>A2705</option><option>A2706</option>
-        <option>A2707</option><option>A2708</option><option>A2709</option>
-        <option>A2710</option><option>A2711</option><option>A2712</option>
-        <option>A2713</option><option>A2714</option><option>A2715</option>
-        <option>A2716</option><option>A2717</option><option>A2718</option>
-        <option>A2719</option><option>A2720</option>
-      </optgroup>
-      <optgroup label="School">
-        <option>Zebar</option>
-      </optgroup>
-      <optgroup label="IPMAT 28">
-        <option>A2804</option><option>S2801</option><option>PN2801</option>
-      </optgroup>
-      <optgroup label="Admin">
-        <option>Admin</option>
-      </optgroup>
-    </select>
+    <option value="">— Select Batch —</option>
+    <optgroup label="Classroom">
+      <option value="A2701">A2701</option>
+      <option value="A2702">A2702</option>
+      <option value="A2703">A2703</option>
+      <option value="A2704">A2704</option>
+      <option value="A2705">A2705</option>
+      <option value="A2706">A2706</option>
+      <option value="A2707">A2707</option>
+      <option value="A2708">A2708</option>
+      <option value="A2709">A2709</option>
+      <option value="A2710">A2710</option>
+      <option value="A2711">A2711</option>
+      <option value="A2712">A2712</option>
+      <option value="A2713">A2713</option>
+      <option value="A2714">A2714</option>
+      <option value="A2715">A2715</option>
+      <option value="A2716">A2716</option>
+      <option value="A2717">A2717</option>
+      <option value="A2718">A2718</option>
+      <option value="A2719">A2719</option>
+      <option value="A2720">A2720</option>
+    </optgroup>
+    <optgroup label="School"><option value="Zebar">Zebar</option></optgroup>
+    <optgroup label="IPMAT 28">
+      <option value="Z2801">Z2801</option>
+      <option value="PN2801">PN2801</option>
+      <option value="S2801">S2801</option>
+      <option value="A2804">A2804</option>
+    </optgroup>
+    <optgroup label="Admin"><option value="Admin">Admin</option></optgroup>
+  </select>
     <button class="btn-gold" onclick="startTest()">Start Test</button>
     <div id="loginError">Invalid PIN format. Use IMS or STU followed by exactly 10 digits.</div>
   </div>
