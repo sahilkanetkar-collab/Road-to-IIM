@@ -262,33 +262,29 @@ const MANIFEST = [
       {t:"Test 23", url:"RoadToIIM_Test23_OnlineTest.html", matchNum:23},
       {t:"Test 24", url:"RoadToIIM_Test24_OnlineTest.html", matchNum:24, isNew:true},
     ]},
-  { id:"speed", glyph:"Sp", name:"Speed Tests", desc:"Short bursts against the clock",
+  { id:"rapid", glyph:"RF", name:"Rapid Fire", desc:"Short bursts, no feedback till the end",
     tests:[
-      {t:"Speed 01", url:"RoadToIIM_SpeedTest01_VocabGrammar.html", sheetName:"Speed Test 01"},
-      {t:"Speed 02", url:"RoadToIIM_SpeedTest02_VocabGrammar.html", sheetName:"Speed Test 02"},
-      {t:"Speed 03", url:"RoadToIIM_SpeedTest03_VocabGrammar.html", sheetName:"Speed Test 03"},
-      {t:"Speed 04", url:"RoadToIIM_SpeedTest04_VocabGrammar.html", sheetName:"Speed Test 04"},
-      {t:"Speed 05", url:"RoadToIIM_SpeedTest05_VocabGrammar.html", sheetName:"Speed Test 05"},
-      {t:"Speed 06", url:"RoadToIIM_SpeedTest06_VocabGrammar.html", sheetName:"Speed Test 06", isNew:true},
+      {t:"Rapid Fire 01", url:"RoadToIIM_SpeedTest01_VocabGrammar.html", sheetName:"Rapid Fire Test 01"},
+      {t:"Rapid Fire 02", url:"RoadToIIM_SpeedTest02_VocabGrammar.html", sheetName:"Rapid Fire Test 02"},
+      {t:"Rapid Fire 03", url:"RoadToIIM_SpeedTest03_VocabGrammar.html", sheetName:"Rapid Fire Test 03"},
+      {t:"Rapid Fire 04", url:"RoadToIIM_SpeedTest04_VocabGrammar.html", sheetName:"Rapid Fire Test 04"},
+      {t:"Rapid Fire 05", url:"RoadToIIM_SpeedTest05_VocabGrammar.html", sheetName:"Rapid Fire Test 05"},
+      {t:"Rapid Fire 06", url:"RoadToIIM_SpeedTest06_VocabGrammar.html", sheetName:"Rapid Fire Test 6", isNew:true},
     ]},
   { id:"rc", glyph:"RC", name:"RC Series & Drills", desc:"Passages, alerts, skeletons",
     tests:[
       {t:"RC Series 01", url:"RoadToIIM_RC_Series01.html", sheetName:"RC Series 01"},
       {t:"RC Series 02", url:"RoadToIIM_RC_Series02.html", sheetName:"RC Series 02"},
       {t:"RC Series 03", url:"RoadToIIM_RC_Series03.html", sheetName:"RC Series 03"},
-      {t:"RC Drill 04",  url:"RoadToIIM_RC_Series04_RCDrill.html", sheetName:"RC Drill 04"},
-      {t:"RC Drill 05",  url:"RoadToIIM_RC_Series05_RCDrill.html", sheetName:"RC Drill 05", isNew:true},
+      {t:"RC Drill 04",  url:"RoadToIIM_RC_Series04_RCDrill.html", sheetName:"Road to IIM RC Series 04"},
+      {t:"RC Drill 05",  url:"RoadToIIM_RC_Series05_RCDrill.html", sheetName:"Road to IIM RC Series 05", isNew:true},
     ]},
   { id:"concept", glyph:"Co", name:"Concept Tests", desc:"Straight from class decks",
     tests:[
-      {t:"Word Web I",    url:"RoadToIIM_ConceptTest01_WordWebI.html",     sheetName:"Concept Test 01"},
-      {t:"Word Web II",   url:"RoadToIIM_ConceptTest02_WordWebII.html",    sheetName:"Concept Test 02"},
-      {t:"The Impostors", url:"RoadToIIM_ConceptTest03_TheImpostors.html", sheetName:"Concept Test 03"},
-      {t:"Cumulative",    url:"RoadToIIM_ConceptTest04_Cumulative.html",   sheetName:"Concept Test 04", isNew:true},
-    ]},
-  { id:"rapid", glyph:"RF", name:"Rapid Fire", desc:"No feedback till the end. Pure nerve.",
-    tests:[
-      {t:"Rapid Fire 01", url:"", sheetName:"Rapid Fire Test 01"},
+      {t:"Word Web I",    url:"RoadToIIM_ConceptTest01_WordWebI.html",     sheetName:"Concept Test 1"},
+      {t:"Word Web II",   url:"RoadToIIM_ConceptTest02_WordWebII.html",    sheetName:"Concept Test 2"},
+      {t:"The Impostors", url:"RoadToIIM_ConceptTest03_TheImpostors.html", sheetName:"Concept Test 3"},
+      {t:"Cumulative",    url:"RoadToIIM_ConceptTest04_Cumulative.html",   sheetName:"Concept Test 4", isNew:true},
     ]},
   { id:"vault", glyph:"Va", name:"The Vault", desc:"Your words and your mistakes, banked daily",
     tests:[
@@ -299,7 +295,7 @@ const MANIFEST = [
     tests:[
       {t:"IWP", url:"iwp_week1_session.html", sheetName:"__iwp__"},
       {t:"RLS", url:"RLS_Week1.html",         sheetName:"__rls__"},
-      {t:"BYOT",url:"byot.html",              sheetName:"__byot__"},
+      {t:"BYOT",url:"byot.html",              sheetPrefix:"Custom ·"},
       {t:"Aeon Condenser", url:"aeon_condenser.html", sheetName:"__aeon__"},
     ]},
 ];
@@ -343,6 +339,10 @@ function isDone(test, profile){
   const names=Object.keys(profile.tests);
   // 1) exact sheetName
   if(test.sheetName && profile.tests[test.sheetName]) return {done:true, best:profile.tests[test.sheetName].best};
+  // 1b) prefix match (e.g. BYOT: any "Custom · …" submission counts)
+  if(test.sheetPrefix){
+    for(const n of names){ if(n.startsWith(test.sheetPrefix)) return {done:true, best:profile.tests[n].best}; }
+  }
   // 2) number match against "Road to IIM Test N" / "Road to IIM Paper N"
   if(test.matchNum!=null){
     const re=new RegExp('^Road to IIM (Test|Paper)\\s*0*'+test.matchNum+'$','i');
