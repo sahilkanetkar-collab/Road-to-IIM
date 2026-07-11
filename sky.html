@@ -67,6 +67,8 @@ header{
   padding:30px clamp(20px,6vw,72px) 6px;
   display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
 }
+.right-cluster{display:flex;align-items:center;gap:18px;min-width:0;flex-shrink:1;}
+.student{font-size:.82rem;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:46vw;}
 .brand{font-family:'Fraunces',serif;font-weight:700;font-size:clamp(1.5rem,3vw,2.1rem);}
 .brand em{font-style:normal;color:var(--gold);text-shadow:0 0 14px rgba(217,185,106,.5);}
 .right-cluster{display:flex;align-items:center;gap:18px;}
@@ -84,7 +86,6 @@ header{
 }
 .northstar .flame.dim{background:radial-gradient(circle at 35% 30%, #3a4062, #232946 75%);color:var(--dim);box-shadow:none;animation:none;}
 @keyframes starpulse{0%,100%{box-shadow:0 0 12px rgba(217,185,106,.45);}50%{box-shadow:0 0 22px rgba(217,185,106,.8);}}
-.student{font-size:.82rem;color:var(--dim);}
 .student b{color:var(--ivory);}
 .student .signout{color:var(--gold);cursor:pointer;text-decoration:underline;font-size:.72rem;margin-left:8px;}
 .tagline{
@@ -288,15 +289,15 @@ const MANIFEST = [
     ]},
   { id:"vault", glyph:"Va", name:"The Vault", desc:"Your words and your mistakes, banked daily",
     tests:[
-      {t:"The Vault",    url:"the_vault.html",   sheetName:"__vault__"},
-      {t:"Mistake Bank", url:"mistake_bank.html", sheetName:"__mistakes__"},
+      {t:"The Vault",    url:"the_vault.html",    soon:true},
+      {t:"Mistake Bank", url:"mistake_bank.html", soon:true},
     ]},
   { id:"skills", glyph:"Sk", name:"Skill Building", desc:"Daily habits that compound",
     tests:[
-      {t:"IWP", url:"iwp_week1_session.html", sheetName:"__iwp__"},
-      {t:"RLS", url:"RLS_Week1.html",         sheetName:"__rls__"},
+      {t:"IWP", url:"iwp_week1_session.html", soon:true},
+      {t:"RLS", url:"RLS_Week1.html",         soon:true},
       {t:"BYOT",url:"byot.html",              sheetPrefix:"Custom ·"},
-      {t:"Aeon Condenser", url:"aeon_condenser.html", sheetName:"__aeon__"},
+      {t:"Aeon Condenser", url:"aeon_condenser.html", soon:true},
     ]},
 ];
 
@@ -364,11 +365,13 @@ let openId=MANIFEST[0].id, PROFILE=null, PIN=null;
 function buildHubs(){
   hubsEl.innerHTML='';
   MANIFEST.forEach((fam,idx)=>{
-    const doneCount=fam.tests.filter(t=>isDone(t,PROFILE).done).length;
+    const trackable=fam.tests.filter(t=>!t.soon);
+    const doneCount=trackable.filter(t=>isDone(t,PROFILE).done).length;
+    const progBadge = trackable.length ? `<span class="prog">${doneCount}/${trackable.length}</span>` : '';
     const b=document.createElement('button');
-    b.className='hub-wrap'+(doneCount===fam.tests.length&&doneCount>0?' complete':'');
+    b.className='hub-wrap'+(trackable.length&&doneCount===trackable.length?' complete':'');
     b.dataset.id=fam.id;b.setAttribute('aria-label',fam.name);
-    b.innerHTML=`<div class="hub" style="--phase:${-(idx*0.9)}s">${fam.glyph}<span class="prog">${doneCount}/${fam.tests.length}</span></div>
+    b.innerHTML=`<div class="hub" style="--phase:${-(idx*0.9)}s">${fam.glyph}${progBadge}</div>
       <div class="hub-name">${fam.name}</div>`;
     b.addEventListener('click',()=>{openId=fam.id;render();});
     hubsEl.appendChild(b);
@@ -386,7 +389,8 @@ function render(){
     l.className='leaf'+(st.done?' done':'')+(test.isNew&&!st.done?' new':'');
     l.style.setProperty('--i',i);
     const scoreBit = st.done && typeof st.best==='number' ? ` · <span class="score">${st.best}</span>` : '';
-    l.innerHTML=`<span class="dot"></span><span class="lbl">${test.t}${test.isNew&&!st.done?' <span class="badge-new">NEW</span>':''}<span class="sub">${st.done?'Best'+scoreBit:'Not yet lit'}</span></span>`;
+    const sub = test.soon ? 'Open anytime · tracking coming soon' : (st.done?'Best'+scoreBit:'Not yet lit');
+    l.innerHTML=`<span class="dot"></span><span class="lbl">${test.t}${test.isNew&&!st.done?' <span class="badge-new">NEW</span>':''}<span class="sub">${sub}</span></span>`;
     l.addEventListener('click',()=>{ if(test.url){ location.href = PORTAL_BASE + test.url; } });
     leavesEl.appendChild(l);
   });
