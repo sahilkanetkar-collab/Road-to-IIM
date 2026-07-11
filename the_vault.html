@@ -282,6 +282,11 @@ fetch("vault_content.json")
    const d=days[dayIdx];
    const w=d.words.map(x=>({t:"w",...x})),i=d.idioms.map(x=>({t:"i",...x}));
    deck=[w[0],w[1],w[2],i[0],w[3],w[4],i[1]];
+   deck.forEach(c=>{
+     const right=c.options[c.correct],o=c.options.slice();
+     for(let k=o.length-1;k>0;k--){const j=Math.floor(Math.random()*(k+1));[o[k],o[j]]=[o[j],o[k]];}
+     c.options=o;c.correct=o.indexOf(right);
+   });
    results=Array(deck.length).fill(null);
    $("dateLine").textContent=new Date().toLocaleDateString("en-IN",{weekday:"long",day:"numeric",month:"long"})+" · Drop "+(dayIdx+1)+" of "+days.length;
    ready=true;
