@@ -117,6 +117,13 @@
      "meta": "45 Qs · Vocab + Tenses · +4 / −1",
      "key": "(Rapid|Speed).*\\b0?6\\b",
      "added": "2026-07"
+    },
+    {
+     "t": "Rapid Fire 07",
+     "href": "RoadToIIM_SpeedTest07_VocabGrammar.html",
+     "meta": "45 Qs · Vocab + Conditionals & Tenses · +4 / −1",
+     "key": "(Rapid|Speed).*0?7\\b",
+     "added": "2026-07"
     }
    ]
   },
