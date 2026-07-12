@@ -315,11 +315,14 @@ requestAnimationFrame(paintStars);
 
 /* ═══ PROFILE ═══ */
 const PROFILE_TTL = 6*60*60*1000;
-function pkey(pin){return 'riim_profile_'+pin;}
+function pkey(pin){return 'riim_profile_v2_'+pin;} /* v2: bust caches poisoned by the endpoint mismatch */
 async function fetchProfile(pin){
-  const res = await fetch(EXEC_URL+'?mode=profile&pin='+encodeURIComponent(pin));
+  /* send BOTH param names so either doGet variant (mode= or action=) answers */
+  const res = await fetch(EXEC_URL+'?mode=profile&action=profile&pin='+encodeURIComponent(pin));
   const data = await res.json();
-  if(data.status!=='success') throw new Error(data.message||'profile error');
+  /* accept either response shape: {status:"success"} (v10) or {ok:true} (draft) */
+  const good = data.status==='success' || data.ok===true;
+  if(!good) throw new Error(data.message||data.error||'profile error');
   data._fetchedAt=Date.now();
   try{localStorage.setItem(pkey(pin),JSON.stringify(data));}catch(e){}
   return data;
@@ -338,20 +341,21 @@ async function getProfile(pin){
 function isDone(test, profile){
   if(!profile||!profile.tests) return {done:false};
   const names=Object.keys(profile.tests);
+  const bestOf=n=>{const b=Number(profile.tests[n]&&profile.tests[n].best);return isFinite(b)?b:null;};
   // 1) exact sheetName
-  if(test.sheetName && profile.tests[test.sheetName]) return {done:true, best:profile.tests[test.sheetName].best};
+  if(test.sheetName && profile.tests[test.sheetName]) return {done:true, best:bestOf(test.sheetName)};
   // 1b) prefix match (e.g. BYOT: any "Custom · …" submission counts)
   if(test.sheetPrefix){
-    for(const n of names){ if(n.startsWith(test.sheetPrefix)) return {done:true, best:profile.tests[n].best}; }
+    for(const n of names){ if(n.startsWith(test.sheetPrefix)) return {done:true, best:bestOf(n)}; }
   }
   // 2) number match against "Road to IIM Test N" / "Road to IIM Paper N"
   if(test.matchNum!=null){
     const re=new RegExp('^Road to IIM (Test|Paper)\\s*0*'+test.matchNum+'$','i');
-    for(const n of names){ if(re.test(n.trim())) return {done:true, best:profile.tests[n].best}; }
+    for(const n of names){ if(re.test(n.trim())) return {done:true, best:bestOf(n)}; }
   }
   // 3) loose contains (e.g. sheetName "Speed Test 01" vs "Road to IIM Speed Test 01")
   if(test.sheetName && !test.sheetName.startsWith('__')){
-    for(const n of names){ if(n.toLowerCase().includes(test.sheetName.toLowerCase())) return {done:true, best:profile.tests[n].best}; }
+    for(const n of names){ if(n.toLowerCase().includes(test.sheetName.toLowerCase())) return {done:true, best:bestOf(n)}; }
   }
   return {done:false};
 }
