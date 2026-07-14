@@ -4,6 +4,15 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Deck Studio — animations, transitions &amp; backgrounds for PPTX</title>
+<!-- PWA -->
+<link rel="manifest" href="deck-studio.webmanifest">
+<meta name="theme-color" content="#0d1526">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Deck Studio">
+<link rel="apple-touch-icon" href="icons/deck-studio-apple-180.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/deck-studio-192.png">
 <script>
 /*!
 
@@ -804,6 +813,11 @@ $("go").addEventListener("click",async()=>{
   }
   go.disabled=false;go.textContent="Process deck";
 });
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('deck-studio-sw.js').catch(()=>{});
+  });
+}
 </script>
 </body>
 </html>
