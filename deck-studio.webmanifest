@@ -1,0 +1,31 @@
+{
+  "name": "Deck Studio — Road to IIM",
+  "short_name": "Deck Studio",
+  "description": "Add auto animations, transitions & backgrounds to your PPTX files. A Road to IIM tool.",
+  "start_url": "./deck_studio.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0d1526",
+  "theme_color": "#0d1526",
+  "icons": [
+    {
+      "src": "./icons/deck-studio-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icons/deck-studio-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icons/deck-studio-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
