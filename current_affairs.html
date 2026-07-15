@@ -5,17 +5,26 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Current Affairs · Road to IIM</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
 <style>
 
 :root {
   --navy:      #0d1526;
-  --navy-card: #162035;
+  --navy-card: #111e35;
+  --navy-hi:   #1a2d4a;
   --gold:      #d4af37;
-  --green:     #4ea082;
   --text:      #dde3f0;
-  --text-dim:  #7a8aaa;
+  --text-dim:  #6a7d9e;
   --border:    rgba(255,255,255,0.07);
+
+  /* Per-tab accents */
+  --c-geo:     #5b8dd9;
+  --c-econ:    #4ea082;
+  --c-tech:    #9b72cf;
+  --c-sports:  #e08a3a;
+  --c-history: #d4af37;
+
+  --accent: var(--c-geo); /* updated by JS */
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -23,23 +32,54 @@
 body {
   font-family: 'DM Sans', system-ui, sans-serif;
   background: var(--navy);
+  background-image:
+    radial-gradient(rgba(255,255,255,0.022) 1px, transparent 1px);
+  background-size: 28px 28px;
   color: var(--text);
   min-height: 100vh;
+  position: relative;
 }
 
+/* ── HEADER ── */
 header {
-  padding: 26px 28px 0;
+  padding: 28px 32px 0;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   gap: 12px;
+  position: relative;
+  overflow: hidden;
 }
-.brand-label { font-size: 10px; letter-spacing: 2.5px; text-transform: uppercase; color: var(--gold); margin-bottom: 5px; }
-.page-title  { font-size: 23px; font-weight: 700; }
-.page-date   { font-size: 13px; color: var(--text-dim); margin-top: 3px; }
+
+.header-glow {
+  position: absolute;
+  top: -80px; left: -80px;
+  width: 420px; height: 320px;
+  background: radial-gradient(ellipse at 30% 40%, rgba(212,175,55,0.07) 0%, transparent 65%);
+  pointer-events: none;
+}
+
+.brand-label {
+  font-size: 10px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 6px;
+}
+.page-title {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -.5px;
+  background: linear-gradient(135deg, #dde3f0 0%, #a0aec0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.page-date { font-size: 13px; color: var(--text-dim); margin-top: 4px; }
 
 #refresh-btn {
-  background: none;
+  background: rgba(255,255,255,0.04);
   border: 1px solid var(--border);
   color: var(--text-dim);
   padding: 7px 14px;
@@ -52,26 +92,28 @@ header {
   gap: 6px;
   transition: all .2s;
   flex-shrink: 0;
-  margin-top: 2px;
+  margin-top: 4px;
+  backdrop-filter: blur(4px);
 }
-#refresh-btn:hover { border-color: var(--gold); color: var(--gold); }
+#refresh-btn:hover { border-color: var(--accent); color: var(--accent); }
 #refresh-btn.loading { opacity: .45; pointer-events: none; }
 #refresh-btn.loading .ri { animation: spin 1s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
+/* ── TABS ── */
 .tab-bar {
   display: flex;
-  padding: 20px 28px 0;
+  padding: 22px 32px 0;
   border-bottom: 1px solid var(--border);
   gap: 2px;
   overflow-x: auto;
   scrollbar-width: none;
-  margin-top: 16px;
+  margin-top: 18px;
 }
 .tab-bar::-webkit-scrollbar { display: none; }
 
 .tab-btn {
-  padding: 9px 16px 11px;
+  padding: 9px 17px 11px;
   background: none;
   border: none;
   border-bottom: 2px solid transparent;
@@ -84,18 +126,37 @@ header {
   white-space: nowrap;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 7px;
   transition: color .15s, border-color .15s;
 }
 .tab-btn:hover { color: var(--text); }
-.tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); }
 
-main { padding: 22px 28px 56px; max-width: 1040px; }
+.tab-btn[data-tab="geopolitics"].active { color: var(--c-geo);     border-color: var(--c-geo);     }
+.tab-btn[data-tab="economics"].active   { color: var(--c-econ);    border-color: var(--c-econ);    }
+.tab-btn[data-tab="tech"].active        { color: var(--c-tech);    border-color: var(--c-tech);    }
+.tab-btn[data-tab="sports"].active      { color: var(--c-sports);  border-color: var(--c-sports);  }
+.tab-btn[data-tab="history"].active     { color: var(--c-history); border-color: var(--c-history); }
+
+.tab-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity .2s;
+}
+.tab-btn.active .tab-dot { opacity: 1; }
+.tab-btn[data-tab="geopolitics"] .tab-dot { background: var(--c-geo);     }
+.tab-btn[data-tab="economics"]   .tab-dot { background: var(--c-econ);    }
+.tab-btn[data-tab="tech"]        .tab-dot { background: var(--c-tech);    }
+.tab-btn[data-tab="sports"]      .tab-dot { background: var(--c-sports);  }
+.tab-btn[data-tab="history"]     .tab-dot { background: var(--c-history); }
+
+/* ── MAIN ── */
+main { padding: 24px 32px 64px; max-width: 1060px; }
 
 .status-bar {
   font-size: 12px;
   color: var(--text-dim);
-  margin-bottom: 18px;
+  margin-bottom: 20px;
   min-height: 18px;
   display: flex;
   align-items: center;
@@ -104,119 +165,243 @@ main { padding: 22px 28px 56px; max-width: 1040px; }
 .live-dot {
   width: 6px; height: 6px;
   border-radius: 50%;
-  background: var(--green);
+  background: var(--accent);
   flex-shrink: 0;
   display: none;
 }
 .status-bar.live .live-dot { display: block; }
 
+/* ── GRID ── */
 .cards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(370px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
   gap: 14px;
 }
 
+/* ── FEATURED CARD (first item, full-width) ── */
+.news-card.featured {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 0;
+  padding: 0;
+  overflow: hidden;
+}
+.featured-body {
+  padding: 22px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+.featured-img-wrap {
+  position: relative;
+  overflow: hidden;
+}
+.featured-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform .4s ease;
+}
+.news-card.featured:hover .featured-img-wrap img { transform: scale(1.04); }
+
+.featured .card-headline { font-family: 'Fraunces', Georgia, serif; font-size: 20px; line-height: 1.35; }
+.featured .card-desc { font-size: 13.5px; -webkit-line-clamp: 4; }
+
+/* ── STANDARD CARD ── */
 .news-card {
   background: var(--navy-card);
   border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 17px 18px;
+  border-radius: 14px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  transition: border-color .2s, transform .15s;
-  animation: fadeUp .3s ease both;
+  gap: 11px;
+  padding: 17px 18px;
+  transition: border-color .25s, box-shadow .25s, transform .15s;
+  animation: fadeUp .35s ease both;
+  overflow: hidden;
+  position: relative;
 }
-.news-card:hover { border-color: rgba(212,175,55,.25); transform: translateY(-2px); }
+.news-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  opacity: 0;
+  transition: opacity .3s;
+}
+.news-card:hover {
+  border-color: rgba(255,255,255,0.14);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.04);
+  transform: translateY(-2px);
+}
+.news-card:hover::before { opacity: 0.6; }
 
 @keyframes fadeUp {
-  from { opacity:0; transform:translateY(8px); }
+  from { opacity:0; transform:translateY(10px); }
   to   { opacity:1; transform:translateY(0); }
 }
 
-.card-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+/* Card image */
+.card-img-wrap {
+  margin: -17px -18px 0;
+  height: 150px;
+  overflow: hidden;
+  border-radius: 14px 14px 0 0;
+  flex-shrink: 0;
+}
+.card-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform .4s ease;
+}
+.news-card:hover .card-img-wrap img { transform: scale(1.05); }
+
+/* Meta row */
+.card-meta {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+
+.favicon {
+  width: 14px; height: 14px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
 
 .source-pill {
   font-size: 9.5px;
   font-weight: 700;
-  letter-spacing: .8px;
+  letter-spacing: .7px;
   text-transform: uppercase;
-  background: var(--gold);
-  color: #0d1526;
   padding: 2px 7px;
   border-radius: 4px;
   flex-shrink: 0;
+  background: rgba(255,255,255,0.07);
+  color: var(--text-dim);
+  border: 1px solid rgba(255,255,255,0.08);
 }
-.year-pill { background: rgba(78,160,130,.2); color: var(--green); }
+.year-pill {
+  background: rgba(212,175,55,0.12);
+  color: var(--gold);
+  border-color: rgba(212,175,55,0.2);
+}
 
 .card-time { font-size: 11px; color: var(--text-dim); }
 
-.card-headline { font-size: 14.5px; font-weight: 600; line-height: 1.45; }
-.card-headline a { color: var(--text); text-decoration: none; }
-.card-headline a:hover { color: var(--gold); }
+.new-badge {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  background: rgba(78,160,130,0.15);
+  color: #4ea082;
+  border: 1px solid rgba(78,160,130,0.25);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
 
-.card-desc { font-size: 13px; line-height: 1.65; color: var(--text-dim); }
+.card-headline { font-size: 14.5px; font-weight: 600; line-height: 1.45; }
+.card-headline a { color: var(--text); text-decoration: none; transition: color .15s; }
+.card-headline a:hover { color: var(--accent); }
+
+.card-desc {
+  font-size: 13px;
+  line-height: 1.65;
+  color: var(--text-dim);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
 
 .card-link {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 5px;
   font-size: 12px;
-  color: var(--green);
+  font-weight: 600;
+  color: var(--accent);
   text-decoration: none;
-  margin-top: 2px;
+  margin-top: auto;
+  padding-top: 2px;
+  transition: gap .15s, opacity .15s;
 }
-.card-link:hover { opacity: .75; }
+.card-link:hover { gap: 8px; }
 
-/* Skeletons */
+/* History year display */
+.year-display {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 58px;
+  font-weight: 700;
+  color: rgba(212,175,55,0.1);
+  line-height: 1;
+  letter-spacing: -3px;
+  margin-bottom: -4px;
+  flex-shrink: 0;
+}
+
+/* ── SKELETON ── */
 @keyframes shimmer {
   0%   { background-position: -200% 0; }
   100% { background-position:  200% 0; }
 }
 .skel {
   border-radius: 4px;
-  background: linear-gradient(90deg, rgba(255,255,255,.04) 25%, rgba(255,255,255,.09) 50%, rgba(255,255,255,.04) 75%);
+  background: linear-gradient(90deg,
+    rgba(255,255,255,.03) 25%,
+    rgba(255,255,255,.08) 50%,
+    rgba(255,255,255,.03) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.8s ease-in-out infinite;
 }
 .skel-card {
   background: var(--navy-card);
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: 14px;
   padding: 17px 18px;
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
+.skel-card.skel-featured {
+  grid-column: 1 / -1;
+  height: 200px;
+  padding: 0;
+}
 
-/* Info / Error boxes */
+/* ── INFO / ERROR ── */
 .info-box, .err-box {
   grid-column: 1 / -1;
   background: var(--navy-card);
   border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 40px 32px;
+  border-radius: 16px;
+  padding: 48px 32px;
   text-align: center;
   color: var(--text-dim);
 }
 .info-box .icon, .err-box .icon { font-size: 36px; margin-bottom: 14px; }
 .info-box h3, .err-box h3 { font-size: 17px; font-weight: 700; color: var(--text); margin-bottom: 10px; }
 .info-box p, .err-box p { font-size: 13.5px; line-height: 1.7; margin-bottom: 6px; }
-
 .code-block {
   display: inline-block;
-  background: rgba(255,255,255,.07);
+  background: rgba(255,255,255,.06);
   border: 1px solid var(--border);
   border-radius: 6px;
   padding: 6px 14px;
   font-family: monospace;
   font-size: 13px;
-  color: var(--green);
+  color: #4ea082;
   margin: 8px 0;
 }
-
 .retry-btn {
-  background: var(--gold);
+  background: var(--accent);
   color: #0d1526;
   border: none;
   font-family: inherit;
@@ -227,13 +412,17 @@ main { padding: 22px 28px 56px; max-width: 1040px; }
   cursor: pointer;
   margin-top: 16px;
   display: inline-block;
+  transition: opacity .15s;
 }
 .retry-btn:hover { opacity: .85; }
 
-@media (max-width: 520px) {
-  header { flex-direction: column; }
+@media (max-width: 640px) {
+  header { flex-direction: column; padding: 20px 18px 0; }
+  .tab-bar { padding: 16px 18px 0; }
+  main { padding: 18px 18px 56px; }
   .cards-grid { grid-template-columns: 1fr; }
-  main { padding: 18px 16px 56px; }
+  .news-card.featured { grid-template-columns: 1fr; }
+  .featured-img-wrap { height: 180px; }
 }
 
 </style>
@@ -241,6 +430,7 @@ main { padding: 22px 28px 56px; max-width: 1040px; }
 <body>
 
 <header>
+  <div class="header-glow"></div>
   <div>
     <div class="brand-label">Road to IIM</div>
     <div class="page-title">Current Affairs</div>
@@ -256,11 +446,21 @@ main { padding: 22px 28px 56px; max-width: 1040px; }
 </header>
 
 <div class="tab-bar">
-  <button class="tab-btn active" onclick="openTab('geopolitics',this)">🌍&nbsp; Geopolitics</button>
-  <button class="tab-btn"        onclick="openTab('economics',this)">📈&nbsp; Economics</button>
-  <button class="tab-btn"        onclick="openTab('tech',this)">💡&nbsp; Tech</button>
-  <button class="tab-btn"        onclick="openTab('sports',this)">🏏&nbsp; Sports</button>
-  <button class="tab-btn"        onclick="openTab('history',this)">📜&nbsp; On This Day</button>
+  <button class="tab-btn active" data-tab="geopolitics" onclick="openTab('geopolitics',this)">
+    <span class="tab-dot"></span>🌍 Geopolitics
+  </button>
+  <button class="tab-btn" data-tab="economics" onclick="openTab('economics',this)">
+    <span class="tab-dot"></span>📈 Economics
+  </button>
+  <button class="tab-btn" data-tab="tech" onclick="openTab('tech',this)">
+    <span class="tab-dot"></span>💡 Tech
+  </button>
+  <button class="tab-btn" data-tab="sports" onclick="openTab('sports',this)">
+    <span class="tab-dot"></span>🏏 Sports
+  </button>
+  <button class="tab-btn" data-tab="history" onclick="openTab('history',this)">
+    <span class="tab-dot"></span>📜 On This Day
+  </button>
 </div>
 
 <main>
@@ -273,24 +473,32 @@ main { padding: 22px 28px 56px; max-width: 1040px; }
 
 <script>
 
-/* ─── FEEDS ─── */
+/* ─── CONFIG ─── */
 const FEEDS = {
   geopolitics: [
-    { url: 'https://feeds.bbci.co.uk/news/world/rss.xml',                    src: 'BBC World'  },
-    { url: 'https://www.thehindu.com/news/international/feeder/default.rss', src: 'The Hindu'  }
+    { url: 'https://feeds.bbci.co.uk/news/world/rss.xml',                    src: 'BBC World', domain: 'bbc.co.uk'  },
+    { url: 'https://www.thehindu.com/news/international/feeder/default.rss', src: 'The Hindu', domain: 'thehindu.com' }
   ],
   economics: [
-    { url: 'https://economictimes.indiatimes.com/rssfeedstopstories.cms',    src: 'Econ Times' },
-    { url: 'https://www.livemint.com/rss/news',                              src: 'Mint'       }
+    { url: 'https://economictimes.indiatimes.com/rssfeedstopstories.cms',    src: 'Econ Times', domain: 'economictimes.indiatimes.com' },
+    { url: 'https://www.livemint.com/rss/news',                              src: 'Mint',       domain: 'livemint.com' }
   ],
   tech: [
-    { url: 'https://techcrunch.com/feed/',           src: 'TechCrunch' },
-    { url: 'https://www.theverge.com/rss/index.xml', src: 'The Verge'  }
+    { url: 'https://techcrunch.com/feed/',           src: 'TechCrunch', domain: 'techcrunch.com' },
+    { url: 'https://www.theverge.com/rss/index.xml', src: 'The Verge',  domain: 'theverge.com'  }
   ],
   sports: [
-    { url: 'https://www.espncricinfo.com/rss/content/story/feeds/0.xml', src: 'Cricinfo'    },
-    { url: 'https://sports.ndtv.com/rss/all',                            src: 'NDTV Sports' }
+    { url: 'https://www.espncricinfo.com/rss/content/story/feeds/0.xml', src: 'Cricinfo',    domain: 'espncricinfo.com' },
+    { url: 'https://sports.ndtv.com/rss/all',                            src: 'NDTV Sports', domain: 'ndtv.com'         }
   ]
+};
+
+const TAB_ACCENT = {
+  geopolitics: '#5b8dd9',
+  economics:   '#4ea082',
+  tech:        '#9b72cf',
+  sports:      '#e08a3a',
+  history:     '#d4af37'
 };
 
 /* ─── STATE ─── */
@@ -303,28 +511,10 @@ document.getElementById('page-date').textContent =
     weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
   });
 
-/* Detect local file — show helpful message instead of a silent error */
 if (window.location.protocol === 'file:') {
-  showLocalFileMessage();
+  showLocalMsg();
 } else {
   openTab('geopolitics', document.querySelector('.tab-btn.active'));
-}
-
-/* ─── LOCAL FILE WARNING ─── */
-function showLocalFileMessage() {
-  document.getElementById('grid').innerHTML = `
-    <div class="info-box">
-      <div class="icon">🔒</div>
-      <h3>One small step needed</h3>
-      <p>Browsers block external network requests when a file is opened directly from your computer. This page needs to be served over a web server — not opened as a local file.</p>
-      <p style="margin-top:14px"><strong style="color:var(--text)">Option 1 — Push to GitHub Pages</strong><br>
-      Just commit this file to the Road to IIM repo. It'll work immediately.</p>
-      <p style="margin-top:12px"><strong style="color:var(--text)">Option 2 — Quick local test</strong><br>
-      Open Terminal in the folder containing this file and run:</p>
-      <div class="code-block">python -m http.server 8000</div>
-      <p>Then open <span style="color:var(--green);font-family:monospace">localhost:8000/current_affairs.html</span></p>
-    </div>`;
-  setStatus('');
 }
 
 /* ─── TAB SWITCH ─── */
@@ -332,8 +522,12 @@ function openTab(tab, el) {
   currentTab = tab;
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   el.classList.add('active');
+
+  // Update CSS accent variable
+  document.documentElement.style.setProperty('--accent', TAB_ACCENT[tab]);
+
   if (tabCache[tab]) {
-    renderCards(tabCache[tab].cards);
+    renderCards(tabCache[tab].cards, tab);
     setStatus('Last updated: ' + tabCache[tab].ts, true);
   } else {
     loadTab(tab);
@@ -341,7 +535,7 @@ function openTab(tab, el) {
 }
 
 async function doRefresh() {
-  if (window.location.protocol === 'file:') { showLocalFileMessage(); return; }
+  if (window.location.protocol === 'file:') { showLocalMsg(); return; }
   delete tabCache[currentTab];
   const btn = document.getElementById('refresh-btn');
   btn.classList.add('loading');
@@ -349,7 +543,7 @@ async function doRefresh() {
   btn.classList.remove('loading');
 }
 
-/* ─── MAIN LOAD ─── */
+/* ─── LOAD ─── */
 async function loadTab(tab) {
   showSkeletons();
   setStatus('Fetching latest headlines…');
@@ -360,7 +554,7 @@ async function loadTab(tab) {
 
     const ts = new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
     tabCache[tab] = { cards, ts };
-    renderCards(cards);
+    renderCards(cards, tab);
     setStatus('Last updated: ' + ts, true);
   } catch (err) {
     console.error('[loadTab]', err);
@@ -368,7 +562,7 @@ async function loadTab(tab) {
       <div class="err-box">
         <div class="icon">⚠️</div>
         <h3>Couldn't load content</h3>
-        <p>One of the news sources may be temporarily down.</p>
+        <p>A news source may be temporarily down.</p>
         <button class="retry-btn" onclick="doRefresh()">Retry</button>
       </div>`;
     setStatus('');
@@ -377,58 +571,62 @@ async function loadTab(tab) {
 
 /* ─── RSS — 3 fallback strategies ─── */
 async function loadRSS(feeds) {
-  const results = await Promise.allSettled(feeds.map(f => fetchWithFallback(f)));
+  const results = await Promise.allSettled(feeds.map(fetchWithFallback));
   const items   = results.flatMap(r => r.status === 'fulfilled' ? r.value : []).slice(0, 8);
   if (!items.length) throw new Error('All feeds failed');
   return items;
 }
 
-async function fetchWithFallback({ url, src }) {
-  /* Strategy 1: rss2json.com — returns clean JSON, no XML parsing */
+async function fetchWithFallback({ url, src, domain }) {
+  /* Strategy 1: rss2json — clean JSON + thumbnail field */
   try {
-    const r = await fetchTimeout(
-      `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}&count=5`
-    );
+    const r = await t_fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}&count=5`);
     const d = await r.json();
     if (d.status === 'ok' && d.items?.length) {
       return d.items.map(i => ({
-        src,
+        src, domain,
         title:   (i.title || '').trim(),
-        desc:    strip(i.description || i.content || '').slice(0, 260),
+        desc:    strip(i.description || i.content || '').slice(0, 300),
         link:    i.link || i.guid || '#',
-        pubDate: i.pubDate || ''
+        pubDate: i.pubDate || '',
+        image:   i.thumbnail || i.enclosure?.link || ''
       })).filter(i => i.title.length > 5);
     }
-  } catch (e) { console.warn(`rss2json failed (${src}):`, e.message); }
+  } catch(e) { console.warn(`rss2json (${src}):`, e.message); }
 
-  /* Strategy 2: corsproxy.io + XML parse */
+  /* Strategy 2: corsproxy.io */
   try {
-    const r   = await fetchTimeout(`https://corsproxy.io/?${encodeURIComponent(url)}`);
+    const r   = await t_fetch(`https://corsproxy.io/?${encodeURIComponent(url)}`);
     const xml = new DOMParser().parseFromString(await r.text(), 'text/xml');
-    const out = parseXML(xml, src);
+    const out = parseXML(xml, src, domain);
     if (out.length) return out;
-  } catch (e) { console.warn(`corsproxy failed (${src}):`, e.message); }
+  } catch(e) { console.warn(`corsproxy (${src}):`, e.message); }
 
-  /* Strategy 3: allorigins.win + XML parse */
+  /* Strategy 3: allorigins.win */
   try {
-    const r   = await fetchTimeout(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`);
+    const r   = await t_fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`);
     const d   = await r.json();
     const xml = new DOMParser().parseFromString(d.contents, 'text/xml');
-    const out = parseXML(xml, src);
+    const out = parseXML(xml, src, domain);
     if (out.length) return out;
-  } catch (e) { console.warn(`allorigins failed (${src}):`, e.message); }
+  } catch(e) { console.warn(`allorigins (${src}):`, e.message); }
 
   return [];
 }
 
-function parseXML(xml, src) {
-  return [...xml.querySelectorAll('item')].slice(0, 5).map(item => ({
-    src,
-    title:   (item.querySelector('title')?.textContent || '').trim(),
-    desc:    strip(item.querySelector('description')?.textContent || '').slice(0, 260),
-    link:    getLink(item),
-    pubDate: item.querySelector('pubDate')?.textContent?.trim() || ''
-  })).filter(i => i.title.length > 5);
+function parseXML(xml, src, domain) {
+  return [...xml.querySelectorAll('item')].slice(0, 5).map(item => {
+    const mediaUrl = item.getElementsByTagNameNS('*','content')[0]?.getAttribute('url') || '';
+    const encUrl   = item.querySelector('enclosure')?.getAttribute('url') || '';
+    return {
+      src, domain,
+      title:   item.querySelector('title')?.textContent?.trim() || '',
+      desc:    strip(item.querySelector('description')?.textContent || '').slice(0, 300),
+      link:    getLink(item),
+      pubDate: item.querySelector('pubDate')?.textContent?.trim() || '',
+      image:   mediaUrl || encUrl || ''
+    };
+  }).filter(i => i.title.length > 5);
 }
 
 function getLink(item) {
@@ -439,68 +637,108 @@ function getLink(item) {
   return '#';
 }
 
-function fetchTimeout(url, ms = 8000) {
+function t_fetch(url, ms = 8000) {
   const ctrl = new AbortController();
   setTimeout(() => ctrl.abort(), ms);
   return fetch(url, { signal: ctrl.signal });
 }
 
-function strip(html) {
-  return html.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
-}
+function strip(h) { return h.replace(/<[^>]+>/g,'').replace(/\s+/g,' ').trim(); }
 
 /* ─── WIKIPEDIA ON THIS DAY ─── */
 async function loadOnThisDay() {
-  setStatus('Fetching historical events…');
   const d   = new Date();
-  const m   = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-
-  const res  = await fetch(
-    `https://api.wikimedia.org/feed/v1/wikipedia/en/onthisday/events/${m}/${day}`
-  );
+  const m   = String(d.getMonth()+1).padStart(2,'0');
+  const day = String(d.getDate()).padStart(2,'0');
+  const res  = await fetch(`https://api.wikimedia.org/feed/v1/wikipedia/en/onthisday/events/${m}/${day}`);
   const data = await res.json();
   const pool = data.events || [];
-  if (!pool.length) throw new Error('No events from Wikipedia');
-
+  if (!pool.length) throw new Error('No Wikipedia events');
   return pickDiverse(pool, 6).map(e => ({
-    isHistory: true,
-    src:       String(e.year),
-    title:     e.text,
-    desc:      '',
-    link:      e.pages?.[0]?.content_urls?.desktop?.page || '#',
-    pubDate:   ''
+    isHistory: true, src: String(e.year),
+    title: e.text, desc: '',
+    link: e.pages?.[0]?.content_urls?.desktop?.page || '#',
+    pubDate: '', image: ''
   }));
 }
 
 function pickDiverse(events, n) {
-  const sorted = [...events].sort((a, b) => a.year - b.year);
+  const sorted = [...events].sort((a,b) => a.year - b.year);
   const size   = Math.ceil(sorted.length / n);
-  const picked = [];
-  for (let i = 0; i < n && i * size < sorted.length; i++) {
-    const bucket = sorted.slice(i * size, (i + 1) * size);
-    picked.push(bucket[Math.floor(Math.random() * bucket.length)]);
-  }
-  return picked;
+  return Array.from({length: n}, (_,i) => {
+    const bucket = sorted.slice(i*size, (i+1)*size);
+    return bucket[Math.floor(Math.random()*bucket.length)];
+  }).filter(Boolean);
 }
 
 /* ─── RENDER ─── */
-function renderCards(cards) {
+function renderCards(cards, tab) {
+  const grid = document.getElementById('grid');
   if (!cards?.length) {
-    document.getElementById('grid').innerHTML = `
-      <div class="err-box">
-        <div class="icon">📡</div>
-        <h3>No stories found</h3>
-        <p>Try refreshing — the feed may have been temporarily unavailable.</p>
-        <button class="retry-btn" onclick="doRefresh()">Retry</button>
-      </div>`;
+    grid.innerHTML = `<div class="err-box"><div class="icon">📡</div><h3>No stories found</h3><p>Try refreshing.</p><button class="retry-btn" onclick="doRefresh()">Retry</button></div>`;
     return;
   }
-  document.getElementById('grid').innerHTML = cards.map((card, idx) => `
-    <div class="news-card" style="animation-delay:${idx * 0.05}s">
+
+  grid.innerHTML = cards.map((card, idx) => {
+    const isFirst   = idx === 0;
+    const isNew     = card.pubDate && (Date.now() - new Date(card.pubDate)) < 6 * 3600000;
+    const faviconUrl = card.domain
+      ? `https://www.google.com/s2/favicons?domain=${card.domain}&sz=32`
+      : '';
+    const timeStr = relTime(card.pubDate);
+    const delay   = `animation-delay:${idx * 0.06}s`;
+
+    if (card.isHistory) {
+      return `
+      <div class="news-card" style="${delay}">
+        <div class="year-display">${esc(card.src)}</div>
+        <div class="card-meta">
+          <span class="source-pill year-pill">${esc(card.src)} AD</span>
+        </div>
+        <div class="card-headline">
+          <a href="${esc(card.link)}" target="_blank" rel="noopener">${esc(card.title)}</a>
+        </div>
+        <a class="card-link" href="${esc(card.link)}" target="_blank" rel="noopener">
+          Read on Wikipedia &rarr;
+        </a>
+      </div>`;
+    }
+
+    if (isFirst && card.image) {
+      return `
+      <div class="news-card featured" style="${delay}">
+        <div class="featured-body">
+          <div class="card-meta">
+            ${faviconUrl ? `<img class="favicon" src="${faviconUrl}" onerror="this.remove()" alt="">` : ''}
+            <span class="source-pill">${esc(card.src)}</span>
+            ${timeStr ? `<span class="card-time">${timeStr}</span>` : ''}
+            ${isNew ? `<span class="new-badge">New</span>` : ''}
+          </div>
+          <div class="card-headline">
+            <a href="${esc(card.link)}" target="_blank" rel="noopener">${esc(card.title)}</a>
+          </div>
+          <div class="card-desc">${esc(card.desc)}</div>
+          <a class="card-link" href="${esc(card.link)}" target="_blank" rel="noopener">
+            Read full article &rarr;
+          </a>
+        </div>
+        <div class="featured-img-wrap">
+          <img src="${esc(card.image)}" alt="" onerror="this.closest('.news-card').classList.remove('featured');this.closest('.featured-img-wrap').remove()">
+        </div>
+      </div>`;
+    }
+
+    return `
+    <div class="news-card" style="${delay}">
+      ${card.image ? `
+        <div class="card-img-wrap">
+          <img src="${esc(card.image)}" alt="" onerror="this.closest('.card-img-wrap').remove()">
+        </div>` : ''}
       <div class="card-meta">
-        <span class="source-pill ${card.isHistory ? 'year-pill' : ''}">${esc(card.src)}</span>
-        ${card.pubDate ? `<span class="card-time">${fmtDate(card.pubDate)}</span>` : ''}
+        ${faviconUrl ? `<img class="favicon" src="${faviconUrl}" onerror="this.remove()" alt="">` : ''}
+        <span class="source-pill">${esc(card.src)}</span>
+        ${timeStr ? `<span class="card-time">${timeStr}</span>` : ''}
+        ${isNew ? `<span class="new-badge">New</span>` : ''}
       </div>
       <div class="card-headline">
         <a href="${esc(card.link)}" target="_blank" rel="noopener">${esc(card.title)}</a>
@@ -509,18 +747,37 @@ function renderCards(cards) {
       <a class="card-link" href="${esc(card.link)}" target="_blank" rel="noopener">
         Read full article &rarr;
       </a>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 
 /* ─── SKELETONS ─── */
 function showSkeletons() {
   const rows = [
-    'height:11px;width:55px', 'height:15px;width:100%', 'height:15px;width:80%',
-    'height:13px;width:100%', 'height:13px;width:88%',  'height:13px;width:65%'
+    'height:11px;width:55px', 'height:15px;width:100%',
+    'height:15px;width:78%',  'height:13px;width:100%',
+    'height:13px;width:85%',  'height:13px;width:62%'
   ];
-  document.getElementById('grid').innerHTML = Array(6).fill(
-    `<div class="skel-card">${rows.map(s => `<div class="skel" style="${s}"></div>`).join('')}</div>`
-  ).join('');
+  const card = `<div class="skel-card">${rows.map(s=>`<div class="skel" style="${s}"></div>`).join('')}</div>`;
+  document.getElementById('grid').innerHTML =
+    `<div class="skel-card skel-featured skel"></div>` + Array(5).fill(card).join('');
+}
+
+/* ─── LOCAL FILE MESSAGE ─── */
+function showLocalMsg() {
+  document.getElementById('grid').innerHTML = `
+    <div class="info-box">
+      <div class="icon">🔒</div>
+      <h3>Needs a web server to run</h3>
+      <p>Browsers block external network requests from local files. Two options:</p>
+      <p style="margin-top:14px"><strong style="color:var(--text)">Option 1 — GitHub Pages</strong><br>
+      Push this file to the repo. Works instantly.</p>
+      <p style="margin-top:10px"><strong style="color:var(--text)">Option 2 — Quick local test</strong><br>
+      Run in Terminal from this folder:</p>
+      <div class="code-block">python -m http.server 8000</div><br>
+      Then open <span style="color:#4ea082;font-family:monospace">localhost:8000/current_affairs.html</span>
+    </div>`;
+  setStatus('');
 }
 
 /* ─── HELPERS ─── */
@@ -529,16 +786,25 @@ function setStatus(msg, live = false) {
   document.getElementById('status-bar').classList.toggle('live', live);
 }
 
-function fmtDate(str) {
+function relTime(str) {
+  if (!str) return '';
   try {
-    return new Date(str).toLocaleDateString('en-IN', {
-      day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'
-    });
+    const diff = Date.now() - new Date(str).getTime();
+    const m = Math.floor(diff / 60000);
+    const h = Math.floor(diff / 3600000);
+    const d = Math.floor(diff / 86400000);
+    if (m < 2)  return 'just now';
+    if (m < 60) return `${m}m ago`;
+    if (h < 24) return `${h}h ago`;
+    if (d < 7)  return `${d}d ago`;
+    return new Date(str).toLocaleDateString('en-IN', {day:'numeric', month:'short'});
   } catch { return ''; }
 }
 
 function esc(s) {
-  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  return String(s||'')
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
 </script>
