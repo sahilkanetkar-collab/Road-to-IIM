@@ -3,7 +3,7 @@
   "short_name": "Current Affairs",
   "description": "Live news in 5 categories — built for IPMAT & CAT prep",
   "start_url": "/Road-to-IIM/current_affairs.html",
-  "scope": "/Road-to-IIM/",
+  "scope": "/Road-to-IIM/current_affairs.html",
   "display": "standalone",
   "background_color": "#0d1526",
   "theme_color": "#0d1526",
