@@ -28,7 +28,7 @@
   --c-geo:     #5b8dd9;
   --c-econ:    #4ea082;
   --c-tech:    #9b72cf;
-  --c-sports:  #e08a3a;
+  --c-special: #e0658a;
   --c-history: #d4af37;
 
   --accent: var(--c-geo); /* updated by JS */
@@ -141,7 +141,7 @@ header {
 .tab-btn[data-tab="geopolitics"].active { color: var(--c-geo);     border-color: var(--c-geo);     }
 .tab-btn[data-tab="economics"].active   { color: var(--c-econ);    border-color: var(--c-econ);    }
 .tab-btn[data-tab="tech"].active        { color: var(--c-tech);    border-color: var(--c-tech);    }
-.tab-btn[data-tab="sports"].active      { color: var(--c-sports);  border-color: var(--c-sports);  }
+.tab-btn[data-tab="special"].active     { color: var(--c-special); border-color: var(--c-special); }
 .tab-btn[data-tab="history"].active     { color: var(--c-history); border-color: var(--c-history); }
 
 .tab-dot {
@@ -154,8 +154,68 @@ header {
 .tab-btn[data-tab="geopolitics"] .tab-dot { background: var(--c-geo);     }
 .tab-btn[data-tab="economics"]   .tab-dot { background: var(--c-econ);    }
 .tab-btn[data-tab="tech"]        .tab-dot { background: var(--c-tech);    }
-.tab-btn[data-tab="sports"]      .tab-dot { background: var(--c-sports);  }
+.tab-btn[data-tab="special"]     .tab-dot { background: var(--c-special); }
 .tab-btn[data-tab="history"]     .tab-dot { background: var(--c-history); }
+
+/* ── SPECIAL TAB ── */
+.special-card { border-color: rgba(224,101,138,0.28); }
+.curated-badge {
+  font-size: 10px; letter-spacing: 1px; text-transform: uppercase;
+  color: var(--c-special); border: 1px solid rgba(224,101,138,0.45);
+  padding: 2px 8px; border-radius: 20px; margin-left: auto;
+}
+.special-note {
+  margin: 10px 0 4px; padding: 10px 12px;
+  background: rgba(224,101,138,0.07);
+  border-left: 2px solid var(--c-special);
+  border-radius: 0 8px 8px 0;
+  font-size: 13px; line-height: 1.55; color: var(--text);
+}
+.note-label {
+  display: block; font-size: 10px; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--c-special); margin-bottom: 4px;
+}
+
+/* ── ADMIN: floating add button + modal ── */
+#admin-fab {
+  position: fixed; bottom: 24px; right: 24px;
+  width: 52px; height: 52px; border-radius: 50%;
+  background: var(--gold); color: #0d1526;
+  font-size: 26px; line-height: 1; border: none; cursor: pointer;
+  display: none; align-items: center; justify-content: center;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.45); z-index: 50;
+}
+#admin-fab:active { transform: scale(0.94); }
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(6,10,20,0.72);
+  backdrop-filter: blur(3px);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 60; padding: 20px;
+}
+.modal-box {
+  background: var(--navy-card); border: 1px solid var(--border);
+  border-radius: 14px; padding: 22px; width: 100%; max-width: 440px;
+}
+.modal-box h3 { font-family: 'Fraunces', Georgia, serif; margin-bottom: 14px; }
+.modal-box input, .modal-box textarea {
+  width: 100%; background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border); border-radius: 8px;
+  color: var(--text); font-family: inherit; font-size: 13px;
+  padding: 10px 12px; margin-bottom: 10px;
+}
+.modal-box input:focus, .modal-box textarea:focus { outline: none; border-color: var(--gold); }
+.modal-box textarea { min-height: 90px; resize: vertical; }
+.modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
+.btn-ghost {
+  background: none; border: 1px solid var(--border); color: var(--text-dim);
+  padding: 8px 16px; border-radius: 8px; cursor: pointer; font-family: inherit; font-size: 13px;
+}
+.btn-gold {
+  background: var(--gold); border: none; color: #0d1526; font-weight: 600;
+  padding: 8px 18px; border-radius: 8px; cursor: pointer; font-family: inherit; font-size: 13px;
+}
+.btn-gold:disabled { opacity: 0.5; }
+#add-status { font-size: 12px; color: var(--text-dim); margin-top: 10px; min-height: 16px; }
 
 /* ── MAIN ── */
 main { padding: 24px 32px 64px; max-width: 1060px; }
@@ -457,13 +517,13 @@ main { padding: 24px 32px 64px; max-width: 1060px; }
     <span class="tab-dot"></span>🌍 Geopolitics
   </button>
   <button class="tab-btn" data-tab="economics" onclick="openTab('economics',this)">
-    <span class="tab-dot"></span>📈 Economics
+    <span class="tab-dot"></span>📈 Economics &amp; Finance
   </button>
   <button class="tab-btn" data-tab="tech" onclick="openTab('tech',this)">
     <span class="tab-dot"></span>💡 Tech
   </button>
-  <button class="tab-btn" data-tab="sports" onclick="openTab('sports',this)">
-    <span class="tab-dot"></span>🏏 Sports
+  <button class="tab-btn" data-tab="special" onclick="openTab('special',this)">
+    <span class="tab-dot"></span>⭐ Special
   </button>
   <button class="tab-btn" data-tab="history" onclick="openTab('history',this)">
     <span class="tab-dot"></span>📜 On This Day
@@ -478,6 +538,21 @@ main { padding: 24px 32px 64px; max-width: 1060px; }
   <div class="cards-grid" id="grid"></div>
 </main>
 
+<button id="admin-fab" onclick="openAddModal()" title="Add article">&#65291;</button>
+
+<div id="add-modal" class="modal-overlay" style="display:none">
+  <div class="modal-box">
+    <h3>&#9733; Add to Special</h3>
+    <input id="add-url" type="url" placeholder="Article URL (https://...)">
+    <textarea id="add-note" placeholder="Your note — why this article matters"></textarea>
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="closeAddModal()">Cancel</button>
+      <button class="btn-gold" id="add-submit" onclick="submitSpecial()">Post</button>
+    </div>
+    <div id="add-status"></div>
+  </div>
+</div>
+
 <script>
 
 /* ─── CONFIG ─── */
@@ -488,23 +563,23 @@ const FEEDS = {
   ],
   economics: [
     { url: 'https://economictimes.indiatimes.com/rssfeedstopstories.cms',    src: 'Econ Times', domain: 'economictimes.indiatimes.com' },
-    { url: 'https://www.livemint.com/rss/news',                              src: 'Mint',       domain: 'livemint.com' }
+    { url: 'https://www.livemint.com/rss/news',                              src: 'Mint',       domain: 'livemint.com' },
+    { url: 'https://www.moneycontrol.com/rss/business.xml',                  src: 'Moneycontrol', domain: 'moneycontrol.com' }
   ],
   tech: [
     { url: 'https://techcrunch.com/feed/',           src: 'TechCrunch', domain: 'techcrunch.com' },
     { url: 'https://www.theverge.com/rss/index.xml', src: 'The Verge',  domain: 'theverge.com'  }
-  ],
-  sports: [
-    { url: 'https://www.espncricinfo.com/rss/content/story/feeds/0.xml', src: 'Cricinfo',    domain: 'espncricinfo.com' },
-    { url: 'https://sports.ndtv.com/rss/all',                            src: 'NDTV Sports', domain: 'ndtv.com'         }
   ]
 };
+
+/* Special tab — Apps Script endpoint (deploy CA_Special_AppsScript.gs, paste /exec URL) */
+const SPECIAL_API = 'https://script.google.com/macros/s/AKfycbzt5wiqP4XsogeKYr83NG0Lb9-V1KVTfO6xuWVVA0T-zrRSrCA4TlhODsepciGBk_Lf/exec';
 
 const TAB_ACCENT = {
   geopolitics: '#5b8dd9',
   economics:   '#4ea082',
   tech:        '#9b72cf',
-  sports:      '#e08a3a',
+  special:     '#e0658a',
   history:     '#d4af37'
 };
 
@@ -532,6 +607,7 @@ function openTab(tab, el) {
 
   // Update CSS accent variable
   document.documentElement.style.setProperty('--accent', TAB_ACCENT[tab]);
+  updateAdminBtn();
 
   if (tabCache[tab]) {
     renderCards(tabCache[tab].cards, tab);
@@ -555,9 +631,9 @@ async function loadTab(tab) {
   showSkeletons();
   setStatus('Fetching latest headlines…');
   try {
-    const cards = tab === 'history'
-      ? await loadOnThisDay()
-      : await loadRSS(FEEDS[tab]);
+    const cards = tab === 'history'  ? await loadOnThisDay()
+                : tab === 'special'  ? await loadSpecial()
+                : await loadRSS(FEEDS[tab]);
 
     const ts = new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
     tabCache[tab] = { cards, ts };
@@ -652,6 +728,113 @@ function t_fetch(url, ms = 8000) {
 
 function strip(h) { return h.replace(/<[^>]+>/g,'').replace(/\s+/g,' ').trim(); }
 
+/* ─── SPECIAL TAB (curated via Apps Script) ─── */
+async function loadSpecial() {
+  const r = await t_fetch(`${SPECIAL_API}?action=list`, 12000);
+  const d = await r.json();
+  if (!d.ok) throw new Error('Special feed failed');
+  return (d.articles || []).map(a => {
+    let domain = '';
+    try { domain = new URL(a.link).hostname.replace(/^www\./, ''); } catch (e) {}
+    return {
+      isSpecial: true,
+      src: a.src || 'Curated', domain,
+      title: a.title, desc: '', note: a.note || '',
+      link: a.link, pubDate: a.ts || '', image: ''
+    };
+  });
+}
+
+/* ─── ADMIN (Sahil only — PIN verified server-side) ─── */
+function isAdmin() { return localStorage.getItem('ca_admin') === '1'; }
+
+function updateAdminBtn() {
+  const fab = document.getElementById('admin-fab');
+  if (fab) fab.style.display = (currentTab === 'special' && isAdmin()) ? 'flex' : 'none';
+}
+
+async function unlockAdmin() {
+  const pin = prompt('Admin PIN:');
+  if (!pin) return false;
+  try {
+    const r = await t_fetch(`${SPECIAL_API}?action=auth&pin=${encodeURIComponent(pin)}`, 10000);
+    const d = await r.json();
+    if (d.ok) {
+      localStorage.setItem('ca_admin', '1');
+      localStorage.setItem('ca_pin', pin);
+      return true;
+    }
+  } catch (e) {}
+  alert('Invalid PIN');
+  return false;
+}
+
+function openAddModal(prefillUrl) {
+  document.getElementById('add-url').value = prefillUrl || '';
+  document.getElementById('add-note').value = '';
+  document.getElementById('add-status').textContent = '';
+  document.getElementById('add-modal').style.display = 'flex';
+  (prefillUrl ? document.getElementById('add-note') : document.getElementById('add-url')).focus();
+}
+
+function closeAddModal() {
+  document.getElementById('add-modal').style.display = 'none';
+}
+
+async function submitSpecial() {
+  const url    = document.getElementById('add-url').value.trim();
+  const note   = document.getElementById('add-note').value.trim();
+  const status = document.getElementById('add-status');
+  if (!/^https?:\/\//i.test(url)) { status.textContent = 'Please paste a valid URL.'; return; }
+
+  const btn = document.getElementById('add-submit');
+  btn.disabled = true;
+  status.textContent = 'Posting\u2026';
+  try {
+    const r = await fetch(SPECIAL_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ pin: localStorage.getItem('ca_pin') || '', url, note })
+    });
+    const d = await r.json();
+    if (!d.ok) throw new Error(d.error || 'Failed');
+    status.textContent = 'Posted \u2713';
+    delete tabCache.special;
+    setTimeout(() => {
+      closeAddModal();
+      if (currentTab === 'special') loadTab('special');
+    }, 700);
+  } catch (err) {
+    status.textContent = 'Failed: ' + err.message;
+  }
+  btn.disabled = false;
+}
+
+/* ─── SHARE TARGET + ?admin=1 handling ─── */
+(async function handleIncomingParams() {
+  const p = new URLSearchParams(location.search);
+  const hasShare = p.has('url') || p.has('text') || p.has('title');
+  const wantAdmin = p.get('admin') === '1';
+  if (!hasShare && !wantAdmin) return;
+
+  history.replaceState({}, '', location.pathname);   // clean the URL
+
+  if (!isAdmin()) {
+    const ok = await unlockAdmin();
+    if (!ok) return;
+  }
+
+  if (hasShare) {
+    const raw = [p.get('url'), p.get('text'), p.get('title')].filter(Boolean).join(' ');
+    const m = raw.match(/https?:\/\/\S+/);
+    const specialBtn = document.querySelector('.tab-btn[data-tab="special"]');
+    openTab('special', specialBtn);
+    openAddModal(m ? m[0] : '');
+  } else {
+    updateAdminBtn();
+  }
+})();
+
 /* ─── WIKIPEDIA ON THIS DAY ─── */
 async function loadOnThisDay() {
   const d   = new Date();
@@ -682,7 +865,9 @@ function pickDiverse(events, n) {
 function renderCards(cards, tab) {
   const grid = document.getElementById('grid');
   if (!cards?.length) {
-    grid.innerHTML = `<div class="err-box"><div class="icon">📡</div><h3>No stories found</h3><p>Try refreshing.</p><button class="retry-btn" onclick="doRefresh()">Retry</button></div>`;
+    grid.innerHTML = tab === 'special'
+      ? `<div class="info-box"><div class="icon">⭐</div><h3>Nothing here yet</h3><p>Hand-picked articles from Sahil Sir will appear here. Check back soon!</p></div>`
+      : `<div class="err-box"><div class="icon">📡</div><h3>No stories found</h3><p>Try refreshing.</p><button class="retry-btn" onclick="doRefresh()">Retry</button></div>`;
     return;
   }
 
@@ -707,6 +892,25 @@ function renderCards(cards, tab) {
         </div>
         <a class="card-link" href="${esc(card.link)}" target="_blank" rel="noopener">
           Read on Wikipedia &rarr;
+        </a>
+      </div>`;
+    }
+
+    if (card.isSpecial) {
+      return `
+      <div class="news-card special-card" style="${delay}">
+        <div class="card-meta">
+          ${faviconUrl ? `<img class="favicon" src="${faviconUrl}" onerror="this.remove()" alt="">` : ''}
+          <span class="source-pill">${esc(card.src)}</span>
+          ${timeStr ? `<span class="card-time">${timeStr}</span>` : ''}
+          <span class="curated-badge">&#9733; Curated</span>
+        </div>
+        <div class="card-headline">
+          <a href="${esc(card.link)}" target="_blank" rel="noopener">${esc(card.title)}</a>
+        </div>
+        ${card.note ? `<div class="special-note"><span class="note-label">Sahil Sir's Note</span>${esc(card.note)}</div>` : ''}
+        <a class="card-link" href="${esc(card.link)}" target="_blank" rel="noopener">
+          Read full article &rarr;
         </a>
       </div>`;
     }
