@@ -820,9 +820,12 @@ function esc(s) {
 /* ── PWA: Register Service Worker ── */
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('current-affairs-sw.js')
-      .then(reg => console.log('[CA] SW registered, scope:', reg.scope))
-      .catch(err => console.warn('[CA] SW registration failed:', err));
+    navigator.serviceWorker.register(
+      '/Road-to-IIM/current-affairs-sw.js',
+      { scope: '/Road-to-IIM/current_affairs.html' }
+    )
+    .then(reg => console.log('[CA] SW registered, scope:', reg.scope))
+    .catch(err => console.warn('[CA] SW registration failed:', err));
   });
 }
 </script>
