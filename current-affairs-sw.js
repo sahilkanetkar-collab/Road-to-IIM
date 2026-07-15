@@ -1,32 +1,24 @@
 /* Current Affairs — Road to IIM
-   Service Worker v1
-   Strategy:
-   - App shell (HTML, fonts)  → stale-while-revalidate (loads instantly, updates in background)
-   - News API calls           → network only (always fresh data, never cached)
+   Service Worker v2
+   - No precaching on install (avoids install failure)
+   - Cache on demand — stale-while-revalidate for app shell
+   - Network only for all news/API calls
+   - Scoped to current_affairs.html only
 */
 
-const CACHE_NAME = 'current-affairs-v1';
+const CACHE = 'ca-v2';
 
-const APP_SHELL = [
-  '/Road-to-IIM/current_affairs.html',
-];
-
-/* News data sources — always go to network, never cache */
-const NETWORK_ONLY_HOSTS = [
+const NETWORK_ONLY = [
   'api.rss2json.com',
   'api.allorigins.win',
   'corsproxy.io',
   'api.wikimedia.org',
-  'www.google.com',        // favicons
+  'www.google.com',
 ];
 
-/* ── INSTALL: cache the app shell ── */
+/* ── INSTALL: no precaching, just activate immediately ── */
 self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(APP_SHELL))
-      .then(() => self.skipWaiting())
-  );
+  self.skipWaiting();
 });
 
 /* ── ACTIVATE: clear old caches ── */
@@ -34,37 +26,30 @@ self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys()
       .then(keys => Promise.all(
-        keys
-          .filter(key => key !== CACHE_NAME)
-          .map(key => caches.delete(key))
+        keys.filter(k => k !== CACHE).map(k => caches.delete(k))
       ))
       .then(() => self.clients.claim())
   );
 });
 
-/* ── FETCH: route requests ── */
+/* ── FETCH ── */
 self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
 
-  /* News APIs → always hit the network */
-  if (NETWORK_ONLY_HOSTS.some(h => url.hostname.includes(h))) {
-    return; /* browser handles it */
-  }
+  /* News APIs → always network, never cache */
+  if (NETWORK_ONLY.some(h => url.hostname.includes(h))) return;
 
   /* Everything else → stale-while-revalidate */
   event.respondWith(
-    caches.open(CACHE_NAME).then(cache =>
+    caches.open(CACHE).then(cache =>
       cache.match(event.request).then(cached => {
-        const networkFetch = fetch(event.request)
-          .then(response => {
-            if (response && response.status === 200 && response.type !== 'opaque') {
-              cache.put(event.request, response.clone());
-            }
-            return response;
-          })
-          .catch(() => cached); /* offline fallback */
-
-        return cached || networkFetch;
+        const fresh = fetch(event.request).then(res => {
+          if (res && res.status === 200 && res.type !== 'opaque') {
+            cache.put(event.request, res.clone());
+          }
+          return res;
+        }).catch(() => cached);
+        return cached || fresh;
       })
     )
   );
