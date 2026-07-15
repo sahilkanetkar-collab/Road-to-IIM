@@ -1,0 +1,31 @@
+{
+  "name": "Current Affairs — Road to IIM",
+  "short_name": "Current Affairs",
+  "description": "Live news in 5 categories — built for IPMAT & CAT prep",
+  "start_url": "/Road-to-IIM/current_affairs.html",
+  "scope": "/Road-to-IIM/",
+  "display": "standalone",
+  "background_color": "#0d1526",
+  "theme_color": "#0d1526",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icons/ca/ca-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/ca/ca-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/ca/ca-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
