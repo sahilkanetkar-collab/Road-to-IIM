@@ -1,7 +1,7 @@
 {
   "name": "Current Affairs — Road to IIM",
   "short_name": "Current Affairs",
-  "description": "Live news in 5 categories — built for IPMAT & CAT prep",
+  "description": "Live news + curated articles — built for IPMAT & CAT prep",
   "start_url": "/Road-to-IIM/current_affairs.html",
   "scope": "/Road-to-IIM/current_affairs.html",
   "display": "standalone",
@@ -27,5 +27,14 @@
       "type": "image/png",
       "purpose": "maskable"
     }
-  ]
+  ],
+  "share_target": {
+    "action": "/Road-to-IIM/current_affairs.html",
+    "method": "GET",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  }
 }
