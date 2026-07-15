@@ -4,6 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Current Affairs · Road to IIM</title>
+<meta name="theme-color" content="#0d1526">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Current Affairs">
+<link rel="manifest" href="current-affairs.webmanifest">
+<link rel="apple-touch-icon" href="icons/ca/ca-apple-180.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
 <style>
@@ -807,6 +814,17 @@ function esc(s) {
     .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
+</script>
+
+<script>
+/* ── PWA: Register Service Worker ── */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('current-affairs-sw.js')
+      .then(reg => console.log('[CA] SW registered, scope:', reg.scope))
+      .catch(err => console.warn('[CA] SW registration failed:', err));
+  });
+}
 </script>
 </body>
 </html>
