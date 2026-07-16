@@ -7,9 +7,13 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=DM+Sans:wght@400;500;700&family=Grenze+Gotisch:wght@600;700&display=swap" rel="stylesheet">
 <style>
+/* ═══ sky v2 — polish pass · Jul 2026 ═══
+   Same data plumbing as v1. Changes: readable hubs with progress rings,
+   "Next up" card, progress strip, incomplete-first sorting with a Lit
+   divider, grid leaves, animation diet, bigger sub text. */
 :root{
   --sky:#0c1022; --sky-deep:#070a18;
-  --ivory:#f2eede; --dim:#8b90a8;
+  --ivory:#f2eede; --dim:#9298b0;
   --gold:#d9b96a; --gold-deep:#b8892e;
   --done:#6fc39a; --node:#1d2340;
 }
@@ -23,12 +27,9 @@ canvas#stars{position:fixed;inset:0;width:100vw;height:100vh;z-index:0;pointer-e
   position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
   font-family:'Grenze Gotisch',serif;font-weight:700;white-space:nowrap;
   font-size:clamp(4.2rem,14vw,12rem); color:transparent;
-  -webkit-text-stroke:1.2px rgba(217,185,106,.16);
-  text-shadow:0 0 45px rgba(217,185,106,.18), 0 0 100px rgba(217,185,106,.09);
+  -webkit-text-stroke:1px rgba(217,185,106,.09);
   z-index:0;pointer-events:none;user-select:none;
-  animation:breathe 7s ease-in-out infinite;
 }
-@keyframes breathe{0%,100%{opacity:.75;}50%{opacity:1;text-shadow:0 0 55px rgba(217,185,106,.24),0 0 110px rgba(217,185,106,.12);}}
 
 /* ── login overlay ─────────────────────── */
 .login-veil{
@@ -64,109 +65,150 @@ canvas#stars{position:fixed;inset:0;width:100vw;height:100vh;z-index:0;pointer-e
 /* ── header ─────────────────────────────── */
 header{
   position:relative;z-index:2;
-  padding:30px clamp(20px,6vw,72px) 6px;
+  padding:28px clamp(20px,6vw,72px) 4px;
   display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
 }
+.brand{font-family:'Fraunces',serif;font-weight:700;font-size:clamp(1.5rem,3vw,2.1rem);}
+.brand em{font-style:normal;color:var(--gold);text-shadow:0 0 14px rgba(217,185,106,.5);}
 .right-cluster{display:flex;align-items:center;gap:18px;min-width:0;flex-shrink:1;}
 .tracker-link{font-size:.74rem;font-weight:700;letter-spacing:.04em;color:var(--gold);text-decoration:none;border:1px solid rgba(217,185,106,.45);border-radius:999px;padding:5px 13px;white-space:nowrap;transition:background .2s,box-shadow .2s;}
 .tracker-link:hover{background:rgba(217,185,106,.12);box-shadow:0 0 12px rgba(217,185,106,.25);}
 @media (max-width:560px){.tracker-link{padding:4px 10px;font-size:.68rem;}}
-.student{font-size:.82rem;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:46vw;}
-.brand{font-family:'Fraunces',serif;font-weight:700;font-size:clamp(1.5rem,3vw,2.1rem);}
-.brand em{font-style:normal;color:var(--gold);text-shadow:0 0 14px rgba(217,185,106,.5);}
-.right-cluster{display:flex;align-items:center;gap:18px;}
-.northstar{
-  display:flex;align-items:center;gap:8px;
-  font-size:.8rem;color:var(--dim);
-}
+.northstar{display:flex;align-items:center;gap:8px;font-size:.8rem;color:var(--dim);}
 .northstar .flame{
   width:30px;height:30px;border-radius:50%;
   background:radial-gradient(circle at 35% 30%, #ffe9b0, var(--gold-deep) 75%);
   box-shadow:0 0 14px rgba(217,185,106,.55);
   display:flex;align-items:center;justify-content:center;
   font-weight:700;color:var(--sky-deep);font-size:.8rem;
-  animation:starpulse 3s ease-in-out infinite;
 }
-.northstar .flame.dim{background:radial-gradient(circle at 35% 30%, #3a4062, #232946 75%);color:var(--dim);box-shadow:none;animation:none;}
-@keyframes starpulse{0%,100%{box-shadow:0 0 12px rgba(217,185,106,.45);}50%{box-shadow:0 0 22px rgba(217,185,106,.8);}}
+.northstar .flame.dim{background:radial-gradient(circle at 35% 30%, #3a4062, #232946 75%);color:var(--dim);box-shadow:none;}
+.student{font-size:.82rem;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:46vw;}
 .student b{color:var(--ivory);}
 .student .signout{color:var(--gold);cursor:pointer;text-decoration:underline;font-size:.72rem;margin-left:8px;}
+
 .tagline{
   position:relative;z-index:2;
-  padding:0 clamp(20px,6vw,72px) 26px;
+  padding:0 clamp(20px,6vw,72px) 10px;
   font-family:'Fraunces',serif;font-size:clamp(.95rem,2vw,1.2rem);color:var(--dim);
 }
 .tagline .stroke{color:var(--gold);}
 
-/* ── canopy ─────────────────────────────── */
+/* ── progress strip ─────────────────────── */
+.skybar{
+  position:relative;z-index:2;
+  padding:0 clamp(20px,6vw,72px) 22px;
+  display:none;align-items:center;gap:12px;
+}
+.skybar .bar{
+  flex:1;height:5px;border-radius:999px;background:rgba(242,238,222,.1);overflow:hidden;max-width:420px;
+}
+.skybar .fill{height:100%;width:0%;border-radius:999px;background:linear-gradient(90deg,var(--gold),var(--done));transition:width .8s ease;}
+.skybar .count{font-size:.76rem;color:var(--dim);white-space:nowrap;}
+.skybar .count b{color:var(--gold);}
+
+/* ── next up card ───────────────────────── */
+.nextup{
+  position:relative;z-index:2;
+  margin:0 clamp(20px,6vw,72px) 30px;
+  max-width:560px;
+  display:none;align-items:center;gap:16px;
+  background:linear-gradient(150deg,rgba(217,185,106,.12),rgba(20,26,51,.65));
+  border:1px solid rgba(217,185,106,.45);border-radius:14px;
+  padding:16px 18px;cursor:pointer;text-align:left;
+  color:var(--ivory);font-family:'DM Sans',sans-serif;width:calc(100% - 2*clamp(20px,6vw,72px));
+  transition:box-shadow .2s ease, transform .2s ease;
+}
+.nextup:hover{box-shadow:0 0 26px rgba(217,185,106,.3);transform:translateY(-1px);}
+.nextup:focus-visible{outline:2px solid var(--gold);outline-offset:2px;}
+.nextup .spark{
+  width:36px;height:36px;flex:0 0 36px;border-radius:50%;
+  border:2px solid var(--gold);box-shadow:0 0 14px rgba(217,185,106,.5);
+  display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:1rem;
+}
+.nextup .nu-body{flex:1;min-width:0;}
+.nextup .nu-eyebrow{font-size:.62rem;font-weight:700;letter-spacing:.14em;color:var(--gold);margin-bottom:2px;}
+.nextup .nu-title{font-family:'Fraunces',serif;font-size:1.05rem;font-weight:600;}
+.nextup .nu-sub{font-size:.74rem;color:var(--dim);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.nextup .nu-go{
+  flex:0 0 auto;padding:9px 16px;border-radius:999px;border:none;cursor:pointer;
+  background:linear-gradient(135deg,var(--gold),var(--gold-deep));color:var(--sky-deep);
+  font-weight:700;font-size:.8rem;font-family:'DM Sans',sans-serif;
+}
+@media (max-width:560px){
+  .nextup{flex-wrap:wrap;}
+  .nextup .nu-go{width:100%;text-align:center;}
+}
+
+/* ── canopy: hubs ───────────────────────── */
 .canopy{position:relative;z-index:2;padding-bottom:80px;}
 svg.wires{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible;z-index:1;}
 svg.wires path{
-  fill:none;stroke:rgba(217,185,106,.4);stroke-width:1.4;stroke-linecap:round;
+  fill:none;stroke:rgba(217,185,106,.32);stroke-width:1.3;stroke-linecap:round;
   stroke-dasharray:420;stroke-dashoffset:420;animation:draw .5s ease forwards;
-  filter:drop-shadow(0 0 3px rgba(217,185,106,.35));
 }
-svg.wires path.gold{stroke:var(--gold);filter:drop-shadow(0 0 5px rgba(217,185,106,.6));}
+svg.wires path.gold{stroke:var(--gold);filter:drop-shadow(0 0 4px rgba(217,185,106,.5));}
+svg.wires path.lit{stroke:rgba(111,195,154,.35);}
 @keyframes draw{to{stroke-dashoffset:0;}}
+
 .hubs{
-  display:flex;justify-content:center;gap:clamp(10px,3.4vw,54px);
-  padding:8px clamp(10px,4vw,60px) 34px;
-  position:relative;z-index:2;
+  display:flex;justify-content:center;gap:clamp(14px,3.6vw,52px);
+  padding:8px clamp(10px,4vw,60px) 36px;
+  position:relative;z-index:2;flex-wrap:wrap;
 }
 .hub-wrap{
   display:flex;flex-direction:column;align-items:center;gap:9px;cursor:pointer;
   user-select:none;-webkit-tap-highlight-color:transparent;background:none;border:none;
-  font-family:'DM Sans',sans-serif;color:var(--ivory);
+  font-family:'DM Sans',sans-serif;color:var(--ivory);width:clamp(88px,11vw,116px);
+}
+.hub-ring{
+  width:clamp(58px,7vw,76px);height:clamp(58px,7vw,76px);border-radius:50%;
+  padding:3px;background:conic-gradient(var(--done) calc(var(--pct)*1%), rgba(217,185,106,.22) 0);
+  transition:transform .2s ease;
 }
 .hub{
-  width:clamp(48px,6.4vw,80px);height:clamp(48px,6.4vw,80px);border-radius:50%;
+  width:100%;height:100%;border-radius:50%;
   background:radial-gradient(circle at 32% 28%, #2b3358, var(--node) 70%);
-  border:1.5px solid rgba(217,185,106,.35);
-  color:var(--ivory);
   display:flex;align-items:center;justify-content:center;
-  font-family:'Fraunces',serif;font-weight:600;font-size:clamp(.9rem,1.5vw,1.3rem);
-  box-shadow:0 0 18px rgba(217,185,106,.12), inset 0 0 12px rgba(0,0,0,.4);
-  transition:transform .25s ease, box-shadow .25s ease, background .25s ease;
-  animation:floaty 5.2s ease-in-out infinite;
-  animation-delay:var(--phase);
-  position:relative;
+  font-family:'DM Sans',sans-serif;font-weight:700;font-size:clamp(.72rem,1.1vw,.82rem);
+  color:var(--ivory);letter-spacing:.02em;
+  box-shadow:inset 0 0 12px rgba(0,0,0,.45);
+  transition:background .2s ease, box-shadow .2s ease;
 }
-.hub .prog{
-  position:absolute;bottom:-4px;right:-4px;
-  min-width:20px;height:20px;padding:0 4px;border-radius:10px;
-  background:var(--sky-deep);border:1px solid rgba(217,185,106,.5);
-  color:var(--gold);font-size:.58rem;font-weight:700;
-  display:flex;align-items:center;justify-content:center;font-family:'DM Sans',sans-serif;
-}
-@keyframes floaty{0%,100%{transform:translateY(0);}50%{transform:translateY(-7px);}}
-.hub-wrap:hover .hub{transform:translateY(-4px) scale(1.09);box-shadow:0 0 26px rgba(217,185,106,.35), inset 0 0 12px rgba(0,0,0,.4);animation-play-state:paused;}
+.hub-wrap:hover .hub-ring{transform:translateY(-3px);}
 .hub-wrap:focus-visible{outline:none;}
-.hub-wrap:focus-visible .hub{outline:2px solid var(--gold);outline-offset:3px;}
+.hub-wrap:focus-visible .hub-ring{outline:2px solid var(--gold);outline-offset:3px;}
 .hub-wrap.open .hub{
   background:radial-gradient(circle at 32% 28%, #f0d896, var(--gold-deep) 75%);
-  color:var(--sky-deep);border-color:var(--gold);
-  box-shadow:0 0 30px rgba(217,185,106,.55), 0 0 70px rgba(217,185,106,.2);
-  animation:floaty 5.2s ease-in-out infinite, pulse 2.6s ease-in-out infinite;
-  animation-delay:var(--phase), 0s;
+  color:var(--sky-deep);
+  box-shadow:0 0 26px rgba(217,185,106,.5);
 }
-@keyframes pulse{0%,100%{box-shadow:0 0 30px rgba(217,185,106,.55),0 0 70px rgba(217,185,106,.2);}50%{box-shadow:0 0 42px rgba(217,185,106,.75),0 0 95px rgba(217,185,106,.3);}}
-.hub-wrap.complete .hub{border-color:var(--done);box-shadow:0 0 22px rgba(111,195,154,.4), inset 0 0 12px rgba(0,0,0,.4);}
-.hub-name{font-size:clamp(.6rem,1.15vw,.78rem);font-weight:700;text-align:center;max-width:100px;line-height:1.25;}
-.hub-count{font-size:.62rem;color:var(--gold);font-weight:700;}
+.hub-wrap.complete .hub-ring{background:conic-gradient(var(--done) 100%, var(--done) 0);}
+.hub-name{
+  font-size:clamp(.72rem,1.2vw,.82rem);font-weight:700;text-align:center;
+  line-height:1.3;color:var(--ivory);
+}
+.hub-wrap.open .hub-name{color:var(--gold);}
+.hub-desc{font-size:.64rem;color:var(--dim);text-align:center;line-height:1.3;}
+@media (max-width:640px){
+  .hubs{display:grid;grid-template-columns:repeat(3,1fr);gap:18px 8px;justify-items:center;}
+  .hub-wrap{width:100%;}
+  .hub-desc{display:none;}
+}
 
 /* ── leaves ─────────────────────────────── */
-.panel{position:relative;z-index:2;max-width:880px;margin:0 auto;padding:26px clamp(20px,5vw,50px) 0;}
-.panel-head{font-family:'Fraunces',serif;font-size:1.05rem;color:var(--dim);padding-bottom:16px;}
+.panel{position:relative;z-index:2;max-width:820px;margin:0 auto;padding:22px clamp(20px,5vw,50px) 0;}
+.panel-head{font-family:'Fraunces',serif;font-size:1.05rem;color:var(--dim);padding-bottom:14px;}
 .panel-head b{color:var(--ivory);}
-.leaves{display:flex;flex-wrap:wrap;justify-content:center;gap:14px 20px;}
+.leaves{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:4px 18px;}
 .leaf{
-  display:flex;align-items:center;gap:10px;
+  display:flex;align-items:center;gap:11px;
   border:none;background:none;cursor:pointer;font-family:'DM Sans',sans-serif;
-  padding:6px 12px 6px 6px;border-radius:999px;
-  transition:background .15s ease;
-  opacity:0;transform:translateY(-8px);
-  animation:drop .3s ease forwards;
-  animation-delay:calc(var(--i) * 45ms);
+  padding:8px 12px 8px 8px;border-radius:12px;
+  transition:background .15s ease;text-align:left;
+  opacity:0;transform:translateY(-6px);
+  animation:drop .25s ease forwards;
+  animation-delay:calc(var(--i) * 30ms);
 }
 @keyframes drop{to{opacity:1;transform:none;}}
 .leaf:hover,.leaf:focus-visible{background:rgba(242,238,222,.07);}
@@ -179,20 +221,24 @@ svg.wires path.gold{stroke:var(--gold);filter:drop-shadow(0 0 5px rgba(217,185,1
 .leaf:hover .dot{box-shadow:0 0 10px rgba(217,185,106,.4);}
 .leaf.done .dot{background:var(--done);border-color:var(--done);box-shadow:0 0 10px rgba(111,195,154,.5);}
 .leaf.done .dot::after{content:'✓';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--sky-deep);font-size:.7rem;font-weight:700;}
-.leaf.new .dot{border-color:var(--gold);box-shadow:0 0 12px rgba(217,185,106,.55);animation:twinkle 2.2s ease-in-out infinite;}
-@keyframes twinkle{0%,100%{box-shadow:0 0 8px rgba(217,185,106,.4);}50%{box-shadow:0 0 16px rgba(217,185,106,.8);}}
-.leaf .lbl{font-size:.86rem;font-weight:500;color:var(--ivory);text-align:left;}
-.leaf .sub{display:block;font-size:.68rem;color:var(--dim);font-weight:400;}
+.leaf.new .dot{border-color:var(--gold);box-shadow:0 0 12px rgba(217,185,106,.6);}
+.leaf .lbl{font-size:.88rem;font-weight:500;color:var(--ivory);min-width:0;}
+.leaf .sub{display:block;font-size:.74rem;color:var(--dim);font-weight:400;margin-top:1px;}
 .leaf .score{color:var(--done);font-weight:700;}
-.badge-new{font-size:.6rem;font-weight:700;letter-spacing:.08em;color:var(--gold);border:1px solid rgba(217,185,106,.5);border-radius:4px;padding:1px 5px;}
+.badge-new{font-size:.6rem;font-weight:700;letter-spacing:.08em;color:var(--gold);border:1px solid rgba(217,185,106,.5);border-radius:4px;padding:1px 5px;margin-left:4px;}
+.leaf-divider{
+  grid-column:1/-1;display:flex;align-items:center;gap:10px;
+  padding:14px 4px 6px;font-size:.66rem;font-weight:700;letter-spacing:.14em;color:var(--done);
+  opacity:0;animation:drop .25s ease forwards;animation-delay:calc(var(--i) * 30ms);
+}
+.leaf-divider::before,.leaf-divider::after{content:'';flex:1;height:1px;background:rgba(111,195,154,.25);}
 
 footer{position:relative;z-index:2;padding:20px clamp(20px,6vw,72px) 40px;font-size:.72rem;color:var(--dim);opacity:.8;text-align:center;}
 
-@media (max-width:560px){.hub-name{max-width:58px;}}
 @media (prefers-reduced-motion:reduce){
-  .hub,.hub-wrap.open .hub,.watermark,.leaf,.leaf.new .dot,.northstar .flame{animation:none !important;}
-  .leaf{opacity:1;transform:none;}
+  .leaf,.leaf-divider{animation:none;opacity:1;transform:none;}
   svg.wires path{animation:none;stroke-dashoffset:0;}
+  .nextup,.hub-ring{transition:none;}
 }
 </style>
 </head>
@@ -229,6 +275,21 @@ footer{position:relative;z-index:2;padding:20px clamp(20px,6vw,72px) 40px;font-s
 </header>
 <div class="tagline">Every test is a star. <span class="stroke">Light them up, one by one.</span></div>
 
+<div class="skybar" id="skybar">
+  <div class="bar"><div class="fill" id="skyFill"></div></div>
+  <div class="count" id="skyCount"></div>
+</div>
+
+<button class="nextup" id="nextUp">
+  <div class="spark">✦</div>
+  <div class="nu-body">
+    <div class="nu-eyebrow">NEXT UP FOR YOU</div>
+    <div class="nu-title" id="nuTitle"></div>
+    <div class="nu-sub" id="nuSub"></div>
+  </div>
+  <span class="nu-go" id="nuGo">Start now</span>
+</button>
+
 <div class="canopy" id="canopy">
   <svg class="wires" id="wires"></svg>
   <div class="hubs" id="hubs"></div>
@@ -249,7 +310,7 @@ const PORTAL_BASE = ""; // same directory as the test files
    sheetName matches the exact testName written to All Responses.
    matchNum lets "Road to IIM Test 19" and "Road to IIM Paper 19" both count. */
 const MANIFEST = [
-  { id:"standard", glyph:"St", name:"Standard Tests", desc:"Full 30-minute mixed VA papers · +4 / −1",
+  { id:"standard", name:"Standard Tests", desc:"Full 30-minute mixed VA papers · +4 / −1",
     tests:[
       {t:"Test 9",  url:"RoadToIIM_Test9_OnlineTest.html",  matchNum:9},
       {t:"Test 11", url:"RoadToIIM_Test11_OnlineTest.html", matchNum:11},
@@ -267,7 +328,7 @@ const MANIFEST = [
       {t:"Test 23", url:"RoadToIIM_Test23_OnlineTest.html", matchNum:23},
       {t:"Test 24", url:"RoadToIIM_Test24_OnlineTest.html", matchNum:24, isNew:true},
     ]},
-  { id:"rapid", glyph:"RF", name:"Rapid Fire", desc:"Short bursts, no feedback till the end",
+  { id:"rapid", name:"Rapid Fire", desc:"Short bursts, no feedback till the end",
     tests:[
       {t:"Rapid Fire 01", url:"RoadToIIM_SpeedTest01_VocabGrammar.html", sheetName:"Rapid Fire Test 01"},
       {t:"Rapid Fire 02", url:"RoadToIIM_SpeedTest02_VocabGrammar.html", sheetName:"Rapid Fire Test 02"},
@@ -277,7 +338,7 @@ const MANIFEST = [
       {t:"Rapid Fire 06", url:"RoadToIIM_SpeedTest06_VocabGrammar.html", sheetName:"Rapid Fire Test 6"},
       {t:"Rapid Fire 07", url:"RoadToIIM_SpeedTest07_VocabGrammar.html", sheetName:"Rapid Fire Test 07", isNew:true},
     ]},
-  { id:"rc", glyph:"RC", name:"RC Series & Drills", desc:"Passages, alerts, skeletons",
+  { id:"rc", name:"RC Series & Drills", desc:"Passages, alerts, skeletons",
     tests:[
       {t:"RC Series 01", url:"RoadToIIM_RC_Series01.html", sheetName:"RC Series 01"},
       {t:"RC Series 02", url:"RoadToIIM_RC_Series02.html", sheetName:"RC Series 02"},
@@ -285,19 +346,19 @@ const MANIFEST = [
       {t:"RC Drill 04",  url:"RoadToIIM_RC_Series04_RCDrill.html", sheetName:"Road to IIM RC Series 04"},
       {t:"RC Drill 05",  url:"RoadToIIM_RC_Series05_RCDrill.html", sheetName:"Road to IIM RC Series 05", isNew:true},
     ]},
-  { id:"concept", glyph:"Co", name:"Concept Tests", desc:"Straight from class decks",
+  { id:"concept", name:"Concept Tests", desc:"Straight from class decks",
     tests:[
       {t:"Word Web I",    url:"RoadToIIM_ConceptTest01_WordWebI.html",     sheetName:"Concept Test 1"},
       {t:"Word Web II",   url:"RoadToIIM_ConceptTest02_WordWebII.html",    sheetName:"Concept Test 2"},
       {t:"The Impostors", url:"RoadToIIM_ConceptTest03_TheImpostors.html", sheetName:"Concept Test 3"},
       {t:"Cumulative",    url:"RoadToIIM_ConceptTest04_Cumulative.html",   sheetName:"Concept Test 4", isNew:true},
     ]},
-  { id:"vault", glyph:"Va", name:"The Vault", desc:"Your words and your mistakes, banked daily",
+  { id:"vault", name:"The Vault", desc:"Your words and your mistakes, banked daily",
     tests:[
       {t:"The Vault",    url:"the_vault.html",    soon:true},
       {t:"Mistake Bank", url:"mistake_bank.html", soon:true},
     ]},
-  { id:"skills", glyph:"Sk", name:"Skill Building", desc:"Daily habits that compound",
+  { id:"skills", name:"Skill Building", desc:"Daily habits that compound",
     tests:[
       {t:"IWP", url:"iwp_week1_session.html", soon:true},
       {t:"RLS", url:"RLS_Week1.html",         soon:true},
@@ -306,21 +367,26 @@ const MANIFEST = [
     ]},
 ];
 
-/* ═══ STARFIELD ═══ */
+/* ═══ STARFIELD (dieted: fewer stars, ~30fps) ═══ */
 const cv=document.getElementById('stars'),cx=cv.getContext('2d');
 let stars=[];const REDUCED=matchMedia('(prefers-reduced-motion: reduce)').matches;
-function seedStars(){const n=Math.min(160,Math.floor(innerWidth*innerHeight/9000));
+function seedStars(){const n=Math.min(110,Math.floor(innerWidth*innerHeight/13000));
   stars=Array.from({length:n},()=>({x:Math.random()*innerWidth,y:Math.random()*innerHeight,r:Math.random()*1.3+.3,p:Math.random()*Math.PI*2,v:.4+Math.random()*.9,gold:Math.random()<.12}));}
 function sizeCanvas(){cv.width=innerWidth*devicePixelRatio;cv.height=innerHeight*devicePixelRatio;cx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);seedStars();}
 sizeCanvas();addEventListener('resize',sizeCanvas);
-function paintStars(t){cx.clearRect(0,0,innerWidth,innerHeight);
+let lastPaint=0;
+function paintStars(t){
+  if(t-lastPaint<33){requestAnimationFrame(paintStars);return;}
+  lastPaint=t;
+  cx.clearRect(0,0,innerWidth,innerHeight);
   for(const s of stars){const tw=REDUCED?.8:.5+.5*Math.sin(t/900*s.v+s.p);cx.globalAlpha=.25+.6*tw;cx.fillStyle=s.gold?'#d9b96a':'#e8ecff';cx.beginPath();cx.arc(s.x,s.y,s.r,0,7);cx.fill();}
-  cx.globalAlpha=1;if(!REDUCED)requestAnimationFrame(paintStars);}
+  cx.globalAlpha=1;if(!REDUCED)requestAnimationFrame(paintStars);
+}
 requestAnimationFrame(paintStars);
 
 /* ═══ PROFILE ═══ */
 const PROFILE_TTL = 6*60*60*1000;
-function pkey(pin){return 'riim_profile_v2_'+pin;} /* v2: bust caches poisoned by the endpoint mismatch */
+function pkey(pin){return 'riim_profile_v2_'+pin;} /* same key as v1 — caches carry over */
 async function fetchProfile(pin){
   /* send BOTH param names so either doGet variant (mode= or action=) answers */
   const res = await fetch(EXEC_URL+'?mode=profile&action=profile&pin='+encodeURIComponent(pin));
@@ -371,20 +437,63 @@ const hubsEl=document.getElementById('hubs'),leavesEl=document.getElementById('l
       canopy=document.getElementById('canopy');
 let openId=MANIFEST[0].id, PROFILE=null, PIN=null;
 
+function famProgress(fam){
+  const trackable=fam.tests.filter(t=>!t.soon);
+  const done=trackable.filter(t=>isDone(t,PROFILE).done).length;
+  return {done, total:trackable.length};
+}
+
 function buildHubs(){
   hubsEl.innerHTML='';
-  MANIFEST.forEach((fam,idx)=>{
-    const trackable=fam.tests.filter(t=>!t.soon);
-    const doneCount=trackable.filter(t=>isDone(t,PROFILE).done).length;
-    const progBadge = trackable.length ? `<span class="prog">${doneCount}/${trackable.length}</span>` : '';
+  MANIFEST.forEach(fam=>{
+    const {done,total}=famProgress(fam);
+    const pct= total ? Math.round(done/total*100) : 0;
+    const inner = total ? `${done}/${total}` : '✦';
     const b=document.createElement('button');
-    b.className='hub-wrap'+(trackable.length&&doneCount===trackable.length?' complete':'');
+    b.className='hub-wrap'+(total&&done===total?' complete':'');
     b.dataset.id=fam.id;b.setAttribute('aria-label',fam.name);
-    b.innerHTML=`<div class="hub" style="--phase:${-(idx*0.9)}s">${fam.glyph}${progBadge}</div>
-      <div class="hub-name">${fam.name}</div>`;
+    b.innerHTML=`<div class="hub-ring" style="--pct:${pct}"><div class="hub">${inner}</div></div>
+      <div class="hub-name">${fam.name}</div>
+      <div class="hub-desc">${fam.desc}</div>`;
     b.addEventListener('click',()=>{openId=fam.id;render();});
     hubsEl.appendChild(b);
   });
+}
+
+function updateSkybar(){
+  const bar=document.getElementById('skybar');
+  if(!PROFILE){bar.style.display='none';return;}
+  let done=0,total=0;
+  MANIFEST.forEach(fam=>{const p=famProgress(fam);done+=p.done;total+=p.total;});
+  if(!total){bar.style.display='none';return;}
+  bar.style.display='flex';
+  document.getElementById('skyFill').style.width=Math.round(done/total*100)+'%';
+  document.getElementById('skyCount').innerHTML=`<b>${done}</b> of ${total} stars lit`;
+}
+
+function computeNextUp(){
+  /* priority: newest unlit → first unlit in manifest order */
+  let firstUnlit=null, firstNew=null;
+  MANIFEST.forEach(fam=>{
+    fam.tests.forEach(test=>{
+      if(test.soon) return;
+      const done=isDone(test,PROFILE).done;
+      if(done) return;
+      if(test.isNew && !firstNew) firstNew={fam,test};
+      if(!firstUnlit) firstUnlit={fam,test};
+    });
+  });
+  return firstNew||firstUnlit;
+}
+
+function updateNextUp(){
+  const card=document.getElementById('nextUp');
+  const nu=computeNextUp();
+  if(!nu){ card.style.display='none'; return; }
+  card.style.display='flex';
+  document.getElementById('nuTitle').textContent=nu.test.t;
+  document.getElementById('nuSub').textContent=nu.fam.name+' · '+nu.fam.desc;
+  card.onclick=()=>{ if(nu.test.url) location.href = PORTAL_BASE + nu.test.url; };
 }
 
 function render(){
@@ -392,17 +501,34 @@ function render(){
   const fam=MANIFEST.find(f=>f.id===openId);
   panelHead.innerHTML=`<b>${fam.name}</b> — ${fam.desc}`;
   leavesEl.innerHTML='';
-  fam.tests.forEach((test,i)=>{
-    const st=isDone(test,PROFILE);
+
+  /* incomplete first (NEW floats to top), then a Lit divider, then done */
+  const withState=fam.tests.map(t=>({t, st:isDone(t,PROFILE)}));
+  const unlit=withState.filter(x=>!x.st.done);
+  unlit.sort((a,b)=>(b.t.isNew?1:0)-(a.t.isNew?1:0));
+  const lit=withState.filter(x=>x.st.done);
+
+  let i=0;
+  const addLeaf=(test,st)=>{
     const l=document.createElement('button');
     l.className='leaf'+(st.done?' done':'')+(test.isNew&&!st.done?' new':'');
-    l.style.setProperty('--i',i);
+    l.style.setProperty('--i',i++);
     const scoreBit = st.done && typeof st.best==='number' ? ` · <span class="score">${st.best}</span>` : '';
     const sub = test.soon ? 'Open anytime · tracking coming soon' : (st.done?'Best'+scoreBit:'Not yet lit');
     l.innerHTML=`<span class="dot"></span><span class="lbl">${test.t}${test.isNew&&!st.done?' <span class="badge-new">NEW</span>':''}<span class="sub">${sub}</span></span>`;
     l.addEventListener('click',()=>{ if(test.url){ location.href = PORTAL_BASE + test.url; } });
     leavesEl.appendChild(l);
-  });
+  };
+
+  unlit.forEach(x=>addLeaf(x.t,x.st));
+  if(lit.length && unlit.length){
+    const d=document.createElement('div');
+    d.className='leaf-divider';d.style.setProperty('--i',i++);
+    d.textContent='LIT';
+    leavesEl.appendChild(d);
+  }
+  lit.forEach(x=>addLeaf(x.t,x.st));
+
   requestAnimationFrame(drawWires);
 }
 
@@ -420,7 +546,8 @@ function drawWires(){
     const p=document.createElementNS('http://www.w3.org/2000/svg','path');
     p.setAttribute('d',`M ${hx} ${hy} Q ${mx} ${my} ${lx} ${ly}`);
     if(leaf.classList.contains('new'))p.classList.add('gold');
-    p.style.animationDelay=(i*45)+'ms';
+    else if(leaf.classList.contains('done'))p.classList.add('lit');
+    p.style.animationDelay=(i*30)+'ms';
     wires.appendChild(p);
   });
 }
@@ -438,8 +565,8 @@ function applyProfile(profile){
   const flame=document.getElementById('streakFlame');
   flame.textContent=profile.streak||0;
   flame.classList.toggle('dim',!(profile.streak>0));
-  document.getElementById('streakLabel').textContent=(profile.streak===1?'day streak':'day streak');
-  buildHubs();render();
+  document.getElementById('streakLabel').textContent='day streak';
+  buildHubs();render();updateSkybar();updateNextUp();
 }
 
 /* ═══ LOGIN ═══ */
@@ -448,7 +575,8 @@ async function enter(pin){
   PIN=pin;
   try{localStorage.setItem('riim_pin',pin);}catch(e){}
   veil.style.display='none';
-  buildHubs();render(); // paint immediately (all unlit)
+  document.getElementById('trackerLink').style.display=''; /* always visible once inside — never gated on profile */
+  buildHubs();render();updateNextUp(); // paint immediately (all unlit)
   const profile=await getProfile(pin);
   if(profile){ applyProfile(profile); }
   else {
