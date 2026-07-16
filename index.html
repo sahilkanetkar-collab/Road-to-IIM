@@ -68,6 +68,9 @@ header{
   display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
 }
 .right-cluster{display:flex;align-items:center;gap:18px;min-width:0;flex-shrink:1;}
+.tracker-link{font-size:.74rem;font-weight:700;letter-spacing:.04em;color:var(--gold);text-decoration:none;border:1px solid rgba(217,185,106,.45);border-radius:999px;padding:5px 13px;white-space:nowrap;transition:background .2s,box-shadow .2s;}
+.tracker-link:hover{background:rgba(217,185,106,.12);box-shadow:0 0 12px rgba(217,185,106,.25);}
+@media (max-width:560px){.tracker-link{padding:4px 10px;font-size:.68rem;}}
 .student{font-size:.82rem;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:46vw;}
 .brand{font-family:'Fraunces',serif;font-weight:700;font-size:clamp(1.5rem,3vw,2.1rem);}
 .brand em{font-style:normal;color:var(--gold);text-shadow:0 0 14px rgba(217,185,106,.5);}
@@ -213,6 +216,7 @@ footer{position:relative;z-index:2;padding:20px clamp(20px,6vw,72px) 40px;font-s
 <header>
   <div class="brand">Road to <em>IIM</em></div>
   <div class="right-cluster">
+    <a class="tracker-link" id="trackerLink" href="road_to_iim_tracker_v2.html" style="display:none">My Tracker</a>
     <div class="northstar" id="northstar" title="Daily streak" style="display:none">
       <div class="flame dim" id="streakFlame">0</div>
       <span id="streakLabel">day streak</span>
@@ -426,6 +430,7 @@ function applyProfile(profile){
   PROFILE=profile;
   if(!profile) return;
   document.getElementById('studentBox').style.display='';
+  document.getElementById('trackerLink').style.display='';
   document.getElementById('studentName').textContent=profile.name||'Student';
   document.getElementById('studentBatch').textContent=profile.batch||'';
   const ns=document.getElementById('northstar');
