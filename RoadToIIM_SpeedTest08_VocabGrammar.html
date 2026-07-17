@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rapid Fire Test 08 | Road to IIM</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+:root{
+  --navy:#0d1b2a; --navy2:#1a2e45; --gold:#c9a84c; --gold2:#e8c76a;
+  --green:#2ecc71; --red:#e74c3c; --grey:#8899aa; --white:#f0f4f8;
+  --purple:#8b5cf6; --purple2:#7c3aed;
+  --panel:300px; --topbar:56px; --navbar:62px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:var(--navy);color:var(--white);min-height:100vh;}
+
+/* ---------- LOGIN ---------- */
+#loginScreen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;}
+.loginCard{background:var(--navy2);border:1px solid rgba(201,168,76,.35);border-radius:14px;padding:36px 32px;width:100%;max-width:420px;box-shadow:0 12px 40px rgba(0,0,0,.45);}
+.loginCard h1{color:var(--gold);font-size:1.35rem;letter-spacing:.5px;margin-bottom:4px;}
+.loginCard h2{color:var(--grey);font-size:.9rem;font-weight:400;margin-bottom:24px;}
+.loginCard label{display:block;font-size:.8rem;color:var(--grey);margin:14px 0 5px;letter-spacing:.4px;}
+.loginCard input,.loginCard select{width:100%;padding:11px 12px;border-radius:8px;border:1px solid rgba(136,153,170,.35);background:var(--navy);color:var(--white);font-size:.95rem;font-family:inherit;}
+.loginCard input:focus,.loginCard select:focus{outline:none;border-color:var(--gold);}
+#loginErr{color:var(--red);font-size:.83rem;margin-top:12px;min-height:1.2em;display:none;}
+#loginBtn{width:100%;margin-top:22px;padding:13px;border:none;border-radius:8px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);font-weight:700;font-size:1rem;cursor:pointer;letter-spacing:.5px;}
+#loginBtn:hover{filter:brightness(1.08);}
+.testMeta{margin-top:18px;font-size:.75rem;color:var(--grey);line-height:1.6;border-top:1px solid rgba(136,153,170,.2);padding-top:14px;}
+
+/* ---------- TEST ---------- */
+#testScreen{display:none;min-height:100vh;}
+#topBar{height:var(--topbar);background:var(--navy2);display:flex;align-items:center;justify-content:space-between;padding:0 18px;border-bottom:1px solid rgba(201,168,76,.3);position:sticky;top:0;z-index:10;}
+#topBar .tName{color:var(--gold);font-weight:700;font-size:.95rem;}
+#topBar .qCounter{color:var(--grey);font-size:.85rem;}
+#qTimerText{font-weight:700;color:var(--white);font-size:1.05rem;min-width:44px;text-align:right;}
+#timerBarWrap{height:6px;background:rgba(136,153,170,.25);width:100%;}
+#timerBar{height:100%;width:100%;background:var(--green);}
+#timerBar.warn{background:var(--gold);}
+#timerBar.danger{background:var(--red);}
+#layout{display:flex;align-items:flex-start;}
+#mainContent{flex:1;max-width:860px;margin:0 auto;padding:28px 24px 120px;}
+.secBadge{display:inline-block;background:rgba(139,92,246,.18);color:var(--purple);border:1px solid var(--purple2);font-size:.72rem;padding:3px 10px;border-radius:20px;letter-spacing:.5px;margin-bottom:14px;}
+#qText{font-size:1.05rem;line-height:1.65;margin-bottom:22px;white-space:pre-line;overflow-wrap:break-word;word-break:break-word;}
+.opt{display:flex;gap:12px;align-items:flex-start;background:var(--navy2);border:1px solid rgba(136,153,170,.3);border-radius:10px;padding:14px 16px;margin-bottom:12px;cursor:pointer;transition:border-color .15s,background .15s;}
+.opt:hover{border-color:var(--gold);}
+.opt.sel{border-color:var(--gold);background:rgba(201,168,76,.12);}
+.opt .oLetter{flex:0 0 auto;width:26px;height:26px;border-radius:50%;border:1px solid var(--grey);display:flex;align-items:center;justify-content:center;font-size:.8rem;color:var(--grey);}
+.opt.sel .oLetter{background:var(--gold);color:var(--navy);border-color:var(--gold);font-weight:700;}
+.opt .oText{flex:1;line-height:1.55;font-size:.95rem;overflow-wrap:break-word;word-break:break-word;}
+#actionBar{position:fixed;bottom:0;left:0;right:var(--panel);background:var(--navy2);border-top:1px solid rgba(201,168,76,.3);padding:14px 24px;display:flex;justify-content:flex-end;gap:12px;z-index:10;}
+#nextBtn{padding:12px 34px;border:none;border-radius:8px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);font-weight:700;font-size:.95rem;cursor:pointer;}
+#sidePanel{width:var(--panel);flex:0 0 var(--panel);background:var(--navy2);border-left:1px solid rgba(201,168,76,.25);min-height:calc(100vh - var(--topbar) - 6px);padding:20px 16px;position:sticky;top:calc(var(--topbar) + 6px);}
+#sidePanel h3{color:var(--gold);font-size:.85rem;letter-spacing:.6px;margin-bottom:14px;}
+#palette{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;}
+.pcell{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:6px;font-size:.75rem;background:var(--navy);border:1px solid rgba(136,153,170,.3);color:var(--grey);cursor:default;}
+.pcell.done{background:var(--green);color:var(--navy);border-color:var(--green);font-weight:700;}
+.pcell.skip{background:var(--red);color:var(--white);border-color:var(--red);}
+.pcell.cur{border-color:var(--gold);color:var(--gold);font-weight:700;box-shadow:0 0 0 2px rgba(201,168,76,.35);}
+.legend{margin-top:18px;font-size:.72rem;color:var(--grey);line-height:2;}
+.legend span{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px;}
+@media (max-width:900px){#sidePanel{display:none;}#actionBar{right:0;}}
+
+/* ---------- RESULTS ---------- */
+#resultsScreen{display:none;max-width:900px;margin:0 auto;padding:40px 24px 80px;}
+#resultsScreen h1{color:var(--gold);font-size:1.5rem;margin-bottom:6px;}
+#resultsScreen .sub{color:var(--grey);font-size:.9rem;margin-bottom:26px;}
+.statGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:14px;margin-bottom:34px;}
+.stat{background:var(--navy2);border:1px solid rgba(201,168,76,.3);border-radius:10px;padding:18px 14px;text-align:center;}
+.stat .v{font-size:1.5rem;font-weight:700;color:var(--gold2);}
+.stat .l{font-size:.72rem;color:var(--grey);letter-spacing:.5px;margin-top:4px;}
+.secErr{background:var(--navy2);border:1px solid rgba(136,153,170,.3);border-radius:10px;padding:16px 18px;margin-bottom:34px;font-size:.9rem;line-height:1.8;}
+.secErr b{color:var(--gold);}
+#resultsScreen h2{color:var(--gold);font-size:1.1rem;margin:30px 0 16px;}
+.rq{background:var(--navy2);border:1px solid rgba(136,153,170,.3);border-radius:12px;padding:20px;margin-bottom:18px;}
+.rq .rqHead{font-size:.75rem;color:var(--grey);margin-bottom:8px;letter-spacing:.4px;}
+.rq .rqStem{font-size:.95rem;line-height:1.6;margin-bottom:14px;white-space:pre-line;overflow-wrap:break-word;word-break:break-word;}
+.ropt{display:flex;gap:10px;align-items:flex-start;border:1px solid rgba(136,153,170,.25);border-radius:8px;padding:10px 12px;margin-bottom:8px;font-size:.88rem;line-height:1.5;}
+.ropt .oLetter{flex:0 0 auto;width:22px;height:22px;border-radius:50%;border:1px solid var(--grey);display:flex;align-items:center;justify-content:center;font-size:.7rem;color:var(--grey);}
+.ropt.correct{border-color:var(--green);background:rgba(46,204,113,.12);}
+.ropt.correct .oLetter{background:var(--green);border-color:var(--green);color:var(--navy);font-weight:700;}
+.ropt.wrong{border-color:var(--red);background:rgba(231,76,60,.12);}
+.ropt.wrong .oLetter{background:var(--red);border-color:var(--red);color:var(--white);font-weight:700;}
+.ropt .oText{overflow-wrap:break-word;word-break:break-word;}
+.rq .exp{margin-top:12px;font-size:.85rem;color:var(--grey);line-height:1.65;border-top:1px dashed rgba(136,153,170,.3);padding-top:12px;}
+.rq .exp b{color:var(--gold2);}
+.rq .status{display:inline-block;font-size:.7rem;padding:2px 10px;border-radius:12px;margin-left:8px;vertical-align:1px;}
+.rq .status.ok{background:rgba(46,204,113,.15);color:var(--green);border:1px solid var(--green);}
+.rq .status.no{background:rgba(231,76,60,.15);color:var(--red);border:1px solid var(--red);}
+.rq .status.sk{background:rgba(136,153,170,.15);color:var(--grey);border:1px solid var(--grey);}
+#pdfBtn{padding:11px 26px;border:1px solid var(--gold);border-radius:8px;background:transparent;color:var(--gold);font-weight:600;font-size:.9rem;cursor:pointer;margin-bottom:8px;}
+#pdfBtn:hover{background:rgba(201,168,76,.12);}
+@media print{
+  body{background:#fff;color:#000;}
+  #loginScreen,#testScreen,#pdfBtn{display:none !important;}
+  #resultsScreen{display:block !important;color:#000;}
+  .stat,.rq,.secErr{border-color:#999;background:#fff;color:#000;}
+  .stat .v{color:#000;} .stat .l,.rq .rqHead,.rq .exp,#resultsScreen .sub{color:#333;}
+  #resultsScreen h1,#resultsScreen h2,.secErr b,.rq .exp b{color:#000;}
+  .ropt{color:#000;}
+  .ropt.correct{background:#e8f8ef;} .ropt.wrong{background:#fdecea;}
+}
+</style>
+</head>
+<body>
+
+<!-- ================= LOGIN ================= -->
+<div id="loginScreen">
+  <div class="loginCard">
+    <h1>ROAD TO IIM</h1>
+    <h2>Rapid Fire Test 08 &middot; Vocabulary + Grammar</h2>
+    <label for="stuName">Full Name</label>
+    <input type="text" id="stuName" placeholder="Your full name" autocomplete="off">
+    <label for="stuPin">PIN</label>
+    <input type="text" id="stuPin" placeholder="STU########## or IMS##########" autocomplete="off" maxlength="13">
+    <label for="stuBatch">Batch</label>
+    <select id="stuBatch">
+      <option value="">-- Select your batch --</option>
+      <optgroup label="Classroom">
+        <option>A2701</option><option>A2702</option><option>A2703</option><option>A2704</option>
+        <option>A2705</option><option>A2706</option><option>A2707</option><option>A2708</option>
+        <option>A2709</option><option>A2710</option><option>A2711</option><option>A2712</option>
+        <option>A2714</option><option>A2715</option><option>A2716</option><option>A2717</option>
+        <option>A2718</option><option>A2719</option><option>A2720</option>
+      </optgroup>
+      <optgroup label="School">
+        <option>Zebar</option>
+      </optgroup>
+      <optgroup label="IPMAT 28">
+        <option>Z2801</option><option>S2801</option><option>A2804</option><option>PN2801</option>
+      </optgroup>
+      <optgroup label="Admin">
+        <option>Admin</option>
+      </optgroup>
+    </select>
+    <div id="loginErr"></div>
+    <button id="loginBtn">Start Test</button>
+    <div class="testMeta">
+      45 questions &middot; +4 / &minus;1 &middot; Max 180<br>
+      Per-question timer: 25s Idioms &middot; 40s Cloze + Confusables &middot; 35s Sentence Correction<br>
+      No going back. The question advances when the bar runs out.
+    </div>
+  </div>
+</div>
+
+<!-- ================= TEST ================= -->
+<div id="testScreen">
+  <div id="topBar">
+    <span class="tName">Rapid Fire 08</span>
+    <span class="qCounter" id="qCounter">Q 1 / 45</span>
+    <span id="qTimerText">25s</span>
+  </div>
+  <div id="timerBarWrap"><div id="timerBar"></div></div>
+  <div id="layout">
+    <div id="mainContent">
+      <span class="secBadge" id="secBadge">Vocabulary</span>
+      <div id="qText"></div>
+      <div id="optBox"></div>
+    </div>
+    <div id="sidePanel">
+      <h3>QUESTION PALETTE</h3>
+      <div id="palette"></div>
+      <div class="legend">
+        <span style="background:var(--green)"></span>Answered<br>
+        <span style="background:var(--red)"></span>Skipped<br>
+        <span style="background:var(--navy);border:1px solid var(--gold)"></span>Current
+      </div>
+    </div>
+  </div>
+  <div id="actionBar">
+    <button id="nextBtn">Next &rarr;</button>
+  </div>
+</div>
+
+<!-- ================= RESULTS ================= -->
+<div id="resultsScreen">
+  <h1>Rapid Fire Test 08 &mdash; Results</h1>
+  <div class="sub" id="resSub"></div>
+  <button id="pdfBtn" onclick="downloadPDF()">Download PDF</button>
+  <div class="statGrid">
+    <div class="stat"><div class="v" id="stScore">0</div><div class="l">SCORE / 180</div></div>
+    <div class="stat"><div class="v" id="stCorrect">0</div><div class="l">CORRECT</div></div>
+    <div class="stat"><div class="v" id="stWrong">0</div><div class="l">WRONG</div></div>
+    <div class="stat"><div class="v" id="stSkipped">0</div><div class="l">SKIPPED</div></div>
+    <div class="stat"><div class="v" id="stTime">0:00</div><div class="l">TIME TAKEN</div></div>
+  </div>
+  <div class="secErr" id="secErrBox"></div>
+  <h2>Question Review</h2>
+  <div id="reviewBox"></div>
+</div>
+
+<script>
+/* ============================================================
+   ROAD TO IIM — Rapid Fire Test 08 (Vocabulary + Grammar)
+   Speed-test architecture (A15) · Whitelist v5 · Safety Net
+   ============================================================ */
+
+var SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx5Ojm_zp4LfsMeelx5e06KNjVH1wfsXdV0keS4407m4FO1HU4EpVb7GKj-ibAsxnspeA/exec";
+var TEST_NAME  = "Rapid Fire Test 08";
+var MAX_MARKS  = 180;
+var FILE_NAME  = "RoadToIIM_SpeedTest08_VocabGrammar.html";
+var SN_KEY     = "riim_session_RapidFire08";
+var PIN_REGEX  = /^(STU|IMS)\d{10}$/;
+var BLOCK_MSG  = "This PIN isn't on the active student list. Message Sahil Sir if you think this is a mistake.";
+
+/* ==================== QUESTIONS (45) ==================== */
+var QUESTIONS = [
+/* Q01 */ {sec:"Vocabulary",td:25,q:"The residents said they would no longer ______ the constant noise from the construction site.",o:["put off","put up with","put out","put across"],a:1,e:"put up with = tolerate. put off = postpone; put out = extinguish or inconvenience; put across = communicate an idea clearly.",tag:{area:"Vocabulary",sub:"Idioms and Phrasal Verbs"}},
+/* Q02 */ {sec:"Vocabulary",td:25,q:"The plan to build a new library ______ when the council withdrew its funding.",o:["fell through","fell out","fell behind","fell off"],a:0,e:"fell through = failed to happen. fell out = quarrelled; fell behind = lagged; fell off = declined in quantity or quality.",tag:{area:"Vocabulary",sub:"Idioms and Phrasal Verbs"}},
+/* Q03 */ {sec:"Vocabulary",td:25,q:"The new manager ______ a complete change in the team's attitude within months.",o:["brought up","brought down","brought about","brought off"],a:2,e:"brought about = caused. brought up = raised a topic or a child; brought down = caused a fall; brought off = succeeded at something difficult.",tag:{area:"Vocabulary",sub:"Idioms and Phrasal Verbs"}},
+/* Q04 */ {sec:"Vocabulary",td:25,q:"Economists believe the trade agreement will ______ a period of rapid growth.",o:["phase out","roll back","wind up","usher in"],a:3,e:"usher in = mark the beginning of. phase out = withdraw gradually; roll back = reverse; wind up = bring to an end.",tag:{area:"Vocabulary",sub:"Idioms and Phrasal Verbs"}},
+/* Q05 */ {sec:"Vocabulary",td:25,q:"Experts warned that the new tax is no ______ for the state's financial troubles.",o:["silver bullet","white elephant","red herring","dark horse"],a:0,e:"silver bullet = a simple, instant solution to a complex problem, which is exactly what the experts deny exists. white elephant = a costly useless possession; red herring = a misleading distraction; dark horse = an unexpected contender.",tag:{area:"Vocabulary",sub:"Idioms and Phrasal Verbs"}},
+/* Q06 */ {sec:"Vocabulary",td:25,q:"In the end, choosing between the two job offers ______ what you value more: salary or stability.",o:["comes up with","comes in for","comes down to","comes around to"],a:2,e:"comes down to = is ultimately decided by. comes up with = produces an idea; comes in for = receives criticism; comes around to = eventually accepts.",tag:{area:"Vocabulary",sub:"Idioms and Phrasal Verbs"}},
+/* Q07 */ {sec:"Vocabulary",td:25,q:"Customers stay loyal to the store because the staff always ______ to help them.",o:["pass the buck","go the extra mile","cut corners","sit on the fence"],a:1,e:"go the extra mile = make special effort beyond what is required. pass the buck = shift responsibility; cut corners = do something cheaply or carelessly; sit on the fence = avoid taking sides.",tag:{area:"Vocabulary",sub:"Idioms and Phrasal Verbs"}},
+/* Q08 */ {sec:"Vocabulary",td:25,q:"The film's plot was weak, but the lead actor's performance was its one ______.",o:["last straw","stumbling block","parting shot","saving grace"],a:3,e:"saving grace = the one redeeming quality of something otherwise poor. last straw = a final intolerable act; stumbling block = an obstacle; parting shot = a final remark made on leaving.",tag:{area:"Vocabulary",sub:"Idioms and Phrasal Verbs"}},
+/* Q09 */ {sec:"Vocabulary",td:25,q:"New interns often feel ______ during their first week in the office.",o:["ill at ease","out of hand","under a cloud","down to earth"],a:0,e:"ill at ease = uncomfortable or nervous. out of hand = out of control; under a cloud = under suspicion; down to earth = practical and unpretentious.",tag:{area:"Vocabulary",sub:"Idioms and Phrasal Verbs"}},
+/* Q10 */ {sec:"Vocabulary",td:25,q:"The two companies met again on Friday to ______ the remaining differences in the contract.",o:["rule out","drag out","iron out","spell out"],a:2,e:"iron out = resolve. rule out = eliminate as a possibility; drag out = prolong unnecessarily; spell out = state explicitly.",tag:{area:"Vocabulary",sub:"Idioms and Phrasal Verbs"}},
+/* Q11 */ {sec:"Vocabulary",td:25,q:"The referee was accused of choosing to ______ to the repeated fouls.",o:["lend an ear","turn a blind eye","give a free hand","take a fancy"],a:1,e:"turn a blind eye to = deliberately ignore, which fits an accusation against a referee. lend an ear to = listen sympathetically; give a free hand to = grant full freedom; take a fancy to = develop a liking for.",tag:{area:"Vocabulary",sub:"Idioms and Phrasal Verbs"}},
+/* Q12 */ {sec:"Vocabulary",td:25,q:"The union agreed to ______ the strike after the management accepted two of its demands.",o:["take back","put down","set aside","call off"],a:3,e:"call off = cancel. take back = retract a statement; put down = suppress by force, or criticise; set aside = reserve or disregard.",tag:{area:"Vocabulary",sub:"Idioms and Phrasal Verbs"}},
+/* Q13 */ {sec:"Vocabulary",td:40,q:"Digital surveillance has grown so ___(1)___ that the boundary between public and private life is increasingly ___(2)___; what once felt intrusive now passes almost ___(3)___.\nChoose the option whose three words fill blanks (1), (2), and (3) in order.",o:["pervasive / blurred / unnoticed","pervasive / rigid / unnoticed","sporadic / blurred / unnoticed","pervasive / blurred / triumphantly"],a:0,e:"pervasive (spread everywhere), blurred (a weakening boundary), unnoticed (no longer felt as intrusive). sporadic contradicts the growth described; rigid contradicts a weakening boundary; triumphantly does not describe how intrusion is received.",tag:{area:"Vocabulary",sub:"Cloze"}},
+/* Q14 */ {sec:"Vocabulary",td:40,q:"Public health officials stressed that vaccination remains the most ___(1)___ tool against the outbreak, though its success is ___(2)___ on communities' willingness to ___(3)___ expert advice.\nChoose the option whose three words fill blanks (1), (2), and (3) in order.",o:["effective / contingent / defy","effective / adamant / heed","effective / contingent / heed","obsolete / contingent / heed"],a:2,e:"effective (the strongest tool), contingent on (dependent on a condition), heed (follow advice). defy reverses the required attitude; adamant describes a person's firmness, not dependence; obsolete contradicts the officials' endorsement.",tag:{area:"Vocabulary",sub:"Cloze"}},
+/* Q15 */ {sec:"Vocabulary",td:40,q:"Extreme weather events, once considered ___(1)___, have become a regular ___(2)___ of the news cycle, forcing governments to shift from denial to ___(3)___.\nChoose the option whose three words fill blanks (1), (2), and (3) in order.",o:["anomalies / feature / aggravation","anomalies / feature / mitigation","certainties / feature / mitigation","anomalies / casualty / mitigation"],a:1,e:"anomalies (once thought rare), feature (a recurring element), mitigation (the responsible policy response). certainties contradicts the once-rare framing; casualty reverses the relationship with the news cycle; aggravation is the opposite of a policy response.",tag:{area:"Vocabulary",sub:"Cloze"}},
+/* Q16 */ {sec:"Vocabulary",td:40,q:"Remote work has ___(1)___ traditional notions of the office, but critics argue that it also ___(2)___ the informal mentoring on which young employees have long ___(3)___.\nChoose the option whose three words fill blanks (1), (2), and (3) in order.",o:["upended / erodes / frowned","upended / nurtures / relied","cemented / erodes / relied","upended / erodes / relied"],a:3,e:"upended (overturned old notions), erodes (wears away mentoring), relied (what young employees have depended on). cemented contradicts the disruption; nurtures contradicts the criticism; frowned reverses the employees' attitude.",tag:{area:"Vocabulary",sub:"Cloze"}},
+/* Q17 */ {sec:"Vocabulary",td:40,q:"In an age of information ___(1)___, readers must learn to ___(2)___ credible reporting from content designed merely to ___(3)___ outrage.\nChoose the option whose three words fill blanks (1), (2), and (3) in order.",o:["overload / distinguish / provoke","overload / distinguish / soothe","scarcity / distinguish / provoke","overload / conflate / provoke"],a:0,e:"overload (too much information), distinguish (tell one kind from another), provoke (what outrage-bait is designed to do). scarcity contradicts the age described; conflate means the opposite of separating; soothe is the opposite of provoking outrage.",tag:{area:"Vocabulary",sub:"Cloze"}},
+/* Q18 */ {sec:"Vocabulary",td:40,q:"The new policy is ___(1)___ on the belief that early reading habits ___(2)___ lifelong learning, a claim most researchers find ___(3)___ persuasive.\nChoose the option whose three words fill blanks (1), (2), and (3) in order.",o:["premised / hinder / broadly","premised / foster / broadly","intent / foster / broadly","premised / foster / scarcely"],a:1,e:"premised on (built on a belief), foster (encourage), broadly persuasive (widely accepted). hinder contradicts the policy's own logic; intent on the belief is not idiomatic; scarcely persuasive would contradict researcher support.",tag:{area:"Vocabulary",sub:"Cloze"}},
+/* Q19 */ {sec:"Vocabulary",td:40,q:"One of the following sentences uses CHORD or CORD incorrectly. Identify it.",o:["The speech struck a chord with young voters.","He tripped over the extension cord in the hallway.","The surgeon examined the spinal chord for damage.","The guitarist played an unfamiliar chord."],a:2,e:"C is wrong: the bundle of nerves in the spine is the spinal cord, spelt like a rope or cable. Chord belongs to music and to the figurative striking a chord.",tag:{area:"Vocabulary",sub:"Confusable Words"}},
+/* Q20 */ {sec:"Vocabulary",td:40,q:"One of the following sentences uses TIDE or TIED incorrectly. Identify it.",o:["The fishermen waited for the tide to turn.","Her hands were tied by the company's strict policy.","A small loan helped the family tide over the crisis.","The final goal tide the match at two goals each."],a:3,e:"D is wrong: a match that is levelled is tied, the past tense of tie. Tide refers to the sea's movement or, in tide over, to helping someone through a difficult period.",tag:{area:"Vocabulary",sub:"Confusable Words"}},
+/* Q21 */ {sec:"Vocabulary",td:40,q:"One of the following sentences uses WRING or RING incorrectly. Identify it.",o:["The coach warned he would ring every last effort out of the squad.","She had to wring the towel dry before hanging it.","His resignation speech had a ring of sincerity.","The scandal made the minister's promises ring hollow."],a:0,e:"A is wrong: extracting effort by squeezing is to wring it out of the squad. Ring belongs to sounds, which is why a ring of sincerity and promises that ring hollow are correct.",tag:{area:"Vocabulary",sub:"Confusable Words"}},
+/* Q22 */ {sec:"Vocabulary",td:40,q:"One of the following sentences uses CLIMATIC or CLIMACTIC incorrectly. Identify it.",o:["Scientists study long-term climatic patterns to predict droughts.","The novel builds slowly toward its climatic confrontation.","The film's climactic scene was shot in a single take.","Farmers adjusted sowing dates to suit changed climatic conditions."],a:1,e:"B is wrong: a confrontation at the story's peak is climactic, from climax. Climatic relates only to climate, which is why the weather patterns and the sowing conditions are correct.",tag:{area:"Vocabulary",sub:"Confusable Words"}},
+/* Q23 */ {sec:"Vocabulary",td:40,q:"One of the following sentences uses INFER or IMPLY incorrectly. Identify it.",o:["From her silence, we inferred that she disagreed.","The report implies that costs will rise further.","Readers can infer the author's intent from the preface.","Are you inferring that I made this mistake deliberately?"],a:3,e:"D is wrong: the accuser is suggesting something without stating it, which is to imply. The listener or reader infers; the speaker or writer implies.",tag:{area:"Vocabulary",sub:"Confusable Words"}},
+/* Q24 */ {sec:"Vocabulary",td:40,q:"One of the following sentences uses DISINTERESTED or UNINTERESTED incorrectly. Identify it.",o:["A disinterested umpire is essential for a fair match.","He seemed disinterested in the lecture and kept yawning.","We need a disinterested third party to settle the dispute.","She was uninterested in gossip and left the room."],a:1,e:"B is wrong: a bored listener is uninterested, meaning lacking interest. Disinterested means impartial and free of personal stake, which is exactly right for umpires and neutral third parties.",tag:{area:"Vocabulary",sub:"Confusable Words"}},
+/* Q25 */ {sec:"Vocabulary",td:40,q:"One of the following sentences uses COMPRISE incorrectly. Identify it.",o:["The delegation comprises officials from five states.","The house comprises four bedrooms and a study.","The panel comprises of three judges.","Ten districts together constitute the new zone."],a:2,e:"C is wrong: comprises never takes of; the whole comprises its parts directly. Constitute correctly runs the other way, from parts to whole.",tag:{area:"Vocabulary",sub:"Confusable Words"}},
+/* Q26 */ {sec:"Vocabulary",td:40,q:"One of the following sentences uses FLOUT or FLAUNT incorrectly. Identify it.",o:["The firm was fined for flaunting safety regulations.","Drivers who flout traffic rules will face heavier fines.","He never misses a chance to flaunt his new watch.","She refused to flaunt her wealth despite her success."],a:0,e:"A is wrong: openly disregarding regulations is flouting them. Flaunt means to display something showily, which fits the watch and the wealth but not the breaking of rules.",tag:{area:"Vocabulary",sub:"Confusable Words"}},
+/* Q27 */ {sec:"Vocabulary",td:40,q:"One of the following sentences uses APPRAISED or APPRISED incorrectly. Identify it.",o:["The jeweller appraised the ring at two lakh rupees.","Keep me apprised of any change in the schedule.","The manager was appraised of the situation by mail.","Property must be appraised before the bank approves a loan."],a:2,e:"C is wrong: being informed of a situation is being apprised of it. Appraise means to assess value, which fits the ring and the property but not the passing of information.",tag:{area:"Vocabulary",sub:"Confusable Words"}},
+/* Q28 */ {sec:"Grammar",td:35,q:"Nothing has changed in the village since independence, [hasn't it?]\nChoose the correct replacement for the underlined portion.",o:["hasn't it?","has it?","isn't it?","didn't it?"],a:1,e:"Nothing makes the statement negative, and a negative statement takes a positive tag: has it? The tag verb must also echo the auxiliary has from the main clause.",tag:{area:"Grammar",sub:"Question Tags"}},
+/* Q29 */ {sec:"Grammar",td:35,q:"The Board's hopes of an early settlement [seems to be fading] after the latest round of talks.\nChoose the correct replacement for the underlined portion.",o:["seem to be fading","seems to be fading","is seeming to fade","seems to fade"],a:0,e:"The subject is the plural noun hopes, not the possessive Board's, so the verb must be seem. A possessive before a plural head noun is a classic agreement trap.",tag:{area:"Grammar",sub:"Subject-Verb Agreement"}},
+/* Q30 */ {sec:"Grammar",td:35,q:"The impact of Gandhi's ideas has proved [more lasting than any other leader] of his era.\nChoose the correct replacement for the underlined portion.",o:["lasting more than any other leader","more lasting than any other leaders","more lasting than those of any other leader","more lasting than any other leader"],a:2,e:"The sentence compares impact with impact, not impact with a leader, so it needs those of any other leader, where those stands in for the ideas' impact. Without it the comparison is illogical.",tag:{area:"Grammar",sub:"Comparison"}},
+/* Q31 */ {sec:"Grammar",td:35,q:"Kalidasa is widely [regarded to be] the finest poet of classical Sanskrit.\nChoose the correct replacement for the underlined portion.",o:["regarded to be","regarded like","regarding as","regarded as"],a:3,e:"The fixed construction is regarded as. Regard never takes to be, and like cannot introduce the complement of regard.",tag:{area:"Grammar",sub:"Standard Usage"}},
+/* Q32 */ {sec:"Grammar",td:35,q:"The auditor insisted that the branch [submits] its accounts before Friday.\nChoose the correct replacement for the underlined portion.",o:["will submit","submit","submitted","submits"],a:1,e:"After a demand verb such as insisted that, the mandative subjunctive uses the base form submit, with no s and no tense marking, regardless of the subject.",tag:{area:"Grammar",sub:"Subjunctive"}},
+/* Q33 */ {sec:"Grammar",td:35,q:"The scholarship will go to [whomever performs best] in the final round.\nChoose the correct replacement for the underlined portion.",o:["whoever performs best","whomever performs best","whom performs best","whosoever's performance being best"],a:0,e:"The pronoun is the subject of performs, so it must be whoever. Case is decided by the pronoun's role inside its own clause, not by the preposition to before the clause.",tag:{area:"Grammar",sub:"Pronoun Case"}},
+/* Q34 */ {sec:"Vocabulary",td:35,q:"The new policy will not [effect] employees who joined before 2020.\nChoose the correct replacement for the underlined portion.",o:["effect","be effected for","affect","have an affect on"],a:2,e:"To influence someone is to affect them; affect is the verb needed here. Effect as a verb means to bring about, as in effect a change, and affect as a noun exists only as a technical term in psychology.",tag:{area:"Vocabulary",sub:"Confusable Words"}},
+/* Q35 */ {sec:"Grammar",td:35,q:"Before the guests arrived, I [had my brother to feed] the dogs.\nChoose the correct replacement for the underlined portion.",o:["had my brother to feed","had my brother feed","had my brother fed","have my brother feed"],a:1,e:"Causative have with a person takes the bare infinitive: had my brother feed. The to infinitive is used after get, not have, and the past tense must be kept for the earlier action.",tag:{area:"Grammar",sub:"Causative Verbs"}},
+/* Q36 */ {sec:"Grammar",td:35,q:"[Had the President knew] about the leak earlier, the press note would have been different.\nChoose the correct replacement for the underlined portion.",o:["If the President has known","Had the President had known","Had the President knew","Had the President known"],a:3,e:"The inverted third conditional drops if and fronts had, and the main verb must be the past participle known. Knew is a past form, not a participle, and doubling had is ungrammatical.",tag:{area:"Grammar",sub:"Conditionals"}},
+/* Q37 */ {sec:"Grammar",td:35,q:"If the team [would have planned] better, the launch would not have failed.\nChoose the correct replacement for the underlined portion.",o:["had planned","would have planned","has planned","planned"],a:0,e:"In a third conditional, the if clause takes the past perfect had planned; would have belongs only in the result clause. Using would have in both halves is a standard error.",tag:{area:"Grammar",sub:"Conditionals"}},
+/* Q38 */ {sec:"Grammar",td:35,q:"If she [accepted] the transfer last year, she would be working in Mumbai now.\nChoose the correct replacement for the underlined portion.",o:["would accept","had accepted","has accepted","accepted"],a:1,e:"This is a mixed conditional: a past condition with a present result. The past condition needs the past perfect had accepted, while would be working correctly carries the present consequence.",tag:{area:"Grammar",sub:"Conditionals"}},
+/* Q39 */ {sec:"Grammar",td:35,q:"The scheme aims to increase enrolment, [reducing dropout rates, and to enhance] learning outcomes.\nChoose the correct replacement for the underlined portion.",o:["reducing dropout rates, and to enhance","for reducing dropout rates and enhance","reduce dropout rates, and enhance","to reduce dropout rates and enhancing"],a:2,e:"The series after aims to must stay parallel: increase, reduce, and enhance, all sharing the single to. Mixing an ing form with infinitives breaks the parallel structure.",tag:{area:"Grammar",sub:"Parallelism"}},
+/* Q40 */ {sec:"Grammar",td:35,q:"Good editors value writing that is clear, concise, and [has persuasion].\nChoose the correct replacement for the underlined portion.",o:["has persuasion","persuading readers","with persuasion","persuasive"],a:3,e:"The series lists adjectives after is: clear, concise, and persuasive. A verb phrase or a prepositional phrase in the final slot breaks the parallel adjective pattern.",tag:{area:"Grammar",sub:"Parallelism"}},
+/* Q41 */ {sec:"Grammar",td:35,q:"[The number of applicants have] doubled since the fee was waived.\nChoose the correct replacement for the underlined portion.",o:["The numbers of applicant have","The number of applicants has","A number of applicants has","The number of applicants have"],a:1,e:"The number of takes a singular verb because the grammatical subject is the singular noun number: the number has doubled. By contrast, a number of, meaning many, takes a plural verb.",tag:{area:"Grammar",sub:"Subject-Verb Agreement"}},
+/* Q42 */ {sec:"Grammar",td:35,q:"Neither the director nor the producers [was willing] to comment on the delay.\nChoose the correct replacement for the underlined portion.",o:["were willing","was willing","is willing","has been willing"],a:0,e:"With neither nor, the verb agrees with the nearer subject. The nearer subject producers is plural, so the verb must be were. The past tense also matches the reported event.",tag:{area:"Grammar",sub:"Subject-Verb Agreement"}},
+/* Q43 */ {sec:"Grammar",td:35,q:"By the time the ambulance arrived, the crowd [dispersed] completely.\nChoose the correct replacement for the underlined portion.",o:["dispersed","has dispersed","had dispersed","would disperse"],a:2,e:"By the time signals that one past action was completed before another, which requires the past perfect had dispersed. The simple past would wrongly make the two actions simultaneous.",tag:{area:"Grammar",sub:"Tense Usage"}},
+/* Q44 */ {sec:"Grammar",td:35,q:"She said that she [will join] the firm the following month.\nChoose the correct replacement for the underlined portion.",o:["joins","is joining","will join","would join"],a:3,e:"In reported speech after a past reporting verb, will shifts to would: she said she would join. The present forms fail to backshift, and keeping will is inconsistent with the following month.",tag:{area:"Grammar",sub:"Reported Speech"}},
+/* Q45 */ {sec:"Grammar",td:35,q:"The instructor reminded the class that water [boiled] at a lower temperature at high altitudes.\nChoose the correct replacement for the underlined portion.",o:["boiled","boils","had boiled","would boil"],a:1,e:"A universal truth stays in the simple present even inside reported speech: water boils. Backshifting to a past form wrongly limits a permanent fact to the past.",tag:{area:"Grammar",sub:"Tense Usage"}}
+];
+
+/* ==================== WHITELIST RUNTIME BLOCK (v5 §17) ==================== */
+var WL_PROMISE = fetch("whitelist.json",{cache:"no-store"})
+  .then(function(r){ return r.ok ? r.json() : null; })
+  .catch(function(){ return null; });
+
+function normalizePin(pin){
+  return String(pin).replace(/\D/g,"").replace(/^0+/,"");
+}
+
+async function isWhitelisted(pin,batch){
+  var WL;
+  try{ WL = await WL_PROMISE; }catch(e){ WL = null; }
+  if(!WL) return true; /* FAIL-OPEN: never lock out a regular on a network hiccup */
+  try{
+    var bypass = WL.bypass_batches || [];
+    if(bypass.indexOf(batch) !== -1) return true;
+    var norm = normalizePin(pin);
+    var admins = (WL.admin_pins || []).map(String);
+    if(admins.indexOf(norm) !== -1) return true;
+    if(Array.isArray(WL.pins)){
+      if(WL.pins.map(String).indexOf(norm) !== -1) return true;
+    } else if(WL.pins && typeof WL.pins === "object"){
+      if(Object.prototype.hasOwnProperty.call(WL.pins,norm)) return true;
+    }
+    return false;
+  }catch(e){ return true; }
+}
+
+/* ==================== SAFETY NET — retry queue ==================== */
+function snReadJSON(key,fallback){
+  try{ var v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; }catch(e){ return fallback; }
+}
+function snWriteJSON(key,val){
+  try{ localStorage.setItem(key,JSON.stringify(val)); }catch(e){}
+}
+function snUnqueue(id){
+  var p = snReadJSON("riim_pending",[]);
+  p = p.filter(function(x){ return x.id !== id; });
+  snWriteJSON("riim_pending",p);
+}
+function snSendWithQueue(opts){
+  var p = snReadJSON("riim_pending",[]);
+  var id = Date.now() + "-" + Math.random().toString(36).slice(2);
+  p.push({id:id, opts:{method:opts.method, mode:opts.mode, headers:opts.headers, body:opts.body}});
+  snWriteJSON("riim_pending",p);
+  return fetch(SCRIPT_URL,opts).then(function(r){ snUnqueue(id); return r; });
+}
+function snFlushQueue(){
+  var p = snReadJSON("riim_pending",[]);
+  p.forEach(function(item){
+    fetch(SCRIPT_URL,item.opts).then(function(){ snUnqueue(item.id); }).catch(function(){});
+  });
+}
+
+/* ==================== STATE ==================== */
+var studentName = "", studentPin = "", studentBatch = "";
+var currentQ = 0;
+var answers = new Array(45).fill(null);
+var questionTimes = new Array(45).fill(0);
+var qSecondsLeft = 0;
+var qStartTs = 0;              /* absolute ts (ms) when current question was first shown */
+var pendingResumeStartTs = null; /* set by snTryResume so renderQuestion can compute elapsed */
+var qInterval = null;
+var testOver = false;
+
+/* ==================== SAFETY NET — session autosave / resume ==================== */
+function snSaveSession(){
+  if(testOver) return;
+  snWriteJSON(SN_KEY,{
+    file: FILE_NAME,
+    testName: TEST_NAME,
+    name: studentName,
+    pin: studentPin,
+    batch: studentBatch,
+    currentQ: currentQ,
+    answers: answers,
+    questionTimes: questionTimes,
+    qStartTs: qStartTs,
+    ts: Date.now()
+  });
+}
+function snClearSession(){
+  try{ localStorage.removeItem(SN_KEY); }catch(e){}
+}
+function snTryResume(){
+  var s = snReadJSON(SN_KEY,null);
+  if(!s || !s.testName) return false;
+  var answered = (s.answers || []).filter(function(a){ return a !== null; }).length;
+  var ok = confirm("You have an unfinished attempt of " + TEST_NAME + " (" + answered + " question(s) answered). Resume where you left off?");
+  if(!ok){ snClearSession(); return false; }
+  studentName = s.name; studentPin = s.pin; studentBatch = s.batch;
+  currentQ = Math.min(s.currentQ || 0, 44);
+  answers = s.answers && s.answers.length === 45 ? s.answers : answers;
+  questionTimes = s.questionTimes && s.questionTimes.length === 45 ? s.questionTimes : questionTimes;
+  if(s.qStartTs && typeof s.qStartTs === "number") pendingResumeStartTs = s.qStartTs;
+  document.getElementById("loginScreen").style.display = "none";
+  document.getElementById("testScreen").style.display = "block";
+  buildPalette();
+  renderQuestion();
+  return true;
+}
+
+/* ==================== LOGIN (async — awaits whitelist) ==================== */
+function showLoginError(msg){
+  var el = document.getElementById("loginErr");
+  el.textContent = msg;
+  el.style.display = "block";
+}
+async function startTest(){
+  var nameEl = document.getElementById("stuName");
+  var pinEl  = document.getElementById("stuPin");
+  var batchEl= document.getElementById("stuBatch");
+  var name = nameEl.value.trim();
+  var pin  = pinEl.value.trim().toUpperCase();
+  var batch= batchEl.value;
+  pinEl.value = pin;
+  if(!name){ showLoginError("Please enter your full name."); return; }
+  if(!PIN_REGEX.test(pin)){ showLoginError("Invalid PIN. Format: STU########## or IMS##########."); return; }
+  if(!batch){ showLoginError("Please select your batch."); return; }
+  var allowed = await isWhitelisted(pin,batch);
+  if(!allowed){ showLoginError(BLOCK_MSG); return; }
+  studentName = name; studentPin = pin; studentBatch = batch;
+  document.getElementById("loginErr").style.display = "none";
+  document.getElementById("loginScreen").style.display = "none";
+  document.getElementById("testScreen").style.display = "block";
+  buildPalette();
+  snSaveSession();
+  renderQuestion();
+}
+document.getElementById("loginBtn").addEventListener("click", startTest);
+
+/* ==================== PALETTE (read-only) ==================== */
+function buildPalette(){
+  var pal = document.getElementById("palette");
+  pal.innerHTML = "";
+  for(var i = 0; i < 45; i++){
+    var c = document.createElement("div");
+    c.className = "pcell";
+    c.id = "pcell" + i;
+    c.textContent = i + 1;
+    pal.appendChild(c);
+  }
+}
+function paintPalette(){
+  for(var i = 0; i < 45; i++){
+    var c = document.getElementById("pcell" + i);
+    if(!c) continue;
+    c.className = "pcell";
+    if(i < currentQ){
+      c.classList.add(answers[i] !== null ? "done" : "skip");
+    }
+    if(i === currentQ) c.classList.add("cur");
+  }
+}
+
+/* ==================== RENDER + PER-QUESTION TIMER ==================== */
+function renderQuestion(){
+  var q = QUESTIONS[currentQ];
+  document.getElementById("qCounter").textContent = "Q " + (currentQ + 1) + " / 45";
+  document.getElementById("secBadge").textContent = q.sec + " \u00b7 " + q.tag.sub;
+  document.getElementById("qText").textContent = q.q;
+  var box = document.getElementById("optBox");
+  box.innerHTML = "";
+  var letters = ["A","B","C","D"];
+  q.o.forEach(function(opt,idx){
+    var d = document.createElement("div");
+    d.className = "opt" + (answers[currentQ] === idx ? " sel" : "");
+    var l = document.createElement("div"); l.className = "oLetter"; l.textContent = letters[idx];
+    var t = document.createElement("div"); t.className = "oText"; t.textContent = opt;
+    d.appendChild(l); d.appendChild(t);
+    d.addEventListener("click", function(){ selectOption(idx); });
+    box.appendChild(d);
+  });
+  document.getElementById("nextBtn").textContent = (currentQ === 44) ? "Submit" : "Next \u2192";
+  paintPalette();
+
+  /* determine start ts + remaining seconds: on resume, restore original start ts */
+  if(pendingResumeStartTs){
+    qStartTs = pendingResumeStartTs;
+    pendingResumeStartTs = null;
+    var elapsed = Math.floor((Date.now() - qStartTs) / 1000);
+    qSecondsLeft = Math.max(0, q.td - elapsed);
+  } else {
+    qStartTs = Date.now();
+    qSecondsLeft = q.td;
+  }
+
+  /* timer bar reset sequence: transition none -> startPct -> reflow -> linear -> 0% */
+  var bar = document.getElementById("timerBar");
+  var startPct = (qSecondsLeft / q.td) * 100;
+  bar.style.transition = "none";
+  bar.style.width = startPct + "%";
+  bar.classList.remove("warn","danger");
+  if(qSecondsLeft / q.td <= 0.25) bar.classList.add("danger");
+  else if(qSecondsLeft / q.td <= 0.5) bar.classList.add("warn");
+  void bar.offsetWidth; /* force reflow */
+  bar.style.transition = "width " + qSecondsLeft + "s linear";
+  bar.style.width = "0%";
+
+  document.getElementById("qTimerText").textContent = qSecondsLeft + "s";
+  if(qInterval) clearInterval(qInterval);
+
+  /* persist the fresh qStartTs immediately so a refresh before any interaction is still tracked */
+  snSaveSession();
+
+  /* if resume computed 0s left, auto-advance on next tick */
+  if(qSecondsLeft <= 0){ setTimeout(advance, 50); return; }
+  qInterval = setInterval(qTick, 1000);
+}
+function qTick(){
+  qSecondsLeft--;
+  if(qSecondsLeft < 0) qSecondsLeft = 0;
+  document.getElementById("qTimerText").textContent = qSecondsLeft + "s";
+  var q = QUESTIONS[currentQ];
+  var bar = document.getElementById("timerBar");
+  var frac = qSecondsLeft / q.td;
+  if(frac <= 0.25){ bar.classList.remove("warn"); bar.classList.add("danger"); }
+  else if(frac <= 0.5){ bar.classList.add("warn"); }
+  if(qSecondsLeft <= 0){
+    advance();
+  }
+}
+function selectOption(idx){
+  if(testOver) return;
+  answers[currentQ] = idx;
+  var opts = document.querySelectorAll("#optBox .opt");
+  opts.forEach(function(el,i){ el.classList.toggle("sel", i === idx); });
+  snSaveSession();
+}
+function advance(){
+  if(testOver) return;
+  clearInterval(qInterval);
+  var q = QUESTIONS[currentQ];
+  questionTimes[currentQ] = q.td - qSecondsLeft;
+  if(currentQ === 44){ submitTest(); return; }
+  currentQ++;
+  snSaveSession();
+  renderQuestion();
+}
+document.getElementById("nextBtn").addEventListener("click", advance);
+
+/* ==================== MISTAKE BANK CAPTURE ==================== */
+function bankMistakes(){
+  try{
+    var bank = snReadJSON("riim_mistakes",[]);
+    var now = Date.now(), DAY = 86400000;
+    QUESTIONS.forEach(function(q,i){
+      var chosen = answers[i];
+      if(chosen === null || chosen === q.a) return;
+      var k = "RF08-Q" + (i + 1);
+      var existing = null;
+      for(var j = 0; j < bank.length; j++){ if(bank[j].k === k){ existing = bank[j]; break; } }
+      if(existing){
+        existing.box = 1; existing.due = now + DAY; existing.chosen = chosen;
+      } else {
+        bank.push({k:k, stem:q.q, opts:q.o, ans:q.a, chosen:chosen, exp:q.e, sub:q.tag.sub, src:TEST_NAME, box:1, due:now + DAY});
+      }
+    });
+    if(bank.length > 300) bank = bank.slice(bank.length - 300);
+    snWriteJSON("riim_mistakes",bank);
+  }catch(e){}
+}
+
+/* ==================== SUBMIT ==================== */
+function fmtTime(totalSecs){
+  var m = Math.floor(totalSecs / 60);
+  var s = totalSecs % 60;
+  return m + ":" + (s < 10 ? "0" : "") + s;
+}
+function submitTest(){
+  if(testOver) return;
+  testOver = true;
+  clearInterval(qInterval);
+
+  var correctCount = 0, wrongCount = 0, skippedCount = 0;
+  var sectionErrors = {"Vocabulary":0,"Grammar":0};
+  var topicErrorMap = {};
+  var wrongQuestions = [];
+  QUESTIONS.forEach(function(q,i){
+    var chosen = answers[i];
+    if(chosen === null){ skippedCount++; return; }
+    if(chosen === q.a){ correctCount++; }
+    else {
+      wrongCount++;
+      wrongQuestions.push(i + 1);
+      sectionErrors[q.sec] = (sectionErrors[q.sec] || 0) + 1;
+      topicErrorMap[q.tag.sub] = (topicErrorMap[q.tag.sub] || 0) + 1;
+    }
+  });
+  var finalScore = correctCount * 4 - wrongCount * 1;
+  var totalSecs = questionTimes.reduce(function(a,b){ return a + b; }, 0);
+  var timeTakenStr = fmtTime(totalSecs);
+
+  /* 16-field payload — explicit key:value, topicErrors is field 16 */
+  var payload = {
+    testName: TEST_NAME,
+    name: studentName,
+    pin: studentPin,
+    batch: studentBatch,
+    score: finalScore,
+    correct: correctCount,
+    wrong: wrongCount,
+    skipped: skippedCount,
+    maxMarks: MAX_MARKS,
+    timeTaken: timeTakenStr,
+    timestamp: new Date().toLocaleString("en-IN",{timeZone:"Asia/Kolkata"}),
+    sectionErrors: JSON.stringify(sectionErrors),
+    wrongQuestions: JSON.stringify(wrongQuestions),
+    studentAnswers: JSON.stringify(answers),
+    questionTimes: JSON.stringify(questionTimes),
+    topicErrors: JSON.stringify(topicErrorMap)
+  };
+
+  snSendWithQueue({
+    method: "POST",
+    mode: "no-cors",
+    headers: {"Content-Type": "text/plain"},
+    body: JSON.stringify(payload)
+  }).catch(function(){});
+
+  bankMistakes();
+
+  /* local results archive (last 200) */
+  try{
+    var res = snReadJSON("riim_results",[]);
+    res.push({testName:TEST_NAME, score:finalScore, correct:correctCount, wrong:wrongCount, skipped:skippedCount, maxMarks:MAX_MARKS, timeTaken:timeTakenStr, ts:Date.now()});
+    if(res.length > 200) res = res.slice(res.length - 200);
+    snWriteJSON("riim_results",res);
+  }catch(e){}
+
+  snClearSession();
+  showResults(finalScore, correctCount, wrongCount, skippedCount, timeTakenStr, sectionErrors);
+}
+
+/* ==================== RESULTS ==================== */
+function showResults(score, correct, wrong, skipped, timeStr, sectionErrors){
+  document.getElementById("testScreen").style.display = "none";
+  document.getElementById("resultsScreen").style.display = "block";
+  document.getElementById("resSub").textContent = studentName + " \u00b7 " + studentBatch + " \u00b7 " + new Date().toLocaleString("en-IN",{timeZone:"Asia/Kolkata"});
+  document.getElementById("stScore").textContent = score;
+  document.getElementById("stCorrect").textContent = correct;
+  document.getElementById("stWrong").textContent = wrong;
+  document.getElementById("stSkipped").textContent = skipped;
+  document.getElementById("stTime").textContent = timeStr;
+  document.getElementById("secErrBox").innerHTML =
+    "<b>Section errors</b> \u2014 Vocabulary: " + (sectionErrors["Vocabulary"] || 0) +
+    " \u00b7 Grammar: " + (sectionErrors["Grammar"] || 0);
+
+  var letters = ["A","B","C","D"];
+  var box = document.getElementById("reviewBox");
+  box.innerHTML = "";
+  QUESTIONS.forEach(function(q,i){
+    var chosen = answers[i];
+    var wrap = document.createElement("div");
+    wrap.className = "rq";
+    var head = document.createElement("div");
+    head.className = "rqHead";
+    var status = chosen === null ? "<span class='status sk'>SKIPPED</span>"
+               : chosen === q.a ? "<span class='status ok'>CORRECT</span>"
+               : "<span class='status no'>WRONG</span>";
+    head.innerHTML = "Q" + (i + 1) + " \u00b7 " + q.sec + " \u00b7 " + q.tag.sub + status;
+    wrap.appendChild(head);
+    var stem = document.createElement("div");
+    stem.className = "rqStem";
+    stem.textContent = q.q;
+    wrap.appendChild(stem);
+    q.o.forEach(function(opt,idx){
+      var r = document.createElement("div");
+      r.className = "ropt";
+      if(idx === q.a) r.classList.add("correct");
+      else if(idx === chosen) r.classList.add("wrong");
+      var l = document.createElement("div"); l.className = "oLetter"; l.textContent = letters[idx];
+      var t = document.createElement("div"); t.className = "oText"; t.textContent = opt;
+      r.appendChild(l); r.appendChild(t);
+      wrap.appendChild(r);
+    });
+    var exp = document.createElement("div");
+    exp.className = "exp";
+    exp.innerHTML = "<b>Explanation:</b> ";
+    exp.appendChild(document.createTextNode(q.e));
+    wrap.appendChild(exp);
+    box.appendChild(wrap);
+  });
+  window.scrollTo(0,0);
+}
+
+/* ==================== DOWNLOAD PDF ==================== */
+function downloadPDF(){
+  var jsPDFctor = (window.jspdf && window.jspdf.jsPDF) || window.jsPDF;
+  if(!jsPDFctor){ alert("PDF library failed to load. Please check your connection and try again."); return; }
+  var doc = new jsPDFctor({unit:"pt", format:"a4"});
+  var pageW = doc.internal.pageSize.getWidth();
+  var pageH = doc.internal.pageSize.getHeight();
+  var margin = 40;
+  var y = margin;
+  var letters = ["A","B","C","D"];
+
+  function newPageIfNeeded(h){
+    if(y + h > pageH - margin){ doc.addPage(); y = margin; }
+  }
+  function writeWrapped(text, x, maxW, size, style){
+    doc.setFont("helvetica", style || "normal");
+    doc.setFontSize(size);
+    var lines = doc.splitTextToSize(text, maxW);
+    for(var i = 0; i < lines.length; i++){
+      newPageIfNeeded(size + 4);
+      doc.text(lines[i], x, y);
+      y += size + 4;
+    }
+  }
+
+  /* header */
+  doc.setFont("helvetica","bold");
+  doc.setFontSize(16);
+  doc.setTextColor(13,27,42);
+  doc.text("ROAD TO IIM", margin, y); y += 20;
+  doc.setFontSize(13);
+  doc.setTextColor(201,168,76);
+  doc.text("Rapid Fire Test 08 \u2014 Vocabulary + Grammar", margin, y); y += 18;
+  doc.setFont("helvetica","normal");
+  doc.setFontSize(10);
+  doc.setTextColor(60,60,60);
+  var dateStr = new Date().toLocaleString("en-IN",{timeZone:"Asia/Kolkata"});
+  doc.text(studentName + " \u00b7 " + studentBatch + " \u00b7 " + dateStr, margin, y); y += 16;
+  doc.setDrawColor(201,168,76);
+  doc.line(margin, y, pageW - margin, y); y += 16;
+
+  /* summary stats */
+  doc.setTextColor(0,0,0);
+  doc.setFont("helvetica","bold"); doc.setFontSize(11);
+  doc.text("Summary", margin, y); y += 14;
+  doc.setFont("helvetica","normal"); doc.setFontSize(10);
+  var summary = "Score: " + document.getElementById("stScore").textContent + " / 180   \u00b7   " +
+                "Correct: " + document.getElementById("stCorrect").textContent + "   \u00b7   " +
+                "Wrong: " + document.getElementById("stWrong").textContent + "   \u00b7   " +
+                "Skipped: " + document.getElementById("stSkipped").textContent + "   \u00b7   " +
+                "Time: " + document.getElementById("stTime").textContent;
+  writeWrapped(summary, margin, pageW - 2*margin, 10);
+  y += 4;
+  var secErrText = (document.getElementById("secErrBox").textContent || "").replace(/\s+/g," ").trim();
+  if(secErrText){ writeWrapped(secErrText, margin, pageW - 2*margin, 10); y += 6; }
+
+  /* question review */
+  doc.setDrawColor(200,200,200);
+  doc.line(margin, y, pageW - margin, y); y += 14;
+  doc.setFont("helvetica","bold"); doc.setFontSize(12);
+  doc.setTextColor(13,27,42);
+  doc.text("Question Review", margin, y); y += 16;
+
+  QUESTIONS.forEach(function(q,i){
+    var chosen = answers[i];
+    var statusLabel = chosen === null ? "SKIPPED" : (chosen === q.a ? "CORRECT" : "WRONG");
+    newPageIfNeeded(60);
+    doc.setFont("helvetica","bold"); doc.setFontSize(10);
+    doc.setTextColor(13,27,42);
+    doc.text("Q" + (i+1) + "  \u00b7  " + q.sec + " \u00b7 " + q.tag.sub + "   [" + statusLabel + "]", margin, y);
+    y += 12;
+    doc.setTextColor(0,0,0);
+    writeWrapped(q.q, margin, pageW - 2*margin, 10, "normal");
+    y += 2;
+    q.o.forEach(function(opt,idx){
+      var prefix = letters[idx] + ")  ";
+      var marker = "";
+      if(idx === q.a) marker = "  \u2713 correct";
+      else if(idx === chosen) marker = "  \u2717 your choice";
+      if(idx === q.a) doc.setTextColor(30,120,60);
+      else if(idx === chosen) doc.setTextColor(180,50,50);
+      else doc.setTextColor(60,60,60);
+      writeWrapped(prefix + opt + marker, margin + 12, pageW - 2*margin - 12, 10, "normal");
+    });
+    doc.setTextColor(0,0,0);
+    y += 2;
+    doc.setFont("helvetica","bold"); doc.setFontSize(9);
+    newPageIfNeeded(14);
+    doc.text("Explanation:", margin, y); y += 11;
+    doc.setFont("helvetica","normal"); doc.setFontSize(9);
+    writeWrapped(q.e, margin, pageW - 2*margin, 9, "normal");
+    y += 10;
+    doc.setDrawColor(230,230,230);
+    newPageIfNeeded(6);
+    doc.line(margin, y, pageW - margin, y);
+    y += 12;
+  });
+
+  /* filename */
+  var safeName = (studentName || "student").replace(/[^A-Za-z0-9]+/g,"_").slice(0,40);
+  var d = new Date();
+  var dateTag = d.getFullYear() + String(d.getMonth()+1).padStart(2,"0") + String(d.getDate()).padStart(2,"0");
+  var fname = "RapidFire08_" + safeName + "_" + dateTag + ".pdf";
+  doc.save(fname);
+}
+
+/* ==================== PAGE LOAD ==================== */
+snFlushQueue();
+snTryResume();
+</script>
+</body>
+</html>
