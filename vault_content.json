@@ -1,6 +1,6 @@
 {
  "version": 1,
- "updated": "2026-07-10",
+ "updated": "2026-07-17",
  "days": [
   {
    "words": [
@@ -1128,6 +1128,2242 @@
      "correct": 0,
      "origin": "Straight from tennis — once the ball lands on your side, only you can play it.",
      "usage": "I've shared the study plan and the portal login. The ball is in your court now."
+    }
+   ]
+  },
+  {
+   "words": [
+    {
+     "word": "Alacrity",
+     "pos": "noun",
+     "options": [
+      "Brisk, cheerful readiness",
+      "Deep sadness",
+      "Extreme caution",
+      "A sudden outburst of anger"
+     ],
+     "correct": 0,
+     "usage": "She accepted the extra mock test with surprising alacrity.",
+     "note": "Latin alacer = lively, eager.",
+     "synonyms": [
+      "eagerness",
+      "willingness",
+      "promptness",
+      "zeal"
+     ]
+    },
+    {
+     "word": "Ebullient",
+     "pos": "adj.",
+     "options": [
+      "Overflowing with enthusiasm and energy",
+      "Boiling with rage",
+      "Quiet and withdrawn",
+      "Carefully organised"
+     ],
+     "correct": 0,
+     "usage": "The topper walked out of the exam hall ebullient, high-fiving strangers.",
+     "note": "Latin bullire = to boil. Enthusiasm bubbling over.",
+     "synonyms": [
+      "exuberant",
+      "buoyant",
+      "effervescent"
+     ]
+    },
+    {
+     "word": "Fastidious",
+     "pos": "adj.",
+     "options": [
+      "Very attentive to detail; hard to please",
+      "Extremely fast",
+      "Deeply religious",
+      "Careless and sloppy"
+     ],
+     "correct": 0,
+     "usage": "A fastidious editor, she caught the single misplaced comma on page 40.",
+     "note": "Latin fastidium = loathing. Originally 'easily disgusted'.",
+     "synonyms": [
+      "meticulous",
+      "finicky",
+      "exacting",
+      "particular"
+     ]
+    },
+    {
+     "word": "Lugubrious",
+     "pos": "adj.",
+     "options": [
+      "Looking or sounding sad and gloomy",
+      "Extremely slippery",
+      "Loud and celebratory",
+      "Dishonest in speech"
+     ],
+     "correct": 0,
+     "usage": "His lugubrious face after the mock made everyone assume the worst.",
+     "note": "Latin lugere = to mourn.",
+     "synonyms": [
+      "mournful",
+      "doleful",
+      "somber",
+      "funereal"
+     ]
+    },
+    {
+     "word": "Nefarious",
+     "pos": "adj.",
+     "options": [
+      "Wicked, villainous, criminal",
+      "Famous and admired",
+      "Foggy and unclear",
+      "Related to the sea"
+     ],
+     "correct": 0,
+     "usage": "The nefarious scheme involved leaking fake answer keys to rivals.",
+     "note": "Latin nefas = a wrong, a crime against divine law.",
+     "synonyms": [
+      "villainous",
+      "heinous",
+      "iniquitous",
+      "vile"
+     ]
+    }
+   ],
+   "idioms": [
+    {
+     "idiom": "Bite the bullet",
+     "scene": [
+      [
+       "😬",
+       "shake",
+       0
+      ],
+      [
+       "🔫",
+       "pop",
+       0.4
+      ],
+      [
+       "💊",
+       "flicker",
+       0.8
+      ]
+     ],
+     "caption": "No anaesthesia in old field hospitals — just something to clench.",
+     "options": [
+      "Face a painful situation with courage",
+      "Eat something dangerous",
+      "Speak without thinking",
+      "Start a fight deliberately"
+     ],
+     "correct": 0,
+     "origin": "Before anaesthesia, soldiers reportedly bit on a bullet during surgery to endure the pain.",
+     "usage": "I hate grammar drills, but I'll bite the bullet and finish the modifier deck tonight."
+    },
+    {
+     "idiom": "Throw in the towel",
+     "scene": [
+      [
+       "🥊",
+       "shake",
+       0
+      ],
+      [
+       "🧻",
+       "fall",
+       0.4
+      ],
+      [
+       "🏳️",
+       "floaty",
+       0.8
+      ]
+     ],
+     "caption": "The towel flies, the fight ends.",
+     "options": [
+      "Give up; admit defeat",
+      "Clean up a mess",
+      "Offer help to a rival",
+      "Celebrate a victory"
+     ],
+     "correct": 0,
+     "origin": "From boxing — a trainer throws a towel into the ring to stop the fight and concede.",
+     "usage": "Half the batch wanted to throw in the towel after Test 18; nobody actually did."
+    }
+   ]
+  },
+  {
+   "words": [
+    {
+     "word": "Reticent",
+     "pos": "adj.",
+     "options": [
+      "Reluctant to speak; reserved",
+      "Repeatedly returning",
+      "Easily angered",
+      "Openly rebellious"
+     ],
+     "correct": 0,
+     "usage": "Reticent in class, he wrote the sharpest essays in the batch.",
+     "note": "Latin tacere = to be silent (same root as taciturn).",
+     "synonyms": [
+      "reserved",
+      "tight-lipped",
+      "uncommunicative"
+     ]
+    },
+    {
+     "word": "Prosaic",
+     "pos": "adj.",
+     "options": [
+      "Dull, ordinary, lacking imagination",
+      "Written in verse",
+      "Highly technical",
+      "Ancient and outdated"
+     ],
+     "correct": 0,
+     "usage": "The topic sounded prosaic — 'My Daily Routine' — until she made it a thriller.",
+     "note": "Latin prosa = straightforward speech. Prose, not poetry.",
+     "synonyms": [
+      "mundane",
+      "pedestrian",
+      "humdrum",
+      "unimaginative"
+     ]
+    },
+    {
+     "word": "Venerate",
+     "pos": "verb",
+     "options": [
+      "To regard with deep respect",
+      "To poison slowly",
+      "To decorate lavishly",
+      "To question openly"
+     ],
+     "correct": 0,
+     "usage": "Students venerate toppers a little too much; toppers are just students with routines.",
+     "note": "Latin venerari = to worship.",
+     "synonyms": [
+      "revere",
+      "esteem",
+      "honour",
+      "idolise"
+     ]
+    },
+    {
+     "word": "Zealot",
+     "pos": "noun",
+     "options": [
+      "A fanatical, uncompromising follower",
+      "A skilled craftsman",
+      "A lazy observer",
+      "A neutral judge"
+     ],
+     "correct": 0,
+     "usage": "He became a vocabulary zealot — correcting even the teacher's synonyms.",
+     "note": "Greek zelotes = emulous follower. Originally a Jewish resistance sect.",
+     "synonyms": [
+      "fanatic",
+      "extremist",
+      "partisan"
+     ]
+    },
+    {
+     "word": "Acrimony",
+     "pos": "noun",
+     "options": [
+      "Bitterness and ill feeling",
+      "Sweet-smelling air",
+      "Financial shrewdness",
+      "Perfect harmony"
+     ],
+     "correct": 0,
+     "usage": "The debate ended in acrimony, with both sides refusing to shake hands.",
+     "note": "Latin acer = sharp. Sharpness of temper.",
+     "synonyms": [
+      "bitterness",
+      "rancour",
+      "hostility",
+      "asperity"
+     ]
+    }
+   ],
+   "idioms": [
+    {
+     "idiom": "Pull someone's leg",
+     "scene": [
+      [
+       "🦵",
+       "shake",
+       0
+      ],
+      [
+       "😂",
+       "pop",
+       0.4
+      ],
+      [
+       "🤝",
+       "floaty",
+       0.8
+      ]
+     ],
+     "caption": "No legs are harmed in the making of this joke.",
+     "options": [
+      "To tease or joke with someone",
+      "To trip someone deliberately",
+      "To slow someone down",
+      "To beg for a favour"
+     ],
+     "correct": 0,
+     "origin": "Possibly from Victorian street thieves tripping victims — the meaning softened into harmless teasing.",
+     "usage": "Relax, there's no surprise test tomorrow — I was just pulling your leg."
+    },
+    {
+     "idiom": "On cloud nine",
+     "scene": [
+      [
+       "☁️",
+       "floaty",
+       0
+      ],
+      [
+       "😁",
+       "pop",
+       0.4
+      ]
+     ],
+     "caption": "Nine clouds up, gravity optional.",
+     "options": [
+      "Extremely happy",
+      "Lost in confusion",
+      "Dangerously overconfident",
+      "Daydreaming instead of working"
+     ],
+     "correct": 0,
+     "origin": "One theory credits the US Weather Bureau's cloud classification, where 'nine' was the towering cumulonimbus — the highest of all.",
+     "usage": "She's been on cloud nine since the IPMAT call letter arrived."
+    }
+   ]
+  },
+  {
+   "words": [
+    {
+     "word": "Belligerent",
+     "pos": "adj.",
+     "options": [
+      "Hostile and aggressive; ready to fight",
+      "Beautifully decorated",
+      "Loyal and devoted",
+      "Slow and clumsy"
+     ],
+     "correct": 0,
+     "usage": "One belligerent comment in the group chat derailed the whole study plan.",
+     "note": "Latin bellum = war. One waging war.",
+     "synonyms": [
+      "combative",
+      "pugnacious",
+      "antagonistic",
+      "hostile"
+     ]
+    },
+    {
+     "word": "Candid",
+     "pos": "adj.",
+     "options": [
+      "Truthful and straightforward",
+      "Sweet like sugar",
+      "Hidden from view",
+      "Politely evasive"
+     ],
+     "correct": 0,
+     "usage": "Her candid feedback stung, but it fixed my RC approach in a week.",
+     "note": "Latin candidus = white, pure. Honest = unstained.",
+     "synonyms": [
+      "frank",
+      "forthright",
+      "blunt",
+      "open"
+     ]
+    },
+    {
+     "word": "Deference",
+     "pos": "noun",
+     "options": [
+      "Respectful submission to another's judgment",
+      "A delay in payment",
+      "A minor disagreement",
+      "A formal complaint"
+     ],
+     "correct": 0,
+     "usage": "Out of deference to the seniors, he let them pick the mock schedule.",
+     "note": "Latin deferre = to yield, carry down.",
+     "synonyms": [
+      "respect",
+      "regard",
+      "obeisance",
+      "submission"
+     ]
+    },
+    {
+     "word": "Enervate",
+     "pos": "verb",
+     "options": [
+      "To drain of energy; weaken",
+      "To energise and excite",
+      "To irritate mildly",
+      "To make nervous"
+     ],
+     "correct": 0,
+     "usage": "Careful — this word is a classic trap. Three back-to-back mocks will enervate anyone.",
+     "note": "Latin nervus = sinew. To cut the sinews — the opposite of energise.",
+     "synonyms": [
+      "exhaust",
+      "debilitate",
+      "sap",
+      "weaken"
+     ]
+    },
+    {
+     "word": "Fortuitous",
+     "pos": "adj.",
+     "options": [
+      "Happening by lucky chance",
+      "Carefully planned",
+      "Extremely strong",
+      "Doomed to fail"
+     ],
+     "correct": 0,
+     "usage": "A fortuitous seat swap put her next to the batch's best note-maker.",
+     "note": "Latin fors = chance, luck.",
+     "synonyms": [
+      "accidental",
+      "serendipitous",
+      "unplanned",
+      "lucky"
+     ]
+    }
+   ],
+   "idioms": [
+    {
+     "idiom": "Piece of cake",
+     "scene": [
+      [
+       "🍰",
+       "pop",
+       0
+      ],
+      [
+       "😎",
+       "floaty",
+       0.4
+      ]
+     ],
+     "caption": "So easy you could eat it.",
+     "options": [
+      "Something very easy",
+      "A small reward",
+      "A sweet gesture",
+      "An unfair share"
+     ],
+     "correct": 0,
+     "origin": "Popularised by 1930s American slang; possibly from cakewalk contests where the prize for an easy stroll was a cake.",
+     "usage": "After the RC drills, the actual exam passage felt like a piece of cake."
+    },
+    {
+     "idiom": "Add fuel to the fire",
+     "scene": [
+      [
+       "🔥",
+       "flicker",
+       0
+      ],
+      [
+       "⛽",
+       "fall",
+       0.4
+      ],
+      [
+       "🔥",
+       "pop",
+       0.8
+      ]
+     ],
+     "caption": "Exactly what the fire wanted.",
+     "options": [
+      "Make a bad situation worse",
+      "Speed up a project",
+      "Motivate a tired team",
+      "Waste valuable resources"
+     ],
+     "correct": 0,
+     "origin": "An image as old as fire itself — Roman writers used the phrase two thousand years ago.",
+     "usage": "Bringing up last year's result only added fuel to the fire during the argument."
+    }
+   ]
+  },
+  {
+   "words": [
+    {
+     "word": "Hackneyed",
+     "pos": "adj.",
+     "options": [
+      "Overused and unoriginal",
+      "Roughly cut",
+      "Illegally accessed",
+      "Cleverly disguised"
+     ],
+     "correct": 0,
+     "usage": "'Hard work is the key to success' — a hackneyed line that kills essay scores.",
+     "note": "From Hackney horses — hired out so often they wore out.",
+     "synonyms": [
+      "trite",
+      "clichéd",
+      "banal",
+      "stale"
+     ]
+    },
+    {
+     "word": "Impetuous",
+     "pos": "adj.",
+     "options": [
+      "Acting rashly, without thought",
+      "Impossible to move",
+      "Deeply respectful",
+      "Constantly complaining"
+     ],
+     "correct": 0,
+     "usage": "An impetuous guess on a negative-marking question costs more than a skip.",
+     "note": "Latin impetus = attack, rush.",
+     "synonyms": [
+      "rash",
+      "impulsive",
+      "hasty",
+      "headlong"
+     ]
+    },
+    {
+     "word": "Juxtapose",
+     "pos": "verb",
+     "options": [
+      "To place side by side for contrast",
+      "To mix thoroughly",
+      "To replace secretly",
+      "To judge harshly"
+     ],
+     "correct": 0,
+     "usage": "The passage juxtaposes a monk's silence with a trader's chaos — that contrast IS the answer.",
+     "note": "Latin juxta = next to + French poser = to place.",
+     "synonyms": [
+      "compare",
+      "contrast",
+      "collocate"
+     ]
+    },
+    {
+     "word": "Lethargic",
+     "pos": "adj.",
+     "options": [
+      "Sluggish, lacking energy",
+      "Deadly and poisonous",
+      "Forgetful of names",
+      "Unusually tall"
+     ],
+     "correct": 0,
+     "usage": "Post-lunch lectures make everyone lethargic; that's when attendance tricks fail.",
+     "note": "Greek lethargos = forgetful, from Lethe, the river of forgetfulness.",
+     "synonyms": [
+      "sluggish",
+      "listless",
+      "torpid",
+      "languid"
+     ]
+    },
+    {
+     "word": "Mercurial",
+     "pos": "adj.",
+     "options": [
+      "Prone to sudden, unpredictable changes of mood",
+      "Made of metal",
+      "Extremely precise",
+      "Silent and watchful"
+     ],
+     "correct": 0,
+     "usage": "His mercurial moods meant one mock decided whether the week was good or ruined.",
+     "note": "From Mercury — swift messenger god, and the liquid metal that never sits still.",
+     "synonyms": [
+      "volatile",
+      "capricious",
+      "erratic",
+      "fickle"
+     ]
+    }
+   ],
+   "idioms": [
+    {
+     "idiom": "Face the music",
+     "scene": [
+      [
+       "🎺",
+       "shake",
+       0
+      ],
+      [
+       "😰",
+       "pop",
+       0.4
+      ],
+      [
+       "🎼",
+       "floaty",
+       0.8
+      ]
+     ],
+     "caption": "The band plays whether you like the tune or not.",
+     "options": [
+      "Accept the consequences of your actions",
+      "Attend a concert reluctantly",
+      "Perform under pressure",
+      "Ignore criticism completely"
+     ],
+     "correct": 0,
+     "origin": "One theory: disgraced soldiers were drummed out of the regiment, literally facing the band.",
+     "usage": "He skipped three tests; now he has to face the music in the mentoring session."
+    },
+    {
+     "idiom": "Cry over spilt milk",
+     "scene": [
+      [
+       "🥛",
+       "fall",
+       0
+      ],
+      [
+       "😢",
+       "shake",
+       0.4
+      ]
+     ],
+     "caption": "The milk is on the floor. The floor is not giving it back.",
+     "options": [
+      "Waste time regretting what cannot be undone",
+      "Complain about small portions",
+      "Grieve dramatically in public",
+      "Blame others for accidents"
+     ],
+     "correct": 0,
+     "origin": "A proverb since the 1600s — spilt milk cannot be gathered up again.",
+     "usage": "The paper's done. Don't cry over spilt milk; analyse it and move to the next mock."
+    }
+   ]
+  },
+  {
+   "words": [
+    {
+     "word": "Nonchalant",
+     "pos": "adj.",
+     "options": [
+      "Casually calm and unconcerned",
+      "Rudely dismissive",
+      "Secretly anxious",
+      "Unable to decide"
+     ],
+     "correct": 0,
+     "usage": "He gave a nonchalant shrug at the result, then quietly topped the next test.",
+     "note": "French non + chaloir = to not be heated about it.",
+     "synonyms": [
+      "unconcerned",
+      "blasé",
+      "casual",
+      "indifferent"
+     ]
+    },
+    {
+     "word": "Ostentatious",
+     "pos": "adj.",
+     "options": [
+      "Showy, designed to impress",
+      "Hidden and secretive",
+      "Extremely fragile",
+      "Old-fashioned"
+     ],
+     "correct": 0,
+     "usage": "An ostentatious vocabulary impresses no examiner; precision does.",
+     "note": "Latin ostentare = to display.",
+     "synonyms": [
+      "flashy",
+      "pretentious",
+      "gaudy",
+      "flamboyant"
+     ]
+    },
+    {
+     "word": "Placate",
+     "pos": "verb",
+     "options": [
+      "To calm someone's anger",
+      "To place carefully",
+      "To praise excessively",
+      "To postpone indefinitely"
+     ],
+     "correct": 0,
+     "usage": "A quick apology placated the invigilator after the phone buzzed.",
+     "note": "Latin placare = to soothe.",
+     "synonyms": [
+      "appease",
+      "pacify",
+      "mollify",
+      "conciliate"
+     ]
+    },
+    {
+     "word": "Querulous",
+     "pos": "adj.",
+     "options": [
+      "Habitually complaining",
+      "Full of questions",
+      "Strangely quiet",
+      "Quick to forgive"
+     ],
+     "correct": 0,
+     "usage": "A querulous tone in the passage signals the author disapproves — mark it.",
+     "note": "Latin queri = to complain. Not related to 'query'!",
+     "synonyms": [
+      "petulant",
+      "whiny",
+      "peevish",
+      "grumbling"
+     ]
+    },
+    {
+     "word": "Redundant",
+     "pos": "adj.",
+     "options": [
+      "No longer needed; unnecessarily repetitive",
+      "Freshly painted",
+      "Completely accurate",
+      "Highly profitable"
+     ],
+     "correct": 0,
+     "usage": "'Return back' and 'repeat again' are redundant — the verb already says it.",
+     "note": "Latin redundare = to overflow.",
+     "synonyms": [
+      "superfluous",
+      "surplus",
+      "unnecessary",
+      "repetitive"
+     ]
+    }
+   ],
+   "idioms": [
+    {
+     "idiom": "The elephant in the room",
+     "scene": [
+      [
+       "🐘",
+       "pop",
+       0
+      ],
+      [
+       "🙈",
+       "shake",
+       0.5
+      ],
+      [
+       "🙉",
+       "shake",
+       0.9
+      ]
+     ],
+     "caption": "Everyone sees it. Nobody mentions it.",
+     "options": [
+      "An obvious problem no one wants to discuss",
+      "A very large obstacle",
+      "An unwanted guest",
+      "A memory that won't fade"
+     ],
+     "correct": 0,
+     "origin": "Traced to a 19th-century Russian fable about a man who tours a museum and notices everything except the elephant.",
+     "usage": "Attendance is the elephant in the room — everyone blames the syllabus instead."
+    },
+    {
+     "idiom": "Steal someone's thunder",
+     "scene": [
+      [
+       "⛈️",
+       "flicker",
+       0
+      ],
+      [
+       "🏃",
+       "shake",
+       0.4
+      ],
+      [
+       "😤",
+       "pop",
+       0.8
+      ]
+     ],
+     "caption": "Borrowed weather, unreturned.",
+     "options": [
+      "Take credit or attention meant for another",
+      "Copy someone's idea illegally",
+      "Silence a loud person",
+      "Win by cheating"
+     ],
+     "correct": 0,
+     "origin": "Playwright John Dennis invented a thunder machine for his play; rivals used it in Macbeth, and he raged that they'd stolen his thunder.",
+     "usage": "Announcing your score during her farewell speech? That's stealing her thunder."
+    }
+   ]
+  },
+  {
+   "words": [
+    {
+     "word": "Serendipity",
+     "pos": "noun",
+     "options": [
+      "A happy accident; luck in finding good things",
+      "A tropical illness",
+      "Deep meditation",
+      "A musical harmony"
+     ],
+     "correct": 0,
+     "usage": "Pure serendipity: the essay topic was the exact article she'd read that morning.",
+     "note": "Coined by Horace Walpole from the Persian tale 'The Three Princes of Serendip'.",
+     "synonyms": [
+      "chance",
+      "fluke",
+      "providence"
+     ]
+    },
+    {
+     "word": "Tenacious",
+     "pos": "adj.",
+     "options": [
+      "Holding firmly; persistent",
+      "Easily stretched",
+      "Ten times larger",
+      "Softly spoken"
+     ],
+     "correct": 0,
+     "usage": "Tenacious students treat a 40th percentile as data, not destiny.",
+     "note": "Latin tenere = to hold.",
+     "synonyms": [
+      "persistent",
+      "dogged",
+      "resolute",
+      "unyielding"
+     ]
+    },
+    {
+     "word": "Vacillate",
+     "pos": "verb",
+     "options": [
+      "To waver between choices",
+      "To clean thoroughly",
+      "To vaccinate",
+      "To speak vaguely"
+     ],
+     "correct": 0,
+     "usage": "Don't vacillate between two options for ninety seconds — mark, move, return.",
+     "note": "Latin vacillare = to sway.",
+     "synonyms": [
+      "waver",
+      "dither",
+      "oscillate",
+      "hesitate"
+     ]
+    },
+    {
+     "word": "Wistful",
+     "pos": "adj.",
+     "options": [
+      "Full of gentle longing or yearning",
+      "Extremely thin",
+      "Playfully dishonest",
+      "Sharp and witty"
+     ],
+     "correct": 0,
+     "usage": "The passage's wistful tone about 'lost letter-writing' hints at the author's view.",
+     "note": "From obsolete 'wistly' = intently; shaded toward longing.",
+     "synonyms": [
+      "longing",
+      "nostalgic",
+      "pensive",
+      "yearning"
+     ]
+    },
+    {
+     "word": "Austere",
+     "pos": "adj.",
+     "options": [
+      "Severely simple; strict, without comfort",
+      "Southern in origin",
+      "Loud and cheerful",
+      "Generously decorated"
+     ],
+     "correct": 0,
+     "usage": "The hostel room was austere — a bed, a desk, and a poster of the IIM gate.",
+     "note": "Greek austeros = making the tongue dry, harsh.",
+     "synonyms": [
+      "stern",
+      "spartan",
+      "ascetic",
+      "severe"
+     ]
+    }
+   ],
+   "idioms": [
+    {
+     "idiom": "Play devil's advocate",
+     "scene": [
+      [
+       "😈",
+       "pop",
+       0
+      ],
+      [
+       "⚖️",
+       "floaty",
+       0.4
+      ],
+      [
+       "🗣️",
+       "shake",
+       0.8
+      ]
+     ],
+     "caption": "Someone has to argue for the horns.",
+     "options": [
+      "Argue the opposite side to test an idea",
+      "Defend a guilty person",
+      "Cause trouble for fun",
+      "Support the losing team"
+     ],
+     "correct": 0,
+     "origin": "From the Vatican's advocatus diaboli — an official appointed to argue against a candidate's sainthood.",
+     "usage": "I agree with your answer, but let me play devil's advocate: what if the tone is ironic?"
+    },
+    {
+     "idiom": "Get out of hand",
+     "scene": [
+      [
+       "✋",
+       "shake",
+       0
+      ],
+      [
+       "🎈",
+       "floaty",
+       0.4
+      ],
+      [
+       "💥",
+       "pop",
+       0.8
+      ]
+     ],
+     "caption": "The balloon has opinions now.",
+     "options": [
+      "Become uncontrollable",
+      "Escape punishment",
+      "Lose a possession",
+      "Finish ahead of time"
+     ],
+     "correct": 0,
+     "origin": "From horse-driving — losing grip of the reins meant losing control of the horses.",
+     "usage": "The group-study meme thread got out of hand; nobody studied after 9 pm."
+    }
+   ]
+  },
+  {
+   "words": [
+    {
+     "word": "Brevity",
+     "pos": "noun",
+     "options": [
+      "Shortness; concise expression",
+      "Bravery in battle",
+      "A cold drink",
+      "A short holiday"
+     ],
+     "correct": 0,
+     "usage": "Brevity wins in para-summary: the shortest option that keeps the core often survives.",
+     "note": "Latin brevis = short. 'Brevity is the soul of wit' — Hamlet.",
+     "synonyms": [
+      "conciseness",
+      "terseness",
+      "pithiness"
+     ]
+    },
+    {
+     "word": "Chicanery",
+     "pos": "noun",
+     "options": [
+      "Trickery; deception by clever means",
+      "A type of poultry",
+      "Elegant handwriting",
+      "Loud celebration"
+     ],
+     "correct": 0,
+     "usage": "The distractor options use chicanery — half-true words arranged to mislead.",
+     "note": "French chicaner = to quibble in legal disputes.",
+     "synonyms": [
+      "deception",
+      "trickery",
+      "duplicity",
+      "subterfuge"
+     ]
+    },
+    {
+     "word": "Debacle",
+     "pos": "noun",
+     "options": [
+      "A sudden, complete failure; a fiasco",
+      "A formal debate",
+      "A double victory",
+      "A minor setback"
+     ],
+     "correct": 0,
+     "usage": "Attempting all 100 questions with negative marking was a predictable debacle.",
+     "note": "French débâcler = to unbar; originally the violent breaking of river ice.",
+     "synonyms": [
+      "fiasco",
+      "disaster",
+      "collapse",
+      "rout"
+     ]
+    },
+    {
+     "word": "Effrontery",
+     "pos": "noun",
+     "options": [
+      "Shameless boldness; insolence",
+      "Great effort",
+      "The front of a building",
+      "Polite hesitation"
+     ],
+     "correct": 0,
+     "usage": "He had the effrontery to ask for grace marks after skipping every class.",
+     "note": "Latin effrons = barefaced, without shame on the forehead.",
+     "synonyms": [
+      "audacity",
+      "impudence",
+      "gall",
+      "nerve"
+     ]
+    },
+    {
+     "word": "Frugal",
+     "pos": "adj.",
+     "options": [
+      "Careful with money; economical",
+      "Extremely fragile",
+      "Fruit-bearing",
+      "Cold and distant"
+     ],
+     "correct": 0,
+     "usage": "A frugal test-taker spends time only where marks grow.",
+     "note": "Latin frux = fruit, profit. Spending only what bears fruit.",
+     "synonyms": [
+      "thrifty",
+      "economical",
+      "sparing",
+      "prudent"
+     ]
+    }
+   ],
+   "idioms": [
+    {
+     "idiom": "Kill two birds with one stone",
+     "scene": [
+      [
+       "🪨",
+       "fall",
+       0
+      ],
+      [
+       "🐦",
+       "shake",
+       0.4
+      ],
+      [
+       "🐦",
+       "shake",
+       0.7
+      ]
+     ],
+     "caption": "Efficient. The birds disagree.",
+     "options": [
+      "Achieve two goals with one action",
+      "Hunt without permission",
+      "Ruin two plans at once",
+      "Win by pure luck"
+     ],
+     "correct": 0,
+     "origin": "An old proverb of efficiency, in English print since the 1600s.",
+     "usage": "Reading editorials kills two birds with one stone — vocabulary and current affairs."
+    },
+    {
+     "idiom": "Sit on the fence",
+     "scene": [
+      [
+       "🧍",
+       "floaty",
+       0
+      ],
+      [
+       "🪵",
+       "shake",
+       0.4
+      ],
+      [
+       "🤷",
+       "pop",
+       0.8
+      ]
+     ],
+     "caption": "Comfortable? No. Committed? Also no.",
+     "options": [
+      "Avoid choosing a side",
+      "Rest during hard work",
+      "Spy on both neighbours",
+      "Delay a payment"
+     ],
+     "correct": 0,
+     "origin": "The image of someone perched between two fields, refusing to drop into either, dates to 19th-century American politics.",
+     "usage": "On this debate topic, sitting on the fence scores zero — pick a side and argue."
+    }
+   ]
+  },
+  {
+   "words": [
+    {
+     "word": "Gullible",
+     "pos": "adj.",
+     "options": [
+      "Easily deceived or tricked",
+      "Related to seabirds",
+      "Full of guilt",
+      "Physically weak"
+     ],
+     "correct": 0,
+     "usage": "Gullible readers accept the first plausible option; trained ones test it against the passage.",
+     "note": "From gull (to dupe) — the bird was thought foolishly easy to catch.",
+     "synonyms": [
+      "naive",
+      "credulous",
+      "trusting",
+      "unsuspecting"
+     ]
+    },
+    {
+     "word": "Histrionic",
+     "pos": "adj.",
+     "options": [
+      "Overly theatrical or dramatic",
+      "Related to history",
+      "Scientifically proven",
+      "Quiet and modest"
+     ],
+     "correct": 0,
+     "usage": "Her histrionic reaction to a one-mark loss entertained the whole batch.",
+     "note": "Latin histrio = actor.",
+     "synonyms": [
+      "theatrical",
+      "melodramatic",
+      "overwrought"
+     ]
+    },
+    {
+     "word": "Indolent",
+     "pos": "adj.",
+     "options": [
+      "Lazy; avoiding effort",
+      "Financially broke",
+      "Extremely spicy",
+      "Deeply thoughtful"
+     ],
+     "correct": 0,
+     "usage": "An indolent revision plan — 'I'll do it all in May' — is how percentiles die.",
+     "note": "Latin in + dolere = feeling no pain; drifted to 'taking no trouble'.",
+     "synonyms": [
+      "lazy",
+      "slothful",
+      "idle",
+      "lethargic"
+     ]
+    },
+    {
+     "word": "Jubilant",
+     "pos": "adj.",
+     "options": [
+      "Feeling or expressing great joy",
+      "Slightly nervous",
+      "Recently married",
+      "Loudly argumentative"
+     ],
+     "correct": 0,
+     "usage": "The jubilant Zebar corridor after results needed its own noise policy.",
+     "note": "Latin jubilare = to shout for joy.",
+     "synonyms": [
+      "elated",
+      "exultant",
+      "overjoyed",
+      "triumphant"
+     ]
+    },
+    {
+     "word": "Lament",
+     "pos": "verb",
+     "options": [
+      "To express deep grief or sorrow",
+      "To brighten a room",
+      "To flatten metal",
+      "To argue a case"
+     ],
+     "correct": 0,
+     "usage": "The author laments the decline of deep reading — that single verb sets the tone question.",
+     "note": "Latin lamentum = a wailing.",
+     "synonyms": [
+      "mourn",
+      "grieve",
+      "bewail",
+      "bemoan"
+     ]
+    }
+   ],
+   "idioms": [
+    {
+     "idiom": "A dime a dozen",
+     "scene": [
+      [
+       "🪙",
+       "fall",
+       0
+      ],
+      [
+       "🪙",
+       "fall",
+       0.3
+      ],
+      [
+       "🪙",
+       "fall",
+       0.6
+      ],
+      [
+       "🤏",
+       "pop",
+       1
+      ]
+     ],
+     "caption": "Bulk discount on ordinary.",
+     "options": [
+      "Very common and of little value",
+      "Surprisingly cheap to buy",
+      "A fair bargain",
+      "Rare and precious"
+     ],
+     "correct": 0,
+     "origin": "American phrase from the 1800s, when a dime genuinely bought a dozen eggs.",
+     "usage": "Generic essay openings are a dime a dozen; a sharp first line is not."
+    },
+    {
+     "idiom": "Go the extra mile",
+     "scene": [
+      [
+       "🏃",
+       "shake",
+       0
+      ],
+      [
+       "🛣️",
+       "floaty",
+       0.4
+      ],
+      [
+       "⭐",
+       "pop",
+       0.8
+      ]
+     ],
+     "caption": "The road ends. You don't.",
+     "options": [
+      "Make more effort than required",
+      "Travel without a map",
+      "Waste energy showing off",
+      "Take the longer route home"
+     ],
+     "correct": 0,
+     "origin": "From the Sermon on the Mount — 'whosoever shall compel thee to go a mile, go with him twain'.",
+     "usage": "She goes the extra mile: every wrong answer gets a written post-mortem."
+    }
+   ]
+  },
+  {
+   "words": [
+    {
+     "word": "Meticulous",
+     "pos": "adj.",
+     "options": [
+      "Extremely careful about details",
+      "Fearful of insects",
+      "Falsely modest",
+      "Quick and careless"
+     ],
+     "correct": 0,
+     "usage": "A meticulous error log beats ten extra mocks.",
+     "note": "Latin metus = fear — originally 'fearful', then 'carefully timid about mistakes'.",
+     "synonyms": [
+      "thorough",
+      "scrupulous",
+      "painstaking",
+      "precise"
+     ]
+    },
+    {
+     "word": "Nostalgia",
+     "pos": "noun",
+     "options": [
+      "Sentimental longing for the past",
+      "Fear of the future",
+      "A breathing illness",
+      "Love of new things"
+     ],
+     "correct": 0,
+     "usage": "The essay drips with nostalgia for handwritten letters — that's your tone answer.",
+     "note": "Greek nostos = homecoming + algos = pain. Once diagnosed as a disease in soldiers.",
+     "synonyms": [
+      "longing",
+      "wistfulness",
+      "homesickness"
+     ]
+    },
+    {
+     "word": "Opulent",
+     "pos": "adj.",
+     "options": [
+      "Lavishly rich and luxurious",
+      "Slightly transparent",
+      "Widely popular",
+      "Heavily guarded"
+     ],
+     "correct": 0,
+     "usage": "The opulent farmhouse in the RC contrasts with the narrator's one-room flat — contrast = question.",
+     "note": "Latin ops = wealth, resources.",
+     "synonyms": [
+      "luxurious",
+      "sumptuous",
+      "lavish",
+      "plush"
+     ]
+    },
+    {
+     "word": "Pedantic",
+     "pos": "adj.",
+     "options": [
+      "Excessively concerned with minor rules and details",
+      "Related to walking",
+      "Kind to children",
+      "Broadly educated"
+     ],
+     "correct": 0,
+     "usage": "Correcting 'less marks' to 'fewer marks' mid-condolence is peak pedantic.",
+     "note": "From pedant — originally just a schoolmaster.",
+     "synonyms": [
+      "fussy",
+      "doctrinaire",
+      "hair-splitting",
+      "bookish"
+     ]
+    },
+    {
+     "word": "Quandary",
+     "pos": "noun",
+     "options": [
+      "A state of uncertainty; a dilemma",
+      "A four-sided figure",
+      "A stone pit",
+      "A heated argument"
+     ],
+     "correct": 0,
+     "usage": "Classic quandary: attempt the long RC for 20 marks or bank the short one for 12.",
+     "note": "Origin uncertain — possibly from Latin quando = when, as in 'what now, when?'",
+     "synonyms": [
+      "dilemma",
+      "predicament",
+      "impasse",
+      "bind"
+     ]
+    }
+   ],
+   "idioms": [
+    {
+     "idiom": "Throw caution to the wind",
+     "scene": [
+      [
+       "⚠️",
+       "fall",
+       0
+      ],
+      [
+       "🌬️",
+       "floaty",
+       0.4
+      ],
+      [
+       "🤸",
+       "pop",
+       0.8
+      ]
+     ],
+     "caption": "The wind now owns your caution.",
+     "options": [
+      "Act recklessly, abandoning care",
+      "Warn everyone loudly",
+      "Predict bad weather",
+      "Give up a good habit"
+     ],
+     "correct": 0,
+     "origin": "The image of tossing something away on the breeze — recorded in English since the 1600s.",
+     "usage": "In the last five minutes he threw caution to the wind and guessed all pending questions."
+    },
+    {
+     "idiom": "Burn bridges",
+     "scene": [
+      [
+       "🌉",
+       "shake",
+       0
+      ],
+      [
+       "🔥",
+       "flicker",
+       0.4
+      ],
+      [
+       "🚶",
+       "fall",
+       0.8
+      ]
+     ],
+     "caption": "No way back. That was the point.",
+     "options": [
+      "Destroy relationships or options for return",
+      "Work through the night",
+      "Take a dangerous shortcut",
+      "End a project early"
+     ],
+     "correct": 0,
+     "origin": "From military strategy — armies burned bridges behind them so retreat was impossible.",
+     "usage": "Leave the coaching politely; never burn bridges with mentors you may need again."
+    }
+   ]
+  },
+  {
+   "words": [
+    {
+     "word": "Rancor",
+     "pos": "noun",
+     "options": [
+      "Long-lasting bitterness and resentment",
+      "A loud noise",
+      "A cattle farm",
+      "Sudden joy"
+     ],
+     "correct": 0,
+     "usage": "Years later, the rancor over that group-project betrayal still surfaces at reunions.",
+     "note": "Latin rancere = to stink, to be rotten.",
+     "synonyms": [
+      "bitterness",
+      "animosity",
+      "enmity",
+      "grudge"
+     ]
+    },
+    {
+     "word": "Stoic",
+     "pos": "adj.",
+     "options": [
+      "Enduring hardship without complaint",
+      "Made of stone",
+      "Slow to learn",
+      "Full of energy"
+     ],
+     "correct": 0,
+     "usage": "She stayed stoic through three server crashes during the online mock.",
+     "note": "From the Stoa (porch) in Athens where Zeno taught calm endurance.",
+     "synonyms": [
+      "impassive",
+      "unflinching",
+      "phlegmatic",
+      "composed"
+     ]
+    },
+    {
+     "word": "Trepidation",
+     "pos": "noun",
+     "options": [
+      "Fear or anxiety about what may happen",
+      "Rapid heartbeat",
+      "A three-part journey",
+      "Great excitement"
+     ],
+     "correct": 0,
+     "usage": "He opened the scorecard with trepidation and closed it with relief.",
+     "note": "Latin trepidare = to tremble.",
+     "synonyms": [
+      "dread",
+      "apprehension",
+      "unease",
+      "anxiety"
+     ]
+    },
+    {
+     "word": "Umbrage",
+     "pos": "noun",
+     "options": [
+      "Offence or annoyance taken at something",
+      "Shade from a tree",
+      "A formal apology",
+      "An umbrella stand"
+     ],
+     "correct": 0,
+     "usage": "She took umbrage at being called 'lucky' — it dismissed two years of 6 am revisions.",
+     "note": "Latin umbra = shadow. To feel overshadowed, slighted.",
+     "synonyms": [
+      "offence",
+      "resentment",
+      "pique",
+      "displeasure"
+     ]
+    },
+    {
+     "word": "Voracious",
+     "pos": "adj.",
+     "options": [
+      "Having a huge appetite; devouring greedily",
+      "Extremely truthful",
+      "Loudly spoken",
+      "Spinning rapidly"
+     ],
+     "correct": 0,
+     "usage": "A voracious reader, she finished the entire RC compendium before Week 3.",
+     "note": "Latin vorare = to devour.",
+     "synonyms": [
+      "insatiable",
+      "ravenous",
+      "gluttonous",
+      "avid"
+     ]
+    }
+   ],
+   "idioms": [
+    {
+     "idiom": "The last straw",
+     "scene": [
+      [
+       "🐪",
+       "shake",
+       0
+      ],
+      [
+       "🌾",
+       "fall",
+       0.4
+      ],
+      [
+       "💢",
+       "pop",
+       0.8
+      ]
+     ],
+     "caption": "The camel had limits. Who knew.",
+     "options": [
+      "The final problem that makes a situation unbearable",
+      "The cheapest option left",
+      "A weak excuse",
+      "The end of harvest season"
+     ],
+     "correct": 0,
+     "origin": "From the proverb 'the straw that broke the camel's back' — one tiny addition to an already crushing load.",
+     "usage": "The fourth 'urgent' schedule change was the last straw; the batch revolted."
+    },
+    {
+     "idiom": "Read between the lines",
+     "scene": [
+      [
+       "📄",
+       "floaty",
+       0
+      ],
+      [
+       "🔍",
+       "shake",
+       0.4
+      ],
+      [
+       "💡",
+       "flicker",
+       0.8
+      ]
+     ],
+     "caption": "The real message never got typed.",
+     "options": [
+      "Understand the hidden or implied meaning",
+      "Skip unimportant paragraphs",
+      "Read very carefully twice",
+      "Check for spelling errors"
+     ],
+     "correct": 0,
+     "origin": "From cryptography — secret messages were once written in invisible ink between the visible lines.",
+     "usage": "Inference questions are exactly this: read between the lines, but never beyond them."
+    }
+   ]
+  },
+  {
+   "words": [
+    {
+     "word": "Wary",
+     "pos": "adj.",
+     "options": [
+      "Cautious and alert to danger",
+      "Tired and sleepy",
+      "Warm and friendly",
+      "Confused by choices"
+     ],
+     "correct": 0,
+     "usage": "Be wary of options with 'always' and 'never' — extremes rarely survive the passage.",
+     "note": "Old English waer = aware, on guard.",
+     "synonyms": [
+      "cautious",
+      "chary",
+      "guarded",
+      "vigilant"
+     ]
+    },
+    {
+     "word": "Adulation",
+     "pos": "noun",
+     "options": [
+      "Excessive flattery or admiration",
+      "Reaching adulthood",
+      "Watering down",
+      "Formal approval"
+     ],
+     "correct": 0,
+     "usage": "The topper found the adulation exhausting — forty juniors asking for 'the one trick'.",
+     "note": "Latin adulari = to fawn like a dog.",
+     "synonyms": [
+      "flattery",
+      "idolisation",
+      "hero-worship",
+      "sycophancy"
+     ]
+    },
+    {
+     "word": "Bombastic",
+     "pos": "adj.",
+     "options": [
+      "High-sounding but with little meaning",
+      "Explosively dangerous",
+      "Cheerful and loud",
+      "Old and crumbling"
+     ],
+     "correct": 0,
+     "usage": "Bombastic essays impress no one; examiners smell padding instantly.",
+     "note": "From bombast — cotton stuffing once used to pad clothing.",
+     "synonyms": [
+      "grandiloquent",
+      "pompous",
+      "overblown",
+      "turgid"
+     ]
+    },
+    {
+     "word": "Cynical",
+     "pos": "adj.",
+     "options": [
+      "Believing people act only from self-interest",
+      "Repeating in cycles",
+      "Related to films",
+      "Physically flexible"
+     ],
+     "correct": 0,
+     "usage": "The cynical narrator assumes the charity is a tax dodge — until the last paragraph.",
+     "note": "From the Cynics, Greek philosophers who scorned conventional values.",
+     "synonyms": [
+      "distrustful",
+      "skeptical",
+      "jaded",
+      "misanthropic"
+     ]
+    },
+    {
+     "word": "Despot",
+     "pos": "noun",
+     "options": [
+      "A ruler with absolute, oppressive power",
+      "A dishonest merchant",
+      "A deep well",
+      "A loyal servant"
+     ],
+     "correct": 0,
+     "usage": "The hostel warden ran lights-out like a benevolent despot.",
+     "note": "Greek despotes = master of the household.",
+     "synonyms": [
+      "tyrant",
+      "dictator",
+      "autocrat",
+      "oppressor"
+     ]
+    }
+   ],
+   "idioms": [
+    {
+     "idiom": "Miss the boat",
+     "scene": [
+      [
+       "⛵",
+       "floaty",
+       0
+      ],
+      [
+       "🏃",
+       "shake",
+       0.4
+      ],
+      [
+       "😩",
+       "pop",
+       0.8
+      ]
+     ],
+     "caption": "The boat waited. Briefly.",
+     "options": [
+      "Lose an opportunity by being too slow",
+      "Forget an appointment",
+      "Choose the wrong transport",
+      "Avoid a disaster narrowly"
+     ],
+     "correct": 0,
+     "origin": "Literal origin — arrive late at the dock and watch your ship leave without you.",
+     "usage": "Registration closed Tuesday; he checked Wednesday and missed the boat."
+    },
+    {
+     "idiom": "Cut corners",
+     "scene": [
+      [
+       "📐",
+       "shake",
+       0
+      ],
+      [
+       "✂️",
+       "pop",
+       0.4
+      ],
+      [
+       "🏚️",
+       "fall",
+       0.8
+      ]
+     ],
+     "caption": "Straight through the corner. What could go wrong.",
+     "options": [
+      "Do something cheaply or carelessly to save effort",
+      "Trim excess spending wisely",
+      "Take a faster legal route",
+      "Redesign something old"
+     ],
+     "correct": 0,
+     "origin": "From driving — swinging across a corner instead of taking the full, proper turn.",
+     "usage": "Cut corners in Gate 1 checks and a broken payload reaches students — we learned that once."
+    }
+   ]
+  },
+  {
+   "words": [
+    {
+     "word": "Equanimity",
+     "pos": "noun",
+     "options": [
+      "Calmness and composure under stress",
+      "Equal division of property",
+      "Horse-riding skill",
+      "A state of confusion"
+     ],
+     "correct": 0,
+     "usage": "She read the tough Physics RC with total equanimity — panic is a time tax.",
+     "note": "Latin aequus = even + animus = mind. An even mind.",
+     "synonyms": [
+      "composure",
+      "serenity",
+      "poise",
+      "level-headedness"
+     ]
+    },
+    {
+     "word": "Furtive",
+     "pos": "adj.",
+     "options": [
+      "Secretive; trying not to be noticed",
+      "Extremely angry",
+      "Covered in fur",
+      "Moving forward"
+     ],
+     "correct": 0,
+     "usage": "A furtive glance at the toppers' answer sheet — spotted instantly by the invigilator.",
+     "note": "Latin fur = thief. Moving like a thief.",
+     "synonyms": [
+      "stealthy",
+      "sly",
+      "surreptitious",
+      "covert"
+     ]
+    },
+    {
+     "word": "Grandiose",
+     "pos": "adj.",
+     "options": [
+      "Impressively grand, often pretentiously so",
+      "Related to grandparents",
+      "Enormously fat",
+      "Perfectly planned"
+     ],
+     "correct": 0,
+     "usage": "His grandiose plan — 'finish Norman Lewis in a weekend' — lasted four pages.",
+     "note": "Italian grandioso, from Latin grandis = great.",
+     "synonyms": [
+      "extravagant",
+      "pompous",
+      "lofty",
+      "ostentatious"
+     ]
+    },
+    {
+     "word": "Hapless",
+     "pos": "adj.",
+     "options": [
+      "Unlucky; unfortunate",
+      "Without a home",
+      "Extremely happy",
+      "Careless with money"
+     ],
+     "correct": 0,
+     "usage": "The hapless student's laptop updated itself mid-mock — twice.",
+     "note": "From hap = luck (as in 'happen', 'perhaps'). Luck-less.",
+     "synonyms": [
+      "unlucky",
+      "ill-fated",
+      "luckless",
+      "wretched"
+     ]
+    },
+    {
+     "word": "Immutable",
+     "pos": "adj.",
+     "options": [
+      "Unchanging; unable to be changed",
+      "Silent by choice",
+      "Impossible to measure",
+      "Free from disease"
+     ],
+     "correct": 0,
+     "usage": "The +4/−1 rule is immutable; your attempt strategy is not.",
+     "note": "Latin in + mutare = not changeable.",
+     "synonyms": [
+      "unchangeable",
+      "fixed",
+      "permanent",
+      "invariable"
+     ]
+    }
+   ],
+   "idioms": [
+    {
+     "idiom": "Jump on the bandwagon",
+     "scene": [
+      [
+       "🎺",
+       "floaty",
+       0
+      ],
+      [
+       "🚌",
+       "shake",
+       0.4
+      ],
+      [
+       "🏃",
+       "pop",
+       0.8
+      ]
+     ],
+     "caption": "The music was loud, the wagon was moving, everyone jumped.",
+     "options": [
+      "Join something because it is popular",
+      "Start a music career",
+      "Travel without paying",
+      "Interrupt a celebration"
+     ],
+     "correct": 0,
+     "origin": "From American election parades — politicians literally climbed onto the circus bandwagon to be seen with a winning candidate.",
+     "usage": "Half the batch jumped on the 'question-first RC' bandwagon; for Indore, it backfired."
+    },
+    {
+     "idiom": "Take with a grain of salt",
+     "scene": [
+      [
+       "🧂",
+       "fall",
+       0
+      ],
+      [
+       "🤨",
+       "shake",
+       0.4
+      ],
+      [
+       "📜",
+       "floaty",
+       0.8
+      ]
+     ],
+     "caption": "Season the claim before swallowing it.",
+     "options": [
+      "Treat a claim with healthy skepticism",
+      "Add flavour to a story",
+      "Accept criticism politely",
+      "Forgive a small mistake"
+     ],
+     "correct": 0,
+     "origin": "From Pliny the Elder — an ancient antidote recipe was to be taken with a grain of salt.",
+     "usage": "Take 'this year's paper will be easy' predictions with a grain of salt."
+    }
+   ]
+  },
+  {
+   "words": [
+    {
+     "word": "Judicious",
+     "pos": "adj.",
+     "options": [
+      "Showing good judgment; wise and careful",
+      "Related to courts of law",
+      "Harshly critical",
+      "Full of envy"
+     ],
+     "correct": 0,
+     "usage": "A judicious skip is worth more than a brave wrong answer.",
+     "note": "Latin judicium = judgment. Note: 'judicial' = of courts; 'judicious' = wise.",
+     "synonyms": [
+      "prudent",
+      "sensible",
+      "shrewd",
+      "discerning"
+     ]
+    },
+    {
+     "word": "Languish",
+     "pos": "verb",
+     "options": [
+      "To grow weak; to be neglected",
+      "To speak many languages",
+      "To stretch lazily",
+      "To celebrate loudly"
+     ],
+     "correct": 0,
+     "usage": "Unrevised words languish in notebooks; the Vault exists so they don't.",
+     "note": "Latin languere = to be faint.",
+     "synonyms": [
+      "weaken",
+      "wither",
+      "deteriorate",
+      "fade"
+     ]
+    },
+    {
+     "word": "Malleable",
+     "pos": "adj.",
+     "options": [
+      "Easily shaped or influenced",
+      "Impossible to break",
+      "Related to shopping centres",
+      "Badly behaved"
+     ],
+     "correct": 0,
+     "usage": "Young opinions are malleable — which is why the author fears early propaganda.",
+     "note": "Latin malleus = hammer. Metal soft enough to hammer into shape.",
+     "synonyms": [
+      "pliable",
+      "impressionable",
+      "adaptable",
+      "tractable"
+     ]
+    },
+    {
+     "word": "Nebulous",
+     "pos": "adj.",
+     "options": [
+      "Vague, unclear, hazy",
+      "Full of stars",
+      "Newly formed",
+      "Extremely large"
+     ],
+     "correct": 0,
+     "usage": "'Do better next time' is nebulous advice; 'cut RC guess-attempts to two' is not.",
+     "note": "Latin nebula = mist, cloud.",
+     "synonyms": [
+      "vague",
+      "hazy",
+      "indistinct",
+      "amorphous"
+     ]
+    },
+    {
+     "word": "Obstinate",
+     "pos": "adj.",
+     "options": [
+      "Stubbornly refusing to change one's position",
+      "Loudly obnoxious",
+      "Blocking a path",
+      "Medically trained"
+     ],
+     "correct": 0,
+     "usage": "Obstinate about his 'lucky pen', he nearly missed the OMR deadline refilling it.",
+     "note": "Latin obstinare = to persist stubbornly.",
+     "synonyms": [
+      "stubborn",
+      "headstrong",
+      "intransigent",
+      "mulish"
+     ]
+    }
+   ],
+   "idioms": [
+    {
+     "idiom": "In hot water",
+     "scene": [
+      [
+       "🛁",
+       "shake",
+       0
+      ],
+      [
+       "🔥",
+       "flicker",
+       0.4
+      ],
+      [
+       "😅",
+       "pop",
+       0.8
+      ]
+     ],
+     "caption": "The bath was not optional.",
+     "options": [
+      "In serious trouble",
+      "Under time pressure",
+      "Sick with fever",
+      "Extremely embarrassed"
+     ],
+     "correct": 0,
+     "origin": "In English since the 1500s — the image of being scalded as punishment.",
+     "usage": "Caught sharing the test link outside the batch, he was in hot water with admin."
+    },
+    {
+     "idiom": "Turn a blind eye",
+     "scene": [
+      [
+       "👁️",
+       "flicker",
+       0
+      ],
+      [
+       "🙈",
+       "pop",
+       0.4
+      ],
+      [
+       "🔭",
+       "floaty",
+       0.8
+      ]
+     ],
+     "caption": "Admiral Nelson's telescope, wrong eye, on purpose.",
+     "options": [
+      "Deliberately ignore something wrong",
+      "Lose eyesight gradually",
+      "Refuse to read fine print",
+      "Sleep during duty"
+     ],
+     "correct": 0,
+     "origin": "Admiral Nelson, blind in one eye, raised his telescope to it at Copenhagen and claimed he saw no signal to retreat.",
+     "usage": "The warden turned a blind eye to the 2 am study group — marks were improving."
+    }
+   ]
+  },
+  {
+   "words": [
+    {
+     "word": "Paucity",
+     "pos": "noun",
+     "options": [
+      "Scarcity; smallness of quantity",
+      "Great wealth",
+      "A brief pause",
+      "Physical weakness"
+     ],
+     "correct": 0,
+     "usage": "The paucity of direct questions in Indore papers is exactly why inference practice matters.",
+     "note": "Latin paucus = few.",
+     "synonyms": [
+      "scarcity",
+      "dearth",
+      "shortage",
+      "insufficiency"
+     ]
+    },
+    {
+     "word": "Quintessential",
+     "pos": "adj.",
+     "options": [
+      "Representing the most perfect example of something",
+      "Divided into five parts",
+      "Extremely old",
+      "Musically gifted"
+     ],
+     "correct": 0,
+     "usage": "The quintessential Rohtak question: fact, stated verbatim, hiding in paragraph two.",
+     "note": "Medieval 'fifth essence' — the purest element beyond earth, air, fire, water.",
+     "synonyms": [
+      "archetypal",
+      "classic",
+      "definitive",
+      "model"
+     ]
+    },
+    {
+     "word": "Resilient",
+     "pos": "adj.",
+     "options": [
+      "Able to recover quickly from setbacks",
+      "Resistant to water",
+      "Firmly attached",
+      "Naturally silent"
+     ],
+     "correct": 0,
+     "usage": "Resilient isn't 'never falling'; it's a shorter gap between mock disaster and next attempt.",
+     "note": "Latin resilire = to leap back.",
+     "synonyms": [
+      "tough",
+      "hardy",
+      "buoyant",
+      "irrepressible"
+     ]
+    },
+    {
+     "word": "Sagacious",
+     "pos": "adj.",
+     "options": [
+      "Wise; having sharp judgment",
+      "Related to legends",
+      "Slow and heavy",
+      "Overly talkative"
+     ],
+     "correct": 0,
+     "usage": "A sagacious mentor asks what you did in the last ten minutes of the paper.",
+     "note": "Latin sagax = keen-scented, like a tracking dog.",
+     "synonyms": [
+      "wise",
+      "astute",
+      "perceptive",
+      "sage"
+     ]
+    },
+    {
+     "word": "Tirade",
+     "pos": "noun",
+     "options": [
+      "A long, angry speech of criticism",
+      "A three-day festival",
+      "A slow parade",
+      "A written apology"
+     ],
+     "correct": 0,
+     "usage": "The coach's tirade about silly errors lasted longer than the test itself.",
+     "note": "French tirer = to draw out — a long 'pull' of words.",
+     "synonyms": [
+      "diatribe",
+      "harangue",
+      "rant",
+      "polemic"
+     ]
+    }
+   ],
+   "idioms": [
+    {
+     "idiom": "Throw someone under the bus",
+     "scene": [
+      [
+       "🚌",
+       "shake",
+       0
+      ],
+      [
+       "😱",
+       "fall",
+       0.4
+      ],
+      [
+       "🤷",
+       "pop",
+       0.8
+      ]
+     ],
+     "caption": "Friendship, meet public transport.",
+     "options": [
+      "Betray someone to protect yourself",
+      "Push someone to work harder",
+      "Fire an employee suddenly",
+      "Blame public services"
+     ],
+     "correct": 0,
+     "origin": "Modern idiom from 1980s politics and journalism — sacrificing an ally for self-preservation.",
+     "usage": "When the project flopped, he threw his teammate under the bus in front of the mentor."
+    },
+    {
+     "idiom": "Wear your heart on your sleeve",
+     "scene": [
+      [
+       "❤️",
+       "pop",
+       0
+      ],
+      [
+       "👕",
+       "floaty",
+       0.4
+      ],
+      [
+       "😭",
+       "shake",
+       0.8
+      ]
+     ],
+     "caption": "Emotions: now available in outerwear.",
+     "options": [
+      "Show your feelings openly",
+      "Fall in love too quickly",
+      "Dress carelessly",
+      "Make promises you can't keep"
+     ],
+     "correct": 0,
+     "origin": "From medieval jousting, where knights tied a lady's ribbon to their sleeve; Shakespeare's Iago made the phrase famous.",
+     "usage": "She wears her heart on her sleeve — you know her mock score from her walk."
     }
    ]
   }
