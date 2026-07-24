@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verbal Constellation · Road to IIM</title>
+<meta name="theme-color" content="#0B0819">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --sky:#0B0819; --panel:#141029; --panel2:#181336;
+  --gold:#E8C36A; --gold-dim:#B99548; --star:#F0EEFF;
+  --ink:#DFDCF5; --ink2:#9A93CE; --line:rgba(154,147,206,0.18);
+  --known:#5DCAA5;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{background:var(--sky);color:var(--ink);font-family:'Inter',sans-serif;min-height:100vh;overflow-x:hidden}
+#starfield{position:fixed;inset:0;z-index:0;pointer-events:none}
+.wrap{position:relative;z-index:1;max-width:1080px;margin:0 auto;padding:0 20px 80px}
+header{text-align:center;padding:64px 0 40px}
+.eyebrow{font-size:12px;letter-spacing:0.28em;color:var(--gold-dim);text-transform:uppercase;margin-bottom:14px}
+h1{font-family:'Marcellus',serif;font-size:clamp(34px,6vw,56px);font-weight:400;color:var(--star);letter-spacing:0.02em}
+h1 .g{color:var(--gold)}
+.sub{color:var(--ink2);font-size:15px;margin-top:12px}
+.searchbox{max-width:520px;margin:32px auto 0;position:relative}
+.searchbox input{width:100%;background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:13px 22px;color:var(--ink);font-size:15px;font-family:'Inter',sans-serif;outline:none;transition:border-color .2s}
+.searchbox input:focus{border-color:var(--gold-dim)}
+.searchbox input::placeholder{color:var(--ink2);opacity:.7}
+#progressline{text-align:center;color:var(--ink2);font-size:13px;margin-top:18px}
+#progressline b{color:var(--gold);font-weight:600}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px;margin-top:36px}
+.ccard{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px 22px;cursor:pointer;transition:transform .18s,border-color .18s;position:relative;overflow:hidden}
+.ccard:hover{transform:translateY(-3px);border-color:var(--gold-dim)}
+.ccard svg{display:block;width:100%;height:110px;margin-bottom:10px}
+.cname{font-family:'Marcellus',serif;font-size:20px;color:var(--star);letter-spacing:0.02em}
+.ctopic{font-size:13px;color:var(--gold-dim);margin-top:3px}
+.cmeta{display:flex;justify-content:space-between;align-items:center;margin-top:12px;font-size:12px;color:var(--ink2)}
+.cbar{height:3px;background:rgba(154,147,206,0.15);border-radius:2px;margin-top:8px;overflow:hidden}
+.cbar i{display:block;height:100%;background:var(--known);border-radius:2px;transition:width .3s}
+#results{margin-top:28px;display:none}
+.rrow{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin-bottom:10px;cursor:pointer}
+.rrow:hover{border-color:var(--gold-dim)}
+.rname{font-size:14px;font-weight:500;color:var(--ink)}
+.rfrom{font-size:12px;color:var(--gold-dim);margin-top:2px}
+.overlay{position:fixed;inset:0;z-index:10;background:rgba(5,4,14,0.72);backdrop-filter:blur(3px);display:none;align-items:flex-end;justify-content:center}
+.overlay.open{display:flex}
+.sheet{background:var(--panel2);border:1px solid var(--line);border-bottom:none;border-radius:22px 22px 0 0;width:100%;max-width:760px;max-height:88vh;display:flex;flex-direction:column;animation:rise .28s ease}
+@keyframes rise{from{transform:translateY(40px);opacity:0}to{transform:translateY(0);opacity:1}}
+.sheethead{padding:22px 26px 16px;border-bottom:1px solid var(--line);display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.shname{font-family:'Marcellus',serif;font-size:24px;color:var(--star)}
+.shtopic{font-size:13px;color:var(--gold-dim);margin-top:3px}
+.shcount{font-size:12px;color:var(--ink2);margin-top:6px}
+.closebtn{background:none;border:1px solid var(--line);color:var(--ink2);border-radius:999px;width:34px;height:34px;font-size:16px;cursor:pointer;flex-shrink:0;line-height:1}
+.closebtn:hover{border-color:var(--gold-dim);color:var(--gold)}
+.sheetbody{overflow-y:auto;padding:14px 26px 40px}
+.frow{border-bottom:1px solid var(--line)}
+.fhead{display:flex;align-items:center;gap:12px;padding:14px 2px;cursor:pointer}
+.fstar{flex-shrink:0;font-size:17px;color:rgba(154,147,206,0.4);cursor:pointer;transition:color .15s,transform .15s;background:none;border:none;padding:4px}
+.fstar.on{color:var(--gold);transform:scale(1.15)}
+.fname{font-size:14.5px;font-weight:500;color:var(--ink);flex:1}
+.fchev{color:var(--ink2);font-size:12px;transition:transform .2s}
+.frow.open .fchev{transform:rotate(90deg)}
+.fbody{display:none;padding:2px 8px 18px 40px}
+.frow.open .fbody{display:block}
+.frule{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;color:var(--star)}
+.frule .rl{font-family:'Marcellus',serif;font-size:16.5px;line-height:1.5;letter-spacing:0.01em}
+.frule .ex{font-size:13.5px;color:var(--ink2);font-style:italic;margin-top:9px;line-height:1.65;border-top:1px dashed var(--line);padding-top:9px}
+.frule .ex b{color:var(--gold);font-weight:500;font-style:normal}
+.fnote{font-size:13px;color:var(--ink2);margin-top:10px;line-height:1.6}
+.fnote b{color:var(--gold);font-weight:500}
+footer{text-align:center;margin-top:64px;color:var(--ink2);font-size:12px;letter-spacing:0.06em}
+footer .g{color:var(--gold-dim)}
+@media (max-width:640px){
+  header{padding:44px 0 28px}
+  .grid{grid-template-columns:1fr;gap:14px}
+  .sheetbody{padding:12px 18px 36px}
+  .sheethead{padding:18px 18px 14px}
+}
+@media (prefers-reduced-motion: reduce){
+  .ccard,.sheet{animation:none;transition:none}
+}
+</style>
+</head>
+<body>
+<canvas id="starfield" aria-hidden="true"></canvas>
+<div class="wrap">
+<header>
+  <div class="eyebrow">Road to IIM · IPMAT · Verbal Ability</div>
+  <h1>The Verbal <span class="g">Constellation</span></h1>
+  <p class="sub">Twelve constellations. Every rule that matters. Tap a star to chart it.</p>
+  <div class="searchbox"><input type="text" id="search" placeholder="Search a rule… (e.g. affect, semicolon, assumption)" aria-label="Search rules"></div>
+  <div id="progressline"></div>
+  <button id="installbtn" style="display:none;margin:16px auto 0;background:none;border:1px solid var(--gold-dim);color:var(--gold);border-radius:999px;padding:9px 22px;font-size:13px;font-family:'Inter',sans-serif;cursor:pointer;letter-spacing:0.04em">✦ Install as app</button>
+</header>
+<div id="results"></div>
+<div class="grid" id="grid"></div>
+<footer>Road to IIM · <span class="g">Verbal Constellation v1</span> · Sahil Sir</footer>
+</div>
+
+<div class="overlay" id="overlay" role="dialog" aria-modal="true">
+  <div class="sheet">
+    <div class="sheethead">
+      <div>
+        <div class="shname" id="shname"></div>
+        <div class="shtopic" id="shtopic"></div>
+        <div class="shcount" id="shcount"></div>
+      </div>
+      <button class="closebtn" id="closebtn" aria-label="Close">✕</button>
+    </div>
+    <div class="sheetbody" id="sheetbody"></div>
+  </div>
+</div>
+<script>
+const TOPICS = [
+{name:"The Tense Spiral", topic:"Tenses & Conditionals", stars:[
+{n:"Universal truths stay simple present", r:"Habits and universal truths take the simple present — even inside reported speech.", e:"The teacher said that the earth <b>revolves</b> around the sun.", x:"Backshift everything else in reported speech, but never a universal truth."},
+{n:"Present perfect hates finished time", r:"Never pair the present perfect with a finished-time word (yesterday, last year, in 2019).", e:"I <b>saw</b> him yesterday — not <i>I have seen him yesterday</i>.", x:"“Have seen + yesterday” is the single most-tested tense error in IPMAT SC."},
+{n:"Past perfect needs two past events", r:"Use had + V3 only for the earlier of two past actions.", e:"The train <b>had left</b> before we <b>reached</b> the station.", x:"One lonely past action never takes past perfect — “I had gone yesterday” ✗."},
+{n:"Since vs for", r:"Since + a point in time; for + a duration.", e:"She has lived here <b>since 2019</b> — <b>for seven years</b>.", x:""},
+{n:"First conditional: no will after if", r:"If + simple present, main clause + will.", e:"If it <b>rains</b>, we <b>will cancel</b> the match.", x:"“If it will rain” ✗ — will never enters the if-clause."},
+{n:"Second conditional: were for everyone", r:"Unreal present: If + past (subjunctive were), main clause + would.", e:"If I <b>were</b> the principal, I <b>would change</b> the timetable.", x:"“If I was rich” fails formal SC — the subjunctive were applies to all subjects."},
+{n:"Third conditional: past that never happened", r:"If + had + V3, main clause + would have + V3.", e:"If he had been healthy, he <b>would not have had</b> to spend so much.", x:"Obligation in perfect form keeps its had: would have <b>had to</b> — dropping it breaks the meaning."},
+{n:"Future time clauses take present", r:"After when, before, after, until, as soon as — use present tense for future meaning.", e:"Call me as soon as you <b>reach</b> home.", x:"“As soon as you will reach” ✗."},
+{n:"Stative verbs refuse -ing", r:"Know, believe, own, love, understand, seem — no continuous form.", e:"I <b>know</b> the answer — never <i>I am knowing</i>.", x:"Want, prefer, belong, consist join the list. “I am having a car” ✗ (but “having lunch” ✓ — action sense)."},
+{n:"Reported speech backshift", r:"Present → past, will → would, can → could, here → there, now → then.", e:"“I <b>am</b> busy now” → He said he <b>was</b> busy <b>then</b>.", x:"Time and place words shift too — today → that day, tomorrow → the next day."},
+{n:"Present perfect continuous duration", r:"Has/have been + -ing marks an action running from past into now — usually with since/for.", e:"She <b>has been teaching</b> here for a decade.", x:""}
+]},
+{name:"The Agreement Belt", topic:"Subject–Verb Agreement", stars:[
+{n:"Verb obeys the subject, not the nearest noun", r:"A prepositional phrase between subject and verb changes nothing.", e:"The bouquet of roses <b>is</b> on the table.", x:"“The quality of the mangoes were poor” ✗ — quality is the subject."},
+{n:"Either/or, neither/nor: nearer subject wins", r:"With or/nor, the verb agrees with the subject closest to it.", e:"Neither the students nor the teacher <b>was</b> late. Neither the teacher nor the students <b>were</b> late.", x:"Setters love flipping the order mid-option — check the noun touching the verb."},
+{n:"Each, every, everyone: always singular", r:"Each of / every one of + plural noun still takes a singular verb.", e:"Each of the boys <b>has</b> a hall ticket.", x:"“Each of the students have” ✗ — the of-phrase is a decoy."},
+{n:"Collective nouns: unit or members?", r:"Singular when acting as one body; plural when the members act separately.", e:"The jury <b>is</b> unanimous. The jury <b>are</b> divided in their opinions.", x:"“Divided”, “quarrelling”, “their” — these words signal the plural reading."},
+{n:"A number of vs the number of", r:"A number of + plural verb; the number of + singular verb.", e:"A number of students <b>were</b> absent. The number of absentees <b>is</b> rising.", x:""},
+{n:"Amounts read as one lump", r:"Sums of money, distances, and time periods take singular verbs.", e:"Ten kilometres <b>is</b> a long walk. Five thousand rupees <b>is</b> a fair price.", x:""},
+{n:"One of the + plural, singular verb", r:"“One” is the subject; the plural noun after of is not.", e:"One of my friends <b>lives</b> in Indore.", x:"But: one of the friends <b>who live</b> in Indore — the who-clause bounces to friends."},
+{n:"Plural-looking singulars", r:"News, mathematics, physics, economics, measles — singular.", e:"Mathematics <b>is</b> my strongest section.", x:"“Economics are” ✗ — the final -s is a costume, not a plural."},
+{n:"Pair nouns stay plural", r:"Scissors, trousers, spectacles take plural verbs — unless “a pair of” leads.", e:"The scissors <b>are</b> blunt, but a pair of scissors <b>is</b> on the desk.", x:""},
+{n:"As well as does not add subjects", r:"With as well as / along with / together with, the verb follows the first subject only.", e:"The captain, as well as the players, <b>was</b> confident.", x:"Only and joins subjects into a plural — everything else is a garnish between commas."},
+{n:"Distances between subject and verb", r:"Strip the sentence to bare subject + verb before judging agreement.", e:"The list of items that were sent to the two warehouses <b>was</b> incomplete.", x:"The longer the gap, the surer the trap — this is deliberate setter design."}
+]},
+{name:"The Modifier Nebula", topic:"Modifiers & Parallelism", stars:[
+{n:"Opening -ing phrase must name its doer", r:"The noun right after the comma must be the one doing the action.", e:"Walking down the street, <b>I</b> admired the trees — not <i>the trees looked lovely</i>.", x:"The dangling participle: the classic “Being rusty, he could not ride the cycle” error family."},
+{n:"Only sits beside what it limits", r:"Moving only moves the meaning.", e:"<b>Only</b> I love you · I <b>only</b> love you · I love <b>only</b> you — three different sentences.", x:"Same rule for even, just, almost, nearly."},
+{n:"Lists must march in parallel", r:"Items in a series share one grammatical form.", e:"She likes <b>reading</b>, <b>writing</b>, and <b>swimming</b> — not <i>to swim</i>.", x:"Check what follows the final and — the third item is where parallelism dies."},
+{n:"Correlatives demand twins", r:"Not only…but also, either…or, both…and must join matching structures.", e:"He is not only <b>a teacher</b> but also <b>a mentor</b>.", x:"“He not only teaches verbal but also quant” ✗ — verb after not only, noun after but also = mismatch."},
+{n:"Compare like with like", r:"After than, the compared items must be the same kind of thing.", e:"The climate of Ahmedabad is hotter than <b>that of</b> Shimla — not <i>than Shimla</i>.", x:"“That of / those of” is the repair kit for illogical comparisons."},
+{n:"Fewer vs less", r:"Fewer for countables, less for uncountables.", e:"<b>Fewer</b> mistakes, <b>less</b> confusion.", x:"“Less than 30 questions” ✗ in formal SC — questions can be counted."},
+{n:"Linking verbs take adjectives", r:"After feel, look, seem, taste, smell — adjective, not adverb.", e:"The plan sounds <b>good</b>. I feel <b>bad</b> about it — not <i>badly</i>.", x:""},
+{n:"No double comparatives", r:"One comparative marker per adjective.", e:"This paper is <b>easier</b> — never <i>more easier</i>.", x:"Also banned: most easiest, more better, more preferable."},
+{n:"Absolute adjectives resist degrees", r:"Unique, perfect, complete, universal cannot be more or most.", e:"Her method is <b>unique</b> — not <i>the most unique</i>.", x:"“Almost perfect” ✓ (approaching it), “more perfect” ✗ (exceeding it)."},
+{n:"Squinting modifiers face both ways", r:"An adverb between two verbs must be moved until it points one way.", e:"Students who revise <b>often</b> score well — often revise, or often score? Rewrite it.", x:"If a sentence has two readings, IPMAT calls it wrong."}
+]},
+{name:"The Root Tree", topic:"Etymology & Word Roots", stars:[
+{n:"bene / mal — good / bad", r:"Bene blesses, mal curses.", e:"<b>Benevolent</b> (wishing well) · <b>malevolent</b> (wishing harm) · <b>malady</b>, <b>benefactor</b>.", x:"Malapropism = a comically wrong word — bad (mal) placement (apropos)."},
+{n:"ped / pod — foot", r:"Latin ped, Greek pod: both walk.", e:"<b>Pedestrian</b>, <b>pedal</b>, <b>podium</b>, <b>tripod</b>, <b>expedite</b> (free the feet).", x:"Impostor: pedagogue comes from Greek paid- (child), not foot — a child-leader, hence teacher."},
+{n:"chron — time", r:"Anything chron ticks.", e:"<b>Chronic</b> (long-lasting), <b>chronology</b>, <b>anachronism</b> (a thing out of its time), <b>synchronise</b>.", x:""},
+{n:"spec / spect — look", r:"To spec is to see.", e:"<b>Spectator</b>, <b>retrospect</b> (look back), <b>circumspect</b> (looking around — cautious), <b>conspicuous</b>.", x:"Circumspect ≠ suspicious — it means careful, a favourite vocab-MCQ swap."},
+{n:"dict — say", r:"Dict speaks with authority.", e:"<b>Verdict</b> (truth spoken), <b>edict</b>, <b>contradict</b>, <b>dictum</b>, <b>valedictory</b> (farewell speech).", x:""},
+{n:"cred — believe", r:"Cred is trust.", e:"<b>Credible</b> (believable), <b>incredulous</b> (unwilling to believe), <b>credentials</b>, <b>creed</b>.", x:"Credible (the claim) vs credulous (the gullible listener) — the pair setters love."},
+{n:"voc / vok — call", r:"Voc calls out.", e:"<b>Vocation</b> (a calling), <b>evoke</b>, <b>provoke</b>, <b>equivocate</b> (call both ways — dodge the question), <b>vociferous</b>.", x:""},
+{n:"phil / phob — love / fear", r:"Phil embraces, phob flees.", e:"<b>Bibliophile</b> (book lover), <b>philanthropy</b>, <b>xenophobia</b> (fear of outsiders), <b>anglophile</b>.", x:""},
+{n:"graph / gram — write", r:"Graph writes, gram is the written thing.", e:"<b>Epigraph</b>, <b>calligraphy</b>, <b>anagram</b>, <b>epigram</b> (a witty written jab).", x:"Epigraph (inscription) vs epitaph (on a tomb) vs epithet (a descriptive tag) — three-way impostor set."},
+{n:"The number ladder", r:"bi 2 · tri 3 · quad 4 · sept 7 · oct 8 · nona 9 · dec 10 · cent 100.", e:"<b>Octogenarian</b> (in their 80s), <b>centenary</b>, <b>quadruped</b>, <b>September</b> — once the seventh month.", x:"Decimate originally meant killing one in ten — now it means destroying a large part."},
+{n:"circum / peri — around", r:"Latin circum, Greek peri: both circle.", e:"<b>Circumlocution</b> (talking around the point), <b>circumvent</b>, <b>perimeter</b>, <b>periscope</b>.", x:"Circumlocution is wordiness; circumvention is dodging — related roots, different crimes."}
+]},
+{name:"The Impostors", topic:"Confusable Word Pairs", stars:[
+{n:"affect vs effect", r:"Affect is usually the verb (to influence); effect is usually the noun (the result).", e:"The rain <b>affected</b> the match; the <b>effect</b> was a draw.", x:"Reverse trap exists: effect as a verb = to bring about (“effect a change”); affect as a noun is psychology jargon."},
+{n:"its vs it's", r:"It's = it is. Its = belonging to it. No apostrophe in the possessive.", e:"<b>It's</b> losing <b>its</b> shine.", x:"Possessive pronouns never take apostrophes — hers, ours, yours, theirs, its."},
+{n:"complement vs compliment", r:"Complement completes; compliment praises.", e:"The scarf <b>complements</b> the dress; he paid her a <b>compliment</b>.", x:"Complimentary also means free of charge — a complimentary breakfast praises no one."},
+{n:"principal vs principle", r:"Principal = chief (person or main sum); principle = a rule or truth.", e:"The <b>principal</b> announced a new <b>principle</b> of grading.", x:"Principal also means the loan amount in SI/CI problems — quant and verbal share this star."},
+{n:"stationary vs stationery", r:"Stationary stands still; stationery is paper and pens.", e:"The van stood <b>stationary</b> outside the <b>stationery</b> shop.", x:"Memory hook: station<b>e</b>ry has an e for envelope."},
+{n:"lose vs loose", r:"Lose (verb) = fail to keep; loose (adjective) = not tight.", e:"Don't <b>lose</b> marks over a <b>loose</b> grip on spellings.", x:""},
+{n:"advice vs advise", r:"Advice is the noun; advise is the verb.", e:"I <b>advise</b> you to take my <b>advice</b>.", x:"Same family: practice/practise, licence/license — British English splits noun (c) and verb (s)."},
+{n:"elicit vs illicit", r:"Elicit (verb) = draw out; illicit (adjective) = illegal.", e:"The lawyer <b>elicited</b> details of the <b>illicit</b> trade.", x:""},
+{n:"eminent vs imminent", r:"Eminent = distinguished; imminent = about to happen.", e:"The <b>eminent</b> scientist warned of an <b>imminent</b> storm.", x:"Third sibling: immanent (inherent, dwelling within) — rare but appears in RC philosophy passages."},
+{n:"discreet vs discrete", r:"Discreet = tactfully quiet; discrete = separate and distinct.", e:"Be <b>discreet</b> about the plan; keep the files in <b>discrete</b> folders.", x:""},
+{n:"allusion vs illusion", r:"Allusion = an indirect reference; illusion = a false perception.", e:"The poem makes an <b>allusion</b> to the Mahabharata; the mirage was an <b>illusion</b>.", x:"Cousin: delusion — a false belief held despite evidence."}
+]},
+{name:"The Idiom Archipelago", topic:"Idioms · 12 islands · 74 idioms", stars:[
+{n:"The Boxing Ring", r:"Idioms that climbed out of the ring — struggle, defeat, and unfair blows.", e:"<b>Throw in the towel</b> — give up · <b>below the belt</b> — unfairly hurtful · <b>on the ropes</b> — close to defeat · <b>saved by the bell</b> — rescued at the last moment · <b>roll with the punches</b> — adapt to setbacks · <b>the gloves are off</b> — politeness abandoned, real conflict begins.", x:"Throw in the towel (surrender) vs throw down the gauntlet (issue a challenge) — opposite moves, both violent-sounding."},
+{n:"The Battlefield", r:"War idioms — conflict, persistence, and peace-making.", e:"<b>Bite the bullet</b> — endure the unavoidable bravely · <b>stick to your guns</b> — refuse to change your position · <b>up in arms</b> — angrily protesting · <b>a loose cannon</b> — dangerously unpredictable person · <b>fight a losing battle</b> — struggle with no hope of success · <b>bury the hatchet</b> — end a quarrel and make peace.", x:"Bite the bullet (endure) vs bite the dust (fail or die) — one bullet, one grave."},
+{n:"The High Seas", r:"Sailing idioms — learning, shared fate, and surviving storms.", e:"<b>Learn the ropes</b> — master the basics · <b>in the same boat</b> — sharing the same difficulty · <b>miss the boat</b> — lose the opportunity · <b>weather the storm</b> — survive a crisis · <b>take the wind out of someone's sails</b> — deflate their confidence · <b>on an even keel</b> — calm and stable.", x:"In the same boat means shared trouble, not general similarity — the options will offer the diluted meaning."},
+{n:"The Menagerie", r:"Animal idioms — the exam's favourite habitat.", e:"<b>Let the cat out of the bag</b> — reveal a secret (usually by accident) · <b>cry wolf</b> — raise false alarms · <b>a dark horse</b> — an unexpected winner or hidden talent · <b>hold your horses</b> — wait, slow down · <b>a wild goose chase</b> — a futile pursuit · <b>the elephant in the room</b> — the obvious issue everyone ignores · <b>until the cows come home</b> — indefinitely.", x:"Dark horse (pleasant surprise) vs black sheep (the family disgrace) — setters swap these constantly."},
+{n:"The Kitchen", r:"Food idioms — secrets, ease, and envy served hot.", e:"<b>Take with a pinch of salt</b> — treat sceptically · <b>spill the beans</b> — reveal a secret · <b>a piece of cake</b> — very easy · <b>bite off more than you can chew</b> — overcommit · <b>a hot potato</b> — an issue too controversial to hold · <b>sour grapes</b> — disparaging what you cannot have · <b>butter someone up</b> — flatter for favour.", x:"Sour grapes is not general bitterness — it is specifically devaluing the thing you failed to get (from Aesop's fox)."},
+{n:"The Body", r:"Anatomy idioms — cost, courage, and narrow escapes.", e:"<b>Cost an arm and a leg</b> — be extremely expensive · <b>pull someone's leg</b> — tease playfully · <b>get cold feet</b> — lose nerve at the last minute · <b>by the skin of your teeth</b> — only just, barely · <b>keep an ear to the ground</b> — stay alert to developments · <b>an Achilles heel</b> — the one fatal weakness.", x:"Pull someone's leg (tease) vs pull your socks up (improve your effort) — one is a joke, the other a scolding."},
+{n:"The Clock Tower", r:"Time idioms — lateness, rarity, and long nights.", e:"<b>At the eleventh hour</b> — at the last possible moment · <b>once in a blue moon</b> — very rarely · <b>burn the midnight oil</b> — work late into the night · <b>in the nick of time</b> — just in time · <b>call it a day</b> — stop working for now · <b>around the clock</b> — continuously, day and night.", x:"Eleventh hour ≠ 11 o'clock — literal readings are the planted wrong option."},
+{n:"The Weather Vane", r:"Sky idioms — moods, fusses, and silver linings.", e:"<b>Under the weather</b> — slightly unwell · <b>a storm in a teacup</b> — great fuss over a trifle · <b>every cloud has a silver lining</b> — misfortune carries some hope · <b>steal someone's thunder</b> — take the credit or attention meant for another · <b>on cloud nine</b> — extremely happy · <b>come rain or shine</b> — no matter what.", x:"Storm in a teacup (trivial fuss) vs the perfect storm (worst possible combination of events) — scale is the difference."},
+{n:"The Gaming Table", r:"Cards-and-sport idioms — bluffs, stakes, and fair play.", e:"<b>Call someone's bluff</b> — challenge them to prove a doubtful claim · <b>the ball is in your court</b> — the next move is yours · <b>an ace up your sleeve</b> — a hidden advantage · <b>up the ante</b> — raise the stakes · <b>a level playing field</b> — conditions fair to all · <b>hit the jackpot</b> — achieve sudden big success.", x:"The ball is in your court assigns responsibility, not advantage — you must act, not gloat."},
+{n:"Myth & Legend", r:"Idioms borrowed from Greek myth and old stories — RC passages love these.", e:"<b>Pandora's box</b> — a source of endless unforeseen troubles · <b>the Midas touch</b> — success in everything attempted · <b>a Trojan horse</b> — a hidden threat inside an attractive gift · <b>a Herculean task</b> — one demanding enormous effort · <b>the sword of Damocles</b> — ever-present impending danger · <b>crocodile tears</b> — insincere grief.", x:"Opening Pandora's box unleashes problems — it never means discovering treasure, however tempting the option sounds."},
+{n:"The Marketplace", r:"Money-and-trade idioms — spending, selling, and shortcuts.", e:"<b>Break the bank</b> — exhaust all funds · <b>pay through the nose</b> — pay far too much · <b>sell like hot cakes</b> — sell extremely fast · <b>cut corners</b> — save time or money by lowering quality · <b>drive a hard bargain</b> — negotiate toughly · <b>a penny for your thoughts</b> — tell me what you are thinking.", x:"Cut corners (compromise quality — negative) vs cut to the chase (skip to the point — neutral)."},
+{n:"The Exam Hall", r:"The high-frequency drifters — no shared origin, maximum paper presence.", e:"<b>A red herring</b> — a deliberately misleading distraction · <b>the last straw</b> — the final small unbearable burden · <b>a blessing in disguise</b> — hidden good fortune · <b>the tip of the iceberg</b> — the small visible part of a much larger problem · <b>beat around the bush</b> — avoid coming to the point · <b>back to the drawing board</b> — start again from scratch.", x:"Red herring is also the name of the CR trap-option type — the idiom and the exam strategy are the same idea."}
+]},
+{name:"The Connector Bridge", topic:"Transitions & Signposts", stars:[
+{n:"However / but — the U-turn", r:"Contrast connectors reverse the direction of the argument.", e:"The data looked promising; <b>however</b>, the sample was tiny.", x:"In RC, the sentence after however usually carries the author's real position — slow down there."},
+{n:"Moreover / furthermore — same lane", r:"Addition connectors continue in the same direction with fresh support.", e:"The plan is cheap; <b>moreover</b>, it is fast.", x:"If you understood the previous point, addition sentences can be read at speed."},
+{n:"Therefore / hence / thus — arrival", r:"Conclusion connectors announce the destination of the reasoning.", e:"Costs rose and sales fell; <b>therefore</b>, the venture folded.", x:"In CR, the sentence after therefore is the conclusion — the thing to strengthen or weaken."},
+{n:"Although + clause, despite + noun", r:"Although takes a full clause; despite / in spite of take a noun or -ing form.", e:"<b>Although</b> he was ill, he taught. <b>Despite</b> his illness, he taught.", x:"“Despite of” ✗ always. “In spite of” ✓ — the of belongs to that phrase only."},
+{n:"While / whereas — split screen", r:"Balanced contrast between two subjects, no U-turn.", e:"<b>Whereas</b> Rohtak tests retrieval, Indore tests inference.", x:""},
+{n:"Indeed / in fact — the intensifier", r:"Restates the previous claim more strongly.", e:"The test was hard — <b>indeed</b>, the hardest of the season.", x:"In fact can also quietly correct: “He seems calm; in fact, he is terrified.” Watch which job it is doing."},
+{n:"For instance — the exhibit", r:"Examples support the claim just made; the claim is the star, not the example.", e:"Some idioms come from sport — <b>for instance</b>, throw in the towel.", x:"RC questions ask why an example is used (to support which claim), not what it says."},
+{n:"Nevertheless — concede, then counter", r:"Admits the opposing point has weight, then overrides it.", e:"The critique is fair; <b>nevertheless</b>, the theory survives.", x:"Concession + pivot is the skeleton of most argumentative passages — an Orange Alert moment."},
+{n:"Meanwhile / subsequently — the clock", r:"Time connectors sequence events: meanwhile (same time), subsequently (after).", e:"<b>Subsequently</b>, the policy was reversed.", x:"In parajumbles, time connectors are ordering evidence — anchor them to dates and chronology."},
+{n:"In other words — the free retry", r:"Restatement connectors say the same idea again, more simply.", e:"The premise is unfalsifiable — <b>in other words</b>, no evidence could disprove it.", x:"If a Yellow-Alert sentence is followed by in other words, the re-read is free — read the restatement instead."}
+]},
+{name:"The Parajumble Compass", topic:"Para-jumbles & Sequencing", stars:[
+{n:"The opener test", r:"An opener stands alone: it introduces the topic and points at nothing before it.", e:"An opener has no <b>he, this, such, but,</b> or <b>however</b> — nothing that reaches backwards.", x:"A sentence beginning with a pronoun or contrast word is disqualified from opening — eliminate options instantly."},
+{n:"The closer test", r:"Closers conclude: summary words, consequences, or a rounding-off of the idea.", e:"<b>Thus, therefore, in the end, ultimately</b> — the sound of a paragraph landing.", x:""},
+{n:"Pronoun chains", r:"Every pronoun needs its noun in an earlier sentence — that pairing is a lock.", e:"“<b>She</b> refused the offer” must follow the sentence introducing the woman.", x:"One confirmed pronoun link usually kills two or three options — chase pronouns first."},
+{n:"A introduces, the refers back", r:"First mention takes a/an; later mentions take the.", e:"“<b>A</b> scientist proposed a theory… <b>The</b> scientist was ridiculed.” A before the — always.", x:""},
+{n:"This / these / such point backwards", r:"A demonstrative + noun compresses the previous sentence's idea.", e:"“<b>This approach</b> failed” must follow the sentence describing an approach.", x:"Ask: what exactly does this refer to? If the previous sentence can't answer, the order is wrong."},
+{n:"Chronology is a spine", r:"Dates and time words (initially, later, eventually) impose an order the paragraph must obey.", e:"1947 before 1991; <b>initially</b> before <b>eventually</b>.", x:""},
+{n:"Mandatory pairs", r:"Cause→effect, question→answer, problem→solution, general→specific travel together.", e:"A sentence posing a question is glued to the one answering it.", x:"Find one mandatory pair, then eliminate every option that separates it — faster than building the full order."},
+{n:"Contrast words rarely open", r:"But, however, yet, still need something earlier to contrast against.", e:"“<b>But</b> the results said otherwise” cannot be sentence one.", x:"Rare exception: a passage-level contrast with an unstated context — trust elimination over dogma."},
+{n:"General to specific", r:"Definition before example; claim before evidence; category before instance.", e:"“Metals conduct heat” precedes “Copper, for instance…”.", x:""},
+{n:"Sequence by elimination, not construction", r:"Lock one link, strike the options that violate it, repeat.", e:"Two locked pairs almost always leave <b>one</b> surviving option.", x:"Building the whole order from scratch is slower and less accurate — the options are the tool."}
+]},
+{name:"The CR Forge", topic:"Critical Reasoning", stars:[
+{n:"Find the conclusion first", r:"Every argument = conclusion + premises. Ask: what is the author urging me to accept?", e:"Premise: attendance fell. Premise: scores fell. <b>Conclusion: attendance drives scores.</b>", x:"The conclusion is often mid-paragraph, not last — position is not proof."},
+{n:"Assumption = the unstated bridge", r:"The assumption is what must be true for the premises to reach the conclusion.", e:"“Sales rose after the ad, so the ad worked” assumes <b>nothing else</b> boosted sales.", x:""},
+{n:"The negation test", r:"Negate the option: if the argument collapses, that option is the assumption.", e:"Negate “nothing else boosted sales” → the argument <b>falls apart</b> → it was the assumption.", x:"The single most reliable CR tool — use it to break ties between two final options."},
+{n:"Strengthen supports the bridge", r:"A strengthener makes the conclusion more likely — it need not prove it.", e:"“Sales rose only in cities where the ad aired” <b>strengthens</b>.", x:"Rejecting a good strengthener because it isn't conclusive is the trap — more likely is enough."},
+{n:"Weaken attacks the bridge", r:"A weakener makes the conclusion less likely — it need not disprove it.", e:"“A festival discount ran the same week” <b>weakens</b>.", x:""},
+{n:"Correlation is not causation", r:"Two things moving together may have a third cause, or reversed cause.", e:"Ice-cream sales and drownings rise together — <b>summer</b> causes both.", x:"Three standard weakeners: third factor, reverse causation, coincidence."},
+{n:"Inference must be true", r:"An inference follows necessarily from the text — not merely plausibly.", e:"“Some students passed” lets you infer <b>not all failed</b> — nothing more.", x:"Options with always, never, only, all overreach the text — extreme language is a wrong-answer scent."},
+{n:"Out of scope is out", r:"Options importing new topics, comparisons, or populations are decoys.", e:"An argument about <b>IPMAT</b> coaching cannot be weakened by facts about CAT coaching.", x:"Most wrong CR options fail on scope before they fail on logic — check scope first."},
+{n:"Paradox: make both true", r:"Resolve an apparent contradiction by finding the fact that lets both statements stand.", e:"Prices fell yet revenue rose — because <b>volume</b> more than doubled.", x:""},
+{n:"Beware the biased sample", r:"A conclusion about everyone cannot rest on a survey of a special few.", e:"“Students at the library prefer studying” — the library <b>selected</b> the sample.", x:"Ask who was surveyed and who the conclusion covers — any gap between them is the flaw."}
+]},
+{name:"The RC Lighthouse", topic:"Reading Comprehension", stars:[
+{n:"The Hammer mindset", r:"The passage is a tool: pick it up, use it, put it down. You do not need to own it.", e:"Read to <b>use</b>, not to memorise — the passage stays on screen the whole time.", x:"Trying to retain everything causes the overload that makes students quit at paragraph two."},
+{n:"Red Alert: unknown word", r:"Mark it and move. Context will reveal it — or the questions will never need it.", e:"“The policy was <b>quixotic</b>…” — keep reading; the next line calls it impractical. There's your meaning.", x:"Stopping at a hard word is exactly how the vocabulary-overload dropout happens."},
+{n:"Yellow Alert: the tangled sentence", r:"One re-read, maximum. Then mark and move.", e:"If it resists twice, the <b>questions</b> will tell you whether it ever mattered.", x:"Perfectionism on one sentence costs the whole passage — budget re-reads like marks."},
+{n:"Orange Alert: the paragraph jump", r:"A new paragraph that feels disconnected is a structural turn — slow down, don't zone out.", e:"Para 3 suddenly discusses objections? The author has moved from <b>claim</b> to <b>defence</b>.", x:"Students zone out at precisely the transitions where the passage structure is decided."},
+{n:"The thirty-second skeleton", r:"Before touching the questions, answer one thing: what is the author's single point?", e:"One line, your words: “Author argues <b>X</b>, despite <b>Y</b>.”", x:"If you cannot say it in one line, you have facts but not the passage."},
+{n:"Where the skeleton lives", r:"Additive passages carry their skeleton near the start; argumentative passages build to it at the end.", e:"Factual bone-china passage: thesis in para 1. Evolution argument: verdict in the <b>final</b> para.", x:"Reading the ending of an argumentative passage carelessly means missing the whole point."},
+{n:"Read fully first (Indore)", r:"Question-first fails on inference-heavy papers — Indore tests purpose, tone, and structure.", e:"You cannot locate “the author's attitude” with keyword hunting; it lives in the <b>whole</b> passage.", x:"Rohtak rewards retrieval; Indore punishes it. Match the strategy to the paper."},
+{n:"The tone ladder", r:"Place the author: laudatory → sympathetic → neutral-analytical → sceptical → critical → satirical.", e:"“Ambitious, if naïve” = <b>sceptical sympathy</b> — mixed tones are the Indore favourite.", x:"Extreme tone options (contemptuous, eulogistic) are usually wrong unless the passage is loud about it."},
+{n:"Main idea vs true-but-narrow", r:"The main idea covers the whole passage; a detail option is true yet too small.", e:"A passage on climate policy ≠ “solar panels are cheaper” — <b>true, but a brick, not the building</b>.", x:"“Is it true?” is the wrong test for main-idea questions. Ask: “does it cover everything?”"},
+{n:"Inference stays one step away", r:"A valid RC inference is one small step from the text — never a leap.", e:"Text: “the reform faced resistance.” Inference: <b>not everyone supported it</b>. Not: “it failed.”", x:""},
+{n:"Dialogue RCs: track the speakers", r:"In conversation passages, attribute every claim — disagreement is often implicit, carried by tone.", e:"Speaker A calls the model “elegant”; Speaker B calls it “tidy” — <b>“tidy” is the polite knife</b>.", x:"Questions test who holds which view and where they silently part ways — label speakers as you read."}
+]},
+{name:"The Preposition Reef", topic:"Prepositions & Fixed Pairings", stars:[
+{n:"Different from, superior to", r:"Different takes from; superior, inferior, junior, senior, prior take to.", e:"This paper is different <b>from</b> last year's and superior <b>to</b> it.", x:"“Different than” and “superior than” ✗ — than belongs to ordinary comparatives only."},
+{n:"Comprises takes no of", r:"The whole comprises the parts; the whole is composed of the parts.", e:"The test <b>comprises</b> four sections = <b>is composed of</b> four sections.", x:"“Comprises of” ✗ every single time — a top-five SC error."},
+{n:"Discuss, describe, order — no about", r:"Some verbs carry their object directly.", e:"We <b>discussed</b> the plan — not <i>discussed about</i>. She <b>ordered</b> a retest.", x:"Same family: emphasise, stress, attack, resemble, marry — all preposition-free."},
+{n:"Married to, die of", r:"Married to a person; die of a disease or hunger; die from an injury or cause.", e:"She is married <b>to</b> a pilot; the crops died <b>of</b> drought.", x:""},
+{n:"Angry with people, at things", r:"Angry/annoyed with a person; angry at a thing or situation.", e:"Angry <b>with</b> the invigilator, angry <b>at</b> the delay.", x:"Same split: good at a skill, good to a person."},
+{n:"Between two, among many", r:"Between for two (or distinct one-to-one relations); among for an undifferentiated group.", e:"Divide it <b>between</b> the two toppers, or <b>among</b> the whole batch.", x:"Between survives with 3+ when each relation is individual: “a treaty between five nations” ✓."},
+{n:"Prefer X to Y", r:"Prefer pairs with to, never than.", e:"I prefer accuracy <b>to</b> speed.", x:"With infinitives, switch construction: “prefer to revise rather than cram.”"},
+{n:"In, on, at for time", r:"At a clock time, on a day or date, in a month, year, or longer period.", e:"<b>At</b> 9 a.m. <b>on</b> Monday <b>in</b> July.", x:"Fixed oddities: at night, at dawn, in the morning, on the morning of the exam."},
+{n:"Beside vs besides", r:"Beside = next to; besides = in addition to.", e:"Sit <b>beside</b> me; <b>besides</b> verbal, revise quant.", x:""},
+{n:"Abide by, deal in, deal with", r:"Fixed pairings: abide by rules, deal in goods, deal with problems or people.", e:"Abide <b>by</b> the timer; the shop deals <b>in</b> books; the mentor deals <b>with</b> doubts.", x:""},
+{n:"Since needs perfect company", r:"Since + a starting point pairs with a perfect tense, not simple present or past.", e:"She <b>has taught</b> here since 2020 — not <i>she teaches here since 2020</i>.", x:""}
+]},
+{name:"The Punctuation Gate", topic:"Punctuation & Sentence Boundaries", stars:[
+{n:"The comma splice", r:"Two independent clauses cannot share a bare comma.", e:"“The test ended, the students left” ✗ → use a <b>semicolon</b>, a <b>full stop</b>, or a <b>conjunction</b>.", x:"Four legal repairs: period · semicolon · comma + and/but · subordinate one clause with because/although."},
+{n:"The fragment test", r:"A sentence needs a subject and a finite verb — a clause beginning with because/which/although alone is a fragment.", e:"“Because the syllabus changed.” — <b>incomplete</b>. Attach it to a main clause.", x:""},
+{n:"Semicolon: the equal sign", r:"A semicolon joins two related independent clauses of equal weight.", e:"Rohtak tests retrieval<b>;</b> Indore tests inference.", x:"Both sides must stand alone as sentences — a semicolon before a fragment ✗."},
+{n:"Colon: the announcer", r:"A colon follows a complete clause and introduces a list, quotation, or expansion.", e:"Pack three things<b>:</b> admit card, ID, and two pens.", x:"“The three things are: …” ✗ — the clause before the colon must already be complete."},
+{n:"Apostrophes possess, never pluralise", r:"Apostrophe + s for possession; bare s for plurals; decades take no apostrophe.", e:"The student<b>'s</b> notes · the students<b>'</b> notes · the 1990<b>s</b>.", x:"“Apple's for sale” — the grocer's apostrophe — is a planted error, not a style choice."},
+{n:"That restricts, which digresses", r:"That + no comma = essential info; which + comma = removable extra.", e:"The test <b>that</b> was leaked was cancelled. The test, <b>which</b> ran long, was cancelled.", x:"Remove the which-clause and the sentence must survive intact — that's the test."},
+{n:"Commas fence off the removable", r:"Non-essential phrases take a comma on both sides — one comma is a broken fence.", e:"Sahil Sir<b>,</b> our verbal mentor<b>,</b> built the portal.", x:"A single comma around an appositive is as wrong as none — setters drop exactly one."},
+{n:"The em dash interrupts", r:"Dashes mark a sharp break or emphatic addition — stronger than commas, looser than colons.", e:"One habit decides the score <b>—</b> revision.", x:""},
+{n:"Hyphenate the team, not the description", r:"Compound modifiers before a noun take hyphens; after the noun they lose them.", e:"A <b>well-known</b> author · the author is <b>well known</b>.", x:"Adverbs in -ly never hyphenate: “a highly rated test” — no hyphen."},
+{n:"The Oxford comma prevents mergers", r:"The comma before the final and keeps the last two items from fusing.", e:"“I thank my parents, the AC<b>,</b> and the invigilator” — without it, your parents are the AC and invigilator.", x:""}
+]}
+];
+let known = {};
+try { known = JSON.parse(localStorage.getItem('rtiim_verbal_constellation_v1')) || {}; } catch(e) { known = {}; }
+function saveKnown(){ try { localStorage.setItem('rtiim_verbal_constellation_v1', JSON.stringify(known)); } catch(e) {} }
+function keyOf(ti, si){ return ti + ':' + si; }
+function totalStars(){ return TOPICS.reduce((s,t)=>s+t.stars.length,0); }
+function knownCount(ti){ return TOPICS[ti].stars.reduce((s,_,si)=>s+(known[keyOf(ti,si)]?1:0),0); }
+function knownTotal(){ return Object.values(known).filter(Boolean).length; }
+
+function mulberry(seed){ return function(){ seed|=0; seed=seed+0x6D2B79F5|0; let t=Math.imul(seed^seed>>>15,1|seed); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+
+function constellationSVG(ti){
+  const rnd = mulberry(ti*131+29);
+  const n = 5 + Math.floor(rnd()*3);
+  const pts = [];
+  for(let i=0;i<n;i++){ pts.push([18+rnd()*244, 14+rnd()*82]); }
+  pts.sort((a,b)=>a[0]-b[0]);
+  let lines='', stars='';
+  for(let i=0;i<n-1;i++){
+    lines += '<line x1="'+pts[i][0].toFixed(1)+'" y1="'+pts[i][1].toFixed(1)+'" x2="'+pts[i+1][0].toFixed(1)+'" y2="'+pts[i+1][1].toFixed(1)+'" stroke="rgba(232,195,106,0.35)" stroke-width="1"/>';
+  }
+  for(let i=0;i<n;i++){
+    const r = 1.6 + rnd()*2.2;
+    const dur = (2+rnd()*3).toFixed(1);
+    stars += '<circle cx="'+pts[i][0].toFixed(1)+'" cy="'+pts[i][1].toFixed(1)+'" r="'+r.toFixed(1)+'" fill="#F0EEFF"><animate attributeName="opacity" values="1;0.35;1" dur="'+dur+'s" repeatCount="indefinite"/></circle>';
+  }
+  return '<svg viewBox="0 0 280 110" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">'+lines+stars+'</svg>';
+}
+
+const grid = document.getElementById('grid');
+function renderGrid(){
+  grid.innerHTML = '';
+  TOPICS.forEach((t,ti)=>{
+    const kc = knownCount(ti);
+    const card = document.createElement('div');
+    card.className = 'ccard';
+    card.setAttribute('role','button');
+    card.setAttribute('tabindex','0');
+    card.innerHTML = constellationSVG(ti) +
+      '<div class="cname">'+t.name+'</div>' +
+      '<div class="ctopic">'+t.topic+'</div>' +
+      '<div class="cmeta"><span>'+t.stars.length+' rules</span><span>'+kc+' charted</span></div>' +
+      '<div class="cbar"><i style="width:'+(kc/t.stars.length*100).toFixed(0)+'%"></i></div>';
+    card.addEventListener('click', ()=>openSheet(ti));
+    card.addEventListener('keydown', e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); openSheet(ti);} });
+    grid.appendChild(card);
+  });
+  document.getElementById('progressline').innerHTML = 'Sky charted: <b>'+knownTotal()+'</b> / '+totalStars()+' stars';
+}
+
+const overlay = document.getElementById('overlay');
+const sheetbody = document.getElementById('sheetbody');
+let currentTopic = null;
+
+function openSheet(ti){
+  currentTopic = ti;
+  const t = TOPICS[ti];
+  document.getElementById('shname').textContent = t.name;
+  document.getElementById('shtopic').textContent = t.topic;
+  refreshSheetCount();
+  sheetbody.innerHTML = '';
+  t.stars.forEach((st,si)=>{
+    const row = document.createElement('div');
+    row.className = 'frow';
+    const isOn = known[keyOf(ti,si)] ? ' on' : '';
+    row.innerHTML =
+      '<div class="fhead">' +
+        '<button class="fstar'+isOn+'" aria-label="Mark as charted">★</button>' +
+        '<div class="fname">'+st.n+'</div>' +
+        '<div class="fchev">▶</div>' +
+      '</div>' +
+      '<div class="fbody"><div class="frule"><div class="rl">'+st.r+'</div>' + (st.e ? '<div class="ex">'+st.e+'</div>' : '') + '</div>' + (st.x ? '<div class="fnote"><b>Trap:</b> '+st.x+'</div>' : '') + '</div>';
+    row.querySelector('.fhead').addEventListener('click', e=>{
+      if(e.target.classList.contains('fstar')) return;
+      row.classList.toggle('open');
+    });
+    row.querySelector('.fstar').addEventListener('click', e=>{
+      e.stopPropagation();
+      const k = keyOf(ti,si);
+      known[k] = !known[k];
+      e.target.classList.toggle('on', !!known[k]);
+      saveKnown();
+      refreshSheetCount();
+      renderGrid();
+    });
+    sheetbody.appendChild(row);
+  });
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function refreshSheetCount(){
+  const t = TOPICS[currentTopic];
+  document.getElementById('shcount').textContent = knownCount(currentTopic)+' of '+t.stars.length+' charted';
+}
+function closeSheet(){
+  overlay.classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.getElementById('closebtn').addEventListener('click', closeSheet);
+overlay.addEventListener('click', e=>{ if(e.target===overlay) closeSheet(); });
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeSheet(); });
+
+const searchEl = document.getElementById('search');
+const resultsEl = document.getElementById('results');
+searchEl.addEventListener('input', ()=>{
+  const q = searchEl.value.trim().toLowerCase();
+  if(!q){ resultsEl.style.display='none'; grid.style.display='grid'; return; }
+  const hits = [];
+  TOPICS.forEach((t,ti)=>t.stars.forEach((st,si)=>{
+    if(st.n.toLowerCase().includes(q) || t.topic.toLowerCase().includes(q) || (st.r||'').toLowerCase().includes(q) || (st.e||'').toLowerCase().includes(q) || (st.x||'').toLowerCase().includes(q)) hits.push([ti,si]);
+  }));
+  grid.style.display='none';
+  resultsEl.style.display='block';
+  resultsEl.innerHTML = hits.length ? '' : '<div class="rrow"><div class="rname">No stars found for “'+searchEl.value+'”</div><div class="rfrom">Try a topic word like “comma”, “assumption”, or “affect”.</div></div>';
+  hits.slice(0,30).forEach(([ti,si])=>{
+    const row = document.createElement('div');
+    row.className = 'rrow';
+    row.innerHTML = '<div class="rname">'+TOPICS[ti].stars[si].n+'</div><div class="rfrom">'+TOPICS[ti].name+' · '+TOPICS[ti].topic+'</div>';
+    row.addEventListener('click', ()=>{
+      openSheet(ti);
+      setTimeout(()=>{
+        const rows = sheetbody.querySelectorAll('.frow');
+        if(rows[si]){ rows[si].classList.add('open'); rows[si].scrollIntoView({block:'center'}); }
+      }, 60);
+    });
+    resultsEl.appendChild(row);
+  });
+});
+
+const cv = document.getElementById('starfield');
+const cx = cv.getContext('2d');
+let bgStars = [];
+function initField(){
+  cv.width = innerWidth; cv.height = innerHeight;
+  bgStars = [];
+  const count = Math.floor(innerWidth*innerHeight/9000);
+  for(let i=0;i<count;i++){
+    bgStars.push({x:Math.random()*cv.width, y:Math.random()*cv.height, r:Math.random()*1.3+0.3, p:Math.random()*Math.PI*2, s:0.3+Math.random()*0.8});
+  }
+}
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+function tick(t){
+  cx.clearRect(0,0,cv.width,cv.height);
+  bgStars.forEach(s=>{
+    const a = reduceMotion ? 0.6 : 0.35 + 0.45*Math.abs(Math.sin(t/1600*s.s + s.p));
+    cx.globalAlpha = a;
+    cx.fillStyle = '#F0EEFF';
+    cx.beginPath(); cx.arc(s.x, s.y, s.r, 0, 7); cx.fill();
+  });
+  cx.globalAlpha = 1;
+  if(!reduceMotion) requestAnimationFrame(tick);
+}
+addEventListener('resize', initField);
+initField();
+requestAnimationFrame(tick);
+
+renderGrid();
+
+if ('serviceWorker' in navigator) {
+  addEventListener('load', ()=>{ navigator.serviceWorker.register('sw.js').catch(()=>{}); });
+}
+let deferredPrompt = null;
+const installBtn = document.getElementById('installbtn');
+addEventListener('beforeinstallprompt', e=>{
+  e.preventDefault();
+  deferredPrompt = e;
+  installBtn.style.display = 'block';
+});
+installBtn.addEventListener('click', async ()=>{
+  if(!deferredPrompt) return;
+  deferredPrompt.prompt();
+  await deferredPrompt.userChoice;
+  deferredPrompt = null;
+  installBtn.style.display = 'none';
+});
+addEventListener('appinstalled', ()=>{ installBtn.style.display = 'none'; });
+</script>
+</body>
+</html>
