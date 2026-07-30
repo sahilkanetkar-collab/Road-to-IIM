@@ -28,6 +28,7 @@
   --c-geo:     #5b8dd9;
   --c-econ:    #4ea082;
   --c-tech:    #9b72cf;
+  --c-saved:   #e8985a;
   --c-special: #e0658a;
   --c-history: #d4af37;
 
@@ -66,6 +67,13 @@ header {
   pointer-events: none;
 }
 
+.org-label {
+  font-size: 10px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 3px;
+}
 .brand-label {
   font-size: 10px;
   letter-spacing: 2.5px;
@@ -143,6 +151,7 @@ header {
 .tab-btn[data-tab="tech"].active        { color: var(--c-tech);    border-color: var(--c-tech);    }
 .tab-btn[data-tab="special"].active     { color: var(--c-special); border-color: var(--c-special); }
 .tab-btn[data-tab="history"].active     { color: var(--c-history); border-color: var(--c-history); }
+.tab-btn[data-tab="saved"].active       { color: var(--c-saved);   border-color: var(--c-saved);   }
 
 .tab-dot {
   width: 7px; height: 7px;
@@ -156,6 +165,7 @@ header {
 .tab-btn[data-tab="tech"]        .tab-dot { background: var(--c-tech);    }
 .tab-btn[data-tab="special"]     .tab-dot { background: var(--c-special); }
 .tab-btn[data-tab="history"]     .tab-dot { background: var(--c-history); }
+.tab-btn[data-tab="saved"]       .tab-dot { background: var(--c-saved);   }
 
 /* ── SPECIAL TAB ── */
 .special-card { border-color: rgba(224,101,138,0.28); }
@@ -174,6 +184,34 @@ header {
 .note-label {
   display: block; font-size: 10px; letter-spacing: 1.5px;
   text-transform: uppercase; color: var(--c-special); margin-bottom: 4px;
+}
+
+/* ── SAVE (bookmark) BUTTON ── */
+.save-btn {
+  margin-left: auto;
+  background: none; border: none; cursor: pointer;
+  color: var(--text-dim); font-size: 17px; line-height: 1;
+  padding: 2px 4px; flex-shrink: 0;
+  transition: color 0.15s, transform 0.1s;
+}
+.save-btn:hover { color: var(--c-saved); }
+.save-btn:active { transform: scale(0.85); }
+.save-btn.saved { color: var(--c-saved); }
+.card-meta .curated-badge { margin-left: auto; }
+.card-meta .curated-badge + .save-btn,
+.card-meta .new-badge + .save-btn { margin-left: 6px; }
+
+/* ── "NEW SINCE LAST VISIT" DIVIDER ── */
+.new-divider {
+  grid-column: 1 / -1;
+  display: flex; align-items: center; gap: 12px;
+  font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--text-dim);
+  margin: 2px 0;
+}
+.new-divider::before, .new-divider::after {
+  content: ''; flex: 1; height: 1px;
+  background: var(--border);
 }
 
 /* ── ADMIN: floating add button + modal ── */
@@ -499,6 +537,7 @@ main { padding: 24px 32px 64px; max-width: 1060px; }
 <header>
   <div class="header-glow"></div>
   <div>
+    <div class="org-label">IMS Ahmedabad</div>
     <div class="brand-label">Road to IIM</div>
     <div class="page-title">Current Affairs</div>
     <div class="page-date" id="page-date"></div>
@@ -527,6 +566,9 @@ main { padding: 24px 32px 64px; max-width: 1060px; }
   </button>
   <button class="tab-btn" data-tab="history" onclick="openTab('history',this)">
     <span class="tab-dot"></span>📜 On This Day
+  </button>
+  <button class="tab-btn" data-tab="saved" onclick="openTab('saved',this)">
+    <span class="tab-dot"></span>🔖 Saved
   </button>
 </div>
 
@@ -580,18 +622,66 @@ const TAB_ACCENT = {
   economics:   '#4ea082',
   tech:        '#9b72cf',
   special:     '#e0658a',
-  history:     '#d4af37'
+  history:     '#d4af37',
+  saved:       '#e8985a'
 };
+
+/* How long a persisted tab stays "fresh" before a background refresh (ms) */
+const STALE_AFTER = 10 * 60 * 1000;
 
 /* ─── STATE ─── */
 let currentTab = 'geopolitics';
 const tabCache = {};
+let lastRenderedCards = [];
+
+/* ─── PERSISTENCE (localStorage) ───
+   ca_store_v1  : { [tab]: { cards, ts, fetchedAt, day } }  — last fetched articles
+   ca_saved_v1  : [ card, ... ]                             — bookmarked articles
+   ca_seen_v1   : { [tab]: timestamp }                      — last visit per tab   */
+function storeGet(key, fallback) {
+  try { return JSON.parse(localStorage.getItem(key)) || fallback; }
+  catch { return fallback; }
+}
+function storeSet(key, val) {
+  try { localStorage.setItem(key, JSON.stringify(val)); } catch (e) {}
+}
+function persistTab(tab, entry) {
+  const store = storeGet('ca_store_v1', {});
+  store[tab] = entry;
+  storeSet('ca_store_v1', store);
+}
+function readPersistedTab(tab) {
+  const entry = storeGet('ca_store_v1', {})[tab];
+  if (!entry || !entry.cards?.length) return null;
+  /* On This Day is only valid for the calendar day it was fetched */
+  if (tab === 'history' && entry.day !== todayKey()) return null;
+  return entry;
+}
+function todayKey() {
+  const d = new Date();
+  return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;
+}
+
+/* Snapshot of "last seen" timestamps, taken once per app open —
+   used to place the "new since your last visit" divider */
+const prevSeen = storeGet('ca_seen_v1', {});
+function markSeen(tab) {
+  const seen = storeGet('ca_seen_v1', {});
+  seen[tab] = Date.now();
+  storeSet('ca_seen_v1', seen);
+}
 
 /* ─── INIT ─── */
-document.getElementById('page-date').textContent =
-  new Date().toLocaleDateString('en-IN', {
-    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
-  });
+function setPageDate() {
+  document.getElementById('page-date').textContent =
+    new Date().toLocaleDateString('en-IN', {
+      weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
+    });
+}
+setPageDate();
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden) setPageDate();
+});
 
 if (window.location.protocol === 'file:') {
   showLocalMsg();
@@ -609,12 +699,37 @@ function openTab(tab, el) {
   document.documentElement.style.setProperty('--accent', TAB_ACCENT[tab]);
   updateAdminBtn();
 
+  /* Saved tab is always read live from localStorage */
+  if (tab === 'saved') {
+    renderCards(loadSaved(), 'saved');
+    setStatus(loadSaved().length ? 'Your saved articles' : '', false);
+    return;
+  }
+
+  /* 1. In-memory cache from this session */
   if (tabCache[tab]) {
     renderCards(tabCache[tab].cards, tab);
     setStatus('Last updated: ' + tabCache[tab].ts, true);
-  } else {
-    loadTab(tab);
+    return;
   }
+
+  /* 2. Persisted cache — render instantly, refresh in background if stale */
+  const persisted = readPersistedTab(tab);
+  if (persisted) {
+    tabCache[tab] = { cards: persisted.cards, ts: persisted.ts };
+    renderCards(persisted.cards, tab);
+    const age = Date.now() - (persisted.fetchedAt || 0);
+    if (age > STALE_AFTER) {
+      setStatus('Showing saved copy — refreshing\u2026', false);
+      loadTab(tab, true);   // quiet refresh: no skeletons
+    } else {
+      setStatus('Last updated: ' + persisted.ts, true);
+    }
+    return;
+  }
+
+  /* 3. Nothing cached — full load */
+  loadTab(tab);
 }
 
 async function doRefresh() {
@@ -627,20 +742,27 @@ async function doRefresh() {
 }
 
 /* ─── LOAD ─── */
-async function loadTab(tab) {
-  showSkeletons();
-  setStatus('Fetching latest headlines…');
+async function loadTab(tab, quiet = false) {
+  if (tab === 'saved') { renderCards(loadSaved(), 'saved'); return; }
+  if (!quiet) {
+    showSkeletons();
+    setStatus('Fetching latest headlines…');
+  }
   try {
     const cards = tab === 'history'  ? await loadOnThisDay()
                 : tab === 'special'  ? await loadSpecial()
-                : await loadRSS(FEEDS[tab]);
+                : await loadRSS(tab);
 
     const ts = new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
     tabCache[tab] = { cards, ts };
-    renderCards(cards, tab);
-    setStatus('Last updated: ' + ts, true);
+    persistTab(tab, { cards, ts, fetchedAt: Date.now(), day: todayKey() });
+    if (currentTab === tab) {
+      renderCards(cards, tab);
+      setStatus('Last updated: ' + ts, true);
+    }
   } catch (err) {
     console.error('[loadTab]', err);
+    if (quiet) { setStatus('Last updated: ' + (tabCache[tab]?.ts || ''), true); return; }
     document.getElementById('grid').innerHTML = `
       <div class="err-box">
         <div class="icon">⚠️</div>
@@ -652,12 +774,31 @@ async function loadTab(tab) {
   }
 }
 
-/* ─── RSS — 3 fallback strategies ─── */
-async function loadRSS(feeds) {
-  const results = await Promise.allSettled(feeds.map(fetchWithFallback));
-  const items   = results.flatMap(r => r.status === 'fulfilled' ? r.value : []).slice(0, 8);
+/* ─── RSS ───
+   Strategy 0: our own Apps Script aggregator (server-side fetch + 15-min cache —
+               one fetch serves every student, no public proxy dependency)
+   Fallback : the original 3-proxy chain, per feed */
+async function loadRSS(tab) {
+  try {
+    const r = await t_fetch(`${SPECIAL_API}?action=feeds&tab=${tab}`, 12000);
+    const d = await r.json();
+    if (d.ok && d.items?.length) {
+      return sortByDate(d.items).slice(0, 8);
+    }
+  } catch (e) { console.warn('[feeds api]', e.message); }
+
+  const results = await Promise.allSettled(FEEDS[tab].map(fetchWithFallback));
+  const items   = sortByDate(results.flatMap(r => r.status === 'fulfilled' ? r.value : [])).slice(0, 8);
   if (!items.length) throw new Error('All feeds failed');
   return items;
+}
+
+function sortByDate(items) {
+  return [...items].sort((a, b) => {
+    const ta = a.pubDate ? new Date(a.pubDate).getTime() : 0;
+    const tb = b.pubDate ? new Date(b.pubDate).getTime() : 0;
+    return tb - ta;
+  });
 }
 
 async function fetchWithFallback({ url, src, domain }) {
@@ -743,6 +884,31 @@ async function loadSpecial() {
       link: a.link, pubDate: a.ts || '', image: ''
     };
   });
+}
+
+/* ─── SAVED (bookmarks — stored on this device) ─── */
+function loadSaved() {
+  return storeGet('ca_saved_v1', []);
+}
+function isSavedLink(link) {
+  return loadSaved().some(c => c.link === link);
+}
+function toggleSave(idx, btn) {
+  const card = lastRenderedCards[idx];
+  if (!card || !card.link || card.link === '#') return;
+  let saved = loadSaved();
+  if (saved.some(c => c.link === card.link)) {
+    saved = saved.filter(c => c.link !== card.link);
+    if (btn) { btn.classList.remove('saved'); btn.textContent = '\u2606'; }
+  } else {
+    saved.unshift({ ...card, savedAt: Date.now() });
+    if (btn) { btn.classList.add('saved'); btn.textContent = '\u2605'; }
+  }
+  storeSet('ca_saved_v1', saved);
+  if (currentTab === 'saved') {
+    renderCards(loadSaved(), 'saved');
+    setStatus(loadSaved().length ? 'Your saved articles' : '', false);
+  }
 }
 
 /* ─── ADMIN (Sahil only — PIN verified server-side) ─── */
@@ -864,12 +1030,31 @@ function pickDiverse(events, n) {
 /* ─── RENDER ─── */
 function renderCards(cards, tab) {
   const grid = document.getElementById('grid');
+  lastRenderedCards = cards || [];
   if (!cards?.length) {
     grid.innerHTML = tab === 'special'
       ? `<div class="info-box"><div class="icon">⭐</div><h3>Nothing here yet</h3><p>Hand-picked articles from Sahil Sir will appear here. Check back soon!</p></div>`
+      : tab === 'saved'
+      ? `<div class="info-box"><div class="icon">🔖</div><h3>No saved articles yet</h3><p>Tap the &#9734; on any story to keep it here for revision — useful before interviews and WAT.</p></div>`
       : `<div class="err-box"><div class="icon">📡</div><h3>No stories found</h3><p>Try refreshing.</p><button class="retry-btn" onclick="doRefresh()">Retry</button></div>`;
     return;
   }
+
+  /* "Caught up" divider: only on live feed tabs, cards sorted newest-first */
+  const isFeedTab   = ['geopolitics','economics','tech'].includes(tab);
+  const seenCutoff  = isFeedTab ? (prevSeen[tab] || 0) : 0;
+  let dividerBefore = -1;
+  if (seenCutoff) {
+    const firstOld = cards.findIndex(c => c.pubDate && new Date(c.pubDate).getTime() <= seenCutoff);
+    if (firstOld > 0) dividerBefore = firstOld;
+  }
+
+  const saveBtn = (card, idx) => {
+    if (!card.link || card.link === '#') return '';
+    const on = isSavedLink(card.link);
+    return `<button class="save-btn${on ? ' saved' : ''}" onclick="toggleSave(${idx}, this)"
+      title="${on ? 'Remove from saved' : 'Save for later'}" aria-label="Save article">${on ? '\u2605' : '\u2606'}</button>`;
+  };
 
   grid.innerHTML = cards.map((card, idx) => {
     const isFirst   = idx === 0;
@@ -879,13 +1064,16 @@ function renderCards(cards, tab) {
       : '';
     const timeStr = relTime(card.pubDate);
     const delay   = `animation-delay:${idx * 0.06}s`;
+    const divider = idx === dividerBefore
+      ? `<div class="new-divider">You're caught up — seen last visit</div>` : '';
 
     if (card.isHistory) {
-      return `
+      return divider + `
       <div class="news-card" style="${delay}">
         <div class="year-display">${esc(card.src)}</div>
         <div class="card-meta">
           <span class="source-pill year-pill">${esc(card.src)} AD</span>
+          ${saveBtn(card, idx)}
         </div>
         <div class="card-headline">
           <a href="${esc(card.link)}" target="_blank" rel="noopener">${esc(card.title)}</a>
@@ -897,13 +1085,14 @@ function renderCards(cards, tab) {
     }
 
     if (card.isSpecial) {
-      return `
+      return divider + `
       <div class="news-card special-card" style="${delay}">
         <div class="card-meta">
-          ${faviconUrl ? `<img class="favicon" src="${faviconUrl}" onerror="this.remove()" alt="">` : ''}
+          ${faviconUrl ? `<img class="favicon" src="${faviconUrl}" loading="lazy" onerror="this.remove()" alt="">` : ''}
           <span class="source-pill">${esc(card.src)}</span>
           ${timeStr ? `<span class="card-time">${timeStr}</span>` : ''}
           <span class="curated-badge">&#9733; Curated</span>
+          ${saveBtn(card, idx)}
         </div>
         <div class="card-headline">
           <a href="${esc(card.link)}" target="_blank" rel="noopener">${esc(card.title)}</a>
@@ -916,14 +1105,15 @@ function renderCards(cards, tab) {
     }
 
     if (isFirst && card.image) {
-      return `
+      return divider + `
       <div class="news-card featured" style="${delay}">
         <div class="featured-body">
           <div class="card-meta">
-            ${faviconUrl ? `<img class="favicon" src="${faviconUrl}" onerror="this.remove()" alt="">` : ''}
+            ${faviconUrl ? `<img class="favicon" src="${faviconUrl}" loading="lazy" onerror="this.remove()" alt="">` : ''}
             <span class="source-pill">${esc(card.src)}</span>
             ${timeStr ? `<span class="card-time">${timeStr}</span>` : ''}
             ${isNew ? `<span class="new-badge">New</span>` : ''}
+            ${saveBtn(card, idx)}
           </div>
           <div class="card-headline">
             <a href="${esc(card.link)}" target="_blank" rel="noopener">${esc(card.title)}</a>
@@ -934,22 +1124,23 @@ function renderCards(cards, tab) {
           </a>
         </div>
         <div class="featured-img-wrap">
-          <img src="${esc(card.image)}" alt="" onerror="this.closest('.news-card').classList.remove('featured');this.closest('.featured-img-wrap').remove()">
+          <img src="${esc(card.image)}" alt="" loading="lazy" onerror="this.closest('.news-card').classList.remove('featured');this.closest('.featured-img-wrap').remove()">
         </div>
       </div>`;
     }
 
-    return `
+    return divider + `
     <div class="news-card" style="${delay}">
       ${card.image ? `
         <div class="card-img-wrap">
-          <img src="${esc(card.image)}" alt="" onerror="this.closest('.card-img-wrap').remove()">
+          <img src="${esc(card.image)}" alt="" loading="lazy" onerror="this.closest('.card-img-wrap').remove()">
         </div>` : ''}
       <div class="card-meta">
-        ${faviconUrl ? `<img class="favicon" src="${faviconUrl}" onerror="this.remove()" alt="">` : ''}
+        ${faviconUrl ? `<img class="favicon" src="${faviconUrl}" loading="lazy" onerror="this.remove()" alt="">` : ''}
         <span class="source-pill">${esc(card.src)}</span>
         ${timeStr ? `<span class="card-time">${timeStr}</span>` : ''}
         ${isNew ? `<span class="new-badge">New</span>` : ''}
+        ${saveBtn(card, idx)}
       </div>
       <div class="card-headline">
         <a href="${esc(card.link)}" target="_blank" rel="noopener">${esc(card.title)}</a>
@@ -960,6 +1151,8 @@ function renderCards(cards, tab) {
       </a>
     </div>`;
   }).join('');
+
+  if (isFeedTab) markSeen(tab);
 }
 
 /* ─── SKELETONS ─── */
