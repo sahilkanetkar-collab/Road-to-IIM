@@ -1,12 +1,12 @@
 /* Current Affairs — Road to IIM
-   Service Worker v3
+   Service Worker v4
    - No precaching on install (avoids install failure)
    - Cache on demand — stale-while-revalidate for app shell
    - Network only for all news/API calls
    - Scoped to current_affairs.html only
 */
 
-const CACHE = 'ca-v3';
+const CACHE = 'ca-v4';
 
 const NETWORK_ONLY = [
   'api.rss2json.com',
