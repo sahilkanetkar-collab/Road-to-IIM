@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rapid Fire Test 10 | Road to IIM</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+:root{
+  --navy:#0d1b2a; --navy2:#1a2e45; --gold:#c9a84c; --gold2:#e8c76a;
+  --green:#2ecc71; --red:#e74c3c; --grey:#8899aa; --white:#f0f4f8;
+  --purple:#8b5cf6; --purple2:#7c3aed;
+  --panel:300px; --topbar:56px; --navbar:62px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:var(--navy);color:var(--white);min-height:100vh;}
+
+/* ---------- LOGIN ---------- */
+#loginScreen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;}
+.loginCard{background:var(--navy2);border:1px solid rgba(201,168,76,.35);border-radius:14px;padding:36px 32px;width:100%;max-width:420px;box-shadow:0 12px 40px rgba(0,0,0,.45);}
+.loginCard h1{color:var(--gold);font-size:1.35rem;letter-spacing:.5px;margin-bottom:4px;}
+.loginCard h2{color:var(--grey);font-size:.9rem;font-weight:400;margin-bottom:24px;}
+.loginCard label{display:block;font-size:.8rem;color:var(--grey);margin:14px 0 5px;letter-spacing:.4px;}
+.loginCard input,.loginCard select{width:100%;padding:11px 12px;border-radius:8px;border:1px solid rgba(136,153,170,.35);background:var(--navy);color:var(--white);font-size:.95rem;font-family:inherit;}
+.loginCard input:focus,.loginCard select:focus{outline:none;border-color:var(--gold);}
+#loginErr{color:var(--red);font-size:.83rem;margin-top:12px;min-height:1.2em;display:none;}
+#loginBtn{width:100%;margin-top:22px;padding:13px;border:none;border-radius:8px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);font-weight:700;font-size:1rem;cursor:pointer;letter-spacing:.5px;}
+#loginBtn:hover{filter:brightness(1.08);}
+.testMeta{margin-top:18px;font-size:.75rem;color:var(--grey);line-height:1.6;border-top:1px solid rgba(136,153,170,.2);padding-top:14px;}
+
+/* ---------- TEST ---------- */
+#testScreen{display:none;min-height:100vh;}
+#topBar{height:var(--topbar);background:var(--navy2);display:flex;align-items:center;justify-content:space-between;padding:0 18px;border-bottom:1px solid rgba(201,168,76,.3);position:sticky;top:0;z-index:10;}
+#topBar .tName{color:var(--gold);font-weight:700;font-size:.95rem;}
+#topBar .qCounter{color:var(--grey);font-size:.85rem;}
+#qTimerText{font-weight:700;color:var(--white);font-size:1.05rem;min-width:44px;text-align:right;}
+#timerBarWrap{height:6px;background:rgba(136,153,170,.25);width:100%;}
+#timerBar{height:100%;width:100%;background:var(--green);}
+#timerBar.warn{background:var(--gold);}
+#timerBar.danger{background:var(--red);}
+#layout{display:flex;align-items:flex-start;}
+#mainContent{flex:1;max-width:860px;margin:0 auto;padding:28px 24px 120px;}
+.secBadge{display:inline-block;background:rgba(139,92,246,.18);color:var(--purple);border:1px solid var(--purple2);font-size:.72rem;padding:3px 10px;border-radius:20px;letter-spacing:.5px;margin-bottom:14px;}
+#qText{font-size:1.05rem;line-height:1.65;margin-bottom:22px;white-space:pre-line;overflow-wrap:break-word;word-break:break-word;}
+#passageBox{display:none;background:rgba(201,168,76,.06);border:1px solid rgba(201,168,76,.25);border-radius:10px;padding:14px 16px;margin-bottom:18px;}
+#pLabel{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;font-weight:bold;}
+#pText{font-size:.95rem;line-height:1.6;white-space:pre-line;overflow-wrap:break-word;word-break:break-word;}
+.opt{display:flex;gap:12px;align-items:flex-start;background:var(--navy2);border:1px solid rgba(136,153,170,.3);border-radius:10px;padding:14px 16px;margin-bottom:12px;cursor:pointer;transition:border-color .15s,background .15s;}
+.opt:hover{border-color:var(--gold);}
+.opt.sel{border-color:var(--gold);background:rgba(201,168,76,.12);}
+.opt .oLetter{flex:0 0 auto;width:26px;height:26px;border-radius:50%;border:1px solid var(--grey);display:flex;align-items:center;justify-content:center;font-size:.8rem;color:var(--grey);}
+.opt.sel .oLetter{background:var(--gold);color:var(--navy);border-color:var(--gold);font-weight:700;}
+.opt .oText{flex:1;line-height:1.55;font-size:.95rem;overflow-wrap:break-word;word-break:break-word;}
+#actionBar{position:fixed;bottom:0;left:0;right:var(--panel);background:var(--navy2);border-top:1px solid rgba(201,168,76,.3);padding:14px 24px;display:flex;justify-content:flex-end;gap:12px;z-index:10;}
+#nextBtn{padding:12px 34px;border:none;border-radius:8px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);font-weight:700;font-size:.95rem;cursor:pointer;}
+#sidePanel{width:var(--panel);flex:0 0 var(--panel);background:var(--navy2);border-left:1px solid rgba(201,168,76,.25);min-height:calc(100vh - var(--topbar) - 6px);padding:20px 16px;position:sticky;top:calc(var(--topbar) + 6px);}
+#sidePanel h3{color:var(--gold);font-size:.85rem;letter-spacing:.6px;margin-bottom:14px;}
+#palette{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;}
+.pcell{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:6px;font-size:.75rem;background:var(--navy);border:1px solid rgba(136,153,170,.3);color:var(--grey);cursor:default;}
+.pcell.done{background:var(--green);color:var(--navy);border-color:var(--green);font-weight:700;}
+.pcell.skip{background:var(--red);color:var(--white);border-color:var(--red);}
+.pcell.cur{border-color:var(--gold);color:var(--gold);font-weight:700;box-shadow:0 0 0 2px rgba(201,168,76,.35);}
+.legend{margin-top:18px;font-size:.72rem;color:var(--grey);line-height:2;}
+.legend span{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px;}
+@media (max-width:900px){#sidePanel{display:none;}#actionBar{right:0;}}
+
+/* ---------- RESULTS ---------- */
+#resultsScreen{display:none;max-width:900px;margin:0 auto;padding:40px 24px 80px;}
+#resultsScreen h1{color:var(--gold);font-size:1.5rem;margin-bottom:6px;}
+#resultsScreen .sub{color:var(--grey);font-size:.9rem;margin-bottom:26px;}
+.statGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:14px;margin-bottom:34px;}
+.stat{background:var(--navy2);border:1px solid rgba(201,168,76,.3);border-radius:10px;padding:18px 14px;text-align:center;}
+.stat .v{font-size:1.5rem;font-weight:700;color:var(--gold2);}
+.stat .l{font-size:.72rem;color:var(--grey);letter-spacing:.5px;margin-top:4px;}
+.secErr{background:var(--navy2);border:1px solid rgba(136,153,170,.3);border-radius:10px;padding:16px 18px;margin-bottom:34px;font-size:.9rem;line-height:1.8;}
+.secErr b{color:var(--gold);}
+#resultsScreen h2{color:var(--gold);font-size:1.1rem;margin:30px 0 16px;}
+.rq{background:var(--navy2);border:1px solid rgba(136,153,170,.3);border-radius:12px;padding:20px;margin-bottom:18px;}
+.rq .rqHead{font-size:.75rem;color:var(--grey);margin-bottom:8px;letter-spacing:.4px;}
+.rq .rqStem{font-size:.95rem;line-height:1.6;margin-bottom:14px;white-space:pre-line;overflow-wrap:break-word;word-break:break-word;}
+.ropt{display:flex;gap:10px;align-items:flex-start;border:1px solid rgba(136,153,170,.25);border-radius:8px;padding:10px 12px;margin-bottom:8px;font-size:.88rem;line-height:1.5;}
+.ropt .oLetter{flex:0 0 auto;width:22px;height:22px;border-radius:50%;border:1px solid var(--grey);display:flex;align-items:center;justify-content:center;font-size:.7rem;color:var(--grey);}
+.ropt.correct{border-color:var(--green);background:rgba(46,204,113,.12);}
+.ropt.correct .oLetter{background:var(--green);border-color:var(--green);color:var(--navy);font-weight:700;}
+.ropt.wrong{border-color:var(--red);background:rgba(231,76,60,.12);}
+.ropt.wrong .oLetter{background:var(--red);border-color:var(--red);color:var(--white);font-weight:700;}
+.ropt .oText{overflow-wrap:break-word;word-break:break-word;}
+.rq .exp{margin-top:12px;font-size:.85rem;color:var(--grey);line-height:1.65;border-top:1px dashed rgba(136,153,170,.3);padding-top:12px;}
+.rq .exp b{color:var(--gold2);}
+.rq .status{display:inline-block;font-size:.7rem;padding:2px 10px;border-radius:12px;margin-left:8px;vertical-align:1px;}
+.rq .status.ok{background:rgba(46,204,113,.15);color:var(--green);border:1px solid var(--green);}
+.rq .status.no{background:rgba(231,76,60,.15);color:var(--red);border:1px solid var(--red);}
+.rq .status.sk{background:rgba(136,153,170,.15);color:var(--grey);border:1px solid var(--grey);}
+#pdfBtn{padding:11px 26px;border:1px solid var(--gold);border-radius:8px;background:transparent;color:var(--gold);font-weight:600;font-size:.9rem;cursor:pointer;margin-bottom:8px;}
+#pdfBtn:hover{background:rgba(201,168,76,.12);}
+@media print{
+  body{background:#fff;color:#000;}
+  #loginScreen,#testScreen,#pdfBtn{display:none !important;}
+  #resultsScreen{display:block !important;color:#000;}
+  .stat,.rq,.secErr{border-color:#999;background:#fff;color:#000;}
+  .stat .v{color:#000;} .stat .l,.rq .rqHead,.rq .exp,#resultsScreen .sub{color:#333;}
+  #resultsScreen h1,#resultsScreen h2,.secErr b,.rq .exp b{color:#000;}
+  .ropt{color:#000;}
+  .ropt.correct{background:#e8f8ef;} .ropt.wrong{background:#fdecea;}
+}
+</style>
+</head>
+<body>
+
+<!-- ================= LOGIN ================= -->
+<div id="loginScreen">
+  <div class="loginCard">
+    <h1>ROAD TO IIM</h1>
+    <h2>Rapid Fire Test 10 &middot; Vocab + RC + Reasoning</h2>
+    <label for="stuName">Full Name</label>
+    <input type="text" id="stuName" placeholder="Your full name" autocomplete="off">
+    <label for="stuPin">PIN</label>
+    <input type="text" id="stuPin" placeholder="STU########## or IMS##########" autocomplete="off" maxlength="13">
+    <label for="stuBatch">Batch</label>
+    <select id="stuBatch">
+      <option value="">-- Select your batch --</option>
+      <optgroup label="Classroom">
+        <option>A2701</option><option>A2702</option><option>A2703</option><option>A2704</option>
+        <option>A2705</option><option>A2706</option><option>A2707</option><option>A2708</option>
+        <option>A2709</option><option>A2710</option><option>A2711</option><option>A2712</option>
+        <option>A2714</option><option>A2715</option><option>A2716</option><option>A2717</option>
+        <option>A2718</option><option>A2719</option><option>A2720</option>
+      </optgroup>
+      <optgroup label="School">
+        <option>Zebar</option>
+      </optgroup>
+      <optgroup label="IPMAT 28">
+        <option>Z2801</option><option>S2801</option><option>A2804</option><option>PN2801</option>
+      </optgroup>
+      <optgroup label="Admin">
+        <option>Admin</option>
+      </optgroup>
+    </select>
+    <div id="loginErr"></div>
+    <button id="loginBtn">Start Test</button>
+    <div class="testMeta">
+      35 questions &middot; +4 / &minus;1 &middot; Max 140<br>
+      Per-question timer: 90/40s RC &middot; 25s Vocab + Recall &middot; 40s Confusables &middot; 50s Sentence Exclusion &middot; 30s Word Roots<br>
+      No going back. The question advances when the bar runs out.
+    </div>
+  </div>
+</div>
+
+<!-- ================= TEST ================= -->
+<div id="testScreen">
+  <div id="topBar">
+    <span class="tName">Rapid Fire 10</span>
+    <span class="qCounter" id="qCounter">Q 1 / 35</span>
+    <span id="qTimerText">25s</span>
+  </div>
+  <div id="timerBarWrap"><div id="timerBar"></div></div>
+  <div id="layout">
+    <div id="mainContent">
+      <span class="secBadge" id="secBadge">Vocabulary</span>
+      <div id="passageBox"><div id="pLabel"></div><div id="pText"></div></div>
+      <div id="qText"></div>
+      <div id="optBox"></div>
+    </div>
+    <div id="sidePanel">
+      <h3>QUESTION PALETTE</h3>
+      <div id="palette"></div>
+      <div class="legend">
+        <span style="background:var(--green)"></span>Answered<br>
+        <span style="background:var(--red)"></span>Skipped<br>
+        <span style="background:var(--navy);border:1px solid var(--gold)"></span>Current
+      </div>
+    </div>
+  </div>
+  <div id="actionBar">
+    <button id="nextBtn">Next &rarr;</button>
+  </div>
+</div>
+
+<!-- ================= RESULTS ================= -->
+<div id="resultsScreen">
+  <h1>Rapid Fire Test 10 &mdash; Results</h1>
+  <div class="sub" id="resSub"></div>
+  <button id="pdfBtn" onclick="downloadPDF()">Download PDF</button>
+  <div class="statGrid">
+    <div class="stat"><div class="v" id="stScore">0</div><div class="l">SCORE / 140</div></div>
+    <div class="stat"><div class="v" id="stCorrect">0</div><div class="l">CORRECT</div></div>
+    <div class="stat"><div class="v" id="stWrong">0</div><div class="l">WRONG</div></div>
+    <div class="stat"><div class="v" id="stSkipped">0</div><div class="l">SKIPPED</div></div>
+    <div class="stat"><div class="v" id="stTime">0:00</div><div class="l">TIME TAKEN</div></div>
+  </div>
+  <div class="secErr" id="secErrBox"></div>
+  <h2>Question Review</h2>
+  <div id="reviewBox"></div>
+</div>
+
+<script>
+/* ============================================================
+   ROAD TO IIM — Rapid Fire Test 10 (Vocab + RC + Reasoning)
+   Speed-test architecture (A15) · Whitelist v5 · Safety Net
+   ============================================================ */
+
+var SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx5Ojm_zp4LfsMeelx5e06KNjVH1wfsXdV0keS4407m4FO1HU4EpVb7GKj-ibAsxnspeA/exec";
+var TEST_NAME  = "Rapid Fire Test 10";
+var MAX_MARKS  = 140;
+var FILE_NAME  = "RoadToIIM_SpeedTest10_VocabGrammar.html";
+var SN_KEY     = "riim_session_RapidFire10";
+var PIN_REGEX  = /^(STU|IMS)\d{10}$/;
+var BLOCK_MSG  = "This PIN isn't on the active student list. Message Sahil Sir if you think this is a mistake.";
+
+/* ==================== QUESTIONS (35) ==================== */
+var QUESTIONS = [
+/* Q01 */ {sec:"Reading Comprehension",td:90,p:"Urban birds are changing their tune. Ornithologists studying sparrows in three Indian cities found that birds in the loudest neighbourhoods now sing at a higher pitch than their rural cousins, lifting their songs above the rumble of traffic. The adjustment is ingenious, but it is not free. Higher-pitched songs carry less information, and males that sing them attract fewer mates. The birds have solved one problem by creating another. In that trade-off lies a warning: adaptation to a damaged environment is survival, not restoration.",pl:"Passage A",q:"The sparrows in noisy neighbourhoods sing at a higher pitch in order to",o:["attract more mates than rural birds","make their songs audible above traffic noise","carry more information in each song","imitate the songs of other urban species"],a:1,e:"The passage says the birds lift their songs above the rumble of traffic, i.e. to stay audible over the noise. Higher pitch actually reduces information and mate attraction, so A and C reverse the facts.",tag:{area:"Reading Comprehension",sub:"RC Detail"}},
+/* Q02 */ {sec:"Reading Comprehension",td:40,p:"Urban birds are changing their tune. Ornithologists studying sparrows in three Indian cities found that birds in the loudest neighbourhoods now sing at a higher pitch than their rural cousins, lifting their songs above the rumble of traffic. The adjustment is ingenious, but it is not free. Higher-pitched songs carry less information, and males that sing them attract fewer mates. The birds have solved one problem by creating another. In that trade-off lies a warning: adaptation to a damaged environment is survival, not restoration.",pl:"Passage A",q:"According to the passage, the cost of higher-pitched songs is that they",o:["lift the songs above the rumble of traffic","cannot be heard by rural cousins","convey less information and attract fewer mates","damage the birds' environment further"],a:2,e:"The stated price is that higher-pitched songs carry less information and the males singing them attract fewer mates. Option A lifts a phrase from the passage, but it is the benefit of the adjustment, not its cost.",tag:{area:"Reading Comprehension",sub:"RC Detail"}},
+/* Q03 */ {sec:"Reading Comprehension",td:40,p:"Urban birds are changing their tune. Ornithologists studying sparrows in three Indian cities found that birds in the loudest neighbourhoods now sing at a higher pitch than their rural cousins, lifting their songs above the rumble of traffic. The adjustment is ingenious, but it is not free. Higher-pitched songs carry less information, and males that sing them attract fewer mates. The birds have solved one problem by creating another. In that trade-off lies a warning: adaptation to a damaged environment is survival, not restoration.",pl:"Passage A",q:"'Ingenious' as used in the passage most nearly means",o:["naive and trusting","cleverly resourceful","instinctive and unthinking","deceptive"],a:1,e:"Ingenious praises the cleverness of the birds' solution to the noise problem. It should not be confused with ingenuous, which means innocent and trusting, the trap laid in option A.",tag:{area:"Reading Comprehension",sub:"RC Vocab in Context"}},
+/* Q04 */ {sec:"Reading Comprehension",td:40,p:"Urban birds are changing their tune. Ornithologists studying sparrows in three Indian cities found that birds in the loudest neighbourhoods now sing at a higher pitch than their rural cousins, lifting their songs above the rumble of traffic. The adjustment is ingenious, but it is not free. Higher-pitched songs carry less information, and males that sing them attract fewer mates. The birds have solved one problem by creating another. In that trade-off lies a warning: adaptation to a damaged environment is survival, not restoration.",pl:"Passage A",q:"The final sentence suggests the author views the birds' adaptation as",o:["proof that nature always recovers","a change that fully solves the noise problem","evidence that the environment remains damaged","an argument for relocating urban sparrows"],a:2,e:"The closing line distinguishes survival from restoration: the birds cope, but the damaged environment stays damaged. That is a warning, not a story of recovery or a full solution.",tag:{area:"Reading Comprehension",sub:"RC Interpretation"}},
+/* Q05 */ {sec:"Reading Comprehension",td:90,p:"My grandfather repaired clocks in a shop no wider than a doorway. Customers brought him watches that had survived wars and weddings, and he treated each as if it were the only one of its kind. He never promised a date of return; a clock, he said, would tell him when it was ready. I thought this an old man's affectation until I watched him work: he listened to a mechanism the way a doctor listens to a heartbeat, and he would not close a case until the ticking satisfied him.",pl:"Passage B",q:"The grandfather refused to promise a return date because he",o:["had a shop too small to store many clocks","rarely received requests for one","worked only on rare, one-of-a-kind watches","believed the clock itself would indicate when the work was done"],a:3,e:"His stated reason is that a clock would tell him when it was ready. The shop's size and the treating of each watch as one of a kind appear in the passage but are never given as reasons for refusing a date.",tag:{area:"Reading Comprehension",sub:"RC Detail"}},
+/* Q06 */ {sec:"Reading Comprehension",td:40,p:"My grandfather repaired clocks in a shop no wider than a doorway. Customers brought him watches that had survived wars and weddings, and he treated each as if it were the only one of its kind. He never promised a date of return; a clock, he said, would tell him when it was ready. I thought this an old man's affectation until I watched him work: he listened to a mechanism the way a doctor listens to a heartbeat, and he would not close a case until the ticking satisfied him.",pl:"Passage B",q:"The narrator initially regarded the grandfather's saying as",o:["a pose rather than a genuine belief","the only way to treat watches that had survived wars","a promise he made to every customer","a skill learned from doctors"],a:0,e:"The narrator thought it an old man's affectation, i.e. a mannerism adopted for effect rather than a real conviction, until watching him work changed that view.",tag:{area:"Reading Comprehension",sub:"RC Detail"}},
+/* Q07 */ {sec:"Reading Comprehension",td:40,p:"My grandfather repaired clocks in a shop no wider than a doorway. Customers brought him watches that had survived wars and weddings, and he treated each as if it were the only one of its kind. He never promised a date of return; a clock, he said, would tell him when it was ready. I thought this an old man's affectation until I watched him work: he listened to a mechanism the way a doctor listens to a heartbeat, and he would not close a case until the ticking satisfied him.",pl:"Passage B",q:"'Affectation' as used in the passage most nearly means",o:["deep affection for his craft","a professional obligation","behaviour put on for show","a symptom of illness"],a:2,e:"An affectation is artificial behaviour adopted to impress, which is what the narrator first suspected. The word has nothing to do with affection, the look-alike trap in option A.",tag:{area:"Reading Comprehension",sub:"RC Vocab in Context"}},
+/* Q08 */ {sec:"Reading Comprehension",td:40,p:"My grandfather repaired clocks in a shop no wider than a doorway. Customers brought him watches that had survived wars and weddings, and he treated each as if it were the only one of its kind. He never promised a date of return; a clock, he said, would tell him when it was ready. I thought this an old man's affectation until I watched him work: he listened to a mechanism the way a doctor listens to a heartbeat, and he would not close a case until the ticking satisfied him.",pl:"Passage B",q:"The comparison between the grandfather and a doctor chiefly emphasises his",o:["medical training","impatience with customers","fear of making mistakes","attentiveness and care"],a:3,e:"Listening to a mechanism the way a doctor listens to a heartbeat conveys concentrated, careful attention. The comparison is figurative; no actual medical training or fear is implied.",tag:{area:"Reading Comprehension",sub:"RC Interpretation"}},
+/* Q09 */ {sec:"Vocabulary",td:25,q:"The report was criticised for being ______, long on adjectives and short on evidence.",o:["rigorous","concise","verbose","lucid"],a:2,e:"verbose = using more words than needed, which matches long on adjectives. rigorous = thorough and exact; concise = brief and to the point; lucid = clearly expressed.",tag:{area:"Vocabulary",sub:"Word Choice"}},
+/* Q10 */ {sec:"Vocabulary",td:25,q:"A ______ inspection revealed cracks that the routine survey had missed.",o:["meticulous","cursory","hasty","superficial"],a:0,e:"meticulous = extremely careful about detail, which is why it caught what a routine check missed. cursory, hasty and superficial all describe the kind of look that misses cracks.",tag:{area:"Vocabulary",sub:"Word Choice"}},
+/* Q11 */ {sec:"Vocabulary",td:25,q:"The two leaders issued a joint statement to ______ rumours of a rift.",o:["fuel","corroborate","dispel","vindicate"],a:2,e:"dispel = drive away doubts or rumours, which is the purpose of a joint statement. fuel and corroborate would strengthen the rumours; vindicate = clear of blame.",tag:{area:"Vocabulary",sub:"Word Choice"}},
+/* Q12 */ {sec:"Vocabulary",td:25,q:"His ______ remarks at the funeral struck many mourners as heartless.",o:["solemn","eloquent","poignant","flippant"],a:3,e:"flippant = treating a serious matter with unfitting lightness, which is why the mourners found the remarks heartless. solemn, eloquent and poignant would all suit a funeral.",tag:{area:"Vocabulary",sub:"Word Choice"}},
+/* Q13 */ {sec:"Vocabulary",td:25,q:"The startup's growth was ______, doubling revenue every quarter for two years.",o:["stagnant","meteoric","erratic","marginal"],a:1,e:"meteoric = swift and spectacular, like a meteor's flight. Doubling every quarter is exactly that. stagnant = not growing; erratic = irregular; marginal = slight.",tag:{area:"Vocabulary",sub:"Word Choice"}},
+/* Q14 */ {sec:"Vocabulary",td:25,q:"She offered a ______ apology, clearly made under pressure and without feeling.",o:["heartfelt","profuse","perfunctory","gracious"],a:2,e:"perfunctory = done as a routine duty, without real effort or feeling. heartfelt and gracious contradict without feeling; profuse describes abundance, not emptiness.",tag:{area:"Vocabulary",sub:"Word Choice"}},
+/* Q15 */ {sec:"Vocabulary",td:25,q:"The drought ______ the region's existing water disputes.",o:["resolved","diluted","preempted","exacerbated"],a:3,e:"exacerbated = made an already bad situation worse, which is what a drought does to water disputes. resolved and diluted point the wrong way; preempted = forestalled.",tag:{area:"Vocabulary",sub:"Word Choice"}},
+/* Q16 */ {sec:"Vocabulary",td:25,q:"Their friendship, though tested by distance, proved remarkably ______.",o:["durable","fickle","transient","fragile"],a:0,e:"durable = able to withstand wear and pressure, which is what surviving the test of distance shows. fickle, transient and fragile all describe what the friendship proved not to be.",tag:{area:"Vocabulary",sub:"Word Choice"}},
+/* Q17 */ {sec:"Vocabulary",td:40,q:"One of the following sentences uses PRINCIPLE or PRINCIPAL incorrectly. Identify it.",o:["The school principal addressed the assembly.","The principle reason for the delay was fog.","He refused the bribe as a matter of principle.","Repayments cover interest first and principal later."],a:1,e:"B is wrong: the main or most important reason is the principal reason. Principle is a noun only, meaning a rule or moral standard, as in a matter of principle.",tag:{area:"Vocabulary",sub:"Confusable Words"}},
+/* Q18 */ {sec:"Vocabulary",td:40,q:"One of the following sentences uses STATIONARY or STATIONERY incorrectly. Identify it.",o:["The van remained stationary at the signal.","The shop sells imported stationery.","Prices have been stationary for a year.","She wrote the invitations on scented stationary."],a:3,e:"D is wrong: writing paper is stationery, with an e. Stationary, with an a, means not moving or not changing, which fits the van and the prices.",tag:{area:"Vocabulary",sub:"Confusable Words"}},
+/* Q19 */ {sec:"Vocabulary",td:40,q:"One of the following sentences uses ALLUSION or ILLUSION incorrectly. Identify it.",o:["The speech contained an allusion to the Mahabharata.","Mirrors create an illusion of space in small rooms.","He was under no allusion about the difficulty of the task.","Her poem makes a subtle allusion to Kabir."],a:2,e:"C is wrong: a false belief is an illusion; to be under no illusion is the fixed phrase. An allusion is an indirect reference, as in the speech and the poem.",tag:{area:"Vocabulary",sub:"Confusable Words"}},
+/* Q20 */ {sec:"Vocabulary",td:40,q:"One of the following sentences uses DISCREET or DISCRETE incorrectly. Identify it.",o:["The inquiry was handled in a discreet manner.","The course is divided into twelve discrete modules.","Be discreet about the surprise party.","The data fell into three discreet categories."],a:3,e:"D is wrong: separate and distinct categories are discrete. Discreet, with the e's together, means careful and tactful about secrets, as in the inquiry and the party.",tag:{area:"Vocabulary",sub:"Confusable Words"}},
+/* Q21 */ {sec:"Recall",td:25,q:"Historians argue that the printing press ______ an age of mass literacy.",o:["phased out","ushered in","wound up","rolled back"],a:1,e:"usher in = mark the beginning of a new period. Tested in Rapid Fire 08. phase out = withdraw gradually; wind up = bring to an end; roll back = reverse.",tag:{area:"Vocabulary",sub:"Cumulative Recall"}},
+/* Q22 */ {sec:"Recall",td:25,q:"Talks ended in ______ for the third time, with both unions refusing to budge.",o:["consensus","deadlock","euphoria","accord"],a:1,e:"deadlock = a standstill where neither side yields. Tested in Rapid Fire 09. consensus and accord mean agreement; euphoria = intense elation.",tag:{area:"Vocabulary",sub:"Cumulative Recall"}},
+/* Q23 */ {sec:"Recall",td:25,q:"Advertising has become so ______ that public spaces without it feel strange.",o:["pervasive","sporadic","covert","negligible"],a:0,e:"pervasive = spread through every part of something. Tested in Rapid Fire 08. sporadic = occasional; covert = hidden; negligible = too small to matter.",tag:{area:"Vocabulary",sub:"Cumulative Recall"}},
+/* Q24 */ {sec:"Recall",td:25,q:"Normally ______ about her plans, she surprised everyone by announcing the move publicly.",o:["reticent","candid","strident","effusive"],a:0,e:"reticent = reserved and unwilling to reveal much, which makes the public announcement a surprise. Tested in Rapid Fire 09. candid = frank; strident = harshly loud; effusive = gushing.",tag:{area:"Vocabulary",sub:"Cumulative Recall"}},
+/* Q25 */ {sec:"Sentence Exclusion",td:50,q:"Three of the four sentences form a coherent paragraph. Identify the sentence that does NOT belong.\n1. The library digitised its rarest manuscripts last year.\n2. Scholars can now study them without travelling to the city.\n3. Digitisation also protects the originals from handling.\n4. The city's new metro line has reduced travel time by half.",o:["Sentence 1","Sentence 2","Sentence 3","Sentence 4"],a:3,e:"Sentences 1, 2 and 3 develop one idea: digitisation and its benefits. Sentence 4 is about the metro; it shares the word city with sentence 2 but contributes nothing to the digitisation thread.",tag:{area:"Verbal Reasoning",sub:"Odd Sentence Out"}},
+/* Q26 */ {sec:"Sentence Exclusion",td:50,q:"Three of the four sentences form a coherent paragraph. Identify the sentence that does NOT belong.\n1. Honey never spoils if stored in a sealed container.\n2. Bees communicate the location of flowers through dances.\n3. Its low moisture and acidity make bacterial growth impossible.\n4. Archaeologists have even tasted edible honey found in ancient tombs.",o:["Sentence 1","Sentence 2","Sentence 3","Sentence 4"],a:1,e:"The paragraph is about honey's imperishability: the claim (1), the chemistry behind it (3), and the striking proof (4). Sentence 2 is about bee communication, a different topic that merely shares the theme of bees.",tag:{area:"Verbal Reasoning",sub:"Odd Sentence Out"}},
+/* Q27 */ {sec:"Sentence Exclusion",td:50,q:"Three of the four sentences form a coherent paragraph. Identify the sentence that does NOT belong.\n1. Electric buses are quieter than their diesel counterparts.\n2. Manufacturing lithium batteries raises serious mining concerns.\n3. They also eliminate exhaust fumes in crowded streets.\n4. Several cities report cleaner air along converted routes.",o:["Sentence 1","Sentence 2","Sentence 3","Sentence 4"],a:1,e:"Sentences 1, 3 and 4 build a single case for electric buses: quieter, cleaner, with results in cities. Sentence 2 raises an unconnected criticism with no contrast word linking it to the rest.",tag:{area:"Verbal Reasoning",sub:"Odd Sentence Out"}},
+/* Q28 */ {sec:"Sentence Exclusion",td:50,q:"Three of the four sentences form a coherent paragraph. Identify the sentence that does NOT belong.\n1. The festival began as a harvest thanksgiving centuries ago.\n2. Farmers offered the season's first grain to the village deity.\n3. Grain exports were banned during last year's shortage.\n4. Modern celebrations retain the ritual, though few recall its origin.",o:["Sentence 1","Sentence 2","Sentence 3","Sentence 4"],a:2,e:"Sentences 1, 2 and 4 trace the festival from origin to ritual to the present day. Sentence 3 is current-affairs material about grain policy, connected only by the word grain.",tag:{area:"Verbal Reasoning",sub:"Odd Sentence Out"}},
+/* Q29 */ {sec:"Sentence Exclusion",td:50,q:"Three of the four sentences form a coherent paragraph. Identify the sentence that does NOT belong.\n1. The hotel's restaurant serves regional cuisine.\n2. Regular exercise strengthens the heart muscle.\n3. It also lowers resting blood pressure over time.\n4. Doctors therefore prescribe walking before medication in mild cases.",o:["Sentence 1","Sentence 2","Sentence 3","Sentence 4"],a:0,e:"Sentences 2, 3 and 4 form a chain about exercise and the heart, ending in the doctors' 'therefore'. Sentence 1, about a hotel restaurant, belongs to a different paragraph altogether.",tag:{area:"Verbal Reasoning",sub:"Odd Sentence Out"}},
+/* Q30 */ {sec:"Sentence Exclusion",td:50,q:"Three of the four sentences form a coherent paragraph. Identify the sentence that does NOT belong.\n1. Old maps often reveal how coastlines have shifted.\n2. Cartographers once relied on sailors' rough sketches.\n3. Comparing these with satellite images shows erosion patterns.\n4. Satellite launches have become cheaper in the last decade.",o:["Sentence 1","Sentence 2","Sentence 3","Sentence 4"],a:3,e:"Sentences 1, 2 and 3 concern what old maps can teach us about coastlines. Sentence 4 is about the economics of launching satellites; it shares only the word satellite with sentence 3.",tag:{area:"Verbal Reasoning",sub:"Odd Sentence Out"}},
+/* Q31 */ {sec:"Word Roots",td:30,q:"The new bypass was designed with no thought for ______, who must now cross six lanes of traffic.",o:["pedestrians","spectators","commuters","cyclists"],a:0,e:"pedestrians = people travelling on foot, from Latin ped, foot. Crossing lanes on foot is precisely their problem; commuters and cyclists may use vehicles, and spectators merely watch.",tag:{area:"Vocabulary",sub:"Roots: ped/pod"}},
+/* Q32 */ {sec:"Word Roots",td:30,q:"The customs delay threatened the shipment, so the firm paid extra to ______ clearance.",o:["impede","expedite","retract","concede"],a:1,e:"expedite = speed up, literally to free the feet (ex + ped) from a snare. impede is its root-opposite, to shackle the feet; retract = withdraw; concede = admit or yield.",tag:{area:"Vocabulary",sub:"Roots: ped/pod"}},
+/* Q33 */ {sec:"Word Roots",td:30,q:"Heavy regulation, critics argue, will ______ innovation rather than guide it.",o:["propel","emancipate","surmount","impede"],a:3,e:"impede = hinder or obstruct, literally to chain the feet (in + ped). The contrast with guide demands obstruction. propel and emancipate would help innovation; surmount = overcome.",tag:{area:"Vocabulary",sub:"Roots: ped/pod"}},
+/* Q34 */ {sec:"Word Roots",td:30,q:"The champion mounted the ______ to collect her third consecutive gold.",o:["pedestal","pedigree","podium","plinth"],a:2,e:"podium = the platform a winner or speaker stands on, from Greek pod, foot. A pedestal or plinth supports a statue, not a champion; pedigree = line of descent.",tag:{area:"Vocabulary",sub:"Roots: ped/pod"}},
+/* Q35 */ {sec:"Word Roots",td:30,q:"The stallion's ______ could be traced through six generations of race winners.",o:["pedigree","pedagogy","pedicure","pedestal"],a:0,e:"pedigree = recorded line of ancestry, from French pied de grue, crane's foot, after the branching shape of family trees. pedagogy = the craft of teaching; a pedicure treats the feet directly.",tag:{area:"Vocabulary",sub:"Roots: ped/pod"}}
+];
+
+/* ==================== WHITELIST RUNTIME BLOCK (v5 §17) ==================== */
+var WL_PROMISE = fetch("whitelist.json",{cache:"no-store"})
+  .then(function(r){ return r.ok ? r.json() : null; })
+  .catch(function(){ return null; });
+
+function normalizePin(pin){
+  return String(pin).replace(/\D/g,"").replace(/^0+/,"");
+}
+
+async function isWhitelisted(pin,batch){
+  var WL;
+  try{ WL = await WL_PROMISE; }catch(e){ WL = null; }
+  if(!WL) return true; /* FAIL-OPEN: never lock out a regular on a network hiccup */
+  try{
+    var bypass = WL.bypass_batches || [];
+    if(bypass.indexOf(batch) !== -1) return true;
+    var norm = normalizePin(pin);
+    var admins = (WL.admin_pins || []).map(String);
+    if(admins.indexOf(norm) !== -1) return true;
+    if(Array.isArray(WL.pins)){
+      if(WL.pins.map(String).indexOf(norm) !== -1) return true;
+    } else if(WL.pins && typeof WL.pins === "object"){
+      if(Object.prototype.hasOwnProperty.call(WL.pins,norm)) return true;
+    }
+    return false;
+  }catch(e){ return true; }
+}
+
+/* ==================== SAFETY NET — retry queue ==================== */
+function snReadJSON(key,fallback){
+  try{ var v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; }catch(e){ return fallback; }
+}
+function snWriteJSON(key,val){
+  try{ localStorage.setItem(key,JSON.stringify(val)); }catch(e){}
+}
+function snUnqueue(id){
+  var p = snReadJSON("riim_pending",[]);
+  p = p.filter(function(x){ return x.id !== id; });
+  snWriteJSON("riim_pending",p);
+}
+function snSendWithQueue(opts){
+  var p = snReadJSON("riim_pending",[]);
+  var id = Date.now() + "-" + Math.random().toString(36).slice(2);
+  p.push({id:id, opts:{method:opts.method, mode:opts.mode, headers:opts.headers, body:opts.body}});
+  snWriteJSON("riim_pending",p);
+  return fetch(SCRIPT_URL,opts).then(function(r){ snUnqueue(id); return r; });
+}
+function snFlushQueue(){
+  var p = snReadJSON("riim_pending",[]);
+  p.forEach(function(item){
+    fetch(SCRIPT_URL,item.opts).then(function(){ snUnqueue(item.id); }).catch(function(){});
+  });
+}
+
+/* ==================== STATE ==================== */
+var studentName = "", studentPin = "", studentBatch = "";
+var currentQ = 0;
+var answers = new Array(35).fill(null);
+var questionTimes = new Array(35).fill(0);
+var qSecondsLeft = 0;
+var qStartTs = 0;              /* absolute ts (ms) when current question was first shown */
+var pendingResumeStartTs = null; /* set by snTryResume so renderQuestion can compute elapsed */
+var qInterval = null;
+var testOver = false;
+
+/* ==================== SAFETY NET — session autosave / resume ==================== */
+function snSaveSession(){
+  if(testOver) return;
+  snWriteJSON(SN_KEY,{
+    file: FILE_NAME,
+    testName: TEST_NAME,
+    name: studentName,
+    pin: studentPin,
+    batch: studentBatch,
+    currentQ: currentQ,
+    answers: answers,
+    questionTimes: questionTimes,
+    qStartTs: qStartTs,
+    ts: Date.now()
+  });
+}
+function snClearSession(){
+  try{ localStorage.removeItem(SN_KEY); }catch(e){}
+}
+function snTryResume(){
+  var s = snReadJSON(SN_KEY,null);
+  if(!s || !s.testName) return false;
+  var answered = (s.answers || []).filter(function(a){ return a !== null; }).length;
+  var ok = confirm("You have an unfinished attempt of " + TEST_NAME + " (" + answered + " question(s) answered). Resume where you left off?");
+  if(!ok){ snClearSession(); return false; }
+  studentName = s.name; studentPin = s.pin; studentBatch = s.batch;
+  currentQ = Math.min(s.currentQ || 0, 34);
+  answers = s.answers && s.answers.length === 35 ? s.answers : answers;
+  questionTimes = s.questionTimes && s.questionTimes.length === 35 ? s.questionTimes : questionTimes;
+  if(s.qStartTs && typeof s.qStartTs === "number") pendingResumeStartTs = s.qStartTs;
+  document.getElementById("loginScreen").style.display = "none";
+  document.getElementById("testScreen").style.display = "block";
+  buildPalette();
+  renderQuestion();
+  return true;
+}
+
+/* ==================== LOGIN (async — awaits whitelist) ==================== */
+function showLoginError(msg){
+  var el = document.getElementById("loginErr");
+  el.textContent = msg;
+  el.style.display = "block";
+}
+async function startTest(){
+  var nameEl = document.getElementById("stuName");
+  var pinEl  = document.getElementById("stuPin");
+  var batchEl= document.getElementById("stuBatch");
+  var name = nameEl.value.trim();
+  var pin  = pinEl.value.trim().toUpperCase();
+  var batch= batchEl.value;
+  pinEl.value = pin;
+  if(!name){ showLoginError("Please enter your full name."); return; }
+  if(!PIN_REGEX.test(pin)){ showLoginError("Invalid PIN. Format: STU########## or IMS##########."); return; }
+  if(!batch){ showLoginError("Please select your batch."); return; }
+  var allowed = await isWhitelisted(pin,batch);
+  if(!allowed){ showLoginError(BLOCK_MSG); return; }
+  studentName = name; studentPin = pin; studentBatch = batch;
+  document.getElementById("loginErr").style.display = "none";
+  document.getElementById("loginScreen").style.display = "none";
+  document.getElementById("testScreen").style.display = "block";
+  buildPalette();
+  snSaveSession();
+  renderQuestion();
+}
+document.getElementById("loginBtn").addEventListener("click", startTest);
+
+/* ==================== PALETTE (read-only) ==================== */
+function buildPalette(){
+  var pal = document.getElementById("palette");
+  pal.innerHTML = "";
+  for(var i = 0; i < 35; i++){
+    var c = document.createElement("div");
+    c.className = "pcell";
+    c.id = "pcell" + i;
+    c.textContent = i + 1;
+    pal.appendChild(c);
+  }
+}
+function paintPalette(){
+  for(var i = 0; i < 35; i++){
+    var c = document.getElementById("pcell" + i);
+    if(!c) continue;
+    c.className = "pcell";
+    if(i < currentQ){
+      c.classList.add(answers[i] !== null ? "done" : "skip");
+    }
+    if(i === currentQ) c.classList.add("cur");
+  }
+}
+
+/* ==================== RENDER + PER-QUESTION TIMER ==================== */
+function renderQuestion(){
+  var q = QUESTIONS[currentQ];
+  document.getElementById("qCounter").textContent = "Q " + (currentQ + 1) + " / 35";
+  document.getElementById("secBadge").textContent = q.sec + " \u00b7 " + q.tag.sub;
+  var pB = document.getElementById("passageBox");
+  if(q.p){
+    pB.style.display = "block";
+    document.getElementById("pLabel").textContent = q.pl || "Passage";
+    document.getElementById("pText").textContent = q.p;
+  } else { pB.style.display = "none"; }
+  document.getElementById("qText").textContent = q.q;
+  var box = document.getElementById("optBox");
+  box.innerHTML = "";
+  var letters = ["A","B","C","D"];
+  q.o.forEach(function(opt,idx){
+    var d = document.createElement("div");
+    d.className = "opt" + (answers[currentQ] === idx ? " sel" : "");
+    var l = document.createElement("div"); l.className = "oLetter"; l.textContent = letters[idx];
+    var t = document.createElement("div"); t.className = "oText"; t.textContent = opt;
+    d.appendChild(l); d.appendChild(t);
+    d.addEventListener("click", function(){ selectOption(idx); });
+    box.appendChild(d);
+  });
+  document.getElementById("nextBtn").textContent = (currentQ === 34) ? "Submit" : "Next \u2192";
+  paintPalette();
+
+  /* determine start ts + remaining seconds: on resume, restore original start ts */
+  if(pendingResumeStartTs){
+    qStartTs = pendingResumeStartTs;
+    pendingResumeStartTs = null;
+    var elapsed = Math.floor((Date.now() - qStartTs) / 1000);
+    qSecondsLeft = Math.max(0, q.td - elapsed);
+  } else {
+    qStartTs = Date.now();
+    qSecondsLeft = q.td;
+  }
+
+  /* timer bar reset sequence: transition none -> startPct -> reflow -> linear -> 0% */
+  var bar = document.getElementById("timerBar");
+  var startPct = (qSecondsLeft / q.td) * 100;
+  bar.style.transition = "none";
+  bar.style.width = startPct + "%";
+  bar.classList.remove("warn","danger");
+  if(qSecondsLeft / q.td <= 0.25) bar.classList.add("danger");
+  else if(qSecondsLeft / q.td <= 0.5) bar.classList.add("warn");
+  void bar.offsetWidth; /* force reflow */
+  bar.style.transition = "width " + qSecondsLeft + "s linear";
+  bar.style.width = "0%";
+
+  document.getElementById("qTimerText").textContent = qSecondsLeft + "s";
+  if(qInterval) clearInterval(qInterval);
+
+  /* persist the fresh qStartTs immediately so a refresh before any interaction is still tracked */
+  snSaveSession();
+
+  /* if resume computed 0s left, auto-advance on next tick */
+  if(qSecondsLeft <= 0){ setTimeout(advance, 50); return; }
+  qInterval = setInterval(qTick, 1000);
+}
+function qTick(){
+  qSecondsLeft--;
+  if(qSecondsLeft < 0) qSecondsLeft = 0;
+  document.getElementById("qTimerText").textContent = qSecondsLeft + "s";
+  var q = QUESTIONS[currentQ];
+  var bar = document.getElementById("timerBar");
+  var frac = qSecondsLeft / q.td;
+  if(frac <= 0.25){ bar.classList.remove("warn"); bar.classList.add("danger"); }
+  else if(frac <= 0.5){ bar.classList.add("warn"); }
+  if(qSecondsLeft <= 0){
+    advance();
+  }
+}
+function selectOption(idx){
+  if(testOver) return;
+  answers[currentQ] = idx;
+  var opts = document.querySelectorAll("#optBox .opt");
+  opts.forEach(function(el,i){ el.classList.toggle("sel", i === idx); });
+  snSaveSession();
+}
+function advance(){
+  if(testOver) return;
+  clearInterval(qInterval);
+  var q = QUESTIONS[currentQ];
+  questionTimes[currentQ] = q.td - qSecondsLeft;
+  if(currentQ === 34){ submitTest(); return; }
+  currentQ++;
+  snSaveSession();
+  renderQuestion();
+}
+document.getElementById("nextBtn").addEventListener("click", advance);
+
+/* ==================== MISTAKE BANK CAPTURE ==================== */
+function bankMistakes(){
+  try{
+    var bank = snReadJSON("riim_mistakes",[]);
+    var now = Date.now(), DAY = 86400000;
+    QUESTIONS.forEach(function(q,i){
+      var chosen = answers[i];
+      if(chosen === null || chosen === q.a) return;
+      var k = "RF10-Q" + (i + 1);
+      var existing = null;
+      for(var j = 0; j < bank.length; j++){ if(bank[j].k === k){ existing = bank[j]; break; } }
+      if(existing){
+        existing.box = 1; existing.due = now + DAY; existing.chosen = chosen;
+      } else {
+        bank.push({k:k, stem:(q.p ? q.p + "\n\n" + q.q : q.q), opts:q.o, ans:q.a, chosen:chosen, exp:q.e, sub:q.tag.sub, src:TEST_NAME, box:1, due:now + DAY});
+      }
+    });
+    if(bank.length > 300) bank = bank.slice(bank.length - 300);
+    snWriteJSON("riim_mistakes",bank);
+  }catch(e){}
+}
+
+/* ==================== SUBMIT ==================== */
+function fmtTime(totalSecs){
+  var m = Math.floor(totalSecs / 60);
+  var s = totalSecs % 60;
+  return m + ":" + (s < 10 ? "0" : "") + s;
+}
+function submitTest(){
+  if(testOver) return;
+  testOver = true;
+  clearInterval(qInterval);
+
+  var correctCount = 0, wrongCount = 0, skippedCount = 0;
+  var sectionErrors = {"Reading Comprehension":0,"Vocabulary":0,"Recall":0,"Sentence Exclusion":0,"Word Roots":0};
+  var topicErrorMap = {};
+  var wrongQuestions = [];
+  QUESTIONS.forEach(function(q,i){
+    var chosen = answers[i];
+    if(chosen === null){ skippedCount++; return; }
+    if(chosen === q.a){ correctCount++; }
+    else {
+      wrongCount++;
+      wrongQuestions.push(i + 1);
+      sectionErrors[q.sec] = (sectionErrors[q.sec] || 0) + 1;
+      topicErrorMap[q.tag.sub] = (topicErrorMap[q.tag.sub] || 0) + 1;
+    }
+  });
+  var finalScore = correctCount * 4 - wrongCount * 1;
+  var totalSecs = questionTimes.reduce(function(a,b){ return a + b; }, 0);
+  var timeTakenStr = fmtTime(totalSecs);
+
+  /* 16-field payload — explicit key:value, topicErrors is field 16 */
+  var payload = {
+    testName: TEST_NAME,
+    name: studentName,
+    pin: studentPin,
+    batch: studentBatch,
+    score: finalScore,
+    correct: correctCount,
+    wrong: wrongCount,
+    skipped: skippedCount,
+    maxMarks: MAX_MARKS,
+    timeTaken: timeTakenStr,
+    timestamp: new Date().toLocaleString("en-IN",{timeZone:"Asia/Kolkata"}),
+    sectionErrors: JSON.stringify(sectionErrors),
+    wrongQuestions: JSON.stringify(wrongQuestions),
+    studentAnswers: JSON.stringify(answers),
+    questionTimes: JSON.stringify(questionTimes),
+    topicErrors: JSON.stringify(topicErrorMap)
+  };
+
+  snSendWithQueue({
+    method: "POST",
+    mode: "no-cors",
+    headers: {"Content-Type": "text/plain"},
+    body: JSON.stringify(payload)
+  }).catch(function(){});
+
+  bankMistakes();
+
+  /* local results archive (last 200) */
+  try{
+    var res = snReadJSON("riim_results",[]);
+    res.push({testName:TEST_NAME, score:finalScore, correct:correctCount, wrong:wrongCount, skipped:skippedCount, maxMarks:MAX_MARKS, timeTaken:timeTakenStr, ts:Date.now()});
+    if(res.length > 200) res = res.slice(res.length - 200);
+    snWriteJSON("riim_results",res);
+  }catch(e){}
+
+  snClearSession();
+  showResults(finalScore, correctCount, wrongCount, skippedCount, timeTakenStr, sectionErrors);
+}
+
+/* ==================== RESULTS ==================== */
+function showResults(score, correct, wrong, skipped, timeStr, sectionErrors){
+  document.getElementById("testScreen").style.display = "none";
+  document.getElementById("resultsScreen").style.display = "block";
+  document.getElementById("resSub").textContent = studentName + " \u00b7 " + studentBatch + " \u00b7 " + new Date().toLocaleString("en-IN",{timeZone:"Asia/Kolkata"});
+  document.getElementById("stScore").textContent = score;
+  document.getElementById("stCorrect").textContent = correct;
+  document.getElementById("stWrong").textContent = wrong;
+  document.getElementById("stSkipped").textContent = skipped;
+  document.getElementById("stTime").textContent = timeStr;
+  var secParts = [];
+  for(var sk in sectionErrors){ if(sectionErrors.hasOwnProperty(sk)) secParts.push(sk + ": " + sectionErrors[sk]); }
+  document.getElementById("secErrBox").innerHTML =
+    "<b>Section errors</b> \u2014 " + (secParts.length ? secParts.join(" \u00b7 ") : "None");
+
+  var letters = ["A","B","C","D"];
+  var box = document.getElementById("reviewBox");
+  box.innerHTML = "";
+  QUESTIONS.forEach(function(q,i){
+    var chosen = answers[i];
+    var wrap = document.createElement("div");
+    wrap.className = "rq";
+    var head = document.createElement("div");
+    head.className = "rqHead";
+    var status = chosen === null ? "<span class='status sk'>SKIPPED</span>"
+               : chosen === q.a ? "<span class='status ok'>CORRECT</span>"
+               : "<span class='status no'>WRONG</span>";
+    head.innerHTML = "Q" + (i + 1) + " \u00b7 " + q.sec + " \u00b7 " + q.tag.sub + status;
+    wrap.appendChild(head);
+    if(q.p && (i === 0 || QUESTIONS[i-1].p !== q.p)){
+      var pv = document.createElement("div");
+      pv.className = "rqStem";
+      pv.style.fontStyle = "italic";
+      pv.style.opacity = ".85";
+      pv.textContent = (q.pl || "Passage") + ": " + q.p;
+      wrap.appendChild(pv);
+    }
+    var stem = document.createElement("div");
+    stem.className = "rqStem";
+    stem.textContent = q.q;
+    wrap.appendChild(stem);
+    q.o.forEach(function(opt,idx){
+      var r = document.createElement("div");
+      r.className = "ropt";
+      if(idx === q.a) r.classList.add("correct");
+      else if(idx === chosen) r.classList.add("wrong");
+      var l = document.createElement("div"); l.className = "oLetter"; l.textContent = letters[idx];
+      var t = document.createElement("div"); t.className = "oText"; t.textContent = opt;
+      r.appendChild(l); r.appendChild(t);
+      wrap.appendChild(r);
+    });
+    var exp = document.createElement("div");
+    exp.className = "exp";
+    exp.innerHTML = "<b>Explanation:</b> ";
+    exp.appendChild(document.createTextNode(q.e));
+    wrap.appendChild(exp);
+    box.appendChild(wrap);
+  });
+  window.scrollTo(0,0);
+}
+
+/* ==================== DOWNLOAD PDF ==================== */
+function downloadPDF(){
+  var jsPDFctor = (window.jspdf && window.jspdf.jsPDF) || window.jsPDF;
+  if(!jsPDFctor){ alert("PDF library failed to load. Please check your connection and try again."); return; }
+  var doc = new jsPDFctor({unit:"pt", format:"a4"});
+  var pageW = doc.internal.pageSize.getWidth();
+  var pageH = doc.internal.pageSize.getHeight();
+  var margin = 40;
+  var y = margin;
+  var letters = ["A","B","C","D"];
+
+  function newPageIfNeeded(h){
+    if(y + h > pageH - margin){ doc.addPage(); y = margin; }
+  }
+  function writeWrapped(text, x, maxW, size, style){
+    doc.setFont("helvetica", style || "normal");
+    doc.setFontSize(size);
+    var lines = doc.splitTextToSize(text, maxW);
+    for(var i = 0; i < lines.length; i++){
+      newPageIfNeeded(size + 4);
+      doc.text(lines[i], x, y);
+      y += size + 4;
+    }
+  }
+
+  /* header */
+  doc.setFont("helvetica","bold");
+  doc.setFontSize(16);
+  doc.setTextColor(13,27,42);
+  doc.text("ROAD TO IIM", margin, y); y += 20;
+  doc.setFontSize(13);
+  doc.setTextColor(201,168,76);
+  doc.text("Rapid Fire Test 10 \u2014 Vocab + RC + Reasoning", margin, y); y += 18;
+  doc.setFont("helvetica","normal");
+  doc.setFontSize(10);
+  doc.setTextColor(60,60,60);
+  var dateStr = new Date().toLocaleString("en-IN",{timeZone:"Asia/Kolkata"});
+  doc.text(studentName + " \u00b7 " + studentBatch + " \u00b7 " + dateStr, margin, y); y += 16;
+  doc.setDrawColor(201,168,76);
+  doc.line(margin, y, pageW - margin, y); y += 16;
+
+  /* summary stats */
+  doc.setTextColor(0,0,0);
+  doc.setFont("helvetica","bold"); doc.setFontSize(11);
+  doc.text("Summary", margin, y); y += 14;
+  doc.setFont("helvetica","normal"); doc.setFontSize(10);
+  var summary = "Score: " + document.getElementById("stScore").textContent + " / 140   \u00b7   " +
+                "Correct: " + document.getElementById("stCorrect").textContent + "   \u00b7   " +
+                "Wrong: " + document.getElementById("stWrong").textContent + "   \u00b7   " +
+                "Skipped: " + document.getElementById("stSkipped").textContent + "   \u00b7   " +
+                "Time: " + document.getElementById("stTime").textContent;
+  writeWrapped(summary, margin, pageW - 2*margin, 10);
+  y += 4;
+  var secErrText = (document.getElementById("secErrBox").textContent || "").replace(/\s+/g," ").trim();
+  if(secErrText){ writeWrapped(secErrText, margin, pageW - 2*margin, 10); y += 6; }
+
+  /* question review */
+  doc.setDrawColor(200,200,200);
+  doc.line(margin, y, pageW - margin, y); y += 14;
+  doc.setFont("helvetica","bold"); doc.setFontSize(12);
+  doc.setTextColor(13,27,42);
+  doc.text("Question Review", margin, y); y += 16;
+
+  QUESTIONS.forEach(function(q,i){
+    var chosen = answers[i];
+    var statusLabel = chosen === null ? "SKIPPED" : (chosen === q.a ? "CORRECT" : "WRONG");
+    newPageIfNeeded(60);
+    doc.setFont("helvetica","bold"); doc.setFontSize(10);
+    doc.setTextColor(13,27,42);
+    doc.text("Q" + (i+1) + "  \u00b7  " + q.sec + " \u00b7 " + q.tag.sub + "   [" + statusLabel + "]", margin, y);
+    y += 12;
+    if(q.p && (i === 0 || QUESTIONS[i-1].p !== q.p)){
+      doc.setTextColor(90,90,90);
+      writeWrapped((q.pl || "Passage") + ": " + q.p, margin, pageW - 2*margin, 8, "italic");
+      y += 2;
+    }
+    doc.setTextColor(0,0,0);
+    writeWrapped(q.q, margin, pageW - 2*margin, 10, "normal");
+    y += 2;
+    q.o.forEach(function(opt,idx){
+      var prefix = letters[idx] + ")  ";
+      var marker = "";
+      if(idx === q.a) marker = "  \u2713 correct";
+      else if(idx === chosen) marker = "  \u2717 your choice";
+      if(idx === q.a) doc.setTextColor(30,120,60);
+      else if(idx === chosen) doc.setTextColor(180,50,50);
+      else doc.setTextColor(60,60,60);
+      writeWrapped(prefix + opt + marker, margin + 12, pageW - 2*margin - 12, 10, "normal");
+    });
+    doc.setTextColor(0,0,0);
+    y += 2;
+    doc.setFont("helvetica","bold"); doc.setFontSize(9);
+    newPageIfNeeded(14);
+    doc.text("Explanation:", margin, y); y += 11;
+    doc.setFont("helvetica","normal"); doc.setFontSize(9);
+    writeWrapped(q.e, margin, pageW - 2*margin, 9, "normal");
+    y += 10;
+    doc.setDrawColor(230,230,230);
+    newPageIfNeeded(6);
+    doc.line(margin, y, pageW - margin, y);
+    y += 12;
+  });
+
+  /* filename */
+  var safeName = (studentName || "student").replace(/[^A-Za-z0-9]+/g,"_").slice(0,40);
+  var d = new Date();
+  var dateTag = d.getFullYear() + String(d.getMonth()+1).padStart(2,"0") + String(d.getDate()).padStart(2,"0");
+  var fname = "RapidFire10_" + safeName + "_" + dateTag + ".pdf";
+  doc.save(fname);
+}
+
+/* ==================== PAGE LOAD ==================== */
+snFlushQueue();
+snTryResume();
+</script>
+</body>
+</html>
