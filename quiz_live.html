@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Live — Road to IIM</title>
+<style>
+:root{
+  --navy:#0d1526; --navy2:#141f36; --navy3:#1b2a4a;
+  --gold:#d4af37; --gold2:#f0d47a;
+  --ink:#eef2fa; --dim:#8fa0c0;
+  --green:#3ddc84; --red:#ff5c6c;
+  --optA:#e94f64; --optB:#3b82f6; --optC:#f0b429; --optD:#3ddc84;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--navy);color:var(--ink);min-height:100vh}
+.wrap{max-width:1100px;margin:0 auto;padding:24px 20px 60px}
+header{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}
+.brand{font-size:20px;font-weight:700;letter-spacing:.5px}
+.brand span{color:var(--gold)}
+.tag{font-size:12px;color:var(--dim);letter-spacing:2px;text-transform:uppercase}
+.card{background:var(--navy2);border:1px solid #24335a;border-radius:16px;padding:26px}
+h1{font-size:26px;margin-bottom:6px}
+h2{font-size:20px;margin-bottom:14px}
+.sub{color:var(--dim);font-size:14px;margin-bottom:18px}
+textarea{width:100%;min-height:220px;background:#0a111f;color:var(--ink);border:1px solid #2a3a63;border-radius:10px;padding:14px;font-family:Consolas,Menlo,monospace;font-size:13px;resize:vertical}
+input[type=text],input[type=number]{background:#0a111f;color:var(--ink);border:1px solid #2a3a63;border-radius:8px;padding:10px 12px;font-size:15px;width:100%}
+.btn{display:inline-block;background:var(--gold);color:#1a1a1a;font-weight:700;border:none;border-radius:10px;padding:13px 26px;font-size:16px;cursor:pointer;transition:transform .12s, box-shadow .12s}
+.btn:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(212,175,55,.35)}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
+.btn.ghost{background:transparent;color:var(--gold);border:1.5px solid var(--gold)}
+.btn.small{padding:9px 16px;font-size:14px}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.mt{margin-top:16px}.mt2{margin-top:26px}
+.err{color:var(--red);font-size:14px;margin-top:10px;min-height:18px}
+.hide{display:none!important}
+
+/* Builder */
+.bq{background:#0a111f;border:1px solid #2a3a63;border-radius:12px;padding:16px;margin-bottom:14px}
+.bq .qhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.bq .qnum{color:var(--gold);font-weight:700}
+.bq .del{color:var(--red);background:none;border:none;cursor:pointer;font-size:13px}
+.bq .opts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.bq .oline{display:flex;gap:8px;align-items:center}
+.bq .oline input[type=radio]{accent-color:var(--gold);width:18px;height:18px;flex:none}
+.bq .trow{display:flex;gap:10px;align-items:center;margin-top:10px;font-size:13px;color:var(--dim)}
+.bq .trow input{width:80px}
+
+/* Lobby */
+.codebox{text-align:center;padding:30px 0 10px}
+.codebox .lbl{letter-spacing:3px;color:var(--dim);text-transform:uppercase;font-size:13px}
+.codebox .code{font-size:96px;font-weight:800;color:var(--gold);letter-spacing:14px;line-height:1.1;text-shadow:0 0 40px rgba(212,175,55,.35)}
+.joinurl{text-align:center;font-size:18px;color:var(--ink);margin-top:6px}
+.joinurl b{color:var(--gold2)}
+.pcount{text-align:center;margin-top:22px;font-size:16px;color:var(--dim)}
+.pcount b{color:var(--ink);font-size:22px}
+.names{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:18px}
+.names .n{background:var(--navy3);border:1px solid #2c3f6d;border-radius:20px;padding:7px 16px;font-size:15px;animation:pop .3s}
+@keyframes pop{from{transform:scale(.6);opacity:0}to{transform:scale(1);opacity:1}}
+.pinnote{text-align:center;margin-top:24px;font-size:13px;color:var(--dim)}
+.pinnote b{color:var(--gold)}
+
+/* Question */
+.qtop{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;color:var(--dim);font-size:14px}
+.qtext{font-size:30px;font-weight:700;line-height:1.35;margin-bottom:22px}
+.timerbar{height:12px;background:#0a111f;border-radius:8px;overflow:hidden;margin-bottom:6px}
+.timerbar .fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold2));width:100%;transition:width .25s linear}
+.timerrow{display:flex;justify-content:space-between;font-size:14px;color:var(--dim);margin-bottom:20px}
+.timerrow .secs{color:var(--gold);font-weight:700;font-size:18px}
+.optgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.opt{border-radius:12px;padding:20px 18px;font-size:20px;font-weight:600;color:#fff;display:flex;align-items:center;gap:14px;min-height:76px;position:relative;overflow:hidden}
+.opt .letter{width:38px;height:38px;border-radius:9px;background:rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;font-weight:800;flex:none}
+.opt.oA{background:var(--optA)}.opt.oB{background:var(--optB)}.opt.oC{background:var(--optC);color:#1a1a1a}.opt.oC .letter{color:#fff}.opt.oD{background:var(--optD);color:#0d2518}.opt.oD .letter{color:#fff}
+.opt.dimmed{opacity:.22;filter:grayscale(.6)}
+.opt .tick{position:absolute;right:16px;font-size:26px}
+.opt .cnt{position:absolute;right:16px;bottom:8px;font-size:14px;font-weight:700;background:rgba(0,0,0,.3);color:#fff;border-radius:8px;padding:2px 10px}
+.distbar{position:absolute;left:0;bottom:0;height:6px;background:rgba(255,255,255,.85)}
+
+/* Leaderboard */
+.podium{display:flex;justify-content:center;align-items:flex-end;gap:18px;margin:30px 0 34px}
+.pcol{text-align:center;width:150px}
+.pcol .pname{font-weight:700;margin-bottom:8px;font-size:16px;word-break:break-word}
+.pcol .pscore{color:var(--gold2);font-size:14px;margin-bottom:8px}
+.pcol .bar{border-radius:10px 10px 0 0;display:flex;align-items:flex-start;justify-content:center;padding-top:10px;font-size:30px;font-weight:800;color:#1a1a1a}
+.pcol.p1 .bar{height:150px;background:linear-gradient(180deg,var(--gold2),var(--gold))}
+.pcol.p2 .bar{height:110px;background:linear-gradient(180deg,#dfe6f2,#aab6cc);}
+.pcol.p3 .bar{height:85px;background:linear-gradient(180deg,#e8b98a,#c98d57)}
+.lb{max-width:560px;margin:0 auto}
+.lb .lrow{display:flex;justify-content:space-between;background:var(--navy3);border:1px solid #2c3f6d;border-radius:10px;padding:12px 18px;margin-bottom:8px;font-size:16px}
+.lb .lrow .rk{color:var(--gold);font-weight:700;width:34px}
+.lb .lrow .nm{flex:1}
+.lb .lrow .sc{font-weight:700}
+.center{text-align:center}
+.controls{position:sticky;bottom:0;background:linear-gradient(180deg,transparent,var(--navy) 30%);padding:18px 0 6px;margin-top:26px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+footer{text-align:center;color:#41527a;font-size:12px;margin-top:34px}
+@media(max-width:640px){.optgrid{grid-template-columns:1fr}.codebox .code{font-size:64px;letter-spacing:8px}.qtext{font-size:22px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div>
+    <div class="brand">ROAD TO <span>IIM</span></div>
+    <div class="tag">Quiz Live · Presenter</div>
+  </div>
+  <div id="sessInfo" class="tag hide">Code <b id="hCode" style="color:var(--gold);font-size:16px;letter-spacing:2px"></b></div>
+</header>
+
+<!-- ============ SETUP ============ -->
+<div id="scrSetup" class="card">
+  <h1>Start a live quiz</h1>
+  <p class="sub">Students join on their phones with a 4-digit code. Kahoot-style scoring: faster correct answers earn more points (1000 → 500).</p>
+
+  <div class="row">
+    <button class="btn small ghost" onclick="showTab('paste')">Paste quiz JSON</button>
+    <button class="btn small ghost" onclick="showTab('build')">Quick builder</button>
+    <button class="btn small ghost" onclick="loadSample()">Load sample quiz</button>
+  </div>
+
+  <div id="tabPaste" class="mt">
+    <textarea id="quizJson" placeholder='{"title":"Vocab Rapid Fire","questions":[{"q":"Pick the synonym of LACONIC","options":["Verbose","Terse","Jovial","Morose"],"ans":1,"time":20}]}'></textarea>
+  </div>
+
+  <div id="tabBuild" class="mt hide">
+    <input type="text" id="bTitle" placeholder="Quiz title (e.g., Vocab Rapid Fire — A2804)">
+    <div id="bList" class="mt"></div>
+    <button class="btn small ghost" onclick="addBQ()">+ Add question</button>
+  </div>
+
+  <div class="mt2 row">
+    <button class="btn" id="btnCreate" onclick="createSession()">Create session →</button>
+  </div>
+  <div class="err" id="setupErr"></div>
+</div>
+
+<!-- ============ LOBBY ============ -->
+<div id="scrLobby" class="card hide">
+  <div class="codebox">
+    <div class="lbl">Join with code</div>
+    <div class="code" id="bigCode">0000</div>
+    <div class="joinurl">Go to <b id="joinUrl">…/quiz_join.html</b></div>
+  </div>
+  <div class="pcount"><b id="pCount">0</b> players joined</div>
+  <div class="names" id="nameCloud"></div>
+  <div class="pinnote">Host PIN (keep private, needed to control quiz): <b id="hPin"></b></div>
+  <div class="controls">
+    <button class="btn" onclick="ctrl('start')">Start quiz ▶</button>
+  </div>
+</div>
+
+<!-- ============ QUESTION ============ -->
+<div id="scrQ" class="card hide">
+  <div class="qtop">
+    <span id="qNum">Question 1 / 10</span>
+    <span id="qAnswered">0 answered</span>
+  </div>
+  <div class="qtext" id="qText"></div>
+  <div class="timerbar"><div class="fill" id="tFill"></div></div>
+  <div class="timerrow"><span>Time remaining</span><span class="secs" id="tSecs">20s</span></div>
+  <div class="optgrid" id="optGrid"></div>
+  <div class="controls">
+    <button class="btn" onclick="ctrl('reveal')">Reveal answer</button>
+  </div>
+</div>
+
+<!-- ============ REVEAL ============ -->
+<div id="scrReveal" class="card hide">
+  <div class="qtop"><span id="rNum"></span><span>Answer reveal</span></div>
+  <div class="qtext" id="rText"></div>
+  <div class="optgrid" id="rGrid"></div>
+  <h2 class="mt2 center" style="color:var(--gold)">Top 10</h2>
+  <div class="lb" id="rBoard"></div>
+  <div class="controls">
+    <button class="btn" id="btnNext" onclick="ctrl('next')">Next question →</button>
+    <button class="btn ghost" onclick="ctrl('end')">End quiz</button>
+  </div>
+</div>
+
+<!-- ============ END ============ -->
+<div id="scrEnd" class="card hide">
+  <h1 class="center" style="color:var(--gold)">🏆 Final results</h1>
+  <div class="podium" id="podium"></div>
+  <div class="lb" id="finalBoard"></div>
+  <div class="controls">
+    <button class="btn ghost" onclick="location.reload()">New quiz</button>
+  </div>
+</div>
+
+<footer>Road to IIM · Quiz Live v1 · Sahil Sir</footer>
+</div>
+
+<script>
+/* ================= CONFIG ================= */
+var API_URL = "PASTE_YOUR_APPS_SCRIPT_EXEC_URL_HERE";
+var JOIN_PAGE = location.href.replace(/quiz_live\.html.*$/,"quiz_join.html");
+
+/* ================= STATE ================= */
+var S = { code:null, pin:null, nQ:0, phase:"setup", qIndex:-1, timerId:null, pollId:null, lastRevealQ:-1 };
+
+/* ================= API ================= */
+function api(payload){
+  return fetch(API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(payload)})
+    .then(function(r){return r.json();});
+}
+
+/* ================= SETUP ================= */
+function showTab(t){
+  document.getElementById("tabPaste").classList.toggle("hide", t!=="paste");
+  document.getElementById("tabBuild").classList.toggle("hide", t!=="build");
+}
+var SAMPLE = {
+  title:"Vocab Rapid Fire — Demo",
+  questions:[
+    {q:"Pick the closest synonym of LACONIC", options:["Verbose","Terse","Jovial","Morose"], ans:1, time:15},
+    {q:"An EPHEMERAL trend is one that is…", options:["Long-lasting","Controversial","Short-lived","Widespread"], ans:2, time:15},
+    {q:"The prefix 'circum-' means", options:["Around","Under","Against","Beyond"], ans:0, time:12},
+    {q:"Choose the correctly spelt word", options:["Occurence","Occurrence","Ocurrence","Occurrance"], ans:1, time:12},
+    {q:"'To throw in the towel' means to…", options:["Celebrate","Clean up","Give up","Start fresh"], ans:2, time:12}
+  ]
+};
+function loadSample(){
+  showTab('paste');
+  document.getElementById("quizJson").value = JSON.stringify(SAMPLE,null,2);
+}
+
+/* quick builder */
+var bqCount = 0;
+function addBQ(){
+  bqCount++;
+  var d = document.createElement("div");
+  d.className = "bq";
+  d.innerHTML =
+    '<div class="qhead"><span class="qnum">Q'+bqCount+'</span><button class="del" onclick="this.closest(\'.bq\').remove()">remove</button></div>'+
+    '<input type="text" class="bqq" placeholder="Question text">'+
+    '<div class="opts">'+
+      [0,1,2,3].map(function(i){
+        return '<div class="oline"><input type="radio" name="ans'+bqCount+'" value="'+i+'" '+(i===0?'checked':'')+' title="correct"><input type="text" class="bqo" placeholder="Option '+"ABCD"[i]+'"></div>';
+      }).join("")+
+    '</div>'+
+    '<div class="trow">Time (sec) <input type="number" class="bqt" value="20" min="5" max="120"> <span>· radio = correct option</span></div>';
+  document.getElementById("bList").appendChild(d);
+}
+function builderToJson(){
+  var qs = [];
+  document.querySelectorAll("#bList .bq").forEach(function(b){
+    var q = b.querySelector(".bqq").value.trim();
+    var opts = Array.prototype.map.call(b.querySelectorAll(".bqo"),function(o){return o.value.trim();});
+    var ans = Number((b.querySelector("input[type=radio]:checked")||{}).value||0);
+    var time = Number(b.querySelector(".bqt").value)||20;
+    if(q && opts.filter(Boolean).length>=2) qs.push({q:q,options:opts,ans:ans,time:time});
+  });
+  return { title: document.getElementById("bTitle").value.trim()||"Quiz Live", questions: qs };
+}
+
+function createSession(){
+  var errEl = document.getElementById("setupErr");
+  errEl.textContent = "";
+  if(API_URL.indexOf("PASTE_")===0){ errEl.textContent="Set API_URL first (deploy quiz_live_backend.gs, paste the /exec URL into this file)."; return; }
+  var quiz;
+  if(!document.getElementById("tabBuild").classList.contains("hide")){
+    quiz = builderToJson();
+  } else {
+    try { quiz = JSON.parse(document.getElementById("quizJson").value); }
+    catch(e){ errEl.textContent = "Invalid JSON: "+e.message; return; }
+  }
+  if(!quiz.questions || !quiz.questions.length){ errEl.textContent="No questions found."; return; }
+  var btn = document.getElementById("btnCreate");
+  btn.disabled = true; btn.textContent = "Creating…";
+  api({action:"create", quiz:quiz}).then(function(res){
+    btn.disabled = false; btn.textContent = "Create session →";
+    if(!res.ok){ errEl.textContent = res.error||"Failed"; return; }
+    S.code = res.code; S.pin = res.pin; S.nQ = res.nQ;
+    document.getElementById("bigCode").textContent = S.code;
+    document.getElementById("hCode").textContent = S.code;
+    document.getElementById("hPin").textContent = S.pin;
+    document.getElementById("joinUrl").textContent = JOIN_PAGE.replace(/^https?:\/\//,"");
+    document.getElementById("sessInfo").classList.remove("hide");
+    show("scrLobby");
+    startPolling();
+  }).catch(function(e){
+    btn.disabled=false; btn.textContent="Create session →";
+    errEl.textContent = "Network error: "+e.message;
+  });
+}
+
+/* ================= SCREENS ================= */
+function show(id){
+  ["scrSetup","scrLobby","scrQ","scrReveal","scrEnd"].forEach(function(s){
+    document.getElementById(s).classList.toggle("hide", s!==id);
+  });
+}
+
+/* ================= CONTROL ================= */
+function ctrl(cmd){
+  api({action:"control", code:S.code, pin:S.pin, cmd:cmd}).then(function(res){
+    if(res.ok) pollNow();
+  });
+}
+
+/* ================= POLLING ================= */
+function startPolling(){
+  if(S.pollId) clearInterval(S.pollId);
+  S.pollId = setInterval(pollNow, 2000);
+  pollNow();
+}
+function pollNow(){
+  api({action:"poll", code:S.code, role:"host"}).then(render).catch(function(){});
+}
+
+var localDeadline = 0;
+function render(st){
+  if(!st.ok) return;
+  S.phase = st.phase; S.qIndex = st.qIndex;
+  if(st.phase==="lobby"){
+    show("scrLobby");
+    document.getElementById("pCount").textContent = st.nPlayers;
+    var cloud = document.getElementById("nameCloud");
+    var have = {};
+    Array.prototype.forEach.call(cloud.children,function(c){have[c.textContent]=1;});
+    (st.names||[]).forEach(function(n){
+      if(!have[n]){ var d=document.createElement("div"); d.className="n"; d.textContent=n; cloud.appendChild(d); }
+    });
+  }
+  else if(st.phase==="question" && st.q){
+    show("scrQ");
+    document.getElementById("qNum").textContent = "Question "+(st.qIndex+1)+" / "+st.nQ;
+    document.getElementById("qAnswered").textContent = (st.answered||0)+" / "+st.nPlayers+" answered";
+    document.getElementById("qText").textContent = st.q.q;
+    var g = document.getElementById("optGrid");
+    if(g.dataset.qi !== String(st.qIndex)){
+      g.dataset.qi = String(st.qIndex);
+      g.innerHTML = st.q.options.map(function(o,i){
+        return '<div class="opt o'+"ABCD"[i]+'"><span class="letter">'+"ABCD"[i]+'</span>'+esc(o)+'</div>';
+      }).join("");
+      localDeadline = Date.now() + st.remainingMs;
+      startTimer(st.q.time);
+    } else {
+      localDeadline = Date.now() + st.remainingMs; // resync
+    }
+  }
+  else if(st.phase==="reveal" && st.q){
+    show("scrReveal");
+    document.getElementById("rNum").textContent = "Question "+(st.qIndex+1)+" / "+st.nQ;
+    document.getElementById("rText").textContent = st.q.q;
+    var total = (st.dist||[]).reduce(function(a,b){return a+b;},0)||1;
+    document.getElementById("rGrid").innerHTML = st.q.options.map(function(o,i){
+      var cnt = (st.dist||[])[i]||0;
+      var pct = Math.round(100*cnt/total);
+      var cls = "opt o"+"ABCD"[i] + (i===st.ans?"":" dimmed");
+      return '<div class="'+cls+'"><span class="letter">'+"ABCD"[i]+'</span>'+esc(o)+
+        (i===st.ans?'<span class="tick">✓</span>':'')+
+        '<span class="cnt">'+cnt+'</span><div class="distbar" style="width:'+pct+'%"></div></div>';
+    }).join("");
+    document.getElementById("rBoard").innerHTML = board(st.top||[]);
+    document.getElementById("btnNext").textContent = (st.qIndex+1>=st.nQ) ? "Show final results →" : "Next question →";
+    stopTimer();
+  }
+  else if(st.phase==="end"){
+    show("scrEnd");
+    var top = st.top||[];
+    var pod = document.getElementById("podium");
+    pod.innerHTML = "";
+    var order = [1,0,2]; // 2nd, 1st, 3rd
+    order.forEach(function(idx){
+      if(!top[idx]) return;
+      var d = document.createElement("div");
+      d.className = "pcol p"+(idx+1);
+      d.innerHTML = '<div class="pname">'+esc(top[idx].name)+'</div><div class="pscore">'+top[idx].score+' pts</div><div class="bar">'+(idx+1)+'</div>';
+      pod.appendChild(d);
+    });
+    document.getElementById("finalBoard").innerHTML = board(top.slice(3), 4);
+    stopTimer();
+    if(S.pollId){ clearInterval(S.pollId); S.pollId=null; }
+  }
+}
+function board(arr, startRank){
+  var r0 = startRank||1;
+  return arr.map(function(p,i){
+    return '<div class="lrow"><span class="rk">#'+(r0+i)+'</span><span class="nm">'+esc(p.name)+'</span><span class="sc">'+p.score+'</span></div>';
+  }).join("");
+}
+
+/* ================= TIMER ================= */
+function startTimer(totalSec){
+  stopTimer();
+  S.timerId = setInterval(function(){
+    var rem = Math.max(localDeadline - Date.now(), 0);
+    var pct = Math.min(100, 100*rem/(totalSec*1000));
+    document.getElementById("tFill").style.width = pct+"%";
+    document.getElementById("tSecs").textContent = Math.ceil(rem/1000)+"s";
+    if(rem<=0){ document.getElementById("tSecs").textContent = "Time up!"; }
+  }, 200);
+}
+function stopTimer(){ if(S.timerId){ clearInterval(S.timerId); S.timerId=null; } }
+
+function esc(s){ return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];}); }
+
+/* start with one builder question ready */
+addBQ();
+</script>
+</body>
+</html>
