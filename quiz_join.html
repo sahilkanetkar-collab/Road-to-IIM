@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Join Quiz — Road to IIM</title>
+<style>
+:root{
+  --navy:#0d1526; --navy2:#141f36; --navy3:#1b2a4a;
+  --gold:#d4af37; --gold2:#f0d47a;
+  --ink:#eef2fa; --dim:#8fa0c0;
+  --green:#3ddc84; --red:#ff5c6c;
+  --optA:#e94f64; --optB:#3b82f6; --optC:#f0b429; --optD:#3ddc84;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--navy);color:var(--ink);min-height:100vh;min-height:100dvh}
+.wrap{max-width:480px;margin:0 auto;padding:22px 18px 40px;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column}
+.brand{text-align:center;font-weight:700;letter-spacing:.5px;margin-bottom:4px}
+.brand span{color:var(--gold)}
+.tag{text-align:center;font-size:11px;color:var(--dim);letter-spacing:2px;text-transform:uppercase;margin-bottom:20px}
+.card{background:var(--navy2);border:1px solid #24335a;border-radius:16px;padding:24px;flex:1;display:flex;flex-direction:column}
+h1{font-size:22px;text-align:center;margin-bottom:18px}
+input{background:#0a111f;color:var(--ink);border:1px solid #2a3a63;border-radius:10px;padding:14px;font-size:17px;width:100%;margin-bottom:12px;text-align:center}
+#inCode{letter-spacing:8px;font-size:24px;font-weight:700}
+.btn{background:var(--gold);color:#1a1a1a;font-weight:700;border:none;border-radius:12px;padding:15px;font-size:17px;cursor:pointer;width:100%}
+.btn:disabled{opacity:.4}
+.err{color:var(--red);font-size:14px;text-align:center;margin-top:12px;min-height:18px}
+.hide{display:none!important}
+.center{text-align:center}
+.dim{color:var(--dim)}
+.big{font-size:44px;font-weight:800;color:var(--gold)}
+.wait{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px}
+.pulse{width:60px;height:60px;border-radius:50%;border:3px solid var(--gold);animation:pl 1.4s ease-out infinite}
+@keyframes pl{0%{transform:scale(.7);opacity:1}100%{transform:scale(1.5);opacity:0}}
+
+.qhead{font-size:13px;color:var(--dim);display:flex;justify-content:space-between;margin-bottom:10px}
+.qtext{font-size:19px;font-weight:600;line-height:1.4;margin-bottom:16px}
+.timer{height:8px;background:#0a111f;border-radius:6px;overflow:hidden;margin-bottom:18px}
+.timer .fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold2));width:100%;transition:width .25s linear}
+.abtns{display:grid;grid-template-columns:1fr 1fr;gap:12px;flex:1;align-content:start}
+.ab{border:none;border-radius:14px;min-height:110px;font-size:22px;font-weight:800;color:#fff;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:10px}
+.ab small{font-size:13px;font-weight:600;opacity:.9;line-height:1.25;word-break:break-word}
+.ab.oA{background:var(--optA)}.ab.oB{background:var(--optB)}.ab.oC{background:var(--optC);color:#1a1a1a}.ab.oD{background:var(--optD);color:#0d2518}
+.ab:active{transform:scale(.97)}
+.ab.picked{outline:4px solid var(--gold2);outline-offset:2px}
+.ab.faded{opacity:.25}
+
+.result{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center}
+.ring{width:110px;height:110px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:50px}
+.ring.good{background:rgba(61,220,132,.12);border:3px solid var(--green)}
+.ring.bad{background:rgba(255,92,108,.12);border:3px solid var(--red)}
+.pts{font-size:30px;font-weight:800;color:var(--gold)}
+.rank{font-size:15px;color:var(--dim)}
+.rank b{color:var(--ink)}
+.myscore{position:sticky;bottom:0;margin-top:14px;text-align:center;font-size:14px;color:var(--dim)}
+.myscore b{color:var(--gold);font-size:17px}
+footer{text-align:center;color:#41527a;font-size:11px;margin-top:16px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand">ROAD TO <span>IIM</span></div>
+  <div class="tag">Quiz Live</div>
+
+  <div class="card">
+    <!-- JOIN -->
+    <div id="scrJoin">
+      <h1>Join the quiz</h1>
+      <input type="tel" id="inCode" maxlength="4" placeholder="CODE" inputmode="numeric" autocomplete="off">
+      <input type="text" id="inName" maxlength="30" placeholder="Your name" autocomplete="off">
+      <button class="btn" id="btnJoin" onclick="join()">Join →</button>
+      <div class="err" id="joinErr"></div>
+    </div>
+
+    <!-- WAIT -->
+    <div id="scrWait" class="wait hide">
+      <div class="pulse"></div>
+      <div class="big" style="font-size:24px" id="wTitle">Waiting…</div>
+      <div class="dim" id="wSub">You're in! Watch the big screen.</div>
+    </div>
+
+    <!-- QUESTION -->
+    <div id="scrQ" class="hide" style="flex:1;display:flex;flex-direction:column">
+      <div class="qhead"><span id="qNum"></span><span id="qTime"></span></div>
+      <div class="qtext" id="qText"></div>
+      <div class="timer"><div class="fill" id="tFill"></div></div>
+      <div class="abtns" id="aBtns"></div>
+    </div>
+
+    <!-- ANSWERED (locked) -->
+    <div id="scrLocked" class="wait hide">
+      <div class="big" style="font-size:40px">✔</div>
+      <div style="font-size:18px;font-weight:700">Answer locked in!</div>
+      <div class="dim">Waiting for reveal…</div>
+    </div>
+
+    <!-- REVEAL -->
+    <div id="scrReveal" class="result hide">
+      <div class="ring" id="rvRing">✓</div>
+      <div style="font-size:20px;font-weight:700" id="rvHead"></div>
+      <div class="pts" id="rvPts"></div>
+      <div class="rank" id="rvRank"></div>
+    </div>
+
+    <!-- END -->
+    <div id="scrEnd" class="result hide">
+      <div style="font-size:46px">🏆</div>
+      <div style="font-size:22px;font-weight:800" id="endRank"></div>
+      <div class="pts" id="endScore"></div>
+      <div class="dim">Great game! Watch the podium on screen.</div>
+    </div>
+
+    <div class="myscore hide" id="scoreBar">Score: <b id="myScore">0</b></div>
+  </div>
+  <footer>Road to IIM · Sahil Sir</footer>
+</div>
+
+<script>
+/* ================= CONFIG ================= */
+var API_URL = "PASTE_YOUR_APPS_SCRIPT_EXEC_URL_HERE";
+
+var S = { code:null, name:null, phase:null, qIndex:-1, answeredQ:-1, pollId:null, timerId:null, deadline:0, qTime:20 };
+
+function api(payload){
+  return fetch(API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(payload)})
+    .then(function(r){return r.json();});
+}
+function show(id){
+  ["scrJoin","scrWait","scrQ","scrLocked","scrReveal","scrEnd"].forEach(function(s){
+    document.getElementById(s).classList.toggle("hide", s!==id);
+  });
+}
+function esc(s){ return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];}); }
+
+/* prefill code from ?code= */
+(function(){
+  var m = location.search.match(/[?&]code=(\d{4})/);
+  if(m) document.getElementById("inCode").value = m[1];
+})();
+
+function join(){
+  var code = document.getElementById("inCode").value.trim();
+  var name = document.getElementById("inName").value.trim();
+  var err = document.getElementById("joinErr");
+  err.textContent = "";
+  if(API_URL.indexOf("PASTE_")===0){ err.textContent = "Quiz system not configured yet."; return; }
+  if(!/^\d{4}$/.test(code)){ err.textContent = "Enter the 4-digit code."; return; }
+  if(!name){ err.textContent = "Enter your name."; return; }
+  var b = document.getElementById("btnJoin");
+  b.disabled = true; b.textContent = "Joining…";
+  api({action:"join", code:code, name:name}).then(function(res){
+    b.disabled=false; b.textContent="Join →";
+    if(!res.ok){ err.textContent = res.error||"Could not join"; return; }
+    S.code = code; S.name = name;
+    document.getElementById("wTitle").textContent = res.title;
+    document.getElementById("scoreBar").classList.remove("hide");
+    show("scrWait");
+    startPolling();
+  }).catch(function(e){
+    b.disabled=false; b.textContent="Join →";
+    err.textContent = "Network error — try again.";
+  });
+}
+
+function startPolling(){
+  if(S.pollId) clearInterval(S.pollId);
+  S.pollId = setInterval(pollNow, 2000);
+  pollNow();
+}
+function pollNow(){
+  api({action:"poll", code:S.code, role:"player", name:S.name}).then(render).catch(function(){});
+}
+
+function render(st){
+  if(!st.ok) return;
+  if(typeof st.myScore === "number") document.getElementById("myScore").textContent = st.myScore;
+
+  if(st.phase==="lobby"){ show("scrWait"); }
+
+  else if(st.phase==="question"){
+    if(st.myAnswer){ // already answered this q
+      show("scrLocked");
+    } else {
+      if(S.qIndex !== st.qIndex || document.getElementById("scrQ").classList.contains("hide")){
+        buildQuestion(st);
+      }
+      S.deadline = Date.now() + st.remainingMs;
+      show("scrQ");
+    }
+    S.qIndex = st.qIndex;
+  }
+
+  else if(st.phase==="reveal"){
+    show("scrReveal");
+    var a = st.myAnswer;
+    var ring = document.getElementById("rvRing");
+    var head = document.getElementById("rvHead");
+    var pts = document.getElementById("rvPts");
+    if(a && a.c === st.ans){
+      ring.className = "ring good"; ring.textContent = "✓";
+      head.textContent = "Correct!";
+      pts.textContent = "+"+a.pts+" pts";
+    } else if(a){
+      ring.className = "ring bad"; ring.textContent = "✗";
+      head.textContent = "Not this time";
+      pts.textContent = "Answer: "+"ABCD"[st.ans];
+    } else {
+      ring.className = "ring bad"; ring.textContent = "–";
+      head.textContent = "No answer";
+      pts.textContent = "Answer: "+"ABCD"[st.ans];
+    }
+    document.getElementById("rvRank").innerHTML = st.myRank ? "Your rank: <b>#"+st.myRank+"</b>" : "";
+    stopTimer();
+  }
+
+  else if(st.phase==="end"){
+    show("scrEnd");
+    document.getElementById("endRank").textContent = st.myRank ? "Rank #"+st.myRank : "Thanks for playing!";
+    document.getElementById("endScore").textContent = (st.myScore||0)+" pts";
+    stopTimer();
+    if(S.pollId){ clearInterval(S.pollId); S.pollId=null; }
+  }
+}
+
+function buildQuestion(st){
+  document.getElementById("qNum").textContent = "Q"+(st.qIndex+1)+" / "+st.nQ;
+  document.getElementById("qText").textContent = st.q.q;
+  S.qTime = st.q.time;
+  var g = document.getElementById("aBtns");
+  g.innerHTML = st.q.options.map(function(o,i){
+    return '<button class="ab o'+"ABCD"[i]+'" onclick="answer('+i+',this)">'+"ABCD"[i]+'<small>'+esc(o)+'</small></button>';
+  }).join("");
+  startTimer();
+}
+
+function answer(i, btn){
+  // lock UI instantly
+  document.querySelectorAll("#aBtns .ab").forEach(function(b){ b.disabled=true; b.classList.add(b===btn?"picked":"faded"); });
+  api({action:"answer", code:S.code, name:S.name, qi:S.qIndex, choice:i}).then(function(res){
+    if(res.ok){ show("scrLocked"); }
+    else {
+      // question closed / time up — poll will move us on
+      pollNow();
+    }
+  }).catch(function(){ pollNow(); });
+}
+
+function startTimer(){
+  stopTimer();
+  S.timerId = setInterval(function(){
+    var rem = Math.max(S.deadline - Date.now(), 0);
+    var pct = Math.min(100, 100*rem/(S.qTime*1000));
+    document.getElementById("tFill").style.width = pct+"%";
+    document.getElementById("qTime").textContent = Math.ceil(rem/1000)+"s";
+    if(rem<=0){
+      document.querySelectorAll("#aBtns .ab").forEach(function(b){ b.disabled=true; b.classList.add("faded"); });
+    }
+  }, 200);
+}
+function stopTimer(){ if(S.timerId){ clearInterval(S.timerId); S.timerId=null; } }
+</script>
+</body>
+</html>
