@@ -1,10 +1,10 @@
-/* Deck Studio service worker — v1
+/* Deck Studio service worker — v2
    IMPORTANT: This SW lives at the repo root, so its scope covers the whole
    Road to IIM site. To avoid interfering with sky.html, tests, or any other
    page, it ONLY intercepts requests for Deck Studio's own assets and the
    Google Fonts it uses. Every other request is passed through untouched. */
 
-const CACHE = 'deck-studio-v1';
+const CACHE = 'deck-studio-v2';
 
 const APP_SHELL = [
   './deck_studio.html',
