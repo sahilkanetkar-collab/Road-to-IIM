@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Road to IIM · UGAT-B VA Challenge Mock</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+:root{
+  --navy:#0d1b2a; --navy2:#1a2e45; --gold:#c9a84c; --gold2:#e8c76a;
+  --green:#2ecc71; --red:#e74c3c; --grey:#8899aa; --white:#f0f4f8;
+  --panel:300px; --topbar:56px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:var(--navy);color:var(--white);min-height:100vh;}
+.hidden{display:none;}
+/* ---------- LOGIN ---------- */
+#loginScreen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;}
+.loginCard{background:var(--navy2);border:1px solid rgba(201,168,76,.35);border-radius:14px;padding:36px 32px;width:100%;max-width:420px;box-shadow:0 12px 40px rgba(0,0,0,.45);}
+.loginCard h1{color:var(--gold);font-size:1.35rem;letter-spacing:.5px;margin-bottom:4px;}
+.loginCard h2{color:var(--grey);font-size:.9rem;font-weight:400;margin-bottom:24px;}
+.loginCard label{display:block;font-size:.8rem;color:var(--grey);margin:14px 0 5px;letter-spacing:.4px;}
+.loginCard input,.loginCard select{width:100%;padding:11px 12px;border-radius:8px;border:1px solid rgba(136,153,170,.35);background:var(--navy);color:var(--white);font-size:.95rem;font-family:inherit;}
+.loginCard input:focus,.loginCard select:focus{outline:none;border-color:var(--gold);}
+.badge{display:inline-block;background:rgba(201,168,76,.12);color:var(--gold);border:1px solid rgba(201,168,76,.4);border-radius:20px;padding:3px 12px;font-size:.75rem;margin:3px 3px 0 0;}
+.startBtn{width:100%;margin-top:22px;padding:13px;border:none;border-radius:8px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);font-weight:700;font-size:.95rem;cursor:pointer;}
+/* ---------- TOPBAR ---------- */
+#topBar{height:var(--topbar);background:var(--navy2);display:flex;align-items:center;justify-content:space-between;padding:0 18px;border-bottom:1px solid rgba(201,168,76,.3);position:sticky;top:0;z-index:10;}
+#topBar .tName{color:var(--gold);font-weight:700;font-size:.95rem;}
+#topBar .qCounter{color:var(--grey);font-size:.85rem;}
+#timer{font-weight:700;color:var(--gold);font-variant-numeric:tabular-nums;font-size:1.05rem;}
+#timer.low{color:var(--red);}
+#timerBarWrap{height:6px;background:rgba(136,153,170,.25);width:100%;position:sticky;top:var(--topbar);z-index:10;}
+#timerBar{height:100%;width:100%;background:var(--green);transition:width 1s linear;}
+#timerBar.warn{background:var(--gold);}
+#timerBar.danger{background:var(--red);}
+/* ---------- LAYOUT ---------- */
+#mainWrap{display:flex;align-items:flex-start;max-width:1200px;margin:0 auto;}
+#quizArea{flex:1;max-width:860px;padding:22px 18px;}
+#sidePanel{width:var(--panel);flex:0 0 var(--panel);background:var(--navy2);border-left:1px solid rgba(201,168,76,.25);min-height:calc(100vh - var(--topbar) - 6px);padding:20px 16px;position:sticky;top:calc(var(--topbar) + 6px);}
+#sidePanel h3{color:var(--gold);font-size:.85rem;letter-spacing:.6px;margin-bottom:14px;}
+#palette{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;}
+.pal{aspect-ratio:1;border-radius:8px;background:var(--navy);border:1px solid rgba(136,153,170,.3);color:var(--white);font-size:.85rem;cursor:pointer;}
+.pal.ans{background:var(--green);border-color:var(--green);color:#fff;}
+.pal.cur{outline:2px solid var(--gold);}
+#mobPalette{display:none;}
+@media(max-width:900px){
+  #sidePanel{display:none;}
+  #mobPalette{display:flex;flex-wrap:wrap;gap:6px;padding:10px 14px;background:var(--navy2);border-bottom:1px solid rgba(201,168,76,.2);position:sticky;top:calc(var(--topbar) + 6px);z-index:9;}
+  #mobPalette .pal{aspect-ratio:auto;width:30px;height:30px;font-size:.78rem;}
+}
+/* ---------- QUESTION ---------- */
+.topicTag{color:var(--grey);font-size:.8rem;letter-spacing:.4px;margin-bottom:10px;}
+.passage{background:var(--navy2);border-left:3px solid var(--gold);border-radius:8px;padding:18px;margin-bottom:18px;line-height:1.75;font-size:.96rem;max-height:340px;overflow-y:auto;}
+.qstem{font-size:1.03rem;line-height:1.65;margin-bottom:16px;}
+.qstem u{text-decoration:underline;text-underline-offset:3px;}
+.opt{display:flex;gap:12px;align-items:flex-start;background:var(--navy2);border:1px solid rgba(136,153,170,.3);border-radius:10px;padding:14px 16px;margin-bottom:12px;cursor:pointer;transition:border-color .15s,background .15s;line-height:1.55;}
+.opt:hover{border-color:var(--gold);}
+.opt.sel{border-color:var(--gold);background:rgba(201,168,76,.12);}
+.opt .oLetter{flex:0 0 auto;width:26px;height:26px;border-radius:50%;border:1px solid var(--grey);display:flex;align-items:center;justify-content:center;font-size:.8rem;color:var(--grey);}
+.opt.sel .oLetter{background:var(--gold);color:var(--navy);border-color:var(--gold);font-weight:700;}
+.navrow{display:flex;gap:10px;margin-top:18px;}
+.navrow button{flex:1;padding:12px;border-radius:8px;background:var(--navy2);border:1px solid rgba(201,168,76,.35);color:var(--white);cursor:pointer;font-size:.92rem;}
+.navrow .subm{background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);border:none;font-weight:700;}
+/* ---------- RESULTS ---------- */
+#results{max-width:860px;margin:0 auto;padding:22px 18px;}
+.card{background:var(--navy2);border:1px solid rgba(201,168,76,.25);border-radius:14px;padding:24px;margin:16px 0;}
+.card h1{color:var(--gold);font-size:1.3rem;}
+.score-big{font-size:3rem;color:var(--gold);font-weight:700;text-align:center;}
+.stat-row{display:flex;gap:10px;margin:18px 0;flex-wrap:wrap;}
+.stat{flex:1;min-width:100px;background:var(--navy);border-radius:10px;padding:14px;text-align:center;}
+.stat b{display:block;font-size:1.4rem;color:var(--gold);}
+.rev{border:1px solid rgba(136,153,170,.2);border-radius:10px;padding:16px;margin:12px 0;line-height:1.6;font-size:.94rem;background:var(--navy2);}
+.rev.ok{border-left:3px solid var(--green);}
+.rev.bad{border-left:3px solid var(--red);}
+.rev.skip{border-left:3px solid var(--grey);}
+.tag-c{color:var(--green);font-weight:600;}
+.tag-w{color:var(--red);font-weight:600;}
+.expl{background:rgba(46,204,113,.08);border-radius:8px;padding:10px 12px;margin-top:8px;color:#c9d4cd;font-size:.9rem;}
+.pdf-btn{background:transparent;border:1.5px solid var(--gold);color:var(--gold);padding:11px 24px;width:100%;margin:14px 0;border-radius:8px;font-size:.95rem;cursor:pointer;}
+a.backlink{color:var(--gold);text-decoration:none;display:block;text-align:center;margin-top:18px;}
+.note{color:var(--grey);font-size:.85rem;line-height:1.5;margin-top:10px;}
+.rqHead{margin-bottom:10px;color:var(--grey);font-size:.88rem;}
+.rqHead b{color:var(--gold);}
+.rstem{margin:8px 0 12px;line-height:1.6;}
+.ropt{display:flex;gap:10px;align-items:flex-start;border:1px solid rgba(136,153,170,.25);border-radius:8px;padding:9px 12px;margin:7px 0;line-height:1.5;font-size:.92rem;}
+.ropt .rLetter{flex:0 0 auto;width:22px;height:22px;border-radius:50%;border:1px solid var(--grey);display:flex;align-items:center;justify-content:center;font-size:.72rem;color:var(--grey);}
+.ropt.correct{border-color:var(--green);background:rgba(46,204,113,.1);}
+.ropt.correct .rLetter{background:var(--green);border-color:var(--green);color:#fff;font-weight:700;}
+.ropt.wrong{border-color:var(--red);background:rgba(231,76,60,.1);}
+.ropt.wrong .rLetter{background:var(--red);border-color:var(--red);color:#fff;font-weight:700;}
+.revPass{margin:8px 0;}
+.revPass summary{cursor:pointer;color:var(--gold);font-size:.85rem;margin-bottom:6px;}
+.revPass p{margin:8px 0;line-height:1.7;font-size:.9rem;color:#c8d2dd;}
+.concept{background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.25);border-radius:8px;padding:10px 12px;margin-top:8px;font-size:.9rem;line-height:1.6;color:#dcd3b8;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="loginCard" id="login">
+    <h1>ROAD TO IIM</h1>
+    <h2>UGAT-B VA Challenge Mock</h2>
+    <div style="margin-bottom:6px;">
+      <span class="badge">15 Questions</span><span class="badge">25 Minutes</span><span class="badge">+3 / −1</span><span class="badge">Max 45</span>
+    </div>
+    <label for="inName">Full Name</label><input type="text" id="inName" placeholder="Your full name" autocomplete="off">
+    <label for="inPin">PIN</label><input type="text" id="inPin" placeholder="STU########## or IMS##########" autocomplete="off" maxlength="13">
+    <label for="inBatch">Batch</label>
+    <select id="inBatch">
+      <option value="">-- Select your batch --</option>
+      <optgroup label="Classroom">
+        <option>A2701</option><option>A2702</option><option>A2703</option><option>A2704</option><option>A2705</option><option>A2706</option><option>A2707</option><option>A2708</option><option>A2709</option><option>A2710</option><option>A2711</option><option>A2712</option><option>A2714</option><option>A2715</option><option>A2716</option><option>A2717</option><option>A2718</option><option>A2719</option><option>A2720</option>
+      </optgroup>
+      <optgroup label="School"><option>Zebar</option></optgroup>
+      <optgroup label="IPMAT 28"><option>Z2801</option><option>S2801</option><option>A2804</option><option>PN2801</option></optgroup>
+      <optgroup label="Admin"><option>Admin</option></optgroup>
+    </select>
+    <div class="note" id="windowMsg" style="display:none;"></div>
+    <button class="startBtn" onclick="startTest()">Start Test</button>
+  </div>
+</div>
+
+<!-- TEST -->
+<div id="test" class="hidden">
+  <div id="topBar">
+    <span class="tName">UGAT-B VA Challenge</span>
+    <span class="qCounter">Q<span id="qNum">1</span> / 15</span>
+    <span id="timer">25:00</span>
+  </div>
+  <div id="timerBarWrap"><div id="timerBar"></div></div>
+  <div id="mobPalette"></div>
+  <div id="mainWrap">
+    <div id="quizArea">
+      <div class="topicTag" id="qTopic"></div>
+      <div id="passageBox" class="passage hidden"></div>
+      <div class="qstem" id="stem"></div>
+      <div id="opts"></div>
+      <div class="navrow">
+        <button onclick="nav(-1)">◀ Previous</button>
+        <button onclick="clearAns()">Clear</button>
+        <button onclick="nav(1)">Next ▶</button>
+        <button class="subm" onclick="confirmSubmit()">Submit</button>
+      </div>
+    </div>
+    <div id="sidePanel">
+      <h3>QUESTIONS</h3>
+      <div id="palette"></div>
+    </div>
+  </div>
+</div>
+
+<!-- RESULTS -->
+<div id="results" class="hidden">
+  <div class="card">
+    <h1 style="text-align:center;">Result · UGAT-B VA Challenge</h1>
+    <div class="score-big" id="scoreOut"></div>
+    <div style="text-align:center;color:var(--mut);">out of 45</div>
+    <div class="stat-row">
+      <div class="stat"><b id="stCorrect"></b>Correct</div>
+      <div class="stat"><b id="stWrong"></b>Wrong</div>
+      <div class="stat"><b id="stSkip"></b>Skipped</div>
+      <div class="stat"><b id="stTime"></b>Time</div>
+    </div>
+    <div id="syncMsg" class="note" style="text-align:center;"></div>
+  </div>
+  <div id="reviewList"></div>
+  <button class="pdf-btn" onclick="downloadPDF()">Download PDF Report</button>
+  <a class="backlink" href="index.html">← Back to Road to IIM</a>
+</div>
+
+</div>
+<script>
+/* ============================================================
+   CONFIG — VERIFY APPS SCRIPT URL BEFORE DEPLOY (v8)
+   ============================================================ */
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx5Ojm_zp4LfsMeelx5e06KNjVH1wfsXdV0keS4407m4FO1HU4EpVb7GKj-ibAsxnspeA/exec"; // Apps Script v8
+const TEST_NAME  = "UGAT-B VA Challenge Mock";
+const DURATION   = 1500;   // 25 minutes — deliberate override for this mock
+const MAX_MARKS  = 45;
+/* Limited window — UTC epochs (00:00 IST = 18:30 UTC previous day) */
+const OPEN_TS  = Date.UTC(2026,7,13,18,30,0);  /* Fri 14 Aug 2026, 00:00 IST */
+const CLOSE_TS = Date.UTC(2026,7,16,18,30,0);  /* Mon 17 Aug 2026, 00:00 IST */
+
+/* ============================================================ PASSAGES */
+const PASSAGES = {
+P1:`<p>In an era enthralled by the arithmetic of engagement, human attention has been annexed as the raw material of commerce — parsed into impressions, auctioned in milliseconds, and returned to its owner diminished. The contemplative traditions that once trained the mind toward sustained regard — the scholar's marginalia, the monastic hour, the slow apprenticeship of craft — have been supplanted by an economy that profits precisely from interruption. The platform, like the plantation before it, extracts value from a resource it does not replenish.</p>
+<p>Mira Chandran, a celebrated computational linguist who had spent two decades teaching machines to summarise human thought, resigned her chair after an unsettling discovery: the models compressed everything and comprehended nothing, and their users, she observed, were beginning to do the same. She retreated to a coastal archive in Kerala, where she spent her days restoring water-damaged palm-leaf manuscripts — work that could not be hurried, summarised, or delegated. There she came to regard slowness not as inefficiency but as fidelity: the price a mind pays to be adequate to its object.</p>
+<p>Meanwhile, institutions responded to the crisis of distraction with characteristic literal-mindedness. Schools purchased 'focus applications' that gamified stillness; corporations scheduled mandatory mindfulness, metricised serenity, and appended attention scores to performance reviews. The remedy reproduced the disease: contemplation itself became content.</p>
+<p>In her late essays, Chandran argued that the deepest casualty of the attention economy was not concentration but reverence — the capacity to grant an object of thought more time than its usefulness demands. Her claim, initially dismissed as nostalgic, quietly reordered the debate: the question ceased to be how attention might be recaptured, and became what attention was for.</p>`,
+P2:`<p>Extreme urban heat has emerged as one of the most unevenly distributed climate risks in South Asian cities. Surface temperatures in dense, low-income neighbourhoods routinely exceed those of leafier districts by several degrees, a disparity attributable to sparse tree cover, heat-retaining construction materials, and the absence of open space. The burden falls disproportionately on informal workers — street vendors, waste pickers, construction labourers, and delivery riders — whose earnings depend on hours spent outdoors and who rarely enjoy access to shade, drinking water, or cooling at home.</p>
+<p>Health consequences extend well beyond heatstroke. Sustained exposure elevates risks of kidney disorder, cardiovascular strain, and pregnancy complications, while nighttime temperatures that fail to fall below recovery thresholds deprive the body of its principal means of repair. Productivity losses compound the injury: studies estimate that outdoor workers in the hottest wards forfeit up to a quarter of their working hours during peak summer, translating directly into lost income for households with no savings buffer.</p>
+<p>Municipal responses have begun to shift from emergency relief toward structural adaptation. Heat action plans now designate cooling shelters, stagger outdoor working hours, and issue ward-level warnings in local languages. Several cities have experimented with cool-roof programmes, subsidising reflective coatings for informal settlements where roofs of tin and asbestos can turn dwellings into ovens. Early evaluations suggest such coatings lower indoor temperatures meaningfully at modest cost.</p>
+<p>Advocates argue, however, that durable protection requires recognising heat as an occupational hazard, entitling informal workers to the protections — rest breaks, hydration, compensation for heat-related illness — that formal employment confers. Without such recognition, they contend, adaptation will remain a matter of charity rather than of right, renewed or withdrawn with each budget cycle.</p>`
+};
+
+/* ============================================================ QUESTIONS
+   answer = 0-based index into options                             */
+const Q = [
+{topic:"Odd One Out",passage:null,
+stem:`Five statements are given below, four of which follow a common thread.<br><br>
+1. Default enrolment in pension schemes has dramatically raised retirement savings rates without restricting individual choice.<br>
+2. Placing healthier foods at eye level in cafeterias measurably shifts consumption patterns among students.<br>
+3. Subtle changes in how choices are framed can steer decisions while preserving the freedom to choose — a principle now embedded in public policy design.<br>
+4. Mandatory congestion charges in city centres have reduced peak-hour traffic by imposing direct financial penalties on drivers.<br>
+5. Reminder messages that cite what "most people" do have improved tax compliance in several countries.<br><br>
+Identify the statement that does not follow the common thread.`,
+options:["Statement 3","Statement 4","Statement 2","Statement 5"],answer:1,
+expl:`Statements 1, 2, 3 and 5 all describe <b>nudges</b> — interventions that steer behaviour while preserving freedom of choice. Statement 3 is the umbrella statement, not the odd one (a classic trap). Statement 4 describes a <b>mandate with financial penalties</b>, which restricts choice — the opposite of a nudge.`,
+concept:`<b>Concept — Odd One Out with an umbrella trap:</b> In statement-based OOO sets, the most general statement is usually the <i>theme itself</i>, not the odd one — never eliminate a statement merely for being broad. Find the mechanism the group shares (here: influencing behaviour while preserving free choice — a nudge) and hunt for the statement that breaks that mechanism (a mandate that removes choice).`},
+
+{topic:"Vocabulary · Usage",passage:null,
+stem:`Examine the following statement:<br><br>The committee offered only <u>qualified</u> support for the proposal, endorsing its aims while questioning its funding model.<br><br>Choose the option that best uses the underlined word in a context similar to how it is used in the statement.`,
+options:["Only qualified electricians may service the high-voltage equipment.","Her success owed much to the qualified guidance of her mentors.","The film received qualified acclaim: critics admired its craft but doubted its coherence.","He was qualified for the post by virtue of a decade of experience."],answer:2,
+expl:`In the stem, "qualified" means <b>limited or conditional</b>, not "credentialed". Only the film option mirrors this — acclaim tempered by reservations. The other three use "qualified" in the sense of possessing credentials or competence.`,
+concept:`<b>Concept — Polysemy in usage questions:</b> Many words carry a dominant sense and a quieter secondary sense ('qualified' = credentialed vs. limited). The exam deliberately activates the secondary sense in the stem and baits you with options using the dominant one. Always extract the meaning <i>from the stem's context</i> first, then match sense-to-sense, never word-to-word.`},
+
+{topic:"Grammar · Parts of Speech",passage:null,
+stem:`From the options given below, identify the pair of adverbs in the following statement.<br><br>Despite the labyrinthine, byzantine negotiations, she argued cogently and, curiously, prevailed against interlocutors of formidable perspicacity.`,
+options:["cogently / curiously","labyrinthine / byzantine","formidable / perspicacity","curiously / formidable"],answer:0,
+expl:`"Cogently" modifies the verb "argued"; "curiously" is a sentence adverb commenting on the whole clause — together they form the only pure adverb pair. "Labyrinthine" and "byzantine" are adjectives, "formidable" is an adjective and "perspicacity" a noun, and the half-right pair "curiously / formidable" fails because "formidable" is an adjective despite its adverbial feel in the sentence's flow. "Despite" is a preposition governing "the … negotiations".`,
+concept:`<b>Concept — Identifying adverbs:</b> Test what a word modifies, not how it looks. Manner adverbs modify verbs ('argued cogently'); sentence adverbs comment on the entire clause ('curiously, she prevailed'). Impressive-sounding words are planted as decoys: '-ine/-able' endings signal adjectives, '-ity' signals nouns. An adjective can <i>feel</i> adverbial in the flow of a sentence — classification beats feel.`},
+
+{topic:"Parajumbles",passage:null,
+stem:`The following sentences are in jumbled order. Arrange them in the most logical sequence to form a meaningful paragraph.<br><br>
+A. Yet transparency alone rarely restores confidence, because disclosure without accountability merely documents failure rather than correcting it.<br>
+B. Institutional trust, once eroded, behaves less like a resource that can be replenished and more like a reputation that must be rebuilt transaction by transaction.<br>
+C. Governments have therefore turned to sweeping transparency initiatives, publishing budgets, contracts, and performance data in the hope of winning citizens back.<br>
+D. This is why reformers increasingly pair open data with independent oversight bodies empowered to act on what the data reveals.`,
+options:["BCAD","BACD","CBAD","BCDA"],answer:0,
+expl:`B states the thesis (trust must be rebuilt). C responds with the governments' strategy ("therefore"). A introduces the limitation ("Yet transparency alone…"). D resolves it ("This is why reformers pair open data with oversight"). There is no chronological anchor — the chain is purely logical: thesis → response → limitation → resolution.`,
+concept:`<b>Concept — Logic-chain parajumbles:</b> When no dates or time markers exist, sequence by argumentative role: thesis → response → limitation → resolution. Connectors are the skeleton — 'therefore' answers a stated problem, 'Yet' concedes a limitation of what precedes it, 'This is why' delivers the resolution. Anchor the opener (the only sentence needing no prior context) and let connectors chain the rest.`},
+
+{topic:"Grammar · Correlatives",passage:null,
+stem:`Select an option to complete the given sentence.<br><br>_______ had the committee anticipated the scale of the backlash, _______ did it prepare a coherent response once protests erupted.`,
+options:["Hardly, when","Neither, nor","Not only, but also","Scarcely, than"],answer:1,
+expl:`Both clauses are negated and inverted: the committee neither anticipated the backlash <b>nor</b> prepared a response. Students conditioned to hunt for time-sequence correlatives (hardly/when, scarcely/than) miss that the logic here demands double negation, not sequence — and "scarcely…than" is in any case an incorrect pairing.`,
+concept:`<b>Concept — Correlative pairs and inversion:</b> Fixed pairs cannot be mixed: no sooner…than, hardly/scarcely…when, neither…nor, not only…but also. When a negative correlative opens the sentence, both clauses invert (auxiliary before subject: 'Neither had the committee…, nor did it…'). Diagnostic: ask whether the sentence expresses <i>time sequence</i> (sooner/hardly/scarcely) or <i>double negation</i> (neither/nor) — the logic picks the pair.`},
+
+{topic:"Vocabulary · Idioms",passage:null,
+stem:`Choose the appropriate idiom that is closest to the underlined segment in the following.<br><br>The whistle-blower's complaint ultimately <u>harmed him through the very mechanism he himself had set in motion</u>.`,
+options:["thrown to the wolves","left holding the bag","caught between two stools","hoist with his own petard"],answer:3,
+expl:`"Hoist with his own petard" (from <i>Hamlet</i> — a petard was a small bomb) means being harmed by one's own device or scheme. "Thrown to the wolves" is being sacrificed by others; "left holding the bag" is bearing blame others escaped; "caught between two stools" is failing by hesitating between alternatives.`,
+concept:`<b>Concept — Idioms of self-inflicted harm vs. victimhood:</b> Distinguish idioms by <i>agency</i>. 'Hoist with one's own petard' (Shakespeare's Hamlet; a petard was a small bomb — its engineer blown up by it) = destroyed by one's own device. 'Thrown to the wolves' = sacrificed by others; 'left holding the bag' = blamed while others escape; 'caught between two stools' = failure through indecision. Who caused the harm decides the idiom.`},
+
+{topic:"Reading Comprehension",passage:"P1",
+stem:`Select the real-life situation that best reflects the concerns raised in the passage.`,
+options:["A meditation app awarding streak badges and ranking users on weekly 'calm leaderboards'.","A library extending its opening hours so researchers can consult rare manuscripts.","A publisher commissioning long-form essays on the history of traditional crafts.","A company banning phones in meetings to improve productivity."],answer:0,
+expl:`The passage's sharpest concern is the irony that "the remedy reproduced the disease: contemplation itself became content" — serenity metricised and gamified. A meditation app with streaks and leaderboards is precisely this: stillness converted into an engagement metric. The library and publisher options support contemplation; the phone ban is a mundane remedy, not the metricisation irony.`,
+concept:`<b>Concept — Application questions:</b> These test whether you grasped the passage's <i>mechanism</i>, not its topic. Extract the abstract pattern (here: the remedy for distraction being converted into the very metrics that caused it) and find the scenario that reproduces the pattern. Options that merely share the topic (libraries, essays, phone bans) without the mechanism are the standard traps.`},
+
+{topic:"Reading Comprehension",passage:"P1",
+stem:`Select the option that can be most logically inferred from the passage.`,
+options:["Mindfulness applications have measurably improved serenity in corporate environments.","Practices that resist acceleration may preserve forms of understanding that summarisation destroys.","Computational models comprehend text more reliably than distracted human readers.","Contemplative traditions disappeared because they generated no economic value."],answer:1,
+expl:`Chandran's manuscript restoration — "work that could not be hurried, summarised, or delegated" — leads her to see slowness as "fidelity: the price a mind pays to be adequate to its object". The inference is that unhurried practice preserves what compression destroys. The mindfulness option contradicts the passage's irony; the models "comprehended nothing"; and the economic claim about traditions is stated nowhere.`,
+concept:`<b>Concept — Inference discipline:</b> A valid inference is compelled by the passage but not stated in it. Reject options that (a) contradict the passage's stance, (b) overreach with absolutes or causes never given, or (c) merely restate a detail. The correct inference typically generalises a specific example (manuscript restoration → unhurried practice preserves understanding) one careful step, no further.`},
+
+{topic:"Reading Comprehension",passage:"P1",
+stem:`Select the option that most accurately summarises the passage.`,
+options:["A linguist abandoned technology after discovering that archives offer better employment than universities.","Society's crisis of distraction has been resolved by combining focus applications with manuscript preservation.","A linguist's disillusionment with machine summarisation exemplifies a broader argument that the attention economy — and institutional imitations of contemplation — have hollowed out the reverence on which deep thought depends.","The attention economy has damaged concentration, but corporate mindfulness programmes are gradually reversing the harm."],answer:2,
+expl:`The correct summary must hold all four movements: the commodification of attention, Chandran's discovery and retreat, the failed institutional remedies, and her final thesis about reverence. Only one option does. The others trivialise her retreat, falsely claim resolution, or invert the passage's verdict on corporate mindfulness.`,
+concept:`<b>Concept — Summary questions:</b> A summary must span every movement of the passage — setup, pivot, complication, thesis — in compressed form. The classic wrong answers: trivialising one episode into the whole, claiming a resolution the passage never reached, or inverting the author's verdict. If an option ignores an entire paragraph's role, it is not a summary.`},
+
+{topic:"Reading Comprehension",passage:"P1",
+stem:`Which of the following best captures the central theme of the passage?`,
+options:["Institutional programmes have largely succeeded in restoring concentration by adapting technology to contemplative ends.","Advances in computational linguistics prove that machine summarisation can substitute for human comprehension.","The decline of craft traditions is primarily an economic problem best addressed through education reform.","The commercial capture of attention has eroded something deeper than focus — the very disposition to dwell on things beyond their utility."],answer:3,
+expl:`The final paragraph carries the thesis: the deepest casualty is not concentration but <b>reverence</b> — "the capacity to grant an object of thought more time than its usefulness demands". The institutional option inverts the passage; the linguistics option contradicts "comprehended nothing"; craft economics is out of scope.`,
+concept:`<b>Concept — Locating the thesis in argumentative passages:</b> Argumentative passages carry their skeleton at the <i>end</i> — the final paragraph names the real claim (reverence, not concentration, is the casualty). Additive passages state it upfront. Identify the passage type first; then the theme question becomes a reading task, not a guessing task.`},
+
+{topic:"Reading Comprehension",passage:"P2",
+stem:`According to the passage, why do high nighttime temperatures pose a distinct threat?`,
+options:["They increase demand for electricity in informal settlements.","They accelerate the deterioration of tin and asbestos roofing.","They prevent the body from undergoing its principal process of recovery.","They force workers to shift their working hours into the day."],answer:2,
+expl:`The passage states that nighttime temperatures failing to fall below recovery thresholds "deprive the body of its principal means of repair". Electricity demand, roof deterioration, and shifted working hours are never cited as consequences of high nighttime temperatures.`,
+concept:`<b>Concept — Detail questions:</b> Locate, then paraphrase-match. The correct option restates the passage's words in new clothing ('principal means of repair' → 'principal process of recovery'); wrong options import plausible real-world facts the passage never asserts. Plausibility outside the passage is worthless — support inside it is everything.`},
+
+{topic:"Reading Comprehension",passage:"P2",
+stem:`Which statement, if true, would most weaken the advocates' argument in the final paragraph?`,
+options:["Cool-roof coatings lose reflectivity after several years and require reapplication.","Cities that formally recognised heat as an occupational hazard saw no measurable improvement in informal workers' health outcomes over a decade.","Informal workers in several wards were unaware of ward-level heat warnings.","Most municipal heat action plans are drafted with input from informal workers' associations."],answer:1,
+expl:`The advocates claim that recognising heat as an occupational hazard is what makes protection <b>durable</b>. A decade of recognition producing no measurable improvement directly attacks that causal claim. The coatings and warnings options weaken other programmes, not the advocates' argument; the consultation option, if anything, mildly supports current plans.`,
+concept:`<b>Concept — Weaken questions:</b> First isolate the exact claim (recognition as an occupational hazard → durable protection). The strongest weakener attacks that causal link directly — evidence that the cause occurred without the promised effect. Options that damage adjacent programmes or peripheral details leave the argument standing. Precision of target beats strength of language.`},
+
+{topic:"Reading Comprehension",passage:"P2",
+stem:`The advocates' argument in the final paragraph relies on which of the following assumptions?`,
+options:["Cool-roof coatings are ineffective at lowering indoor temperatures.","Informal workers prefer monetary compensation to rest breaks.","Formal-sector workers never experience heat-related illness.","Rights-based entitlements are less vulnerable to fluctuations in municipal budgets than discretionary programmes."],answer:3,
+expl:`The advocates contrast protection as a "right" against adaptation as "charity… renewed or withdrawn with each budget cycle". This contrast only works if entitlements are assumed to be more budget-proof than discretionary schemes. The coatings claim contradicts the passage, workers' preferences are never discussed, and "never" makes the formal-sector option far too strong.`,
+concept:`<b>Concept — Assumption questions and the negation test:</b> An assumption is an unstated premise the argument cannot survive without. Negate the candidate: if the argument collapses ('rights are NOT more budget-proof than charity' destroys the advocates' contrast), it is the assumption. Options with extreme words ('never') usually fail the necessity test — arguments rarely require absolutes.`},
+
+{topic:"Reading Comprehension",passage:"P2",
+stem:`Which option best captures the central idea of the passage?`,
+options:["Urban heat is chiefly a problem of inadequate tree cover that afforestation programmes can solve.","Cool-roof programmes have eliminated the health risks of extreme heat in informal settlements.","Extreme heat imposes unequal burdens on informal urban workers, and lasting protection demands structural, rights-based responses beyond emergency relief.","Informal workers' productivity losses are the primary reason municipalities adopt heat action plans."],answer:2,
+expl:`The passage moves from unequal exposure, to health and income harms, to the shift from relief toward structural adaptation, ending with the rights-based argument. Only one option spans that arc. Tree cover is one cause among several; "eliminated" is false; and the passage never states why municipalities adopt plans.`,
+concept:`<b>Concept — Central idea vs. supporting content:</b> The central idea must span the passage's full arc — problem, harms, responses, and the concluding argument. Options built from a single cause (tree cover), a single programme (cool roofs), or an unstated motive are scope traps: true as fragments, false as the centre.`},
+
+{topic:"Vocabulary · Fill-Ups",passage:null,
+stem:`Complete the following sentence using the most appropriate words in all four blanks.<br><br>A judicious editor excises the _______ passages of a manuscript, tempers its _______ claims, preserves its _______ insights, and resists the _______ urge to impose her own voice upon the author's.`,
+options:["superfluous / tenuous / pedestrian / officious","verbose / specious / equivocal / intrusive","prolix / hyperbolic / nebulous / overweening","redundant / grandiose / trenchant / meddlesome"],answer:3,
+expl:`The third blank is the gate: insights worth <b>preserving</b> must carry a positive word. "Trenchant" (sharp, incisive) is the only positive candidate — "pedestrian", "equivocal", and "nebulous" are all faults an editor would cut, not preserve. With the gate applied, "redundant / grandiose / meddlesome" complete the sentence coherently.`,
+concept:`<b>Concept — The valence gate in multi-blank FITB:</b> Before comparing meanings, assign each blank a charge: does the sentence demand a positive or negative word there? Here, insights being <i>preserved</i> demands a positive word — 'trenchant' (incisive) is the only candidate; 'pedestrian', 'equivocal', and 'nebulous' are all faults. One valence check eliminates three clusters before any fine meaning-comparison is needed.`}
+];
+
+/* ============================================================ STATE */
+let cur=0, answers=Array(15).fill(null), secondsLeft=DURATION, timerInt=null;
+let qTimes=Array(15).fill(0), lastTick=null, student={name:"",pin:"",batch:""};
+
+/* ============================================================ ENGINE */
+function windowState(){
+  const now=Date.now();
+  if(now<OPEN_TS) return 'before';
+  if(now>=CLOSE_TS) return 'after';
+  return 'open';
+}
+function fmtRemain(ms){
+  const s=Math.max(0,Math.floor(ms/1000));
+  const d=Math.floor(s/86400),h=Math.floor(s%86400/3600),m=Math.floor(s%3600/60);
+  return (d>0?d+'d ':'')+h+'h '+m+'m';
+}
+function refreshWindowMsg(){
+  const el=document.getElementById('windowMsg');
+  const st=windowState();
+  if(st==='before'){el.style.display='block';el.innerHTML='⏳ This test opens in <b>'+fmtRemain(OPEN_TS-Date.now())+'</b> (Fri 14 Aug, 12:00 AM).';}
+  else if(st==='after'){el.style.display='block';el.innerHTML='🔒 The window for this test has closed.';}
+  else{el.style.display='block';el.innerHTML='🟢 Live — window closes in <b>'+fmtRemain(CLOSE_TS-Date.now())+'</b> (Mon 17 Aug, 12:00 AM).';}
+}
+setInterval(refreshWindowMsg,30000);
+document.addEventListener('DOMContentLoaded',refreshWindowMsg);
+function startTest(){
+  const n=document.getElementById('inName').value.trim();
+  const p=document.getElementById('inPin').value.trim();
+  const b=document.getElementById('inBatch').value;
+  if(!n||!p||!b){alert('Please fill name, PIN and batch.');return;}
+  const st=windowState();
+  if(st!=='open' && !p.toUpperCase().startsWith('IMS')){
+    alert(st==='before'
+      ? 'This test opens Friday 14 Aug at 12:00 AM. Come back then!'
+      : 'The window for this test closed on Monday 17 Aug at 12:00 AM.');
+    return;
+  }
+  student={name:n,pin:p,batch:b};
+  document.getElementById('loginScreen').classList.add('hidden');
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('test').classList.remove('hidden');
+  buildPalette(); lastTick=Date.now(); render();
+  timerInt=setInterval(tick,1000);
+}
+function tick(){
+  secondsLeft--;
+  const m=Math.floor(secondsLeft/60),s=secondsLeft%60;
+  const t=document.getElementById('timer');
+  t.textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+  const bar=document.getElementById('timerBar');
+  bar.style.width=(secondsLeft/DURATION*100)+'%';
+  if(secondsLeft<=300){t.classList.add('low');bar.className='danger';}
+  else if(secondsLeft<=600){bar.className='warn';}
+  if(secondsLeft<=0){clearInterval(timerInt);submitTest();}
+}
+function buildPalette(){
+  ['palette','mobPalette'].forEach(id=>{
+    const pal=document.getElementById(id);pal.innerHTML='';
+    for(let i=0;i<15;i++){
+      const b=document.createElement('button');
+      b.className='pal';b.textContent=i+1;b.onclick=()=>{go(i);};
+      pal.appendChild(b);
+    }
+  });
+}
+function logTime(){
+  const now=Date.now();
+  qTimes[cur]+=Math.round((now-lastTick)/1000);
+  lastTick=now;
+}
+function go(i){logTime();cur=i;render();}
+function nav(d){const n=cur+d;if(n>=0&&n<15)go(n);}
+function clearAns(){answers[cur]=null;render();}
+function render(){
+  const q=Q[cur];
+  document.getElementById('qNum').textContent=cur+1;
+  document.getElementById('qTopic').textContent=q.topic;
+  const pb=document.getElementById('passageBox');
+  if(q.passage){pb.innerHTML=PASSAGES[q.passage];pb.classList.remove('hidden');}
+  else pb.classList.add('hidden');
+  document.getElementById('stem').innerHTML=q.stem;
+  const ob=document.getElementById('opts');ob.innerHTML='';
+  q.options.forEach((o,i)=>{
+    const d=document.createElement('div');
+    d.className='opt'+(answers[cur]===i?' sel':'');
+    d.innerHTML='<span class="oLetter">'+String.fromCharCode(65+i)+'</span><span>'+o+'</span>';
+    d.onclick=()=>{answers[cur]=i;render();};
+    ob.appendChild(d);
+  });
+  ['palette','mobPalette'].forEach(id=>{
+    document.querySelectorAll('#'+id+' .pal').forEach((p,i)=>{
+      p.classList.toggle('ans',answers[i]!==null);
+      p.classList.toggle('cur',i===cur);
+    });
+  });
+}
+function confirmSubmit(){
+  const un=answers.filter(a=>a===null).length;
+  if(confirm(un>0?`You have ${un} unanswered question(s). Submit anyway?`:'Submit the test?')){
+    clearInterval(timerInt);submitTest();
+  }
+}
+
+/* ============================================================ SUBMIT */
+function submitTest(){
+  logTime();
+  let correct=0,wrong=0,skipped=0;
+  const wrongQuestions=[],studentAnswers=[],topicErrors={},sectionErrors={};
+  answers.forEach((a,i)=>{
+    studentAnswers.push(a===null?"-":String.fromCharCode(65+a));
+    if(a===null){skipped++;}
+    else if(a===Q[i].answer){correct++;}
+    else{
+      wrong++;wrongQuestions.push(i+1);
+      topicErrors[Q[i].topic]=(topicErrors[Q[i].topic]||0)+1;
+      const sec=Q[i].topic.startsWith("Reading")?"RC":Q[i].topic.startsWith("Grammar")?"Grammar":Q[i].topic.startsWith("Vocabulary")?"Vocabulary":"Verbal Reasoning";
+      sectionErrors[sec]=(sectionErrors[sec]||0)+1;
+    }
+  });
+  const score=correct*3-wrong*1;
+  document.getElementById('test').classList.add('hidden');
+  document.getElementById('results').classList.remove('hidden');
+  document.getElementById('scoreOut').textContent=score;
+  document.getElementById('stCorrect').textContent=correct;
+  document.getElementById('stWrong').textContent=wrong;
+  document.getElementById('stSkip').textContent=skipped;
+  const used=DURATION-Math.max(secondsLeft,0);
+  document.getElementById('stTime').textContent=Math.floor(used/60)+'m '+(used%60)+'s';
+  buildReview();
+  logToSheet(score,correct,wrong,skipped,sectionErrors,wrongQuestions,studentAnswers,topicErrors);
+}
+function buildReview(){
+  const rl=document.getElementById('reviewList');rl.innerHTML='<h1 style="margin:18px 0 6px;">Review</h1>';
+  Q.forEach((q,i)=>{
+    const a=answers[i],ok=a===q.answer,skip=a===null;
+    const d=document.createElement('div');
+    d.className='rev '+(skip?'skip':ok?'ok':'bad');
+    let optHtml='';
+    q.options.forEach((o,j)=>{
+      let cls='ropt';
+      if(j===q.answer)cls+=' correct';
+      else if(j===a)cls+=' wrong';
+      let mark=j===q.answer?' ✓':(j===a?' ✗':'');
+      optHtml+=`<div class="${cls}"><span class="rLetter">${String.fromCharCode(65+j)}</span><span>${o}${mark}</span></div>`;
+    });
+    const status=skip?`<span class="tag-w">Skipped</span>`
+      :ok?`<span class="tag-c">Correct (+3)</span>`
+      :`<span class="tag-w">Wrong (−1)</span>`;
+    d.innerHTML=`<div class="rqHead"><b>Q${i+1}</b> · ${q.topic} · ${status}</div>`+
+      (q.passage?`<details class="revPass"><summary>Show passage</summary>${PASSAGES[q.passage]}</details>`:'')+
+      `<div class="rstem">${q.stem}</div>${optHtml}`+
+      `<div class="expl"><b>Why:</b> ${q.expl}</div>`+
+      `<div class="concept">${q.concept}</div>`;
+    rl.appendChild(d);
+  });
+}
+
+/* ============================================================ PAYLOAD — 16 FIELDS, VERIFY AGAINST APPS SCRIPT v8 */
+function logToSheet(score,correct,wrong,skipped,sectionErrors,wrongQuestions,studentAnswers,topicErrors){
+  const payload={
+    testName: TEST_NAME,
+    name: student.name,
+    pin: student.pin,
+    batch: student.batch,
+    score: score,
+    correct: correct,
+    wrong: wrong,
+    skipped: skipped,
+    maxMarks: MAX_MARKS,
+    timeTaken: DURATION-Math.max(secondsLeft,0),
+    timestamp: new Date().toISOString(),
+    sectionErrors: JSON.stringify(sectionErrors),
+    wrongQuestions: JSON.stringify(wrongQuestions),
+    studentAnswers: JSON.stringify(studentAnswers),
+    questionTimes: JSON.stringify(qTimes),
+    topicErrors: JSON.stringify(topicErrors)
+  };
+  fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)})
+    .then(()=>{document.getElementById('syncMsg').textContent='✓ Response recorded.';})
+    .catch(()=>{document.getElementById('syncMsg').textContent='⚠ Could not sync — screenshot this result.';});
+}
+
+/* ============================================================ PDF */
+function downloadPDF(){
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF();
+  const W=doc.internal.pageSize.getWidth(),M=14;let y=18;
+  function line(txt,size,style,color){
+    doc.setFontSize(size);doc.setFont('helvetica',style||'normal');
+    doc.setTextColor.apply(doc,color||[20,20,40]);
+    const rows=doc.splitTextToSize(txt,W-2*M);
+    rows.forEach(r=>{
+      if(y>282){doc.addPage();y=18;}
+      doc.text(r,M,y);y+=size*0.42+1.6;
+    });
+  }
+  let correct=0,wrong=0,skipped=0;
+  answers.forEach((a,i)=>{if(a===null)skipped++;else if(a===Q[i].answer)correct++;else wrong++;});
+  const score=correct*3-wrong;
+  line('Road to IIM · UGAT-B VA Challenge Mock',15,'bold',[10,17,40]);
+  line(`${student.name}  |  ${student.batch}  |  ${new Date().toLocaleString()}`,10);
+  line(`Score: ${score}/45   Correct: ${correct}   Wrong: ${wrong}   Skipped: ${skipped}`,11,'bold',[150,110,20]);
+  y+=3;
+  Q.forEach((q,i)=>{
+    const a=answers[i],ok=a===q.answer;
+    const plain=q.stem.replace(/<br\s*\/?>/gi,'\n').replace(/<[^>]+>/g,'');
+    line(`Q${i+1} · ${q.topic}`,11,'bold');
+    line(plain,9.5);
+    q.options.forEach((o,j)=>line(`${String.fromCharCode(65+j)}. ${o}`,9.5,j===q.answer?'bold':'normal',j===q.answer?[30,120,80]:[20,20,40]));
+    line(a===null?'Skipped':ok?`Your answer: ${String.fromCharCode(65+a)} (Correct)`:`Your answer: ${String.fromCharCode(65+a)} (Wrong) | Correct: ${String.fromCharCode(65+q.answer)}`,9.5,'bold',ok?[30,120,80]:[170,60,60]);
+    line('Why: '+q.expl.replace(/<[^>]+>/g,''),9,'italic',[80,80,100]);
+    line(q.concept.replace(/<[^>]+>/g,''),9,'normal',[110,90,30]);
+    y+=2;
+  });
+  doc.save('UGAT_VA_Challenge_'+student.name.replace(/\s+/g,'_')+'.pdf');
+}
+</script>
+</body>
+</html>
