@@ -108,6 +108,43 @@ header{
 .skybar .count b{color:var(--gold);}
 
 /* ── next up card ───────────────────────── */
+
+/* ═══ LIMITED-WINDOW EVENT ═══ */
+.eventcard{
+  position:relative;z-index:2;
+  margin:0 clamp(20px,6vw,72px) 18px;
+  max-width:560px;
+  display:none;align-items:center;gap:16px;
+  background:linear-gradient(150deg,rgba(231,110,80,.14),rgba(20,26,51,.7));
+  border:1px solid rgba(231,140,80,.55);border-radius:14px;
+  padding:16px 18px;cursor:pointer;text-align:left;
+  color:var(--ivory);font-family:'DM Sans',sans-serif;width:calc(100% - 2*clamp(20px,6vw,72px));
+  transition:box-shadow .2s ease, transform .2s ease;
+}
+.eventcard:hover{box-shadow:0 0 26px rgba(231,140,80,.35);transform:translateY(-1px);}
+.eventcard .spark{
+  width:36px;height:36px;flex:0 0 36px;border-radius:50%;
+  border:2px solid #e78c50;box-shadow:0 0 14px rgba(231,140,80,.55);
+  display:flex;align-items:center;justify-content:center;color:#e78c50;font-size:1rem;
+}
+.eventcard .nu-body{flex:1;min-width:0;}
+.eventcard .nu-eyebrow{font-size:.62rem;font-weight:700;letter-spacing:.14em;color:#e78c50;margin-bottom:2px;display:flex;align-items:center;gap:8px;}
+.eventcard .live-dot{width:7px;height:7px;border-radius:50%;background:#e74c3c;animation:evpulse 1.2s infinite;}
+@keyframes evpulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(231,76,60,.6);}50%{opacity:.6;box-shadow:0 0 0 5px rgba(231,76,60,0);}}
+.eventcard .nu-title{font-family:'Fraunces',serif;font-size:1.05rem;font-weight:600;}
+.eventcard .nu-sub{font-size:.74rem;color:var(--dim);margin-top:2px;}
+.eventcard .ev-timer{font-variant-numeric:tabular-nums;color:var(--ivory);font-weight:600;}
+.eventcard .nu-go{
+  flex:0 0 auto;padding:9px 16px;border-radius:999px;border:none;cursor:pointer;
+  background:linear-gradient(135deg,#e78c50,#c9642e);color:var(--sky-deep);
+  font-weight:700;font-size:.8rem;font-family:'DM Sans',sans-serif;
+}
+.eventcard.locked{cursor:default;}
+.eventcard.locked .nu-go{background:rgba(146,152,176,.25);color:var(--dim);}
+@media (max-width:560px){
+  .eventcard{flex-wrap:wrap;}
+  .eventcard .nu-go{width:100%;text-align:center;}
+}
 .nextup{
   position:relative;z-index:2;
   margin:0 clamp(20px,6vw,72px) 30px;
@@ -280,6 +317,16 @@ footer{position:relative;z-index:2;padding:20px clamp(20px,6vw,72px) 40px;font-s
   <div class="count" id="skyCount"></div>
 </div>
 
+<button class="eventcard" id="eventCard">
+  <span class="spark">⚡</span>
+  <span class="nu-body">
+    <span class="nu-eyebrow" id="evEyebrow"><span class="live-dot" id="evDot"></span>LIMITED WINDOW</span>
+    <span class="nu-title" id="evTitle"></span>
+    <span class="nu-sub" id="evSub"></span>
+  </span>
+  <span class="nu-go" id="evGo">Enter</span>
+</button>
+
 <button class="nextup" id="nextUp">
   <div class="spark">✦</div>
   <div class="nu-body">
@@ -327,6 +374,10 @@ const MANIFEST = [
       {t:"Test 22", url:"RoadToIIM_Test22_OnlineTest.html", matchNum:22},
       {t:"Test 23", url:"RoadToIIM_Test23_OnlineTest.html", matchNum:23},
       {t:"Test 24", url:"RoadToIIM_Test24_OnlineTest.html", matchNum:24, isNew:true},
+    ]},
+  { id:"challenge", name:"Challenge Series", desc:"Limited-window mocks · real exam patterns",
+    tests:[
+      {t:"UGAT-B VA Challenge", url:"RoadToIIM_UGATB_VA_ChallengeMock.html", sheetName:"UGAT-B VA Challenge Mock", isNew:true},
     ]},
   { id:"rapid", name:"Rapid Fire", desc:"Short bursts, no feedback till the end",
     tests:[
@@ -605,6 +656,53 @@ document.getElementById('signOut').addEventListener('click',()=>{
   try{saved=localStorage.getItem('riim_pin');}catch(e){}
   if(saved){ enter(saved); }
 })();
+
+/* ═══ LIMITED-WINDOW EVENTS ═══
+   Timestamps are UTC epochs. IST = UTC+5:30, so 00:00 IST = 18:30 UTC previous day.
+   Add future window tests here — one entry each. */
+const EVENTS = [
+  { t:"UGAT-B VA Challenge Mock",
+    sub:"IIM Bangalore pattern · 15 Qs · 25 min · +3/−1",
+    url:"RoadToIIM_UGATB_VA_ChallengeMock.html",
+    opensAt: Date.UTC(2026,7,13,18,30,0),   /* Fri 14 Aug 2026, 00:00 IST */
+    closesAt: Date.UTC(2026,7,16,18,30,0)   /* Mon 17 Aug 2026, 00:00 IST */
+  }
+];
+
+function fmtRemain(ms){
+  const s=Math.max(0,Math.floor(ms/1000));
+  const d=Math.floor(s/86400), h=Math.floor(s%86400/3600), m=Math.floor(s%3600/60), sec=s%60;
+  if(d>0) return d+"d "+h+"h "+m+"m";
+  if(h>0) return h+"h "+m+"m "+String(sec).padStart(2,"0")+"s";
+  return m+"m "+String(sec).padStart(2,"0")+"s";
+}
+
+function updateEventCard(){
+  const card=document.getElementById('eventCard');
+  const now=Date.now();
+  const ev=EVENTS.find(e=>now < e.closesAt);   /* first not-yet-closed event */
+  if(!ev){ card.style.display='none'; return; }
+  document.getElementById('evTitle').textContent=ev.t;
+  const dot=document.getElementById('evDot'), go=document.getElementById('evGo'),
+        sub=document.getElementById('evSub'), eb=document.getElementById('evEyebrow');
+  if(now < ev.opensAt){
+    card.style.display='flex'; card.classList.add('locked');
+    dot.style.display='none';
+    eb.childNodes[1].textContent='';
+    eb.innerHTML='<span class="live-dot" id="evDot" style="display:none"></span>OPENS SOON';
+    sub.innerHTML=ev.sub+' · Opens in <span class="ev-timer">'+fmtRemain(ev.opensAt-now)+'</span>';
+    go.textContent='Locked'; card.onclick=null;
+  }else{
+    card.style.display='flex'; card.classList.remove('locked');
+    eb.innerHTML='<span class="live-dot"></span>LIVE · LIMITED WINDOW';
+    sub.innerHTML=ev.sub+' · Ends in <span class="ev-timer">'+fmtRemain(ev.closesAt-now)+'</span>';
+    go.textContent='Enter';
+    card.onclick=()=>{ location.href = PORTAL_BASE + ev.url; };
+  }
+}
+setInterval(updateEventCard,1000);
+updateEventCard();
+
 </script>
 </body>
 </html>
