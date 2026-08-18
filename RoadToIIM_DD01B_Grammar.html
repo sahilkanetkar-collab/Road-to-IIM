@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daily Drill DD01B – Grammar | Road to IIM</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+:root{
+  --bg:#0d1321; --card:#16203a; --card2:#1b2745; --gold:#d4af37; --gold-soft:rgba(212,175,55,.15);
+  --text:#e8e6df; --muted:#9aa3b5; --green:#4ea082; --red:#c85a5a; --blue:#5a8ac8;
+}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',system-ui,sans-serif}
+body{background:var(--bg);color:var(--text);min-height:100vh}
+.hidden{display:none!important}
+.wrap{max-width:900px;margin:0 auto;padding:20px}
+/* ---------- LOGIN ---------- */
+#login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
+.login-card{background:var(--card);border:1px solid var(--gold-soft);border-radius:16px;padding:36px 32px;width:100%;max-width:420px;text-align:center}
+.brand{font-size:.8rem;letter-spacing:3px;color:var(--gold);text-transform:uppercase;margin-bottom:6px}
+.login-card h1{font-size:1.5rem;margin-bottom:4px}
+.dd-badge{display:inline-block;background:var(--gold-soft);color:var(--gold);border:1px solid var(--gold);border-radius:20px;padding:3px 14px;font-size:.75rem;letter-spacing:1px;margin:10px 0 4px}
+.login-meta{color:var(--muted);font-size:.85rem;margin-bottom:22px}
+.login-card input,.login-card select{width:100%;padding:12px 14px;margin-bottom:14px;border-radius:8px;border:1px solid #2c3a5e;background:var(--card2);color:var(--text);font-size:1rem}
+.login-card select:invalid{color:var(--muted)}
+.btn{display:inline-block;background:var(--gold);color:#101010;border:none;border-radius:8px;padding:12px 30px;font-size:1rem;font-weight:600;cursor:pointer;transition:.2s}
+.btn:hover{filter:brightness(1.1)}
+.err{color:var(--red);font-size:.85rem;min-height:18px;margin-bottom:6px}
+/* ---------- TEST ---------- */
+#test-header{position:sticky;top:0;background:var(--card);border-bottom:1px solid var(--gold-soft);padding:12px 18px;display:flex;justify-content:space-between;align-items:center;z-index:10}
+#test-header .t-name{font-size:.9rem;color:var(--gold);font-weight:600}
+#timer{font-size:1.15rem;font-weight:700;background:var(--card2);padding:6px 16px;border-radius:8px;border:1px solid var(--gold-soft)}
+#timer.low{color:var(--red);border-color:var(--red)}
+#palette{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}
+.pal-btn{width:38px;height:38px;border-radius:8px;border:1px solid #2c3a5e;background:var(--card2);color:var(--text);cursor:pointer;font-weight:600}
+.pal-btn.answered{background:var(--green);border-color:var(--green);color:#fff}
+.pal-btn.current{outline:2px solid var(--gold)}
+.q-card{background:var(--card);border:1px solid var(--gold-soft);border-radius:14px;padding:26px}
+.q-num{color:var(--gold);font-size:.8rem;letter-spacing:1px;margin-bottom:8px}
+.q-stem{font-size:1.08rem;line-height:1.6;margin-bottom:20px}
+.opt{display:block;width:100%;text-align:left;padding:13px 16px;margin-bottom:10px;border-radius:10px;border:1px solid #2c3a5e;background:var(--card2);color:var(--text);cursor:pointer;font-size:.98rem;transition:.15s}
+.opt:hover{border-color:var(--gold)}
+.opt.selected{background:var(--gold-soft);border-color:var(--gold);color:var(--gold)}
+.nav-row{display:flex;justify-content:space-between;margin-top:20px;gap:10px}
+.btn-ghost{background:transparent;color:var(--text);border:1px solid #2c3a5e;border-radius:8px;padding:11px 22px;cursor:pointer}
+.btn-ghost:hover{border-color:var(--gold);color:var(--gold)}
+.btn-clear{background:transparent;color:var(--muted);border:1px solid transparent;padding:11px 10px;cursor:pointer;font-size:.85rem}
+#submit-row{text-align:center;margin:26px 0}
+/* ---------- RESULTS ---------- */
+.res-card{background:var(--card);border:1px solid var(--gold-soft);border-radius:16px;padding:30px;text-align:center;margin-bottom:20px}
+.res-score{font-size:2.6rem;font-weight:800;color:var(--gold)}
+.res-grid{display:flex;justify-content:center;gap:26px;margin-top:16px;flex-wrap:wrap}
+.res-grid div{font-size:.9rem;color:var(--muted)}
+.res-grid b{display:block;font-size:1.3rem;color:var(--text)}
+.pdf-btn{background:transparent;color:var(--gold);border:1.5px solid var(--gold);border-radius:8px;padding:11px 26px;font-size:.95rem;font-weight:600;cursor:pointer;margin-top:18px}
+.pdf-btn:hover{background:var(--gold-soft)}
+.rev-item{background:var(--card);border:1px solid #2c3a5e;border-radius:12px;padding:18px;margin-bottom:12px;text-align:left}
+.rev-item.wrong{border-left:4px solid var(--red)}
+.rev-item.correct{border-left:4px solid var(--green)}
+.rev-item.skipped{border-left:4px solid var(--muted)}
+.rev-stem{font-size:.95rem;margin-bottom:8px}
+.rev-ans{font-size:.88rem;color:var(--muted);line-height:1.55}
+.rev-ans .ok{color:var(--green);font-weight:600}
+.rev-ans .bad{color:var(--red)}
+.sub-note{color:var(--muted);font-size:.85rem;margin-top:10px}
+footer{text-align:center;color:var(--muted);font-size:.75rem;padding:24px 0}
+</style>
+</head>
+<body>
+
+<!-- ============ LOGIN ============ -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="brand">Road to IIM</div>
+    <h1>Daily Drills</h1>
+    <div class="dd-badge">DD01B · GRAMMAR · TUE</div>
+    <div class="login-meta">20 Questions · 30 Minutes · +4 / −1</div>
+    <input type="text" id="inp-name" placeholder="Full Name" autocomplete="off">
+    <input type="password" id="inp-pin" placeholder="PIN" autocomplete="off">
+    <select id="inp-batch" required>
+      <option value="" disabled selected>Select Batch</option>
+      <optgroup label="Classroom">
+        <option>A2701</option><option>A2702</option><option>A2703</option><option>A2704</option>
+        <option>A2705</option><option>A2706</option><option>A2707</option><option>A2708</option>
+        <option>A2709</option><option>A2710</option><option>A2711</option><option>A2712</option>
+        <option>A2714</option><option>A2715</option><option>A2716</option><option>A2717</option>
+        <option>A2718</option><option>A2719</option><option>A2720</option>
+      </optgroup>
+      <optgroup label="School"><option>Zebar</option></optgroup>
+      <optgroup label="IPMAT 28">
+        <option>Z2801</option><option>S2801</option><option>A2804</option><option>PN2801</option>
+      </optgroup>
+      <optgroup label="Admin"><option>Admin</option></optgroup>
+    </select>
+    <div class="err" id="login-err"></div>
+    <button class="btn" onclick="startTest()">Start Drill</button>
+  </div>
+</div>
+
+<!-- ============ TEST ============ -->
+<div id="test-screen" class="hidden">
+  <div id="test-header">
+    <span class="t-name">DD01B – Grammar · Road to IIM</span>
+    <span id="timer">30:00</span>
+  </div>
+  <div class="wrap">
+    <div id="palette"></div>
+    <div class="q-card">
+      <div class="q-num" id="q-num"></div>
+      <div class="q-stem" id="q-stem"></div>
+      <div id="q-options"></div>
+      <div class="nav-row">
+        <button class="btn-ghost" onclick="prevQ()">← Prev</button>
+        <button class="btn-clear" onclick="clearAns()">Clear Response</button>
+        <button class="btn-ghost" onclick="nextQ()">Next →</button>
+      </div>
+    </div>
+    <div id="submit-row"><button class="btn" onclick="confirmSubmit()">Submit Drill</button></div>
+  </div>
+</div>
+
+<!-- ============ RESULTS ============ -->
+<div id="results-screen" class="hidden">
+  <div class="wrap">
+    <div class="res-card">
+      <div class="brand">Road to IIM · Daily Drills</div>
+      <h2 style="margin:6px 0 2px">DD01B – Grammar</h2>
+      <div class="res-score" id="res-score"></div>
+      <div style="color:var(--muted);font-size:.85rem">out of 80</div>
+      <div class="res-grid">
+        <div><b id="res-correct"></b>Correct</div>
+        <div><b id="res-wrong"></b>Wrong</div>
+        <div><b id="res-skipped"></b>Skipped</div>
+        <div><b id="res-time"></b>Time Taken</div>
+      </div>
+      <button class="pdf-btn" onclick="downloadPDF()">Download PDF</button>
+      <div class="sub-note" id="sub-status">Submitting your score…</div>
+    </div>
+    <h3 style="margin:8px 0 14px;color:var(--gold);font-size:1rem;letter-spacing:1px">REVIEW</h3>
+    <div id="review-list"></div>
+  </div>
+  <footer>Road to IIM · Daily Drills · Sahil Sir – Verbal Ability</footer>
+</div>
+
+<script>
+/* ================= CONFIG ================= */
+const TEST_NAME = "DD01B - Grammar";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx5Ojm_zp4LfsMeelx5e06KNjVH1wfsXdV0keS4407m4FO1HU4EpVb7GKj-ibAsxnspeA/exec"; // Apps Script v8
+const TIMER_DURATION = 30 * 60; // 30 minutes — standard for all tests
+const MAX_MARKS = 80; // 20 Q × 4
+
+/* ================= QUESTIONS =================
+   topic values feed topicErrors (PATH 2 auto-detect) */
+const QUESTIONS = [
+ // ---- Q1–10: Foundational ----
+ {stem:"Choose the correct verb: The bouquet of red roses ______ on the table since morning.",
+  opts:["have been lying","were lying","has been lying","are lying"],ans:2,topic:"Grammar-SVA",
+  exp:"The subject is <i>bouquet</i> (singular), not <i>roses</i>. The 'of + plural noun' phrase between subject and verb is the classic SVA trap. Singular subject → has been lying."},
+ {stem:"Choose the correct verb: By the time we arrived at the theatre, the show ______.",
+  opts:["started","has started","had started","was starting"],ans:2,topic:"Grammar-Tenses",
+  exp:"Two past events — the earlier one takes past perfect. The show starting happened <i>before</i> we arrived, so: had started."},
+ {stem:"Choose the correct pronoun: Between you and ______, this plan will not work.",
+  opts:["I","me","myself","mine"],ans:1,topic:"Grammar-Pronouns",
+  exp:"<i>Between</i> is a preposition, so it takes the object form: me. 'Between you and I' sounds formal but is wrong — a hypercorrection trap."},
+ {stem:"Choose the correct article: He is ______ honest man, and everyone in ______ office trusts him.",
+  opts:["a, the","an, the","an, an","the, an"],ans:1,topic:"Grammar-Articles",
+  exp:"Article choice follows <b>sound</b>, not spelling. <i>Honest</i> begins with a vowel sound (the h is silent) → an. <i>The office</i> — a specific, known office."},
+ {stem:"Choose the correct preposition: She has always been good ______ mathematics but poor ______ chemistry.",
+  opts:["in, at","at, in","at, at","with, in"],ans:2,topic:"Grammar-Prepositions",
+  exp:"The fixed pairing is <i>good at / poor at</i> a subject or skill. Both blanks take 'at'."},
+ {stem:"Choose the correct verb: Neither of the two answers ______ correct.",
+  opts:["are","is","were","have been"],ans:1,topic:"Grammar-SVA",
+  exp:"<i>Neither of</i> + plural noun still takes a singular verb — the subject is 'neither' (not one of the two). So: is."},
+ {stem:"Choose the correct tense: I ______ him since 2019, so I can vouch for his honesty.",
+  opts:["know","knew","have known","am knowing"],ans:2,topic:"Grammar-Tenses",
+  exp:"<i>Since + point in time</i> signals present perfect: have known. 'Am knowing' fails because <i>know</i> is a stative verb — no continuous form."},
+ {stem:"Which sentence means she ate <b>nothing except</b> fruit?",
+  opts:["She only ate fruit for breakfast.","Only she ate fruit for breakfast.","She ate only fruit for breakfast.","She ate fruit only for breakfast."],ans:2,topic:"Grammar-Modifiers",
+  exp:"<i>Only</i> modifies what it sits next to. 'Ate only fruit' = nothing but fruit. Option A suggests eating was all she did; B = nobody else ate fruit; D leans toward 'only at breakfast'."},
+ {stem:"Choose the correct pronoun: Each of the girls submitted ______ assignment before the deadline.",
+  opts:["their","her","its","hers"],ans:1,topic:"Grammar-Pronouns",
+  exp:"<i>Each</i> is singular, and the group is 'girls' → her. 'Their' fails the singular test in exam grammar (formal usage)."},
+ {stem:"Identify the error: The news of the floods (A) / are shocking (B) / and has upset everyone (C) / in the village. (D)",
+  opts:["Part A","Part B","Part C","Part D"],ans:1,topic:"Grammar-SVA",
+  exp:"<i>News</i> looks plural but is uncountable and singular: the news <b>is</b> shocking. Part C correctly uses 'has', which confirms the intended singular subject."},
+ // ---- Q11–20: Exam level ----
+ {stem:"Choose the correct verb: The number of applicants for the IPM programme ______ sharply this year.",
+  opts:["have risen","has risen","are rising","were rising"],ans:1,topic:"Grammar-SVA",
+  exp:"<i>The number of</i> = singular (a single figure) → has risen. Contrast: <i>A number of</i> applicants (= many) takes a plural verb."},
+ {stem:"Which sentence is free of a dangling modifier?",
+  opts:["Walking into the room, the chandelier caught my eye.","Walking into the room, I noticed the chandelier at once.","Walking into the room, the beauty of the chandelier struck me.","While walking into the room, the chandelier was noticed by me."],ans:1,topic:"Grammar-Modifiers",
+  exp:"The opening phrase must describe the subject that follows the comma. Only in B is the walker (<i>I</i>) the subject. In A and C, the chandelier/beauty appears to be walking."},
+ {stem:"Choose the sentence with correct parallel structure:",
+  opts:["She likes swimming, to run, and biking every weekend.","She likes swimming, running, and to bike every weekend.","She likes swimming, running, and biking every weekend.","She likes to swim, running, and biking every weekend."],ans:2,topic:"Grammar-Parallelism",
+  exp:"Items in a list must share one grammatical form. Only C keeps all three as -ing forms. The others mix gerunds and infinitives."},
+ {stem:"Choose the correct form: If I ______ you, I would accept the offer without hesitation.",
+  opts:["was","am","were","had been"],ans:2,topic:"Grammar-Conditionals",
+  exp:"Hypothetical/unreal condition takes the subjunctive <i>were</i> for all subjects: If I <b>were</b> you. 'Was' is the everyday-speech trap; 'had been' would need a past-time result clause."},
+ {stem:"Choose the correct form: The committee demanded that every member ______ present at the review meeting.",
+  opts:["is","was","be","should have been"],ans:2,topic:"Grammar-Conditionals",
+  exp:"Verbs of demand/suggestion/insistence trigger the subjunctive: demanded that he <b>be</b> present. The bare form 'be' is used regardless of subject."},
+ {stem:"Choose the correct pronoun: The candidate ______ we interviewed yesterday has been selected for the Ahmedabad centre.",
+  opts:["who","whom","which","whose"],ans:1,topic:"Grammar-Pronouns",
+  exp:"The pronoun is the <b>object</b> of 'interviewed' (we interviewed <i>him</i>) → whom. Quick test: answer with him/her → whom; he/she → who."},
+ {stem:"Choose the correct sequence of tenses: She told the panel that she ______ the report the previous day itself.",
+  opts:["submitted","has submitted","had submitted","will have submitted"],ans:2,topic:"Grammar-Tenses",
+  exp:"Reported speech after a past reporting verb pushes the earlier action into past perfect: had submitted. 'The previous day' confirms it happened before she spoke."},
+ {stem:"Choose the sentence with the correlative pair placed correctly:",
+  opts:["He not only won the debate but also the quiz.","He won not only the debate but also the quiz.","Not only he won the debate but also the quiz.","He won not only the debate but he also won the quiz too."],ans:1,topic:"Grammar-Parallelism",
+  exp:"<i>Not only … but also</i> must frame parallel elements. In B both halves are noun phrases (the debate / the quiz). In A, 'won the debate' (verb phrase) is paired with 'the quiz' (noun) — broken parallelism. D is redundant."},
+ {stem:"Choose the correct verb: The captain, along with the senior players, ______ leaving for the training camp tonight.",
+  opts:["are","were","is","have been"],ans:2,topic:"Grammar-SVA",
+  exp:"Phrases like <i>along with, as well as, together with</i> do NOT change the subject's number. Subject = the captain (singular) → is."},
+ {stem:"Choose the correct word: No sooner had he arrived at the venue ______ the meeting began.",
+  opts:["when","than","then","that"],ans:1,topic:"Grammar-Conjunctions",
+  exp:"Fixed pairs: <i>No sooner … than</i> and <i>Hardly/Scarcely … when</i>. Mixing them is the most common trap. Here: no sooner → than."}
+];
+
+/* ================= STATE ================= */
+let student={name:"",pin:"",batch:""};
+let answers=new Array(QUESTIONS.length).fill(null);
+let qTimes=new Array(QUESTIONS.length).fill(0);
+let cur=0, remaining=TIMER_DURATION, timerId=null, qStart=null, startedAt=null;
+
+/* ================= LOGIN ================= */
+function startTest(){
+  const n=document.getElementById("inp-name").value.trim();
+  const p=document.getElementById("inp-pin").value.trim();
+  const b=document.getElementById("inp-batch").value;
+  const err=document.getElementById("login-err");
+  if(!n||!p||!b){err.textContent="Please fill name, PIN and batch.";return;}
+  student={name:n,pin:p,batch:b};
+  document.getElementById("login-screen").classList.add("hidden");
+  document.getElementById("test-screen").classList.remove("hidden");
+  startedAt=Date.now();
+  buildPalette(); showQ(0); startTimer();
+}
+
+/* ================= TIMER ================= */
+function startTimer(){
+  timerId=setInterval(()=>{
+    remaining--;
+    const t=document.getElementById("timer");
+    t.textContent=fmt(remaining);
+    if(remaining<=300)t.classList.add("low");
+    if(remaining<=0){clearInterval(timerId);submitTest(true);}
+  },1000);
+}
+function fmt(s){const m=Math.floor(s/60),x=s%60;return String(m).padStart(2,"0")+":"+String(x).padStart(2,"0");}
+
+/* ================= NAVIGATION ================= */
+function buildPalette(){
+  const pal=document.getElementById("palette");pal.innerHTML="";
+  QUESTIONS.forEach((_,i)=>{
+    const b=document.createElement("button");
+    b.className="pal-btn";b.textContent=i+1;b.onclick=()=>showQ(i);
+    b.id="pal-"+i;pal.appendChild(b);
+  });
+}
+function showQ(i){
+  logTime(); cur=i; qStart=Date.now();
+  document.getElementById("q-num").textContent="QUESTION "+(i+1)+" OF "+QUESTIONS.length;
+  document.getElementById("q-stem").innerHTML=QUESTIONS[i].stem;
+  const box=document.getElementById("q-options");box.innerHTML="";
+  QUESTIONS[i].opts.forEach((o,j)=>{
+    const b=document.createElement("button");
+    b.className="opt"+(answers[i]===j?" selected":"");
+    b.innerHTML="<b>"+String.fromCharCode(65+j)+".</b> "+o;
+    b.onclick=()=>{answers[i]=j;refreshPalette();showQ(i);};
+    box.appendChild(b);
+  });
+  refreshPalette();
+}
+function refreshPalette(){
+  QUESTIONS.forEach((_,i)=>{
+    const b=document.getElementById("pal-"+i);
+    b.classList.toggle("answered",answers[i]!==null);
+    b.classList.toggle("current",i===cur);
+  });
+}
+function logTime(){if(qStart!==null)qTimes[cur]+=Math.round((Date.now()-qStart)/1000);}
+function prevQ(){if(cur>0)showQ(cur-1);}
+function nextQ(){if(cur<QUESTIONS.length-1)showQ(cur+1);}
+function clearAns(){answers[cur]=null;showQ(cur);}
+function confirmSubmit(){
+  const un=answers.filter(a=>a===null).length;
+  if(confirm("Submit drill?"+(un?" You have "+un+" unanswered question(s).":"")))submitTest(false);
+}
+
+/* ================= SUBMIT & RESULTS ================= */
+let RESULT=null;
+function submitTest(auto){
+  clearInterval(timerId); logTime();
+  let correct=0,wrong=0,skipped=0,score=0;
+  const wrongQuestions=[],studentAnswers={},topicErrors={};
+  QUESTIONS.forEach((q,i)=>{
+    const a=answers[i];
+    studentAnswers["Q"+(i+1)]=a===null?"-":String.fromCharCode(65+a);
+    if(a===null){skipped++;}
+    else if(a===q.ans){correct++;score+=4;}
+    else{wrong++;score-=1;wrongQuestions.push(i+1);
+      topicErrors[q.topic]=(topicErrors[q.topic]||0)+1;}
+  });
+  const timeTaken=fmt(TIMER_DURATION-Math.max(remaining,0));
+  RESULT={correct,wrong,skipped,score,timeTaken};
+  const payload={
+    testName:TEST_NAME, name:student.name, pin:student.pin, batch:student.batch,
+    score:score, correct:correct, wrong:wrong, skipped:skipped,
+    maxMarks:MAX_MARKS, timeTaken:timeTaken, timestamp:new Date().toISOString(),
+    sectionErrors:JSON.stringify({"VA":wrong}),
+    wrongQuestions:JSON.stringify(wrongQuestions),
+    studentAnswers:JSON.stringify(studentAnswers),
+    questionTimes:JSON.stringify(qTimes),
+    topicErrors:JSON.stringify(topicErrors)
+  };
+  showResults();
+  fetch(SCRIPT_URL,{method:"POST",mode:"no-cors",
+    headers:{"Content-Type":"text/plain;charset=utf-8"},
+    body:JSON.stringify(payload)})
+    .then(()=>{document.getElementById("sub-status").textContent="✓ Score submitted successfully.";})
+    .catch(()=>{document.getElementById("sub-status").textContent="⚠ Submission failed — screenshot this page and send to Sahil Sir.";});
+}
+function showResults(){
+  document.getElementById("test-screen").classList.add("hidden");
+  document.getElementById("results-screen").classList.remove("hidden");
+  document.getElementById("res-score").textContent=RESULT.score;
+  document.getElementById("res-correct").textContent=RESULT.correct;
+  document.getElementById("res-wrong").textContent=RESULT.wrong;
+  document.getElementById("res-skipped").textContent=RESULT.skipped;
+  document.getElementById("res-time").textContent=RESULT.timeTaken;
+  const list=document.getElementById("review-list");list.innerHTML="";
+  QUESTIONS.forEach((q,i)=>{
+    const a=answers[i];
+    const cls=a===null?"skipped":(a===q.ans?"correct":"wrong");
+    const d=document.createElement("div");d.className="rev-item "+cls;
+    d.innerHTML="<div class='rev-stem'><b>Q"+(i+1)+".</b> "+q.stem+"</div>"+
+      "<div class='rev-ans'>Your answer: "+(a===null?"<i>Skipped</i>":"<span class='"+(a===q.ans?"ok":"bad")+"'>"+String.fromCharCode(65+a)+". "+q.opts[a]+"</span>")+
+      "<br>Correct: <span class='ok'>"+String.fromCharCode(65+q.ans)+". "+q.opts[q.ans]+"</span>"+
+      "<br>"+q.exp+"</div>";
+    list.appendChild(d);
+  });
+  window.scrollTo(0,0);
+}
+
+/* ================= PDF ================= */
+function downloadPDF(){
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF();
+  const gold=[212,175,55];
+  doc.setFillColor(13,19,33);doc.rect(0,0,210,297,"F");
+  doc.setTextColor(...gold);doc.setFontSize(10);doc.text("ROAD TO IIM  ·  DAILY DRILLS",105,16,{align:"center"});
+  doc.setTextColor(232,230,223);doc.setFontSize(18);doc.text("DD01B – Grammar",105,28,{align:"center"});
+  doc.setFontSize(11);doc.setTextColor(154,163,181);
+  doc.text("Name: "+student.name+"    Batch: "+student.batch,105,38,{align:"center"});
+  doc.setDrawColor(...gold);doc.line(30,44,180,44);
+  doc.setFontSize(30);doc.setTextColor(...gold);doc.text(String(RESULT.score),105,62,{align:"center"});
+  doc.setFontSize(10);doc.setTextColor(154,163,181);doc.text("out of "+MAX_MARKS,105,69,{align:"center"});
+  doc.setFontSize(12);doc.setTextColor(232,230,223);
+  doc.text("Correct: "+RESULT.correct,55,84);doc.text("Wrong: "+RESULT.wrong,105,84);doc.text("Skipped: "+RESULT.skipped,150,84);
+  doc.text("Time Taken: "+RESULT.timeTaken,105,94,{align:"center"});
+  const wq=[];QUESTIONS.forEach((q,i)=>{if(answers[i]!==null&&answers[i]!==q.ans)wq.push(i+1);});
+  doc.setFontSize(10);doc.setTextColor(200,90,90);
+  doc.text("Review these questions: "+(wq.length?wq.join(", "):"None – full marks on attempts!"),105,106,{align:"center"});
+  doc.setFontSize(8);doc.setTextColor(154,163,181);
+  doc.text("Road to IIM · Daily Drills · Sahil Sir – Verbal Ability",105,285,{align:"center"});
+  doc.save("DD01B_Grammar_"+student.name.replace(/\s+/g,"_")+".pdf");
+}
+</script>
+</body>
+</html>
