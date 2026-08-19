@@ -77,6 +77,7 @@ input.tita{background:var(--panel2);border:1px solid rgba(212,169,78,.4);color:v
   <optgroup label="Classroom"><option>A2701</option><option>A2702</option><option>A2703</option><option>A2704</option><option>A2705</option><option>A2706</option><option>A2707</option><option>A2708</option><option>A2709</option><option>A2710</option><option>A2711</option><option>A2712</option><option>A2714</option><option>A2715</option><option>A2716</option><option>A2717</option><option>A2718</option><option>A2719</option><option>A2720</option></optgroup>
   <optgroup label="School"><option>Zebar</option></optgroup>
   <optgroup label="IPMAT 28"><option>Z2801</option><option>S2801</option><option>A2804</option><option>PN2801</option></optgroup>
+  <optgroup label="Go Getters"><option>Go Getters</option></optgroup>
   <optgroup label="Admin"><option>Admin</option></optgroup>
  </select>
  <div id="loginErr"></div>
@@ -139,12 +140,12 @@ var NET_MSG="Couldn't verify access \u2014 check your internet connection and tr
 /* ==================== AVAILABILITY WINDOW ====================
    UTC epochs. IST = UTC+5:30, so 00:00 IST = 18:30 UTC the previous day.
    Opens : Thu 20 Aug 2026, 00:00 IST
-   Closes: Sun 23 Aug 2026, 00:00 IST (end of Saturday)
+   Closes: Mon 24 Aug 2026, 00:00 IST (end of Sunday)
    Entry is blocked outside this window; an attempt already in progress
    when the window closes is allowed to finish and submit. */
 var WIN_OPEN  = Date.UTC(2026,7,19,18,30,0);
-var WIN_CLOSE = Date.UTC(2026,7,22,18,30,0);
-var SHUT_MSG  = "This mock closed on Saturday at midnight. Your attempt window has ended.";
+var WIN_CLOSE = Date.UTC(2026,7,23,18,30,0);
+var SHUT_MSG  = "This mock closed on Sunday at midnight. Your attempt window has ended.";
 
 function winState(){
  var now=Date.now();
@@ -173,7 +174,7 @@ function paintWindow(){
   btn.disabled=true;btn.textContent="Closed";
  }else{
   note.style.display="block";
-  note.innerHTML="<b>OPEN NOW</b>Closes Saturday midnight \u00b7 "+fmtRemain(WIN_CLOSE-Date.now())+" left";
+  note.innerHTML="<b>OPEN NOW</b>Closes Sunday midnight \u00b7 "+fmtRemain(WIN_CLOSE-Date.now())+" left";
   btn.disabled=false;btn.textContent="Start Test";
  }
  return st;
