@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>UGAT Mock 002 · Road to IIM</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=DM+Sans:wght@400;500;700&family=DM+Mono&display=swap");
+:root{--navy:#0B1220;--panel:#101A2D;--panel2:#152136;--gold:#D4A94E;--text:#E8E4D8;--mut:#8B94A8;--green:rgba(78,160,130,1);--red:#C05555;--line:rgba(212,169,78,.22)}
+*{box-sizing:border-box;margin:0}
+body{background:var(--navy);color:var(--text);font-family:"DM Sans",sans-serif}
+h1{font-family:Fraunces,serif;color:var(--gold)}
+.mono{font-family:"DM Mono",monospace;font-size:12px;color:var(--mut)}
+#loginScreen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.loginCard{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:28px;max-width:420px;width:100%}
+.loginCard h1{font-size:24px;margin-bottom:2px}
+.loginCard h2{font-family:Fraunces,serif;font-size:15px;color:var(--text);font-weight:600;margin-bottom:18px}
+.loginCard label{display:block;font-family:"DM Mono";font-size:10.5px;color:var(--mut);letter-spacing:.1em;margin:12px 0 5px}
+.loginCard input,.loginCard select{width:100%;background:var(--panel2);color:var(--text);border:1px solid rgba(232,228,216,.25);border-radius:7px;padding:10px 12px;font-size:14px;font-family:"DM Sans"}
+#loginErr{display:none;color:var(--red);font-size:12.5px;margin-top:10px}
+#loginBtn{width:100%;margin-top:16px;background:var(--gold);color:var(--navy);border:none;border-radius:8px;padding:12px;font-weight:700;font-size:15px;cursor:pointer}
+.testMeta{font-family:"DM Mono";font-size:10.5px;color:var(--mut);margin-top:14px;line-height:1.7}
+#testScreen,#resultsScreen{display:none;max-width:1020px;margin:0 auto;padding:18px}
+#topBar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:12px 16px;margin-bottom:14px}
+#topBar .tName{font-family:Fraunces,serif;color:var(--gold);font-weight:700}
+#timer{font-family:"DM Mono";color:var(--gold);font-size:20px;margin-left:auto}
+#layout{display:grid;grid-template-columns:1fr 210px;gap:14px}
+@media(max-width:760px){#layout{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px;margin-bottom:12px}
+.secBadge{font-family:"DM Mono";font-size:10.5px;color:var(--gold);letter-spacing:.08em}
+#passageBox{display:none;background:var(--panel2);border-left:3px solid var(--gold);border-radius:6px;padding:12px;margin:10px 0;font-size:14px;line-height:1.6;white-space:pre-wrap;max-height:300px;overflow-y:auto}
+#qText{font-size:16px;line-height:1.6;margin:12px 0;white-space:pre-wrap}
+.opt{display:block;width:100%;text-align:left;background:var(--panel2);border:1px solid rgba(232,228,216,.15);color:var(--text);border-radius:8px;padding:12px 14px;margin:8px 0;cursor:pointer;font-size:14.5px;font-family:"DM Sans"}
+.opt.sel{border-color:var(--gold);background:rgba(212,169,78,.14)}
+input.tita{background:var(--panel2);border:1px solid rgba(212,169,78,.4);color:var(--text);border-radius:8px;padding:12px;font-size:16px;width:100%;font-family:"DM Mono"}
+.btn{background:var(--gold);color:var(--navy);border:none;border-radius:8px;padding:11px 20px;font-weight:700;cursor:pointer;font-size:14px;font-family:"DM Sans"}
+.btn.ghost{background:var(--panel2);color:var(--text);border:1px solid rgba(232,228,216,.3)}
+.btn.green{background:var(--green)}
+#sidePanel h3{font-family:"DM Mono";font-size:10.5px;color:var(--mut);letter-spacing:.1em;margin-bottom:8px}
+#palette{display:flex;flex-wrap:wrap;gap:6px}
+#palette button{width:34px;height:34px;border-radius:6px;border:1px solid rgba(232,228,216,.2);background:var(--panel2);color:var(--text);cursor:pointer;font-family:"DM Mono";font-size:12px}
+#palette .done{background:rgba(78,160,130,.25);border-color:rgba(78,160,130,.7)}
+#palette .cur{border-color:var(--gold)}
+.legend{font-size:11px;color:var(--mut);margin-top:10px;line-height:2}
+.legend span{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.statGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px;margin:14px 0}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;text-align:center}
+.stat .v{font-family:"DM Mono";font-size:22px;color:var(--gold)}
+.stat .l{font-family:"DM Mono";font-size:9.5px;color:var(--mut);letter-spacing:.08em;margin-top:4px}
+.secErr{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 16px;font-size:13px;margin-bottom:14px}
+.secErr b{color:var(--gold)}
+#pdfBtn{margin:10px 0}
+.rq{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:12px}
+.rqHead{font-family:"DM Mono";font-size:11px;color:var(--mut);margin-bottom:8px}
+.status{font-weight:700;margin-left:8px}
+.status.ok{color:var(--green)}.status.no{color:var(--red)}.status.sk{color:var(--mut)}
+.rqStem{font-size:14.5px;line-height:1.55;margin-bottom:8px;white-space:pre-wrap}
+.ropt{display:flex;gap:10px;padding:7px 10px;border-radius:6px;font-size:13.5px;margin:3px 0}
+.ropt.correct{background:rgba(78,160,130,.15);color:var(--green)}
+.ropt.wrong{background:rgba(192,85,85,.13);color:var(--red)}
+.exp{font-size:12.5px;color:var(--mut);margin-top:8px;border-top:1px solid rgba(232,228,216,.08);padding-top:8px}
+.exp b{color:var(--gold)}
+</style>
+</head>
+<body>
+<div id="loginScreen"><div class="loginCard">
+ <h1>ROAD TO IIM</h1><h2 id="lgTitle"></h2>
+ <label for="stuName">FULL NAME</label><input type="text" id="stuName" placeholder="Your full name" autocomplete="off">
+ <label for="stuPin">PIN</label><input type="text" id="stuPin" placeholder="STU########## or IMS##########" autocomplete="off" maxlength="13">
+ <label for="stuBatch">BATCH</label>
+ <select id="stuBatch"><option value="">-- Select your batch --</option>
+  <optgroup label="Classroom"><option>A2701</option><option>A2702</option><option>A2703</option><option>A2704</option><option>A2705</option><option>A2706</option><option>A2707</option><option>A2708</option><option>A2709</option><option>A2710</option><option>A2711</option><option>A2712</option><option>A2714</option><option>A2715</option><option>A2716</option><option>A2717</option><option>A2718</option><option>A2719</option><option>A2720</option></optgroup>
+  <optgroup label="School"><option>Zebar</option></optgroup>
+  <optgroup label="IPMAT 28"><option>Z2801</option><option>S2801</option><option>A2804</option><option>PN2801</option></optgroup>
+  <optgroup label="Admin"><option>Admin</option></optgroup>
+ </select>
+ <div id="loginErr"></div>
+ <button id="loginBtn">Start Test</button>
+ <div class="testMeta" id="lgMeta"></div>
+</div></div>
+
+<div id="testScreen">
+ <div id="topBar"><span class="tName" id="tbName"></span><span class="mono" id="qCounter"></span><span id="timer">--:--</span></div>
+ <div id="layout">
+  <div>
+   <div class="card">
+    <span class="secBadge" id="secBadge"></span>
+    <div id="passageBox"></div>
+    <div id="qText"></div>
+    <div id="optBox"></div>
+   </div>
+   <div class="card" style="display:flex;gap:10px;justify-content:space-between;flex-wrap:wrap">
+    <div><button class="btn ghost" onclick="nav(-1)">&#8249; Prev</button> <button class="btn" onclick="nav(1)">Next &#8250;</button></div>
+    <button class="btn green" onclick="if(confirm('Submit test?'))submitTest()">Submit</button>
+   </div>
+  </div>
+  <div id="sidePanel" class="card"><h3>QUESTION PALETTE</h3><div id="palette"></div>
+   <div class="legend"><span style="background:rgba(78,160,130,.6)"></span>Answered<br><span style="background:#152136;border:1px solid #D4A94E"></span>Current</div>
+  </div>
+ </div>
+</div>
+
+<div id="resultsScreen">
+ <h1 id="resTitle" style="font-size:26px"></h1>
+ <div class="mono" id="resSub" style="margin:6px 0 4px"></div>
+ <button id="pdfBtn" class="btn" onclick="downloadPDF()">Download PDF</button>
+ <div class="statGrid">
+  <div class="stat"><div class="v" id="stScore">0</div><div class="l" id="stMaxL">SCORE</div></div>
+  <div class="stat"><div class="v" id="stCorrect">0</div><div class="l">CORRECT</div></div>
+  <div class="stat"><div class="v" id="stWrong">0</div><div class="l">WRONG</div></div>
+  <div class="stat"><div class="v" id="stSkipped">0</div><div class="l">SKIPPED</div></div>
+  <div class="stat"><div class="v" id="stTime">0:00</div><div class="l">TIME TAKEN</div></div>
+ </div>
+ <div class="secErr" id="secErrBox"></div>
+ <h1 style="font-size:19px;margin:14px 0 10px">Question Review</h1>
+ <div id="reviewBox"></div>
+</div>
+
+<script>
+/* ============================================================
+   ROAD TO IIM — Studio-built portal test
+   Whitelist v5 · Safety Net · 16-field payload · PATH 2 tags
+   ============================================================ */
+var CFG={"testName":"UGAT Mock 002","examName":"UGAT IIM Bangalore","maxMarks":180,"minutes":120,"c":3,"w":-1,"titaW":-1,"hasTita":false,"navNote":"free navigation","fileName":"ugat_iimb_UGAT_Mock_002.html","snKey":"riim_session_UGAT_Mock_002","bankPrefix":"UGAT_Mock_002"};
+var QUESTIONS=[{"id":"M002-Q01","section":"QADI","format":"QA mixed (JEE-lite)","kind":"mcq","passage":null,"stem":"The minimum value of f(x) = |x − 1| + |x − 3| for real x is:","options":["2","1","0","4"],"answer":"2","answerIndex":0,"difficulty":"Medium","explanation":"For 1 ≤ x ≤ 3, f(x) = (x−1)+(3−x) = 2, the minimum.","status":"approved","flags":[],"verified":"ok","verNote":""},{"id":"M002-Q02","section":"QADI","format":"QA mixed (JEE-lite)","kind":"mcq","passage":null,"stem":"If g(x) = x·|x|, then g′(−2) equals:","options":["−4","4","−2","0"],"answer":"4","answerIndex":1,"difficulty":"Medium","explanation":"For x \u003c 0, g(x) = −x², so g′(x) = −2x; g′(−2) = 4.","status":"approved","flags":[],"verified":"ok","verNote":""},{"id":"M002-Q03","section":"QADI","format":"QA mixed (JEE-lite)","kind":"mcq","passage":null,"stem":"∫₀² (3x² + 2x) dx equals:","options":["10","14","12","16"],"answer":"12","answerIndex":2,"difficulty":"Easy","explanation":"Antiderivative x³ + x²; at x = 2: 8 + 4 = 12.","status":"approved","flags":[],"verified":"ok","verNote":""},{"id":"M002-Q04","section":"QADI","format":"QA mixed (JEE-lite)","kind":"mcq","passage":null,"stem":"The maximum value of f(x) = −x² + 6x + 1 is:","options":["8","9","12","10"],"answer":"10","answerIndex":3,"difficulty":"Easy","explanation":"Vertex at x = 3: f(3) = −9 + 18 + 1 = 10.","status":"approved","flags":[],"verified":"ok","verNote":""},{"id":"M002-Q05","section":"QADI","format":"QA mixed (JEE-lite)","kind":"mcq","passage":null,"stem":"A company gets 60% of its stock of pens from factory A and 40% from factory B. 2% of A's pens and 5% of B's pens are defective. A randomly chosen pen is found defective. The probability that it came from factory B is:","options":["5/8","3/8","2/5","1/2"],"answer":"5/8","answerIndex":0,"difficulty":"Hard","explanation":"P(B|D) = (0.4×0.05)/(0.6×0.02 + 0.4×0.05) = 0.020/0.032 = 5/8.","status":"approved","flags":[],"verified":"ok","verNote":""},{"id":"M002-Q06","section":"QADI","format":"QA mixed (JEE-lite)","kind":"mcq","passage":null,"stem":"Two fair dice are thrown together. The probability that the sum of the numbers is exactly 8 is:","options":["1/6","5/36","1/9","7/36"],"answer":"5/36","answerIndex":1,"difficulty":"Easy","explanation":"Favourable: (2,6),(3,5),(4,4),(5,3),(6,2) = 5 of 36.","status":"approved","flags":[],"verified":"ok","verNote":""},{"id":"M002-Q07","section":"QADI","format":"QA mixed (JEE-lite)","kind":"mcq","passage":null,"stem":"A fair coin is tossed 5 times. The probability of getting exactly 3 heads is:","options":["1/2","3/8","5/16","5/32"],"answer":"5/16","answerIndex":2,"difficulty":"Medium","explanation":"C(5,3)/2⁵ = 10/32 = 5/16.","status":"approved","flags":[],"verified":"ok","verNote":""},{"id":"M002-Q08","section":"QADI","format":"QA mixed (JEE-lite)","kind":"mcq","passage":null,"stem":"A bag contains 5 red and 4 blue balls. Two balls are drawn at random without replacement. The probability that both are red is:","options":["2/9","5/9","10/81","5/18"],"answer":"5/18","answerIndex":3,"difficulty":"Medium","explanation":"C(5,2)/C(9,2) = 10/36 = 5/18.","status":"approved","flags":[],"verified":"ok","verNote":""},{"id":"M002-Q09","section":"QADI","format":"QA mixed (JEE-lite)","kind":"mcq","passage":null,"stem":"If A = [[1, 2], [3, 4]], then det(2A) equals:","options":["−8","8","−4","−16"],"answer":"−8","answerIndex":0,"difficulty":"Medium","explanation":"det(2A) = 2² · det(A) = 4 × (−2) = −8.","status":"approved","flags":[],"verified":"ok","verNote":""},{"id":"M002-Q10","section":"QADI","format":"QA mixed (JEE-lite)","kind":"mcq","passage":null,"stem":"If A is a 3 × 3 skew-symmetric matrix with real entries, then det(A) equals:","options":["1","0","−1","Cannot be determined"],"answer":"0","answerIndex":1,"difficulty":"Medium","explanation":"det(A) = det(Aᵀ) = det(−A) = (−1)³det(A) ⟹ det(A) = 0 for odd order.","status":"approved","flags":[],"verified":"ok","verNote":""},{"id":"M002-Q11","section":"QADI","format":"QA mixed (JEE-lite)","kind":"mcq","passage":null,"stem":"In a class of 60 students, 35 like cricket, 30 like football and 10 like neither. The number of students who like both games is:","options":["10","12","15","20"],"answer":"15","answerIndex":2,"difficulty":"Easy","explanation":"n(C∪F) = 50; both = 35 + 30 − 50 = 15.","status":"approved","flags":[],"verified":"ok","verNote":""},{"id":"M002-Q12","section":"QADI","format":"QA mixed (JEE-lite)","kind":"mcq","passage":null,"stem":"If α and β are the roots of x² − 7x + 10 = 0, then α² + β² equals:","options":["69","39","49","29"],"answer":"29","answerIndex":3,"difficulty":"Easy","explanation":"α² + β² = (α+β)² − 2αβ = 49 − 20 = 29.","status":"approved","flags":[],"verified":"ok","verNote":""},{"id":"M002-Q13","section":"QADI","format":"QA mixed (JEE-lite)","kind":"mcq","passage":null,"stem":"Given log₁₀2 = 0.3010, the number of digits in 2²⁰ is:","options":["7","6","8","21"],"answer":"7","answerIndex":0,"difficulty":"Medium","explanation":"log 2²⁰ = 20 × 0.3010 = 6.020 ⟹ 7 digits.","status":"approved","flags":[],"verified":"ok","verNote":""},{"id":"M002-Q14","section":"QADI","format":"QA mixed (JEE-lite)","kind":"mcq","passage":null,"stem":"If f(x) = 2x + 3 and g(x) = x², then f(g(2)) equals:","options":["7","11","10","14"],"answer":"11","answerIndex":1,"difficulty":"Easy","explanation":"g(2) = 4; f(4) = 11.","status":"approved","flags":[],"verified":"ok","verNote":""},{"id":"M002-Q15","section":"QADI","format":"QA mixed (JEE-lite)","kind":"mcq","passage":null,"stem":"The 3rd term of an arithmetic progression is 11 and its 7th term is 23. Its 15th term is:","options":["44","45","47","50"],"answer":"47","answerIndex":2,"difficulty":"Easy","explanation":"d = 3, a = 5; a₁₅ = 5 + 14×3 = 47.","status":"approved","flags":[],"verified":"ok","verNote":""},{"id":"M002-Q16","section":"QADI","format":"QA mixed (JEE-lite)","kind":"mcq","passage":null,"stem":"In how many ways can the letters of the word MANGO be arranged so that the two vowels are always together?","options":["24","36","120","48"],"answer":"48","answerIndex":3,"difficulty":"Medium","explanation":"Treat AO as one block: 4! × 2! = 48.","status":"approved","flags":[],"verified":"ok","verNote":""},{"id":"M002-Q17","section":"QADI","format":"QA mixed (JEE-lite)","kind":"mcq","passage":null,"stem":"A 180 m long train crosses a pole in 12 seconds. Its speed in km/h is:","options":["54","45","60","72"],"answer":"54","answerIndex":0,"difficulty":"Easy","explanation":"180/12 = 15 m/s = 15 × 3.6 = 54 km/h.","status":"approved","flags":[],"verified":"ok","verNote":""},{"id":"M002-Q18","section":"QADI","format":"QA mixed (JEE-lite)","kind":"mcq","passage":null,"stem":"Ravi can finish a job in 12 days and Sameer in 18 days. Working together, they will finish it in:","options":["7 1/2 days","7 1/5 days","6 days","8 days"],"answer":"7 1/5 days","answerIndex":1,"difficulty":"Easy","explanation":"Combined rate 1/12 + 1/18 = 5/36 per day ⟹ 36/5 = 7 1/5 days.","status":"approved","flags":[],"verified":"ok","verNote":""},{"id":"M002-Q19","section":"QADI","format":"QA mixed (JEE-lite)","kind":"mcq","passage":null,"stem":"A trader marks an article costing ₹840 at 25% above cost price and allows a 10% discount on the marked price. His profit per cent is:","options":["10%","15%","12.5%","17.5%"],"answer":"12.5%","answerIndex":2,"difficulty":"Medium","explanation":"SP = 840 × 1.25 × 0.9 = ₹945; profit = 105/840 = 12.5%.","status":"approved","flags":[],"verified":"ok","verNote":""},{"id":"M002-Q20","section":"QADI","format":"QA mixed (JEE-lite)","kind":"mcq","passage":null,"stem":"The compound interest on ₹8,000 at 10% per annum, compounded annually for 2 years, is:","options":["₹1,600","₹1,640","₹1,760","₹1,680"],"answer":"₹1,680","answerIndex":3,"difficulty":"Easy","explanation":"8000 × (1.1)² − 8000 = 9680 − 8000 = ₹1,680.","status":"approved","flags":[],"verified":"ok","verNote":""},{"id":"M002-Q21","section":"QADI","format":"QA mixed (JEE-lite)","kind":"mcq","passage":null,"stem":"A vessel holds 40 litres of a milk–water mixture in the ratio 7 : 3. How much water must be added so that the ratio becomes 7 : 5?","options":["8 litres","6 litres","10 litres","12 litres"],"answer":"8 litres","answerIndex":0,"difficulty":"Medium","explanation":"Milk 28 L stays fixed; water needed = 28 × 5/7 = 20 ⟹ add 20 − 12 = 8 L.","status":"approved","flags":[],"verified":"ok","verNote":""},{"id":"M002-Q22","section":"QADI","format":"QA mixed (JEE-lite)","kind":"mcq","passage":null,"stem":"The mean of 5 numbers is 20. If one of the numbers, 30, is removed, the mean of the remaining numbers is:","options":["16","17.5","18","18.5"],"answer":"17.5","answerIndex":1,"difficulty":"Easy","explanation":"New mean = (100 − 30)/4 = 17.5.","status":"approved","flags":[],"verified":"ok","verNote":""},{"id":"M002-Q23","section":"QADI","format":"DI set (2 sets × 4)","kind":"mcq","passage":"Study the data below and answer the questions that follow.\n\nThe bar graph shows the production (in thousand units) of Biscuits and Namkeen by Vistara Foods over five years.\n\nYear — Biscuits — Namkeen\n2021 — 40 — 30\n2022 — 50 — 35\n2023 — 45 — 50\n2024 — 60 — 40\n2025 — 55 — 60","stem":"The ratio of the total production of Biscuits to that of Namkeen over the five years is:","options":["43 : 50","10 : 9","50 : 43","25 : 21"],"answer":"50 : 43","answerIndex":2,"difficulty":"Easy","explanation":"Totals 250 : 215 = 50 : 43.","status":"approved","flags":[],"verified":"ok","verNote":""},{"id":"M002-Q24","section":"QADI","format":"DI set (2 sets × 4)","kind":"mcq","passage":"Study the data below and answer the questions that follow.\n\nThe bar graph shows the production (in thousand units) of Biscuits and Namkeen by Vistara Foods over five years.\n\nYear — Biscuits — Namkeen\n2021 — 40 — 30\n2022 — 50 — 35\n2023 — 45 — 50\n2024 — 60 — 40\n2025 — 55 — 60","stem":"The percentage increase in Namkeen production from 2022 to 2023 is approximately:","options":["37.5%","40%","45%","42.9%"],"answer":"42.9%","answerIndex":3,"difficulty":"Medium","explanation":"(50 − 35)/35 × 100 = 300/7 ≈ 42.9%.","status":"approved","flags":[],"verified":"ok","verNote":""},{"id":"M002-Q25","section":"QADI","format":"DI set (2 sets × 4)","kind":"mcq","passage":"Study the data below and answer the questions that follow.\n\nThe bar graph shows the production (in thousand units) of Biscuits and Namkeen by Vistara Foods over five years.\n\nYear — Biscuits — Namkeen\n2021 — 40 — 30\n2022 — 50 — 35\n2023 — 45 — 50\n2024 — 60 — 40\n2025 — 55 — 60","stem":"In which year was the combined production of Biscuits and Namkeen the highest?","options":["2025","2023","2024","2022"],"answer":"2025","answerIndex":0,"difficulty":"Easy","explanation":"Combined: 70, 85, 95, 100, 115 — highest in 2025.","status":"approved","flags":[],"verified":"ok","verNote":""},{"id":"M002-Q26","section":"QADI","format":"DI set (2 sets × 4)","kind":"mcq","passage":"Study the data below and answer the questions that follow.\n\nThe bar graph shows the production (in thousand units) of Biscuits and Namkeen by Vistara Foods over five years.\n\nYear — Biscuits — Namkeen\n2021 — 40 — 30\n2022 — 50 — 35\n2023 — 45 — 50\n2024 — 60 — 40\n2025 — 55 — 60","stem":"The average annual production of Biscuits over the five years (in thousand units) is:","options":["48","50","52","55"],"answer":"50","answerIndex":1,"difficulty":"Easy","explanation":"250/5 = 50 thousand units.","status":"approved","flags":[],"verified":"ok","verNote":""},{"id":"M002-Q27","section":"QADI","format":"DI set (2 sets × 4)","kind":"mcq","passage":"Study the data below and answer the questions that follow.\n\nThe pie chart shows the distribution of the Deshmukh family's monthly expenditure of ₹72,000.\n\nRent 25% · Food 30% · Education 15% · Transport 10% · Savings 12% · Miscellaneous 8%","stem":"The amount spent on Education per month is:","options":["₹9,600","₹11,520","₹10,800","₹12,000"],"answer":"₹10,800","answerIndex":2,"difficulty":"Easy","explanation":"15% of 72,000 = ₹10,800.","status":"approved","flags":[],"verified":"ok","verNote":""},{"id":"M002-Q28","section":"QADI","format":"DI set (2 sets × 4)","kind":"mcq","passage":"Study the data below and answer the questions that follow.\n\nThe pie chart shows the distribution of the Deshmukh family's monthly expenditure of ₹72,000.\n\nRent 25% · Food 30% · Education 15% · Transport 10% · Savings 12% · Miscellaneous 8%","stem":"The central angle of the sector representing Food is:","options":["90°","100°","120°","108°"],"answer":"108°","answerIndex":3,"difficulty":"Medium","explanation":"30% of 360° = 108°.","status":"approved","flags":[],"verified":"ok","verNote":""},{"id":"M002-Q29","section":"QADI","format":"DI set (2 sets × 4)","kind":"mcq","passage":"Study the data below and answer the questions that follow.\n\nThe pie chart shows the distribution of the Deshmukh family's monthly expenditure of ₹72,000.\n\nRent 25% · Food 30% · Education 15% · Transport 10% · Savings 12% · Miscellaneous 8%","stem":"The ratio of expenditure on Rent to that on Transport is:","options":["5 : 2","3 : 2","2 : 5","5 : 3"],"answer":"5 : 2","answerIndex":0,"difficulty":"Easy","explanation":"25 : 10 = 5 : 2.","status":"approved","flags":[],"verified":"ok","verNote":""},{"id":"M002-Q30","section":"QADI","format":"DI set (2 sets × 4)","kind":"mcq","passage":"Study the data below and answer the questions that follow.\n\nThe pie chart shows the distribution of the Deshmukh family's monthly expenditure of ₹72,000.\n\nRent 25% · Food 30% · Education 15% · Transport 10% · Savings 12% · Miscellaneous 8%","stem":"The monthly Savings exceed Miscellaneous expenditure by:","options":["₹2,160","₹2,880","₹3,240","₹3,600"],"answer":"₹2,880","answerIndex":1,"difficulty":"Medium","explanation":"(12 − 8)% of 72,000 = ₹2,880.","status":"approved","flags":[],"verified":"ok","verNote":""},{"id":"M002-Q31","section":"LR","format":"LR mixed (banking register)","kind":"mcq","passage":"Read the information and answer the questions that follow.\n\nEight friends — Aarav, Bhavna, Chetan, Devika, Farhan, Gauri, Harish and Meera — sit in a straight row, all facing north. Positions are counted from the left end. Aarav sits fourth from the left end. Meera is an immediate neighbour of Aarav. Chetan is an immediate neighbour of both Gauri and Meera. Devika is an immediate neighbour of Aarav. Gauri sits at one of the extreme ends. Harish sits third from the right end. Farhan sits at the extreme right end.","stem":"Who sits at the extreme left end of the row?","options":["Gauri","Chetan","Meera","Bhavna"],"answer":"Gauri","answerIndex":0,"difficulty":"Medium","explanation":"Unique arrangement (left→right): Gauri, Chetan, Meera, Aarav, Devika, Harish, Bhavna, Farhan.","status":"approved","flags":[],"verified":"ok","verNote":""},{"id":"M002-Q32","section":"LR","format":"LR mixed (banking register)","kind":"mcq","passage":"Read the information and answer the questions that follow.\n\nEight friends — Aarav, Bhavna, Chetan, Devika, Farhan, Gauri, Harish and Meera — sit in a straight row, all facing north. Positions are counted from the left end. Aarav sits fourth from the left end. Meera is an immediate neighbour of Aarav. Chetan is an immediate neighbour of both Gauri and Meera. Devika is an immediate neighbour of Aarav. Gauri sits at one of the extreme ends. Harish sits third from the right end. Farhan sits at the extreme right end.","stem":"How many persons sit between Devika and Farhan?","options":["One","Two","Three","Four"],"answer":"Two","answerIndex":1,"difficulty":"Medium","explanation":"Devika is 5th and Farhan 8th — Harish and Bhavna sit between them.","status":"approved","flags":[],"verified":"ok","verNote":""},{"id":"M002-Q33","section":"LR","format":"LR mixed (banking register)","kind":"mcq","passage":"Read the information and answer the questions that follow.\n\nEight friends — Aarav, Bhavna, Chetan, Devika, Farhan, Gauri, Harish and Meera — sit in a straight row, all facing north. Positions are counted from the left end. Aarav sits fourth from the left end. Meera is an immediate neighbour of Aarav. Chetan is an immediate neighbour of both Gauri and Meera. Devika is an immediate neighbour of Aarav. Gauri sits at one of the extreme ends. Harish sits third from the right end. Farhan sits at the extreme right end.","stem":"Who are the immediate neighbours of Harish?","options":["Bhavna and Farhan","Aarav and Devika","Devika and Bhavna","Meera and Devika"],"answer":"Devika and Bhavna","answerIndex":2,"difficulty":"Medium","explanation":"Harish is 6th; Devika (5th) and Bhavna (7th) flank him.","status":"approved","flags":[],"verified":"ok","verNote":""},{"id":"M002-Q34","section":"LR","format":"LR mixed (banking register)","kind":"mcq","passage":"Read the information and answer the questions that follow.\n\nEight friends — Aarav, Bhavna, Chetan, Devika, Farhan, Gauri, Harish and Meera — sit in a straight row, all facing north. Positions are counted from the left end. Aarav sits fourth from the left end. Meera is an immediate neighbour of Aarav. Chetan is an immediate neighbour of both Gauri and Meera. Devika is an immediate neighbour of Aarav. Gauri sits at one of the extreme ends. Harish sits third from the right end. Farhan sits at the extreme right end.","stem":"Which pair sits exactly in the middle of the row (4th and 5th positions)?","options":["Meera and Aarav","Chetan and Meera","Devika and Harish","Aarav and Devika"],"answer":"Aarav and Devika","answerIndex":3,"difficulty":"Easy","explanation":"Positions 4 and 5 are Aarav and Devika.","status":"approved","flags":[],"verified":"ok","verNote":""},{"id":"M002-Q35","section":"LR","format":"LR mixed (banking register)","kind":"mcq","passage":"Read the information and answer the questions that follow.\n\nEight friends — Aarav, Bhavna, Chetan, Devika, Farhan, Gauri, Harish and Meera — sit in a straight row, all facing north. Positions are counted from the left end. Aarav sits fourth from the left end. Meera is an immediate neighbour of Aarav. Chetan is an immediate neighbour of both Gauri and Meera. Devika is an immediate neighbour of Aarav. Gauri sits at one of the extreme ends. Harish sits third from the right end. Farhan sits at the extreme right end.","stem":"Counting from the left end, Bhavna sits at which position?","options":["Seventh","Sixth","Fifth","Eighth"],"answer":"Seventh","answerIndex":0,"difficulty":"Easy","explanation":"Bhavna occupies the 7th position from the left.","status":"approved","flags":[],"verified":"ok","verNote":""},{"id":"M002-Q36","section":"LR","format":"LR mixed (banking register)","kind":"mcq","passage":"Read the information and answer the questions that follow.\n\nSeven persons — Indu, Jatin, Kavya, Lalit, Nisha, Omkar and Priya — live on the seven floors of a building; the ground floor is numbered 1 and the topmost floor 7, with exactly one person per floor. Lalit lives on floor 4. Priya lives above Lalit with exactly two persons living between them. Jatin lives immediately below Priya. Nisha lives immediately above Lalit. Omkar lives on an even-numbered floor. Kavya lives on a floor above Omkar.","stem":"Who lives on the ground floor?","options":["Omkar","Indu","Kavya","Nisha"],"answer":"Indu","answerIndex":1,"difficulty":"Medium","explanation":"Unique arrangement (floor 1→7): Indu, Omkar, Kavya, Lalit, Nisha, Jatin, Priya.","status":"approved","flags":[],"verified":"ok","verNote":""},{"id":"M002-Q37","section":"LR","format":"LR mixed (banking register)","kind":"mcq","passage":"Read the information and answer the questions that follow.\n\nSeven persons — Indu, Jatin, Kavya, Lalit, Nisha, Omkar and Priya — live on the seven floors of a building; the ground floor is numbered 1 and the topmost floor 7, with exactly one person per floor. Lalit lives on floor 4. Priya lives above Lalit with exactly two persons living between them. Jatin lives immediately below Priya. Nisha lives immediately above Lalit. Omkar lives on an even-numbered floor. Kavya lives on a floor above Omkar.","stem":"How many persons live on floors between Nisha's and Omkar's floors?","options":["One","Three","Two","Four"],"answer":"Two","answerIndex":2,"difficulty":"Medium","explanation":"Nisha is on floor 5 and Omkar on floor 2 — Kavya and Lalit live between them.","status":"approved","flags":[],"verified":"ok","verNote":""},{"id":"M002-Q38","section":"LR","format":"LR mixed (banking register)","kind":"mcq","passage":"Read the information and answer the questions that follow.\n\nSeven persons — Indu, Jatin, Kavya, Lalit, Nisha, Omkar and Priya — live on the seven floors of a building; the ground floor is numbered 1 and the topmost floor 7, with exactly one person per floor. Lalit lives on floor 4. Priya lives above Lalit with exactly two persons living between them. Jatin lives immediately below Priya. Nisha lives immediately above Lalit. Omkar lives on an even-numbered floor. Kavya lives on a floor above Omkar.","stem":"Who lives immediately above Kavya?","options":["Nisha","Indu","Jatin","Lalit"],"answer":"Lalit","answerIndex":3,"difficulty":"Easy","explanation":"Kavya is on floor 3; Lalit lives on floor 4.","status":"approved","flags":[],"verified":"ok","verNote":""},{"id":"M002-Q39","section":"LR","format":"LR mixed (banking register)","kind":"mcq","passage":"Read the information and answer the questions that follow.\n\nSeven persons — Indu, Jatin, Kavya, Lalit, Nisha, Omkar and Priya — live on the seven floors of a building; the ground floor is numbered 1 and the topmost floor 7, with exactly one person per floor. Lalit lives on floor 4. Priya lives above Lalit with exactly two persons living between them. Jatin lives immediately below Priya. Nisha lives immediately above Lalit. Omkar lives on an even-numbered floor. Kavya lives on a floor above Omkar.","stem":"On which floor does Jatin live?","options":["Sixth","Fifth","Fourth","Seventh"],"answer":"Sixth","answerIndex":0,"difficulty":"Easy","explanation":"Jatin lives immediately below Priya (floor 7), i.e., on floor 6.","status":"approved","flags":[],"verified":"ok","verNote":""},{"id":"M002-Q40","section":"LR","format":"LR mixed (banking register)","kind":"mcq","passage":null,"stem":"In a certain code, 'A % B' means A is the mother of B, 'A $ B' means A is the brother of B, and 'A @ B' means A is the daughter of B. If P % Q $ R @ S, how is P related to S?","options":["Sister","Wife","Mother","Daughter-in-law"],"answer":"Wife","answerIndex":1,"difficulty":"Hard","explanation":"R is S's daughter and P is R's mother, so P is S's wife.","status":"approved","flags":[],"verified":"ok","verNote":""},{"id":"M002-Q41","section":"LR","format":"LR mixed (banking register)","kind":"mcq","passage":null,"stem":"In a school of 120 students, 40 play cricket, 45 play football and 50 play hockey; 12 play cricket and football, 15 play football and hockey, 10 play cricket and hockey, and 4 play all three. How many students play exactly one game?","options":["68","77","73","81"],"answer":"73","answerIndex":2,"difficulty":"Hard","explanation":"At least one = 102; exactly two = 8+11+6 = 25; exactly one = 102 − 25 − 4 = 73.","status":"approved","flags":[],"verified":"ok","verNote":""},{"id":"M002-Q42","section":"LR","format":"LR mixed (banking register)","kind":"mcq","passage":null,"stem":"The angle between the hour hand and the minute hand of a clock at 3:40 is:","options":["120°","125°","140°","130°"],"answer":"130°","answerIndex":3,"difficulty":"Medium","explanation":"|6×40 − (30×3 + 0.5×40)| = |240 − 110| = 130°.","status":"approved","flags":[],"verified":"ok","verNote":""},{"id":"M002-Q43","section":"LR","format":"LR mixed (banking register)","kind":"mcq","passage":null,"stem":"1 January 2025 was a Wednesday. What day of the week was 1 March 2025?","options":["Saturday","Friday","Sunday","Thursday"],"answer":"Saturday","answerIndex":0,"difficulty":"Medium","explanation":"59 days elapse; 59 mod 7 = 3; Wednesday + 3 = Saturday.","status":"approved","flags":[],"verified":"ok","verNote":""},{"id":"M002-Q44","section":"LR","format":"LR mixed (banking register)","kind":"mcq","passage":null,"stem":"Find the next term of the series: 2, 6, 12, 20, 30, ?","options":["36","42","40","44"],"answer":"42","answerIndex":1,"difficulty":"Easy","explanation":"Terms are n(n+1): differences 4, 6, 8, 10, then 12 ⟹ 30 + 12 = 42.","status":"approved","flags":[],"verified":"ok","verNote":""},{"id":"M002-Q45","section":"LR","format":"LR mixed (banking register)","kind":"mcq","passage":null,"stem":"Question: How many students are there in the class?\nStatement I: Ritu's rank from the top is 15th.\nStatement II: Ritu's rank from the bottom is 21st.","options":["Statement I alone is sufficient","Statement II alone is sufficient","Both statements together are sufficient","Both statements together are not sufficient"],"answer":"Both statements together are sufficient","answerIndex":2,"difficulty":"Medium","explanation":"Neither rank alone fixes the class size; together: 15 + 21 − 1 = 35.","status":"approved","flags":[],"verified":"ok","verNote":""},{"id":"M002-Q46","section":"VA","format":"Reading Comprehension (2×4)","kind":"mcq","passage":"Read the passage and answer the questions that follow.\n\nThere is a peculiar arithmetic by which the modern marketplace appraises the handloom. The algorithm that ranks a Pochampally ikat beside its power-loom imitation sees only the attributes it has been taught to see — price, delivery speed, star ratings — and remains serenely indifferent to the fortnight of warp and weft that preceded the weave. The weaver's misfortune, then, is not that her cloth is unwanted, but that the ledger in which it is entered has no column for meaning. When provenance is flattened into a product photograph, the buyer is not choosing between a heritage and a copy; she is choosing between two thumbnails, and the cheaper thumbnail wins. It would be lazy to indict technology itself, for the loom too was once a disruptive machine. The indictment, rather, is of a marketplace that mistakes measurability for value: whatever cannot be quantified is quietly deleted from the transaction. Until platforms learn to carry the story of a thing alongside its specifications — or until buyers relearn the patience to ask for that story — the artisan will keep subsidising, with her own wages, our collective appetite for convenience.","stem":"Which of the following best captures the central idea of the passage?","options":["Online marketplaces devalue handcrafted goods because their systems cannot register qualities that resist quantification","Handloom products are inferior in quality to power-loom imitations and must be protected by law","Technology is inherently hostile to tradition and should be kept away from craft economies","Buyers deliberately prefer counterfeit products because they are cheaper"],"answer":"Online marketplaces devalue handcrafted goods because their systems cannot register qualities that resist quantification","answerIndex":0,"difficulty":"Medium","explanation":"The passage argues the marketplace 'mistakes measurability for value', erasing unquantifiable worth.","status":"approved","flags":[],"verified":"ok","verNote":""},{"id":"M002-Q47","section":"VA","format":"Reading Comprehension (2×4)","kind":"mcq","passage":"Read the passage and answer the questions that follow.\n\nThere is a peculiar arithmetic by which the modern marketplace appraises the handloom. The algorithm that ranks a Pochampally ikat beside its power-loom imitation sees only the attributes it has been taught to see — price, delivery speed, star ratings — and remains serenely indifferent to the fortnight of warp and weft that preceded the weave. The weaver's misfortune, then, is not that her cloth is unwanted, but that the ledger in which it is entered has no column for meaning. When provenance is flattened into a product photograph, the buyer is not choosing between a heritage and a copy; she is choosing between two thumbnails, and the cheaper thumbnail wins. It would be lazy to indict technology itself, for the loom too was once a disruptive machine. The indictment, rather, is of a marketplace that mistakes measurability for value: whatever cannot be quantified is quietly deleted from the transaction. Until platforms learn to carry the story of a thing alongside its specifications — or until buyers relearn the patience to ask for that story — the artisan will keep subsidising, with her own wages, our collective appetite for convenience.","stem":"Which real-life situation best reflects the central idea of the passage?","options":["A weaver switches to a power loom and doubles her monthly output","A home-style tiffin service loses customers on a delivery app because its listing looks identical to those of mass kitchens, despite far better ingredients","An e-commerce platform bans sellers who list counterfeit sarees","An artisan raises her prices and finds that sales improve among wealthy buyers"],"answer":"A home-style tiffin service loses customers on a delivery app because its listing looks identical to those of mass kitchens, despite far better ingredients","answerIndex":1,"difficulty":"Hard","explanation":"Unquantified quality (ingredients, care) is invisible in the listing, so the cheaper identical-looking option wins — the passage's exact mechanism.","status":"approved","flags":[],"verified":"ok","verNote":""},{"id":"M002-Q48","section":"VA","format":"Reading Comprehension (2×4)","kind":"mcq","passage":"Read the passage and answer the questions that follow.\n\nThere is a peculiar arithmetic by which the modern marketplace appraises the handloom. The algorithm that ranks a Pochampally ikat beside its power-loom imitation sees only the attributes it has been taught to see — price, delivery speed, star ratings — and remains serenely indifferent to the fortnight of warp and weft that preceded the weave. The weaver's misfortune, then, is not that her cloth is unwanted, but that the ledger in which it is entered has no column for meaning. When provenance is flattened into a product photograph, the buyer is not choosing between a heritage and a copy; she is choosing between two thumbnails, and the cheaper thumbnail wins. It would be lazy to indict technology itself, for the loom too was once a disruptive machine. The indictment, rather, is of a marketplace that mistakes measurability for value: whatever cannot be quantified is quietly deleted from the transaction. Until platforms learn to carry the story of a thing alongside its specifications — or until buyers relearn the patience to ask for that story — the artisan will keep subsidising, with her own wages, our collective appetite for convenience.","stem":"Which of the following, if true, most WEAKENS the author's argument?","options":["Several handloom clusters have formed cooperatives to negotiate better prices offline","Power-loom imitations have become even cheaper over the past five years","Handloom sellers who added detailed weaver biographies and process videos to their listings on the same platforms saw sales rise sharply","Most buyers report that they cannot distinguish a handloom weave from an imitation by sight"],"answer":"Handloom sellers who added detailed weaver biographies and process videos to their listings on the same platforms saw sales rise sharply","answerIndex":2,"difficulty":"Hard","explanation":"It shows platforms can carry the 'story' and buyers do respond — contradicting the claim that meaning is necessarily deleted.","status":"approved","flags":[],"verified":"ok","verNote":""},{"id":"M002-Q49","section":"VA","format":"Reading Comprehension (2×4)","kind":"mcq","passage":"Read the passage and answer the questions that follow.\n\nThere is a peculiar arithmetic by which the modern marketplace appraises the handloom. The algorithm that ranks a Pochampally ikat beside its power-loom imitation sees only the attributes it has been taught to see — price, delivery speed, star ratings — and remains serenely indifferent to the fortnight of warp and weft that preceded the weave. The weaver's misfortune, then, is not that her cloth is unwanted, but that the ledger in which it is entered has no column for meaning. When provenance is flattened into a product photograph, the buyer is not choosing between a heritage and a copy; she is choosing between two thumbnails, and the cheaper thumbnail wins. It would be lazy to indict technology itself, for the loom too was once a disruptive machine. The indictment, rather, is of a marketplace that mistakes measurability for value: whatever cannot be quantified is quietly deleted from the transaction. Until platforms learn to carry the story of a thing alongside its specifications — or until buyers relearn the patience to ask for that story — the artisan will keep subsidising, with her own wages, our collective appetite for convenience.","stem":"By saying that the ledger 'has no column for meaning', the author most nearly suggests that:","options":["marketplace accounting software is technologically outdated","the meaning of traditional motifs has been forgotten by weavers themselves","weavers do not maintain proper financial records of their work","the marketplace's framework of valuation structurally excludes intangible worth"],"answer":"the marketplace's framework of valuation structurally excludes intangible worth","answerIndex":3,"difficulty":"Medium","explanation":"The metaphor indicts the valuation framework, not literal bookkeeping.","status":"approved","flags":[],"verified":"ok","verNote":""},{"id":"M002-Q50","section":"VA","format":"Reading Comprehension (2×4)","kind":"mcq","passage":"Read the passage and answer the questions that follow.\n\nA public library is a wager that strangers can share silence. In an age when every private platform monetises the twitch of our attention, the reading room remains one of the few interiors where nothing is being sold and nobody is being watched for profit. Its shelves practise a quiet egalitarianism: the day-labourer's daughter and the judge's son wait their turn for the same borrowed atlas. It is fashionable to pronounce such institutions obsolete, since 'everything is now on the phone.' But this argument mistakes access for formation. A phone can deliver a text in seconds; it cannot easily teach the discipline of sitting with one. The true commons of the library is not merely its books but its manners — the learned habit of lowering one's voice for the benefit of people one will never meet. Municipal budgets that starve libraries in order to fund Wi-Fi kiosks may therefore be economising on the very thing they hope to produce: citizens.","stem":"The central argument of the passage is that public libraries:","options":["matter less for the information they provide than for the shared habits and civic character they cultivate","should digitise their collections to stay relevant","are cheaper for municipalities to run than Wi-Fi kiosks","primarily benefit children from underprivileged families"],"answer":"matter less for the information they provide than for the shared habits and civic character they cultivate","answerIndex":0,"difficulty":"Medium","explanation":"'Mistakes access for formation' — the library's value lies in formation of habits and citizenship.","status":"approved","flags":[],"verified":"ok","verNote":""},{"id":"M002-Q51","section":"VA","format":"Reading Comprehension (2×4)","kind":"mcq","passage":"Read the passage and answer the questions that follow.\n\nA public library is a wager that strangers can share silence. In an age when every private platform monetises the twitch of our attention, the reading room remains one of the few interiors where nothing is being sold and nobody is being watched for profit. Its shelves practise a quiet egalitarianism: the day-labourer's daughter and the judge's son wait their turn for the same borrowed atlas. It is fashionable to pronounce such institutions obsolete, since 'everything is now on the phone.' But this argument mistakes access for formation. A phone can deliver a text in seconds; it cannot easily teach the discipline of sitting with one. The true commons of the library is not merely its books but its manners — the learned habit of lowering one's voice for the benefit of people one will never meet. Municipal budgets that starve libraries in order to fund Wi-Fi kiosks may therefore be economising on the very thing they hope to produce: citizens.","stem":"Which of the following real-life situations best illustrates the author's central argument?","options":["A student downloads free e-books and secures the top rank in her board examination","Residents of a colony who had never spoken to one another gradually begin cooperating on civic problems after months of sharing a community reading room","A library replaces its card catalogue with a faster digital search system","A municipality installs high-speed internet kiosks and footfall at them rises steadily"],"answer":"Residents of a colony who had never spoken to one another gradually begin cooperating on civic problems after months of sharing a community reading room","answerIndex":1,"difficulty":"Hard","explanation":"Shared physical space forming habits of cooperation among strangers mirrors the 'commons of manners' argument.","status":"approved","flags":[],"verified":"ok","verNote":""},{"id":"M002-Q52","section":"VA","format":"Reading Comprehension (2×4)","kind":"mcq","passage":"Read the passage and answer the questions that follow.\n\nA public library is a wager that strangers can share silence. In an age when every private platform monetises the twitch of our attention, the reading room remains one of the few interiors where nothing is being sold and nobody is being watched for profit. Its shelves practise a quiet egalitarianism: the day-labourer's daughter and the judge's son wait their turn for the same borrowed atlas. It is fashionable to pronounce such institutions obsolete, since 'everything is now on the phone.' But this argument mistakes access for formation. A phone can deliver a text in seconds; it cannot easily teach the discipline of sitting with one. The true commons of the library is not merely its books but its manners — the learned habit of lowering one's voice for the benefit of people one will never meet. Municipal budgets that starve libraries in order to fund Wi-Fi kiosks may therefore be economising on the very thing they hope to produce: citizens.","stem":"Which of the following findings, if true, would most seriously undermine the author's argument?","options":["Library membership in most Indian cities has declined over the last decade","Wi-Fi kiosks are frequently vandalised and expensive to maintain","Long-term studies find that habits of patience and civic cooperation are formed almost entirely within the family by age six and are unaffected by later use of public spaces","Many libraries now offer quiet rooms with internet access"],"answer":"Long-term studies find that habits of patience and civic cooperation are formed almost entirely within the family by age six and are unaffected by later use of public spaces","answerIndex":2,"difficulty":"Hard","explanation":"If civic habits are fixed early and unaffected by public spaces, libraries cannot 'produce citizens' as claimed.","status":"approved","flags":[],"verified":"ok","verNote":""},{"id":"M002-Q53","section":"VA","format":"Reading Comprehension (2×4)","kind":"mcq","passage":"Read the passage and answer the questions that follow.\n\nA public library is a wager that strangers can share silence. In an age when every private platform monetises the twitch of our attention, the reading room remains one of the few interiors where nothing is being sold and nobody is being watched for profit. Its shelves practise a quiet egalitarianism: the day-labourer's daughter and the judge's son wait their turn for the same borrowed atlas. It is fashionable to pronounce such institutions obsolete, since 'everything is now on the phone.' But this argument mistakes access for formation. A phone can deliver a text in seconds; it cannot easily teach the discipline of sitting with one. The true commons of the library is not merely its books but its manners — the learned habit of lowering one's voice for the benefit of people one will never meet. Municipal budgets that starve libraries in order to fund Wi-Fi kiosks may therefore be economising on the very thing they hope to produce: citizens.","stem":"The concluding remark that municipalities 'may be economising on the very thing they hope to produce: citizens' implies that the author believes:","options":["citizenship is a legal status conferred by the state, not by institutions","municipal budgets are generally too small to fund libraries","Wi-Fi kiosks should be installed inside libraries instead","civic character is partly shaped by public institutions, so defunding them is self-defeating"],"answer":"civic character is partly shaped by public institutions, so defunding them is self-defeating","answerIndex":3,"difficulty":"Medium","explanation":"The irony rests on libraries being producers of civic character; cutting them undermines the goal.","status":"approved","flags":[],"verified":"ok","verNote":""},{"id":"M002-Q54","section":"VA","format":"Vocabulary","kind":"mcq","passage":null,"stem":"Choose the word that best completes the sentence:\nFar from calming the crowd, the leader's ______ speech only inflamed tempers further.","options":["incendiary","tepid","emollient","conciliatory"],"answer":"incendiary","answerIndex":0,"difficulty":"Medium","explanation":"'Inflamed tempers' demands a provocative word — incendiary.","status":"approved","flags":[],"verified":"ok","verNote":""},{"id":"M002-Q55","section":"VA","format":"Vocabulary","kind":"mcq","passage":null,"stem":"Choose the pair that best completes the sentence:\nAlthough the auditor was famously ______ in his scrutiny, his final report was unexpectedly ______ toward the errant directors.","options":["negligent … harsh","fastidious … charitable","meticulous … scathing","careless … lenient"],"answer":"fastidious … charitable","answerIndex":1,"difficulty":"Hard","explanation":"'Although … unexpectedly' needs contrast: exacting scrutiny yet a generous report — fastidious/charitable.","status":"approved","flags":[],"verified":"ok","verNote":""},{"id":"M002-Q56","section":"VA","format":"Vocabulary","kind":"mcq","passage":null,"stem":"Despite repeated setbacks, the coach remained sanguine about the team's chances. Here, 'sanguine' most nearly means:","options":["indifferent","anxious","optimistic","resigned"],"answer":"optimistic","answerIndex":2,"difficulty":"Easy","explanation":"Sanguine means cheerfully optimistic.","status":"approved","flags":[],"verified":"ok","verNote":""},{"id":"M002-Q57","section":"VA","format":"Vocabulary","kind":"mcq","passage":null,"stem":"The fame of most social-media trends is ephemeral, vanishing within a fortnight. Here, 'ephemeral' most nearly means:","options":["artificial","widespread","controversial","short-lived"],"answer":"short-lived","answerIndex":3,"difficulty":"Easy","explanation":"Ephemeral means lasting a very short time — cued by 'vanishing within a fortnight'.","status":"approved","flags":[],"verified":"ok","verNote":""},{"id":"M002-Q58","section":"VA","format":"Grammar","kind":"mcq","passage":null,"stem":"In the sentence 'He works hard to support his family,' the word 'hard' functions as:","options":["an adverb","an adjective","a noun","a preposition"],"answer":"an adverb","answerIndex":0,"difficulty":"Medium","explanation":"'Hard' modifies the verb 'works', hence it is an adverb.","status":"approved","flags":[],"verified":"ok","verNote":""},{"id":"M002-Q59","section":"VA","format":"Grammar","kind":"mcq","passage":null,"stem":"Choose the correct option to complete the sentence:\nBy the time the train arrived, we ______ for two hours.","options":["are waiting","had been waiting","have been waiting","were waiting"],"answer":"had been waiting","answerIndex":1,"difficulty":"Medium","explanation":"Duration completed before a past event takes the past perfect continuous.","status":"approved","flags":[],"verified":"ok","verNote":""},{"id":"M002-Q60","section":"VA","format":"Statement Odd-One-Out","kind":"mcq","passage":null,"stem":"Three of the following four are alike in a certain way. Choose the one that is different:","options":["Barometer","Thermometer","Diameter","Ammeter"],"answer":"Diameter","answerIndex":2,"difficulty":"Easy","explanation":"Barometer, thermometer and ammeter are measuring instruments; a diameter is a geometric length.","status":"approved","flags":[],"verified":"ok","verNote":""}];
+var SCRIPT_URL="https://script.google.com/macros/s/AKfycbx5Ojm_zp4LfsMeelx5e06KNjVH1wfsXdV0keS4407m4FO1HU4EpVb7GKj-ibAsxnspeA/exec";
+var TEST_NAME=CFG.testName, MAX_MARKS=CFG.maxMarks, FILE_NAME=CFG.fileName, SN_KEY=CFG.snKey;
+var NQ=QUESTIONS.length;
+var PIN_REGEX=/^(STU|IMS)\d{10}$/;
+var BLOCK_MSG="This is a Go Getters test \u2014 access is invite-only. Message Sahil Sir if you think you should be on the list.";
+var NET_MSG="Couldn't verify access \u2014 check your internet connection and try again.";
+
+/* ==================== GO GETTERS ACCESS GATE (server-side, Apps Script v10.5) ====================
+   Replaces the old client-side whitelist.json block (v5 §17), which FAILED OPEN
+   and exposed the list in the public repo. This gate asks the Apps Script
+   (?mode=gogetter) to check the private GoGetters_Whitelist sheet tab.
+   Returns "allowed" | "denied" | "error". Anything but "allowed" blocks entry. */
+async function checkGoGetterAccess(pin,batch){
+ try{
+  var res=await fetch(SCRIPT_URL+"?mode=gogetter&pin="+encodeURIComponent(pin)+"&batch="+encodeURIComponent(batch));
+  var data=await res.json();
+  if(data&&data.status==="success"&&data.allowed===true)return "allowed";
+  if(data&&data.status==="error")return "error";
+  return "denied";
+ }catch(e){return "error"}
+}
+
+/* ==================== SAFETY NET — retry queue ==================== */
+function snReadJSON(key,fallback){try{var v=localStorage.getItem(key);return v?JSON.parse(v):fallback}catch(e){return fallback}}
+function snWriteJSON(key,val){try{localStorage.setItem(key,JSON.stringify(val))}catch(e){}}
+function snUnqueue(id){var p=snReadJSON("riim_pending",[]);p=p.filter(function(x){return x.id!==id});snWriteJSON("riim_pending",p)}
+function snSendWithQueue(opts){
+ var p=snReadJSON("riim_pending",[]);
+ var id=Date.now()+"-"+Math.random().toString(36).slice(2);
+ p.push({id:id,opts:{method:opts.method,mode:opts.mode,headers:opts.headers,body:opts.body}});
+ snWriteJSON("riim_pending",p);
+ return fetch(SCRIPT_URL,opts).then(function(r){snUnqueue(id);return r});
+}
+function snFlushQueue(){
+ var p=snReadJSON("riim_pending",[]);
+ p.forEach(function(item){fetch(SCRIPT_URL,item.opts).then(function(){snUnqueue(item.id)}).catch(function(){})});
+}
+
+/* ==================== STATE ==================== */
+var studentName="",studentPin="",studentBatch="";
+var currentQ=0,testOver=false,started=false;
+var answers=new Array(NQ).fill(null);
+var questionTimes=new Array(NQ).fill(0);
+var secondsLeft=CFG.minutes*60;
+var tickInt=null,qShownTs=0;
+
+/* ==================== SESSION AUTOSAVE / RESUME ==================== */
+function snSaveSession(){
+ if(testOver||!started)return;
+ snWriteJSON(SN_KEY,{file:FILE_NAME,testName:TEST_NAME,name:studentName,pin:studentPin,batch:studentBatch,currentQ:currentQ,answers:answers,questionTimes:questionTimes,secondsLeft:secondsLeft,ts:Date.now()});
+}
+function snClearSession(){try{localStorage.removeItem(SN_KEY)}catch(e){}}
+async function snTryResume(){
+ var s=snReadJSON(SN_KEY,null);
+ if(!s||s.testName!==TEST_NAME)return false;
+ var answered=(s.answers||[]).filter(function(a){return a!==null&&a!==""}).length;
+ var ok=confirm("You have an unfinished attempt of "+TEST_NAME+" ("+answered+" question(s) answered). Resume where you left off?");
+ if(!ok){snClearSession();return false}
+ /* Go Getters: re-verify access on resume too, so a revoked PIN can't re-enter via a saved session */
+ var verdict=await checkGoGetterAccess(s.pin,s.batch);
+ if(verdict!=="allowed"){alert(verdict==="error"?NET_MSG:BLOCK_MSG);return false}
+ studentName=s.name;studentPin=s.pin;studentBatch=s.batch;
+ currentQ=Math.min(s.currentQ||0,NQ-1);
+ if(s.answers&&s.answers.length===NQ)answers=s.answers;
+ if(s.questionTimes&&s.questionTimes.length===NQ)questionTimes=s.questionTimes;
+ if(typeof s.secondsLeft==="number")secondsLeft=Math.max(10,s.secondsLeft);
+ enterTest();
+ return true;
+}
+
+/* ==================== LOGIN ==================== */
+function showLoginError(msg){var el=document.getElementById("loginErr");el.textContent=msg;el.style.display="block"}
+async function startTest(){
+ var name=document.getElementById("stuName").value.trim();
+ var pinEl=document.getElementById("stuPin");
+ var pin=pinEl.value.trim().toUpperCase();pinEl.value=pin;
+ var batch=document.getElementById("stuBatch").value;
+ if(!name){showLoginError("Please enter your full name.");return}
+ if(!PIN_REGEX.test(pin)){showLoginError("Invalid PIN. Format: STU########## or IMS##########.");return}
+ if(!batch){showLoginError("Please select your batch.");return}
+ var btn=document.getElementById("loginBtn");
+ btn.disabled=true;var prevTxt=btn.textContent;btn.textContent="Checking access\u2026";
+ var verdict=await checkGoGetterAccess(pin,batch);
+ btn.disabled=false;btn.textContent=prevTxt;
+ if(verdict!=="allowed"){showLoginError(verdict==="error"?NET_MSG:BLOCK_MSG);return}
+ studentName=name;studentPin=pin;studentBatch=batch;
+ document.getElementById("loginErr").style.display="none";
+ enterTest();
+}
+function enterTest(){
+ started=true;
+ document.getElementById("loginScreen").style.display="none";
+ document.getElementById("testScreen").style.display="block";
+ buildPalette();
+ tickInt=setInterval(function(){
+  secondsLeft--;
+  var t=document.getElementById("timer");if(t)t.textContent=fmtClock(secondsLeft);
+  if(secondsLeft%10===0)snSaveSession();
+  if(secondsLeft<=0)submitTest();
+ },1000);
+ renderQuestion();
+ snSaveSession();
+}
+
+/* ==================== PALETTE (free navigation) ==================== */
+function buildPalette(){
+ var pal=document.getElementById("palette");pal.innerHTML="";
+ for(var i=0;i<NQ;i++){
+  (function(i){
+   var b=document.createElement("button");b.id="pcell"+i;b.textContent=i+1;
+   b.onclick=function(){jumpTo(i)};
+   pal.appendChild(b);
+  })(i);
+ }
+}
+function paintPalette(){
+ for(var i=0;i<NQ;i++){
+  var c=document.getElementById("pcell"+i);if(!c)continue;
+  c.className="";
+  if(answers[i]!==null&&answers[i]!=="")c.classList.add("done");
+  if(i===currentQ)c.classList.add("cur");
+ }
+}
+
+/* ==================== RENDER + PER-QUESTION TIME ==================== */
+function markTime(){
+ if(qShownTs){questionTimes[currentQ]+=Math.round((Date.now()-qShownTs)/1000)}
+ qShownTs=Date.now();
+}
+function fmtClock(s){s=Math.max(0,s);return String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0")}
+function renderQuestion(){
+ var q=QUESTIONS[currentQ];
+ qShownTs=Date.now();
+ document.getElementById("tbName").textContent=TEST_NAME;
+ document.getElementById("qCounter").textContent="Q "+(currentQ+1)+" / "+NQ;
+ document.getElementById("timer").textContent=fmtClock(secondsLeft);
+ document.getElementById("secBadge").textContent=q.section+" \u00b7 "+q.format+" \u00b7 "+q.difficulty+(q.options?"":" \u00b7 TITA");
+ var pB=document.getElementById("passageBox");
+ if(q.passage){pB.style.display="block";pB.textContent=q.passage}else{pB.style.display="none"}
+ document.getElementById("qText").textContent=q.stem;
+ var box=document.getElementById("optBox");box.innerHTML="";
+ var letters=["A","B","C","D"];
+ if(q.options){
+  q.options.forEach(function(opt,idx){
+   var d=document.createElement("button");
+   d.className="opt"+(answers[currentQ]===idx?" sel":"");
+   d.textContent=letters[idx]+". "+opt;
+   d.onclick=function(){answers[currentQ]=idx;snSaveSession();renderQuestion()};
+   box.appendChild(d);
+  });
+ }else{
+  var inp=document.createElement("input");
+  inp.className="tita";inp.placeholder="Type your answer";
+  inp.value=answers[currentQ]||"";
+  inp.oninput=function(){answers[currentQ]=this.value;snSaveSession();paintPalette()};
+  box.appendChild(inp);
+ }
+ paintPalette();
+}
+function nav(d){markTime();currentQ=Math.max(0,Math.min(NQ-1,currentQ+d));snSaveSession();renderQuestion()}
+function jumpTo(i){markTime();currentQ=i;snSaveSession();renderQuestion()}
+
+/* ==================== SCORING HELPERS ==================== */
+function isCorrect(q,a){
+ if(a===null||a==="")return false;
+ if(q.options)return a===q.answerIndex;
+ return String(a).trim().toLowerCase()===String(q.answer).trim().toLowerCase();
+}
+
+/* ==================== MISTAKE BANK (spaced repetition) ==================== */
+function bankMistakes(){
+ try{
+  var bank=snReadJSON("riim_mistakes",[]);
+  var now=Date.now(),DAY=86400000;
+  QUESTIONS.forEach(function(q,i){
+   if(!q.options)return;
+   var chosen=answers[i];
+   if(chosen===null||chosen===q.answerIndex)return;
+   var k=CFG.bankPrefix+"-Q"+(i+1);
+   var existing=null;
+   for(var j=0;j<bank.length;j++){if(bank[j].k===k){existing=bank[j];break}}
+   if(existing){existing.box=1;existing.due=now+DAY;existing.chosen=chosen}
+   else{bank.push({k:k,stem:(q.passage?q.passage+"\n\n"+q.stem:q.stem),opts:q.options,ans:q.answerIndex,chosen:chosen,exp:q.explanation,sub:q.format,src:TEST_NAME,box:1,due:now+DAY})}
+  });
+  if(bank.length>300)bank=bank.slice(bank.length-300);
+  snWriteJSON("riim_mistakes",bank);
+ }catch(e){}
+}
+
+/* ==================== SUBMIT — 16-field payload ==================== */
+function fmtTime(totalSecs){var m=Math.floor(totalSecs/60);var s=totalSecs%60;return m+":"+(s<10?"0":"")+s}
+function submitTest(){
+ if(testOver)return;
+ testOver=true;
+ clearInterval(tickInt);
+ markTime();
+
+ var correctCount=0,wrongCount=0,skippedCount=0;
+ var sectionErrors={},topicErrorMap={},wrongQuestions=[];
+ var score=0;
+ QUESTIONS.forEach(function(q,i){
+  var a=answers[i];
+  if(a===null||a===""){skippedCount++;return}
+  if(isCorrect(q,a)){correctCount++;score+=CFG.c}
+  else{
+   wrongCount++;
+   score+=(q.options?CFG.w:CFG.titaW);
+   wrongQuestions.push(i+1);
+   sectionErrors[q.section]=(sectionErrors[q.section]||0)+1;
+   topicErrorMap[q.format]=(topicErrorMap[q.format]||0)+1;
+  }
+ });
+ var totalSecs=CFG.minutes*60-Math.max(0,secondsLeft);
+ var timeTakenStr=fmtTime(totalSecs);
+
+ /* 16-field payload — explicit key:value, topicErrors is field 16 */
+ var payload={
+  testName:TEST_NAME,
+  name:studentName,
+  pin:studentPin,
+  batch:studentBatch,
+  score:score,
+  correct:correctCount,
+  wrong:wrongCount,
+  skipped:skippedCount,
+  maxMarks:MAX_MARKS,
+  timeTaken:timeTakenStr,
+  timestamp:new Date().toLocaleString("en-IN",{timeZone:"Asia/Kolkata"}),
+  sectionErrors:sectionErrors,      /* raw object — Apps Script doPost stringifies once; */
+  wrongQuestions:wrongQuestions,    /* pre-stringifying here double-encodes the sheet cell */
+  studentAnswers:answers,           /* and breaks profile weakTopics / tracker parsing     */
+  questionTimes:questionTimes,
+  topicErrors:topicErrorMap
+ };
+
+ snSendWithQueue({method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain"},body:JSON.stringify(payload)}).catch(function(){});
+
+ bankMistakes();
+
+ try{
+  var res=snReadJSON("riim_results",[]);
+  res.push({testName:TEST_NAME,score:score,correct:correctCount,wrong:wrongCount,skipped:skippedCount,maxMarks:MAX_MARKS,timeTaken:timeTakenStr,ts:Date.now()});
+  if(res.length>200)res=res.slice(res.length-200);
+  snWriteJSON("riim_results",res);
+ }catch(e){}
+
+ snClearSession();
+ showResults(score,correctCount,wrongCount,skippedCount,timeTakenStr,sectionErrors);
+}
+
+/* ==================== RESULTS ==================== */
+function showResults(score,correct,wrong,skipped,timeStr,sectionErrors){
+ document.getElementById("testScreen").style.display="none";
+ document.getElementById("resultsScreen").style.display="block";
+ document.getElementById("resTitle").textContent=TEST_NAME+" \u2014 Results";
+ document.getElementById("resSub").textContent=studentName+" \u00b7 "+studentBatch+" \u00b7 "+new Date().toLocaleString("en-IN",{timeZone:"Asia/Kolkata"});
+ document.getElementById("stScore").textContent=score;
+ document.getElementById("stMaxL").textContent="SCORE / "+MAX_MARKS;
+ document.getElementById("stCorrect").textContent=correct;
+ document.getElementById("stWrong").textContent=wrong;
+ document.getElementById("stSkipped").textContent=skipped;
+ document.getElementById("stTime").textContent=timeStr;
+ var secParts=[];
+ for(var sk in sectionErrors){if(sectionErrors.hasOwnProperty(sk))secParts.push(sk+": "+sectionErrors[sk])}
+ document.getElementById("secErrBox").innerHTML="<b>Section errors</b> \u2014 "+(secParts.length?secParts.join(" \u00b7 "):"None");
+
+ var letters=["A","B","C","D"];
+ var box=document.getElementById("reviewBox");box.innerHTML="";
+ QUESTIONS.forEach(function(q,i){
+  var a=answers[i];
+  var skippedQ=(a===null||a==="");
+  var ok=isCorrect(q,a);
+  var wrap=document.createElement("div");wrap.className="rq";
+  var head=document.createElement("div");head.className="rqHead";
+  var status=skippedQ?"<span class='status sk'>SKIPPED</span>":ok?"<span class='status ok'>CORRECT</span>":"<span class='status no'>WRONG</span>";
+  head.innerHTML="Q"+(i+1)+" \u00b7 "+q.section+" \u00b7 "+q.format+status;
+  wrap.appendChild(head);
+  if(q.passage&&(i===0||QUESTIONS[i-1].passage!==q.passage)){
+   var pv=document.createElement("div");pv.className="rqStem";
+   pv.style.fontStyle="italic";pv.style.opacity=".85";
+   pv.textContent="Passage: "+q.passage;
+   wrap.appendChild(pv);
+  }
+  var stem=document.createElement("div");stem.className="rqStem";stem.textContent=q.stem;wrap.appendChild(stem);
+  if(q.options){
+   q.options.forEach(function(opt,idx){
+    var r=document.createElement("div");r.className="ropt";
+    if(idx===q.answerIndex)r.classList.add("correct");
+    else if(idx===a)r.classList.add("wrong");
+    var l=document.createElement("div");l.textContent=letters[idx];
+    var t=document.createElement("div");t.textContent=opt;
+    r.appendChild(l);r.appendChild(t);
+    wrap.appendChild(r);
+   });
+  }else{
+   var yr=document.createElement("div");yr.className="ropt"+(skippedQ?"":(ok?" correct":" wrong"));
+   yr.textContent="Your answer: "+(skippedQ?"\u2014":a);
+   wrap.appendChild(yr);
+   var kr=document.createElement("div");kr.className="ropt correct";
+   kr.textContent="Key: "+q.answer;
+   wrap.appendChild(kr);
+  }
+  var exp=document.createElement("div");exp.className="exp";
+  exp.innerHTML="<b>Explanation:</b> ";
+  exp.appendChild(document.createTextNode(q.explanation||""));
+  wrap.appendChild(exp);
+  box.appendChild(wrap);
+ });
+ window.scrollTo(0,0);
+}
+
+/* ==================== DOWNLOAD PDF ==================== */
+function downloadPDF(){
+ var jsPDFctor=(window.jspdf&&window.jspdf.jsPDF)||window.jsPDF;
+ if(!jsPDFctor){alert("PDF library failed to load. Please check your connection and try again.");return}
+ var doc=new jsPDFctor({unit:"pt",format:"a4"});
+ var pageW=doc.internal.pageSize.getWidth();
+ var pageH=doc.internal.pageSize.getHeight();
+ var margin=40,y=margin;
+ var letters=["A","B","C","D"];
+ function newPageIfNeeded(h){if(y+h>pageH-margin){doc.addPage();y=margin}}
+ function writeWrapped(text,x,maxW,size,style){
+  doc.setFont("helvetica",style||"normal");doc.setFontSize(size);
+  var lines=doc.splitTextToSize(text,maxW);
+  for(var i=0;i<lines.length;i++){newPageIfNeeded(size+4);doc.text(lines[i],x,y);y+=size+4}
+ }
+ doc.setFont("helvetica","bold");doc.setFontSize(16);doc.setTextColor(13,27,42);
+ doc.text("ROAD TO IIM",margin,y);y+=20;
+ doc.setFontSize(13);doc.setTextColor(201,168,76);
+ doc.text(TEST_NAME,margin,y);y+=18;
+ doc.setFont("helvetica","normal");doc.setFontSize(10);doc.setTextColor(60,60,60);
+ var dateStr=new Date().toLocaleString("en-IN",{timeZone:"Asia/Kolkata"});
+ doc.text(studentName+" \u00b7 "+studentBatch+" \u00b7 "+dateStr,margin,y);y+=16;
+ doc.setDrawColor(201,168,76);doc.line(margin,y,pageW-margin,y);y+=16;
+ doc.setTextColor(0,0,0);doc.setFont("helvetica","bold");doc.setFontSize(11);
+ doc.text("Summary",margin,y);y+=14;
+ doc.setFont("helvetica","normal");doc.setFontSize(10);
+ var summary="Score: "+document.getElementById("stScore").textContent+" / "+MAX_MARKS+"   \u00b7   Correct: "+document.getElementById("stCorrect").textContent+"   \u00b7   Wrong: "+document.getElementById("stWrong").textContent+"   \u00b7   Skipped: "+document.getElementById("stSkipped").textContent+"   \u00b7   Time: "+document.getElementById("stTime").textContent;
+ writeWrapped(summary,margin,pageW-2*margin,10);y+=4;
+ var secErrText=(document.getElementById("secErrBox").textContent||"").replace(/\s+/g," ").trim();
+ if(secErrText){writeWrapped(secErrText,margin,pageW-2*margin,10);y+=6}
+ doc.setDrawColor(200,200,200);doc.line(margin,y,pageW-margin,y);y+=14;
+ doc.setFont("helvetica","bold");doc.setFontSize(12);doc.setTextColor(13,27,42);
+ doc.text("Question Review",margin,y);y+=16;
+ QUESTIONS.forEach(function(q,i){
+  var a=answers[i];
+  var skippedQ=(a===null||a==="");
+  var ok=isCorrect(q,a);
+  var statusLabel=skippedQ?"SKIPPED":(ok?"CORRECT":"WRONG");
+  newPageIfNeeded(60);
+  doc.setFont("helvetica","bold");doc.setFontSize(10);doc.setTextColor(13,27,42);
+  doc.text("Q"+(i+1)+"  \u00b7  "+q.section+" \u00b7 "+q.format+"   ["+statusLabel+"]",margin,y);y+=12;
+  if(q.passage&&(i===0||QUESTIONS[i-1].passage!==q.passage)){
+   doc.setTextColor(90,90,90);
+   writeWrapped("Passage: "+q.passage,margin,pageW-2*margin,8,"italic");y+=2;
+  }
+  doc.setTextColor(0,0,0);
+  writeWrapped(q.stem,margin,pageW-2*margin,10,"normal");y+=2;
+  if(q.options){
+   q.options.forEach(function(opt,idx){
+    var marker="";
+    if(idx===q.answerIndex)marker="  \u2713 correct";
+    else if(idx===a)marker="  \u2717 your choice";
+    if(idx===q.answerIndex)doc.setTextColor(30,120,60);
+    else if(idx===a)doc.setTextColor(180,50,50);
+    else doc.setTextColor(60,60,60);
+    writeWrapped(letters[idx]+")  "+opt+marker,margin+12,pageW-2*margin-12,10,"normal");
+   });
+  }else{
+   doc.setTextColor(skippedQ?120:(ok?30:180),skippedQ?120:(ok?120:50),skippedQ?120:(ok?60:50));
+   writeWrapped("Your answer: "+(skippedQ?"-":a),margin+12,pageW-2*margin-12,10,"normal");
+   doc.setTextColor(30,120,60);
+   writeWrapped("Key: "+q.answer,margin+12,pageW-2*margin-12,10,"normal");
+  }
+  doc.setTextColor(0,0,0);y+=2;
+  doc.setFont("helvetica","bold");doc.setFontSize(9);
+  newPageIfNeeded(14);
+  doc.text("Explanation:",margin,y);y+=11;
+  doc.setFont("helvetica","normal");doc.setFontSize(9);
+  writeWrapped(q.explanation||"",margin,pageW-2*margin,9,"normal");
+  y+=10;
+  doc.setDrawColor(230,230,230);
+  newPageIfNeeded(6);
+  doc.line(margin,y,pageW-margin,y);y+=12;
+ });
+ var safeName=(studentName||"student").replace(/[^A-Za-z0-9]+/g,"_").slice(0,40);
+ var d=new Date();
+ var dateTag=d.getFullYear()+String(d.getMonth()+1).padStart(2,"0")+String(d.getDate()).padStart(2,"0");
+ doc.save(CFG.bankPrefix+"_"+safeName+"_"+dateTag+".pdf");
+}
+
+/* ==================== PAGE LOAD ==================== */
+document.getElementById("lgTitle").textContent=TEST_NAME;
+document.getElementById("lgMeta").innerHTML=NQ+" questions \u00b7 +"+CFG.c+" / "+CFG.w+(CFG.hasTita?" \u00b7 TITA wrong "+CFG.titaW:"")+" \u00b7 Max "+MAX_MARKS+"<br>"+CFG.minutes+" minutes \u00b7 "+(CFG.navNote||"free navigation")+" \u00b7 auto-submit at 00:00";
+document.getElementById("loginBtn").addEventListener("click",startTest);
+snFlushQueue();
+snTryResume();
+</script>
+</body>
+</html>
