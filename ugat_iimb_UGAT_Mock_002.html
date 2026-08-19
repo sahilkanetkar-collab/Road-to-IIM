@@ -18,6 +18,11 @@ h1{font-family:Fraunces,serif;color:var(--gold)}
 .loginCard label{display:block;font-family:"DM Mono";font-size:10.5px;color:var(--mut);letter-spacing:.1em;margin:12px 0 5px}
 .loginCard input,.loginCard select{width:100%;background:var(--panel2);color:var(--text);border:1px solid rgba(232,228,216,.25);border-radius:7px;padding:10px 12px;font-size:14px;font-family:"DM Sans"}
 #loginErr{display:none;color:var(--red);font-size:12.5px;margin-top:10px}
+#winNote{display:none;margin-top:12px;padding:10px 12px;border-radius:7px;font-size:12.5px;line-height:1.6;border:1px solid var(--line);background:var(--panel2)}
+#winNote b{font-family:"DM Mono";letter-spacing:.06em;font-size:10.5px;display:block;margin-bottom:3px}
+#winNote.shut{border-color:rgba(192,85,85,.5);color:var(--red)}
+#winNote.soon{border-color:rgba(212,169,78,.5);color:var(--gold)}
+#loginBtn:disabled{opacity:.45;cursor:not-allowed}
 #loginBtn{width:100%;margin-top:16px;background:var(--gold);color:var(--navy);border:none;border-radius:8px;padding:12px;font-weight:700;font-size:15px;cursor:pointer}
 .testMeta{font-family:"DM Mono";font-size:10.5px;color:var(--mut);margin-top:14px;line-height:1.7}
 #testScreen,#resultsScreen{display:none;max-width:1020px;margin:0 auto;padding:18px}
@@ -72,9 +77,11 @@ input.tita{background:var(--panel2);border:1px solid rgba(212,169,78,.4);color:v
   <optgroup label="Classroom"><option>A2701</option><option>A2702</option><option>A2703</option><option>A2704</option><option>A2705</option><option>A2706</option><option>A2707</option><option>A2708</option><option>A2709</option><option>A2710</option><option>A2711</option><option>A2712</option><option>A2714</option><option>A2715</option><option>A2716</option><option>A2717</option><option>A2718</option><option>A2719</option><option>A2720</option></optgroup>
   <optgroup label="School"><option>Zebar</option></optgroup>
   <optgroup label="IPMAT 28"><option>Z2801</option><option>S2801</option><option>A2804</option><option>PN2801</option></optgroup>
+  <optgroup label="Go Getters"><option>Go Getters</option></optgroup>
   <optgroup label="Admin"><option>Admin</option></optgroup>
  </select>
  <div id="loginErr"></div>
+ <div id="winNote"></div>
  <button id="loginBtn">Start Test</button>
  <div class="testMeta" id="lgMeta"></div>
 </div></div>
@@ -130,6 +137,49 @@ var PIN_REGEX=/^(STU|IMS)\d{10}$/;
 var BLOCK_MSG="This is a Go Getters test \u2014 access is invite-only. Message Sahil Sir if you think you should be on the list.";
 var NET_MSG="Couldn't verify access \u2014 check your internet connection and try again.";
 
+/* ==================== AVAILABILITY WINDOW ====================
+   UTC epochs. IST = UTC+5:30, so 00:00 IST = 18:30 UTC the previous day.
+   Opens : Thu 20 Aug 2026, 00:00 IST
+   Closes: Mon 24 Aug 2026, 00:00 IST (end of Sunday)
+   Entry is blocked outside this window; an attempt already in progress
+   when the window closes is allowed to finish and submit. */
+var WIN_OPEN  = Date.UTC(2026,7,19,18,30,0);
+var WIN_CLOSE = Date.UTC(2026,7,23,18,30,0);
+var SHUT_MSG  = "This mock closed on Sunday at midnight. Your attempt window has ended.";
+
+function winState(){
+ var now=Date.now();
+ if(now<WIN_OPEN)return "soon";
+ if(now>=WIN_CLOSE)return "shut";
+ return "open";
+}
+function fmtRemain(ms){
+ var s=Math.max(0,Math.floor(ms/1000));
+ var d=Math.floor(s/86400),h=Math.floor(s%86400/3600),m=Math.floor(s%3600/60),sec=s%60;
+ if(d>0)return d+"d "+h+"h "+m+"m";
+ if(h>0)return h+"h "+m+"m "+String(sec).padStart(2,"0")+"s";
+ return m+"m "+String(sec).padStart(2,"0")+"s";
+}
+function paintWindow(){
+ var note=document.getElementById("winNote"),btn=document.getElementById("loginBtn"),st=winState();
+ if(!note||!btn)return st;
+ note.className="";
+ if(st==="soon"){
+  note.className="soon";note.style.display="block";
+  note.innerHTML="<b>OPENS SOON</b>Unlocks Thursday 20 August, 00:00 IST \u00b7 in "+fmtRemain(WIN_OPEN-Date.now());
+  btn.disabled=true;btn.textContent="Locked";
+ }else if(st==="shut"){
+  note.className="shut";note.style.display="block";
+  note.innerHTML="<b>CLOSED</b>"+SHUT_MSG;
+  btn.disabled=true;btn.textContent="Closed";
+ }else{
+  note.style.display="block";
+  note.innerHTML="<b>OPEN NOW</b>Closes Sunday midnight \u00b7 "+fmtRemain(WIN_CLOSE-Date.now())+" left";
+  btn.disabled=false;btn.textContent="Start Test";
+ }
+ return st;
+}
+
 /* ==================== GO GETTERS ACCESS GATE (server-side, Apps Script v10.5) ====================
    Replaces the old client-side whitelist.json block (v5 §17), which FAILED OPEN
    and exposed the list in the public repo. This gate asks the Apps Script
@@ -178,6 +228,7 @@ function snClearSession(){try{localStorage.removeItem(SN_KEY)}catch(e){}}
 async function snTryResume(){
  var s=snReadJSON(SN_KEY,null);
  if(!s||s.testName!==TEST_NAME)return false;
+ if(winState()!=="open"){return false}
  var answered=(s.answers||[]).filter(function(a){return a!==null&&a!==""}).length;
  var ok=confirm("You have an unfinished attempt of "+TEST_NAME+" ("+answered+" question(s) answered). Resume where you left off?");
  if(!ok){snClearSession();return false}
@@ -200,6 +251,9 @@ async function startTest(){
  var pinEl=document.getElementById("stuPin");
  var pin=pinEl.value.trim().toUpperCase();pinEl.value=pin;
  var batch=document.getElementById("stuBatch").value;
+ var st=paintWindow();
+ if(st==="soon"){showLoginError("This mock is not open yet. It unlocks Thursday 20 August at 00:00 IST.");return}
+ if(st==="shut"){showLoginError(SHUT_MSG);return}
  if(!name){showLoginError("Please enter your full name.");return}
  if(!PIN_REGEX.test(pin)){showLoginError("Invalid PIN. Format: STU########## or IMS##########.");return}
  if(!batch){showLoginError("Please select your batch.");return}
@@ -518,6 +572,8 @@ function downloadPDF(){
 document.getElementById("lgTitle").textContent=TEST_NAME;
 document.getElementById("lgMeta").innerHTML=NQ+" questions \u00b7 +"+CFG.c+" / "+CFG.w+(CFG.hasTita?" \u00b7 TITA wrong "+CFG.titaW:"")+" \u00b7 Max "+MAX_MARKS+"<br>"+CFG.minutes+" minutes \u00b7 "+(CFG.navNote||"free navigation")+" \u00b7 auto-submit at 00:00";
 document.getElementById("loginBtn").addEventListener("click",startTest);
+paintWindow();
+setInterval(function(){ if(!started)paintWindow(); },1000);
 snFlushQueue();
 snTryResume();
 </script>
