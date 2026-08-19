@@ -263,6 +263,7 @@ svg.wires path.lit{stroke:rgba(111,195,154,.35);}
 .leaf .sub{display:block;font-size:.74rem;color:var(--dim);font-weight:400;margin-top:1px;}
 .leaf .score{color:var(--done);font-weight:700;}
 .badge-new{font-size:.6rem;font-weight:700;letter-spacing:.08em;color:var(--gold);border:1px solid rgba(217,185,106,.5);border-radius:4px;padding:1px 5px;margin-left:4px;}
+.badge-invite{font-size:.6rem;font-weight:700;letter-spacing:.08em;color:var(--gold-deep);border:1px solid rgba(184,137,46,.55);border-radius:4px;padding:1px 5px;margin-left:4px;background:rgba(184,137,46,.08);}
 .leaf-divider{
   grid-column:1/-1;display:flex;align-items:center;gap:10px;
   padding:14px 4px 6px;font-size:.66rem;font-weight:700;letter-spacing:.14em;color:var(--done);
@@ -397,8 +398,10 @@ const MANIFEST = [
       {t:"DD01A · Vocab",   url:"RoadToIIM_DD01A_Vocab.html",   sheetName:"DD01A - Vocab",   isNew:true},
       {t:"DD01B · Grammar", url:"RoadToIIM_DD01B_Grammar.html", sheetName:"DD01B - Grammar", isNew:true},
     ]},
-  { id:"gogetters", name:"Go Getters", desc:"Coming soon — watch this space",
-    tests:[]},
+  { id:"gogetters", name:"Go Getters", desc:"Invite-only full-length mocks · real exam specs",
+    tests:[
+      {t:"UGAT Mock 002", url:"ugat_iimb_UGAT_Mock_002.html", sheetName:"UGAT Mock 002", isNew:true, invite:true},
+    ]},
   { id:"rc", name:"RC Series & Drills", desc:"Passages, alerts, skeletons",
     tests:[
       {t:"RC Series 01", url:"RoadToIIM_RC_Series01.html", sheetName:"RC Series 01"},
@@ -499,7 +502,9 @@ const hubsEl=document.getElementById('hubs'),leavesEl=document.getElementById('l
 let openId=MANIFEST[0].id, PROFILE=null, PIN=null;
 
 function famProgress(fam){
-  const trackable=fam.tests.filter(t=>!t.soon);
+  /* invite-only tests count only once done — they never appear as a missing star
+     for students who aren't on the list */
+  const trackable=fam.tests.filter(t=>!t.soon && (!t.invite || isDone(t,PROFILE).done));
   const done=trackable.filter(t=>isDone(t,PROFILE).done).length;
   return {done, total:trackable.length};
 }
@@ -537,7 +542,7 @@ function computeNextUp(){
   let firstUnlit=null, firstNew=null;
   MANIFEST.forEach(fam=>{
     fam.tests.forEach(test=>{
-      if(test.soon) return;
+      if(test.soon||test.invite) return;
       const done=isDone(test,PROFILE).done;
       if(done) return;
       if(test.isNew && !firstNew) firstNew={fam,test};
@@ -575,8 +580,11 @@ function render(){
     l.className='leaf'+(st.done?' done':'')+(test.isNew&&!st.done?' new':'');
     l.style.setProperty('--i',i++);
     const scoreBit = st.done && typeof st.best==='number' ? ` · <span class="score">${st.best}</span>` : '';
-    const sub = test.soon ? 'Open anytime · tracking coming soon' : (st.done?'Best'+scoreBit:'Not yet lit');
-    l.innerHTML=`<span class="dot"></span><span class="lbl">${test.t}${test.isNew&&!st.done?' <span class="badge-new">NEW</span>':''}<span class="sub">${sub}</span></span>`;
+    const sub = test.invite&&!st.done ? "Invite-only · access checked at login"
+              : test.soon ? 'Open anytime · tracking coming soon'
+              : (st.done?'Best'+scoreBit:'Not yet lit');
+    const badges=(test.isNew&&!st.done?' <span class="badge-new">NEW</span>':'')+(test.invite?' <span class="badge-invite">INVITE</span>':'');
+    l.innerHTML=`<span class="dot"></span><span class="lbl">${test.t}${badges}<span class="sub">${sub}</span></span>`;
     l.addEventListener('click',()=>{ if(test.url){ location.href = PORTAL_BASE + test.url; } });
     leavesEl.appendChild(l);
   };
