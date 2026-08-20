@@ -107,7 +107,7 @@ a.backlink{color:var(--gold);text-decoration:none;display:block;text-align:cente
     <h1>ROAD TO IIM</h1>
     <h2>IPMATind VA Challenge Mock</h2>
     <div style="margin-bottom:6px;">
-      <span class="badge">45 Questions</span><span class="badge">30 Minutes</span><span class="badge">+4 / −1</span><span class="badge">Q41–45 TITA · no negative</span><span class="badge">Max 180</span>
+      <span class="badge">45 Questions</span><span class="badge">30 Minutes</span><span class="badge">+4 / −1</span><span class="badge">Q41–45 TITA</span><span class="badge">Max 180</span>
     </div>
     <label for="inName">Full Name</label><input type="text" id="inName" placeholder="Your full name" autocomplete="off">
     <label for="inPin">PIN</label><input type="text" id="inPin" placeholder="STU########## or IMS##########" autocomplete="off" maxlength="13">
@@ -185,7 +185,7 @@ const TEST_NAME  = "IPMATind VA Challenge Mock";
 const DURATION   = 1800;   // 30 minutes
 const MAX_MARKS  = 180;
 const NQ = 45;
-const TITA_FROM = 40;      // 0-based index: Q41–45 are type-in, +4/0
+const TITA_FROM = 40;      // 0-based index: Q41–45 are type-in, +4/−1
 /* Limited window — UTC epochs (00:00 IST = 18:30 UTC previous day) */
 const OPEN_TS  = Date.UTC(2026,7,20,18,30,0);  /* Fri 21 Aug 2026, 00:00 IST */
 const CLOSE_TS = Date.UTC(2026,7,23,18,30,0);  /* Mon 24 Aug 2026, 00:00 IST */
@@ -570,7 +570,7 @@ function render(){
   const ob=document.getElementById('opts');ob.innerHTML='';
   if(q.tita){
     const d=document.createElement('div');d.className='tita';
-    d.innerHTML='<input type="text" inputmode="numeric" pattern="[1-4]*" maxlength="4" placeholder="e.g. 3142" value="'+(answers[cur]||'')+'"><span class="hint">Type the 4-digit sequence · +4 / 0</span>';
+    d.innerHTML='<input type="text" inputmode="numeric" pattern="[1-4]*" maxlength="4" placeholder="e.g. 3142" value="'+(answers[cur]||'')+'"><span class="hint">Type the 4-digit sequence · +4 / −1</span>';
     const inp=d.querySelector('input');
     inp.oninput=()=>{inp.value=inp.value.replace(/[^1-4]/g,'').slice(0,4);answers[cur]=inp.value||null;paintPalette();};
     ob.appendChild(d);
@@ -614,7 +614,7 @@ function submitTest(){
     else if(a===q.answer){correct++;score+=4;}
     else{
       wrong++;wrongQuestions.push(i+1);
-      if(!q.tita)score-=1;
+      score-=1;
       topicErrors[Q[i].topic]=(topicErrors[Q[i].topic]||0)+1;
       const t=Q[i].topic;
       const sec=(t.startsWith("Reading")||t.startsWith("Conversation"))?"RC":t.startsWith("Sentence Correction")?"Grammar":(t.startsWith("Vocabulary")||t.startsWith("Sentence Completion"))?"Vocabulary":"Verbal Reasoning";
@@ -652,7 +652,7 @@ function buildReview(){
     });
     const status=skip?`<span class="tag-w">Skipped</span>`
       :ok?`<span class="tag-c">Correct (+4)</span>`
-      :q.tita?`<span class="tag-w">Wrong (0)</span>`:`<span class="tag-w">Wrong (−1)</span>`;
+      :`<span class="tag-w">Wrong (−1)</span>`;
     d.innerHTML=`<div class="rqHead"><b>Q${i+1}</b> · ${q.topic} · ${status}</div>`+
       (q.passage?`<details class="revPass"><summary>Show passage</summary>${PASSAGES[q.passage]}</details>`:'')+
       `<div class="rstem">${q.stem}</div>${optHtml}`+
@@ -702,7 +702,7 @@ function downloadPDF(){
     });
   }
   let correct=0,wrong=0,skipped=0,score=0;
-  answers.forEach((a,i)=>{if(a===null)skipped++;else if(a===Q[i].answer){correct++;score+=4;}else{wrong++;if(!Q[i].tita)score-=1;}});
+  answers.forEach((a,i)=>{if(a===null)skipped++;else if(a===Q[i].answer){correct++;score+=4;}else{wrong++;score-=1;}});
   line('Road to IIM · IPMATind VA Challenge Mock',15,'bold',[10,17,40]);
   line(`${student.name}  |  ${student.batch}  |  ${new Date().toLocaleString()}`,10);
   line(`Score: ${score}/180   Correct: ${correct}   Wrong: ${wrong}   Skipped: ${skipped}`,11,'bold',[150,110,20]);
