@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Road to IIM · IPMATind VA Challenge Mock</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+:root{
+  --navy:#0d1b2a; --navy2:#1a2e45; --gold:#c9a84c; --gold2:#e8c76a;
+  --green:#2ecc71; --red:#e74c3c; --grey:#8899aa; --white:#f0f4f8;
+  --panel:300px; --topbar:56px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:var(--navy);color:var(--white);min-height:100vh;}
+.hidden{display:none;}
+/* ---------- LOGIN ---------- */
+#loginScreen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;}
+.loginCard{background:var(--navy2);border:1px solid rgba(201,168,76,.35);border-radius:14px;padding:36px 32px;width:100%;max-width:420px;box-shadow:0 12px 40px rgba(0,0,0,.45);}
+.loginCard h1{color:var(--gold);font-size:1.35rem;letter-spacing:.5px;margin-bottom:4px;}
+.loginCard h2{color:var(--grey);font-size:.9rem;font-weight:400;margin-bottom:24px;}
+.loginCard label{display:block;font-size:.8rem;color:var(--grey);margin:14px 0 5px;letter-spacing:.4px;}
+.loginCard input,.loginCard select{width:100%;padding:11px 12px;border-radius:8px;border:1px solid rgba(136,153,170,.35);background:var(--navy);color:var(--white);font-size:.95rem;font-family:inherit;}
+.loginCard input:focus,.loginCard select:focus{outline:none;border-color:var(--gold);}
+.badge{display:inline-block;background:rgba(201,168,76,.12);color:var(--gold);border:1px solid rgba(201,168,76,.4);border-radius:20px;padding:3px 12px;font-size:.75rem;margin:3px 3px 0 0;}
+.startBtn{width:100%;margin-top:22px;padding:13px;border:none;border-radius:8px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);font-weight:700;font-size:.95rem;cursor:pointer;}
+/* ---------- TOPBAR ---------- */
+#topBar{height:var(--topbar);background:var(--navy2);display:flex;align-items:center;justify-content:space-between;padding:0 18px;border-bottom:1px solid rgba(201,168,76,.3);position:sticky;top:0;z-index:10;}
+#topBar .tName{color:var(--gold);font-weight:700;font-size:.95rem;}
+#topBar .qCounter{color:var(--grey);font-size:.85rem;}
+#timer{font-weight:700;color:var(--gold);font-variant-numeric:tabular-nums;font-size:1.05rem;}
+#timer.low{color:var(--red);}
+#timerBarWrap{height:6px;background:rgba(136,153,170,.25);width:100%;position:sticky;top:var(--topbar);z-index:10;}
+#timerBar{height:100%;width:100%;background:var(--green);transition:width 1s linear;}
+#timerBar.warn{background:var(--gold);}
+#timerBar.danger{background:var(--red);}
+/* ---------- LAYOUT ---------- */
+#mainWrap{display:flex;align-items:flex-start;max-width:1200px;margin:0 auto;}
+#quizArea{flex:1;max-width:860px;padding:22px 18px;}
+#sidePanel{width:var(--panel);flex:0 0 var(--panel);background:var(--navy2);border-left:1px solid rgba(201,168,76,.25);min-height:calc(100vh - var(--topbar) - 6px);padding:20px 16px;position:sticky;top:calc(var(--topbar) + 6px);}
+#sidePanel h3{color:var(--gold);font-size:.85rem;letter-spacing:.6px;margin-bottom:14px;}
+#palette{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;}
+.pal{aspect-ratio:1;border-radius:8px;background:var(--navy);border:1px solid rgba(136,153,170,.3);color:var(--white);font-size:.85rem;cursor:pointer;}
+.pal.ans{background:var(--green);border-color:var(--green);color:#fff;}
+.pal.cur{outline:2px solid var(--gold);}
+#mobPalette{display:none;}
+@media(max-width:900px){
+  #sidePanel{display:none;}
+  #mobPalette{display:flex;flex-wrap:wrap;gap:6px;padding:10px 14px;background:var(--navy2);border-bottom:1px solid rgba(201,168,76,.2);position:sticky;top:calc(var(--topbar) + 6px);z-index:9;}
+  #mobPalette .pal{aspect-ratio:auto;width:30px;height:30px;font-size:.78rem;}
+}
+/* ---------- QUESTION ---------- */
+.topicTag{color:var(--grey);font-size:.8rem;letter-spacing:.4px;margin-bottom:10px;}
+.passage{background:var(--navy2);border-left:3px solid var(--gold);border-radius:8px;padding:18px;margin-bottom:18px;line-height:1.75;font-size:.96rem;max-height:340px;overflow-y:auto;}
+.qstem{font-size:1.03rem;line-height:1.65;margin-bottom:16px;}
+.qstem u{text-decoration:underline;text-underline-offset:3px;}
+.opt{display:flex;gap:12px;align-items:flex-start;background:var(--navy2);border:1px solid rgba(136,153,170,.3);border-radius:10px;padding:14px 16px;margin-bottom:12px;cursor:pointer;transition:border-color .15s,background .15s;line-height:1.55;}
+.opt:hover{border-color:var(--gold);}
+.opt.sel{border-color:var(--gold);background:rgba(201,168,76,.12);}
+.opt .oLetter{flex:0 0 auto;width:26px;height:26px;border-radius:50%;border:1px solid var(--grey);display:flex;align-items:center;justify-content:center;font-size:.8rem;color:var(--grey);}
+.tita{display:flex;align-items:center;gap:12px;margin-top:6px;}
+.tita input{width:140px;background:var(--navy);border:1px solid var(--gold);border-radius:10px;padding:12px 14px;color:var(--gold2);font-size:1.3rem;letter-spacing:.25em;text-align:center;font-weight:700;}
+.tita .hint{color:var(--mut);font-size:.85rem;}
+.opt.sel .oLetter{background:var(--gold);color:var(--navy);border-color:var(--gold);font-weight:700;}
+.navrow{display:flex;gap:10px;margin-top:18px;}
+.navrow button{flex:1;padding:12px;border-radius:8px;background:var(--navy2);border:1px solid rgba(201,168,76,.35);color:var(--white);cursor:pointer;font-size:.92rem;}
+.navrow .subm{background:linear-gradient(135deg,var(--gold),var(--gold2));color:var(--navy);border:none;font-weight:700;}
+/* ---------- RESULTS ---------- */
+#results{max-width:860px;margin:0 auto;padding:22px 18px;}
+.card{background:var(--navy2);border:1px solid rgba(201,168,76,.25);border-radius:14px;padding:24px;margin:16px 0;}
+.card h1{color:var(--gold);font-size:1.3rem;}
+.score-big{font-size:3rem;color:var(--gold);font-weight:700;text-align:center;}
+.stat-row{display:flex;gap:10px;margin:18px 0;flex-wrap:wrap;}
+.stat{flex:1;min-width:100px;background:var(--navy);border-radius:10px;padding:14px;text-align:center;}
+.stat b{display:block;font-size:1.4rem;color:var(--gold);}
+.rev{border:1px solid rgba(136,153,170,.2);border-radius:10px;padding:16px;margin:12px 0;line-height:1.6;font-size:.94rem;background:var(--navy2);}
+.rev.ok{border-left:3px solid var(--green);}
+.rev.bad{border-left:3px solid var(--red);}
+.rev.skip{border-left:3px solid var(--grey);}
+.tag-c{color:var(--green);font-weight:600;}
+.tag-w{color:var(--red);font-weight:600;}
+.expl{background:rgba(46,204,113,.08);border-radius:8px;padding:10px 12px;margin-top:8px;color:#c9d4cd;font-size:.9rem;}
+.pdf-btn{background:transparent;border:1.5px solid var(--gold);color:var(--gold);padding:11px 24px;width:100%;margin:14px 0;border-radius:8px;font-size:.95rem;cursor:pointer;}
+a.backlink{color:var(--gold);text-decoration:none;display:block;text-align:center;margin-top:18px;}
+.note{color:var(--grey);font-size:.85rem;line-height:1.5;margin-top:10px;}
+.rqHead{margin-bottom:10px;color:var(--grey);font-size:.88rem;}
+.rqHead b{color:var(--gold);}
+.rstem{margin:8px 0 12px;line-height:1.6;}
+.ropt{display:flex;gap:10px;align-items:flex-start;border:1px solid rgba(136,153,170,.25);border-radius:8px;padding:9px 12px;margin:7px 0;line-height:1.5;font-size:.92rem;}
+.ropt .rLetter{flex:0 0 auto;width:22px;height:22px;border-radius:50%;border:1px solid var(--grey);display:flex;align-items:center;justify-content:center;font-size:.72rem;color:var(--grey);}
+.ropt.correct{border-color:var(--green);background:rgba(46,204,113,.1);}
+.ropt.correct .rLetter{background:var(--green);border-color:var(--green);color:#fff;font-weight:700;}
+.ropt.wrong{border-color:var(--red);background:rgba(231,76,60,.1);}
+.ropt.wrong .rLetter{background:var(--red);border-color:var(--red);color:#fff;font-weight:700;}
+.revPass{margin:8px 0;}
+.revPass summary{cursor:pointer;color:var(--gold);font-size:.85rem;margin-bottom:6px;}
+.revPass p{margin:8px 0;line-height:1.7;font-size:.9rem;color:#c8d2dd;}
+.concept{background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.25);border-radius:8px;padding:10px 12px;margin-top:8px;font-size:.9rem;line-height:1.6;color:#dcd3b8;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="loginCard" id="login">
+    <h1>ROAD TO IIM</h1>
+    <h2>IPMATind VA Challenge Mock</h2>
+    <div style="margin-bottom:6px;">
+      <span class="badge">45 Questions</span><span class="badge">30 Minutes</span><span class="badge">+4 / −1</span><span class="badge">Q41–45 TITA · no negative</span><span class="badge">Max 180</span>
+    </div>
+    <label for="inName">Full Name</label><input type="text" id="inName" placeholder="Your full name" autocomplete="off">
+    <label for="inPin">PIN</label><input type="text" id="inPin" placeholder="STU########## or IMS##########" autocomplete="off" maxlength="13">
+    <label for="inBatch">Batch</label>
+    <select id="inBatch">
+      <option value="">-- Select your batch --</option>
+      <optgroup label="Classroom">
+        <option>A2701</option><option>A2702</option><option>A2703</option><option>A2704</option><option>A2705</option><option>A2706</option><option>A2707</option><option>A2708</option><option>A2709</option><option>A2710</option><option>A2711</option><option>A2712</option><option>A2714</option><option>A2715</option><option>A2716</option><option>A2717</option><option>A2718</option><option>A2719</option><option>A2720</option>
+      </optgroup>
+      <optgroup label="School"><option>Zebar</option></optgroup>
+      <optgroup label="IPMAT 28"><option>Z2801</option><option>S2801</option><option>A2804</option><option>PN2801</option></optgroup>
+      <optgroup label="Go Getters"><option>Go Getters</option></optgroup>
+      <optgroup label="Admin"><option>Admin</option></optgroup>
+    </select>
+    <div class="note" id="windowMsg" style="display:none;"></div>
+    <button class="startBtn" onclick="startTest()">Start Test</button>
+  </div>
+</div>
+
+<!-- TEST -->
+<div id="test" class="hidden">
+  <div id="topBar">
+    <span class="tName">IPMATind VA Challenge</span>
+    <span class="qCounter">Q<span id="qNum">1</span> / 45</span>
+    <span id="timer">30:00</span>
+  </div>
+  <div id="timerBarWrap"><div id="timerBar"></div></div>
+  <div id="mobPalette"></div>
+  <div id="mainWrap">
+    <div id="quizArea">
+      <div class="topicTag" id="qTopic"></div>
+      <div id="passageBox" class="passage hidden"></div>
+      <div class="qstem" id="stem"></div>
+      <div id="opts"></div>
+      <div class="navrow">
+        <button onclick="nav(-1)">◀ Previous</button>
+        <button onclick="clearAns()">Clear</button>
+        <button onclick="nav(1)">Next ▶</button>
+        <button class="subm" onclick="confirmSubmit()">Submit</button>
+      </div>
+    </div>
+    <div id="sidePanel">
+      <h3>QUESTIONS</h3>
+      <div id="palette"></div>
+    </div>
+  </div>
+</div>
+
+<!-- RESULTS -->
+<div id="results" class="hidden">
+  <div class="card">
+    <h1 style="text-align:center;">Result · IPMATind VA Challenge</h1>
+    <div class="score-big" id="scoreOut"></div>
+    <div style="text-align:center;color:var(--mut);">out of 180</div>
+    <div class="stat-row">
+      <div class="stat"><b id="stCorrect"></b>Correct</div>
+      <div class="stat"><b id="stWrong"></b>Wrong</div>
+      <div class="stat"><b id="stSkip"></b>Skipped</div>
+      <div class="stat"><b id="stTime"></b>Time</div>
+    </div>
+    <div id="syncMsg" class="note" style="text-align:center;"></div>
+  </div>
+  <div id="reviewList"></div>
+  <button class="pdf-btn" onclick="downloadPDF()">Download PDF Report</button>
+  <a class="backlink" href="index.html">← Back to Road to IIM</a>
+</div>
+
+</div>
+<script>
+/* ============================================================
+   CONFIG — VERIFY APPS SCRIPT URL BEFORE DEPLOY (v8)
+   ============================================================ */
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx5Ojm_zp4LfsMeelx5e06KNjVH1wfsXdV0keS4407m4FO1HU4EpVb7GKj-ibAsxnspeA/exec"; // Apps Script v8
+const TEST_NAME  = "IPMATind VA Challenge Mock";
+const DURATION   = 1800;   // 30 minutes
+const MAX_MARKS  = 180;
+const NQ = 45;
+const TITA_FROM = 40;      // 0-based index: Q41–45 are type-in, +4/0
+/* Limited window — UTC epochs (00:00 IST = 18:30 UTC previous day) */
+const OPEN_TS  = Date.UTC(2026,7,20,18,30,0);  /* Fri 21 Aug 2026, 00:00 IST */
+const CLOSE_TS = Date.UTC(2026,7,23,18,30,0);  /* Mon 24 Aug 2026, 00:00 IST */
+
+/* ============================================================ PASSAGES */
+const PASSAGES = {
+P1:`<p>There are few sights more instructive to the patient observer than a company of rooks at their business in a winter field. I passed three seasons in a parish where a rookery of some two hundred birds occupied a stand of elms behind the vicarage, and I came in time to know their habits as one knows the habits of a neighbour.</p>
+<p>It is commonly said that the crow hides his food and forgets it. Nothing could be further from the truth. I have watched a single bird conceal a walnut beneath a tussock, walk some paces away, return, take it up again, and carry it to a second place; and I have satisfied myself, after much watching, that he did so because another bird had been idly attending him. When no observer was by, the first hiding place sufficed. When one was, the nut was moved. To act thus is not memory alone; it is memory joined to the suspicion that another creature possesses a memory of its own.</p>
+<p>Of the alarm note little need be said, for every farmer's boy knows it. What is less remarked is that the rook has more than one such note, and that the birds distinguish between them with perfect precision. There is a cry for the man with a gun, at which the whole rookery removes itself to the farther field; there is another for the fox, at which they rise but a little and continue to scold from the branches; and there is a third, softer and more urgent, which passes among nesting birds when a hawk is seen but not yet near. I have heard a single hen give this last note while her mate was feeding fifty yards off, and have seen him abandon a good supper at once and without any looking about him, as one obeys an order rather than a hint.</p>
+<p>The young do not possess these notes at birth. A rook reared away from the rookery, as I once contrived by way of experiment, gave the alarm indiscriminately and at nothing, and was ignored by wild birds when at length it was returned to them. Its cries were not false; they were merely uninstructed. Whatever the rook knows of speech, he is taught it, and he is taught it by his own kind.</p>
+<p>I do not pretend that this amounts to language as we possess it. But the man who denies it the name of language altogether must be prepared to say what else it should be called.</p>`,
+P2:`<p>Measurement is not the enemy. A delivery rider who knows how many orders she completed last week is better placed to argue for her wages than one who does not. The trouble begins when measurement stops describing work and starts dictating it.</p>
+<p>The rating has become the invisible supervisor of the Indian gig economy. A driver's screen shows a number to two decimal places, and that number decides which orders he is offered, how long he waits between them, and whether he is quietly removed from the platform altogether. No manager delivers this verdict, and no appeal is heard, because there is nobody to appeal to. The worker is answerable to an arithmetic he cannot inspect. When customers are asked to rate, they rate the weather, the traffic, the cold food and the wrong address, and all of it settles on one man's score.</p>
+<p>The effect on behaviour is predictable and worth stating plainly. A rider who fears his rating will not refuse an unsafe route, will not stop to eat, and will not report a customer who abuses him. Compliance is bought not by threat but by arithmetic, which is cheaper and leaves no fingerprints.</p>
+<p>Some will say that the market corrects such things, that good workers rise and bad ones fall. This is the tortoise's argument: it is true only if you are prepared to wait longer than any human career allows. Others will say that the technology is neutral. So is a weighing scale, until somebody decides what to do with the number.</p>
+<p>None of this requires that we abandon measurement. It requires only that the person measured be told the rule, be permitted to contest the figure, and be judged on what he controls. That is not a technological demand. It is the oldest demand in the history of employment, restated for a screen.</p>`,
+C1:`<p><b>Host:</b> We usually explain Dutch tolerance by pointing to trade and to Calvinism. You argue that the real cause was mud. How did the landscape of the Low Countries shape their politics?</p>
+<p><b>Guest:</b> Consider what a polder actually is. You take a stretch of waterlogged ground, ring it with a dike, and pump the water out. The land you gain sits below the level of the sea around it, and it stays dry only for as long as every metre of that ring is maintained. That is an unusual kind of property. Your field is not safe because you have looked after it; your field is safe because your neighbour has looked after his section of the dike as well. Failure anywhere floods everyone.</p>
+<p><b>Host:</b> So the obligation was collective rather than individual.</p>
+<p><b>Guest:</b> It had to be. From the thirteenth century the Low Countries developed <i>waterschappen</i> — water boards — which are among the oldest continuously functioning administrative bodies in Europe, older than the Dutch state itself. They levied their own taxes, kept their own records, and could compel a landholder to repair his stretch or else have it repaired at his expense. What is striking is who sat on them. Membership was tied to land within the polder, not to noble birth. A prosperous farmer with forty hectares had a voice; a duke whose estates lay elsewhere did not. Water does not consult a genealogy.</p>
+<p><b>Host:</b> And you claim that this produced a habit of negotiation.</p>
+<p><b>Guest:</b> A habit and, in time, a reflex. Historians call it the polder model, and it is still the standard description of Dutch labour relations: endless consultation, decision by consensus, a marked preference for the workable compromise over the clean victory. That reflex was not a moral achievement. It was drilled into the population by four centuries of a single fact — that you cannot outvote water, and you cannot drain your own field while quarrelling with the man who holds the sluice. Agreement was cheaper than drowning.</p>
+<p><b>Host:</b> Were there limits to the arrangement?</p>
+<p><b>Guest:</b> Substantial ones. The boards represented landholders, which is to say a minority; labourers and women stood outside the system altogether. And the model handles slow, shared, predictable problems extremely well. It handles sudden ones badly, because consultation takes time. The flood of 1953 killed more than eighteen hundred people, and the response — the Delta Works — was pushed through by central government at a speed no water board would ever have managed.</p>`
+};
+
+/* ============================================================ QUESTIONS
+   answer = 0-based index into options; TITA answer = string      */
+const Q = [
+{topic:"Reading Comprehension",passage:"P1",tita:false,
+stem:`The narrator concluded that the rook moved the walnut to a second hiding place because`,
+options:["the first hiding place had proved unsuitable for storage", "it habitually moved food from one place to another", "it had noticed another bird attending to the concealment", "it had forgotten the location of the first hiding place"],answer:2,
+expl:`The narrator states that the nut stayed put when no observer was by and was moved when one was. Option D is the popular belief the paragraph opens by rejecting. Options A and B are inventions the text does not support.`,
+concept:`<b>Concept — Cause questions in narrative RC:</b> When a passage sets up a contrast ('when no observer… when one was…'), the cause is the variable that changed. Options that restate the popular belief the author has just rejected are the standard trap — the author's correction, not the folk wisdom, is the answer.`},
+
+{topic:"Reading Comprehension",passage:"P1",tita:false,
+stem:`The phrase 'memory joined to the suspicion that another creature possesses a memory of its own' indicates that the rook`,
+options:["attributes a mental capacity to the bird watching it", "is incapable of trusting members of its own family", "learns to conceal food by imitating its companions", "remembers a greater number of locations than any other bird"],answer:0,
+expl:`The whole point of the sentence is that the rook is reasoning about what another bird will remember — it credits the observer with a mind. Option C concerns how hiding is learnt, a different claim; options B and D overstate or sentimentalise.`,
+concept:`<b>Concept — Phrase-meaning questions:</b> Paraphrase the phrase in your own plain words before reading the options ('the rook assumes the other bird can remember too'). Then match meaning to meaning. Options that add emotion ('incapable of trusting') or comparison ('more than any other bird') smuggle in content the phrase never carried.`},
+
+{topic:"Reading Comprehension",passage:"P1",tita:false,
+stem:`The three alarm notes described in the passage differ chiefly in`,
+options:["the season of the year in which the birds employ them", "whether they are given by the male or the female bird", "the volume at which each is produced", "the particular danger each announces and the response it produces"],answer:3,
+expl:`Gun, fox and hawk are each matched to a distinct reaction: removal to the far field, a short rise with scolding, and a soft warning among nesting birds. Volume is mentioned only of the third note in passing; season and sex are never discussed.`,
+concept:`<b>Concept — 'Differ chiefly in' questions:</b> The word <i>chiefly</i> asks for the organising principle of the paragraph, not any true detail. Volume is mentioned once; danger-and-response is the frame for all three notes. A detail that is true of one item is not the axis of difference across all of them.`},
+
+{topic:"Reading Comprehension",passage:"P1",tita:false,
+stem:`The comparison 'as one obeys an order rather than a hint' is used to convey that the note was`,
+options:["louder than the two other notes the narrator describes", "understood at once and acted upon without hesitation or inspection", "addressed to the whole rookery rather than to the mate alone", "a signal agreed upon between the pair in advance"],answer:1,
+expl:`The force of the comparison lies in 'at once and without any looking about him' — no checking, no delay. The note is described as softer, not louder, killing option A. Option C contradicts 'a single hen … her mate'; option D imports a deliberateness the passage does not claim.`,
+concept:`<b>Concept — Reading a simile for its function:</b> Ask what quality the two halves share. An order versus a hint differ in <i>compulsion and immediacy</i>, not loudness or audience. The sentence just before the simile ('at once and without any looking about him') usually tells you which quality the author means.`},
+
+{topic:"Reading Comprehension",passage:"P1",tita:false,
+stem:`The experiment with the rook reared away from the rookery established that`,
+options:["a bird raised in isolation loses the ability to produce alarm notes", "wild rooks will not accept any bird that has been reared by human beings", "the alarm notes must be learnt from other rooks if they are to be used correctly", "alarm notes given by young birds are deliberately deceptive"],answer:2,
+expl:`The isolated bird could produce the cries but used them 'indiscriminately and at nothing' — the deficit is instruction, not capacity, which rules out option A. Option D is explicitly denied: 'Its cries were not false; they were merely uninstructed.' Option B generalises from a single bird and misattributes the cause of its rejection.`,
+concept:`<b>Concept — What an experiment 'establishes':</b> Separate capacity from competence. The bird <i>could</i> cry (capacity intact) but cried wrongly (competence missing) — so the conclusion is about learning, not ability. Watch for options the author has explicitly denied in the very next sentence; those are written to catch skimmers.`},
+
+{topic:"Reading Comprehension",passage:"P1",tita:false,
+stem:`In the closing paragraph, the narrator`,
+options:["declines to claim the word 'language' while challenging others to supply a better one", "concedes that three seasons of observation established nothing", "argues that only trained naturalists are able to interpret bird calls", "concludes that rook communication is identical to human language"],answer:0,
+expl:`'I do not pretend' is a disclaimer; 'must be prepared to say what else it should be called' throws the burden back on the sceptic. That is a withheld claim plus a challenge — not the assertion of option D, nor the surrender of option B.`,
+concept:`<b>Concept — Hedged conclusions:</b> Authors often close with a two-part move: a concession ('I do not pretend…') followed by a counter-challenge ('but then what else…'). The correct option preserves <i>both</i> parts. Options that keep only the concession (surrender) or only the claim (overstatement) each lose half the sentence.`},
+
+{topic:"Reading Comprehension",passage:"P2",tita:false,
+stem:`According to the author, the difficulty with ratings arises when`,
+options:["workers are given access to their own performance data", "measurement begins to govern conduct rather than merely record it", "customers are permitted to rate the riders who serve them", "platforms publish scores calculated to two decimal places"],answer:1,
+expl:`The opening paragraph concedes the value of measurement and locates the problem precisely: 'when measurement stops describing work and starts dictating it.' Options A and C are things the author accepts; option D is a detail of presentation, not the objection.`,
+concept:`<b>Concept — The concession-then-pivot opener:</b> When a passage opens 'X is not the enemy… The trouble begins when…', the thesis sits after 'when'. Options built from things the author has just conceded as acceptable (workers seeing data) are deliberately placed to reward inattentive reading.`},
+
+{topic:"Reading Comprehension",passage:"P2",tita:false,
+stem:`The phrase 'answerable to an arithmetic he cannot inspect' chiefly conveys that`,
+options:["the platform's calculations are frequently found to be mistaken", "riders are judged by customers rather than by trained managers", "riders lack the numeracy required to understand their own scores", "accountability is owed to a rule the worker is not permitted to see"],answer:3,
+expl:`'Answerable to' is accountability and 'cannot inspect' is concealment — together, judgement by a hidden rule. Option C shifts the fault to the worker, which reverses the author's argument. Option A alleges error, which the passage never does; option B is true but is a different sentence's point.`,
+concept:`<b>Concept — Decode phrase by its two halves:</b> Break a compressed phrase into its components ('answerable to' = accountable; 'cannot inspect' = hidden) and recombine. Options that relocate blame onto the victim ('riders lack numeracy') invert the author's sympathies — valence alone should eliminate them.`},
+
+{topic:"Reading Comprehension",passage:"P2",tita:false,
+stem:`The author states all of the following EXCEPT:`,
+options:["Platforms have begun to allow riders to contest their ratings.", "Ratings determine which orders a rider is offered.", "Customer ratings often reflect matters outside the rider's control.", "Fear of a falling rating discourages riders from refusing unsafe work."],answer:0,
+expl:`Contesting the figure appears only in the final paragraph as a demand the author is making, not as an existing practice — indeed 'there is nobody to appeal to.' Options B, C and D all appear directly in paragraphs 2 and 3.`,
+concept:`<b>Concept — EXCEPT questions and the demand/fact trap:</b> Three options will be locatable verbatim or near-verbatim. The odd one out is often something the author <i>wishes</i> for, planted as if it were a fact. A proposal in the last paragraph is not a statement about the present.`},
+
+{topic:"Reading Comprehension",passage:"P2",tita:false,
+stem:`The remark about the weighing scale is introduced in order to`,
+options:["show that customers cannot be trusted to judge fairly", "suggest that measuring instruments are frequently inaccurate", "concede that the technology itself is not the source of the harm", "argue that gig platforms ought to be regulated as shopkeepers are"],answer:2,
+expl:`The author grants the objection ('So is a weighing scale') and then relocates the harm in the use made of the number. It is a concession that redirects, not a claim about accuracy (option B) or a proposal about regulation (option D).`,
+concept:`<b>Concept — Purpose of an analogy:</b> An analogy answers the sentence before it. 'Others will say the technology is neutral. So is a weighing scale…' — the scale <i>agrees</i> with the objection, then adds 'until somebody decides what to do with the number'. Concede-and-redirect is a common argumentative move; don't read the concession as the author's final position.`},
+
+{topic:"Reading Comprehension",passage:"P2",tita:false,
+stem:`'This is the tortoise's argument' is best understood to mean that the claim`,
+options:["has been repeated so often that it is no longer examined", "applies to established firms but not to newer platforms", "is advanced only by those who are slow to grasp the issue", "may be correct in principle but arrives far too late to be of use"],answer:3,
+expl:`The gloss follows immediately: true only if you can wait longer than a career lasts. The image is about speed of arrival, not about the intelligence of those making it — option C is the trap for students who read only the animal.`,
+concept:`<b>Concept — Let the author's gloss define the metaphor:</b> When a metaphor is followed by a colon, the clause after the colon is its meaning. The tortoise here stands for <i>slowness of outcome</i>, not stupidity of the arguer. Never import the cultural connotation of an image when the author has supplied a precise one.`},
+
+{topic:"Reading Comprehension",passage:"P2",tita:false,
+stem:`The final paragraph indicates that the author`,
+options:["wishes ratings to be abolished from gig platforms altogether", "accepts measurement but demands disclosure, appeal and fair scope", "believes the problem is technological and needs a technological remedy", "regards the demand he is making as novel and untested"],answer:1,
+expl:`Three conditions are listed — told the rule, permitted to contest, judged on what he controls — after an explicit refusal to abandon measurement. Option C is contradicted by 'That is not a technological demand'; option D by 'the oldest demand in the history of employment.'`,
+concept:`<b>Concept — Final-paragraph position questions:</b> Argumentative passages state their actual demand at the end. Count the conditions the author lists and check the option carries all of them. Options that make the author more extreme than the text (abolition) or contradict an explicit sentence (novel vs. 'oldest demand') fail immediately.`},
+
+{topic:"Sentence Completion",passage:null,tita:false,
+stem:`The pamphlet repeated allegations against the mayor for which no evidence had ever been produced _________ .`,
+options:["and the accusations were veracious", "and the accusations were vicarious", "and the accusations were spurious", "and the accusations were spacious"],answer:2,
+expl:`SPURIOUS = false, not genuine, fabricated — exactly what an unevidenced allegation is. VERACIOUS = truthful (the opposite). VICARIOUS = experienced through another person. SPACIOUS = roomy. A four-way near-homophone trap of the kind Indore favours.`,
+concept:`<b>Concept — Near-homophone clusters:</b> Indore loves sets that look and sound alike (veracious / vicarious / spurious / spacious). Resolve the <i>context first</i> ('no evidence' → false) and then pick the word, rather than reading the options and letting their similarity blur your judgement. Root knowledge helps: <i>ver-</i> = truth; <i>vicar-</i> = substitute.`},
+
+{topic:"Sentence Completion",passage:null,tita:false,
+stem:`I had already missed the last train home; to _________ , my phone died before I could call anyone.`,
+options:["top it all off", "mystify me further", "enlarge my troubles", "confound my sorrows"],answer:0,
+expl:`'To top it all off' is the fixed idiom for a final misfortune added to earlier ones. The other three are grammatically possible but are not established English idioms — the question tests collocation, not meaning.`,
+concept:`<b>Concept — Collocation over sense:</b> Some blanks are won by knowing the fixed phrase, not by reasoning about meaning. 'To top it all off' is the only established expression for 'as a final blow'. When three options sound invented, the familiar one is the answer — idioms are not built from scratch.`},
+
+{topic:"Sentence Completion",passage:null,tita:false,
+stem:`My neighbour repeats every scrap of news she hears to anyone who will stand still _________ .`,
+options:["as she is very lucrative", "as she is very loquacious", "as she is very lugubrious", "as she is very ludicrous"],answer:1,
+expl:`LOQUACIOUS = talkative. LUGUBRIOUS = mournful, dismal. LUDICROUS = absurd. LUCRATIVE = profitable. Only the first explains compulsive talking.`,
+concept:`<b>Concept — Root-first vocabulary:</b> <i>loqu-</i> (Latin <i>loqui</i>, to speak) gives loquacious, eloquent, colloquial, soliloquy. Spotting the root resolves the blank instantly and makes the L-alliteration distractors irrelevant. Build word families, not word lists.`},
+
+{topic:"Sentence Completion",passage:null,tita:false,
+stem:`The team had prepared for six months, but the captain's injury on the morning of the final _________ .`,
+options:["put the cart before the horse", "burned the midnight oil", "turned the other cheek", "threw a spanner in the works"],answer:3,
+expl:`'Throw a spanner in the works' = disrupt a plan that was running smoothly. 'Put the cart before the horse' = reverse the correct order; 'burn the midnight oil' = work late; 'turn the other cheek' = decline to retaliate.`,
+concept:`<b>Concept — Idiom by situation type:</b> Classify the scenario before touching the options: a smooth plan disrupted by a sudden event = 'spanner in the works'. The other three idioms belong to different situation types (wrong order, late work, non-retaliation). The CALL framework: Context → Action → Literal image → Lock.`},
+
+{topic:"Sentence Completion",passage:null,tita:false,
+stem:`Once the forgery was proved in court, the dealer found that his reputation lay _________ .`,
+options:["at a premium", "on the mend", "in tatters", "in the offing"],answer:2,
+expl:`'In tatters' = destroyed, ruined — the standard collocation with reputation. 'At a premium' = scarce and valuable; 'on the mend' = recovering; 'in the offing' = about to happen.`,
+concept:`<b>Concept — Prepositional idioms with 'reputation':</b> Reputations lie 'in tatters' or 'in ruins'; they are not 'at a premium' or 'in the offing' (which take goods and events respectively). Learn which nouns each prepositional phrase collocates with — the noun in the sentence filters the options.`},
+
+{topic:"Sentence Completion",passage:null,tita:false,
+stem:`The lecturer answered each objection calmly and with evidence, and her _________ reply left even the sceptics persuaded.`,
+options:["cogent", "verbose", "truculent", "laconic"],answer:0,
+expl:`COGENT = clear, logical and convincing. TRUCULENT = aggressively defiant. LACONIC = using very few words (possible, but the sentence describes a full evidenced reply). VERBOSE = wordy, which carries the wrong connotation for a reply that persuades.`,
+concept:`<b>Concept — Let the result word choose the adjective:</b> 'left even the sceptics persuaded' demands an adjective meaning <i>convincing</i>. 'Laconic' is the near-miss — brevity can persuade, but 'with evidence' describes fullness, not terseness. When two options seem possible, the one that matches <i>every</i> clue wins.`},
+
+{topic:"Sentence Completion",passage:null,tita:false,
+stem:`When the fire alarm sounded during the examination, most of the candidates rushed at the door; only the invigilator _________ and led them out in a single line.`,
+options:["took his chances", "held his tongue", "lost his nerve", "kept his wits about him"],answer:3,
+expl:`'Keep one's wits about one' = stay alert and composed in a crisis, which is what leading an orderly evacuation demonstrates. Option C is the exact opposite; options A and B describe risk-taking and silence, neither of which the sentence supports.`,
+concept:`<b>Concept — Contrast markers in idiom blanks:</b> 'most… rushed; only the invigilator ___' sets up a contrast — the blank must be the opposite of panic. Always check for 'only', 'but', 'unlike' before the blank; it tells you the polarity of the idiom you need and eliminates the antonym trap ('lost his nerve').`},
+
+{topic:"Sentence Correction",passage:null,tita:false,
+stem:`Choose the option that best replaces the underlined portion.<br><br>Please stop blaming me for the mess. I did not invite the whole department. All I did was <u>opening the folder and renamed it</u>.`,
+options:["to open the folder and renamed it", "open the folder and rename it", "opened the folder and renamed it", "opening the folder and renaming it"],answer:1,
+expl:`After 'All I did was', English takes the bare infinitive: 'was open … and rename'. The two verbs must also be parallel. Option A mixes 'to open' with 'renamed'; option C uses past forms after 'was'; option D is parallel but the wrong form.`,
+concept:`<b>Concept — Pseudo-cleft 'All I did was…':</b> This construction takes the bare infinitive ('All I did was <i>ask</i>'). Then apply parallelism: both verbs after 'was' must share the form. Two checks, in order — correct form, then parallel form. An option can be parallel and still wrong (option D).`},
+
+{topic:"Sentence Correction",passage:null,tita:false,
+stem:`Choose the option that best replaces the underlined portion.<br><br>Although the company has struggled for two quarters, <u>suppose that it will report a profit in</u> March, its investors would return at once.`,
+options:["suppose that it reports a profit in", "should it be reporting a profit in", "imagine if it reports a profit in", "should it report a profit in"],answer:3,
+expl:`The main clause uses 'would return', so the conditional clause needs inversion: 'should it report'. This is the formal equivalent of 'if it were to report'. Options C and A give an imperative where a conditional is required; option B puts a continuous form where a simple one belongs.`,
+concept:`<b>Concept — Inverted conditionals:</b> 'Should it report…' = 'If it were to report…'. The result clause ('would return') signals a hypothetical; the if-clause must match in mood, not be an imperative ('suppose', 'imagine'). Inversion with <i>should / were / had</i> is the formal register exams favour.`},
+
+{topic:"Sentence Correction",passage:null,tita:false,
+stem:`Choose the option that best replaces the underlined portion.<br><br>The hospital has appointed a <u>diet</u> to plan meals for patients recovering from surgery.`,
+options:["dieter", "dietary", "dietitian", "dietetic"],answer:2,
+expl:`The slot needs a person who plans meals professionally: DIETITIAN. DIET is the food itself; DIETARY and DIETETIC are adjectives; a DIETER is someone following a diet, not the specialist prescribing one.`,
+concept:`<b>Concept — Word-form questions:</b> Identify the part of speech the slot demands ('appointed a ___ to plan' → a person noun), then the precise role (the professional, not the patient). Suffix knowledge does the work: <i>-ician/-itian</i> = practitioner; <i>-ary/-etic</i> = adjective; <i>-er</i> = one who does.`},
+
+{topic:"Sentence Correction",passage:null,tita:false,
+stem:`Choose the option that best replaces the underlined portion.<br><br>Just as the audience began to leave, <u>alone came the understudy and transgressed</u> them with a flawless final aria.`,
+options:["along came the understudy and transfixed", "alone came the understudy and transposed", "along came the understudy and transgressed", "alone came the understudy and transfixed"],answer:0,
+expl:`Two errors must be fixed together. The idiom is 'along came X' (X arrived unexpectedly), not 'alone came X'. And TRANSGRESS = to violate a rule; the word required is TRANSFIX = to hold motionless with astonishment. Only option A corrects both; each other option leaves one error standing.`,
+concept:`<b>Concept — Two-error underlines:</b> Count the errors before evaluating options. Here the idiom ('along came') and the verb ('transfixed') are both wrong, so any option that fixes only one is a half-right distractor. The <i>trans-</i> family: transfix (pierce/hold still), transgress (step across a line), transpose (swap positions).`},
+
+{topic:"Sentence Correction",passage:null,tita:false,
+stem:`Choose the option that best replaces the underlined portion.<br><br>The witness <u>abdicated</u> his earlier statement as soon as the defence produced the security footage.`,
+options:["revoked", "retracted", "retreated", "rescinded"],answer:1,
+expl:`Statements are RETRACTED — formally withdrawn. ABDICATE applies to a throne or a responsibility. RETREAT is intransitive and physical. RESCIND and REVOKE apply to laws, orders, licences and decisions, not to something a person has said.`,
+concept:`<b>Concept — Verb–object collocation:</b> Four verbs all meaning 'take back', each with its own objects: <i>retract</i> a statement; <i>revoke</i> a licence; <i>rescind</i> an order; <i>abdicate</i> a throne. The object in the sentence ('statement') selects the verb. Synonym lists are useless without their collocates.`},
+
+{topic:"Paragraph Completion",passage:null,tita:false,
+stem:`Choose the sentence that best fills the blank.<br><br>Indian cities are adding air-conditioners faster than almost anywhere else in the world. Each new unit cools one room and warms the street outside it, and the electricity it draws is still generated largely by burning coal. Several municipal bodies are now rewriting building codes to require shading, cross-ventilation and reflective roofing in all new construction. ______`,
+options:["Coal will remain India's principal source of electricity for some decades yet.", "Residents of older buildings will find it impossible to comply with the new codes.", "Air-conditioners should be taxed heavily so as to discourage their purchase.", "The intention is to reduce how much cooling a building needs in the first place."],answer:3,
+expl:`The paragraph moves from problem to municipal response; the closing sentence must explain what that response is for. Shading, ventilation and reflective roofing all reduce demand rather than supply, which is exactly option D. Option C proposes a different policy; options A and B wander off into consequences the paragraph is not building towards.`,
+concept:`<b>Concept — Closing-blank completion:</b> A final blank must complete the paragraph's own move, not start a new one. Here the move is problem → response → <i>purpose of the response</i>. Options that introduce a different policy, a prediction, or an objection open new threads the paragraph has no room to develop.`},
+
+{topic:"Paragraph Completion",passage:null,tita:false,
+stem:`Choose the sentence that best fills the blank.<br><br>A hospital's reputation is built over decades and can be lost in a week. ______ The institution then discovers that the trust it relied upon to recruit doctors, attract patients and raise funds has quietly disappeared, and that nothing in its accounts recorded the loss while it was happening. Reputation, in this sense, behaves less like a possession than like a climate.`,
+options:["One publicised failure, honestly reported, is often enough.", "Hospitals should therefore invest far more heavily in public relations.", "Most patients choose a hospital on the recommendation of a friend.", "Insurance policies rarely cover damage of this kind."],answer:0,
+expl:`The blank sits between 'lost in a week' and 'The institution then discovers'. It must supply the triggering event that 'then' refers back to. Option A supplies exactly that. Option B is a prescription the paragraph has not yet earned; options D and C introduce topics the following sentences never take up.`,
+concept:`<b>Concept — Mid-paragraph blank, read the sentence after it:</b> 'The institution <i>then</i> discovers…' — 'then' needs an event before it. The blank must be the trigger. Always read the sentence after a mid-blank first: its pronouns and connectors ('then', 'this', 'such') tell you what kind of sentence is missing.`},
+
+{topic:"Paragraph Completion",passage:null,tita:false,
+stem:`Choose the sentence that best fills the blank.<br><br>For fifty years the standard advice to young researchers was to specialise early and narrowly. The reasoning was sound: depth produces results, and results produce careers. ______ The problems that matter now — a drug's effect across a population, a city's response to heat — sit between disciplines rather than inside them, and the specialist arrives at them equipped with half a vocabulary. Hence the sudden fashion for the word 'interdisciplinary'.`,
+options:["Universities have been slow to reform their doctoral programmes.", "Young researchers today publish considerably more papers than their predecessors did.", "That advice, however, was framed for a landscape of problems that no longer exists.", "Specialisation remains the surest route to an academic appointment."],answer:2,
+expl:`The paragraph concedes the old advice was sound, then turns against it. The blank must carry that turn, and option C supplies both the contrast marker and the reason the following sentences go on to illustrate. Option D reasserts the old advice instead of turning; options B and A break the chain of argument.`,
+concept:`<b>Concept — The blank as the hinge:</b> Before 'sound reasoning', after 'problems that no longer fit' — the blank is where the paragraph turns. It needs a contrast marker ('however') and must set up the 'now' that follows. A sentence that agrees with what came before (option D) cannot be a hinge.`},
+
+{topic:"Paragraph Completion",passage:null,tita:false,
+stem:`Choose the sentence that best fills the blank.<br><br>Cheap genetic testing kits promise to tell you where your ancestors came from and which illnesses you may be prone to. The first claim rests on comparison against reference populations that are themselves incomplete and unevenly sampled; the second on risk estimates that shift each time the underlying studies are revised. Neither is presented to the buyer with these qualifications attached. ______ The result is a document read as a verdict rather than as an estimate.`,
+options:["The kits are now sold at prices most middle-class families can afford.", "A probability, printed on glossy paper and posted to your home, acquires an authority it has not earned.", "Ancestry testing is considerably more popular among buyers than health-risk testing.", "Regulators in several countries have begun to examine claims of this kind."],answer:1,
+expl:`The final sentence contrasts 'verdict' with 'estimate', so the blank must explain how an estimate comes to look like a verdict. Option B supplies precisely that mechanism — presentation lending false authority. The other three are true-sounding statements that leave the last sentence unexplained.`,
+concept:`<b>Concept — 'The result is…' needs a cause:</b> When the sentence after the blank begins 'The result is', the blank must be the mechanism that produces that result. Here: how does an estimate become a verdict? Through presentation. Options that are plausibly true but explain nothing are filler, not completion.`},
+
+{topic:"Vocabulary · Fill-Ups",passage:null,tita:false,
+stem:`Choose the set of words that best fits the blanks, in order.<br><br>The new principal found it difficult to _________ parents who were _________ about the school's declining results and _________ of every explanation she offered.`,
+options:["placate; anxious; sceptical", "pacify; delighted; trustful", "mollify; curious; appreciative", "console; furious; convinced"],answer:0,
+expl:`PLACATE = to calm someone's anger. Blank 2 must fit 'declining results' — anxious. Blank 3 must explain why placating was difficult — sceptical (doubting). Option B fails on 'delighted'; option C's 'appreciative' removes the difficulty entirely; option D's 'convinced' contradicts the whole sentence.`,
+concept:`<b>Concept — Find the gate blank:</b> In triple blanks, one blank usually eliminates most options alone. Blank 3 must explain why the task was <i>difficult</i> — only 'sceptical' does. Don't evaluate blank 1 first just because it comes first; start with the blank that has the tightest logical constraint.`},
+
+{topic:"Vocabulary · Fill-Ups",passage:null,tita:false,
+stem:`Choose the set of words that best fits the blanks, in order.<br><br>The _________ of retail investors in a rising market can be described as an _________ optimism that rests on rumour and momentum rather than on any _________ assessment of value.`,
+options:["reluctance; infectious; emotional", "prudence; unfounded; casual", "exuberance; unexamined; sober", "scepticism; excessive; rigorous"],answer:2,
+expl:`EXUBERANCE = unrestrained enthusiasm, which is what 'optimism … on rumour and momentum' describes. Blank 2 must mean untested — unexamined. 'Rather than' demands that blank 3 be the opposite of rumour: sober (measured, level-headed). Option B fails blank 1 (prudence is the opposite of what follows); option D fails blank 1 likewise; option A's 'emotional' after 'rather than' inverts the contrast.`,
+concept:`<b>Concept — 'Rather than' fixes polarity:</b> 'X rather than Y' makes Y the opposite of X. Rumour and momentum are impulsive, so blank 3 must be measured ('sober'). Any option placing an impulsive word after 'rather than' ('emotional', 'casual') is self-contradictory. Connectors carry more information than the vocabulary does.`},
+
+{topic:"Vocabulary · Fill-Ups",passage:null,tita:false,
+stem:`Choose the set of words that best fits the blanks, in order.<br><br>Historians have used the image of a _________ as a convenient metaphor for a modern _________ , in which every part depends upon every other, each has its own point of weakness, and no single part can be removed without _________ the whole.`,
+options:["forest; ideology; planting", "clock; economy; weakening", "statue; monarchy; polishing", "river; catastrophe; flooding"],answer:1,
+expl:`The three clauses describe interdependent parts, individual weak points and failure on removal — a mechanism. A CLOCK supplies the mechanism, an ECONOMY the thing figured, and WEAKENING the consequence. The remaining options break down at the second or third blank: a statue has no interdependent parts, a catastrophe is not something a river figures, and planting is not a consequence of removal.`,
+concept:`<b>Concept — Metaphor blanks are solved by the description:</b> The 'in which…' clause describes the image: interlocking parts, individual weak points, failure on removal. Only a mechanism fits. Test each option's first word against that description before checking the rest — three fail at once.`},
+
+{topic:"Vocabulary · Fill-Ups",passage:null,tita:false,
+stem:`Choose the set of words that best fits the blanks, in order.<br><br>A useful account of courage is found in Aristotle, and it remains the point of departure for a long Western _________ of enquiry. On this view, courage is a _________ response to genuine danger — a response that the courageous person believes to have been _________ chosen.`,
+options:["argument; automatic; unconsciously", "fashion; passionate; reluctantly", "discipline; violent; instinctively", "tradition; measured; deliberately"],answer:3,
+expl:`'A long Western ______ of enquiry' takes TRADITION (a single argument or fashion cannot be described this way). Aristotle's courage is the mean between rashness and cowardice, hence MEASURED. And 'believes to have been ______ chosen' requires DELIBERATELY — options C and A make the choice unchosen, which is self-contradictory.`,
+concept:`<b>Concept — Internal contradiction check:</b> 'Chosen' already implies will; pairing it with 'unconsciously' or 'instinctively' makes the phrase contradict itself. Before comparing nuances, scan each option for a word that fights the sentence's own logic — those options are out regardless of how good their other words are.`},
+
+{topic:"Vocabulary · Fill-Ups",passage:null,tita:false,
+stem:`Choose the set of words that best fits the blanks, in order.<br><br>In the artificial _________ of the awards season, you are seized by envy as you read of enormous _________ and adoring reviews, and then you reassure yourself that only _________ writers chase such things — your own quiet readership is all you ever wanted.`,
+options:["climate; advances; vain", "frenzy; struggles; ordinary", "calm; failures; celebrated", "weather; profits; ambitious"],answer:0,
+expl:`CLIMATE takes the adjective 'artificial' naturally and pairs with 'hothouse'-style writing. ADVANCES (publishers' payments) fits 'enormous' and sits beside 'adoring reviews' as an object of envy. The reassurance requires a dismissive word — VAIN. Option B fails blank 2 (struggles are not envied); option C fails blanks 2 and 3 outright.`,
+concept:`<b>Concept — Emotional logic of the sentence:</b> 'Seized by envy as you read of enormous ___' — one envies gains, not struggles or failures. 'Reassure yourself that only ___ writers chase such things' — reassurance needs a dismissive word. Track the speaker's feelings through the sentence; each blank must serve that arc.`},
+
+{topic:"Vocabulary · Fill-Ups",passage:null,tita:false,
+stem:`Choose the set of words that best fits the blanks, in order.<br><br>Even as automation threatens to reshape the profession _________ , auditors continue to work in the belief that their judgement is _________ . History suggests that those most convinced of their own _________ are the last to notice when it has ended.`,
+options:["gradually; replaceable; authority", "unexpectedly; flexible; obsolescence", "irreversibly; unassailable; indispensability", "profitably; questionable; competence"],answer:2,
+expl:`'Threatens to reshape' calls for a word of finality — IRREVERSIBLY. The auditors' belief must resist that threat, so UNASSAILABLE. Blank 3 must name what such a belief is about, and what history says can end: INDISPENSABILITY. Option A is self-defeating ('believe their judgement is replaceable'); option B's 'convinced of their own obsolescence' reverses the sentence.`,
+concept:`<b>Concept — 'Even as' signals tension:</b> 'Even as X threatens…, Y continue to believe…' — blank 2 must be a belief that <i>resists</i> the threat. Then blank 3 must be a noun one can be 'convinced of' and that can 'end'. Beliefs that concede the threat ('replaceable', 'obsolescence') break the tension the connector sets up.`},
+
+{topic:"Conversation Analysis",passage:"C1",tita:false,
+stem:`What was the primary function of the <i>waterschappen</i>?`,
+options:["To organise the labourers who dug the drainage canals", "To administer dike maintenance, levy taxes for it, and compel repairs", "To settle disputes over ownership of newly drained land", "To represent the Low Countries in negotiations with foreign powers"],answer:1,
+expl:`The Guest lists their powers directly: own taxes, own records, and the authority to compel repair or have it done at the landholder's expense. The other three functions are never attributed to the boards anywhere in the conversation.`,
+concept:`<b>Concept — Direct retrieval in conversation RC:</b> Locate the speaker turn where the term is introduced and read the list that follows it. Wrong options in conversation questions are usually functions that sound institutional but are never mentioned — plausibility is not evidence.`},
+
+{topic:"Conversation Analysis",passage:"C1",tita:false,
+stem:`The remark 'Water does not consult a genealogy' implies that`,
+options:["noble families were legally barred from owning land in a polder", "genealogical records were commonly destroyed in the floods", "flooding was more frequent in districts held by the nobility", "membership of the boards followed landholding rather than birth"],answer:3,
+expl:`The line closes a contrast between a farmer with forty hectares inside the polder and a duke whose estates lay elsewhere. Genealogy stands for inherited rank. Option A goes too far — the duke is excluded for the location of his land, not by any prohibition.`,
+concept:`<b>Concept — Aphorisms summarise what precedes them:</b> A punchy closing line ('Water does not consult a genealogy') restates the preceding contrast (farmer with land in / duke with land out). Read backwards one sentence. Options that turn a principle into a legal ban ('barred') overstate — exclusion by circumstance is not prohibition.`},
+
+{topic:"Conversation Analysis",passage:"C1",tita:false,
+stem:`The phrase 'Agreement was cheaper than drowning' is best understood as`,
+options:["an argument that consensus arose from necessity rather than from virtue", "an observation that dike repair was relatively inexpensive", "a criticism of those who refused to pay the water board taxes", "a claim that the Dutch were more frugal than their neighbours"],answer:0,
+expl:`The sentence immediately before it insists the reflex 'was not a moral achievement'. The phrase converts co-operation from a virtue into a calculation. Option B reads 'cheaper' literally and misses the comparison being drawn.`,
+concept:`<b>Concept — Figurative 'cheaper':</b> When a speaker has just said something 'was not a moral achievement', the next line explains what it <i>was</i> instead — a calculation. 'Cheaper' here means less costly in consequences, not in money. Literal readings of a figurative word are the intended trap.`},
+
+{topic:"Conversation Analysis",passage:"C1",tita:false,
+stem:`According to the Guest, what makes a polder 'an unusual kind of property'?`,
+options:["Its value rises each year as more water is pumped away", "It lies below sea level and so cannot be farmed intensively", "Its security depends on maintenance work carried out by other people", "It cannot be inherited but only leased from the water board"],answer:2,
+expl:`The Guest's own gloss: your field is safe because your neighbour maintained his section, and failure anywhere floods everyone. Being below sea level is the setup for that dependence, not the unusual feature itself — which makes option B the trap.`,
+concept:`<b>Concept — Setup versus point:</b> Speakers often give a physical fact (below sea level) as the setup and then the consequence (dependence on neighbours) as the point. The question asks what makes it <i>unusual as property</i> — that is the point, not the setup. Look for the sentence right after the phrase quoted in the stem.`},
+
+{topic:"Conversation Analysis",passage:"C1",tita:false,
+stem:`If a landholder refused to repair his section of the dike, the water board could`,
+options:["confiscate his land and redistribute it among his neighbours", "have the repair carried out and charge the cost to him", "refer the matter to the Dutch central government for decision", "exclude him from the consultations of the polder model"],answer:1,
+expl:`Stated explicitly: compel him to repair his stretch 'or else have it repaired at his expense'. Confiscation, referral upward and exclusion are not among the powers described — and central government appears only much later, in connection with 1953.`,
+concept:`<b>Concept — Do not borrow details across turns:</b> Central government appears in the conversation — but in a different turn, about a different event (1953). Conversation RC tests whether you keep each speaker's points in their place. A true detail from the wrong turn is still a wrong answer.`},
+
+{topic:"Conversation Analysis",passage:"C1",tita:false,
+stem:`The Guest cites the flood of 1953 and the Delta Works chiefly in order to`,
+options:["argue that central government ought to replace local consultation entirely", "illustrate how rapidly the Dutch state responds to every emergency", "demonstrate that the water boards had been abolished by that date", "show that the polder model copes poorly with sudden crises"],answer:3,
+expl:`The example arrives under 'limits to the arrangement' and directly after 'It handles sudden ones badly, because consultation takes time'. It is an illustration of a stated weakness, not a proposal for abolition (option A) nor a general claim about state efficiency (option B).`,
+concept:`<b>Concept — Examples serve the claim before them:</b> An example's purpose is the general sentence it follows ('It handles sudden ones badly'). The Host's question ('Were there limits?') frames the whole turn. Options that turn an illustration into a recommendation ('ought to replace') change the speaker's mode from describing to prescribing.`},
+
+{topic:"Parajumbles · TITA",passage:null,tita:true,
+stem:`The sentences given below, when properly sequenced, form a coherent paragraph. Each sentence is labelled with a number. Decide on the most logical order and type only the sequence of numbers (e.g. 3142).<br><br>1. But the site's fair-play team, which builds tools to detect engine assistance, says the account's move accuracy has been flagged repeatedly.<br>2. Four of the account's blitz games last month appear in the platform's list of most-watched matches.<br>3. Look closer and the marks of a bot are all there: no video, no tournament record, and an improbable run of games without a single blunder.<br>4. The most viewed of them, a twelve-move queen sacrifice, has been replayed more than two million times.`,
+options:[],answer:"2413",
+expl:`Sentence 2 introduces the account and its games and is the only sentence without a back-reference, so it opens. Sentence 4's 'The most viewed of them' points straight back to those four games. Sentence 1's 'But' supplies the reversal. Sentence 3's 'Look closer' then lists the confirming evidence and closes the paragraph.`,
+concept:`<b>Concept — Opener by absence of back-reference:</b> The opening sentence is the one that needs nothing before it. 'Of them', 'But', 'Look closer' all point backwards; only sentence 2 stands alone. Then chain by reference: 'them' → the four games. In TITA there is no option list to lean on — the opener test is your first anchor.`},
+
+{topic:"Parajumbles · TITA",passage:null,tita:true,
+stem:`The sentences given below, when properly sequenced, form a coherent paragraph. Each sentence is labelled with a number. Decide on the most logical order and type only the sequence of numbers (e.g. 3142).<br><br>1. 'It will be less a matter of freak downpours and more like heatwaves, which arrive on schedule and hit harder each year,' say civic engineers.<br>2. It is hard to say which city will face the next disaster, but planners say they are watching several rapidly built suburbs for signs of failure.<br>3. Urban floods are expected to grow more frequent and more destructive because of heavier rainfall, vanishing wetlands, and the concrete we have laid over ground that once absorbed water.<br>4. Poor drainage design is a further danger. With approvals granted faster than surveys can be completed, a single blocked culvert can flood an entire district.`,
+options:[],answer:"3124",
+expl:`Sentence 3 states the thesis with its causes and must open. Sentence 1 is a quotation elaborating on that shift in character, so it follows. Sentence 2 moves from the general trend to the practical difficulty of prediction, and sentence 4's 'a further danger' explicitly adds to what has gone before, fixing it last.`,
+concept:`<b>Concept — 'A further danger' is an additive closer:</b> Phrases like 'a further', 'another', 'also' add to an already-established list and tend to sit late. Quotations that elaborate ('It will be less a matter of…') follow the claim they elaborate. Thesis → elaboration → complication → addition is the natural shape of a news paragraph.`},
+
+{topic:"Parajumbles · TITA",passage:null,tita:true,
+stem:`The sentences given below, when properly sequenced, form a coherent paragraph. Each sentence is labelled with a number. Decide on the most logical order and type only the sequence of numbers (e.g. 3142).<br><br>1. Faced with emptying classrooms and an ageing staff, Tokyo now proposes to merge small schools into regional campuses served by buses.<br>2. At the same time, the average age of teachers in these schools rose to fifty-two.<br>3. Japan's rural school enrolment has fallen for the ninth consecutive year and has reached a record low.<br>4. Despite a decade of subsidies intended to keep families in the countryside, the number of children in village schools dropped by a further eleven per cent.`,
+options:[],answer:"3421",
+expl:`Sentence 3 states the headline fact and opens. Sentence 4 gives the figure behind it and is bound to 3 by subject. Sentence 2's 'At the same time' adds the parallel statistic. Sentence 1 gathers both strands ('emptying classrooms and an ageing staff') into the policy response, which can only come last.`,
+concept:`<b>Concept — The summarising closer:</b> A sentence that names two earlier threads together ('emptying classrooms <i>and</i> an ageing staff') must come after both have been introduced. Headline → detail → parallel detail → response. 'At the same time' marks a parallel fact, not an opener.`},
+
+{topic:"Parajumbles · TITA",passage:null,tita:true,
+stem:`The sentences given below, when properly sequenced, form a coherent paragraph. Each sentence is labelled with a number. Decide on the most logical order and type only the sequence of numbers (e.g. 3142).<br><br>1. Over those three centuries the supply of printed books grew for two principal reasons.<br>2. At the same time the growth of vernacular publishing, and of cheap devotional literature in particular, gave ordinary households a reason to acquire the skill in the first place.<br>3. Paper mills multiplied and brought down the cost of the raw material, while improvements to the press allowed a single workshop to produce far more sheets in a day.<br>4. The extraordinary spread of literacy across Europe between 1500 and 1800 was possible only because reading matter became steadily cheaper and more plentiful.`,
+options:[],answer:"4132",
+expl:`Sentence 4 supplies the period and the claim, so it opens; 'those three centuries' in sentence 1 can only refer back to it. Sentence 1 announces two reasons, sentence 3 gives the supply-side reason, and sentence 2's 'At the same time' delivers the demand-side reason and closes the pair.`,
+concept:`<b>Concept — Demonstrative reference and announced lists:</b> 'Those three centuries' needs '1500 and 1800' before it — a demonstrative is a hard backward link. 'Two principal reasons' announces a list; the next two sentences must be the reasons, with 'At the same time' introducing the second. Announce → item → item.`},
+
+{topic:"Parajumbles · TITA",passage:null,tita:true,
+stem:`The sentences given below, when properly sequenced, form a coherent paragraph. Each sentence is labelled with a number. Decide on the most logical order and type only the sequence of numbers (e.g. 3142).<br><br>1. In competitive professions, short sleep is still worn as a credential. A well-known chief executive once boasted that he had never needed more than four hours. Those who sleep least are assumed to want it most.<br>2. There are other ways to frame the question. You might argue that the right measure is daytime alertness rather than hours in bed. You might say the matter belongs to employers rather than to individuals.<br>3. How long people sleep is not the same as how long they ought to. Occupations, commutes and household duties differ so widely that no single figure can be right for everyone.<br>4. Eight hours is still the standard advice. More or less. A new analysis of wearable-device data finds that the average employed adult sleeps six hours and forty minutes on a working night.`,
+options:[],answer:"1432",
+expl:`Sentence 1 sets the cultural attitude and opens. Sentence 4 supplies the counterpoint of data — what people are actually advised and what they actually do. Sentence 3 then separates the descriptive from the normative, and sentence 2's 'There are other ways to frame the question' can only follow once a question has been framed, so it closes.`,
+concept:`<b>Concept — Multi-sentence units and 'other ways':</b> When each numbered item is itself a mini-paragraph, treat each as a single block with one role. 'There are <i>other</i> ways to frame the question' presupposes a question already framed — a closer. Attitude → data → distinction → alternatives. Open with the block that sets the scene without relying on a prior fact.`}
+];
+
+/* ============================================================ STATE */
+let cur=0, answers=Array(NQ).fill(null), secondsLeft=DURATION, timerInt=null;
+let qTimes=Array(NQ).fill(0), lastTick=null, student={name:"",pin:"",batch:""};
+
+/* ============================================================ ENGINE */
+function windowState(){
+  const now=Date.now();
+  if(now<OPEN_TS) return 'before';
+  if(now>=CLOSE_TS) return 'after';
+  return 'open';
+}
+function fmtRemain(ms){
+  const s=Math.max(0,Math.floor(ms/1000));
+  const d=Math.floor(s/86400),h=Math.floor(s%86400/3600),m=Math.floor(s%3600/60);
+  return (d>0?d+'d ':'')+h+'h '+m+'m';
+}
+function refreshWindowMsg(){
+  const el=document.getElementById('windowMsg');
+  const st=windowState();
+  if(st==='before'){el.style.display='block';el.innerHTML='⏳ This test opens in <b>'+fmtRemain(OPEN_TS-Date.now())+'</b> (Fri 21 Aug, 12:00 AM).';}
+  else if(st==='after'){el.style.display='block';el.innerHTML='🔒 The window for this test has closed.';}
+  else{el.style.display='block';el.innerHTML='🟢 Live — window closes in <b>'+fmtRemain(CLOSE_TS-Date.now())+'</b> (Mon 24 Aug, 12:00 AM).';}
+}
+setInterval(refreshWindowMsg,30000);
+document.addEventListener('DOMContentLoaded',refreshWindowMsg);
+function startTest(){
+  const n=document.getElementById('inName').value.trim();
+  const p=document.getElementById('inPin').value.trim();
+  const b=document.getElementById('inBatch').value;
+  if(!n||!p||!b){alert('Please fill name, PIN and batch.');return;}
+  const st=windowState();
+  if(st!=='open' && !p.toUpperCase().startsWith('IMS')){
+    alert(st==='before'
+      ? 'This test opens Friday 21 Aug at 12:00 AM. Come back then!'
+      : 'The window for this test closed on Monday 24 Aug at 12:00 AM.');
+    return;
+  }
+  student={name:n,pin:p,batch:b};
+  document.getElementById('loginScreen').classList.add('hidden');
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('test').classList.remove('hidden');
+  buildPalette(); lastTick=Date.now(); render();
+  timerInt=setInterval(tick,1000);
+}
+function tick(){
+  secondsLeft--;
+  const m=Math.floor(secondsLeft/60),s=secondsLeft%60;
+  const t=document.getElementById('timer');
+  t.textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+  const bar=document.getElementById('timerBar');
+  bar.style.width=(secondsLeft/DURATION*100)+'%';
+  if(secondsLeft<=300){t.classList.add('low');bar.className='danger';}
+  else if(secondsLeft<=600){bar.className='warn';}
+  if(secondsLeft<=0){clearInterval(timerInt);submitTest();}
+}
+function buildPalette(){
+  ['palette','mobPalette'].forEach(id=>{
+    const pal=document.getElementById(id);pal.innerHTML='';
+    for(let i=0;i<NQ;i++){
+      const b=document.createElement('button');
+      b.className='pal';b.textContent=i+1;b.onclick=()=>{go(i);};
+      pal.appendChild(b);
+    }
+  });
+}
+function logTime(){
+  const now=Date.now();
+  qTimes[cur]+=Math.round((now-lastTick)/1000);
+  lastTick=now;
+}
+function go(i){logTime();cur=i;render();}
+function nav(d){const n=cur+d;if(n>=0&&n<NQ)go(n);}
+function clearAns(){answers[cur]=null;render();}
+function render(){
+  const q=Q[cur];
+  document.getElementById('qNum').textContent=cur+1;
+  document.getElementById('qTopic').textContent=q.topic;
+  const pb=document.getElementById('passageBox');
+  if(q.passage){pb.innerHTML=PASSAGES[q.passage];pb.classList.remove('hidden');}
+  else pb.classList.add('hidden');
+  document.getElementById('stem').innerHTML=q.stem;
+  const ob=document.getElementById('opts');ob.innerHTML='';
+  if(q.tita){
+    const d=document.createElement('div');d.className='tita';
+    d.innerHTML='<input type="text" inputmode="numeric" pattern="[1-4]*" maxlength="4" placeholder="e.g. 3142" value="'+(answers[cur]||'')+'"><span class="hint">Type the 4-digit sequence · +4 / 0</span>';
+    const inp=d.querySelector('input');
+    inp.oninput=()=>{inp.value=inp.value.replace(/[^1-4]/g,'').slice(0,4);answers[cur]=inp.value||null;paintPalette();};
+    ob.appendChild(d);
+    paintPalette();
+    return;
+  }
+  q.options.forEach((o,i)=>{
+    const d=document.createElement('div');
+    d.className='opt'+(answers[cur]===i?' sel':'');
+    d.innerHTML='<span class="oLetter">'+String.fromCharCode(65+i)+'</span><span>'+o+'</span>';
+    d.onclick=()=>{answers[cur]=i;render();};
+    ob.appendChild(d);
+  });
+  paintPalette();
+}
+function paintPalette(){
+  ['palette','mobPalette'].forEach(id=>{
+    document.querySelectorAll('#'+id+' .pal').forEach((p,i)=>{
+      p.classList.toggle('ans',answers[i]!==null);
+      p.classList.toggle('cur',i===cur);
+    });
+  });
+}
+function confirmSubmit(){
+  const un=answers.filter(a=>a===null).length;
+  if(confirm(un>0?`You have ${un} unanswered question(s). Submit anyway?`:'Submit the test?')){
+    clearInterval(timerInt);submitTest();
+  }
+}
+
+/* ============================================================ SUBMIT */
+function submitTest(){
+  logTime();
+  let correct=0,wrong=0,skipped=0;
+  const wrongQuestions=[],studentAnswers=[],topicErrors={},sectionErrors={};
+  let score=0;
+  answers.forEach((a,i)=>{
+    const q=Q[i];
+    studentAnswers.push(a===null?"-":(q.tita?String(a):String.fromCharCode(65+a)));
+    if(a===null){skipped++;}
+    else if(a===q.answer){correct++;score+=4;}
+    else{
+      wrong++;wrongQuestions.push(i+1);
+      if(!q.tita)score-=1;
+      topicErrors[Q[i].topic]=(topicErrors[Q[i].topic]||0)+1;
+      const t=Q[i].topic;
+      const sec=(t.startsWith("Reading")||t.startsWith("Conversation"))?"RC":t.startsWith("Sentence Correction")?"Grammar":(t.startsWith("Vocabulary")||t.startsWith("Sentence Completion"))?"Vocabulary":"Verbal Reasoning";
+      sectionErrors[sec]=(sectionErrors[sec]||0)+1;
+    }
+  });
+  document.getElementById('test').classList.add('hidden');
+  document.getElementById('results').classList.remove('hidden');
+  document.getElementById('scoreOut').textContent=score;
+  document.getElementById('stCorrect').textContent=correct;
+  document.getElementById('stWrong').textContent=wrong;
+  document.getElementById('stSkip').textContent=skipped;
+  const used=DURATION-Math.max(secondsLeft,0);
+  document.getElementById('stTime').textContent=Math.floor(used/60)+'m '+(used%60)+'s';
+  buildReview();
+  logToSheet(score,correct,wrong,skipped,sectionErrors,wrongQuestions,studentAnswers,topicErrors);
+}
+function buildReview(){
+  const rl=document.getElementById('reviewList');rl.innerHTML='<h1 style="margin:18px 0 6px;">Review</h1>';
+  Q.forEach((q,i)=>{
+    const a=answers[i],ok=a===q.answer,skip=a===null;
+    const d=document.createElement('div');
+    d.className='rev '+(skip?'skip':ok?'ok':'bad');
+    let optHtml='';
+    if(q.tita){
+      optHtml+=`<div class="ropt correct"><span class="rLetter">✓</span><span>Correct sequence: <b>${q.answer}</b></span></div>`;
+      if(!skip&&!ok)optHtml+=`<div class="ropt wrong"><span class="rLetter">✗</span><span>Your answer: <b>${a}</b></span></div>`;
+    }
+    q.options.forEach((o,j)=>{
+      let cls='ropt';
+      if(j===q.answer)cls+=' correct';
+      else if(j===a)cls+=' wrong';
+      let mark=j===q.answer?' ✓':(j===a?' ✗':'');
+      optHtml+=`<div class="${cls}"><span class="rLetter">${String.fromCharCode(65+j)}</span><span>${o}${mark}</span></div>`;
+    });
+    const status=skip?`<span class="tag-w">Skipped</span>`
+      :ok?`<span class="tag-c">Correct (+4)</span>`
+      :q.tita?`<span class="tag-w">Wrong (0)</span>`:`<span class="tag-w">Wrong (−1)</span>`;
+    d.innerHTML=`<div class="rqHead"><b>Q${i+1}</b> · ${q.topic} · ${status}</div>`+
+      (q.passage?`<details class="revPass"><summary>Show passage</summary>${PASSAGES[q.passage]}</details>`:'')+
+      `<div class="rstem">${q.stem}</div>${optHtml}`+
+      `<div class="expl"><b>Why:</b> ${q.expl}</div>`+
+      `<div class="concept">${q.concept}</div>`;
+    rl.appendChild(d);
+  });
+}
+
+/* ============================================================ PAYLOAD — 16 FIELDS, VERIFY AGAINST APPS SCRIPT v8 */
+function logToSheet(score,correct,wrong,skipped,sectionErrors,wrongQuestions,studentAnswers,topicErrors){
+  const payload={
+    testName: TEST_NAME,
+    name: student.name,
+    pin: student.pin,
+    batch: student.batch,
+    score: score,
+    correct: correct,
+    wrong: wrong,
+    skipped: skipped,
+    maxMarks: MAX_MARKS,
+    timeTaken: DURATION-Math.max(secondsLeft,0),
+    timestamp: new Date().toISOString(),
+    sectionErrors: JSON.stringify(sectionErrors),
+    wrongQuestions: JSON.stringify(wrongQuestions),
+    studentAnswers: JSON.stringify(studentAnswers),
+    questionTimes: JSON.stringify(qTimes),
+    topicErrors: JSON.stringify(topicErrors)
+  };
+  fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)})
+    .then(()=>{document.getElementById('syncMsg').textContent='✓ Response recorded.';})
+    .catch(()=>{document.getElementById('syncMsg').textContent='⚠ Could not sync — screenshot this result.';});
+}
+
+/* ============================================================ PDF */
+function downloadPDF(){
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF();
+  const W=doc.internal.pageSize.getWidth(),M=14;let y=18;
+  function line(txt,size,style,color){
+    doc.setFontSize(size);doc.setFont('helvetica',style||'normal');
+    doc.setTextColor.apply(doc,color||[20,20,40]);
+    const rows=doc.splitTextToSize(txt,W-2*M);
+    rows.forEach(r=>{
+      if(y>282){doc.addPage();y=18;}
+      doc.text(r,M,y);y+=size*0.42+1.6;
+    });
+  }
+  let correct=0,wrong=0,skipped=0,score=0;
+  answers.forEach((a,i)=>{if(a===null)skipped++;else if(a===Q[i].answer){correct++;score+=4;}else{wrong++;if(!Q[i].tita)score-=1;}});
+  line('Road to IIM · IPMATind VA Challenge Mock',15,'bold',[10,17,40]);
+  line(`${student.name}  |  ${student.batch}  |  ${new Date().toLocaleString()}`,10);
+  line(`Score: ${score}/180   Correct: ${correct}   Wrong: ${wrong}   Skipped: ${skipped}`,11,'bold',[150,110,20]);
+  y+=3;
+  Q.forEach((q,i)=>{
+    const a=answers[i],ok=a===q.answer;
+    const plain=q.stem.replace(/<br\s*\/?>/gi,'\n').replace(/<[^>]+>/g,'');
+    line(`Q${i+1} · ${q.topic}`,11,'bold');
+    line(plain,9.5);
+    q.options.forEach((o,j)=>line(`${String.fromCharCode(65+j)}. ${o}`,9.5,j===q.answer?'bold':'normal',j===q.answer?[30,120,80]:[20,20,40]));
+    const fmt=v=>q.tita?String(v):String.fromCharCode(65+v);
+    if(q.tita)line(`Correct sequence: ${q.answer}`,9.5,'bold',[30,120,80]);
+    line(a===null?'Skipped':ok?`Your answer: ${fmt(a)} (Correct)`:`Your answer: ${fmt(a)} (Wrong) | Correct: ${fmt(q.answer)}`,9.5,'bold',ok?[30,120,80]:[170,60,60]);
+    line('Why: '+q.expl.replace(/<[^>]+>/g,''),9,'italic',[80,80,100]);
+    line(q.concept.replace(/<[^>]+>/g,''),9,'normal',[110,90,30]);
+    y+=2;
+  });
+  doc.save('IPMATind_VA_Challenge_'+student.name.replace(/\s+/g,'_')+'.pdf');
+}
+</script>
+</body>
+</html>
