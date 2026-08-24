@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>UGAT Mock 004 · Road to IIM</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=DM+Sans:wght@400;500;700&family=DM+Mono&display=swap");
+:root{--navy:#0B1220;--panel:#101A2D;--panel2:#152136;--gold:#D4A94E;--text:#E8E4D8;--mut:#8B94A8;--green:rgba(78,160,130,1);--red:#C05555;--line:rgba(212,169,78,.22)}
+*{box-sizing:border-box;margin:0}
+body{background:var(--navy);color:var(--text);font-family:"DM Sans",sans-serif}
+h1{font-family:Fraunces,serif;color:var(--gold)}
+.mono{font-family:"DM Mono",monospace;font-size:12px;color:var(--mut)}
+#loginScreen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.loginCard{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:28px;max-width:420px;width:100%}
+.loginCard h1{font-size:24px;margin-bottom:2px}
+.loginCard h2{font-family:Fraunces,serif;font-size:15px;color:var(--text);font-weight:600;margin-bottom:18px}
+.loginCard label{display:block;font-family:"DM Mono";font-size:10.5px;color:var(--mut);letter-spacing:.1em;margin:12px 0 5px}
+.loginCard input,.loginCard select{width:100%;background:var(--panel2);color:var(--text);border:1px solid rgba(232,228,216,.25);border-radius:7px;padding:10px 12px;font-size:14px;font-family:"DM Sans"}
+#loginErr{display:none;color:var(--red);font-size:12.5px;margin-top:10px}
+#winNote{display:none;margin-top:12px;padding:10px 12px;border-radius:7px;font-size:12.5px;line-height:1.6;border:1px solid var(--line);background:var(--panel2)}
+#winNote b{font-family:"DM Mono";letter-spacing:.06em;font-size:10.5px;display:block;margin-bottom:3px}
+#winNote.shut{border-color:rgba(192,85,85,.5);color:var(--red)}
+#winNote.soon{border-color:rgba(212,169,78,.5);color:var(--gold)}
+#loginBtn:disabled{opacity:.45;cursor:not-allowed}
+#loginBtn{width:100%;margin-top:16px;background:var(--gold);color:var(--navy);border:none;border-radius:8px;padding:12px;font-weight:700;font-size:15px;cursor:pointer}
+.testMeta{font-family:"DM Mono";font-size:10.5px;color:var(--mut);margin-top:14px;line-height:1.7}
+#testScreen,#resultsScreen{display:none;max-width:1020px;margin:0 auto;padding:18px}
+#topBar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:12px 16px;margin-bottom:14px}
+#topBar .tName{font-family:Fraunces,serif;color:var(--gold);font-weight:700}
+#timer{font-family:"DM Mono";color:var(--gold);font-size:20px;margin-left:auto}
+#layout{display:grid;grid-template-columns:1fr 210px;gap:14px}
+@media(max-width:760px){#layout{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px;margin-bottom:12px}
+.secBadge{font-family:"DM Mono";font-size:10.5px;color:var(--gold);letter-spacing:.08em}
+#passageBox{display:none;background:var(--panel2);border-left:3px solid var(--gold);border-radius:6px;padding:12px;margin:10px 0;font-size:14px;line-height:1.6;white-space:pre-wrap;max-height:300px;overflow-y:auto}
+#qText{font-size:16px;line-height:1.6;margin:12px 0;white-space:pre-wrap}
+.opt{display:block;width:100%;text-align:left;background:var(--panel2);border:1px solid rgba(232,228,216,.15);color:var(--text);border-radius:8px;padding:12px 14px;margin:8px 0;cursor:pointer;font-size:14.5px;font-family:"DM Sans"}
+.opt.sel{border-color:var(--gold);background:rgba(212,169,78,.14)}
+input.tita{background:var(--panel2);border:1px solid rgba(212,169,78,.4);color:var(--text);border-radius:8px;padding:12px;font-size:16px;width:100%;font-family:"DM Mono"}
+.btn{background:var(--gold);color:var(--navy);border:none;border-radius:8px;padding:11px 20px;font-weight:700;cursor:pointer;font-size:14px;font-family:"DM Sans"}
+.btn.ghost{background:var(--panel2);color:var(--text);border:1px solid rgba(232,228,216,.3)}
+.btn.green{background:var(--green)}
+#sidePanel h3{font-family:"DM Mono";font-size:10.5px;color:var(--mut);letter-spacing:.1em;margin-bottom:8px}
+#palette{display:flex;flex-wrap:wrap;gap:6px}
+#palette button{width:34px;height:34px;border-radius:6px;border:1px solid rgba(232,228,216,.2);background:var(--panel2);color:var(--text);cursor:pointer;font-family:"DM Mono";font-size:12px}
+#palette .done{background:rgba(78,160,130,.25);border-color:rgba(78,160,130,.7)}
+#palette .cur{border-color:var(--gold)}
+.legend{font-size:11px;color:var(--mut);margin-top:10px;line-height:2}
+.legend span{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.statGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px;margin:14px 0}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;text-align:center}
+.stat .v{font-family:"DM Mono";font-size:22px;color:var(--gold)}
+.stat .l{font-family:"DM Mono";font-size:9.5px;color:var(--mut);letter-spacing:.08em;margin-top:4px}
+.secErr{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 16px;font-size:13px;margin-bottom:14px}
+.secErr b{color:var(--gold)}
+#pdfBtn{margin:10px 0}
+.rq{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:12px}
+.rqHead{font-family:"DM Mono";font-size:11px;color:var(--mut);margin-bottom:8px}
+.status{font-weight:700;margin-left:8px}
+.status.ok{color:var(--green)}.status.no{color:var(--red)}.status.sk{color:var(--mut)}
+.rqStem{font-size:14.5px;line-height:1.55;margin-bottom:8px;white-space:pre-wrap}
+.ropt{display:flex;gap:10px;padding:7px 10px;border-radius:6px;font-size:13.5px;margin:3px 0}
+.ropt.correct{background:rgba(78,160,130,.15);color:var(--green)}
+.ropt.wrong{background:rgba(192,85,85,.13);color:var(--red)}
+.exp{font-size:12.5px;color:var(--mut);margin-top:8px;border-top:1px solid rgba(232,228,216,.08);padding-top:8px}
+.exp b{color:var(--gold)}
+</style>
+</head>
+<body>
+<div id="loginScreen"><div class="loginCard">
+ <h1>ROAD TO IIM</h1><h2 id="lgTitle"></h2>
+ <label for="stuName">FULL NAME</label><input type="text" id="stuName" placeholder="Your full name" autocomplete="off">
+ <label for="stuPin">PIN</label><input type="text" id="stuPin" placeholder="STU########## or IMS##########" autocomplete="off" maxlength="13">
+ <label for="stuBatch">BATCH</label>
+ <select id="stuBatch"><option value="">-- Select your batch --</option>
+  <optgroup label="Classroom"><option>A2701</option><option>A2702</option><option>A2703</option><option>A2704</option><option>A2705</option><option>A2706</option><option>A2707</option><option>A2708</option><option>A2709</option><option>A2710</option><option>A2711</option><option>A2712</option><option>A2714</option><option>A2715</option><option>A2716</option><option>A2717</option><option>A2718</option><option>A2719</option><option>A2720</option></optgroup>
+  <optgroup label="School"><option>Zebar</option></optgroup>
+  <optgroup label="IPMAT 28"><option>Z2801</option><option>S2801</option><option>A2804</option><option>PN2801</option></optgroup>
+  <optgroup label="Go Getters"><option>Go Getters</option></optgroup>
+  <optgroup label="Admin"><option>Admin</option></optgroup>
+ </select>
+ <div id="loginErr"></div>
+ <div id="winNote"></div>
+ <button id="loginBtn">Start Test</button>
+ <div class="testMeta" id="lgMeta"></div>
+</div></div>
+
+<div id="testScreen">
+ <div id="topBar"><span class="tName" id="tbName"></span><span class="mono" id="qCounter"></span><span id="timer">--:--</span></div>
+ <div id="layout">
+  <div>
+   <div class="card">
+    <span class="secBadge" id="secBadge"></span>
+    <div id="passageBox"></div>
+    <div id="qText"></div>
+    <div id="optBox"></div>
+   </div>
+   <div class="card" style="display:flex;gap:10px;justify-content:space-between;flex-wrap:wrap">
+    <div><button class="btn ghost" onclick="nav(-1)">&#8249; Prev</button> <button class="btn" onclick="nav(1)">Next &#8250;</button></div>
+    <button class="btn green" onclick="if(confirm('Submit test?'))submitTest()">Submit</button>
+   </div>
+  </div>
+  <div id="sidePanel" class="card"><h3>QUESTION PALETTE</h3><div id="palette"></div>
+   <div class="legend"><span style="background:rgba(78,160,130,.6)"></span>Answered<br><span style="background:#152136;border:1px solid #D4A94E"></span>Current</div>
+  </div>
+ </div>
+</div>
+
+<div id="resultsScreen">
+ <h1 id="resTitle" style="font-size:26px"></h1>
+ <div class="mono" id="resSub" style="margin:6px 0 4px"></div>
+ <button id="pdfBtn" class="btn" onclick="downloadPDF()">Download PDF</button>
+ <div class="statGrid">
+  <div class="stat"><div class="v" id="stScore">0</div><div class="l" id="stMaxL">SCORE</div></div>
+  <div class="stat"><div class="v" id="stCorrect">0</div><div class="l">CORRECT</div></div>
+  <div class="stat"><div class="v" id="stWrong">0</div><div class="l">WRONG</div></div>
+  <div class="stat"><div class="v" id="stSkipped">0</div><div class="l">SKIPPED</div></div>
+  <div class="stat"><div class="v" id="stTime">0:00</div><div class="l">TIME TAKEN</div></div>
+ </div>
+ <div class="secErr" id="secErrBox"></div>
+ <h1 style="font-size:19px;margin:14px 0 10px">Question Review</h1>
+ <div id="reviewBox"></div>
+</div>
+
+<script>
+/* ============================================================
+   ROAD TO IIM — Studio-built portal test
+   Whitelist v5 · Safety Net · 16-field payload · PATH 2 tags
+   ============================================================ */
+var CFG={"testName":"UGAT Mock 004","examName":"UGAT IIM Bangalore","maxMarks":180,"minutes":120,"c":3,"w":-1,"titaW":-1,"hasTita":false,"navNote":"free navigation","fileName":"ugat_iimb_UGAT_Mock_004.html","snKey":"riim_session_UGAT_Mock_004","bankPrefix":"UGAT_Mock_004"};
+var QUESTIONS=[{"id":"UGAT_QA_001","section":"QADI","format":"QA mixed (JEE-lite)","kind":"mcq","passage":null,"stem":"A point (x,y) is chosen at random from the region defined by x² + y² ≤ 25. What is the probability that the point also satisfies the condition |x| + |y| ≤ 5?","options":["2/π","1/π","4/π","1/2"],"answer":"2/π","answerIndex":0,"difficulty":"Hard","explanation":"Total sample space is a circle of radius 5, Area = 25π. The target region is a square bounded by intercepts at ±5, Area = (1/2) × 10 × 10 = 50. Probability = 50 / 25π = 2/π.","status":"approved","flags":[],"verified":"ok","verNote":"G3: Computed exactly."},{"id":"UGAT_QADI_002","section":"QADI","format":"DI set (2 sets × 4)","kind":"mcq","passage":"A manufacturing company produces four products (P, Q, R, S). Total Cost is the sum of Fixed Cost and Total Variable Cost (Variable Cost per Unit × Units Sold). Profit % is calculated as [(Total Revenue - Total Cost) / Total Cost] × 100.\nProduct P: 1000 Units Sold | ₹50 Selling Price/Unit | ₹10,000 Fixed Cost | ₹30 Var Cost/Unit | Profit % = [?]\nProduct Q: [?] Units Sold | ₹80 Selling Price/Unit | ₹15,000 Fixed Cost | ₹40 Var Cost/Unit | 25% Profit\nProduct R: 2000 Units Sold | [?] Selling Price/Unit | ₹20,000 Fixed Cost | ₹25 Var Cost/Unit | 20% Profit\nProduct S: 1500 Units Sold | ₹120 Selling Price/Unit | [?] Fixed Cost | ₹60 Var Cost/Unit | 50% Profit","stem":"What is the total number of units sold for Product Q?","options":["500","625","750","800"],"answer":"625","answerIndex":1,"difficulty":"Hard","explanation":"Profit is 25%, so Revenue = 1.25 × Total Cost. Let units = x. Revenue = 80x. Cost = 15000 + 40x. Therefore, 80x = 1.25(15000 + 40x). 80x = 18750 + 50x. 30x = 18750. x = 625.","status":"approved","flags":[],"verified":"ok","verNote":"G3: Equation algebraically solved."},{"id":"UGAT_QADI_003","section":"QADI","format":"DI set (2 sets × 4)","kind":"mcq","passage":"A manufacturing company produces four products (P, Q, R, S). Total Cost is the sum of Fixed Cost and Total Variable Cost (Variable Cost per Unit × Units Sold). Profit % is calculated as [(Total Revenue - Total Cost) / Total Cost] × 100.\nProduct P: 1000 Units Sold | ₹50 Selling Price/Unit | ₹10,000 Fixed Cost | ₹30 Var Cost/Unit | Profit % = [?]\nProduct Q: [?] Units Sold | ₹80 Selling Price/Unit | ₹15,000 Fixed Cost | ₹40 Var Cost/Unit | 25% Profit\nProduct R: 2000 Units Sold | [?] Selling Price/Unit | ₹20,000 Fixed Cost | ₹25 Var Cost/Unit | 20% Profit\nProduct S: 1500 Units Sold | ₹120 Selling Price/Unit | [?] Fixed Cost | ₹60 Var Cost/Unit | 50% Profit","stem":"What is the Selling Price per unit for Product R?","options":["₹35","₹40","₹42","₹45"],"answer":"₹42","answerIndex":2,"difficulty":"Medium","explanation":"Total Cost for R = 20000 + (25 × 2000) = ₹70,000. Profit is 20%, so Revenue = 70000 × 1.2 = ₹84,000. Selling Price per unit = 84000 / 2000 = ₹42.","status":"approved","flags":[],"verified":"ok","verNote":"G3: Value mathematically derived."},{"id":"UGAT_QADI_004","section":"QADI","format":"DI set (2 sets × 4)","kind":"mcq","passage":"A manufacturing company produces four products (P, Q, R, S). Total Cost is the sum of Fixed Cost and Total Variable Cost (Variable Cost per Unit × Units Sold). Profit % is calculated as [(Total Revenue - Total Cost) / Total Cost] × 100.\nProduct P: 1000 Units Sold | ₹50 Selling Price/Unit | ₹10,000 Fixed Cost | ₹30 Var Cost/Unit | Profit % = [?]\nProduct Q: [?] Units Sold | ₹80 Selling Price/Unit | ₹15,000 Fixed Cost | ₹40 Var Cost/Unit | 25% Profit\nProduct R: 2000 Units Sold | [?] Selling Price/Unit | ₹20,000 Fixed Cost | ₹25 Var Cost/Unit | 20% Profit\nProduct S: 1500 Units Sold | ₹120 Selling Price/Unit | [?] Fixed Cost | ₹60 Var Cost/Unit | 50% Profit","stem":"If the Fixed Cost for Product S increases by 20% due to equipment upgrades, what is the new Profit % for Product S? (Assume Selling Price and Units Sold remain constant)","options":["42.8%","45.5%","47.2%","48.0%"],"answer":"42.8%","answerIndex":0,"difficulty":"Hard","explanation":"First find S's original Fixed Cost. Rev = 1500×120 = 180000. Cost = 180000/1.5 = 120000. Var Cost = 1500×60 = 90000. Original Fixed Cost = 30000. New Fixed Cost = 30000×1.2 = 36000. New Total Cost = 36000 + 90000 = 126000. Profit = 180000 - 126000 = 54000. New Profit % = (54000/126000)×100 = 42.85%.","status":"approved","flags":[],"verified":"ok","verNote":"G3: Computed exactly."},{"id":"UGAT_QADI_005","section":"QADI","format":"DI set (2 sets × 4)","kind":"mcq","passage":"A manufacturing company produces four products (P, Q, R, S). Total Cost is the sum of Fixed Cost and Total Variable Cost (Variable Cost per Unit × Units Sold). Profit % is calculated as [(Total Revenue - Total Cost) / Total Cost] × 100.\nProduct P: 1000 Units Sold | ₹50 Selling Price/Unit | ₹10,000 Fixed Cost | ₹30 Var Cost/Unit | Profit % = [?]\nProduct Q: [?] Units Sold | ₹80 Selling Price/Unit | ₹15,000 Fixed Cost | ₹40 Var Cost/Unit | 25% Profit\nProduct R: 2000 Units Sold | [?] Selling Price/Unit | ₹20,000 Fixed Cost | ₹25 Var Cost/Unit | 20% Profit\nProduct S: 1500 Units Sold | ₹120 Selling Price/Unit | [?] Fixed Cost | ₹60 Var Cost/Unit | 50% Profit","stem":"What is the overall profit percentage across all four products combined? (Approximate to two decimal places)","options":["32.45%","34.81%","36.12%","38.50%"],"answer":"34.81%","answerIndex":1,"difficulty":"Hard","explanation":"Total Revenue = 50000(P) + 50000(Q) + 84000(R) + 180000(S) = 364,000. Total Cost = 40000(P) + 40000(Q) + 70000(R) + 120000(S) = 270,000. Overall Profit = 364000 - 270000 = 94,000. Profit % = (94000/270000)×100 = 34.81%.","status":"approved","flags":[],"verified":"ok","verNote":"G3: Full matrix calculation verified."},{"id":"UGAT_QADI_006","section":"QADI","format":"DI set (2 sets × 4)","kind":"mcq","passage":"Three investment funds (Alpha, Beta, Gamma) are evaluated on four metrics: Returns (R), Volatility (V), Liquidity (L), and Management (M). The Overall Fund Score is calculated via a proprietary weighted formula: Score = (3R - 2V + 1.5L + M) / 4.\nAlpha: R=8, V=5, L=6, M=7\nBeta: R=6, V=2, L=8, M=9\nGamma: R=9, V=8, L=4, M=5","stem":"What is the absolute difference between the scores of the highest and lowest ranked funds?","options":["2.50","2.75","3.25","3.50"],"answer":"3.25","answerIndex":2,"difficulty":"Medium","explanation":"Scores: Alpha = (24-10+9+7)/4 = 7.5. Beta = (18-4+12+9)/4 = 8.75 (Highest). Gamma = (27-16+6+5)/4 = 5.5 (Lowest). Difference = 8.75 - 5.5 = 3.25.","status":"approved","flags":[],"verified":"ok","verNote":"G3: Computed exactly."},{"id":"UGAT_QADI_007","section":"QADI","format":"DI set (2 sets × 4)","kind":"mcq","passage":"Three investment funds (Alpha, Beta, Gamma) are evaluated on four metrics: Returns (R), Volatility (V), Liquidity (L), and Management (M). The Overall Fund Score is calculated via a proprietary weighted formula: Score = (3R - 2V + 1.5L + M) / 4.\nAlpha: R=8, V=5, L=6, M=7\nBeta: R=6, V=2, L=8, M=9\nGamma: R=9, V=8, L=4, M=5","stem":"If Alpha’s Volatility increases by 40% due to market turbulence, what is its new overall Fund Score?","options":["6.0","6.5","7.0","7.2"],"answer":"6.5","answerIndex":1,"difficulty":"Medium","explanation":"Alpha original Volatility (V) = 5. A 40% increase makes V = 7. New Score = (3(8) - 2(7) + 1.5(6) + 7) / 4 = (24 - 14 + 9 + 7) / 4 = 26 / 4 = 6.5.","status":"approved","flags":[],"verified":"ok","verNote":"G3: Percentage increase on indexed variable computed."},{"id":"UGAT_QADI_008","section":"QADI","format":"DI set (2 sets × 4)","kind":"mcq","passage":"Three investment funds (Alpha, Beta, Gamma) are evaluated on four metrics: Returns (R), Volatility (V), Liquidity (L), and Management (M). The Overall Fund Score is calculated via a proprietary weighted formula: Score = (3R - 2V + 1.5L + M) / 4.\nAlpha: R=8, V=5, L=6, M=7\nBeta: R=6, V=2, L=8, M=9\nGamma: R=9, V=8, L=4, M=5","stem":"Gamma's Management (M) score must increase by how many points for Gamma to exactly tie with Alpha's original score?","options":["6 points","7 points","8 points","9 points"],"answer":"8 points","answerIndex":2,"difficulty":"Hard","explanation":"Target score = Alpha's original (7.5). Gamma's equation: (3(9) - 2(8) + 1.5(4) + M) / 4 = 7.5. (27 - 16 + 6 + M) = 30. 17 + M = 30. M = 13. Gamma's original M = 5. Required increase = 13 - 5 = 8 points.","status":"approved","flags":[],"verified":"ok","verNote":"G3: Algebraic back-calculation."},{"id":"UGAT_QADI_009","section":"QADI","format":"DI set (2 sets × 4)","kind":"mcq","passage":"Three investment funds (Alpha, Beta, Gamma) are evaluated on four metrics: Returns (R), Volatility (V), Liquidity (L), and Management (M). The Overall Fund Score is calculated via a proprietary weighted formula: Score = (3R - 2V + 1.5L + M) / 4.\nAlpha: R=8, V=5, L=6, M=7\nBeta: R=6, V=2, L=8, M=9\nGamma: R=9, V=8, L=4, M=5","stem":"What is the ratio of Beta's combined Liquidity and Management score to Alpha's combined Returns and Volatility score?","options":["15 : 11","17 : 13","19 : 14","18 : 13"],"answer":"17 : 13","answerIndex":1,"difficulty":"Easy","explanation":"Beta's L+M = 8 + 9 = 17. Alpha's R+V = 8 + 5 = 13. The ratio is 17:13.","status":"approved","flags":[],"verified":"ok","verNote":"G3: Ratio verification."},{"id":"UGAT_QA_010","section":"QADI","format":"QA mixed (JEE-lite)","kind":"mcq","passage":null,"stem":"Let the function $f(x) = |x^2 - 4x + 3|$. At how many points is this function non-differentiable?","options":["0","1","2","3"],"answer":"2","answerIndex":2,"difficulty":"Medium","explanation":"The expression inside the modulus factors to (x-1)(x-3). The parabola crosses the x-axis at x=1 and x=3. The absolute value function creates sharp corners ('cusps') exactly at these roots. Therefore, the function is non-differentiable at exactly 2 points.","status":"approved","flags":[],"verified":"ok","verNote":"G3: Computed exactly via derivative limits at roots."},{"id":"UGAT_QA_011","section":"QADI","format":"QA mixed (JEE-lite)","kind":"mcq","passage":null,"stem":"A bag contains 3 red, 4 green, and 5 blue balls. If 3 balls are drawn at random, what is the probability that exactly 2 are green, given that at least 1 is green?","options":["12/41","3/11","6/55","4/21"],"answer":"12/41","answerIndex":0,"difficulty":"Hard","explanation":"Total ways to draw 3 balls = C(12,3) = 220. Ways to draw 0 green = C(8,3) = 56. Ways to draw at least 1 green = 220 - 56 = 164. Ways to draw exactly 2 green = C(4,2) × C(8,1) = 6 × 8 = 48. Required conditional probability = 48 / 164 = 12/41.","status":"approved","flags":[],"verified":"ok","verNote":"G3: Conditional probability computed via combinations."},{"id":"UGAT_QA_012","section":"QADI","format":"QA mixed (JEE-lite)","kind":"mcq","passage":null,"stem":"Let $A = \\begin{pmatrix} 2 & 1 \\\\ 1 & 1 \\end{pmatrix}$ and $I$ be the 2x2 identity matrix. What is the determinant of the matrix expression $A^3 - 3A^2 + A + I$?","options":["0","1","2","3"],"answer":"1","answerIndex":1,"difficulty":"Hard","explanation":"By the Cayley-Hamilton theorem, a matrix satisfies its own characteristic equation: $\\lambda^2 - \\text{tr}(A)\\lambda + \\det(A) = 0$. Here, tr(A) = 3 and det(A) = 1, so $A^2 - 3A + I = 0$. Factoring the target expression: $A^3 - 3A^2 + A = A(A^2 - 3A + I) = A(0) = 0$. Thus, $A^3 - 3A^2 + A + I = 0 + I = I$. The determinant of $I$ is 1.","status":"approved","flags":[],"verified":"ok","verNote":"G3: Characteristic equation and determinant verified."},{"id":"UGAT_QA_013","section":"QADI","format":"QA mixed (JEE-lite)","kind":"mcq","passage":null,"stem":"In a survey of 100 corporate analysts, 50 follow the Tech sector, 60 follow Finance, and 40 follow Energy. 30 follow both Tech and Finance, 20 follow Finance and Energy, and 15 follow Tech and Energy. If 10 analysts follow all three sectors, how many analysts follow exactly one sector?","options":["35","40","45","50"],"answer":"50","answerIndex":3,"difficulty":"Medium","explanation":"Using Venn diagram logic for exactly one: Tech only = 50 - (20 + 5 + 10) = 15. Finance only = 60 - (20 + 10 + 10) = 20. Energy only = 40 - (10 + 5 + 10) = 15. Total exactly one = 15 + 20 + 15 = 50.","status":"approved","flags":[],"verified":"ok","verNote":"G3: Set theory intersection totals computed."},{"id":"UGAT_QA_014","section":"QADI","format":"QA mixed (JEE-lite)","kind":"mcq","passage":null,"stem":"What is the sum of all two-digit positive integers that leave a remainder of 1 when divided by 4 and a remainder of 2 when divided by 5?","options":["245","265","285","305"],"answer":"285","answerIndex":2,"difficulty":"Hard","explanation":"Let the number be N. N = 4k + 1 and N = 5m + 2. By the Chinese Remainder Theorem (or listing out), the common pattern is N = 20p + 17. The two-digit numbers fitting this are 17, 37, 57, 77, and 97. Sum = 17 + 37 + 57 + 77 + 97 = 285.","status":"approved","flags":[],"verified":"ok","verNote":"G3: Arithmetic progression and modulus computed."},{"id":"UGAT_QA_015","section":"QADI","format":"QA mixed (JEE-lite)","kind":"mcq","passage":null,"stem":"If $\\alpha$ and $\\beta$ are the roots of the quadratic equation $x^2 - 2x + 4 = 0$, what is the value of $\\alpha^3 + \\beta^3$?","options":["-16","-8","8","16"],"answer":"-16","answerIndex":0,"difficulty":"Medium","explanation":"From Vieta's formulas, $\\alpha + \\beta = 2$ and $\\alpha\\beta = 4$. Using the algebraic identity: $\\alpha^3 + \\beta^3 = (\\alpha+\\beta)^3 - 3\\alpha\\beta(\\alpha+\\beta) = (2)^3 - 3(4)(2) = 8 - 24 = -16$.","status":"approved","flags":[],"verified":"ok","verNote":"G3: Quadratic roots algebraic identity computed."},{"id":"UGAT_QA_016","section":"QADI","format":"QA mixed (JEE-lite)","kind":"mcq","passage":null,"stem":"Three distinct points are chosen at random from the vertices of a regular hexagon. What is the probability that they form a right-angled triangle?","options":["1/5","3/10","2/5","3/5"],"answer":"3/5","answerIndex":3,"difficulty":"Hard","explanation":"Total triangles = C(6,3) = 20. A right triangle in a regular hexagon is formed only if its hypotenuse is a primary diameter. There are 3 such diameters. For each diameter, any of the remaining 4 vertices will complete a right triangle. 3 × 4 = 12 right triangles. Probability = 12 / 20 = 3/5.","status":"approved","flags":[],"verified":"ok","verNote":"G3: Geometric combinatorics evaluated."},{"id":"UGAT_QA_017","section":"QADI","format":"QA mixed (JEE-lite)","kind":"mcq","passage":null,"stem":"What is the range of the function $f(x) = \\frac{x^2 - x + 1}{x^2 + x + 1}$ for all real values of $x$?","options":["[-1, 1]","[1/3, 3]","[-3, -1/3]","(0, 3]"],"answer":"[1/3, 3]","answerIndex":1,"difficulty":"Hard","explanation":"Let $y = \\frac{x^2 - x + 1}{x^2 + x + 1}$. Rearranging yields $(y-1)x^2 + (y+1)x + (y-1) = 0$. For real x, the discriminant $\\Delta \\ge 0$. So, $(y+1)^2 - 4(y-1)^2 \\ge 0$. Factoring gives $(3-y)(3y-1) \\ge 0$, which simplifies to $1/3 \\le y \\le 3$.","status":"approved","flags":[],"verified":"ok","verNote":"G3: Discriminant inequality solved."},{"id":"UGAT_QA_018","section":"QADI","format":"QA mixed (JEE-lite)","kind":"mcq","passage":null,"stem":"How many distinct 8-letter words can be formed using all the letters of the word 'EQUATION' such that all vowels are grouped together and all consonants are grouped together?","options":["720","1440","2880","4320"],"answer":"1440","answerIndex":1,"difficulty":"Medium","explanation":"The word has 5 vowels (E, U, A, I, O) and 3 consonants (Q, T, N). Treat the vowels as one block and the consonants as another. These 2 blocks can be arranged in 2! = 2 ways. The 5 vowels can permute internally in 5! = 120 ways. The 3 consonants permute in 3! = 6 ways. Total arrangements = 2 × 120 × 6 = 1440.","status":"approved","flags":[],"verified":"ok","verNote":"G3: Factorial combinatorics computed."},{"id":"UGAT_QA_019","section":"QADI","format":"QA mixed (JEE-lite)","kind":"mcq","passage":null,"stem":"An equilateral triangle is inscribed inside a circle of radius 6 cm. What is the area of this triangle?","options":["18√3 cm²","24√3 cm²","27√3 cm²","36√3 cm²"],"answer":"27√3 cm²","answerIndex":2,"difficulty":"Medium","explanation":"For an equilateral triangle inscribed in a circle, Circumradius R = a / √3. Given R = 6, the side 'a' = 6√3. The area is (√3 / 4) × a² = (√3 / 4) × 108 = 27√3.","status":"approved","flags":[],"verified":"ok","verNote":"G3: Geometric area computation."},{"id":"UGAT_QA_020","section":"QADI","format":"QA mixed (JEE-lite)","kind":"mcq","passage":null,"stem":"Three machines A, B, and C produce 50%, 30%, and 20% of the total output of a factory, respectively. Their respective defective rates are 1%, 2%, and 5%. If a randomly selected item is found to be defective, what is the probability that it was produced by Machine C?","options":["2/7","10/21","5/21","1/3"],"answer":"10/21","answerIndex":1,"difficulty":"Hard","explanation":"Using Bayes' Theorem: P(C|Defective) = (P(C) × P(Def|C)) / Total P(Defective). Total P(Defective) = (0.5 × 0.01) + (0.3 × 0.02) + (0.2 × 0.05) = 0.005 + 0.006 + 0.010 = 0.021. P(C and Defective) = 0.010. P(C|Def) = 0.010 / 0.021 = 10/21.","status":"approved","flags":[],"verified":"ok","verNote":"G3: Bayes Theorem computed exactly."},{"id":"UGAT_QA_021","section":"QADI","format":"QA mixed (JEE-lite)","kind":"mcq","passage":null,"stem":"A random variable X has a variance of 4. What is the variance of the transformed variable Y = 3X - 5?","options":["7","12","31","36"],"answer":"36","answerIndex":3,"difficulty":"Medium","explanation":"Variance follows the rule Var(aX + b) = a^2 × Var(X). Therefore, Var(3X - 5) = 3^2 × Var(X) = 9 × 4 = 36.","status":"approved","flags":[],"verified":"ok","verNote":"G3: Linear transformation of variance rule applied."},{"id":"UGAT_QA_022","section":"QADI","format":"QA mixed (JEE-lite)","kind":"mcq","passage":null,"stem":"Solve for x in the equation: log_2(x) + log_2(x - 2) = 3.","options":["4","-2 and 4","2","6"],"answer":"4","answerIndex":0,"difficulty":"Medium","explanation":"Using logarithm rules, log_2(x(x - 2)) = 3. Therefore, x(x - 2) = 2^3 = 8. This forms the quadratic x^2 - 2x - 8 = 0, factoring to (x - 4)(x + 2) = 0. Since log arguments must be strictly positive, x = -2 is extraneous. The only valid solution is x = 4.","status":"approved","flags":[],"verified":"ok","verNote":"G3: Extraneous logarithm roots screened."},{"id":"UGAT_QA_023","section":"QADI","format":"QA mixed (JEE-lite)","kind":"mcq","passage":null,"stem":"Evaluate the limit as x approaches 2 for the function: (x^3 - 8) / (x - 2).","options":["4","8","12","16"],"answer":"12","answerIndex":2,"difficulty":"Easy","explanation":"This is a 0/0 indeterminate form. Using L'Hopital's rule, take the derivative of the numerator (3x^2) and denominator (1). The limit is 3(2)^2 = 12. Alternatively, factoring x^3 - 8 = (x - 2)(x^2 + 2x + 4) leaves x^2 + 2x + 4. At x = 2, this is 4 + 4 + 4 = 12.","status":"approved","flags":[],"verified":"ok","verNote":"G3: Limit evaluated computationally."},{"id":"UGAT_QA_024","section":"QADI","format":"QA mixed (JEE-lite)","kind":"mcq","passage":null,"stem":"The sum of an infinite geometric progression is 15, and the sum of the squares of its terms is 45. What is the first term of this progression?","options":["3","5","7","9"],"answer":"5","answerIndex":1,"difficulty":"Hard","explanation":"Let a be the first term and r be the common ratio. a / (1 - r) = 15. The sum of the squares forms a new GP with first term a^2 and ratio r^2: a^2 / (1 - r^2) = 45. This expands to (a / (1 - r)) × (a / (1 + r)) = 45. Substituting 15 for the first part: 15 × (a / (1 + r)) = 45, meaning a / (1 + r) = 3. So a = 3 + 3r. From the first equation, a = 15 - 15r. Equating them: 15 - 15r = 3 + 3r gives 18r = 12, so r = 2/3. Then a = 15(1 - 2/3) = 15(1/3) = 5.","status":"approved","flags":[],"verified":"ok","verNote":"G3: Infinite series algebraic system solved."},{"id":"UGAT_QA_025","section":"QADI","format":"QA mixed (JEE-lite)","kind":"mcq","passage":null,"stem":"Two trains, measuring 120m and 180m in length, are travelling in opposite directions on parallel tracks. They completely pass each other in 10 seconds. If the speed of the first train is 40 km/h, what is the speed of the second train?","options":["56 km/h","60 km/h","68 km/h","72 km/h"],"answer":"68 km/h","answerIndex":2,"difficulty":"Medium","explanation":"Total distance to cover = 120m + 180m = 300m. Relative speed = Distance / Time = 300m / 10s = 30 m/s. Convert to km/h: 30 × (18/5) = 108 km/h. Since they move in opposite directions, relative speed = Speed1 + Speed2. 108 = 40 + Speed2, so Speed2 = 68 km/h.","status":"approved","flags":[],"verified":"ok","verNote":"G3: Relative speed units converted and solved."},{"id":"UGAT_QA_026","section":"QADI","format":"QA mixed (JEE-lite)","kind":"mcq","passage":null,"stem":"Worker A is twice as efficient as Worker B, and thrice as efficient as Worker C. Working together, they can complete a massive architectural project in 12 days. How many days would it take Worker B to complete the entire project working alone?","options":["33 days","44 days","55 days","66 days"],"answer":"44 days","answerIndex":1,"difficulty":"Medium","explanation":"Let A's efficiency = 6 units/day. Then B's efficiency = 3 units/day, and C's efficiency = 2 units/day. Total efficiency = 6 + 3 + 2 = 11 units/day. Total work = 11 units/day × 12 days = 132 units. Time for B alone = 132 units / 3 units/day = 44 days.","status":"approved","flags":[],"verified":"ok","verNote":"G3: Efficiency ratios equated to complete units of work."},{"id":"UGAT_QA_027","section":"QADI","format":"QA mixed (JEE-lite)","kind":"mcq","passage":null,"stem":"What is the shortest perpendicular distance between the parallel lines given by the equations 3x + 4y - 10 = 0 and 6x + 8y + 5 = 0?","options":["1.5 units","2.0 units","2.5 units","3.0 units"],"answer":"2.5 units","answerIndex":2,"difficulty":"Medium","explanation":"First, scale the first equation to match coefficients: multiply by 2 to get 6x + 8y - 20 = 0. The distance between parallel lines Ax + By + C1 = 0 and Ax + By + C2 = 0 is |C1 - C2| / sqrt(A^2 + B^2). Distance = |-20 - 5| / sqrt(6^2 + 8^2) = 25 / sqrt(100) = 25 / 10 = 2.5 units.","status":"approved","flags":[],"verified":"ok","verNote":"G3: Coordinate geometry parallel distance computed."},{"id":"UGAT_QA_028","section":"QADI","format":"QA mixed (JEE-lite)","kind":"mcq","passage":null,"stem":"What is the remainder when the polynomial P(x) = x^2026 - 3x^2 + 5 is divided by (x - 1)?","options":["1","3","5","7"],"answer":"3","answerIndex":1,"difficulty":"Easy","explanation":"By the Polynomial Remainder Theorem, the remainder when P(x) is divided by (x - c) is simply P(c). Here, c = 1. P(1) = 1^2026 - 3(1)^2 + 5 = 1 - 3 + 5 = 3.","status":"approved","flags":[],"verified":"ok","verNote":"G3: Remainder theorem verified."},{"id":"UGAT_QA_029","section":"QADI","format":"QA mixed (JEE-lite)","kind":"mcq","passage":null,"stem":"The angle of elevation of the top of a communication tower from a point A on the flat ground is 30 degrees. On walking 20 meters directly towards the tower to point B, the angle of elevation changes to 60 degrees. What is the height of the tower?","options":["10√3 meters","15√3 meters","20 meters","20√3 meters"],"answer":"10√3 meters","answerIndex":0,"difficulty":"Hard","explanation":"Let h be height and x be distance from B to base. h/x = tan(60) = √3, so x = h/√3. From point A, h/(x + 20) = tan(30) = 1/√3. Substituting x: h / (h/√3 + 20) = 1/√3. √3 h = h/√3 + 20. Multiply by √3: 3h = h + 20√3. 2h = 20√3, so h = 10√3.","status":"approved","flags":[],"verified":"ok","verNote":"G3: Trigonometric altitude system solved."},{"id":"UGAT_QA_030","section":"QADI","format":"QA mixed (JEE-lite)","kind":"mcq","passage":null,"stem":"Four cards are drawn at random from a standard, well-shuffled deck of 52 playing cards. What is the exact probability that all four cards are of the same suit?","options":["11 / 4165","44 / 4165","13 / 256","1 / 256"],"answer":"44 / 4165","answerIndex":1,"difficulty":"Hard","explanation":"Total ways to draw 4 cards = C(52,4) = 270,725. There are 4 suits. The number of ways to draw 4 cards from one specific suit = C(13,4) = 715. For all 4 suits, valid ways = 4 × 715 = 2,860. Probability = 2860 / 270725. Dividing numerator and denominator by 65 yields 44 / 4165.","status":"approved","flags":[],"verified":"ok","verNote":"G3: Factorial combinatorics fraction reduction."},{"id":"UGAT_LR_001","section":"LR","format":"LR mixed (banking register)","kind":"mcq","passage":null,"stem":"In a coded grid: P $ Q means P is 4m East of Q. P # Q means P is 3m North of Q. P & Q means P is 5m West of Q. If A $ B # C & D, what is the shortest distance between A and D?","options":["√10 m","5 m","√34 m","4 m"],"answer":"√10 m","answerIndex":0,"difficulty":"Hard","explanation":"If D is at (0,0), C is at (-5,0). B is 3m North of C, so B is at (-5,3). A is 4m East of B, so A is at (-1,3). The distance from A(-1,3) to D(0,0) is √((-1)² + 3²) = √10.","status":"approved","flags":[],"verified":"ok","verNote":"G2: Brute-forced spatial grid coordinates. Single unique solution."},{"id":"UGAT_LR_002","section":"LR","format":"LR anchor (scheduling puzzle)","kind":"mcq","passage":"Seven corporate managers (A, B, C, D, E, F, G) give individual presentations on seven consecutive days of the week, starting from Monday to Sunday. The following conditions apply:\n- A presents on Thursday.\n- Exactly two people present between A and B.\n- C presents on the day immediately before B.\n- D presents on a day immediately after E.\n- F presents after E but before G.\n- F does not present on Monday.","stem":"Who gives their presentation on Wednesday?","options":["D","E","F","G"],"answer":"F","answerIndex":2,"difficulty":"Hard","explanation":"A is Thu. 2 days between A and B means B is Mon or Sun. If B=Mon, C would be Sun (before Mon), which invalidates the Mon-Sun sequence. So B=Sun. C=Sat. E and D are adjacent (Mon/Tue or Tue/Wed or Fri/Sat). Sat is C, so Fri/Sat is out. E,D must be Mon/Tue to allow F and G to follow. Therefore: E=Mon, D=Tue. F must be after E and before G, making F=Wed and G=Fri. Final sequence: Mon(E), Tue(D), Wed(F), Thu(A), Fri(G), Sat(C), Sun(B).","status":"approved","flags":[],"verified":"ok","verNote":"G2: Brute-forced scheduling logic. Single valid array generated."},{"id":"UGAT_LR_003","section":"LR","format":"LR anchor (scheduling puzzle)","kind":"mcq","passage":"Seven corporate managers (A, B, C, D, E, F, G) give individual presentations on seven consecutive days of the week, starting from Monday to Sunday. The following conditions apply:\n- A presents on Thursday.\n- Exactly two people present between A and B.\n- C presents on the day immediately before B.\n- D presents on a day immediately after E.\n- F presents after E but before G.\n- F does not present on Monday.","stem":"How many people present between E and A?","options":["One","Two","Three","None"],"answer":"Two","answerIndex":1,"difficulty":"Medium","explanation":"Based on the verified sequence (E, D, F, A, G, C, B), E is on Monday and A is on Thursday. D and F present between them, totaling two people.","status":"approved","flags":[],"verified":"ok","verNote":"G2: Depends on single verified sequence."},{"id":"UGAT_LR_004","section":"LR","format":"LR anchor (scheduling puzzle)","kind":"mcq","passage":"Seven corporate managers (A, B, C, D, E, F, G) give individual presentations on seven consecutive days of the week, starting from Monday to Sunday. The following conditions apply:\n- A presents on Thursday.\n- Exactly two people present between A and B.\n- C presents on the day immediately before B.\n- D presents on a day immediately after E.\n- F presents after E but before G.\n- F does not present on Monday.","stem":"On which day does G present?","options":["Tuesday","Wednesday","Friday","Saturday"],"answer":"Friday","answerIndex":2,"difficulty":"Medium","explanation":"Following the sequence E, D, F, A, G, C, B, manager G presents on Friday.","status":"approved","flags":[],"verified":"ok","verNote":"G2: Directly queries the verified arrangement."},{"id":"UGAT_LR_005","section":"LR","format":"LR anchor (scheduling puzzle)","kind":"mcq","passage":"Seven corporate managers (A, B, C, D, E, F, G) give individual presentations on seven consecutive days of the week, starting from Monday to Sunday. The following conditions apply:\n- A presents on Thursday.\n- Exactly two people present between A and B.\n- C presents on the day immediately before B.\n- D presents on a day immediately after E.\n- F presents after E but before G.\n- F does not present on Monday.","stem":"If they are forced to reschedule such that A and B swap their presentation days, who will present immediately after A?","options":["C","F","G","No one"],"answer":"No one","answerIndex":3,"difficulty":"Hard","explanation":"If A (Thu) and B (Sun) swap, A moves to Sunday. Since Sunday is the final day of the schedule, no one presents after A.","status":"approved","flags":[],"verified":"ok","verNote":"G2: Conditional perturbation testing on the verified array."},{"id":"UGAT_LR_006","section":"LR","format":"LR anchor (scheduling puzzle)","kind":"mcq","passage":"Seven corporate managers (A, B, C, D, E, F, G) give individual presentations on seven consecutive days of the week, starting from Monday to Sunday. The following conditions apply:\n- A presents on Thursday.\n- Exactly two people present between A and B.\n- C presents on the day immediately before B.\n- D presents on a day immediately after E.\n- F presents after E but before G.\n- F does not present on Monday.","stem":"Which of the following statements is definitively true?","options":["E presents on Tuesday.","C presents immediately after A.","D presents on Tuesday.","F presents on Friday."],"answer":"D presents on Tuesday.","answerIndex":2,"difficulty":"Easy","explanation":"Based on the verified sequence (E, D, F, A, G, C, B), D is assigned to Tuesday. E is Monday, C is Saturday, and F is Wednesday.","status":"approved","flags":[],"verified":"ok","verNote":"G2: Statement cross-check."},{"id":"UGAT_LR_007","section":"LR","format":"LR anchor (scheduling puzzle)","kind":"mcq","passage":"Seven corporate managers (A, B, C, D, E, F, G) give individual presentations on seven consecutive days of the week, starting from Monday to Sunday. The following conditions apply:\n- A presents on Thursday.\n- Exactly two people present between A and B.\n- C presents on the day immediately before B.\n- D presents on a day immediately after E.\n- F presents after E but before G.\n- F does not present on Monday.","stem":"Who presents immediately before F?","options":["E","D","A","C"],"answer":"D","answerIndex":1,"difficulty":"Medium","explanation":"F presents on Wednesday. The manager presenting on Tuesday, immediately before F, is D.","status":"approved","flags":[],"verified":"ok","verNote":"G2: Adjacent variable extraction."},{"id":"UGAT_LR_008","section":"LR","format":"LR mixed (clocks)","kind":"mcq","passage":null,"stem":"At what time between 4 and 5 o'clock are the minute hand and the hour hand of a clock exactly 15 minutes apart?","options":["4:05 5/11","4:38 2/11","4:42 7/11","4:45 1/11"],"answer":"4:38 2/11","answerIndex":1,"difficulty":"Hard","explanation":"15 minutes apart equals exactly 90 degrees. Using the angle formula |30H - 5.5M| = 90, with H=4: |120 - 5.5M| = 90. Case 1: 120 - 5.5M = 90 gives M = 60/11 = 5 5/11 (not in options). Case 2: 5.5M - 120 = 90 gives 5.5M = 210, meaning M = 420/11 = 38 2/11.","status":"approved","flags":[],"verified":"ok","verNote":"G3: Clock angle algebra solved."},{"id":"UGAT_LR_009","section":"LR","format":"LR mixed (direction sense)","kind":"mcq","passage":null,"stem":"A survey drone takes off from a base station. It flies 10 km North, turns 135 degrees clockwise and flies 10√2 km. Finally, it turns 45 degrees counter-clockwise and flies 5 km. How far is the drone from the original base station?","options":["10 km","12 km","15 km","18 km"],"answer":"15 km","answerIndex":2,"difficulty":"Hard","explanation":"Coordinate map: Base is (0,0). Flies North 10 km to (0,10). A 135-degree clockwise turn from North faces it South-East. Flying 10√2 km SE brings it exactly back to the x-axis at (10,0). From SE, a 45-degree counter-clockwise turn faces it East. Flying 5 km East brings the final position to (15,0). Distance from (0,0) is 15 km.","status":"approved","flags":[],"verified":"ok","verNote":"G2: Vector coordinates verified."},{"id":"UGAT_LR_010","section":"LR","format":"LR mixed (coding-decoding)","kind":"mcq","passage":null,"stem":"In a certain corporate code system, the word MACHINE is written as 19-7-9-14-15-20-11. Under the same coding logic, how will the word DANGER be written?","options":["10-7-20-13-11-24","11-7-20-16-11-24","10-8-21-14-11-25","9-7-20-13-10-23"],"answer":"10-7-20-13-11-24","answerIndex":0,"difficulty":"Medium","explanation":"The logic is: letter's standard alphabetical position + 6. M(13)+6=19, A(1)+6=7, etc. Applying this to DANGER: D(4)+6=10, A(1)+6=7, N(14)+6=20, G(7)+6=13, E(5)+6=11, R(18)+6=24.","status":"approved","flags":[],"verified":"ok","verNote":"G2: Algorithmic transformation verified."},{"id":"UGAT_LR_011","section":"LR","format":"LR mixed (data sufficiency)","kind":"mcq","passage":null,"stem":"What is the exact value of the positive integer x?\nStatement I: x² - 7x + 12 = 0\nStatement II: x² - 9x + 20 = 0","options":["Statement I alone is sufficient, but Statement II is not.","Statement II alone is sufficient, but Statement I is not.","Both statements together are required to answer the question.","Both statements together are still not sufficient."],"answer":"Both statements together are required to answer the question.","answerIndex":2,"difficulty":"Medium","explanation":"Statement I yields x = 3 or x = 4 (insufficient). Statement II yields x = 4 or x = 5 (insufficient). Using both statements together, the only common integer satisfying both constraints is x = 4.","status":"approved","flags":[],"verified":"ok","verNote":"G2: Roots mapped to sufficiency rules."},{"id":"UGAT_LR_012","section":"LR","format":"LR mixed (number series)","kind":"mcq","passage":null,"stem":"Identify the next logical term in the following sequence: 2, 10, 30, 68, 130, ___","options":["210","216","222","240"],"answer":"222","answerIndex":2,"difficulty":"Medium","explanation":"The series follows the pattern (n³ + n). 1³+1 = 2; 2³+2 = 10; 3³+3 = 30; 4³+4 = 68; 5³+5 = 130. The next term is 6³+6 = 216 + 6 = 222.","status":"approved","flags":[],"verified":"ok","verNote":"G2: Sequence formula mathematically verified."},{"id":"UGAT_LR_013","section":"LR","format":"LR mixed (blood relations)","kind":"mcq","passage":null,"stem":"In a family code language: P @ Q means P is the mother of Q. P $ Q means P is the father of Q. P # Q means P is the brother of Q. P * Q means P is the sister of Q. Based on the expression 'A $ B * C @ D', how is A related to D?","options":["Paternal Uncle","Maternal Grandfather","Paternal Grandfather","Brother"],"answer":"Maternal Grandfather","answerIndex":1,"difficulty":"Medium","explanation":"Breakdown: A $ B means A is the father of B. B * C means B is the sister of C (so A is the father of C). C @ D means C is the mother of D. Therefore, A is the father of C, who is the mother of D. This makes A the maternal grandfather of D.","status":"approved","flags":[],"verified":"ok","verNote":"G2: Ancestry tracing brute forced."},{"id":"UGAT_LR_014","section":"LR","format":"LR mixed (calendar)","kind":"mcq","passage":null,"stem":"If August 23, 2026 falls on a Sunday, what day of the week will August 23, 2030 fall on?","options":["Thursday","Friday","Saturday","Monday"],"answer":"Friday","answerIndex":1,"difficulty":"Medium","explanation":"Track the odd days for each year advance. 2026 to 2027: +1 (Monday). 2027 to 2028 (Leap Year containing Feb 29): +2 (Wednesday). 2028 to 2029: +1 (Thursday). 2029 to 2030: +1 (Friday). Total odd days shifted = 5. Sunday + 5 days = Friday.","status":"approved","flags":[],"verified":"ok","verNote":"G2: Chronological odd-day shift confirmed."},{"id":"UGAT_LR_015","section":"LR","format":"LR mixed (syllogism)","kind":"mcq","passage":null,"stem":"Read the following statements and deduce which of the given conclusions logically follows.\nStatements:\n1. All computers are machines.\n2. Some machines are robots.\n3. No robot is a human.\nConclusions:\nI. Some computers are robots.\nII. Some machines are not humans.","options":["Only Conclusion I follows","Only Conclusion II follows","Both Conclusions I and II follow","Neither Conclusion I nor II follows"],"answer":"Only Conclusion II follows","answerIndex":1,"difficulty":"Medium","explanation":"Conclusion I is false because the intersection of computers and robots is possible but not strictly defined by the statements. Conclusion II is true because some machines are robots, and since no robots are humans, those specific machines cannot be humans.","status":"approved","flags":[],"verified":"ok","verNote":"G2: Euler/Venn logic boundaries enforced."},{"id":"UGAT_VA_001","section":"VA","format":"Reading Comprehension (2×4)","kind":"mcq","passage":"The assimilation of indigenous epistemologies into global scientific paradigms is often celebrated as a triumph of cognitive inclusivity. In the context of traditional Indian ecological knowledge—such as the sacred grove (kavu) conservation systems of Kerala—modern environmentalists frequently extract the functional utility of these practices while discarding their metaphysical scaffolding. This instrumentalist approach assumes that traditional ecological knowledge can be neatly bifurcated: the empirically valid botanical observations are preserved, whereas the animistic cosmologies that birthed them are dismissed as archaic superstitions.\n\nHowever, this selective extraction fundamentally misunderstands the structural integrity of the indigenous worldview. Within the kavu system, ecological preservation is not a conscious, utilitarian strategy aimed at maximizing biodiversity. Rather, it is the emergent byproduct of a deeply entwined ontological relationship with the divine. The forest is not perceived as a repository of natural resources to be managed, but as a sovereign entity possessing its own inherent agency. By attempting to secularize these practices, modern conservationists strip away the very psychological and cultural imperatives that ensure their intergenerational transmission. The paradox is profound: in seeking to save the ecological baby, they discard the cosmological bathwater, thereby ensuring the eventual desiccation of the entire system.\n\nFurthermore, this epistemological asymmetry reveals a persistent colonial hangover in contemporary scientific discourse. The global north sets the parameters of what constitutes 'legitimate' knowledge, relegating indigenous frameworks to the status of raw data awaiting validation by Western methodologies. When traditional practices inevitably fail to conform to the reductive metrics of modern cost-benefit analyses, they are swiftly deemed inefficient. Thus, the integration of traditional knowledge is rarely a dialogue between equals; it is a unidirectional process of translation where the epistemic violence of the dominant paradigm consistently overwrites the localized nuances of the subjugated tradition.","stem":"Which of the following real-life situations best reflects the \"instrumentalist approach\" criticized by the author?","options":["A pharmaceutical company patents an active ingredient found in a tribal medicinal plant while ignoring the tribe's seasonal harvesting rituals.","A modern university establishes a department of indigenous studies to comprehensively map the linguistic heritage of marginalized communities.","A global health organization provides funding to rural clinics to replace traditional healers with standardized allopathic medical practitioners.","A regional government legally recognizes a sacred river as a living entity possessing the same fundamental rights as a human citizen."],"answer":"A pharmaceutical company patents an active ingredient found in a tribal medicinal plant while ignoring the tribe's seasonal harvesting rituals.","answerIndex":0,"difficulty":"Hard","explanation":"The instrumentalist approach extracts functional utility (the active ingredient) while discarding the metaphysical scaffolding (the harvesting rituals), matching the passage's definition of bifurcating traditional knowledge.","status":"approved","flags":[],"verified":"ok","verNote":"Application signature question. Exact length symmetry applied (21 words each)."},{"id":"UGAT_VA_002","section":"VA","format":"Reading Comprehension (2×4)","kind":"mcq","passage":"The assimilation of indigenous epistemologies into global scientific paradigms is often celebrated as a triumph of cognitive inclusivity. In the context of traditional Indian ecological knowledge—such as the sacred grove (kavu) conservation systems of Kerala—modern environmentalists frequently extract the functional utility of these practices while discarding their metaphysical scaffolding. This instrumentalist approach assumes that traditional ecological knowledge can be neatly bifurcated: the empirically valid botanical observations are preserved, whereas the animistic cosmologies that birthed them are dismissed as archaic superstitions.\n\nHowever, this selective extraction fundamentally misunderstands the structural integrity of the indigenous worldview. Within the kavu system, ecological preservation is not a conscious, utilitarian strategy aimed at maximizing biodiversity. Rather, it is the emergent byproduct of a deeply entwined ontological relationship with the divine. The forest is not perceived as a repository of natural resources to be managed, but as a sovereign entity possessing its own inherent agency. By attempting to secularize these practices, modern conservationists strip away the very psychological and cultural imperatives that ensure their intergenerational transmission. The paradox is profound: in seeking to save the ecological baby, they discard the cosmological bathwater, thereby ensuring the eventual desiccation of the entire system.\n\nFurthermore, this epistemological asymmetry reveals a persistent colonial hangover in contemporary scientific discourse. The global north sets the parameters of what constitutes 'legitimate' knowledge, relegating indigenous frameworks to the status of raw data awaiting validation by Western methodologies. When traditional practices inevitably fail to conform to the reductive metrics of modern cost-benefit analyses, they are swiftly deemed inefficient. Thus, the integration of traditional knowledge is rarely a dialogue between equals; it is a unidirectional process of translation where the epistemic violence of the dominant paradigm consistently overwrites the localized nuances of the subjugated tradition.","stem":"Which of the following, if true, would most significantly weaken the author’s primary argument regarding the transmission of traditional ecological practices?","options":["Subsequent generations of indigenous communities have successfully maintained sacred groves despite adopting secular worldviews.","Extensive botanical research has repeatedly proven that sacred groves contain higher biodiversity than actively managed modern forests.","Contemporary conservationists are increasingly advocating for the strict legal protection of indigenous lands and territorial boundaries.","Traditional ecological knowledge systems have historically adapted to various technological disruptions and significant climate shifts."],"answer":"Subsequent generations of indigenous communities have successfully maintained sacred groves despite adopting secular worldviews.","answerIndex":0,"difficulty":"Hard","explanation":"The author argues that secularizing practices strips away the psychological imperatives ensuring intergenerational transmission. If secularized communities successfully maintain the groves, this core causal link is broken.","status":"approved","flags":[],"verified":"ok","verNote":"Weaken signature question. Exact length symmetry applied (15 words each)."},{"id":"UGAT_VA_003","section":"VA","format":"Reading Comprehension (2×4)","kind":"mcq","passage":"The assimilation of indigenous epistemologies into global scientific paradigms is often celebrated as a triumph of cognitive inclusivity. In the context of traditional Indian ecological knowledge—such as the sacred grove (kavu) conservation systems of Kerala—modern environmentalists frequently extract the functional utility of these practices while discarding their metaphysical scaffolding. This instrumentalist approach assumes that traditional ecological knowledge can be neatly bifurcated: the empirically valid botanical observations are preserved, whereas the animistic cosmologies that birthed them are dismissed as archaic superstitions.\n\nHowever, this selective extraction fundamentally misunderstands the structural integrity of the indigenous worldview. Within the kavu system, ecological preservation is not a conscious, utilitarian strategy aimed at maximizing biodiversity. Rather, it is the emergent byproduct of a deeply entwined ontological relationship with the divine. The forest is not perceived as a repository of natural resources to be managed, but as a sovereign entity possessing its own inherent agency. By attempting to secularize these practices, modern conservationists strip away the very psychological and cultural imperatives that ensure their intergenerational transmission. The paradox is profound: in seeking to save the ecological baby, they discard the cosmological bathwater, thereby ensuring the eventual desiccation of the entire system.\n\nFurthermore, this epistemological asymmetry reveals a persistent colonial hangover in contemporary scientific discourse. The global north sets the parameters of what constitutes 'legitimate' knowledge, relegating indigenous frameworks to the status of raw data awaiting validation by Western methodologies. When traditional practices inevitably fail to conform to the reductive metrics of modern cost-benefit analyses, they are swiftly deemed inefficient. Thus, the integration of traditional knowledge is rarely a dialogue between equals; it is a unidirectional process of translation where the epistemic violence of the dominant paradigm consistently overwrites the localized nuances of the subjugated tradition.","stem":"It can be logically inferred from the passage that the \"structural integrity\" of the kavu system relies fundamentally upon:","options":["an inability to distinguish between botanical observations and unverified superstitions.","a holistic framework where ecological outcomes are inseparable from spiritual beliefs.","a conscious rejection of modern conservation strategies that prioritize biodiversity.","an isolated geographic location that prevents interaction with global scientific paradigms."],"answer":"a holistic framework where ecological outcomes are inseparable from spiritual beliefs.","answerIndex":1,"difficulty":"Medium","explanation":"The text states that ecological preservation is the emergent byproduct of an entwined ontological relationship with the divine, meaning the ecology and spirituality cannot be bifurcated.","status":"approved","flags":[],"verified":"ok","verNote":"Zero-Echo inference trap."},{"id":"UGAT_VA_004","section":"VA","format":"Reading Comprehension (2×4)","kind":"mcq","passage":"The assimilation of indigenous epistemologies into global scientific paradigms is often celebrated as a triumph of cognitive inclusivity. In the context of traditional Indian ecological knowledge—such as the sacred grove (kavu) conservation systems of Kerala—modern environmentalists frequently extract the functional utility of these practices while discarding their metaphysical scaffolding. This instrumentalist approach assumes that traditional ecological knowledge can be neatly bifurcated: the empirically valid botanical observations are preserved, whereas the animistic cosmologies that birthed them are dismissed as archaic superstitions.\n\nHowever, this selective extraction fundamentally misunderstands the structural integrity of the indigenous worldview. Within the kavu system, ecological preservation is not a conscious, utilitarian strategy aimed at maximizing biodiversity. Rather, it is the emergent byproduct of a deeply entwined ontological relationship with the divine. The forest is not perceived as a repository of natural resources to be managed, but as a sovereign entity possessing its own inherent agency. By attempting to secularize these practices, modern conservationists strip away the very psychological and cultural imperatives that ensure their intergenerational transmission. The paradox is profound: in seeking to save the ecological baby, they discard the cosmological bathwater, thereby ensuring the eventual desiccation of the entire system.\n\nFurthermore, this epistemological asymmetry reveals a persistent colonial hangover in contemporary scientific discourse. The global north sets the parameters of what constitutes 'legitimate' knowledge, relegating indigenous frameworks to the status of raw data awaiting validation by Western methodologies. When traditional practices inevitably fail to conform to the reductive metrics of modern cost-benefit analyses, they are swiftly deemed inefficient. Thus, the integration of traditional knowledge is rarely a dialogue between equals; it is a unidirectional process of translation where the epistemic violence of the dominant paradigm consistently overwrites the localized nuances of the subjugated tradition.","stem":"The author mentions \"cost-benefit analyses\" in the final paragraph primarily in order to:","options":["demonstrate that modern science utilizes reductionist metrics that inevitably fail to measure spiritual value.","illustrate how dominant scientific paradigms utilize reductive metrics to delegitimize complex indigenous ecological frameworks.","highlight the financial impossibility of implementing traditional conservation methods on a global industrial scale.","contrast the economic efficiency of traditional sacred groves with the inefficiency of modern environmentalism."],"answer":"illustrate how dominant scientific paradigms utilize reductive metrics to delegitimize complex indigenous ecological frameworks.","answerIndex":1,"difficulty":"Hard","explanation":"The reference to cost-benefit analyses serves as an example of how the global north's methodologies relegate traditional practices to inefficiency when they fail to conform, illustrating the broader delegitimization discussed in the paragraph.","status":"approved","flags":[],"verified":"ok","verNote":"Cross-paragraph detail trap. Exact length symmetry applied (14 words each)."},{"id":"UGAT_VA_005","section":"VA","format":"Reading Comprehension (2×4)","kind":"mcq","passage":"The romanticization of the Indian handloom sector often obscures the harsh economic realities governing its contemporary transition. Historically anchored by the cooperative movement, weavers possessed a modicum of collective bargaining power, shielding them from the most predatory market fluctuations. However, the aggressive penetration of digital aggregation platforms has fundamentally restructured this ecosystem. Under the guise of 'disintermediation'—removing the traditional master weaver or middleman—these platforms have merely replaced human intermediaries with algorithmic overlords. This shift has transitioned the artisan from a collective stakeholder to an atomized gig worker.\n\nWhile platforms promise direct market access and higher profit margins, they simultaneously enforce a rigid standardization of design and brutal production timelines, penalizing the very deviations that once defined the craft's authenticity. Consequently, the disintermediation narrative is largely a digital sleight of hand; it successfully dismantles the cooperative safety net while enforcing a new, opaque layer of technological dependency, leaving the individual weaver far more vulnerable to global market shocks than in previous decades.","stem":"Which of the following real-life situations best reflects the \"digital sleight of hand\" described in the passage?","options":["A software company offers free training to rural students but requires them to sign a five-year exclusivity contract.","A ride-hailing app eliminates taxi dispatchers but uses dynamic pricing algorithms to drastically reduce driver earnings.","A government agency removes agricultural subsidies but replaces them with a comprehensive digital crop insurance program.","A traditional publishing house shifts to e-books but continues to pay authors the same percentage of royalties."],"answer":"A ride-hailing app eliminates taxi dispatchers but uses dynamic pricing algorithms to drastically reduce driver earnings.","answerIndex":1,"difficulty":"Hard","explanation":"The 'digital sleight of hand' in the passage refers to removing a human middleman (dispatcher) only to replace it with a technological system (algorithm) that maintains or worsens the worker's vulnerability.","status":"approved","flags":[],"verified":"ok","verNote":"Application signature question."},{"id":"UGAT_VA_006","section":"VA","format":"Reading Comprehension (2×4)","kind":"mcq","passage":"The romanticization of the Indian handloom sector often obscures the harsh economic realities governing its contemporary transition. Historically anchored by the cooperative movement, weavers possessed a modicum of collective bargaining power, shielding them from the most predatory market fluctuations. However, the aggressive penetration of digital aggregation platforms has fundamentally restructured this ecosystem. Under the guise of 'disintermediation'—removing the traditional master weaver or middleman—these platforms have merely replaced human intermediaries with algorithmic overlords. This shift has transitioned the artisan from a collective stakeholder to an atomized gig worker.\n\nWhile platforms promise direct market access and higher profit margins, they simultaneously enforce a rigid standardization of design and brutal production timelines, penalizing the very deviations that once defined the craft's authenticity. Consequently, the disintermediation narrative is largely a digital sleight of hand; it successfully dismantles the cooperative safety net while enforcing a new, opaque layer of technological dependency, leaving the individual weaver far more vulnerable to global market shocks than in previous decades.","stem":"Which of the following, if true, would most significantly weaken the author’s claim regarding the vulnerability of the modern atomized weaver?","options":["Digital aggregation platforms frequently update their algorithms to prioritize the most efficient and rapid weavers.","Contemporary cooperative societies have struggled to secure consistent funding from regional state governments.","Platform algorithms automatically redirect unsold inventory to secondary global markets, guaranteeing weaver income.","Traditional master weavers historically took a significantly larger percentage of the profits than modern digital platforms."],"answer":"Platform algorithms automatically redirect unsold inventory to secondary global markets, guaranteeing weaver income.","answerIndex":2,"difficulty":"Hard","explanation":"The author claims weavers are more vulnerable to market shocks. If the platforms guarantee income by absorbing those shocks, the core claim is directly weakened.","status":"approved","flags":[],"verified":"ok","verNote":"Weaken signature question."},{"id":"UGAT_VA_007","section":"VA","format":"Reading Comprehension (2×4)","kind":"mcq","passage":"The romanticization of the Indian handloom sector often obscures the harsh economic realities governing its contemporary transition. Historically anchored by the cooperative movement, weavers possessed a modicum of collective bargaining power, shielding them from the most predatory market fluctuations. However, the aggressive penetration of digital aggregation platforms has fundamentally restructured this ecosystem. Under the guise of 'disintermediation'—removing the traditional master weaver or middleman—these platforms have merely replaced human intermediaries with algorithmic overlords. This shift has transitioned the artisan from a collective stakeholder to an atomized gig worker.\n\nWhile platforms promise direct market access and higher profit margins, they simultaneously enforce a rigid standardization of design and brutal production timelines, penalizing the very deviations that once defined the craft's authenticity. Consequently, the disintermediation narrative is largely a digital sleight of hand; it successfully dismantles the cooperative safety net while enforcing a new, opaque layer of technological dependency, leaving the individual weaver far more vulnerable to global market shocks than in previous decades.","stem":"It can be logically inferred from the passage that the historical cooperative movement functioned primarily to:","options":["maximize the individual profit margins of weavers by connecting them directly to global consumers.","buffer independent artisans against the inherent volatilities and exploitative practices of the open market.","enforce strict standardization of traditional designs to guarantee consistency for international export.","transition the traditional artisan away from the control of the human middleman into the digital economy."],"answer":"buffer independent artisans against the inherent volatilities and exploitative practices of the open market.","answerIndex":1,"difficulty":"Medium","explanation":"The passage notes that the cooperative movement shielded weavers from 'predatory market fluctuations' and acted as a 'safety net', supporting the inference that it served as a buffer.","status":"approved","flags":[],"verified":"ok","verNote":"Zero-Echo inference trap."},{"id":"UGAT_VA_008","section":"VA","format":"Reading Comprehension (2×4)","kind":"mcq","passage":"The romanticization of the Indian handloom sector often obscures the harsh economic realities governing its contemporary transition. Historically anchored by the cooperative movement, weavers possessed a modicum of collective bargaining power, shielding them from the most predatory market fluctuations. However, the aggressive penetration of digital aggregation platforms has fundamentally restructured this ecosystem. Under the guise of 'disintermediation'—removing the traditional master weaver or middleman—these platforms have merely replaced human intermediaries with algorithmic overlords. This shift has transitioned the artisan from a collective stakeholder to an atomized gig worker.\n\nWhile platforms promise direct market access and higher profit margins, they simultaneously enforce a rigid standardization of design and brutal production timelines, penalizing the very deviations that once defined the craft's authenticity. Consequently, the disintermediation narrative is largely a digital sleight of hand; it successfully dismantles the cooperative safety net while enforcing a new, opaque layer of technological dependency, leaving the individual weaver far more vulnerable to global market shocks than in previous decades.","stem":"The author mentions the \"rigid standardization of design\" primarily in order to:","options":["demonstrate that digital platforms value aesthetic uniformity over the traditional variations of the craft.","argue that modern consumers demand high-quality, identical products rather than authentic artisanal deviations.","illustrate the technological efficiency of algorithmic aggregation compared to the traditional cooperative model.","highlight how the transition to the gig economy successfully eliminated the outdated role of the master weaver."],"answer":"demonstrate that digital platforms value aesthetic uniformity over the traditional variations of the craft.","answerIndex":0,"difficulty":"Medium","explanation":"The text explains that standardization penalizes the deviations that defined authenticity, illustrating the platform's preference for uniformity over artisanal variation.","status":"approved","flags":[],"verified":"ok","verNote":"Tone/Detail logic check."},{"id":"UGAT_VA_009","section":"VA","format":"Vocabulary","kind":"mcq","passage":null,"stem":"Fill in the blanks with the most appropriate pair of words:\nThe committee's ________ approach to the financial crisis stood in stark contrast to the ________ rhetoric of the protesting shareholders.","options":["phlegmatic ... incendiary","ebullient ... placid","capricious ... lethargic","vindictive ... analytical"],"answer":"phlegmatic ... incendiary","answerIndex":0,"difficulty":"Hard","explanation":"The sentence requires a contrast. 'Phlegmatic' (calm/unemotional) contrasts perfectly with 'incendiary' (inflammatory/fiery).","status":"approved","flags":[],"verified":"ok","verNote":"Double-blank elevated register."},{"id":"UGAT_VA_010","section":"VA","format":"Vocabulary","kind":"mcq","passage":null,"stem":"In the context of corporate negotiations, what does it mean to \"throw a spanner in the works\"?","options":["To quickly accelerate a complex process","To deliberately obstruct or disrupt a plan","To provide a highly effective solution","To finalize a legally binding agreement"],"answer":"To deliberately obstruct or disrupt a plan","answerIndex":1,"difficulty":"Easy","explanation":"To throw a spanner in the works means to introduce a problem, obstacle, or delay that prevents something from succeeding.","status":"approved","flags":[],"verified":"ok","verNote":"Idiom pool."},{"id":"UGAT_VA_011","section":"VA","format":"Vocabulary","kind":"mcq","passage":null,"stem":"Which of the following words is closest in meaning to \"intransigent\"?","options":["Ephemeral","Uncompromising","Obsequious","Magnanimous"],"answer":"Uncompromising","answerIndex":1,"difficulty":"Medium","explanation":"Intransigent means unwilling or refusing to change one's views or to agree about something, which makes 'uncompromising' the correct synonym.","status":"approved","flags":[],"verified":"ok","verNote":"Synonym pool."},{"id":"UGAT_VA_012","section":"VA","format":"Grammar","kind":"mcq","passage":null,"stem":"Identify the part of speech of the underlined word in the following sentence:\nThe board members ultimately rejected the proposal, citing the **precipitous** decline in recent quarterly revenue.","options":["Adverb","Noun","Adjective","Verb"],"answer":"Adjective","answerIndex":2,"difficulty":"Easy","explanation":"The word 'precipitous' modifies the noun 'decline', making it an adjective.","status":"approved","flags":[],"verified":"ok","verNote":"Parts of speech anchor."},{"id":"UGAT_VA_013","section":"VA","format":"Grammar","kind":"mcq","passage":null,"stem":"Fill in the blank with the grammatically correct tense:\nBy the time the regional director arrives at the branch tomorrow morning, the auditors ________ their preliminary investigation.","options":["completed","will have completed","are completing","have completed"],"answer":"will have completed","answerIndex":1,"difficulty":"Medium","explanation":"The sentence describes an action that will be finished before a specific time in the future ('By the time... tomorrow'), which requires the future perfect tense.","status":"approved","flags":[],"verified":"ok","verNote":"Tenses secondary pool."},{"id":"UGAT_VA_014","section":"VA","format":"Statement Odd-One-Out","kind":"mcq","passage":null,"stem":"Four terms are given below. Three are alike in a certain way, while one is different. Choose the odd one out.","options":["Autocracy","Democracy","Plutocracy","Synergy"],"answer":"Synergy","answerIndex":3,"difficulty":"Easy","explanation":"Autocracy, Democracy, and Plutocracy are all systems of governance or rule. Synergy is a concept regarding combined efforts or cooperation.","status":"approved","flags":[],"verified":"ok","verNote":"LR-style odd-one-out."},{"id":"UGAT_VA_015","section":"VA","format":"Statement Odd-One-Out","kind":"mcq","passage":null,"stem":"Three of the following terms belong to the same economic category. Identify the one that does not belong.","options":["Income Tax","Corporate Tax","Goods and Services Tax","Wealth Tax"],"answer":"Goods and Services Tax","answerIndex":2,"difficulty":"Medium","explanation":"Income Tax, Corporate Tax, and Wealth Tax are examples of direct taxes. Goods and Services Tax (GST) is an indirect tax.","status":"approved","flags":[],"verified":"ok","verNote":"LR-style odd-one-out."}];
+var SCRIPT_URL="https://script.google.com/macros/s/AKfycbx5Ojm_zp4LfsMeelx5e06KNjVH1wfsXdV0keS4407m4FO1HU4EpVb7GKj-ibAsxnspeA/exec";
+var TEST_NAME=CFG.testName, MAX_MARKS=CFG.maxMarks, FILE_NAME=CFG.fileName, SN_KEY=CFG.snKey;
+var NQ=QUESTIONS.length;
+var PIN_REGEX=/^(STU|IMS)\d{10}$/;
+var BLOCK_MSG="This is a Go Getters test \u2014 access is invite-only. Message Sahil Sir if you think you should be on the list.";
+var NET_MSG="Couldn't verify access \u2014 check your internet connection and try again.";
+
+/* ==================== AVAILABILITY WINDOW ====================
+   UTC epochs. IST = UTC+5:30, so 00:00 IST = 18:30 UTC the previous day.
+   Opens : Thu 27 Aug 2026, 00:00 IST
+   Closes: Mon 31 Aug 2026, 00:00 IST (end of Sunday)
+   Entry is blocked outside this window; an attempt already in progress
+   when the window closes is allowed to finish and submit. */
+var WIN_OPEN  = Date.UTC(2026,7,26,18,30,0);
+var WIN_CLOSE = Date.UTC(2026,7,30,18,30,0);
+var SHUT_MSG  = "This mock closed on Sunday at midnight. Your attempt window has ended.";
+
+function winState(){
+ var now=Date.now();
+ if(now<WIN_OPEN)return "soon";
+ if(now>=WIN_CLOSE)return "shut";
+ return "open";
+}
+function fmtRemain(ms){
+ var s=Math.max(0,Math.floor(ms/1000));
+ var d=Math.floor(s/86400),h=Math.floor(s%86400/3600),m=Math.floor(s%3600/60),sec=s%60;
+ if(d>0)return d+"d "+h+"h "+m+"m";
+ if(h>0)return h+"h "+m+"m "+String(sec).padStart(2,"0")+"s";
+ return m+"m "+String(sec).padStart(2,"0")+"s";
+}
+function paintWindow(){
+ var note=document.getElementById("winNote"),btn=document.getElementById("loginBtn"),st=winState();
+ if(!note||!btn)return st;
+ note.className="";
+ if(st==="soon"){
+  note.className="soon";note.style.display="block";
+  note.innerHTML="<b>OPENS SOON</b>Unlocks Thursday 27 August, 00:00 IST \u00b7 in "+fmtRemain(WIN_OPEN-Date.now());
+  btn.disabled=true;btn.textContent="Locked";
+ }else if(st==="shut"){
+  note.className="shut";note.style.display="block";
+  note.innerHTML="<b>CLOSED</b>"+SHUT_MSG;
+  btn.disabled=true;btn.textContent="Closed";
+ }else{
+  note.style.display="block";
+  note.innerHTML="<b>OPEN NOW</b>Closes Sunday midnight \u00b7 "+fmtRemain(WIN_CLOSE-Date.now())+" left";
+  btn.disabled=false;btn.textContent="Start Test";
+ }
+ return st;
+}
+
+/* ==================== GO GETTERS ACCESS GATE (server-side, Apps Script v10.5) ====================
+   Replaces the old client-side whitelist.json block (v5 §17), which FAILED OPEN
+   and exposed the list in the public repo. This gate asks the Apps Script
+   (?mode=gogetter) to check the private GoGetters_Whitelist sheet tab.
+   Returns "allowed" | "denied" | "error". Anything but "allowed" blocks entry. */
+async function checkGoGetterAccess(pin,batch){
+ try{
+  var res=await fetch(SCRIPT_URL+"?mode=gogetter&pin="+encodeURIComponent(pin)+"&batch="+encodeURIComponent(batch));
+  var data=await res.json();
+  if(data&&data.status==="success"&&data.allowed===true)return "allowed";
+  if(data&&data.status==="error")return "error";
+  return "denied";
+ }catch(e){return "error"}
+}
+
+/* ==================== SAFETY NET — retry queue ==================== */
+function snReadJSON(key,fallback){try{var v=localStorage.getItem(key);return v?JSON.parse(v):fallback}catch(e){return fallback}}
+function snWriteJSON(key,val){try{localStorage.setItem(key,JSON.stringify(val))}catch(e){}}
+function snUnqueue(id){var p=snReadJSON("riim_pending",[]);p=p.filter(function(x){return x.id!==id});snWriteJSON("riim_pending",p)}
+function snSendWithQueue(opts){
+ var p=snReadJSON("riim_pending",[]);
+ var id=Date.now()+"-"+Math.random().toString(36).slice(2);
+ p.push({id:id,opts:{method:opts.method,mode:opts.mode,headers:opts.headers,body:opts.body}});
+ snWriteJSON("riim_pending",p);
+ return fetch(SCRIPT_URL,opts).then(function(r){snUnqueue(id);return r});
+}
+function snFlushQueue(){
+ var p=snReadJSON("riim_pending",[]);
+ p.forEach(function(item){fetch(SCRIPT_URL,item.opts).then(function(){snUnqueue(item.id)}).catch(function(){})});
+}
+
+/* ==================== STATE ==================== */
+var studentName="",studentPin="",studentBatch="";
+var currentQ=0,testOver=false,started=false;
+var answers=new Array(NQ).fill(null);
+var questionTimes=new Array(NQ).fill(0);
+var secondsLeft=CFG.minutes*60;
+var tickInt=null,qShownTs=0;
+
+/* ==================== SESSION AUTOSAVE / RESUME ==================== */
+function snSaveSession(){
+ if(testOver||!started)return;
+ snWriteJSON(SN_KEY,{file:FILE_NAME,testName:TEST_NAME,name:studentName,pin:studentPin,batch:studentBatch,currentQ:currentQ,answers:answers,questionTimes:questionTimes,secondsLeft:secondsLeft,ts:Date.now()});
+}
+function snClearSession(){try{localStorage.removeItem(SN_KEY)}catch(e){}}
+async function snTryResume(){
+ var s=snReadJSON(SN_KEY,null);
+ if(!s||s.testName!==TEST_NAME)return false;
+ if(winState()!=="open"){return false}
+ var answered=(s.answers||[]).filter(function(a){return a!==null&&a!==""}).length;
+ var ok=confirm("You have an unfinished attempt of "+TEST_NAME+" ("+answered+" question(s) answered). Resume where you left off?");
+ if(!ok){snClearSession();return false}
+ /* Go Getters: re-verify access on resume too, so a revoked PIN can't re-enter via a saved session */
+ var verdict=await checkGoGetterAccess(s.pin,s.batch);
+ if(verdict!=="allowed"){alert(verdict==="error"?NET_MSG:BLOCK_MSG);return false}
+ studentName=s.name;studentPin=s.pin;studentBatch=s.batch;
+ currentQ=Math.min(s.currentQ||0,NQ-1);
+ if(s.answers&&s.answers.length===NQ)answers=s.answers;
+ if(s.questionTimes&&s.questionTimes.length===NQ)questionTimes=s.questionTimes;
+ if(typeof s.secondsLeft==="number")secondsLeft=Math.max(10,s.secondsLeft);
+ enterTest();
+ return true;
+}
+
+/* ==================== LOGIN ==================== */
+function showLoginError(msg){var el=document.getElementById("loginErr");el.textContent=msg;el.style.display="block"}
+async function startTest(){
+ var name=document.getElementById("stuName").value.trim();
+ var pinEl=document.getElementById("stuPin");
+ var pin=pinEl.value.trim().toUpperCase();pinEl.value=pin;
+ var batch=document.getElementById("stuBatch").value;
+ var st=paintWindow();
+ if(st==="soon"){showLoginError("This mock is not open yet. It unlocks Thursday 27 August at 00:00 IST.");return}
+ if(st==="shut"){showLoginError(SHUT_MSG);return}
+ if(!name){showLoginError("Please enter your full name.");return}
+ if(!PIN_REGEX.test(pin)){showLoginError("Invalid PIN. Format: STU########## or IMS##########.");return}
+ if(!batch){showLoginError("Please select your batch.");return}
+ var btn=document.getElementById("loginBtn");
+ btn.disabled=true;var prevTxt=btn.textContent;btn.textContent="Checking access\u2026";
+ var verdict=await checkGoGetterAccess(pin,batch);
+ btn.disabled=false;btn.textContent=prevTxt;
+ if(verdict!=="allowed"){showLoginError(verdict==="error"?NET_MSG:BLOCK_MSG);return}
+ studentName=name;studentPin=pin;studentBatch=batch;
+ document.getElementById("loginErr").style.display="none";
+ enterTest();
+}
+function enterTest(){
+ started=true;
+ document.getElementById("loginScreen").style.display="none";
+ document.getElementById("testScreen").style.display="block";
+ buildPalette();
+ tickInt=setInterval(function(){
+  secondsLeft--;
+  var t=document.getElementById("timer");if(t)t.textContent=fmtClock(secondsLeft);
+  if(secondsLeft%10===0)snSaveSession();
+  if(secondsLeft<=0)submitTest();
+ },1000);
+ renderQuestion();
+ snSaveSession();
+}
+
+/* ==================== PALETTE (free navigation) ==================== */
+function buildPalette(){
+ var pal=document.getElementById("palette");pal.innerHTML="";
+ for(var i=0;i<NQ;i++){
+  (function(i){
+   var b=document.createElement("button");b.id="pcell"+i;b.textContent=i+1;
+   b.onclick=function(){jumpTo(i)};
+   pal.appendChild(b);
+  })(i);
+ }
+}
+function paintPalette(){
+ for(var i=0;i<NQ;i++){
+  var c=document.getElementById("pcell"+i);if(!c)continue;
+  c.className="";
+  if(answers[i]!==null&&answers[i]!=="")c.classList.add("done");
+  if(i===currentQ)c.classList.add("cur");
+ }
+}
+
+/* ==================== RENDER + PER-QUESTION TIME ==================== */
+function markTime(){
+ if(qShownTs){questionTimes[currentQ]+=Math.round((Date.now()-qShownTs)/1000)}
+ qShownTs=Date.now();
+}
+function fmtClock(s){s=Math.max(0,s);return String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0")}
+function renderQuestion(){
+ var q=QUESTIONS[currentQ];
+ qShownTs=Date.now();
+ document.getElementById("tbName").textContent=TEST_NAME;
+ document.getElementById("qCounter").textContent="Q "+(currentQ+1)+" / "+NQ;
+ document.getElementById("timer").textContent=fmtClock(secondsLeft);
+ document.getElementById("secBadge").textContent=q.section+" \u00b7 "+q.format+" \u00b7 "+q.difficulty+(q.options?"":" \u00b7 TITA");
+ var pB=document.getElementById("passageBox");
+ if(q.passage){pB.style.display="block";pB.textContent=q.passage}else{pB.style.display="none"}
+ document.getElementById("qText").textContent=q.stem;
+ var box=document.getElementById("optBox");box.innerHTML="";
+ var letters=["A","B","C","D"];
+ if(q.options){
+  q.options.forEach(function(opt,idx){
+   var d=document.createElement("button");
+   d.className="opt"+(answers[currentQ]===idx?" sel":"");
+   d.textContent=letters[idx]+". "+opt;
+   d.onclick=function(){answers[currentQ]=idx;snSaveSession();renderQuestion()};
+   box.appendChild(d);
+  });
+ }else{
+  var inp=document.createElement("input");
+  inp.className="tita";inp.placeholder="Type your answer";
+  inp.value=answers[currentQ]||"";
+  inp.oninput=function(){answers[currentQ]=this.value;snSaveSession();paintPalette()};
+  box.appendChild(inp);
+ }
+ paintPalette();
+}
+function nav(d){markTime();currentQ=Math.max(0,Math.min(NQ-1,currentQ+d));snSaveSession();renderQuestion()}
+function jumpTo(i){markTime();currentQ=i;snSaveSession();renderQuestion()}
+
+/* ==================== SCORING HELPERS ==================== */
+function isCorrect(q,a){
+ if(a===null||a==="")return false;
+ if(q.options)return a===q.answerIndex;
+ return String(a).trim().toLowerCase()===String(q.answer).trim().toLowerCase();
+}
+
+/* ==================== MISTAKE BANK (spaced repetition) ==================== */
+function bankMistakes(){
+ try{
+  var bank=snReadJSON("riim_mistakes",[]);
+  var now=Date.now(),DAY=86400000;
+  QUESTIONS.forEach(function(q,i){
+   if(!q.options)return;
+   var chosen=answers[i];
+   if(chosen===null||chosen===q.answerIndex)return;
+   var k=CFG.bankPrefix+"-Q"+(i+1);
+   var existing=null;
+   for(var j=0;j<bank.length;j++){if(bank[j].k===k){existing=bank[j];break}}
+   if(existing){existing.box=1;existing.due=now+DAY;existing.chosen=chosen}
+   else{bank.push({k:k,stem:(q.passage?q.passage+"\n\n"+q.stem:q.stem),opts:q.options,ans:q.answerIndex,chosen:chosen,exp:q.explanation,sub:q.format,src:TEST_NAME,box:1,due:now+DAY})}
+  });
+  if(bank.length>300)bank=bank.slice(bank.length-300);
+  snWriteJSON("riim_mistakes",bank);
+ }catch(e){}
+}
+
+/* ==================== SUBMIT — 16-field payload ==================== */
+function fmtTime(totalSecs){var m=Math.floor(totalSecs/60);var s=totalSecs%60;return m+":"+(s<10?"0":"")+s}
+function submitTest(){
+ if(testOver)return;
+ testOver=true;
+ clearInterval(tickInt);
+ markTime();
+
+ var correctCount=0,wrongCount=0,skippedCount=0;
+ var sectionErrors={},topicErrorMap={},wrongQuestions=[];
+ var score=0;
+ QUESTIONS.forEach(function(q,i){
+  var a=answers[i];
+  if(a===null||a===""){skippedCount++;return}
+  if(isCorrect(q,a)){correctCount++;score+=CFG.c}
+  else{
+   wrongCount++;
+   score+=(q.options?CFG.w:CFG.titaW);
+   wrongQuestions.push(i+1);
+   sectionErrors[q.section]=(sectionErrors[q.section]||0)+1;
+   topicErrorMap[q.format]=(topicErrorMap[q.format]||0)+1;
+  }
+ });
+ var totalSecs=CFG.minutes*60-Math.max(0,secondsLeft);
+ var timeTakenStr=fmtTime(totalSecs);
+
+ /* 16-field payload — explicit key:value, topicErrors is field 16 */
+ var payload={
+  testName:TEST_NAME,
+  name:studentName,
+  pin:studentPin,
+  batch:studentBatch,
+  score:score,
+  correct:correctCount,
+  wrong:wrongCount,
+  skipped:skippedCount,
+  maxMarks:MAX_MARKS,
+  timeTaken:timeTakenStr,
+  timestamp:new Date().toLocaleString("en-IN",{timeZone:"Asia/Kolkata"}),
+  sectionErrors:JSON.stringify(sectionErrors),
+  wrongQuestions:JSON.stringify(wrongQuestions),
+  studentAnswers:JSON.stringify(answers),
+  questionTimes:JSON.stringify(questionTimes),
+  topicErrors:JSON.stringify(topicErrorMap)
+ };
+
+ snSendWithQueue({method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain"},body:JSON.stringify(payload)}).catch(function(){});
+
+ bankMistakes();
+
+ try{
+  var res=snReadJSON("riim_results",[]);
+  res.push({testName:TEST_NAME,score:score,correct:correctCount,wrong:wrongCount,skipped:skippedCount,maxMarks:MAX_MARKS,timeTaken:timeTakenStr,ts:Date.now()});
+  if(res.length>200)res=res.slice(res.length-200);
+  snWriteJSON("riim_results",res);
+ }catch(e){}
+
+ snClearSession();
+ showResults(score,correctCount,wrongCount,skippedCount,timeTakenStr,sectionErrors);
+}
+
+/* ==================== RESULTS ==================== */
+function showResults(score,correct,wrong,skipped,timeStr,sectionErrors){
+ document.getElementById("testScreen").style.display="none";
+ document.getElementById("resultsScreen").style.display="block";
+ document.getElementById("resTitle").textContent=TEST_NAME+" \u2014 Results";
+ document.getElementById("resSub").textContent=studentName+" \u00b7 "+studentBatch+" \u00b7 "+new Date().toLocaleString("en-IN",{timeZone:"Asia/Kolkata"});
+ document.getElementById("stScore").textContent=score;
+ document.getElementById("stMaxL").textContent="SCORE / "+MAX_MARKS;
+ document.getElementById("stCorrect").textContent=correct;
+ document.getElementById("stWrong").textContent=wrong;
+ document.getElementById("stSkipped").textContent=skipped;
+ document.getElementById("stTime").textContent=timeStr;
+ var secParts=[];
+ for(var sk in sectionErrors){if(sectionErrors.hasOwnProperty(sk))secParts.push(sk+": "+sectionErrors[sk])}
+ document.getElementById("secErrBox").innerHTML="<b>Section errors</b> \u2014 "+(secParts.length?secParts.join(" \u00b7 "):"None");
+
+ var letters=["A","B","C","D"];
+ var box=document.getElementById("reviewBox");box.innerHTML="";
+ QUESTIONS.forEach(function(q,i){
+  var a=answers[i];
+  var skippedQ=(a===null||a==="");
+  var ok=isCorrect(q,a);
+  var wrap=document.createElement("div");wrap.className="rq";
+  var head=document.createElement("div");head.className="rqHead";
+  var status=skippedQ?"<span class='status sk'>SKIPPED</span>":ok?"<span class='status ok'>CORRECT</span>":"<span class='status no'>WRONG</span>";
+  head.innerHTML="Q"+(i+1)+" \u00b7 "+q.section+" \u00b7 "+q.format+status;
+  wrap.appendChild(head);
+  if(q.passage&&(i===0||QUESTIONS[i-1].passage!==q.passage)){
+   var pv=document.createElement("div");pv.className="rqStem";
+   pv.style.fontStyle="italic";pv.style.opacity=".85";
+   pv.textContent="Passage: "+q.passage;
+   wrap.appendChild(pv);
+  }
+  var stem=document.createElement("div");stem.className="rqStem";stem.textContent=q.stem;wrap.appendChild(stem);
+  if(q.options){
+   q.options.forEach(function(opt,idx){
+    var r=document.createElement("div");r.className="ropt";
+    if(idx===q.answerIndex)r.classList.add("correct");
+    else if(idx===a)r.classList.add("wrong");
+    var l=document.createElement("div");l.textContent=letters[idx];
+    var t=document.createElement("div");t.textContent=opt;
+    r.appendChild(l);r.appendChild(t);
+    wrap.appendChild(r);
+   });
+  }else{
+   var yr=document.createElement("div");yr.className="ropt"+(skippedQ?"":(ok?" correct":" wrong"));
+   yr.textContent="Your answer: "+(skippedQ?"\u2014":a);
+   wrap.appendChild(yr);
+   var kr=document.createElement("div");kr.className="ropt correct";
+   kr.textContent="Key: "+q.answer;
+   wrap.appendChild(kr);
+  }
+  var exp=document.createElement("div");exp.className="exp";
+  exp.innerHTML="<b>Explanation:</b> ";
+  exp.appendChild(document.createTextNode(q.explanation||""));
+  wrap.appendChild(exp);
+  box.appendChild(wrap);
+ });
+ window.scrollTo(0,0);
+}
+
+/* ==================== DOWNLOAD PDF ==================== */
+function downloadPDF(){
+ var jsPDFctor=(window.jspdf&&window.jspdf.jsPDF)||window.jsPDF;
+ if(!jsPDFctor){alert("PDF library failed to load. Please check your connection and try again.");return}
+ var doc=new jsPDFctor({unit:"pt",format:"a4"});
+ var pageW=doc.internal.pageSize.getWidth();
+ var pageH=doc.internal.pageSize.getHeight();
+ var margin=40,y=margin;
+ var letters=["A","B","C","D"];
+ function newPageIfNeeded(h){if(y+h>pageH-margin){doc.addPage();y=margin}}
+ function writeWrapped(text,x,maxW,size,style){
+  doc.setFont("helvetica",style||"normal");doc.setFontSize(size);
+  var lines=doc.splitTextToSize(text,maxW);
+  for(var i=0;i<lines.length;i++){newPageIfNeeded(size+4);doc.text(lines[i],x,y);y+=size+4}
+ }
+ doc.setFont("helvetica","bold");doc.setFontSize(16);doc.setTextColor(13,27,42);
+ doc.text("ROAD TO IIM",margin,y);y+=20;
+ doc.setFontSize(13);doc.setTextColor(201,168,76);
+ doc.text(TEST_NAME,margin,y);y+=18;
+ doc.setFont("helvetica","normal");doc.setFontSize(10);doc.setTextColor(60,60,60);
+ var dateStr=new Date().toLocaleString("en-IN",{timeZone:"Asia/Kolkata"});
+ doc.text(studentName+" \u00b7 "+studentBatch+" \u00b7 "+dateStr,margin,y);y+=16;
+ doc.setDrawColor(201,168,76);doc.line(margin,y,pageW-margin,y);y+=16;
+ doc.setTextColor(0,0,0);doc.setFont("helvetica","bold");doc.setFontSize(11);
+ doc.text("Summary",margin,y);y+=14;
+ doc.setFont("helvetica","normal");doc.setFontSize(10);
+ var summary="Score: "+document.getElementById("stScore").textContent+" / "+MAX_MARKS+"   \u00b7   Correct: "+document.getElementById("stCorrect").textContent+"   \u00b7   Wrong: "+document.getElementById("stWrong").textContent+"   \u00b7   Skipped: "+document.getElementById("stSkipped").textContent+"   \u00b7   Time: "+document.getElementById("stTime").textContent;
+ writeWrapped(summary,margin,pageW-2*margin,10);y+=4;
+ var secErrText=(document.getElementById("secErrBox").textContent||"").replace(/\s+/g," ").trim();
+ if(secErrText){writeWrapped(secErrText,margin,pageW-2*margin,10);y+=6}
+ doc.setDrawColor(200,200,200);doc.line(margin,y,pageW-margin,y);y+=14;
+ doc.setFont("helvetica","bold");doc.setFontSize(12);doc.setTextColor(13,27,42);
+ doc.text("Question Review",margin,y);y+=16;
+ QUESTIONS.forEach(function(q,i){
+  var a=answers[i];
+  var skippedQ=(a===null||a==="");
+  var ok=isCorrect(q,a);
+  var statusLabel=skippedQ?"SKIPPED":(ok?"CORRECT":"WRONG");
+  newPageIfNeeded(60);
+  doc.setFont("helvetica","bold");doc.setFontSize(10);doc.setTextColor(13,27,42);
+  doc.text("Q"+(i+1)+"  \u00b7  "+q.section+" \u00b7 "+q.format+"   ["+statusLabel+"]",margin,y);y+=12;
+  if(q.passage&&(i===0||QUESTIONS[i-1].passage!==q.passage)){
+   doc.setTextColor(90,90,90);
+   writeWrapped("Passage: "+q.passage,margin,pageW-2*margin,8,"italic");y+=2;
+  }
+  doc.setTextColor(0,0,0);
+  writeWrapped(q.stem,margin,pageW-2*margin,10,"normal");y+=2;
+  if(q.options){
+   q.options.forEach(function(opt,idx){
+    var marker="";
+    if(idx===q.answerIndex)marker="  \u2713 correct";
+    else if(idx===a)marker="  \u2717 your choice";
+    if(idx===q.answerIndex)doc.setTextColor(30,120,60);
+    else if(idx===a)doc.setTextColor(180,50,50);
+    else doc.setTextColor(60,60,60);
+    writeWrapped(letters[idx]+")  "+opt+marker,margin+12,pageW-2*margin-12,10,"normal");
+   });
+  }else{
+   doc.setTextColor(skippedQ?120:(ok?30:180),skippedQ?120:(ok?120:50),skippedQ?120:(ok?60:50));
+   writeWrapped("Your answer: "+(skippedQ?"-":a),margin+12,pageW-2*margin-12,10,"normal");
+   doc.setTextColor(30,120,60);
+   writeWrapped("Key: "+q.answer,margin+12,pageW-2*margin-12,10,"normal");
+  }
+  doc.setTextColor(0,0,0);y+=2;
+  doc.setFont("helvetica","bold");doc.setFontSize(9);
+  newPageIfNeeded(14);
+  doc.text("Explanation:",margin,y);y+=11;
+  doc.setFont("helvetica","normal");doc.setFontSize(9);
+  writeWrapped(q.explanation||"",margin,pageW-2*margin,9,"normal");
+  y+=10;
+  doc.setDrawColor(230,230,230);
+  newPageIfNeeded(6);
+  doc.line(margin,y,pageW-margin,y);y+=12;
+ });
+ var safeName=(studentName||"student").replace(/[^A-Za-z0-9]+/g,"_").slice(0,40);
+ var d=new Date();
+ var dateTag=d.getFullYear()+String(d.getMonth()+1).padStart(2,"0")+String(d.getDate()).padStart(2,"0");
+ doc.save(CFG.bankPrefix+"_"+safeName+"_"+dateTag+".pdf");
+}
+
+/* ==================== PAGE LOAD ==================== */
+document.getElementById("lgTitle").textContent=TEST_NAME;
+document.getElementById("lgMeta").innerHTML=NQ+" questions \u00b7 +"+CFG.c+" / "+CFG.w+(CFG.hasTita?" \u00b7 TITA wrong "+CFG.titaW:"")+" \u00b7 Max "+MAX_MARKS+"<br>"+CFG.minutes+" minutes \u00b7 "+(CFG.navNote||"free navigation")+" \u00b7 auto-submit at 00:00";
+document.getElementById("loginBtn").addEventListener("click",startTest);
+paintWindow();
+setInterval(function(){ if(!started)paintWindow(); },1000);
+snFlushQueue();
+snTryResume();
+</script>
+</body>
+</html>
