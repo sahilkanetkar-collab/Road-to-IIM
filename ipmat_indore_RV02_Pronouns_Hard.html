@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RV02 Pronouns — Hard · Road to IIM</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=DM+Sans:wght@400;500;700&family=DM+Mono&display=swap");
+:root{--navy:#0B1220;--panel:#101A2D;--panel2:#152136;--gold:#D4A94E;--text:#E8E4D8;--mut:#8B94A8;--green:rgba(78,160,130,1);--red:#C05555;--line:rgba(212,169,78,.22)}
+*{box-sizing:border-box;margin:0}
+body{background:var(--navy);color:var(--text);font-family:"DM Sans",sans-serif}
+h1{font-family:Fraunces,serif;color:var(--gold)}
+.mono{font-family:"DM Mono",monospace;font-size:12px;color:var(--mut)}
+#loginScreen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.loginCard{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:28px;max-width:420px;width:100%}
+.loginCard h1{font-size:24px;margin-bottom:2px}
+.loginCard h2{font-family:Fraunces,serif;font-size:15px;color:var(--text);font-weight:600;margin-bottom:18px}
+.loginCard label{display:block;font-family:"DM Mono";font-size:10.5px;color:var(--mut);letter-spacing:.1em;margin:12px 0 5px}
+.loginCard input,.loginCard select{width:100%;background:var(--panel2);color:var(--text);border:1px solid rgba(232,228,216,.25);border-radius:7px;padding:10px 12px;font-size:14px;font-family:"DM Sans"}
+#loginErr{display:none;color:var(--red);font-size:12.5px;margin-top:10px}
+#loginBtn{width:100%;margin-top:16px;background:var(--gold);color:var(--navy);border:none;border-radius:8px;padding:12px;font-weight:700;font-size:15px;cursor:pointer}
+.testMeta{font-family:"DM Mono";font-size:10.5px;color:var(--mut);margin-top:14px;line-height:1.7}
+#testScreen,#resultsScreen{display:none;max-width:1020px;margin:0 auto;padding:18px}
+#topBar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:12px 16px;margin-bottom:14px}
+#topBar .tName{font-family:Fraunces,serif;color:var(--gold);font-weight:700}
+#timer{font-family:"DM Mono";color:var(--gold);font-size:20px;margin-left:auto}
+#layout{display:grid;grid-template-columns:1fr 210px;gap:14px}
+@media(max-width:760px){#layout{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px;margin-bottom:12px}
+.secBadge{font-family:"DM Mono";font-size:10.5px;color:var(--gold);letter-spacing:.08em}
+#passageBox{display:none;background:var(--panel2);border-left:3px solid var(--gold);border-radius:6px;padding:12px;margin:10px 0;font-size:14px;line-height:1.6;white-space:pre-wrap;max-height:300px;overflow-y:auto}
+#qText{font-size:16px;line-height:1.6;margin:12px 0;white-space:pre-wrap}
+.qFig{margin:10px 0}.qFig img{max-width:100%;border-radius:6px;border:1px solid var(--line);background:#fff}
+table.qTable{border-collapse:collapse;margin:10px 0;font-size:13.5px}
+table.qTable td,table.qTable th{border:1px solid rgba(232,228,216,.25);padding:6px 10px;text-align:left}
+table.qTable th{color:var(--gold);font-family:"DM Mono";font-size:11px;letter-spacing:.05em}
+pre.qTable{background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:10px;font-family:"DM Mono";font-size:12.5px;overflow-x:auto;margin:10px 0;white-space:pre}
+.qTableWrap{overflow-x:auto;margin:10px 0}
+.qTableWrap table{border-collapse:collapse;font-size:13.5px}
+.qTableWrap td,.qTableWrap th{border:1px solid rgba(232,228,216,.25);padding:6px 10px;text-align:left}
+.qTableWrap th{color:var(--gold);font-family:"DM Mono";font-size:11px;letter-spacing:.05em}
+.qTableWrap caption{color:var(--mut);font-size:11.5px;padding:4px}
+.qFig svg{max-width:100%;height:auto;background:#fff;border-radius:6px;border:1px solid var(--line)}
+#secBanner{display:none;position:fixed;inset:0;z-index:50;background:rgba(11,18,32,.94);align-items:center;justify-content:center;text-align:center}
+#secBanner .inner{background:var(--panel);border:1px solid var(--gold);border-radius:12px;padding:30px 44px}
+#secBanner h2{font-family:Fraunces,serif;color:var(--gold);font-size:24px;margin-bottom:8px}
+.opt{display:block;width:100%;text-align:left;background:var(--panel2);border:1px solid rgba(232,228,216,.15);color:var(--text);border-radius:8px;padding:12px 14px;margin:8px 0;cursor:pointer;font-size:14.5px;font-family:"DM Sans"}
+.opt.sel{border-color:var(--gold);background:rgba(212,169,78,.14)}
+input.tita{background:var(--panel2);border:1px solid rgba(212,169,78,.4);color:var(--text);border-radius:8px;padding:12px;font-size:16px;width:100%;font-family:"DM Mono"}
+.btn{background:var(--gold);color:var(--navy);border:none;border-radius:8px;padding:11px 20px;font-weight:700;cursor:pointer;font-size:14px;font-family:"DM Sans"}
+.btn.ghost{background:var(--panel2);color:var(--text);border:1px solid rgba(232,228,216,.3)}
+.btn.green{background:var(--green)}
+#sidePanel h3{font-family:"DM Mono";font-size:10.5px;color:var(--mut);letter-spacing:.1em;margin-bottom:8px}
+#palette{display:flex;flex-wrap:wrap;gap:6px}
+#palette button{width:34px;height:34px;border-radius:6px;border:1px solid rgba(232,228,216,.2);background:var(--panel2);color:var(--text);cursor:pointer;font-family:"DM Mono";font-size:12px}
+#palette .done{background:rgba(78,160,130,.25);border-color:rgba(78,160,130,.7)}
+#palette .cur{border-color:var(--gold)}
+.legend{font-size:11px;color:var(--mut);margin-top:10px;line-height:2}
+.legend span{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.statGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px;margin:14px 0}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;text-align:center}
+.stat .v{font-family:"DM Mono";font-size:22px;color:var(--gold)}
+.stat .l{font-family:"DM Mono";font-size:9.5px;color:var(--mut);letter-spacing:.08em;margin-top:4px}
+.secErr{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 16px;font-size:13px;margin-bottom:14px}
+.secErr b{color:var(--gold)}
+#pdfBtn{margin:10px 0}
+.rq{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:12px}
+.rqHead{font-family:"DM Mono";font-size:11px;color:var(--mut);margin-bottom:8px}
+.status{font-weight:700;margin-left:8px}
+.status.ok{color:var(--green)}.status.no{color:var(--red)}.status.sk{color:var(--mut)}
+.rqStem{font-size:14.5px;line-height:1.55;margin-bottom:8px;white-space:pre-wrap}
+.ropt{display:flex;gap:10px;padding:7px 10px;border-radius:6px;font-size:13.5px;margin:3px 0}
+.ropt.correct{background:rgba(78,160,130,.15);color:var(--green)}
+.ropt.wrong{background:rgba(192,85,85,.13);color:var(--red)}
+.exp{font-size:12.5px;color:var(--mut);margin-top:8px;border-top:1px solid rgba(232,228,216,.08);padding-top:8px}
+.exp b{color:var(--gold)}
+</style>
+</head>
+<body>
+<div id="loginScreen"><div class="loginCard">
+ <h1>ROAD TO IIM</h1><h2 id="lgTitle"></h2>
+ <label for="stuName">FULL NAME</label><input type="text" id="stuName" placeholder="Your full name" autocomplete="off">
+ <label for="stuPin">PIN</label><input type="text" id="stuPin" placeholder="STU########## or IMS##########" autocomplete="off" maxlength="13">
+ <label for="stuBatch">BATCH</label>
+ <select id="stuBatch"><option value="">-- Select your batch --</option>
+  <optgroup label="Classroom"><option>A2701</option><option>A2702</option><option>A2703</option><option>A2704</option><option>A2705</option><option>A2706</option><option>A2707</option><option>A2708</option><option>A2709</option><option>A2710</option><option>A2711</option><option>A2712</option><option>A2714</option><option>A2715</option><option>A2716</option><option>A2717</option><option>A2718</option><option>A2719</option><option>A2720</option></optgroup>
+  <optgroup label="School"><option>Zebar</option></optgroup>
+  <optgroup label="IPMAT 28"><option>Z2801</option><option>S2801</option><option>A2804</option><option>PN2801</option></optgroup>
+  <optgroup label="Go Getters"><option>Go Getters</option></optgroup><optgroup label="Admin"><option>Admin</option></optgroup>
+ </select>
+ <div id="loginErr"></div>
+ <button id="loginBtn">Start Test</button>
+ <div class="testMeta" id="lgMeta"></div>
+</div></div>
+
+<div id="secBanner"><div class="inner"><h2 id="sbTitle"></h2><div class="mono" id="sbSub"></div></div></div>
+<div id="testScreen">
+ <div id="topBar"><span class="tName" id="tbName"></span><span class="mono" id="qCounter"></span><span id="timer">--:--</span></div>
+ <div id="layout">
+  <div>
+   <div class="card">
+    <span class="secBadge" id="secBadge"></span>
+    <div id="passageBox"></div>
+    <div id="qText"></div>
+    <div id="exBox"></div>
+    <div id="optBox"></div>
+   </div>
+   <div class="card" style="display:flex;gap:10px;justify-content:space-between;flex-wrap:wrap">
+    <div><button class="btn ghost" onclick="nav(-1)">&#8249; Prev</button> <button class="btn" onclick="nav(1)">Next &#8250;</button></div>
+    <div><button class="btn ghost" id="endSecBtn" style="display:none" onclick="if(confirm('End this section early? You cannot return to it.'))endSectionEarly()">End Section &#8250;</button> <button class="btn green" id="submitBtn" onclick="if(confirm('Submit test?'))submitTest()">Submit</button></div>
+   </div>
+  </div>
+  <div id="sidePanel" class="card"><h3>QUESTION PALETTE</h3><div id="palette"></div>
+   <div class="legend"><span style="background:rgba(78,160,130,.6)"></span>Answered<br><span style="background:#152136;border:1px solid #D4A94E"></span>Current</div>
+  </div>
+ </div>
+</div>
+
+<div id="resultsScreen">
+ <h1 id="resTitle" style="font-size:26px"></h1>
+ <div class="mono" id="resSub" style="margin:6px 0 4px"></div>
+ <button id="pdfBtn" class="btn" onclick="downloadPDF()">Download PDF</button>
+ <div class="statGrid">
+  <div class="stat"><div class="v" id="stScore">0</div><div class="l" id="stMaxL">SCORE</div></div>
+  <div class="stat"><div class="v" id="stCorrect">0</div><div class="l">CORRECT</div></div>
+  <div class="stat"><div class="v" id="stWrong">0</div><div class="l">WRONG</div></div>
+  <div class="stat"><div class="v" id="stSkipped">0</div><div class="l">SKIPPED</div></div>
+  <div class="stat"><div class="v" id="stTime">0:00</div><div class="l">TIME TAKEN</div></div>
+ </div>
+ <div class="secErr" id="secErrBox"></div>
+ <h1 style="font-size:19px;margin:14px 0 10px">Question Review</h1>
+ <div id="reviewBox"></div>
+</div>
+
+<script>
+/* ============================================================
+   ROAD TO IIM — Studio-built portal test
+   Whitelist v5 · Safety Net · 16-field payload · PATH 2 tags
+   ============================================================ */
+var CFG={"testName":"RV02 Pronouns — Hard","examName":"IPMAT Indore","maxMarks":80,"minutes":30,"c":4,"w":-1,"titaW":0,"hasTita":false,"navNote":"single clock (deliberate override of sectional lock)","sectional":null,"fileName":"ipmat_indore_RV02_Pronouns_Hard.html","snKey":"riim_session_RV02_Pronouns_Hard","bankPrefix":"RV02_Pronouns_Hard"};
+var QUESTIONS=[{"id":"RV02H01","section":"VA","format":"fitb","kind":"mcq","passage":"","stem":"Mehta is the only one of the trustees who _____ the minutes before signing anything.","options":["read","have read","reads","were reading"],"answer":"reads","answerIndex":2,"difficulty":"hard","explanation":"TRAP: the famous reversal. 'One of the trustees who...' would be plural — but THE ONLY locks the antecedent onto 'one' (Rule 17). Exactly one trustee reads the minutes, so 'reads'. Students who memorised only half the rule pick 'read'.","status":"approved","flags":[],"verified":"ok","verNote":"Rule 17; the-only reversal"},{"id":"RV02H02","section":"VA","format":"fitb","kind":"mcq","passage":"","stem":"Neither the interns nor Kavya was willing to admit that _____ estimate had failed.","options":["her","their","its","our"],"answer":"her","answerIndex":0,"difficulty":"hard","explanation":"TRAP: proximity with a crowd in front. 'Nor' hands agreement to the nearer antecedent — Kavya — so 'her' (Rule 6). The plural 'interns' opens the sentence precisely to make 'their' feel safe.","status":"approved","flags":[],"verified":"ok","verNote":"Rule 6; proximity"},{"id":"RV02H03","section":"VA","format":"fitb","kind":"mcq","passage":"","stem":"Every player and every coach must collect _____ accreditation card in person.","options":["their","his","its","your"],"answer":"his","answerIndex":1,"difficulty":"hard","explanation":"TRAP: an 'and' that does not add. 'Every' before a compound forces you to take them one at a time, so the pronoun stays singular — 'his' (Rule 6). The visible 'and' is bait for 'their'.","status":"approved","flags":[],"verified":"ok","verNote":"Rule 6; every + and"},{"id":"RV02H04","section":"VA","format":"sentence-choice","kind":"mcq","passage":"","stem":"Choose the correctly punctuated sentence.","options":["The chapters, that carry the most weight, were taught first.","The chapters which, carry the most weight, were taught first.","The chapters, which carry the most weight were taught first.","The chapters that carry the most weight were taught first."],"answer":"The chapters that carry the most weight were taught first.","answerIndex":3,"difficulty":"hard","explanation":"TRAP: comma placement doing all the work. Comma + that is never legal; a non-defining clause needs BOTH commas, not one; a comma splitting 'which' from its clause is noise (Rule 13). Only the clean defining 'that' clause survives.","status":"approved","flags":[],"verified":"ok","verNote":"Rule 13; comma kill-rule"},{"id":"RV02H05","section":"VA","format":"fitb","kind":"mcq","passage":"","stem":"The panel shortlisted the candidate _____ everyone believed deserved the seat.","options":["whom","which","who","whose"],"answer":"who","answerIndex":2,"difficulty":"hard","explanation":"TRAP: the inserted clause. Delete 'everyone believed' and the skeleton appears: the candidate ___ deserved the seat — subject of 'deserved', so 'who' (Rule 15). The verb 'believed' right after the blank makes 'whom' irresistible and wrong.","status":"approved","flags":[],"verified":"ok","verNote":"Rule 15; insertion decoy"},{"id":"RV02H06","section":"VA","format":"fitb","kind":"mcq","passage":"","stem":"Offer the wildcard entry to _____ the selectors consider most consistent.","options":["whomever","whoever","whichever","whosoever"],"answer":"whomever","answerIndex":0,"difficulty":"hard","explanation":"TRAP: the mirror of the last question. Inside its own clause, the pronoun is the object — the selectors consider HIM most consistent — so 'whomever' (Rule 15). Students burnt by 'to whoever' questions now over-correct in both directions; only the clause-internal test settles it.","status":"approved","flags":[],"verified":"ok","verNote":"Rule 15; internal object"},{"id":"RV02H07","section":"VA","format":"fitb","kind":"mcq","passage":"","stem":"Attempt only such questions _____ you are completely sure of.","options":["that","as","which","what"],"answer":"as","answerIndex":1,"difficulty":"hard","explanation":"TRAP: beyond the guide. After 'such' (and 'the same'), the relative pronoun is 'as' — 'such questions as you are sure of'. 'That' is the natural-sounding wrong answer. File this with your Hard-level extras: such...as, the same...as.","status":"approved","flags":[],"verified":"ok","verNote":"Beyond-guide trap 1; such...as"},{"id":"RV02H08","section":"VA","format":"fitb","kind":"mcq","passage":"","stem":"Let Ravi and _____ handle the vocabulary round on quiz day.","options":["I","myself","we","me"],"answer":"me","answerIndex":3,"difficulty":"hard","explanation":"TRAP: beyond the guide. 'Let' takes an object — you say 'let me go', never 'let I go' — so 'Let Ravi and me' even though the pair seems to be doing the action. The drop-the-partner test still saves you: 'Let me handle it.'","status":"approved","flags":[],"verified":"ok","verNote":"Beyond-guide trap 2; let + object"},{"id":"RV02H09","section":"VA","format":"sentence-choice","kind":"mcq","passage":"","stem":"Choose the version that formal exam English prefers.","options":["He skipped the mock analysis, which cost him ten marks in the next test.","He skipped the mock analysis, that cost him ten marks in the next test.","He skipped the mock analysis, a lapse that cost him ten marks in the next test.","He skipped the mock analysis, which it cost him ten marks in the next test."],"answer":"He skipped the mock analysis, a lapse that cost him ten marks in the next test.","answerIndex":2,"difficulty":"hard","explanation":"TRAP: the broad 'which'. In the first option, 'which' points at the whole act of skipping — no noun antecedent (Rule 20). Formal rewrites give the idea its own noun: 'a lapse that...'. Comma + that and the double-subject 'which it' fail on sight.","status":"approved","flags":[],"verified":"ok","verNote":"Rule 20; broad reference"},{"id":"RV02H10","section":"VA","format":"fitb","kind":"mcq","passage":"","stem":"The credit for the portal belongs to the students as much as to _____.","options":["me","I","myself","mine"],"answer":"me","answerIndex":0,"difficulty":"hard","explanation":"TRAP: modesty by 'myself'. The reflexive needs a same-person subject in its own clause, and there is none — so plain 'me' after the preposition 'to' (Rules 7 and 11). 'Myself' here is politeness cosplay.","status":"approved","flags":[],"verified":"ok","verNote":"Rules 7 + 11; fake formality"},{"id":"RV02H11","section":"VA","format":"fitb","kind":"mcq","passage":"","stem":"_____ being late for the third time left the panel with no choice.","options":["Him","His","He","Himself"],"answer":"His","answerIndex":1,"difficulty":"hard","explanation":"TRAP: the gerund as subject. 'Being late' is a noun here, and it needs an owner in the possessive: 'His being late... left the panel...' (Rule 10). 'Him being late' is the spoken form that exams exist to punish.","status":"approved","flags":[],"verified":"ok","verNote":"Rule 10; gerund subject"},{"id":"RV02H12","section":"VA","format":"fitb","kind":"mcq","passage":"","stem":"None of the applicants has submitted _____ complete portfolio yet.","options":["their","its","one's","his or her"],"answer":"his or her","answerIndex":3,"difficulty":"hard","explanation":"TRAP: the double agent. Exam English treats 'none' as singular — note the 'has' already conceding it — so the pronoun follows suit: 'his or her' (Rule 4). Choosing 'their' contradicts the verb the sentence already used.","status":"approved","flags":[],"verified":"ok","verNote":"Rule 4; none + verb cue"},{"id":"RV02H13","section":"VA","format":"fitb","kind":"mcq","passage":"","stem":"Most of the criticism lost _____ sting once the clarification was issued.","options":["their","it's","its","his"],"answer":"its","answerIndex":2,"difficulty":"hard","explanation":"TRAP: the reversed chameleon. Students memorise 'most = plural' — but 'most' agrees with the noun after 'of' (Rule 4), and 'criticism' is uncountable and singular. So 'its'.","status":"approved","flags":[],"verified":"ok","verNote":"Rule 4; uncountable"},{"id":"RV02H14","section":"VA","format":"fitb","kind":"mcq","passage":"","stem":"The economist _____ forecasts repeatedly moved the markets is retiring.","options":["whose","who's","whom","which"],"answer":"whose","answerIndex":0,"difficulty":"hard","explanation":"TRAP: the apostrophe impostor. Expand it — 'the economist who is forecasts'? Absurd. Possession is meant, so 'whose' (Rule 22 trap box and cast table). 'Who's' is planted for speed-readers.","status":"approved","flags":[],"verified":"ok","verNote":"whose vs who's"},{"id":"RV02H15","section":"VA","format":"sentence-choice","kind":"mcq","passage":"","stem":"Choose the correct sentence.","options":["Pune is the city where I studied in.","Pune is the city where I studied.","Pune is the city in which I studied in.","Pune is the city that I studied."],"answer":"Pune is the city where I studied.","answerIndex":1,"difficulty":"hard","explanation":"TRAP: the double preposition. 'Where' already contains the 'in' (Rule 16), so 'where...in' and 'in which...in' each carry one preposition too many, while 'that I studied' carries one too few. Only the bare 'where I studied' is balanced.","status":"approved","flags":[],"verified":"ok","verNote":"Rule 16; where swallows in"},{"id":"RV02H16","section":"VA","format":"pair-fitb","kind":"mcq","passage":"","stem":"The two teams, winners of _____ respective zones, congratulated _____ after the final.","options":["its / each other","their / one another","his / one another","their / each other"],"answer":"their / each other","answerIndex":3,"difficulty":"hard","explanation":"TRAP: two decisions, one question. Two teams = plural possessor, so 'their'; two parties congratulating = 'each other', since 'one another' needs three or more (Rules 1 and 12). Every wrong option gets exactly one of the two right — eliminating one error no longer hands you the answer.","status":"approved","flags":[],"verified":"ok","verNote":"Rules 1 + 12; double decision"},{"id":"RV02H17","section":"VA","format":"fitb","kind":"mcq","passage":"","stem":"It is I who _____ answerable for this scheduling error.","options":["is","are","am","was"],"answer":"am","answerIndex":2,"difficulty":"hard","explanation":"TRAP: agreement borrowed through 'who'. The antecedent of 'who' is 'I', and the verb copies its antecedent in person as well as number (Rule 17 extended) — 'I who am answerable'. 'Is' feels natural because 'who is' is frequent; frequency is not grammar.","status":"approved","flags":[],"verified":"ok","verNote":"Rule 17; person agreement"},{"id":"RV02H18","section":"VA","format":"sentence-choice","kind":"mcq","passage":"","stem":"Choose the version with no ambiguity.","options":["After removing the sheets from the folders, file the sheets alphabetically.","After removing the sheets from the folders, file them alphabetically.","After removing the sheets from the folders, file them all alphabetically.","After removing the sheets from the folders, they should be filed alphabetically."],"answer":"After removing the sheets from the folders, file the sheets alphabetically.","answerIndex":0,"difficulty":"hard","explanation":"TRAP: two plural candidates. 'Them' could be the sheets or the folders, and 'them all' merely widens the confusion; the passive version dangles its opening phrase (Rule 19). When both candidates are plural, the pronoun must give way to the noun.","status":"approved","flags":[],"verified":"ok","verNote":"Rule 19; plural vs plural"},{"id":"RV02H19","section":"VA","format":"fitb","kind":"mcq","passage":"","stem":"One should build a word list not merely for marks but for _____ own command of the language.","options":["his","one's","their","your"],"answer":"one's","answerIndex":1,"difficulty":"hard","explanation":"TRAP: the long-distance shift. The sentence opened with 'one', and the British convention that Indian exams follow keeps it 'one...one's' (Rule 22). 'His' is the American line and loses when 'one's' is on the table; 'their' and 'your' shift person outright.","status":"approved","flags":[],"verified":"ok","verNote":"Rule 22; one...one's"},{"id":"RV02H20","section":"VA","format":"pair-fitb","kind":"mcq","passage":"","stem":"The student _____ essay the judges praised was among the few _____ had revised systematically.","options":["who's / whom","whose / whom","whom / who","whose / who"],"answer":"whose / who","answerIndex":3,"difficulty":"hard","explanation":"TRAP: the full-family finale. Blank one shows possession — the essay belongs to the student — so 'whose'; blank two is the subject of 'had revised', so 'who' (Rules 14, 15, and the cast table). Each wrong option corrupts exactly one of the two slots.","status":"approved","flags":[],"verified":"ok","verNote":"Cast table; double decision"}];
+var SCRIPT_URL="https://script.google.com/macros/s/AKfycbx5Ojm_zp4LfsMeelx5e06KNjVH1wfsXdV0keS4407m4FO1HU4EpVb7GKj-ibAsxnspeA/exec";
+var TEST_NAME=CFG.testName, MAX_MARKS=CFG.maxMarks, FILE_NAME=CFG.fileName, SN_KEY=CFG.snKey;
+var NQ=QUESTIONS.length;
+var PIN_REGEX=/^(STU|IMS)\d{10}$/;
+var BLOCK_MSG="This PIN isn't on the active student list. Message Sahil Sir if you think this is a mistake.";
+
+/* ==================== WHITELIST RUNTIME BLOCK (v5 §17) ==================== */
+var WL_PROMISE=fetch("whitelist.json",{cache:"no-store"}).then(function(r){return r.ok?r.json():null}).catch(function(){return null});
+function normalizePin(pin){return String(pin).replace(/\D/g,"").replace(/^0+/,"")}
+async function isWhitelisted(pin,batch){
+ var WL;try{WL=await WL_PROMISE}catch(e){WL=null}
+ if(!WL)return true; /* FAIL-OPEN */
+ try{
+  var bypass=WL.bypass_batches||[];
+  if(bypass.indexOf(batch)!==-1)return true;
+  var norm=normalizePin(pin);
+  var admins=(WL.admin_pins||[]).map(String);
+  if(admins.indexOf(norm)!==-1)return true;
+  if(Array.isArray(WL.pins)){if(WL.pins.map(String).indexOf(norm)!==-1)return true}
+  else if(WL.pins&&typeof WL.pins==="object"){if(Object.prototype.hasOwnProperty.call(WL.pins,norm))return true}
+  return false;
+ }catch(e){return true}
+}
+
+/* ==================== SAFETY NET — retry queue ==================== */
+function snReadJSON(key,fallback){try{var v=localStorage.getItem(key);return v?JSON.parse(v):fallback}catch(e){return fallback}}
+function snWriteJSON(key,val){try{localStorage.setItem(key,JSON.stringify(val))}catch(e){}}
+function snUnqueue(id){var p=snReadJSON("riim_pending",[]);p=p.filter(function(x){return x.id!==id});snWriteJSON("riim_pending",p)}
+function snSendWithQueue(opts){
+ var p=snReadJSON("riim_pending",[]);
+ var id=Date.now()+"-"+Math.random().toString(36).slice(2);
+ p.push({id:id,opts:{method:opts.method,mode:opts.mode,headers:opts.headers,body:opts.body}});
+ snWriteJSON("riim_pending",p);
+ return fetch(SCRIPT_URL,opts).then(function(r){snUnqueue(id);return r});
+}
+function snFlushQueue(){
+ var p=snReadJSON("riim_pending",[]);
+ p.forEach(function(item){fetch(SCRIPT_URL,item.opts).then(function(){snUnqueue(item.id)}).catch(function(){})});
+}
+
+/* ==================== STATE ==================== */
+var studentName="",studentPin="",studentBatch="";
+var currentQ=0,testOver=false,started=false;
+var answers=new Array(NQ).fill(null);
+var questionTimes=new Array(NQ).fill(0);
+var SEC=(CFG.sectional&&CFG.sectional.length)?CFG.sectional:null;
+var secIdx=0,elapsedPrior=0;
+var secondsLeft=SEC?SEC[0].minutes*60:CFG.minutes*60;
+var tickInt=null,qShownTs=0;
+function isMCQ(q){return !!(q.options&&q.options.length)}
+
+/* ==================== SESSION AUTOSAVE / RESUME ==================== */
+function snSaveSession(){
+ if(testOver||!started)return;
+ snWriteJSON(SN_KEY,{file:FILE_NAME,testName:TEST_NAME,name:studentName,pin:studentPin,batch:studentBatch,currentQ:currentQ,answers:answers,questionTimes:questionTimes,secondsLeft:secondsLeft,secIdx:secIdx,elapsedPrior:elapsedPrior,ts:Date.now()});
+}
+function snClearSession(){try{localStorage.removeItem(SN_KEY)}catch(e){}}
+function snTryResume(){
+ var s=snReadJSON(SN_KEY,null);
+ if(!s||s.testName!==TEST_NAME)return false;
+ var answered=(s.answers||[]).filter(function(a){return a!==null&&a!==""}).length;
+ var ok=confirm("You have an unfinished attempt of "+TEST_NAME+" ("+answered+" question(s) answered). Resume where you left off?");
+ if(!ok){snClearSession();return false}
+ studentName=s.name;studentPin=s.pin;studentBatch=s.batch;
+ currentQ=Math.min(s.currentQ||0,NQ-1);
+ if(s.answers&&s.answers.length===NQ)answers=s.answers;
+ if(s.questionTimes&&s.questionTimes.length===NQ)questionTimes=s.questionTimes;
+ if(typeof s.secondsLeft==="number")secondsLeft=Math.max(10,s.secondsLeft);
+ if(SEC){
+  secIdx=Math.min(typeof s.secIdx==="number"?s.secIdx:0,SEC.length-1);
+  elapsedPrior=typeof s.elapsedPrior==="number"?s.elapsedPrior:0;
+  currentQ=Math.max(SEC[secIdx].start,Math.min(SEC[secIdx].end,currentQ));
+ }
+ enterTest();
+ return true;
+}
+
+/* ==================== LOGIN ==================== */
+function showLoginError(msg){var el=document.getElementById("loginErr");el.textContent=msg;el.style.display="block"}
+async function startTest(){
+ var name=document.getElementById("stuName").value.trim();
+ var pinEl=document.getElementById("stuPin");
+ var pin=pinEl.value.trim().toUpperCase();pinEl.value=pin;
+ var batch=document.getElementById("stuBatch").value;
+ if(!name){showLoginError("Please enter your full name.");return}
+ if(!PIN_REGEX.test(pin)){showLoginError("Invalid PIN. Format: STU########## or IMS##########.");return}
+ if(!batch){showLoginError("Please select your batch.");return}
+ var allowed=await isWhitelisted(pin,batch);
+ if(!allowed){showLoginError(BLOCK_MSG);return}
+ studentName=name;studentPin=pin;studentBatch=batch;
+ document.getElementById("loginErr").style.display="none";
+ enterTest();
+}
+function enterTest(){
+ started=true;
+ document.getElementById("loginScreen").style.display="none";
+ document.getElementById("testScreen").style.display="block";
+ buildPalette();
+ updateSecButtons();
+ if(SEC)showSecBanner();
+ tickInt=setInterval(function(){
+  secondsLeft--;
+  var t=document.getElementById("timer");if(t)t.textContent=fmtClock(secondsLeft);
+  if(secondsLeft%10===0)snSaveSession();
+  if(secondsLeft<=0){if(SEC&&secIdx<SEC.length-1)advanceSection();else submitTest()}
+ },1000);
+ renderQuestion();
+ snSaveSession();
+}
+function updateSecButtons(){
+ var eb=document.getElementById("endSecBtn"),sb=document.getElementById("submitBtn");
+ if(!SEC){if(eb)eb.style.display="none";return}
+ var last=secIdx===SEC.length-1;
+ if(eb)eb.style.display=last?"none":"inline-block";
+ if(sb)sb.style.display=last?"inline-block":"none";
+}
+function showSecBanner(){
+ var b=document.getElementById("secBanner");if(!b||!SEC)return;
+ document.getElementById("sbTitle").textContent="SECTION "+(secIdx+1)+" of "+SEC.length+" \u00b7 "+SEC[secIdx].sec;
+ document.getElementById("sbSub").textContent=SEC[secIdx].minutes+" minutes \u00b7 "+(SEC[secIdx].end-SEC[secIdx].start+1)+" questions \u00b7 no return once this section ends";
+ b.style.display="flex";
+ setTimeout(function(){b.style.display="none"},2600);
+}
+function advanceSection(){
+ if(!SEC||secIdx>=SEC.length-1)return;
+ markTime();
+ elapsedPrior+=SEC[secIdx].minutes*60-Math.max(0,secondsLeft);
+ secIdx++;
+ secondsLeft=SEC[secIdx].minutes*60;
+ currentQ=SEC[secIdx].start;
+ buildPalette();updateSecButtons();showSecBanner();
+ renderQuestion();snSaveSession();
+}
+function endSectionEarly(){advanceSection()}
+
+/* ==================== PALETTE (free navigation) ==================== */
+function buildPalette(){
+ var pal=document.getElementById("palette");pal.innerHTML="";
+ var lo=SEC?SEC[secIdx].start:0,hi=SEC?SEC[secIdx].end:NQ-1;
+ for(var i=lo;i<=hi;i++){
+  (function(i){
+   var b=document.createElement("button");b.id="pcell"+i;b.textContent=i+1;
+   b.onclick=function(){jumpTo(i)};
+   pal.appendChild(b);
+  })(i);
+ }
+}
+function paintPalette(){
+ for(var i=0;i<NQ;i++){
+  var c=document.getElementById("pcell"+i);if(!c)continue;
+  c.className="";
+  if(answers[i]!==null&&answers[i]!=="")c.classList.add("done");
+  if(i===currentQ)c.classList.add("cur");
+ }
+}
+
+/* ==================== RENDER + PER-QUESTION TIME ==================== */
+function markTime(){
+ if(qShownTs){questionTimes[currentQ]+=Math.round((Date.now()-qShownTs)/1000)}
+ qShownTs=Date.now();
+}
+function fmtClock(s){s=Math.max(0,s);return String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0")}
+function renderQuestion(){
+ var q=QUESTIONS[currentQ];
+ qShownTs=Date.now();
+ document.getElementById("tbName").textContent=TEST_NAME;
+ var qc=document.getElementById("qCounter");
+ if(SEC){var sp=SEC[secIdx];qc.textContent=sp.sec+" \u00b7 Q "+(currentQ-sp.start+1)+" / "+(sp.end-sp.start+1)}
+ else qc.textContent="Q "+(currentQ+1)+" / "+NQ;
+ document.getElementById("timer").textContent=fmtClock(secondsLeft);
+ document.getElementById("secBadge").textContent=q.section+" \u00b7 "+q.format+" \u00b7 "+q.difficulty+(isMCQ(q)?"":" \u00b7 TITA");
+ var pB=document.getElementById("passageBox");
+ if(q.passage){pB.style.display="block";pB.textContent=q.passage}else{pB.style.display="none"}
+ document.getElementById("qText").textContent=q.stem;
+ renderExhibit(q,document.getElementById("exBox"));
+ var box=document.getElementById("optBox");box.innerHTML="";
+ var letters=["A","B","C","D"];
+ if(isMCQ(q)){
+  q.options.forEach(function(opt,idx){
+   var d=document.createElement("button");
+   d.className="opt"+(answers[currentQ]===idx?" sel":"");
+   d.textContent=letters[idx]+". "+opt;
+   d.onclick=function(){answers[currentQ]=idx;snSaveSession();renderQuestion()};
+   box.appendChild(d);
+  });
+ }else{
+  var inp=document.createElement("input");
+  inp.className="tita";inp.placeholder="Type your answer";
+  inp.value=answers[currentQ]||"";
+  inp.oninput=function(){answers[currentQ]=this.value;snSaveSession();paintPalette()};
+  box.appendChild(inp);
+ }
+ paintPalette();
+}
+function nav(d){markTime();var lo=SEC?SEC[secIdx].start:0,hi=SEC?SEC[secIdx].end:NQ-1;currentQ=Math.max(lo,Math.min(hi,currentQ+d));snSaveSession();renderQuestion()}
+function jumpTo(i){if(SEC&&(i<SEC[secIdx].start||i>SEC[secIdx].end))return;markTime();currentQ=i;snSaveSession();renderQuestion()}
+
+/* ==================== FIG / TABLE EXHIBITS ==================== */
+function renderExhibit(q,host){
+ if(!host)return;host.innerHTML="";
+ if(q.fig){
+  var f=String(q.fig).trim();
+  if(f.slice(0,4).toLowerCase()==="<svg"){var w0=document.createElement("div");w0.className="qFig";w0.innerHTML=f;host.appendChild(w0)}
+  else if(/^(data:image|https?:)/.test(f)){var w=document.createElement("div");w.className="qFig";var im=document.createElement("img");im.src=f;im.alt="figure";w.appendChild(im);host.appendChild(w)}
+ }
+ if(q.table!=null&&q.table!==""){
+  var t=q.table,rows=null,heads=null;
+  if(Array.isArray(t))rows=t;
+  else if(t&&typeof t==="object"&&Array.isArray(t.rows)){rows=t.rows;heads=Array.isArray(t.headers)?t.headers:null}
+  if(rows&&rows.length&&Array.isArray(rows[0])){
+   var tb=document.createElement("table");tb.className="qTable";
+   if(heads){var tr0=document.createElement("tr");heads.forEach(function(hh){var th=document.createElement("th");th.textContent=String(hh);tr0.appendChild(th)});tb.appendChild(tr0)}
+   rows.forEach(function(r){var tr=document.createElement("tr");r.forEach(function(c){var td=document.createElement("td");td.textContent=String(c);tr.appendChild(td)});tb.appendChild(tr)});
+   host.appendChild(tb);
+  }else if(typeof t==="string"&&t.trim().charAt(0)==="<"){
+   var wt=document.createElement("div");wt.className="qTableWrap";wt.innerHTML=t;host.appendChild(wt);
+  }else{
+   var pre=document.createElement("pre");pre.className="qTable";pre.textContent=(typeof t==="string")?t:JSON.stringify(t,null,1);host.appendChild(pre);
+  }
+ }
+}
+/* ==================== SCORING HELPERS ==================== */
+function titaNorm(v){
+ var s=String(v==null?"":v).trim();
+ var t=s.replace(/[\s,]/g,"");
+ if(t!==""&&isFinite(t))return String(Number(t));
+ return s.toLowerCase();
+}
+function isCorrect(q,a){
+ if(a===null||a==="")return false;
+ if(isMCQ(q))return a===q.answerIndex;
+ return titaNorm(a)===titaNorm(q.answer);
+}
+
+/* ==================== MISTAKE BANK (spaced repetition) ==================== */
+function bankMistakes(){
+ try{
+  var bank=snReadJSON("riim_mistakes",[]);
+  var now=Date.now(),DAY=86400000;
+  QUESTIONS.forEach(function(q,i){
+   if(!isMCQ(q))return;
+   var chosen=answers[i];
+   if(chosen===null||chosen===q.answerIndex)return;
+   var k=CFG.bankPrefix+"-Q"+(i+1);
+   var existing=null;
+   for(var j=0;j<bank.length;j++){if(bank[j].k===k){existing=bank[j];break}}
+   if(existing){existing.box=1;existing.due=now+DAY;existing.chosen=chosen}
+   else{bank.push({k:k,stem:(q.passage?q.passage+"\n\n"+q.stem:q.stem),opts:q.options,ans:q.answerIndex,chosen:chosen,exp:q.explanation,sub:q.format,src:TEST_NAME,box:1,due:now+DAY})}
+  });
+  if(bank.length>300)bank=bank.slice(bank.length-300);
+  snWriteJSON("riim_mistakes",bank);
+ }catch(e){}
+}
+
+/* ==================== SUBMIT — 16-field payload ==================== */
+function fmtTime(totalSecs){var m=Math.floor(totalSecs/60);var s=totalSecs%60;return m+":"+(s<10?"0":"")+s}
+function submitTest(){
+ if(testOver)return;
+ testOver=true;
+ clearInterval(tickInt);
+ markTime();
+
+ var correctCount=0,wrongCount=0,skippedCount=0;
+ var sectionErrors={},topicErrorMap={},wrongQuestions=[];
+ var score=0;
+ QUESTIONS.forEach(function(q,i){
+  var a=answers[i];
+  if(a===null||a===""){skippedCount++;return}
+  if(isCorrect(q,a)){correctCount++;score+=CFG.c}
+  else{
+   wrongCount++;
+   score+=(isMCQ(q)?CFG.w:CFG.titaW);
+   wrongQuestions.push(i+1);
+   sectionErrors[q.section]=(sectionErrors[q.section]||0)+1;
+   topicErrorMap[q.format]=(topicErrorMap[q.format]||0)+1;
+  }
+ });
+ var totalSecs=SEC?(elapsedPrior+SEC[secIdx].minutes*60-Math.max(0,secondsLeft)):(CFG.minutes*60-Math.max(0,secondsLeft));
+ var timeTakenStr=fmtTime(totalSecs);
+
+ /* 16-field payload — explicit key:value, topicErrors is field 16 */
+ var payload={
+  testName:TEST_NAME,
+  name:studentName,
+  pin:studentPin,
+  batch:studentBatch,
+  score:score,
+  correct:correctCount,
+  wrong:wrongCount,
+  skipped:skippedCount,
+  maxMarks:MAX_MARKS,
+  timeTaken:timeTakenStr,
+  timestamp:new Date().toLocaleString("en-IN",{timeZone:"Asia/Kolkata"}),
+  sectionErrors:JSON.stringify(sectionErrors),
+  wrongQuestions:JSON.stringify(wrongQuestions),
+  studentAnswers:JSON.stringify(answers),
+  questionTimes:JSON.stringify(questionTimes),
+  topicErrors:JSON.stringify(topicErrorMap)
+ };
+
+ snSendWithQueue({method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain"},body:JSON.stringify(payload)}).catch(function(){});
+
+ bankMistakes();
+
+ try{
+  var res=snReadJSON("riim_results",[]);
+  res.push({testName:TEST_NAME,score:score,correct:correctCount,wrong:wrongCount,skipped:skippedCount,maxMarks:MAX_MARKS,timeTaken:timeTakenStr,ts:Date.now()});
+  if(res.length>200)res=res.slice(res.length-200);
+  snWriteJSON("riim_results",res);
+ }catch(e){}
+
+ snClearSession();
+ showResults(score,correctCount,wrongCount,skippedCount,timeTakenStr,sectionErrors);
+}
+
+/* ==================== RESULTS ==================== */
+function showResults(score,correct,wrong,skipped,timeStr,sectionErrors){
+ document.getElementById("testScreen").style.display="none";
+ document.getElementById("resultsScreen").style.display="block";
+ document.getElementById("resTitle").textContent=TEST_NAME+" \u2014 Results";
+ document.getElementById("resSub").textContent=studentName+" \u00b7 "+studentBatch+" \u00b7 "+new Date().toLocaleString("en-IN",{timeZone:"Asia/Kolkata"});
+ document.getElementById("stScore").textContent=score;
+ document.getElementById("stMaxL").textContent="SCORE / "+MAX_MARKS;
+ document.getElementById("stCorrect").textContent=correct;
+ document.getElementById("stWrong").textContent=wrong;
+ document.getElementById("stSkipped").textContent=skipped;
+ document.getElementById("stTime").textContent=timeStr;
+ var secParts=[];
+ for(var sk in sectionErrors){if(sectionErrors.hasOwnProperty(sk))secParts.push(sk+": "+sectionErrors[sk])}
+ document.getElementById("secErrBox").innerHTML="<b>Section errors</b> \u2014 "+(secParts.length?secParts.join(" \u00b7 "):"None");
+
+ var letters=["A","B","C","D"];
+ var box=document.getElementById("reviewBox");box.innerHTML="";
+ QUESTIONS.forEach(function(q,i){
+  var a=answers[i];
+  var skippedQ=(a===null||a==="");
+  var ok=isCorrect(q,a);
+  var wrap=document.createElement("div");wrap.className="rq";
+  var head=document.createElement("div");head.className="rqHead";
+  var status=skippedQ?"<span class='status sk'>SKIPPED</span>":ok?"<span class='status ok'>CORRECT</span>":"<span class='status no'>WRONG</span>";
+  head.innerHTML="Q"+(i+1)+" \u00b7 "+q.section+" \u00b7 "+q.format+status;
+  wrap.appendChild(head);
+  if(q.passage&&(i===0||QUESTIONS[i-1].passage!==q.passage)){
+   var pv=document.createElement("div");pv.className="rqStem";
+   pv.style.fontStyle="italic";pv.style.opacity=".85";
+   pv.textContent="Passage: "+q.passage;
+   wrap.appendChild(pv);
+  }
+  var stem=document.createElement("div");stem.className="rqStem";stem.textContent=q.stem;wrap.appendChild(stem);
+  var exh=document.createElement("div");renderExhibit(q,exh);if(exh.childNodes.length)wrap.appendChild(exh);
+  if(isMCQ(q)){
+   q.options.forEach(function(opt,idx){
+    var r=document.createElement("div");r.className="ropt";
+    if(idx===q.answerIndex)r.classList.add("correct");
+    else if(idx===a)r.classList.add("wrong");
+    var l=document.createElement("div");l.textContent=letters[idx];
+    var t=document.createElement("div");t.textContent=opt;
+    r.appendChild(l);r.appendChild(t);
+    wrap.appendChild(r);
+   });
+  }else{
+   var yr=document.createElement("div");yr.className="ropt"+(skippedQ?"":(ok?" correct":" wrong"));
+   yr.textContent="Your answer: "+(skippedQ?"\u2014":a);
+   wrap.appendChild(yr);
+   var kr=document.createElement("div");kr.className="ropt correct";
+   kr.textContent="Key: "+q.answer;
+   wrap.appendChild(kr);
+  }
+  var exp=document.createElement("div");exp.className="exp";
+  exp.innerHTML="<b>Explanation:</b> ";
+  exp.appendChild(document.createTextNode(q.explanation||""));
+  wrap.appendChild(exp);
+  box.appendChild(wrap);
+ });
+ window.scrollTo(0,0);
+}
+
+/* ==================== DOWNLOAD PDF ==================== */
+function downloadPDF(){
+ var jsPDFctor=(window.jspdf&&window.jspdf.jsPDF)||window.jsPDF;
+ if(!jsPDFctor){alert("PDF library failed to load. Please check your connection and try again.");return}
+ var doc=new jsPDFctor({unit:"pt",format:"a4"});
+ var pageW=doc.internal.pageSize.getWidth();
+ var pageH=doc.internal.pageSize.getHeight();
+ var margin=40,y=margin;
+ var letters=["A","B","C","D"];
+ function newPageIfNeeded(h){if(y+h>pageH-margin){doc.addPage();y=margin}}
+ function writeWrapped(text,x,maxW,size,style){
+  doc.setFont("helvetica",style||"normal");doc.setFontSize(size);
+  var lines=doc.splitTextToSize(text,maxW);
+  for(var i=0;i<lines.length;i++){newPageIfNeeded(size+4);doc.text(lines[i],x,y);y+=size+4}
+ }
+ doc.setFont("helvetica","bold");doc.setFontSize(16);doc.setTextColor(13,27,42);
+ doc.text("ROAD TO IIM",margin,y);y+=20;
+ doc.setFontSize(13);doc.setTextColor(201,168,76);
+ doc.text(TEST_NAME,margin,y);y+=18;
+ doc.setFont("helvetica","normal");doc.setFontSize(10);doc.setTextColor(60,60,60);
+ var dateStr=new Date().toLocaleString("en-IN",{timeZone:"Asia/Kolkata"});
+ doc.text(studentName+" \u00b7 "+studentBatch+" \u00b7 "+dateStr,margin,y);y+=16;
+ doc.setDrawColor(201,168,76);doc.line(margin,y,pageW-margin,y);y+=16;
+ doc.setTextColor(0,0,0);doc.setFont("helvetica","bold");doc.setFontSize(11);
+ doc.text("Summary",margin,y);y+=14;
+ doc.setFont("helvetica","normal");doc.setFontSize(10);
+ var summary="Score: "+document.getElementById("stScore").textContent+" / "+MAX_MARKS+"   \u00b7   Correct: "+document.getElementById("stCorrect").textContent+"   \u00b7   Wrong: "+document.getElementById("stWrong").textContent+"   \u00b7   Skipped: "+document.getElementById("stSkipped").textContent+"   \u00b7   Time: "+document.getElementById("stTime").textContent;
+ writeWrapped(summary,margin,pageW-2*margin,10);y+=4;
+ var secErrText=(document.getElementById("secErrBox").textContent||"").replace(/\s+/g," ").trim();
+ if(secErrText){writeWrapped(secErrText,margin,pageW-2*margin,10);y+=6}
+ doc.setDrawColor(200,200,200);doc.line(margin,y,pageW-margin,y);y+=14;
+ doc.setFont("helvetica","bold");doc.setFontSize(12);doc.setTextColor(13,27,42);
+ doc.text("Question Review",margin,y);y+=16;
+ QUESTIONS.forEach(function(q,i){
+  var a=answers[i];
+  var skippedQ=(a===null||a==="");
+  var ok=isCorrect(q,a);
+  var statusLabel=skippedQ?"SKIPPED":(ok?"CORRECT":"WRONG");
+  newPageIfNeeded(60);
+  doc.setFont("helvetica","bold");doc.setFontSize(10);doc.setTextColor(13,27,42);
+  doc.text("Q"+(i+1)+"  \u00b7  "+q.section+" \u00b7 "+q.format+"   ["+statusLabel+"]",margin,y);y+=12;
+  if(q.passage&&(i===0||QUESTIONS[i-1].passage!==q.passage)){
+   doc.setTextColor(90,90,90);
+   writeWrapped("Passage: "+q.passage,margin,pageW-2*margin,8,"italic");y+=2;
+  }
+  doc.setTextColor(0,0,0);
+  writeWrapped(q.stem,margin,pageW-2*margin,10,"normal");y+=2;
+  if(q.table!=null&&q.table!==""){
+   var trows=Array.isArray(q.table)?q.table:(q.table&&Array.isArray(q.table.rows)?(Array.isArray(q.table.headers)?[q.table.headers].concat(q.table.rows):q.table.rows):null);
+   doc.setTextColor(40,40,40);
+   if(trows){trows.forEach(function(r){writeWrapped(Array.isArray(r)?r.map(String).join("  |  "):String(r),margin+12,pageW-2*margin-12,8.5,"normal")})}
+   else{
+    var ttxt=String(q.table);
+    if(ttxt.trim().charAt(0)==="<")ttxt=ttxt.replace(new RegExp("</tr>","gi"),"\n").replace(new RegExp("</t[dh]>","gi"),"  |  ").replace(new RegExp("<[^>]+>","g")," ").replace(new RegExp("&amp;","g"),"&").replace(new RegExp("&nbsp;","g")," ");
+    ttxt.split("\n").forEach(function(ln){ln=ln.replace(new RegExp("[ ]+","g")," ").trim();if(ln)writeWrapped(ln,margin+12,pageW-2*margin-12,8.5,"normal")});
+   }
+   doc.setTextColor(0,0,0);y+=2;
+  }
+  if(q.fig){doc.setTextColor(120,120,120);writeWrapped("[Figure \u2014 shown in the on-screen review]",margin+12,pageW-2*margin-12,8.5,"italic");doc.setTextColor(0,0,0)}
+  if(isMCQ(q)){
+   q.options.forEach(function(opt,idx){
+    var marker="";
+    if(idx===q.answerIndex)marker="  \u2713 correct";
+    else if(idx===a)marker="  \u2717 your choice";
+    if(idx===q.answerIndex)doc.setTextColor(30,120,60);
+    else if(idx===a)doc.setTextColor(180,50,50);
+    else doc.setTextColor(60,60,60);
+    writeWrapped(letters[idx]+")  "+opt+marker,margin+12,pageW-2*margin-12,10,"normal");
+   });
+  }else{
+   doc.setTextColor(skippedQ?120:(ok?30:180),skippedQ?120:(ok?120:50),skippedQ?120:(ok?60:50));
+   writeWrapped("Your answer: "+(skippedQ?"-":a),margin+12,pageW-2*margin-12,10,"normal");
+   doc.setTextColor(30,120,60);
+   writeWrapped("Key: "+q.answer,margin+12,pageW-2*margin-12,10,"normal");
+  }
+  doc.setTextColor(0,0,0);y+=2;
+  doc.setFont("helvetica","bold");doc.setFontSize(9);
+  newPageIfNeeded(14);
+  doc.text("Explanation:",margin,y);y+=11;
+  doc.setFont("helvetica","normal");doc.setFontSize(9);
+  writeWrapped(q.explanation||"",margin,pageW-2*margin,9,"normal");
+  y+=10;
+  doc.setDrawColor(230,230,230);
+  newPageIfNeeded(6);
+  doc.line(margin,y,pageW-margin,y);y+=12;
+ });
+ var safeName=(studentName||"student").replace(/[^A-Za-z0-9]+/g,"_").slice(0,40);
+ var d=new Date();
+ var dateTag=d.getFullYear()+String(d.getMonth()+1).padStart(2,"0")+String(d.getDate()).padStart(2,"0");
+ doc.save(CFG.bankPrefix+"_"+safeName+"_"+dateTag+".pdf");
+}
+
+/* ==================== PAGE LOAD ==================== */
+document.getElementById("lgTitle").textContent=TEST_NAME;
+var lgTime=SEC?(SEC.map(function(p){return p.sec+" "+p.minutes+"m"}).join(" \u2192 ")+" \u00b7 sectional lock \u00b7 no return"):(CFG.minutes+" minutes \u00b7 "+(CFG.navNote||"free navigation"));
+document.getElementById("lgMeta").innerHTML=NQ+" questions \u00b7 +"+CFG.c+" / "+CFG.w+(CFG.hasTita?" \u00b7 TITA wrong "+CFG.titaW:"")+" \u00b7 Max "+MAX_MARKS+"<br>"+lgTime+" \u00b7 auto-submit at 00:00";
+document.getElementById("loginBtn").addEventListener("click",startTest);
+snFlushQueue();
+snTryResume();
+</script>
+</body>
+</html>
