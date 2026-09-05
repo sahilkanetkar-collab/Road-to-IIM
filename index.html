@@ -264,6 +264,10 @@ svg.wires path.lit{stroke:rgba(111,195,154,.35);}
 .leaf .score{color:var(--done);font-weight:700;}
 .badge-new{font-size:.6rem;font-weight:700;letter-spacing:.08em;color:var(--gold);border:1px solid rgba(217,185,106,.5);border-radius:4px;padding:1px 5px;margin-left:4px;}
 .badge-invite{font-size:.6rem;font-weight:700;letter-spacing:.08em;color:var(--gold-deep);border:1px solid rgba(184,137,46,.55);border-radius:4px;padding:1px 5px;margin-left:4px;background:rgba(184,137,46,.08);}
+.badge-live{font-size:.6rem;font-weight:700;letter-spacing:.08em;color:var(--sky-deep);background:var(--gold);border:1px solid var(--gold);border-radius:4px;padding:1px 6px;margin-left:4px;animation:liveGlow 2.2s ease-in-out infinite;}
+.leaf.featured{background:rgba(217,185,106,.08);border:1px solid rgba(217,185,106,.45);border-radius:10px;}
+.leaf.featured .dot{border-color:var(--gold);box-shadow:0 0 14px rgba(217,185,106,.75);}
+@keyframes liveGlow{0%,100%{box-shadow:0 0 0 0 rgba(217,185,106,0)}50%{box-shadow:0 0 12px 2px rgba(217,185,106,.55)}}
 .leaf-divider{
   grid-column:1/-1;display:flex;align-items:center;gap:10px;
   padding:14px 4px 6px;font-size:.66rem;font-weight:700;letter-spacing:.14em;color:var(--done);
@@ -410,6 +414,7 @@ const MANIFEST = [
       {t:"UGAT Mock 002", url:"ugat_iimb_UGAT_Mock_002.html", sheetName:"UGAT Mock 002", invite:true},
       {t:"UGAT Mock 003", url:"ugat_iimb_UGAT_Mock_003.html", sheetName:"UGAT Mock 003", invite:true},
       {t:"UGAT Mock 004", url:"ugat_iimb_UGAT_Mock_004.html", sheetName:"UGAT Mock 004", isNew:true, invite:true},
+      {t:"IPMAT Indore 01 · Full Mock", url:"ipmat_indore_IPMAT_Indore_01_Full_Consolidated_Test.html", sheetName:"IPMAT Indore 01 — Full Consolidated Test", isNew:true, featured:true, windowed:true, windowNote:"Open to all · Live Mon 7 Sep 12:00 AM → Thu 10 Sep 12:00 AM IST"},
     ]},
   { id:"rc", name:"RC Series & Drills", desc:"Passages, alerts, skeletons",
     tests:[
@@ -513,7 +518,7 @@ let openId=MANIFEST[0].id, PROFILE=null, PIN=null;
 function famProgress(fam){
   /* invite-only tests count only once done — they never appear as a missing star
      for students who aren't on the list */
-  const trackable=fam.tests.filter(t=>!t.soon && (!t.invite || isDone(t,PROFILE).done));
+  const trackable=fam.tests.filter(t=>!t.soon && ((!t.invite && !t.windowed) || isDone(t,PROFILE).done));
   const done=trackable.filter(t=>isDone(t,PROFILE).done).length;
   return {done, total:trackable.length};
 }
@@ -580,19 +585,20 @@ function render(){
   /* incomplete first (NEW floats to top), then a Lit divider, then done */
   const withState=fam.tests.map(t=>({t, st:isDone(t,PROFILE)}));
   const unlit=withState.filter(x=>!x.st.done);
-  unlit.sort((a,b)=>(b.t.isNew?1:0)-(a.t.isNew?1:0));
+  unlit.sort((a,b)=>((b.t.featured?2:0)+(b.t.isNew?1:0))-((a.t.featured?2:0)+(a.t.isNew?1:0)));
   const lit=withState.filter(x=>x.st.done);
 
   let i=0;
   const addLeaf=(test,st)=>{
     const l=document.createElement('button');
-    l.className='leaf'+(st.done?' done':'')+(test.isNew&&!st.done?' new':'');
+    l.className='leaf'+(st.done?' done':'')+(test.isNew&&!st.done?' new':'')+(test.featured&&!st.done?' featured':'');
     l.style.setProperty('--i',i++);
     const scoreBit = st.done && typeof st.best==='number' ? ` · <span class="score">${st.best}</span>` : '';
-    const sub = test.invite&&!st.done ? "Invite-only · access checked at login"
+    const sub = test.windowNote&&!st.done ? test.windowNote
+              : test.invite&&!st.done ? "Invite-only · access checked at login"
               : test.soon ? 'Open anytime · tracking coming soon'
               : (st.done?'Best'+scoreBit:'Not yet lit');
-    const badges=(test.isNew&&!st.done?' <span class="badge-new">NEW</span>':'')+(test.invite?' <span class="badge-invite">INVITE</span>':'');
+    const badges=(test.featured&&!st.done?' <span class="badge-live">★ LIVE</span>':'')+(test.isNew&&!st.done?' <span class="badge-new">NEW</span>':'')+(test.invite?' <span class="badge-invite">INVITE</span>':'');
     l.innerHTML=`<span class="dot"></span><span class="lbl">${test.t}${badges}<span class="sub">${sub}</span></span>`;
     l.addEventListener('click',()=>{ if(test.url){ location.href = PORTAL_BASE + test.url; } });
     leavesEl.appendChild(l);
