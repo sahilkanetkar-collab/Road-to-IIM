@@ -144,7 +144,7 @@ function stemHTML(s){if(!s)return "";var t=s.replace(/&/g,"&amp;").replace(/</g,
 var BLOCK_MSG="This PIN isn't on the active student list. Message Sahil Sir if you think this is a mistake.";
 
 /* ==================== AVAILABILITY WINDOW (IST) ==================== */
-/* ON HOLD — go-live deactivated. Restore real epochs to re-arm. */
+/* ON HOLD — go-live deactivated 6 Sep 2026. Restore real epochs to re-arm. */
 var WINDOW={openUTC:Date.UTC(2099,0,1,18,30,0),closeUTC:Date.UTC(2099,0,2,18,30,0)};
 function windowState(){var n=Date.now();return n<WINDOW.openUTC?"before":(n>=WINDOW.closeUTC?"closed":"open")}
 function fmtIST(utcMs){return new Date(utcMs).toLocaleString("en-IN",{timeZone:"Asia/Kolkata",weekday:"short",day:"numeric",month:"short",hour:"numeric",minute:"2-digit",hour12:true})}
