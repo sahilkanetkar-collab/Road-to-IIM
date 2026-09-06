@@ -144,8 +144,8 @@ function stemHTML(s){if(!s)return "";var t=s.replace(/&/g,"&amp;").replace(/</g,
 var BLOCK_MSG="This PIN isn't on the active student list. Message Sahil Sir if you think this is a mistake.";
 
 /* ==================== AVAILABILITY WINDOW (IST) ==================== */
-/* Live: Mon 7 Sep 2026 00:00 IST -> Thu 10 Sep 2026 00:00 IST (UTC+5:30) */
-var WINDOW={openUTC:Date.UTC(2026,8,6,18,30,0),closeUTC:Date.UTC(2026,8,9,18,30,0)};
+/* ON HOLD — go-live deactivated. Restore real epochs to re-arm. */
+var WINDOW={openUTC:Date.UTC(2099,0,1,18,30,0),closeUTC:Date.UTC(2099,0,2,18,30,0)};
 function windowState(){var n=Date.now();return n<WINDOW.openUTC?"before":(n>=WINDOW.closeUTC?"closed":"open")}
 function fmtIST(utcMs){return new Date(utcMs).toLocaleString("en-IN",{timeZone:"Asia/Kolkata",weekday:"short",day:"numeric",month:"short",hour:"numeric",minute:"2-digit",hour12:true})}
 function applyWindowGate(){
@@ -155,8 +155,8 @@ function applyWindowGate(){
  if(!bn||!btn)return st;
  if(st==="before"){
   bn.style.display="block";bn.className="winBanner soon";
-  bn.innerHTML="\u2605 FEATURED \u00b7 Goes live "+fmtIST(WINDOW.openUTC)+" IST \u00b7 open till "+fmtIST(WINDOW.closeUTC)+" IST";
-  btn.disabled=true;btn.style.opacity=".45";btn.textContent="OPENS "+fmtIST(WINDOW.openUTC).toUpperCase();
+  bn.innerHTML="\u2605 This mock is currently on hold \u2014 the new window will be announced on the portal.";
+  btn.disabled=true;btn.style.opacity=".45";btn.textContent="NOT YET LIVE";
  }else if(st==="closed"){
   bn.style.display="block";bn.className="winBanner over";
   bn.textContent="This test window has closed ("+fmtIST(WINDOW.openUTC)+" \u2192 "+fmtIST(WINDOW.closeUTC)+" IST).";
