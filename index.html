@@ -383,7 +383,8 @@ const MANIFEST = [
   { id:"challenge", name:"Challenge Series", desc:"Limited-window mocks · real exam patterns",
     tests:[
       {t:"UGAT-B VA Challenge", url:"RoadToIIM_UGATB_VA_ChallengeMock.html", sheetName:"UGAT-B VA Challenge Mock"},
-      {t:"IPMATind VA Challenge", url:"RoadToIIM_IPMATind_VA_ChallengeMock.html", sheetName:"IPMATind VA Challenge Mock", isNew:true},
+      {t:"IPMATind VA Challenge", url:"RoadToIIM_IPMATind_VA_ChallengeMock.html", sheetName:"IPMATind VA Challenge Mock"},
+      {t:"IPMATind 01 VA Challenge", url:"ipmat_indore_va_challenge_mock_01.html", sheetName:"IPMAT Indore 01 VA Challenge Mock", featured:true, windowed:true, isNew:true},
     ]},
   { id:"rapid", name:"Rapid Fire", desc:"Short bursts, no feedback till the end",
     tests:[
@@ -408,12 +409,6 @@ const MANIFEST = [
       {t:"RV02 Pronouns · Easy",   url:"ipmat_indore_RV02_Pronouns_Easy.html",   sheetName:"RV02 Pronouns \u2014 Easy",   isNew:true},
       {t:"RV02 Pronouns · Medium", url:"ipmat_indore_RV02_Pronouns_Medium.html", sheetName:"RV02 Pronouns \u2014 Medium", isNew:true},
       {t:"RV02 Pronouns · Hard",   url:"ipmat_indore_RV02_Pronouns_Hard.html",   sheetName:"RV02 Pronouns \u2014 Hard",   isNew:true},
-    ]},
-  { id:"gogetters", name:"Go Getters", desc:"Invite-only full-length mocks · real exam specs",
-    tests:[
-      {t:"UGAT Mock 002", url:"ugat_iimb_UGAT_Mock_002.html", sheetName:"UGAT Mock 002", invite:true},
-      {t:"UGAT Mock 003", url:"ugat_iimb_UGAT_Mock_003.html", sheetName:"UGAT Mock 003", invite:true},
-      {t:"UGAT Mock 004", url:"ugat_iimb_UGAT_Mock_004.html", sheetName:"UGAT Mock 004", isNew:true, invite:true},
     ]},
   { id:"rc", name:"RC Series & Drills", desc:"Passages, alerts, skeletons",
     tests:[
@@ -701,6 +696,12 @@ const EVENTS = [
     url:"RoadToIIM_IPMATind_VA_ChallengeMock.html",
     opensAt: Date.UTC(2026,7,20,18,30,0),   /* Fri 21 Aug 2026, 00:00 IST */
     closesAt: Date.UTC(2026,7,23,18,30,0)   /* Mon 24 Aug 2026, 00:00 IST */
+  },
+  { t:"IPMAT Indore 01 VA Challenge Mock",
+    sub:"IPMAT Indore VARC section \u00b7 45 Qs \u00b7 40 min \u00b7 +4/\u22121",
+    url:"ipmat_indore_va_challenge_mock_01.html",
+    opensAt: Date.UTC(2026,8,8,18,30,0),    /* Wed 9 Sep 2026, 00:00 IST */
+    closesAt: Date.UTC(2026,8,11,18,30,0)   /* Sat 12 Sep 2026, 00:00 IST */
   }
 
 ];
