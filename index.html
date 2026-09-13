@@ -384,7 +384,7 @@ const MANIFEST = [
     tests:[
       {t:"UGAT-B VA Challenge", url:"RoadToIIM_UGATB_VA_ChallengeMock.html", sheetName:"UGAT-B VA Challenge Mock"},
       {t:"IPMATind VA Challenge", url:"RoadToIIM_IPMATind_VA_ChallengeMock.html", sheetName:"IPMATind VA Challenge Mock"},
-      {t:"IPMATind 01 VA Challenge", url:"ipmat_indore_va_challenge_mock_01.html", sheetName:"IPMAT Indore 01 VA Challenge Mock", featured:true, windowed:true, isNew:true},
+      {t:"IPMATind 01 VA Challenge", url:"ipmat_indore_va_challenge_mock_01.html", sheetName:"IPMAT Indore 01 VA Challenge Mock", windowed:true, isNew:true},
     ]},
   { id:"rapid", name:"Rapid Fire", desc:"Short bursts, no feedback till the end",
     tests:[
@@ -746,5 +746,6 @@ setInterval(updateEventCard,1000);
 updateEventCard();
 
 </script>
+<script>/* RIIM usage ping v1 */try{var _p="";try{_p=localStorage.getItem("riim_pin")||""}catch(_){}fetch("https://script.google.com/macros/s/AKfycbx5Ojm_zp4LfsMeelx5e06KNjVH1wfsXdV0keS4407m4FO1HU4EpVb7GKj-ibAsxnspeA/exec?action=ping&type=visit&page=home&pin="+encodeURIComponent(_p),{mode:"no-cors"});}catch(_){}</script>
 </body>
 </html>

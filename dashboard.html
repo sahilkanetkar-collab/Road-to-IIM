@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Progress · Road to IIM</title>
+<style>
+:root{--navy:#0d1b2a;--navy2:#13233a;--gold:#c9a84c;--gold-soft:rgba(201,168,76,.14);--ink:#e8eef6;--dim:#8fa3ba;--green:#4caf7d;--red:#e06c6c;}
+*{box-sizing:border-box;margin:0;padding:0;font-family:Georgia,'Times New Roman',serif;}
+body{background:var(--navy);color:var(--ink);min-height:100vh;}
+.mono{font-family:'Courier New',monospace;}
+.wrap{max-width:900px;margin:0 auto;padding:28px 18px 60px;}
+header{text-align:center;margin-bottom:26px;}
+header h1{color:var(--gold);letter-spacing:.16em;font-size:1.35rem;font-weight:normal;}
+header .sub{color:var(--dim);font-size:.85rem;margin-top:6px;letter-spacing:.06em;}
+.card{background:var(--navy2);border:1px solid rgba(201,168,76,.25);border-radius:12px;padding:20px;margin-bottom:18px;}
+/* login */
+#loginCard{max-width:380px;margin:60px auto;}
+#loginCard label{display:block;color:var(--dim);font-size:.8rem;margin-bottom:6px;letter-spacing:.08em;}
+#pinInput{width:100%;padding:11px 12px;border-radius:8px;border:1px solid rgba(201,168,76,.4);background:var(--navy);color:var(--ink);font-size:1rem;letter-spacing:.12em;}
+#pinInput:focus{outline:none;border-color:var(--gold);}
+#goBtn{width:100%;margin-top:14px;padding:12px;border:none;border-radius:8px;background:var(--gold);color:var(--navy);font-size:1rem;letter-spacing:.1em;cursor:pointer;}
+#goBtn:disabled{opacity:.5;cursor:wait;}
+#loginErr{color:var(--red);font-size:.85rem;margin-top:10px;min-height:1.2em;text-align:center;}
+/* summary */
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;}
+.stat{background:var(--navy);border:1px solid rgba(201,168,76,.2);border-radius:10px;padding:14px;text-align:center;}
+.stat .v{color:var(--gold);font-size:1.5rem;}
+.stat .k{color:var(--dim);font-size:.72rem;letter-spacing:.1em;margin-top:5px;text-transform:uppercase;}
+h2.sec{color:var(--gold);font-size:.95rem;letter-spacing:.14em;text-transform:uppercase;font-weight:normal;margin:26px 0 12px;}
+/* chart */
+#chartBox svg{width:100%;height:auto;display:block;}
+.legend{color:var(--dim);font-size:.75rem;text-align:right;margin-top:6px;letter-spacing:.05em;}
+/* topics */
+.topicRow{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
+.topicRow .tname{flex:0 0 46%;font-size:.86rem;color:var(--ink);}
+.topicRow .bar{flex:1;height:10px;background:rgba(255,255,255,.06);border-radius:5px;overflow:hidden;}
+.topicRow .fill{height:100%;background:var(--red);border-radius:5px;}
+.topicRow .cnt{flex:0 0 46px;text-align:right;color:var(--dim);font-size:.8rem;}
+/* table */
+table{width:100%;border-collapse:collapse;font-size:.84rem;}
+th{color:var(--gold);text-align:left;padding:8px 6px;border-bottom:1px solid rgba(201,168,76,.35);font-weight:normal;letter-spacing:.06em;font-size:.76rem;text-transform:uppercase;}
+td{padding:9px 6px;border-bottom:1px solid rgba(255,255,255,.06);}
+tr.retake td{color:var(--dim);font-style:italic;}
+.pos{color:var(--green);} .neg{color:var(--red);}
+.note{color:var(--dim);font-size:.78rem;margin-top:8px;line-height:1.5;}
+#topRight{text-align:right;margin-bottom:8px;}
+#logout{background:none;border:1px solid rgba(201,168,76,.4);color:var(--dim);border-radius:6px;padding:5px 12px;font-size:.75rem;cursor:pointer;letter-spacing:.08em;}
+#dash{display:none;}
+.empty{text-align:center;color:var(--dim);padding:30px 10px;line-height:1.7;}
+@media(max-width:560px){.topicRow .tname{flex-basis:52%;font-size:.8rem;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>ROAD TO IIM</h1>
+  <div class="sub">My Progress Dashboard</div>
+</header>
+
+<div class="card" id="loginCard">
+  <label for="pinInput">ENTER YOUR PIN</label>
+  <input id="pinInput" class="mono" autocomplete="off" placeholder="e.g. STU1234">
+  <button id="goBtn">View My Progress</button>
+  <div id="loginErr"></div>
+</div>
+
+<div id="dash">
+  <div id="topRight"><span id="whoami" class="mono" style="color:var(--dim);font-size:.8rem;margin-right:12px;"></span><button id="logout">Switch PIN</button></div>
+
+  <div class="grid" id="statGrid"></div>
+
+  <h2 class="sec">Score Trend</h2>
+  <div class="card" id="chartBox"></div>
+
+  <h2 class="sec">Where You Lose Marks</h2>
+  <div class="card" id="topicBox"></div>
+
+  <h2 class="sec">All Attempts</h2>
+  <div class="card" style="overflow-x:auto;">
+    <table id="attTable"><thead><tr>
+      <th>Test</th><th>Date</th><th>Score</th><th>Accuracy</th><th>Time</th>
+    </tr></thead><tbody></tbody></table>
+    <div class="note">Retakes are shown in italics. Stats and trend use your FIRST attempt at each test, matching the leaderboard rule.</div>
+  </div>
+</div>
+</div>
+
+<script>
+const API="https://script.google.com/macros/s/AKfycbx5Ojm_zp4LfsMeelx5e06KNjVH1wfsXdV0keS4407m4FO1HU4EpVb7GKj-ibAsxnspeA/exec";
+
+const $=id=>document.getElementById(id);
+const norm=s=>String(s||'').toLowerCase().replace(/[^a-z0-9]/g,'');
+
+function field(row,name){ // header-agnostic lookup
+  const want=norm(name);
+  for(const k in row){ if(norm(k)===want) return row[k]; }
+  return undefined;
+}
+const num=v=>{const n=parseFloat(v);return isNaN(n)?0:n;};
+
+function parseTs(v){
+  if(v===undefined||v===null||v==='')return null;
+  const d=new Date(v); if(!isNaN(d.getTime()))return d;
+  const n=parseFloat(v); if(!isNaN(n)&&n>1e11)return new Date(n);
+  return null;
+}
+function fmtDate(d){return d?d.toLocaleDateString('en-IN',{day:'numeric',month:'short'}):'--';}
+function fmtTime(sec){sec=Math.round(num(sec));if(sec<=0)return'--';const m=Math.floor(sec/60),s=sec%60;return m+'m '+String(s).padStart(2,'0')+'s';}
+function parseDur(v){ // seconds from: number, "845", "22 mins", or Sheets 1899 duration serial
+  if(v===undefined||v===null||v==='')return 0;
+  if(typeof v==='number')return v>0?Math.round(v):0;
+  const s=String(v).trim();
+  if(/^\d+(\.\d+)?$/.test(s))return Math.round(parseFloat(s));
+  const mMin=s.match(/^(\d+)\s*min/i); if(mMin)return parseInt(mMin[1],10)*60;
+  const d=new Date(s);
+  if(!isNaN(d.getTime())){
+    if(d.getUTCFullYear()<1970){ // Sheets duration serial: read hh:mm:ss from the STRING
+      const tm=s.match(/(\d{1,2}):(\d{2}):(\d{2})/); // (timezone-safe: getHours() would shift by the 1899 GMT+0521 offset)
+      if(!tm)return 0;
+      const h=+tm[1],m=+tm[2],sec=+tm[3];
+      return sec===0 ? h*60+m : h*3600+m*60+sec; // clients sent mm:ss, Sheets stored as hh:mm
+    }
+    return 0; // a real calendar date is not a duration
+  }
+  return 0;
+}
+
+function parseTopicErrors(raw){ // defensive: object of counts | array of strings | array of objects
+  const out={};
+  if(!raw)return out;
+  let v=raw;
+  if(typeof v==='string'){try{v=JSON.parse(v);}catch(e){return out;}}
+  const add=(k,n)=>{k=String(k).trim();if(!k)return;out[k]=(out[k]||0)+n;};
+  if(Array.isArray(v)){
+    v.forEach(it=>{
+      if(typeof it==='string')add(it,1);
+      else if(it&&typeof it==='object'){
+        const t=it.topic||it.tag||it.area||it.name;
+        const c=num(it.count||it.errors||it.wrong||1)||1;
+        if(t)add(t,c);
+      }
+    });
+  }else if(v&&typeof v==='object'){
+    for(const k in v){const n=num(v[k]);add(k,n>0?n:1);}
+  }
+  return out;
+}
+
+/* ---------- login flow ---------- */
+$('goBtn').onclick=()=>load($('pinInput').value.trim());
+$('pinInput').addEventListener('keydown',e=>{if(e.key==='Enter')load($('pinInput').value.trim());});
+$('logout').onclick=()=>{ $('dash').style.display='none'; $('loginCard').style.display='block'; $('pinInput').value=''; $('pinInput').focus(); };
+
+(function(){let saved=null;try{saved=localStorage.getItem('riim_pin');}catch(e){}
+ if(saved){$('pinInput').value=saved;} })();
+
+async function load(pin){
+  if(!pin){$('loginErr').textContent='Please enter your PIN.';return;}
+  $('loginErr').textContent='';$('goBtn').disabled=true;$('goBtn').textContent='Loading...';
+  try{
+    const res=await fetch(API+'?action=getStudentData&pin='+encodeURIComponent(pin));
+    const data=await res.json();
+    if(!data.ok)throw new Error(data.error||'Server error');
+    try{localStorage.setItem('riim_pin',pin);}catch(e){}
+    render(pin,data.rows||[]);
+  }catch(err){
+    $('loginErr').textContent='Could not load your data. Check your PIN and connection, then try again.';
+  }finally{$('goBtn').disabled=false;$('goBtn').textContent='View My Progress';}
+}
+
+/* ---------- render ---------- */
+function render(pin,rows){
+  $('loginCard').style.display='none';$('dash').style.display='block';
+  $('whoami').textContent='PIN: '+pin;
+
+  if(!rows.length){
+    $('statGrid').innerHTML='';$('chartBox').innerHTML='<div class="empty">No attempts found for this PIN yet.<br>Take a test on the portal and your progress will appear here.</div>';
+    $('topicBox').innerHTML='<div class="empty">Nothing here yet.</div>';
+    $('attTable').querySelector('tbody').innerHTML='';return;
+  }
+
+  const atts=rows.map(r=>({
+    test:String(field(r,'testName')||'Unknown test'),
+    score:num(field(r,'score')), max:num(field(r,'maxMarks')),
+    correct:num(field(r,'correct')), wrong:num(field(r,'wrong')), skipped:num(field(r,'skipped')),
+    time:parseDur(field(r,'timeTaken')), ts:parseTs(field(r,'timestamp')),
+    topics:(function(){ // prefer granular topicErrors; fall back to sectionErrors (legacy tests)
+      const t=parseTopicErrors(field(r,'topicErrors'));
+      return Object.keys(t).length?t:parseTopicErrors(field(r,'sectionErrors'));
+    })()
+  }));
+  atts.sort((a,b)=>((a.ts?a.ts.getTime():0)-(b.ts?b.ts.getTime():0)));
+
+  // first-attempt rule
+  const seen=new Set();
+  atts.forEach(a=>{a.retake=seen.has(a.test);seen.add(a.test);});
+  const firsts=atts.filter(a=>!a.retake);
+
+  // summary stats
+  const totC=firsts.reduce((s,a)=>s+a.correct,0), totW=firsts.reduce((s,a)=>s+a.wrong,0);
+  const acc=(totC+totW)>0?Math.round(100*totC/(totC+totW)):0;
+  const avgPct=Math.round(firsts.reduce((s,a)=>s+(a.max>0?100*a.score/a.max:0),0)/firsts.length);
+  const totMin=Math.round(atts.reduce((s,a)=>s+a.time,0)/60);
+  $('statGrid').innerHTML=[
+    ['Tests Taken',firsts.length],['Overall Accuracy',acc+'%'],
+    ['Average Score',avgPct+'%'],['Time Practised',totMin+' min']
+  ].map(([k,v])=>'<div class="stat"><div class="v mono">'+v+'</div><div class="k">'+k+'</div></div>').join('');
+
+  drawChart(firsts);
+  drawTopics(firsts);
+
+  // attempts table (all attempts, retakes italic)
+  $('attTable').querySelector('tbody').innerHTML=atts.map(a=>{
+    const pct=a.max>0?Math.round(100*a.score/a.max):0;
+    const aacc=(a.correct+a.wrong)>0?Math.round(100*a.correct/(a.correct+a.wrong)):0;
+    return '<tr class="'+(a.retake?'retake':'')+'"><td>'+a.test+'</td><td>'+fmtDate(a.ts)+
+      '</td><td class="mono">'+a.score+'/'+a.max+' ('+pct+'%)</td><td class="mono '+(aacc>=70?'pos':aacc<50?'neg':'')+'">'+aacc+'%</td><td class="mono">'+fmtTime(a.time)+'</td></tr>';
+  }).join('');
+}
+
+function drawChart(firsts){
+  const pts=firsts.filter(a=>a.max>0).map(a=>({pct:Math.round(100*a.score/a.max),label:a.test,d:fmtDate(a.ts)}));
+  if(pts.length<2){$('chartBox').innerHTML='<div class="empty">Your score trend appears after two or more tests.</div>';return;}
+  const W=860,H=260,P=38;
+  const xs=i=>P+i*(W-2*P)/(pts.length-1), ys=v=>H-P-(v/100)*(H-2*P);
+  let svg='<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg">';
+  [0,25,50,75,100].forEach(g=>{svg+='<line x1="'+P+'" y1="'+ys(g)+'" x2="'+(W-P)+'" y2="'+ys(g)+'" stroke="rgba(255,255,255,.07)"/><text x="'+(P-8)+'" y="'+(ys(g)+4)+'" fill="#8fa3ba" font-size="11" text-anchor="end">'+g+'</text>';});
+  svg+='<polyline fill="none" stroke="#c9a84c" stroke-width="2.5" points="'+pts.map((p,i)=>xs(i)+','+ys(p.pct)).join(' ')+'"/>';
+  pts.forEach((p,i)=>{svg+='<circle cx="'+xs(i)+'" cy="'+ys(p.pct)+'" r="5" fill="#0d1b2a" stroke="#c9a84c" stroke-width="2"><title>'+p.label+' ('+p.d+'): '+p.pct+'%</title></circle>';});
+  svg+='</svg>';
+  $('chartBox').innerHTML=svg+'<div class="legend">Score as % of max marks, first attempts, oldest to newest. Tap a point for details.</div>';
+}
+
+function drawTopics(firsts){
+  const agg={};
+  firsts.forEach(a=>{for(const t in a.topics)agg[t]=(agg[t]||0)+a.topics[t];});
+  const entries=Object.entries(agg).sort((a,b)=>b[1]-a[1]).slice(0,10);
+  if(!entries.length){$('topicBox').innerHTML='<div class="empty">Topic-wise data will appear as you attempt more recent tests.</div>';return;}
+  const maxV=entries[0][1];
+  $('topicBox').innerHTML=entries.map(([t,c])=>'<div class="topicRow"><div class="tname">'+t+'</div><div class="bar"><div class="fill" style="width:'+Math.max(6,Math.round(100*c/maxV))+'%"></div></div><div class="cnt mono">'+c+'</div></div>').join('')+'<div class="note">Total questions lost per topic across your first attempts. Longest bar = biggest opportunity. Revise the top two before your next test.</div>';
+}
+</script>
+</body>
+</html>

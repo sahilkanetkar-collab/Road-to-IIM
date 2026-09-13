@@ -1,5 +1,5 @@
 {
-  "updated": "2026-07-13",
+  "updated": "2026-09-13",
   "note": "Whitelist disabled \u2014 open access. All valid STU/IMS PINs can enter. All batches in bypass list.",
   "bypass_batches": [
     "A2701",
@@ -26,7 +26,27 @@
     "S2801",
     "A2804",
     "PN2801",
-    "Admin"
+    "Admin",
+    "27E101",
+    "27E102",
+    "27E103",
+    "27E104",
+    "27E105",
+    "27E106",
+    "27E107",
+    "27E108",
+    "27E109",
+    "27E110",
+    "28E101",
+    "28E102",
+    "28E103",
+    "28E104",
+    "28E105",
+    "28E106",
+    "28E107",
+    "28E108",
+    "28E109",
+    "28E110"
   ],
   "admin_pins": [
     "1111111111",
