@@ -385,6 +385,7 @@ const MANIFEST = [
       {t:"UGAT-B VA Challenge", url:"RoadToIIM_UGATB_VA_ChallengeMock.html", sheetName:"UGAT-B VA Challenge Mock"},
       {t:"IPMATind VA Challenge", url:"RoadToIIM_IPMATind_VA_ChallengeMock.html", sheetName:"IPMATind VA Challenge Mock"},
       {t:"IPMATind 01 VA Challenge", url:"ipmat_indore_va_challenge_mock_01.html", sheetName:"IPMAT Indore 01 VA Challenge Mock", windowed:true, isNew:true},
+      {t:"UGAT Mock 005", url:"ugat_iimb_UGAT_Mock_005.html", sheetName:"UGAT Mock 005", featured:true, windowed:true, isNew:true},
     ]},
   { id:"rapid", name:"Rapid Fire", desc:"Short bursts, no feedback till the end",
     tests:[
@@ -709,6 +710,12 @@ const EVENTS = [
     closesAt: Date.UTC(2026,8,11,18,30,0)   /* Sat 12 Sep 2026, 00:00 IST */
   }
 
+  { t:"UGAT Mock 005",
+    sub:"IIM Bangalore pattern \u00b7 15 Qs \u00b7 30 min \u00b7 +3/\u22121",
+    url:"ugat_iimb_UGAT_Mock_005.html",
+    opensAt: Date.UTC(2026,8,14,14,30,0),   /* Mon 14 Sep 2026, 20:00 IST */
+    closesAt: Date.UTC(2026,8,16,18,30,0)   /* Wed 17 Sep 2026, 00:00 IST */
+  },
 ];
 
 function fmtRemain(ms){
