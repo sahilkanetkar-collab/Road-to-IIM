@@ -384,8 +384,9 @@ const MANIFEST = [
     tests:[
       {t:"UGAT-B VA Challenge", url:"RoadToIIM_UGATB_VA_ChallengeMock.html", sheetName:"UGAT-B VA Challenge Mock"},
       {t:"IPMATind VA Challenge", url:"RoadToIIM_IPMATind_VA_ChallengeMock.html", sheetName:"IPMATind VA Challenge Mock"},
-      {t:"IPMATind 01 VA Challenge", url:"ipmat_indore_va_challenge_mock_01.html", sheetName:"IPMAT Indore 01 VA Challenge Mock", windowed:true, isNew:true},
-      {t:"UGAT Mock 005", url:"ugat_iimb_UGAT_Mock_005.html", sheetName:"UGAT Mock 005", featured:true, windowed:true, isNew:true},
+      {t:"IPMATind 01 VA Challenge", url:"ipmat_indore_va_challenge_mock_01.html", sheetName:"IPMAT Indore 01 VA Challenge Mock", windowed:true},
+      {t:"UGAT Mock 005", url:"ugat_iimb_UGAT_Mock_005.html", sheetName:"UGAT Mock 005", windowed:true},
+      {t:"UGAT Mock 006", url:"ugat_iimb_UGAT_Mock_006_Verbal.html", sheetName:"UGAT Mock 006 — Verbal", featured:true, windowed:true, isNew:true},
     ]},
   { id:"rapid", name:"Rapid Fire", desc:"Short bursts, no feedback till the end",
     tests:[
@@ -400,7 +401,8 @@ const MANIFEST = [
       {t:"Rapid Fire 09", url:"RoadToIIM_SpeedTest09_VocabGrammar.html", sheetName:"Rapid Fire Test 09"},
       {t:"Rapid Fire 10", url:"RoadToIIM_SpeedTest10_VocabGrammar.html", sheetName:"Rapid Fire Test 10"},
       {t:"Rapid Fire 11", url:"RoadToIIM_SpeedTest11_VocabGrammar.html", sheetName:"Rapid Fire Test 11"},
-      {t:"Rapid Fire 12", url:"RoadToIIM_SpeedTest12_VocabGrammar.html", sheetName:"Rapid Fire Test 12", isNew:true},
+      {t:"Rapid Fire 12", url:"RoadToIIM_SpeedTest12_VocabGrammar.html", sheetName:"Rapid Fire Test 12"},
+      {t:"Rapid Fire 13", url:"RoadToIIM_SpeedTest13_VocabGrammar.html", sheetName:"Rapid Fire Test 13", isNew:true},
     ]},
   { id:"revisers", name:"Revisers", desc:"One concept, three levels · climb in order",
     tests:[
@@ -720,6 +722,12 @@ const EVENTS = [
     url:"ugat_iimb_UGAT_Mock_005.html",
     opensAt: Date.UTC(2026,8,14,14,30,0),   /* Mon 14 Sep 2026, 20:00 IST */
     closesAt: Date.UTC(2026,8,16,18,30,0)   /* Wed 17 Sep 2026, 00:00 IST */
+  },
+  { t:"UGAT Mock 006",
+    sub:"IIM Bangalore pattern · 15 Qs · 30 min · +3/−1",
+    url:"ugat_iimb_UGAT_Mock_006_Verbal.html",
+    opensAt: Date.UTC(2026,8,22,14,30,0),   /* Tue 22 Sep 2026, 20:00 IST */
+    closesAt: Date.UTC(2026,8,24,18,30,0)   /* Fri 25 Sep 2026, 00:00 IST */
   },
 ];
 

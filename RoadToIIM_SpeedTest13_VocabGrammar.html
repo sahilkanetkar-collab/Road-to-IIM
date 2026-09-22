@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Rapid Fire Test 13 · Road to IIM</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=DM+Sans:wght@400;500;700&family=DM+Mono&display=swap");
+:root{--navy:#0B1220;--panel:#101A2D;--panel2:#152136;--gold:#D4A94E;--text:#E8E4D8;--mut:#8B94A8;--green:rgba(78,160,130,1);--red:#C05555;--line:rgba(212,169,78,.22)}
+*{box-sizing:border-box;margin:0}
+body{background:var(--navy);color:var(--text);font-family:"DM Sans",sans-serif}
+h1{font-family:Fraunces,serif;color:var(--gold)}
+.mono{font-family:"DM Mono",monospace;font-size:12px;color:var(--mut)}
+#loginScreen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.loginCard{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:28px;max-width:420px;width:100%}
+.loginCard h1{font-size:24px;margin-bottom:2px}
+.loginCard h2{font-family:Fraunces,serif;font-size:15px;color:var(--text);font-weight:600;margin-bottom:18px}
+.loginCard label{display:block;font-family:"DM Mono";font-size:10.5px;color:var(--mut);letter-spacing:.1em;margin:12px 0 5px}
+.loginCard input,.loginCard select{width:100%;background:var(--panel2);color:var(--text);border:1px solid rgba(232,228,216,.25);border-radius:7px;padding:10px 12px;font-size:14px;font-family:"DM Sans"}
+#loginErr{display:none;color:var(--red);font-size:12.5px;margin-top:10px}
+#loginBtn{width:100%;margin-top:16px;background:var(--gold);color:var(--navy);border:none;border-radius:8px;padding:12px;font-weight:700;font-size:15px;cursor:pointer}
+.testMeta{font-family:"DM Mono";font-size:10.5px;color:var(--mut);margin-top:14px;line-height:1.7}
+#testScreen,#resultsScreen{display:none;max-width:1020px;margin:0 auto;padding:18px}
+#topBar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:12px 16px;margin-bottom:14px}
+#topBar .tName{font-family:Fraunces,serif;color:var(--gold);font-weight:700}
+#timer{font-family:"DM Mono";color:var(--gold);font-size:20px;margin-left:auto}
+#rfTimerWrap{display:none;height:6px;background:#1b2b45;border-radius:3px;overflow:hidden;margin-bottom:14px}
+#rfTimerBar{height:100%;width:100%;background:var(--green)}
+#rfTimerBar.warn{background:#f39c12}
+#rfTimerBar.danger{background:var(--red)}
+#layout{display:grid;grid-template-columns:1fr 210px;gap:14px}
+@media(max-width:760px){#layout{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px;margin-bottom:12px}
+.secBadge{font-family:"DM Mono";font-size:10.5px;color:var(--gold);letter-spacing:.08em}
+#passageBox{display:none;background:var(--panel2);border-left:3px solid var(--gold);border-radius:6px;padding:12px;margin:10px 0;font-size:14px;line-height:1.6;white-space:pre-wrap;max-height:300px;overflow-y:auto}
+#qText{font-size:16px;line-height:1.6;margin:12px 0;white-space:pre-wrap}
+.qFig{margin:10px 0}.qFig img{max-width:100%;border-radius:6px;border:1px solid var(--line);background:#fff}
+table.qTable{border-collapse:collapse;margin:10px 0;font-size:13.5px}
+table.qTable td,table.qTable th{border:1px solid rgba(232,228,216,.25);padding:6px 10px;text-align:left}
+table.qTable th{color:var(--gold);font-family:"DM Mono";font-size:11px;letter-spacing:.05em}
+pre.qTable{background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:10px;font-family:"DM Mono";font-size:12.5px;overflow-x:auto;margin:10px 0;white-space:pre}
+.qTableWrap{overflow-x:auto;margin:10px 0}
+.qTableWrap table{border-collapse:collapse;font-size:13.5px}
+.qTableWrap td,.qTableWrap th{border:1px solid rgba(232,228,216,.25);padding:6px 10px;text-align:left}
+.qTableWrap th{color:var(--gold);font-family:"DM Mono";font-size:11px;letter-spacing:.05em}
+.qTableWrap caption{color:var(--mut);font-size:11.5px;padding:4px}
+.qFig svg{max-width:100%;height:auto;background:#fff;border-radius:6px;border:1px solid var(--line)}
+#secBanner{display:none;position:fixed;inset:0;z-index:50;background:rgba(11,18,32,.94);align-items:center;justify-content:center;text-align:center}
+#secBanner .inner{background:var(--panel);border:1px solid var(--gold);border-radius:12px;padding:30px 44px}
+#secBanner h2{font-family:Fraunces,serif;color:var(--gold);font-size:24px;margin-bottom:8px}
+.opt{display:block;width:100%;text-align:left;background:var(--panel2);border:1px solid rgba(232,228,216,.15);color:var(--text);border-radius:8px;padding:12px 14px;margin:8px 0;cursor:pointer;font-size:14.5px;font-family:"DM Sans"}
+.opt.sel{border-color:var(--gold);background:rgba(212,169,78,.14)}
+input.tita{background:var(--panel2);border:1px solid rgba(212,169,78,.4);color:var(--text);border-radius:8px;padding:12px;font-size:16px;width:100%;font-family:"DM Mono"}
+.btn{background:var(--gold);color:var(--navy);border:none;border-radius:8px;padding:11px 20px;font-weight:700;cursor:pointer;font-size:14px;font-family:"DM Sans"}
+.btn.ghost{background:var(--panel2);color:var(--text);border:1px solid rgba(232,228,216,.3)}
+.btn.green{background:var(--green)}
+#sidePanel h3{font-family:"DM Mono";font-size:10.5px;color:var(--mut);letter-spacing:.1em;margin-bottom:8px}
+#palette{display:flex;flex-wrap:wrap;gap:6px}
+#palette button{width:34px;height:34px;border-radius:6px;border:1px solid rgba(232,228,216,.2);background:var(--panel2);color:var(--text);cursor:pointer;font-family:"DM Mono";font-size:12px}
+#palette .done{background:rgba(78,160,130,.25);border-color:rgba(78,160,130,.7)}
+#palette .cur{border-color:var(--gold)}
+.legend{font-size:11px;color:var(--mut);margin-top:10px;line-height:2}
+.legend span{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.statGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px;margin:14px 0}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;text-align:center}
+.stat .v{font-family:"DM Mono";font-size:22px;color:var(--gold)}
+.stat .l{font-family:"DM Mono";font-size:9.5px;color:var(--mut);letter-spacing:.08em;margin-top:4px}
+.secErr{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 16px;font-size:13px;margin-bottom:14px}
+.secErr b{color:var(--gold)}
+#pdfBtn{margin:10px 0}
+.rq{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:12px}
+.rqHead{font-family:"DM Mono";font-size:11px;color:var(--mut);margin-bottom:8px}
+.status{font-weight:700;margin-left:8px}
+.status.ok{color:var(--green)}.status.no{color:var(--red)}.status.sk{color:var(--mut)}
+.rqStem{font-size:14.5px;line-height:1.55;margin-bottom:8px;white-space:pre-wrap}
+.ropt{display:flex;gap:10px;padding:7px 10px;border-radius:6px;font-size:13.5px;margin:3px 0}
+.ropt.correct{background:rgba(78,160,130,.15);color:var(--green)}
+.ropt.wrong{background:rgba(192,85,85,.13);color:var(--red)}
+.exp{font-size:12.5px;color:var(--mut);margin-top:8px;border-top:1px solid rgba(232,228,216,.08);padding-top:8px}
+.exp b{color:var(--gold)}
+</style>
+</head>
+<body>
+<div id="loginScreen"><div class="loginCard">
+ <h1>ROAD TO IIM</h1><h2 id="lgTitle"></h2>
+ <label for="stuName">FULL NAME</label><input type="text" id="stuName" placeholder="Your full name" autocomplete="off">
+ <label for="stuPin">PIN</label><input type="text" id="stuPin" placeholder="STU########## or IMS##########" autocomplete="off" maxlength="13">
+ <label for="stuBatch">BATCH</label>
+ <select id="stuBatch"><option value="">-- Select your batch --</option>
+  <optgroup label="Classroom"><option>A2701</option><option>A2702</option><option>A2703</option><option>A2704</option><option>A2705</option><option>A2706</option><option>A2707</option><option>A2708</option><option>A2709</option><option>A2710</option><option>A2711</option><option>A2712</option><option>A2714</option><option>A2715</option><option>A2716</option><option>A2717</option><option>A2718</option><option>A2719</option><option>A2720</option></optgroup>
+  <optgroup label="School"><option>Zebar</option></optgroup>
+  <optgroup label="Online"><option>27E101</option><option>27E102</option><option>27E103</option><option>27E104</option><option>27E105</option><option>27E106</option><option>27E107</option><option>27E108</option><option>27E109</option><option>27E110</option><option>28E101</option><option>28E102</option><option>28E103</option><option>28E104</option><option>28E105</option><option>28E106</option><option>28E107</option><option>28E108</option><option>28E109</option><option>28E110</option></optgroup>
+  <optgroup label="IPMAT 28"><option>Z2801</option><option>S2801</option><option>A2804</option><option>PN2801</option></optgroup>
+  <optgroup label="Admin"><option>Admin</option></optgroup>
+ </select>
+ <div id="loginErr"></div>
+ <button id="loginBtn">Start Test</button>
+ <div class="testMeta" id="lgMeta"></div>
+</div></div>
+
+<div id="secBanner"><div class="inner"><h2 id="sbTitle"></h2><div class="mono" id="sbSub"></div></div></div>
+<div id="testScreen">
+ <div id="topBar"><span class="tName" id="tbName"></span><span class="mono" id="qCounter"></span><span id="timer">--:--</span></div>
+ <div id="rfTimerWrap"><div id="rfTimerBar"></div></div>
+ <div id="layout">
+  <div>
+   <div class="card">
+    <span class="secBadge" id="secBadge"></span>
+    <div id="passageBox"></div>
+    <div id="qText"></div>
+    <div id="exBox"></div>
+    <div id="optBox"></div>
+   </div>
+   <div class="card" style="display:flex;gap:10px;justify-content:space-between;flex-wrap:wrap">
+    <div><button class="btn ghost" id="prevBtn" onclick="nav(-1)">&#8249; Prev</button> <button class="btn" onclick="nav(1)">Next &#8250;</button></div>
+    <div><button class="btn ghost" id="endSecBtn" style="display:none" onclick="if(confirm('End this section early? You cannot return to it.'))endSectionEarly()">End Section &#8250;</button> <button class="btn green" id="submitBtn" onclick="if(confirm('Submit test?'))submitTest()">Submit</button></div>
+   </div>
+  </div>
+  <div id="sidePanel" class="card"><h3>QUESTION PALETTE</h3><div id="palette"></div>
+   <div class="legend"><span style="background:rgba(78,160,130,.6)"></span>Answered<br><span style="background:#152136;border:1px solid #D4A94E"></span>Current</div>
+  </div>
+ </div>
+</div>
+
+<div id="resultsScreen">
+ <h1 id="resTitle" style="font-size:26px"></h1>
+ <div class="mono" id="resSub" style="margin:6px 0 4px"></div>
+ <button id="pdfBtn" class="btn" onclick="downloadPDF()">Download PDF</button>
+ <div class="statGrid">
+  <div class="stat"><div class="v" id="stScore">0</div><div class="l" id="stMaxL">SCORE</div></div>
+  <div class="stat"><div class="v" id="stCorrect">0</div><div class="l">CORRECT</div></div>
+  <div class="stat"><div class="v" id="stWrong">0</div><div class="l">WRONG</div></div>
+  <div class="stat"><div class="v" id="stSkipped">0</div><div class="l">SKIPPED</div></div>
+  <div class="stat"><div class="v" id="stTime">0:00</div><div class="l">TIME TAKEN</div></div>
+ </div>
+ <div class="secErr" id="secErrBox"></div>
+ <h1 style="font-size:19px;margin:14px 0 10px">Question Review</h1>
+ <div id="reviewBox"></div>
+</div>
+
+<script>
+/* ============================================================
+   ROAD TO IIM — Studio-built portal test
+   Whitelist v5 · Safety Net · 16-field payload · PATH 2 tags
+   ============================================================ */
+var CFG={"testName":"Rapid Fire Test 13","examName":"IPMAT Indore","maxMarks":160,"minutes":20,"c":4,"w":-1,"titaW":0,"hasTita":false,"navNote":"rapid · per-question clock · forward only","sectional":null,"fileName":"RoadToIIM_SpeedTest13_VocabGrammar.html","snKey":"riim_session_Rapid_Fire_Test_13","bankPrefix":"Rapid_Fire_Test_13","rapid":true};
+var QUESTIONS=[{"id":"Q01","section":"VA","format":"Fill in the Blank","kind":"mcq","td":25,"stem":"Despite her initial nervousness, she delivered a speech of remarkable _____, captivating the entire audience with her fluency and conviction.","options":["verbosity","eloquence","terseness","obscurity"],"answer":"eloquence","answerIndex":1,"difficulty":"easy","explanation":"Correct (eloquence): Eloquence (fluent, persuasive speech) fits the praise 'remarkable' and the result 'captivated.' The blank requires a quality that impresses, not merely describes word count. Incorrect (verbosity): Excessive wordiness contradicts the positive tone. Incorrect (terseness): Brevity runs counter to the captivating effect. Incorrect (obscurity): Unclear speech contradicts the impact described.","verified":"ok","status":"approved"},{"id":"Q02","section":"VA","format":"Fill in the Blank","kind":"mcq","td":25,"stem":"The politician's _____ promises during the campaign were exposed as hollow once he took office and faced the harsh realities of governance.","options":["ingenuous","grandiose","tepid","circumspect"],"answer":"grandiose","answerIndex":1,"difficulty":"medium","explanation":"Correct (grandiose): Grandiose (impressive but exaggerated) fits 'hollow promises' that disappoint upon scrutiny; the size of the claim explains the fall. Incorrect (ingenuous): Naive or innocent does not explain why promises become hollow. Incorrect (tepid): Lukewarm contradicts the idea of grand initial claims. Incorrect (circumspect): Cautious is the opposite of the trap—overstated promises.","verified":"ok","status":"approved"},{"id":"Q03","section":"VA","format":"Fill in the Blank","kind":"mcq","td":25,"stem":"The ancient manuscript's text had become so _____ over centuries of storage and handling that scholars could barely decipher the faded words.","options":["elaborate","legible","obliterated","exiguous"],"answer":"obliterated","answerIndex":2,"difficulty":"medium","explanation":"Correct (obliterated): Obliterated (destroyed, erased) explains why scholars 'could barely decipher'—severe damage over time. Incorrect (elaborate): Elaborate or ornate is irrelevant to readability damage. Incorrect (legible): Readable is the direct opposite; the problem is illegibility. Incorrect (exiguous): Scanty or meager does not capture the severity of destruction.","verified":"ok","status":"approved"},{"id":"Q04","section":"VA","format":"Fill in the Blank","kind":"mcq","td":25,"stem":"The economist's arguments were so _____ and comprehensive that even her critics grudgingly admitted they left no room for dissent or alternative interpretation.","options":["contentious","cogent","tangential","speculative"],"answer":"cogent","answerIndex":1,"difficulty":"hard","explanation":"Correct (cogent): Cogent (compelling, logically sound) fits 'left no room for dissent.' The quality must compel agreement despite prior disagreement. Incorrect (contentious): Controversial or argumentative suggests disagreement persists. Incorrect (tangential): Irrelevant or off-topic contradicts the impact on critics. Incorrect (speculative): Based on conjecture weakens the certainty and authority described.","verified":"ok","status":"approved"},{"id":"Q05","section":"VA","format":"Fill in the Blank","kind":"mcq","td":25,"stem":"Her _____ demeanor—calm and almost serene on the surface—hid a sharp, calculating mind that few in the office ever glimpsed beneath the mask.","options":["truculent","effusive","placid","capricious"],"answer":"placid","answerIndex":2,"difficulty":"hard","explanation":"Correct (placid): Placid (calm, serene) creates the contrast with 'sharp, calculating mind' hidden beneath—the surface hides the interior. Incorrect (truculent): Fierce or aggressive would show conflict openly, not hide it. Incorrect (effusive): Exuberant or gushing is incompatible with the hidden, controlled nature described. Incorrect (capricious): Unpredictable contradicts both the calm surface and the hidden intellect.","verified":"ok","status":"approved"},{"id":"Q06","section":"VA","format":"Fill in the Blank","kind":"mcq","td":25,"stem":"The _____ remarks from her supervisor left him entirely uncertain whether she approved or disapproved of his recent proposal and presentation.","options":["lucid","equivocal","unambiguous","sardonic"],"answer":"equivocal","answerIndex":1,"difficulty":"medium","explanation":"Correct (equivocal): Equivocal (ambiguous, open to multiple readings) explains his uncertainty—the remarks could mean either approval or disapproval. Incorrect (lucid): Clear or easy to understand would eliminate uncertainty. Incorrect (unambiguous): Clearly expressed also removes uncertainty; directly opposite. Incorrect (sardonic): Mockingly humorous or ironic does not necessarily create uncertainty about approval.","verified":"ok","status":"approved"},{"id":"Q07","section":"VA","format":"Fill in the Blank","kind":"mcq","td":25,"stem":"The philanthropist's _____ to social causes was evident in decades of consistent donations, volunteer work, and mentoring young activists in underprivileged communities.","options":["obligation","responsibility","duty","commitment"],"answer":"commitment","answerIndex":3,"difficulty":"medium","explanation":"Correct (commitment): Commitment (dedication based on choice, not mandate) fits the voluntary, sustained nature across decades. Incorrect (obligation): What one must do implies external pressure or requirement. Incorrect (responsibility): Being in charge of does not capture the sense of personal devotion. Incorrect (duty): Moral obligation feels formal and imposed, not chosen dedication.","verified":"ok","status":"approved"},{"id":"Q08","section":"VA","format":"Fill in the Blank","kind":"mcq","td":25,"stem":"His criticism, though severe, was ultimately _____: every remark was aimed at strengthening the manuscript rather than wounding its author.","options":["constructive","captious","perfunctory","scathing"],"answer":"constructive","answerIndex":0,"difficulty":"hard","explanation":"Correct (constructive): Constructive criticism aims to improve—matches 'aimed at strengthening the manuscript.' Incorrect (captious): Captious means fault-finding for its own sake—the opposite of improvement-driven critique. Incorrect (perfunctory): Done carelessly, as mere routine; contradicts 'every remark was aimed.' Incorrect (scathing): Harshly critical; describes severity, which the sentence already concedes with 'though severe,' not purpose.","verified":"ok","status":"approved"},{"id":"Q09","section":"VA","format":"Word Usage","kind":"mcq","td":25,"stem":"One of the statements below contains a word used incorrectly or inappropriately. Choose the option which has the incorrect or inappropriate usage of the word.","options":["The heiress flaunted her diamond collection at every gala, drawing photographers wherever she went.","Fresh from his promotion, he flaunted his new corner office to every colleague who passed by.","The bodybuilder flaunted his physique on stage, striking pose after pose for the judges.","The startup openly flaunted the city's zoning regulations, operating from a residential flat for years."],"answer":"The startup openly flaunted the city's zoning regulations, operating from a residential flat for years.","answerIndex":3,"difficulty":"medium","explanation":"Correct usages: Flaunt means to display ostentatiously—jewels, an office, a physique can all be shown off. Incorrect (the zoning sentence): Rules are not displayed; they are defied. The intended word is 'flout' (to openly disregard a rule or convention). 'Flaunted the regulations' is the classic flaunt/flout confusion—the startup flouted the zoning regulations.","verified":"ok","status":"approved"},{"id":"Q10","section":"VA","format":"Word Usage","kind":"mcq","td":25,"stem":"One of the statements below contains a word used incorrectly or inappropriately. Choose the option which has the incorrect or inappropriate usage of the word.","options":["The students grew visibly disinterested as the lecture wore on, yawning and scrolling through their phones.","A disinterested arbitrator was appointed so that neither company could claim the ruling was biased.","Judges are expected to remain disinterested, holding no personal stake in the cases before them.","As a disinterested bystander with nothing to gain from the verdict, she gave the most reliable account."],"answer":"The students grew visibly disinterested as the lecture wore on, yawning and scrolling through their phones.","answerIndex":0,"difficulty":"hard","explanation":"Correct usages: Disinterested means impartial—free of personal stake: an arbitrator, judges, a bystander with nothing to gain. Incorrect (the lecture sentence): The students are bored, not impartial. The intended word is 'uninterested' (lacking interest). Using disinterested for boredom is the classic disinterested/uninterested confusion.","verified":"ok","status":"approved"},{"id":"Q11","section":"VA","format":"Word Usage","kind":"mcq","td":25,"stem":"One of the statements below contains a word used incorrectly or inappropriately. Choose the option which has the incorrect or inappropriate usage of the word.","options":["His verbose writing style, full of elaborate descriptions and unnecessary clauses, made the article difficult to follow.","The employment contract's verbose terms and conditions required legal expertise to interpret and understand fully.","She favored a verbose approach to negotiations, explaining every detail of her position with exhaustive clarity.","The institution's verbose regulations governing student conduct burdened all students equally with bureaucratic requirements."],"answer":"She favored a verbose approach to negotiations, explaining every detail of her position with exhaustive clarity.","answerIndex":2,"difficulty":"medium","explanation":"Correct (A/B/D): Verbose describes excessive wordiness in text or speech—writing (A), contract terms (B), regulations (D). Incorrect (C): 'Verbose approach' misapplies the word to a method or strategy. An approach to negotiation is a method, not a text. Use 'detailed' or 'comprehensive.' Verbose belongs to communication (speech, writing, language), not strategies or methodologies.","verified":"ok","status":"approved"},{"id":"Q12","section":"VA","format":"Word Usage","kind":"mcq","td":25,"stem":"One of the statements below contains a word used incorrectly or inappropriately. Choose the option which has the incorrect or inappropriate usage of the word.","options":["Adverse weather over the Himalayas forced the expedition to abandon its summit attempt.","The trial was halted after several patients reported adverse reactions to the new drug.","Despite adverse market conditions, the firm managed to post a modest profit this quarter.","He remained adverse to any form of risk, keeping his entire savings in fixed deposits."],"answer":"He remained adverse to any form of risk, keeping his entire savings in fixed deposits.","answerIndex":3,"difficulty":"hard","explanation":"Correct usages: Adverse means unfavourable or harmful and attaches to conditions and effects—weather, reactions, market conditions. Incorrect (the risk sentence): People are not 'adverse to' things; they are 'averse to' them. Averse means having a strong dislike or reluctance and describes a person's disposition. The rule of thumb: adverse for circumstances, averse for people.","verified":"ok","status":"approved"},{"id":"Q13","section":"VA","format":"One Word Substitution","kind":"mcq","td":25,"stem":"A person who deliberately damages or destroys public or private property out of malice or recklessness is called a _____.","options":["miscreant","charlatan","saboteur","vandal"],"answer":"vandal","answerIndex":3,"difficulty":"easy","explanation":"Correct (vandal): Vandal is the precise term for one who maliciously damages or defaces property. Incorrect (miscreant): A general wrongdoer or villain; broader and less specific to property damage. Incorrect (charlatan): A fraud, impostor, or quack; unrelated to destruction of property. Incorrect (saboteur): One who deliberately destroys for political or military reasons; too narrow and implies a larger conspiracy or cause.","verified":"ok","status":"approved"},{"id":"Q14","section":"VA","format":"One Word Substitution","kind":"mcq","td":25,"stem":"A person who does not believe in the existence of God or denies the reality of any divine being is called a _____.","options":["heretic","agnostic","atheist","skeptic"],"answer":"atheist","answerIndex":2,"difficulty":"hard","explanation":"Correct (atheist): Atheist actively denies God's existence. Incorrect (heretic): One who rejects church doctrine or orthodox belief; heretics often believe in God but reject institutional religion. Incorrect (agnostic): Claims God's existence cannot be known; this is about epistemology, not denial of existence. Agnostics may be believers or non-believers. Incorrect (skeptic): One who doubts claims generally; not specific to God or belief systems.","verified":"ok","status":"approved"},{"id":"Q15","section":"VA","format":"Idioms","kind":"mcq","td":25,"stem":"When her dream job offer fell through at the last moment, she decided to _____ and not let disappointment defeat her spirit or ambitions.","options":["drop the ball","pick herself up","raise the bar","hold her ground"],"answer":"pick herself up","answerIndex":1,"difficulty":"easy","explanation":"Correct (pick herself up): To recover from setback or despair; fits perfectly with the context of resilience after disappointment. Incorrect (drop the ball): Fail in responsibility; opposite sense—she is not failing but recovering. Incorrect (raise the bar): Set higher standards; unrelated to recovering from a specific disappointment. Incorrect (hold her ground): Resist pressure or maintain position; doesn't capture recovery or moving forward.","verified":"ok","status":"approved"},{"id":"Q16","section":"VA","format":"Idioms","kind":"mcq","td":25,"stem":"The CEO's surprise decision to promote an outsider over longtime employees was seen as a _____, sparking outrage and resentment in the office.","options":["slap in the face","blessing in disguise","silver lining","breath of fresh air"],"answer":"slap in the face","answerIndex":0,"difficulty":"medium","explanation":"Correct (slap in the face): An insult or perceived betrayal; fits the outrage and resentment perfectly. Incorrect (blessing in disguise): A hidden good outcome; positive, contradicts outrage. Incorrect (silver lining): A positive aspect of a bad situation; the employees see only negativity here. Incorrect (breath of fresh air): A welcome change; contradicts the sparking outrage.","verified":"ok","status":"approved"},{"id":"Q17","section":"VA","format":"Idioms","kind":"mcq","td":25,"stem":"The witness's testimony was riddled with inconsistencies and contradictions, which made the prosecutor _____ her credibility and reliability as a source.","options":["see red","call it a day","take with a grain of salt","put her foot down"],"answer":"take with a grain of salt","answerIndex":2,"difficulty":"medium","explanation":"Correct (take with a grain of salt): Regard skeptically or with doubt; the prosecutor appropriately doubts the inconsistent testimony. Incorrect (see red): Become very angry; doesn't fit the response to unreliability. Incorrect (call it a day): Stop work or give up; legal proceedings wouldn't stop over one witness. Incorrect (put her foot down): Take a firm stand; syntactically awkward and doesn't fit the context of evaluating testimony.","verified":"ok","status":"approved"},{"id":"Q18","section":"VA","format":"Idioms","kind":"mcq","td":25,"stem":"After years of chasing promotions and recognition without success, he finally _____ and accepted that some dreams were simply not meant to be realized.","options":["struck gold","threw in the towel","turned over a new leaf","burned his bridges"],"answer":"threw in the towel","answerIndex":1,"difficulty":"hard","explanation":"Correct (threw in the towel): Gave up; admitted defeat. Fits perfectly with accepting that dreams won't be realized. Incorrect (struck gold): Found unexpected success; contradicts years of failure and resignation. Incorrect (turned over a new leaf): Made a fresh start; suggests optimism and new beginning, not acceptance of failure. Incorrect (burned his bridges): Severed relationships irreparably; unrelated to pursuing promotions.","verified":"ok","status":"approved"},{"id":"Q19","section":"VA","format":"Roots","kind":"mcq","td":30,"stem":"The word 'BENEFACTOR' is built from the root 'BENE', which most likely means _____.","options":["good","enemy","friend","bad"],"answer":"good","answerIndex":0,"difficulty":"easy","explanation":"Correct (good): Bene (Latin) = good. Benefactor = one who does good deeds; benefit, benevolent all carry 'good.' Incorrect (enemy): No connection to the root meaning. Incorrect (friend): While a benefactor is generous, 'friend' is not the root meaning and is too specific. Incorrect (bad): Completely opposite of bene.","verified":"ok","status":"approved"},{"id":"Q20","section":"VA","format":"Roots","kind":"mcq","td":30,"stem":"If 'MITIGATE' means to make less severe, the root 'AGIT' in the word 'AGITATE' most likely means _____.","options":["to calm","to speak","to move","to think"],"answer":"to move","answerIndex":2,"difficulty":"medium","explanation":"Correct (to move): Agitate = to stir up, disturb, move emotionally. Agent (one who acts/moves), agile (moving easily), agenda (things to be done) all confirm 'move' or 'action.' Incorrect (to calm): Opposite of agitate; wrong meaning. Incorrect (to speak): No connection to agitate. Incorrect (to think): Agitate involves action, not cognition.","verified":"ok","status":"approved"},{"id":"Q21","section":"VA","format":"Roots","kind":"mcq","td":30,"stem":"The root 'CRED' means to believe. Which word below does NOT come from this root?","options":["credible","credentials","credulous","crescendo"],"answer":"crescendo","answerIndex":3,"difficulty":"medium","explanation":"Correct (crescendo): Crescendo comes from Latin 'crescere' (to grow)—a gradual increase, as in music; it shares no ancestry with 'cred' (believe). Incorrect (credible): From cred—capable of being believed. Incorrect (credentials): From cred—documents that make others believe in your authority. Incorrect (credulous): From cred—too ready to believe.","verified":"ok","status":"approved"},{"id":"Q22","section":"VA","format":"Word Choice","kind":"mcq","td":25,"stem":"The new bypass was built to _____ congestion in the city centre by diverting heavy vehicles away from the market roads.","options":["lighten","soften","alleviate","dilute"],"answer":"alleviate","answerIndex":2,"difficulty":"medium","explanation":"Correct (alleviate): Alleviate (to make a problem less severe) is the standard collocation with congestion, pain, pressure, and shortages. Incorrect (lighten): Lighten applies to loads and moods, not traffic problems. Incorrect (soften): Soften applies to blows, stances, and textures. Incorrect (dilute): Dilute applies to liquids and, figuratively, to strength or quality—not congestion.","verified":"ok","status":"approved"},{"id":"Q23","section":"VA","format":"Word Choice","kind":"mcq","td":25,"stem":"Critics praised the biography as remarkably _____, refusing to conceal even the most unflattering episodes of its subject's life.","options":["accurate","discreet","concise","candid"],"answer":"candid","answerIndex":3,"difficulty":"hard","explanation":"Correct (candid): Candid means frank and unconcealing—exactly what 'refusing to conceal unflattering episodes' describes. Incorrect (accurate): Accuracy concerns factual correctness, not willingness to reveal; a book can be accurate about what it includes yet still conceal. Incorrect (discreet): Discreet means deliberately withholding—the opposite. Incorrect (concise): Brevity is irrelevant to concealment.","verified":"ok","status":"approved"},{"id":"Q24","section":"VA","format":"Word Choice","kind":"mcq","td":25,"stem":"After the scandal broke, the minister's once-loyal supporters began to _____ him, deserting his rallies and distancing themselves from his every statement.","options":["renounce","forsake","repudiate","disavow"],"answer":"forsake","answerIndex":1,"difficulty":"medium","explanation":"Correct (forsake): Forsake means to abandon or desert a person, especially one previously supported—matches 'deserting his rallies.' Incorrect (renounce): Renounce takes claims, titles, or beliefs ('renounce the throne'), not people one abandons. Incorrect (repudiate): Repudiate rejects the validity of statements, debts, or agreements. Incorrect (disavow): Disavow denies responsibility for or knowledge of—supporters could disavow his remarks, but the object here is the man himself.","verified":"ok","status":"approved"},{"id":"Q25","section":"VA","format":"SVA","kind":"mcq","td":35,"stem":"The committee, along with the board members, **is** unanimously in favour of the proposal, and they plan to approve it at the next meeting.","options":["is unanimously in favour of the proposal","are unanimously in favour of the proposal","have been unanimously in favour of the proposal","were unanimously in favour of the proposal"],"answer":"is unanimously in favour of the proposal","answerIndex":0,"difficulty":"easy","explanation":"Correct (is): 'Along with' does not join subjects (RV01 Rule 4); verb agrees with 'committee' (singular) → 'is.' Incorrect (are): Treats 'along with' as joining subjects like 'and' would—wrong. 'Along with' is a decorative phrase. Incorrect (have been): Wrong tense; present perfect is unjustified. Incorrect (were): Wrong tense; simple past contradicts the present context.","verified":"ok","status":"approved"},{"id":"Q26","section":"VA","format":"SVA","kind":"mcq","td":35,"stem":"Each of the applicants **have** been asked to submit their portfolio and writing sample by the application deadline on Friday.","options":["have been asked to submit their portfolio","has been asked to submit his or her portfolio","has been asked to submit their portfolio","were asked to submit their portfolios"],"answer":"has been asked to submit his or her portfolio","answerIndex":1,"difficulty":"medium","explanation":"Correct (has...his/her): 'Each' is always singular (RV01 Rule 6) → 'has'; singular antecedent takes 'his or her,' not 'their.' The 'of the applicants' is a decoy. Incorrect (have...their): Keeps plural verb wrongly; ignores 'each' is singular. Incorrect (has...their): Mixes singular verb with plural pronoun. Incorrect (were...portfolios): Wrong tense; simple past doesn't fit present application context.","verified":"ok","status":"approved"},{"id":"Q27","section":"VA","format":"SVA","kind":"mcq","td":35,"stem":"A number of students **was** struggling with the new curriculum, and their complaints about the difficulty reached the administration within weeks.","options":["was struggling with the new curriculum","is struggling with the new curriculum","were struggling with the new curriculum","are struggling with the new curriculum"],"answer":"were struggling with the new curriculum","answerIndex":2,"difficulty":"hard","explanation":"Correct (were): 'A number of' = 'many' (plural, RV01 Rule 9) → 'were.' Incorrect (was): Treats 'A number of' as singular; most common trap. Incorrect (is/are): Wrong tense; present does not fit the simple past 'reached' that follows. Time consistency requires past tense.","verified":"ok","status":"approved"},{"id":"Q28","section":"VA","format":"Pronouns","kind":"mcq","td":35,"stem":"Neither the students nor Mrs. Rao **have raised their hand** to volunteer for the school's annual-day committee, despite the principal's repeated appeals.","options":["have raised their hand","have raised her hand","has raised their hand","has raised her hand"],"answer":"has raised her hand","answerIndex":3,"difficulty":"easy","explanation":"Correct (has...her): With 'neither...nor,' the verb and pronoun agree with the nearer subject—Mrs. Rao, singular (RV02 Rule 6)—so 'has raised her hand.' Incorrect (have...their): Agrees with the farther subject instead. Incorrect (have...her): Right pronoun, but the verb still ignores the nearer singular subject. Incorrect (has...their): Right verb, but the plural pronoun mismatches Mrs. Rao.","verified":"ok","status":"approved"},{"id":"Q29","section":"VA","format":"Pronouns","kind":"mcq","td":35,"stem":"The award will be shared between my colleague and **I**, since we worked on the project together from the very beginning.","options":["between my colleague and I","between my colleague and myself","between my colleague and me","among my colleague and me"],"answer":"between my colleague and me","answerIndex":2,"difficulty":"medium","explanation":"Correct (between...me): A pronoun governed by a preposition takes the object form (RV02): between governs 'my colleague and me.' Incorrect (between...I): 'I' is the subject form; the polite-sounding 'colleague and I' is the classic hypercorrection trap. Incorrect (between...myself): A reflexive needs 'I' earlier in the clause to reflect back on; there is none. Incorrect (among...me): 'Among' requires three or more parties; two sharers take 'between.'","verified":"ok","status":"approved"},{"id":"Q30","section":"VA","format":"Pronouns","kind":"mcq","td":35,"stem":"He is one of the few employees **who has** consistently delivered excellent results and earned praise from senior management over the years.","options":["who has consistently delivered","whom have delivered","that has delivered","who have consistently delivered"],"answer":"who have consistently delivered","answerIndex":3,"difficulty":"hard","explanation":"Correct (who have): 'Who' refers to 'employees' (plural, RV02 Rule 17) → 'have.' Without 'only' or 'sole,' the antecedent is plural. Incorrect (who has): Wrongly uses singular verb. Incorrect (whom have): Wrong case; 'whom' is object form, but 'who' is subject of 'delivered.' Incorrect (that has): 'That' after 'few' is less standard; 'who' is preferred for people.","verified":"ok","status":"approved"},{"id":"Q31","section":"VA","format":"Tenses","kind":"mcq","td":35,"stem":"She **submitted** the report two days ago, and it has already been approved by the management review committee.","options":["submitted","submits","has submitted","is submitting"],"answer":"submitted","answerIndex":0,"difficulty":"easy","explanation":"Correct (submitted): 'Two days ago' is finished time (RV03 Rule 5) → simple past. Incorrect (submits): Present tense; 'ago' closes the time window, requiring past. Incorrect (has submitted): Present perfect mixed with finished time marker 'ago'—wrong (Rule 5). Incorrect (is submitting): Present continuous; 'ago' indicates completed past action.","verified":"ok","status":"approved"},{"id":"Q32","section":"VA","format":"Tenses","kind":"mcq","td":35,"stem":"I **will call** you as soon as I reach the station so that you can arrange transport or inform me of any changes.","options":["will call","call","have called","am calling"],"answer":"call","answerIndex":1,"difficulty":"medium","explanation":"Correct (call): Time clause 'as soon as' takes simple present for future (RV03 Rule 18) → 'call.' Incorrect (will call): 'Will' forbidden inside time clauses. Incorrect (have called): Wrong tense; present perfect doesn't fit time clause. Incorrect (am calling): Present continuous; time clauses use simple present for future events.","verified":"ok","status":"approved"},{"id":"Q33","section":"VA","format":"Tenses","kind":"mcq","td":35,"stem":"Had the weather not been so severe, we **would have reached** the summit by noon and celebrated with the expedition team.","options":["would have reached","would reach","will have reached","reached"],"answer":"would have reached","answerIndex":0,"difficulty":"hard","explanation":"Correct (would have reached): Third conditional (imaginary past, RV04 Rule 6): if + had V3, then would have + V3. Incorrect (would reach): Second conditional (imaginary present)—wrong time frame. Incorrect (will have reached): Future perfect; imaginary past requires would have. Incorrect (reached): Simple past; lacks the conditional structure.","verified":"ok","status":"approved"},{"id":"Q34","section":"VA","format":"Tenses","kind":"mcq","td":35,"stem":"The report states that the company **has been losing** money steadily since the market crash in 2020 despite cost-cutting measures.","options":["has been losing","had been losing","is losing","loses"],"answer":"has been losing","answerIndex":0,"difficulty":"medium","explanation":"Correct (has been losing): 'Since' + point (2020), main clause in present perfect continuous (RV03 Rule 8) = 'has been losing.' Duration from past to now. Incorrect (had been losing): Past perfect; wrong anchoring to present report. Incorrect (is losing): Simple present loses connection to 'since' and duration. Incorrect (loses): Simple present; doesn't capture ongoing duration.","verified":"ok","status":"approved"},{"id":"Q35","section":"VA","format":"Modifiers","kind":"mcq","td":35,"stem":"**Struggling to meet the deadline**, the team worked through the entire night to complete the project and deliver it on time.","options":["Struggling to meet the deadline,","Having struggled to meet the deadline,","While they struggled to meet the deadline,","Because they were struggling to meet the deadline,"],"answer":"Struggling to meet the deadline,","answerIndex":0,"difficulty":"medium","explanation":"Correct (Struggling): Dangling modifier rule: the modifier's implied subject must match the main clause subject. 'The team' is struggling → 'Struggling' is correct and concise. Incorrect (Having struggled): Implies earlier completed action, but the context shows ongoing struggle during the night work. Incorrect (While/Because): Add explicit subjects and create wordiness; the participle form is more elegant and standard.","verified":"ok","status":"approved"},{"id":"Q36","section":"VA","format":"Modifiers","kind":"mcq","td":35,"stem":"The students who **failed to complete**, lacking proper guidance and resources, were offered remedial classes by the institute.","options":["failed to complete,","failed to complete their assignments and lacked proper guidance,","failed to complete their assignments,","had failed to complete their assignments,"],"answer":"failed to complete their assignments,","answerIndex":2,"difficulty":"hard","explanation":"Correct (failed to complete their assignments,): 'Failed to complete' needs a direct object 'assignments' for clarity. 'Lacking proper guidance' is a participial phrase correctly modifying 'students.' Incorrect (failed to complete,): Incomplete without object; awkward. Incorrect (failed...and lacked): Creates a second main verb; 'lacking' as a participial phrase is cleaner. Incorrect (had failed...): Wrong tense; simple past fits the context better than past perfect.","verified":"ok","status":"approved"},{"id":"Q37","section":"VA","format":"Parallelism","kind":"mcq","td":35,"stem":"The company's stated goals are **to improve customer satisfaction, increasing employee engagement, and to expand market share** globally.","options":["to improve customer satisfaction, increasing employee engagement, and to expand market share","to improve customer satisfaction, increasing employee engagement, and expanding market share","improving customer satisfaction, to increase employee engagement, and expanding market share","to improve customer satisfaction, to increase employee engagement, and to expand market share"],"answer":"to improve customer satisfaction, to increase employee engagement, and to expand market share","answerIndex":3,"difficulty":"medium","explanation":"Correct (to improve...to increase...to expand): All three items are to-infinitives—one consistent form for every element in the list. Incorrect (as written): Infinitive, gerund, infinitive—mixed. Incorrect (second option): Anchors on an infinitive but drifts into two gerunds. Incorrect (third option): Gerund, infinitive, gerund—the mirror image of the same error. Parallelism demands one grammatical shape throughout, not a majority vote.","verified":"ok","status":"approved"},{"id":"Q38","section":"VA","format":"Parallelism","kind":"mcq","td":35,"stem":"The manager insisted on **honesty in communication, transparency in decision-making, and that accountability be maintained** across all departments.","options":["honesty in communication, transparency in decision-making, and that accountability be maintained","honesty in communication, transparency in decision-making, and accountability in execution","being honest in communication, transparency in decision-making, and maintaining accountability","honesty in communication, being transparent in decision-making, and accountability being maintained"],"answer":"honesty in communication, transparency in decision-making, and accountability in execution","answerIndex":1,"difficulty":"hard","explanation":"Correct (honesty...transparency...accountability in execution): Three matching noun phrases—abstract noun + 'in' + area—one shape throughout. Incorrect (as written): Two noun phrases, then a that-clause ('that accountability be maintained')—the third element changes shape. Incorrect (third option): Gerund phrase, noun phrase, gerund phrase—mixed. Incorrect (fourth option): Noun phrase, gerund phrase, absolute construction—three different shapes in one list.","verified":"ok","status":"approved"},{"id":"Q39","section":"VA","format":"Prepositions","kind":"mcq","td":35,"stem":"The international treaty allows all refugees and asylum seekers to file applications **in** any of the signatory nations without legal barriers.","options":["in any of the signatory nations","among any of the signatory nations","to any of the signatory nations","at any of the signatory nations"],"answer":"in any of the signatory nations","answerIndex":0,"difficulty":"medium","explanation":"Correct (in): 'File applications in' is the standard collocation for submission location. Incorrect (among): For groups or collective contexts; doesn't fit 'file applications.' Incorrect (to): Wrong preposition; 'to' is for direction of address or sending, not filing location. Incorrect (at): Too restrictive for locations; 'at' is for specific points or institutions, not 'nations.'","verified":"ok","status":"approved"},{"id":"Q40","section":"VA","format":"Sentence Correction","kind":"mcq","td":35,"stem":"The CEO announced that the company **would have launched** a revolutionary new product line within the next quarter, though investors remained deeply skeptical about its commercial prospects and long-term viability.","options":["would have launched","will have launched","launches","would launch"],"answer":"would launch","answerIndex":3,"difficulty":"hard","explanation":"Correct (would launch): After past reporting verb 'announced,' the future steps back once to 'would launch' (backshift, RV03 Rule 14). The quarter lies in the future relative to the announcement. Incorrect (would have launched): Suggests a past imaginary (third conditional)—implies the product was not launched, but the context shows a planned future launch. Incorrect (will have launched): No backshift; ignores the past reporting verb. Incorrect (launches): Present tense; wrong for reported speech.","verified":"ok","status":"approved"}];
+var SCRIPT_URL="https://script.google.com/macros/s/AKfycbx5Ojm_zp4LfsMeelx5e06KNjVH1wfsXdV0keS4407m4FO1HU4EpVb7GKj-ibAsxnspeA/exec";
+var TEST_NAME=CFG.testName, MAX_MARKS=CFG.maxMarks, FILE_NAME=CFG.fileName, SN_KEY=CFG.snKey;
+var NQ=QUESTIONS.length;
+var PIN_REGEX=/^(STU|IMS)\d{10}$/;
+var BLOCK_MSG="This PIN isn't on the active student list. Message Sahil Sir if you think this is a mistake.";
+
+/* ==================== WHITELIST RUNTIME BLOCK (v5 §17) ==================== */
+var WL_PROMISE=fetch("whitelist.json",{cache:"no-store"}).then(function(r){return r.ok?r.json():null}).catch(function(){return null});
+function normalizePin(pin){return String(pin).replace(/\D/g,"").replace(/^0+/,"")}
+async function isWhitelisted(pin,batch){
+ var WL;try{WL=await WL_PROMISE}catch(e){WL=null}
+ if(!WL)return true; /* FAIL-OPEN */
+ try{
+  var bypass=WL.bypass_batches||[];
+  if(bypass.indexOf(batch)!==-1)return true;
+  var norm=normalizePin(pin);
+  var admins=(WL.admin_pins||[]).map(String);
+  if(admins.indexOf(norm)!==-1)return true;
+  if(Array.isArray(WL.pins)){if(WL.pins.map(String).indexOf(norm)!==-1)return true}
+  else if(WL.pins&&typeof WL.pins==="object"){if(Object.prototype.hasOwnProperty.call(WL.pins,norm))return true}
+  return false;
+ }catch(e){return true}
+}
+
+/* ==================== SAFETY NET — retry queue ==================== */
+function snReadJSON(key,fallback){try{var v=localStorage.getItem(key);return v?JSON.parse(v):fallback}catch(e){return fallback}}
+function snWriteJSON(key,val){try{localStorage.setItem(key,JSON.stringify(val))}catch(e){}}
+function snUnqueue(id){var p=snReadJSON("riim_pending",[]);p=p.filter(function(x){return x.id!==id});snWriteJSON("riim_pending",p)}
+function snSendWithQueue(opts){
+ var p=snReadJSON("riim_pending",[]);
+ var id=Date.now()+"-"+Math.random().toString(36).slice(2);
+ p.push({id:id,opts:{method:opts.method,mode:opts.mode,headers:opts.headers,body:opts.body}});
+ snWriteJSON("riim_pending",p);
+ return fetch(SCRIPT_URL,opts).then(function(r){snUnqueue(id);return r});
+}
+function snFlushQueue(){
+ var p=snReadJSON("riim_pending",[]);
+ p.forEach(function(item){fetch(SCRIPT_URL,item.opts).then(function(){snUnqueue(item.id)}).catch(function(){})});
+}
+
+/* ==================== STATE ==================== */
+var studentName="",studentPin="",studentBatch="";
+var currentQ=0,testOver=false,started=false;
+var answers=new Array(NQ).fill(null);
+var questionTimes=new Array(NQ).fill(0);
+var SEC=(CFG.sectional&&CFG.sectional.length)?CFG.sectional:null;
+var secIdx=0,elapsedPrior=0;
+var secondsLeft=SEC?SEC[0].minutes*60:CFG.minutes*60;
+var tickInt=null,qShownTs=0;
+var RAPID=!!CFG.rapid; /* v2.4 rapid mode */
+var qSecondsLeft=0,qStartTs=0,qInterval=null,pendingResumeStartTs=null;
+function isMCQ(q){return !!(q.options&&q.options.length)}
+
+/* ==================== SESSION AUTOSAVE / RESUME ==================== */
+function snSaveSession(){
+ if(testOver||!started)return;
+ snWriteJSON(SN_KEY,{file:FILE_NAME,testName:TEST_NAME,name:studentName,pin:studentPin,batch:studentBatch,currentQ:currentQ,answers:answers,questionTimes:questionTimes,secondsLeft:secondsLeft,secIdx:secIdx,elapsedPrior:elapsedPrior,qStartTs:qStartTs,ts:Date.now()});
+}
+function snClearSession(){try{localStorage.removeItem(SN_KEY)}catch(e){}}
+function snTryResume(){
+ var s=snReadJSON(SN_KEY,null);
+ if(!s||s.testName!==TEST_NAME)return false;
+ var answered=(s.answers||[]).filter(function(a){return a!==null&&a!==""}).length;
+ var ok=confirm("You have an unfinished attempt of "+TEST_NAME+" ("+answered+" question(s) answered). Resume where you left off?");
+ if(!ok){snClearSession();return false}
+ studentName=s.name;studentPin=s.pin;studentBatch=s.batch;
+ currentQ=Math.min(s.currentQ||0,NQ-1);
+ if(s.answers&&s.answers.length===NQ)answers=s.answers;
+ if(s.questionTimes&&s.questionTimes.length===NQ)questionTimes=s.questionTimes;
+ if(typeof s.secondsLeft==="number")secondsLeft=Math.max(10,s.secondsLeft);
+ if(SEC){
+  secIdx=Math.min(typeof s.secIdx==="number"?s.secIdx:0,SEC.length-1);
+  elapsedPrior=typeof s.elapsedPrior==="number"?s.elapsedPrior:0;
+  currentQ=Math.max(SEC[secIdx].start,Math.min(SEC[secIdx].end,currentQ));
+ }
+ if(RAPID&&typeof s.qStartTs==="number"&&s.qStartTs>0)pendingResumeStartTs=s.qStartTs;
+ enterTest();
+ return true;
+}
+
+/* ==================== LOGIN ==================== */
+function showLoginError(msg){var el=document.getElementById("loginErr");el.textContent=msg;el.style.display="block"}
+async function startTest(){
+ var name=document.getElementById("stuName").value.trim();
+ var pinEl=document.getElementById("stuPin");
+ var pin=pinEl.value.trim().toUpperCase();pinEl.value=pin;
+ var batch=document.getElementById("stuBatch").value;
+ if(!name){showLoginError("Please enter your full name.");return}
+ if(!PIN_REGEX.test(pin)){showLoginError("Invalid PIN. Format: STU########## or IMS##########.");return}
+ if(!batch){showLoginError("Please select your batch.");return}
+ var allowed=await isWhitelisted(pin,batch);
+ if(!allowed){showLoginError(BLOCK_MSG);return}
+ studentName=name;studentPin=pin;studentBatch=batch;
+ document.getElementById("loginErr").style.display="none";
+ enterTest();
+}
+function enterTest(){
+ started=true;
+ document.getElementById("loginScreen").style.display="none";
+ document.getElementById("testScreen").style.display="block";
+ buildPalette();
+ updateSecButtons();
+ if(SEC)showSecBanner();
+ if(!RAPID){
+  tickInt=setInterval(function(){
+   secondsLeft--;
+   var t=document.getElementById("timer");if(t)t.textContent=fmtClock(secondsLeft);
+   if(secondsLeft%10===0)snSaveSession();
+   if(secondsLeft<=0){if(SEC&&secIdx<SEC.length-1)advanceSection();else submitTest()}
+  },1000);
+ }else{
+  var pb=document.getElementById("prevBtn");if(pb)pb.style.display="none";
+  var rw=document.getElementById("rfTimerWrap");if(rw)rw.style.display="block";
+ }
+ renderQuestion();
+ snSaveSession();
+}
+function updateSecButtons(){
+ var eb=document.getElementById("endSecBtn"),sb=document.getElementById("submitBtn");
+ if(!SEC){if(eb)eb.style.display="none";return}
+ var last=secIdx===SEC.length-1;
+ if(eb)eb.style.display=last?"none":"inline-block";
+ if(sb)sb.style.display=last?"inline-block":"none";
+}
+function showSecBanner(){
+ var b=document.getElementById("secBanner");if(!b||!SEC)return;
+ document.getElementById("sbTitle").textContent="SECTION "+(secIdx+1)+" of "+SEC.length+" \u00b7 "+SEC[secIdx].sec;
+ document.getElementById("sbSub").textContent=SEC[secIdx].minutes+" minutes \u00b7 "+(SEC[secIdx].end-SEC[secIdx].start+1)+" questions \u00b7 no return once this section ends";
+ b.style.display="flex";
+ setTimeout(function(){b.style.display="none"},2600);
+}
+function advanceSection(){
+ if(!SEC||secIdx>=SEC.length-1)return;
+ markTime();
+ elapsedPrior+=SEC[secIdx].minutes*60-Math.max(0,secondsLeft);
+ secIdx++;
+ secondsLeft=SEC[secIdx].minutes*60;
+ currentQ=SEC[secIdx].start;
+ buildPalette();updateSecButtons();showSecBanner();
+ renderQuestion();snSaveSession();
+}
+function endSectionEarly(){advanceSection()}
+
+/* ==================== PALETTE (free navigation) ==================== */
+function buildPalette(){
+ var pal=document.getElementById("palette");pal.innerHTML="";
+ var lo=SEC?SEC[secIdx].start:0,hi=SEC?SEC[secIdx].end:NQ-1;
+ for(var i=lo;i<=hi;i++){
+  (function(i){
+   var b=document.createElement("button");b.id="pcell"+i;b.textContent=i+1;
+   b.onclick=function(){jumpTo(i)};
+   pal.appendChild(b);
+  })(i);
+ }
+}
+function paintPalette(){
+ for(var i=0;i<NQ;i++){
+  var c=document.getElementById("pcell"+i);if(!c)continue;
+  c.className="";
+  if(answers[i]!==null&&answers[i]!=="")c.classList.add("done");
+  if(i===currentQ)c.classList.add("cur");
+ }
+}
+
+/* ==================== RENDER + PER-QUESTION TIME ==================== */
+function markTime(){
+ if(RAPID)return; /* v2.4: rapid records td-qSecondsLeft in rapidAdvance */
+ if(qShownTs){questionTimes[currentQ]+=Math.round((Date.now()-qShownTs)/1000)}
+ qShownTs=Date.now();
+}
+function fmtClock(s){s=Math.max(0,s);return String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0")}
+function renderQuestion(){
+ var q=QUESTIONS[currentQ];
+ qShownTs=Date.now();
+ document.getElementById("tbName").textContent=TEST_NAME;
+ var qc=document.getElementById("qCounter");
+ if(SEC){var sp=SEC[secIdx];qc.textContent=sp.sec+" \u00b7 Q "+(currentQ-sp.start+1)+" / "+(sp.end-sp.start+1)}
+ else qc.textContent="Q "+(currentQ+1)+" / "+NQ;
+ if(!RAPID)document.getElementById("timer").textContent=fmtClock(secondsLeft);
+ document.getElementById("secBadge").textContent=q.section+" \u00b7 "+q.format+" \u00b7 "+q.difficulty+(isMCQ(q)?"":" \u00b7 TITA");
+ var pB=document.getElementById("passageBox");
+ if(q.passage){pB.style.display="block";pB.textContent=q.passage}else{pB.style.display="none"}
+ document.getElementById("qText").textContent=q.stem;
+ renderExhibit(q,document.getElementById("exBox"));
+ var box=document.getElementById("optBox");box.innerHTML="";
+ var letters=["A","B","C","D"];
+ if(isMCQ(q)){
+  q.options.forEach(function(opt,idx){
+   var d=document.createElement("button");
+   d.className="opt"+(answers[currentQ]===idx?" sel":"");
+   d.textContent=letters[idx]+". "+opt;
+   d.onclick=function(){answers[currentQ]=idx;snSaveSession();if(RAPID){var bs=box.querySelectorAll(".opt");for(var bi=0;bi<bs.length;bi++)bs[bi].classList.toggle("sel",bi===idx);paintPalette()}else{renderQuestion()}};
+   box.appendChild(d);
+  });
+ }else{
+  var inp=document.createElement("input");
+  inp.className="tita";inp.placeholder="Type your answer";
+  inp.value=answers[currentQ]||"";
+  inp.oninput=function(){answers[currentQ]=this.value;snSaveSession();paintPalette()};
+  box.appendChild(inp);
+ }
+ paintPalette();
+ if(RAPID)rapidStartQuestion();
+}
+function nav(d){if(RAPID){if(d>0)rapidAdvance();return}markTime();var lo=SEC?SEC[secIdx].start:0,hi=SEC?SEC[secIdx].end:NQ-1;currentQ=Math.max(lo,Math.min(hi,currentQ+d));snSaveSession();renderQuestion()}
+function jumpTo(i){if(RAPID)return;if(SEC&&(i<SEC[secIdx].start||i>SEC[secIdx].end))return;markTime();currentQ=i;snSaveSession();renderQuestion()}
+
+/* ==================== RAPID MODE ENGINE (v2.4) ==================== */
+function rapidStartQuestion(){
+ if(!RAPID||testOver)return;
+ var q=QUESTIONS[currentQ],dur=q.td||30;
+ if(pendingResumeStartTs){
+  qStartTs=pendingResumeStartTs;pendingResumeStartTs=null;
+  var elapsed=Math.floor((Date.now()-qStartTs)/1000);
+  qSecondsLeft=Math.max(0,dur-elapsed);
+ }else{qStartTs=Date.now();qSecondsLeft=dur}
+ var bar=document.getElementById("rfTimerBar");
+ bar.style.transition="none";bar.style.width=((qSecondsLeft/dur)*100)+"%";
+ bar.classList.remove("warn","danger");
+ var fr=qSecondsLeft/dur;
+ if(fr<=0.25)bar.classList.add("danger");else if(fr<=0.5)bar.classList.add("warn");
+ void bar.offsetWidth; /* force reflow so the linear transition restarts */
+ bar.style.transition="width "+qSecondsLeft+"s linear";bar.style.width="0%";
+ document.getElementById("timer").textContent=qSecondsLeft+"s";
+ if(qInterval)clearInterval(qInterval);
+ snSaveSession(); /* persist fresh qStartTs so refresh-before-interaction still tracks */
+ if(qSecondsLeft<=0){setTimeout(rapidAdvance,50);return}
+ qInterval=setInterval(rapidTick,1000);
+}
+function rapidTick(){
+ qSecondsLeft--;if(qSecondsLeft<0)qSecondsLeft=0;
+ document.getElementById("timer").textContent=qSecondsLeft+"s";
+ var dur=QUESTIONS[currentQ].td||30;
+ var bar=document.getElementById("rfTimerBar"),fr=qSecondsLeft/dur;
+ if(fr<=0.25){bar.classList.remove("warn");bar.classList.add("danger")}
+ else if(fr<=0.5){bar.classList.add("warn")}
+ if(qSecondsLeft<=0)rapidAdvance();
+}
+function rapidAdvance(){
+ if(testOver)return;
+ clearInterval(qInterval);
+ questionTimes[currentQ]=(QUESTIONS[currentQ].td||30)-qSecondsLeft;
+ if(currentQ>=NQ-1){submitTest();return}
+ currentQ++;
+ snSaveSession();
+ renderQuestion();
+}
+
+/* ==================== FIG / TABLE EXHIBITS ==================== */
+function renderExhibit(q,host){
+ if(!host)return;host.innerHTML="";
+ if(q.fig){
+  var f=String(q.fig).trim();
+  if(f.slice(0,4).toLowerCase()==="<svg"){var w0=document.createElement("div");w0.className="qFig";w0.innerHTML=f;host.appendChild(w0)}
+  else if(/^(data:image|https?:)/.test(f)){var w=document.createElement("div");w.className="qFig";var im=document.createElement("img");im.src=f;im.alt="figure";w.appendChild(im);host.appendChild(w)}
+ }
+ if(q.table!=null&&q.table!==""){
+  var t=q.table,rows=null,heads=null;
+  if(Array.isArray(t))rows=t;
+  else if(t&&typeof t==="object"&&Array.isArray(t.rows)){rows=t.rows;heads=Array.isArray(t.headers)?t.headers:null}
+  if(rows&&rows.length&&Array.isArray(rows[0])){
+   var tb=document.createElement("table");tb.className="qTable";
+   if(heads){var tr0=document.createElement("tr");heads.forEach(function(hh){var th=document.createElement("th");th.textContent=String(hh);tr0.appendChild(th)});tb.appendChild(tr0)}
+   rows.forEach(function(r){var tr=document.createElement("tr");r.forEach(function(c){var td=document.createElement("td");td.textContent=String(c);tr.appendChild(td)});tb.appendChild(tr)});
+   host.appendChild(tb);
+  }else if(typeof t==="string"&&t.trim().charAt(0)==="<"){
+   var wt=document.createElement("div");wt.className="qTableWrap";wt.innerHTML=t;host.appendChild(wt);
+  }else{
+   var pre=document.createElement("pre");pre.className="qTable";pre.textContent=(typeof t==="string")?t:JSON.stringify(t,null,1);host.appendChild(pre);
+  }
+ }
+}
+/* ==================== SCORING HELPERS ==================== */
+function titaNorm(v){
+ var s=String(v==null?"":v).trim();
+ var t=s.replace(/[\s,]/g,"");
+ if(t!==""&&isFinite(t))return String(Number(t));
+ return s.toLowerCase();
+}
+function isCorrect(q,a){
+ if(a===null||a==="")return false;
+ if(isMCQ(q))return a===q.answerIndex;
+ return titaNorm(a)===titaNorm(q.answer);
+}
+
+/* ==================== MISTAKE BANK (spaced repetition) ==================== */
+function bankMistakes(){
+ try{
+  var bank=snReadJSON("riim_mistakes",[]);
+  var now=Date.now(),DAY=86400000;
+  QUESTIONS.forEach(function(q,i){
+   if(!isMCQ(q))return;
+   var chosen=answers[i];
+   if(chosen===null||chosen===q.answerIndex)return;
+   var k=CFG.bankPrefix+"-Q"+(i+1);
+   var existing=null;
+   for(var j=0;j<bank.length;j++){if(bank[j].k===k){existing=bank[j];break}}
+   if(existing){existing.box=1;existing.due=now+DAY;existing.chosen=chosen}
+   else{bank.push({k:k,stem:(q.passage?q.passage+"\n\n"+q.stem:q.stem),opts:q.options,ans:q.answerIndex,chosen:chosen,exp:q.explanation,sub:q.format,src:TEST_NAME,box:1,due:now+DAY})}
+  });
+  if(bank.length>300)bank=bank.slice(bank.length-300);
+  snWriteJSON("riim_mistakes",bank);
+ }catch(e){}
+}
+
+/* ==================== SUBMIT — 16-field payload ==================== */
+function fmtTime(totalSecs){var m=Math.floor(totalSecs/60);var s=totalSecs%60;return m+":"+(s<10?"0":"")+s}
+function submitTest(){
+ if(testOver)return;
+ testOver=true;
+ clearInterval(tickInt);
+ if(qInterval)clearInterval(qInterval);
+ if(RAPID&&qStartTs&&!questionTimes[currentQ]){questionTimes[currentQ]=Math.min(QUESTIONS[currentQ].td||30,Math.round((Date.now()-qStartTs)/1000))}
+ markTime();
+
+ var correctCount=0,wrongCount=0,skippedCount=0;
+ var sectionErrors={},topicErrorMap={},wrongQuestions=[];
+ var score=0;
+ QUESTIONS.forEach(function(q,i){
+  var a=answers[i];
+  if(a===null||a===""){skippedCount++;return}
+  if(isCorrect(q,a)){correctCount++;score+=CFG.c}
+  else{
+   wrongCount++;
+   score+=(isMCQ(q)?CFG.w:CFG.titaW);
+   wrongQuestions.push(i+1);
+   sectionErrors[q.section]=(sectionErrors[q.section]||0)+1;
+   topicErrorMap[q.format]=(topicErrorMap[q.format]||0)+1;
+  }
+ });
+ var totalSecs=RAPID?questionTimes.reduce(function(a,b){return a+(b||0)},0):(SEC?(elapsedPrior+SEC[secIdx].minutes*60-Math.max(0,secondsLeft)):(CFG.minutes*60-Math.max(0,secondsLeft)));
+ var timeTakenStr=fmtTime(totalSecs);
+
+ /* 16-field payload — explicit key:value, topicErrors is field 16 */
+ var payload={
+  testName:TEST_NAME,
+  name:studentName,
+  pin:studentPin,
+  batch:studentBatch,
+  score:score,
+  correct:correctCount,
+  wrong:wrongCount,
+  skipped:skippedCount,
+  maxMarks:MAX_MARKS,
+  timeTaken:timeTakenStr,
+  timestamp:new Date().toLocaleString("en-IN",{timeZone:"Asia/Kolkata"}),
+  sectionErrors:JSON.stringify(sectionErrors),
+  wrongQuestions:JSON.stringify(wrongQuestions),
+  studentAnswers:JSON.stringify(answers),
+  questionTimes:JSON.stringify(questionTimes),
+  topicErrors:JSON.stringify(topicErrorMap)
+ };
+
+ snSendWithQueue({method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain"},body:JSON.stringify(payload)}).catch(function(){});
+
+ bankMistakes();
+
+ try{
+  var res=snReadJSON("riim_results",[]);
+  res.push({testName:TEST_NAME,score:score,correct:correctCount,wrong:wrongCount,skipped:skippedCount,maxMarks:MAX_MARKS,timeTaken:timeTakenStr,ts:Date.now()});
+  if(res.length>200)res=res.slice(res.length-200);
+  snWriteJSON("riim_results",res);
+ }catch(e){}
+
+ snClearSession();
+ showResults(score,correctCount,wrongCount,skippedCount,timeTakenStr,sectionErrors);
+}
+
+/* ==================== RESULTS ==================== */
+function showResults(score,correct,wrong,skipped,timeStr,sectionErrors){
+ document.getElementById("testScreen").style.display="none";
+ document.getElementById("resultsScreen").style.display="block";
+ document.getElementById("resTitle").textContent=TEST_NAME+" \u2014 Results";
+ document.getElementById("resSub").textContent=studentName+" \u00b7 "+studentBatch+" \u00b7 "+new Date().toLocaleString("en-IN",{timeZone:"Asia/Kolkata"});
+ document.getElementById("stScore").textContent=score;
+ document.getElementById("stMaxL").textContent="SCORE / "+MAX_MARKS;
+ document.getElementById("stCorrect").textContent=correct;
+ document.getElementById("stWrong").textContent=wrong;
+ document.getElementById("stSkipped").textContent=skipped;
+ document.getElementById("stTime").textContent=timeStr;
+ var secParts=[];
+ for(var sk in sectionErrors){if(sectionErrors.hasOwnProperty(sk))secParts.push(sk+": "+sectionErrors[sk])}
+ document.getElementById("secErrBox").innerHTML="<b>Section errors</b> \u2014 "+(secParts.length?secParts.join(" \u00b7 "):"None");
+
+ var letters=["A","B","C","D"];
+ var box=document.getElementById("reviewBox");box.innerHTML="";
+ QUESTIONS.forEach(function(q,i){
+  var a=answers[i];
+  var skippedQ=(a===null||a==="");
+  var ok=isCorrect(q,a);
+  var wrap=document.createElement("div");wrap.className="rq";
+  var head=document.createElement("div");head.className="rqHead";
+  var status=skippedQ?"<span class='status sk'>SKIPPED</span>":ok?"<span class='status ok'>CORRECT</span>":"<span class='status no'>WRONG</span>";
+  head.innerHTML="Q"+(i+1)+" \u00b7 "+q.section+" \u00b7 "+q.format+status;
+  wrap.appendChild(head);
+  if(q.passage&&(i===0||QUESTIONS[i-1].passage!==q.passage)){
+   var pv=document.createElement("div");pv.className="rqStem";
+   pv.style.fontStyle="italic";pv.style.opacity=".85";
+   pv.textContent="Passage: "+q.passage;
+   wrap.appendChild(pv);
+  }
+  var stem=document.createElement("div");stem.className="rqStem";stem.textContent=q.stem;wrap.appendChild(stem);
+  var exh=document.createElement("div");renderExhibit(q,exh);if(exh.childNodes.length)wrap.appendChild(exh);
+  if(isMCQ(q)){
+   q.options.forEach(function(opt,idx){
+    var r=document.createElement("div");r.className="ropt";
+    if(idx===q.answerIndex)r.classList.add("correct");
+    else if(idx===a)r.classList.add("wrong");
+    var l=document.createElement("div");l.textContent=letters[idx];
+    var t=document.createElement("div");t.textContent=opt;
+    r.appendChild(l);r.appendChild(t);
+    wrap.appendChild(r);
+   });
+  }else{
+   var yr=document.createElement("div");yr.className="ropt"+(skippedQ?"":(ok?" correct":" wrong"));
+   yr.textContent="Your answer: "+(skippedQ?"\u2014":a);
+   wrap.appendChild(yr);
+   var kr=document.createElement("div");kr.className="ropt correct";
+   kr.textContent="Key: "+q.answer;
+   wrap.appendChild(kr);
+  }
+  var exp=document.createElement("div");exp.className="exp";
+  exp.innerHTML="<b>Explanation:</b> ";
+  exp.appendChild(document.createTextNode(q.explanation||""));
+  wrap.appendChild(exp);
+  box.appendChild(wrap);
+ });
+ window.scrollTo(0,0);
+}
+
+/* ==================== DOWNLOAD PDF ==================== */
+function downloadPDF(){
+ var jsPDFctor=(window.jspdf&&window.jspdf.jsPDF)||window.jsPDF;
+ if(!jsPDFctor){alert("PDF library failed to load. Please check your connection and try again.");return}
+ var doc=new jsPDFctor({unit:"pt",format:"a4"});
+ var pageW=doc.internal.pageSize.getWidth();
+ var pageH=doc.internal.pageSize.getHeight();
+ var margin=40,y=margin;
+ var letters=["A","B","C","D"];
+ function newPageIfNeeded(h){if(y+h>pageH-margin){doc.addPage();y=margin}}
+ function writeWrapped(text,x,maxW,size,style){
+  doc.setFont("helvetica",style||"normal");doc.setFontSize(size);
+  var lines=doc.splitTextToSize(text,maxW);
+  for(var i=0;i<lines.length;i++){newPageIfNeeded(size+4);doc.text(lines[i],x,y);y+=size+4}
+ }
+ doc.setFont("helvetica","bold");doc.setFontSize(16);doc.setTextColor(13,27,42);
+ doc.text("ROAD TO IIM",margin,y);y+=20;
+ doc.setFontSize(13);doc.setTextColor(201,168,76);
+ doc.text(TEST_NAME,margin,y);y+=18;
+ doc.setFont("helvetica","normal");doc.setFontSize(10);doc.setTextColor(60,60,60);
+ var dateStr=new Date().toLocaleString("en-IN",{timeZone:"Asia/Kolkata"});
+ doc.text(studentName+" \u00b7 "+studentBatch+" \u00b7 "+dateStr,margin,y);y+=16;
+ doc.setDrawColor(201,168,76);doc.line(margin,y,pageW-margin,y);y+=16;
+ doc.setTextColor(0,0,0);doc.setFont("helvetica","bold");doc.setFontSize(11);
+ doc.text("Summary",margin,y);y+=14;
+ doc.setFont("helvetica","normal");doc.setFontSize(10);
+ var summary="Score: "+document.getElementById("stScore").textContent+" / "+MAX_MARKS+"   \u00b7   Correct: "+document.getElementById("stCorrect").textContent+"   \u00b7   Wrong: "+document.getElementById("stWrong").textContent+"   \u00b7   Skipped: "+document.getElementById("stSkipped").textContent+"   \u00b7   Time: "+document.getElementById("stTime").textContent;
+ writeWrapped(summary,margin,pageW-2*margin,10);y+=4;
+ var secErrText=(document.getElementById("secErrBox").textContent||"").replace(/\s+/g," ").trim();
+ if(secErrText){writeWrapped(secErrText,margin,pageW-2*margin,10);y+=6}
+ doc.setDrawColor(200,200,200);doc.line(margin,y,pageW-margin,y);y+=14;
+ doc.setFont("helvetica","bold");doc.setFontSize(12);doc.setTextColor(13,27,42);
+ doc.text("Question Review",margin,y);y+=16;
+ QUESTIONS.forEach(function(q,i){
+  var a=answers[i];
+  var skippedQ=(a===null||a==="");
+  var ok=isCorrect(q,a);
+  var statusLabel=skippedQ?"SKIPPED":(ok?"CORRECT":"WRONG");
+  newPageIfNeeded(60);
+  doc.setFont("helvetica","bold");doc.setFontSize(10);doc.setTextColor(13,27,42);
+  doc.text("Q"+(i+1)+"  \u00b7  "+q.section+" \u00b7 "+q.format+"   ["+statusLabel+"]",margin,y);y+=12;
+  if(q.passage&&(i===0||QUESTIONS[i-1].passage!==q.passage)){
+   doc.setTextColor(90,90,90);
+   writeWrapped("Passage: "+q.passage,margin,pageW-2*margin,8,"italic");y+=2;
+  }
+  doc.setTextColor(0,0,0);
+  writeWrapped(q.stem,margin,pageW-2*margin,10,"normal");y+=2;
+  if(q.table!=null&&q.table!==""){
+   var trows=Array.isArray(q.table)?q.table:(q.table&&Array.isArray(q.table.rows)?(Array.isArray(q.table.headers)?[q.table.headers].concat(q.table.rows):q.table.rows):null);
+   doc.setTextColor(40,40,40);
+   if(trows){trows.forEach(function(r){writeWrapped(Array.isArray(r)?r.map(String).join("  |  "):String(r),margin+12,pageW-2*margin-12,8.5,"normal")})}
+   else{
+    var ttxt=String(q.table);
+    if(ttxt.trim().charAt(0)==="<")ttxt=ttxt.replace(new RegExp("</tr>","gi"),"\n").replace(new RegExp("</t[dh]>","gi"),"  |  ").replace(new RegExp("<[^>]+>","g")," ").replace(new RegExp("&amp;","g"),"&").replace(new RegExp("&nbsp;","g")," ");
+    ttxt.split("\n").forEach(function(ln){ln=ln.replace(new RegExp("[ ]+","g")," ").trim();if(ln)writeWrapped(ln,margin+12,pageW-2*margin-12,8.5,"normal")});
+   }
+   doc.setTextColor(0,0,0);y+=2;
+  }
+  if(q.fig){doc.setTextColor(120,120,120);writeWrapped("[Figure \u2014 shown in the on-screen review]",margin+12,pageW-2*margin-12,8.5,"italic");doc.setTextColor(0,0,0)}
+  if(isMCQ(q)){
+   q.options.forEach(function(opt,idx){
+    var marker="";
+    if(idx===q.answerIndex)marker="  \u2713 correct";
+    else if(idx===a)marker="  \u2717 your choice";
+    if(idx===q.answerIndex)doc.setTextColor(30,120,60);
+    else if(idx===a)doc.setTextColor(180,50,50);
+    else doc.setTextColor(60,60,60);
+    writeWrapped(letters[idx]+")  "+opt+marker,margin+12,pageW-2*margin-12,10,"normal");
+   });
+  }else{
+   doc.setTextColor(skippedQ?120:(ok?30:180),skippedQ?120:(ok?120:50),skippedQ?120:(ok?60:50));
+   writeWrapped("Your answer: "+(skippedQ?"-":a),margin+12,pageW-2*margin-12,10,"normal");
+   doc.setTextColor(30,120,60);
+   writeWrapped("Key: "+q.answer,margin+12,pageW-2*margin-12,10,"normal");
+  }
+  doc.setTextColor(0,0,0);y+=2;
+  doc.setFont("helvetica","bold");doc.setFontSize(9);
+  newPageIfNeeded(14);
+  doc.text("Explanation:",margin,y);y+=11;
+  doc.setFont("helvetica","normal");doc.setFontSize(9);
+  writeWrapped(q.explanation||"",margin,pageW-2*margin,9,"normal");
+  y+=10;
+  doc.setDrawColor(230,230,230);
+  newPageIfNeeded(6);
+  doc.line(margin,y,pageW-margin,y);y+=12;
+ });
+ var safeName=(studentName||"student").replace(/[^A-Za-z0-9]+/g,"_").slice(0,40);
+ var d=new Date();
+ var dateTag=d.getFullYear()+String(d.getMonth()+1).padStart(2,"0")+String(d.getDate()).padStart(2,"0");
+ doc.save(CFG.bankPrefix+"_"+safeName+"_"+dateTag+".pdf");
+}
+
+/* ==================== PAGE LOAD ==================== */
+document.getElementById("lgTitle").textContent=TEST_NAME;
+var lgTime=CFG.rapid?("per-question clock \u00b7 forward only \u00b7 auto-advance at 0s \u00b7 ~"+CFG.minutes+" min total"):SEC?(SEC.map(function(p){return p.sec+" "+p.minutes+"m"}).join(" \u2192 ")+" \u00b7 sectional lock \u00b7 no return"):(CFG.minutes+" minutes \u00b7 "+(CFG.navNote||"free navigation"));
+document.getElementById("lgMeta").innerHTML=NQ+" questions \u00b7 +"+CFG.c+" / "+CFG.w+(CFG.hasTita?" \u00b7 TITA wrong "+CFG.titaW:"")+" \u00b7 Max "+MAX_MARKS+"<br>"+lgTime+" \u00b7 auto-submit at 00:00";
+document.getElementById("loginBtn").addEventListener("click",startTest);
+snFlushQueue();
+snTryResume();
+</script>
+<script>/* RIIM usage ping v1 */try{fetch("https://script.google.com/macros/s/AKfycbx5Ojm_zp4LfsMeelx5e06KNjVH1wfsXdV0keS4407m4FO1HU4EpVb7GKj-ibAsxnspeA/exec?action=ping&type=open&page="+encodeURIComponent(document.title||location.pathname),{mode:"no-cors"});}catch(_){}</script>
+</body>
+</html>
