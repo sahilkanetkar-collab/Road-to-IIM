@@ -114,7 +114,21 @@ details div{font-size:13px;color:var(--mut);white-space:pre-wrap;padding:8px 0;l
 
 <script>
 // ══════════════════════════════════════════════════════════════
-//  TEST BUILDER STUDIO v2.4 — ASSEMBLY & EXPORT ONLY
+//  TEST BUILDER STUDIO v2.5 — ASSEMBLY & EXPORT ONLY
+//  v2.5 (24 Sep 2026): audit fixes —
+//   · ⊕ Append: a testType "full" envelope now sets the merged
+//     testName / timerMinutes / timerMode / sectionTimers / titaW
+//     (before, Batch 1's values survived: a full Indore mock could
+//     export as one 40-min clock named "Batch 1").
+//   · Per-section TITA penalty (Indore: QA-SA 0, VA −1, decided
+//     5 Sep 2026); meta.titaW overrides all TITA if set.
+//   · meta.sectionTimers honoured per section on locked exams.
+//   · Intake audit: optionTags / titaTraps checked; warning when
+//     timerMinutes overrides a full locked mock's sectional lock.
+//   · Export template: wall-clock timer (closing the tab no longer
+//     pauses the clock; locked sections catch up on resume), Clear
+//     response + Mark for review, Online batch group, usage ping.
+//   · Desk edit keeps optionTags aligned when options are edited.
 //  v2.4 (8 Sep 2026): RAPID MODE — meta.timerMode:"perQuestion"
 //  + integer td (seconds) per question exports a Rapid Fire
 //  delivery: per-question countdown bar, auto-advance at 0s,
@@ -148,7 +162,7 @@ details div{font-size:13px;color:var(--mut);white-space:pre-wrap;padding:8px 0;l
 const EXAM_CONFIG={
  UGAT_IIMB:{name:"UGAT IIM Bangalore",marking:{c:3,w:-1},duration:120,timing:"single",
   sections:{QADI:30,LR:15,VA:15},order:["QADI","LR","VA"],navNote:"free navigation"},
- IPMAT_INDORE:{name:"IPMAT Indore",marking:{c:4,w:-1,titaW:0},duration:120,timing:"locked",secMinutes:40,
+ IPMAT_INDORE:{name:"IPMAT Indore",marking:{c:4,w:-1,titaW:0,titaWSec:{"VA":-1}},duration:120,timing:"locked",secMinutes:40,
   sections:{"QA-SA":15,"QA-MCQ":30,"VA":45},order:["QA-SA","QA-MCQ","VA"],navNote:"sectional lock \u00b7 40 min \u00d7 3 \u00b7 fixed order"},
  JIPMAT:{name:"JIPMAT (NTA)",marking:{c:4,w:-1},duration:150,timing:"single",
   sections:{QA:33,LR:33,VA:34},order:["QA","LR","VA"],navNote:"free navigation"},
@@ -231,6 +245,13 @@ function runAudit(meta,qs){
  const rapid=meta.timerMode==="perQuestion";
  if(rapid&&meta.sectionTimers)errs.push("meta.sectionTimers and timerMode \u2018perQuestion\u2019 are mutually exclusive.");
  if(rapid&&meta.timerMinutes!=null)warns.push("meta.timerMinutes is ignored in rapid mode \u2014 per-question td values govern.");
+ if(!rapid&&cfg.timing==="locked"&&tt==="full"&&meta.timerMinutes!=null)warns.push("meta.timerMinutes = "+meta.timerMinutes+" replaces the sectional lock with ONE clock for the whole mock. Set timerMinutes to null for the official "+cfg.secMinutes+"-min sections.");
+ if(meta.titaW!=null&&(typeof meta.titaW!=="number"||meta.titaW>0))errs.push("meta.titaW must be 0 or a negative number (got \u2018"+meta.titaW+"\u2019).");
+ if(meta.sectionTimers!=null){
+  if(typeof meta.sectionTimers!=="object"||Array.isArray(meta.sectionTimers))errs.push("meta.sectionTimers must be an object like {\"QA-SA\":40}.");
+  else Object.entries(meta.sectionTimers).forEach(([k,v])=>{if(declared.indexOf(k)===-1)warns.push("meta.sectionTimers names \u2018"+k+"\u2019, which is not in meta.sections.");if(typeof v!=="number"||v<=0)errs.push("meta.sectionTimers."+k+" must be a positive number.")});
+  if(cfg.timing!=="locked")warns.push("meta.sectionTimers is ignored: "+cfg.name+" uses a single clock.");
+ }
 
  // Per-question checks
  const counts={},ids={},stems={};
@@ -253,12 +274,24 @@ function runAudit(meta,qs){
   if(q.kind==="tita"){
    if(q.options&&q.options.length)errs.push(tag+": TITA question carries options.");
    if(!String(q.answer??"").trim())errs.push(tag+": TITA answer is empty.");
+   if(q.titaTraps!=null){
+    if(typeof q.titaTraps!=="object"||Array.isArray(q.titaTraps))errs.push(tag+": titaTraps must be an object like {\"2413\":\"pj-time-order\"}.");
+    else if(Object.keys(q.titaTraps).some(k=>String(k).replace(/[\s,]/g,"")===String(q.answer??"").replace(/[\s,]/g,"")))errs.push(tag+": titaTraps lists the correct answer as a trap.");
+   }
   }else{
    const opts=q.options;
    if(!Array.isArray(opts)||opts.length!==4)R4.push(tag+" (options: "+(Array.isArray(opts)?opts.length:"none")+")");
    else{
     if(!Number.isInteger(q.answerIndex)||q.answerIndex<0||q.answerIndex>3)R3.push(tag+" (answerIndex: "+String(q.answerIndex)+")");
     else if(String(opts[q.answerIndex]).trim()!==String(q.answer??"").trim())R3.push(tag+" (answer text \u2260 options[answerIndex])");
+    if(q.optionTags!=null){
+     const ot=q.optionTags;
+     if(!Array.isArray(ot)||ot.length!==4)errs.push(tag+": optionTags must be an array of 4.");
+     else ot.forEach((t,j)=>{
+      if(j===q.answerIndex&&t!==null)errs.push(tag+": optionTags puts \u2018"+t+"\u2019 on the correct option; it must be null.");
+      if(j!==q.answerIndex&&(typeof t!=="string"||!t.trim()))errs.push(tag+": optionTags leaves wrong option "+"ABCD"[j]+" untagged.");
+     });
+    }
    }
   }
  });
@@ -286,7 +319,10 @@ function deriveDelivery(){
  if(!S.meta||!S.qs.length)return null;
  const examKey=resolveExam(S.meta.exam),cfg=EXAM_CONFIG[examKey];
  const isFull=S.meta.testType==="full";
- const mk=cfg.marking;
+ const mk=Object.assign({},cfg.marking);
+ if(typeof S.meta.titaW==="number"){mk.titaW=S.meta.titaW;mk.titaWSec=null} // v2.5 envelope override applies to all TITA
+ const st=(S.meta.sectionTimers&&typeof S.meta.sectionTimers==="object")?S.meta.sectionTimers:{};
+ const secMin=sec=>(typeof st[sec]==="number"&&st[sec]>0)?st[sec]:cfg.secMinutes;
  if(S.meta.timerMode==="perQuestion"){ // v2.4 rapid — bypasses single/locked timing entirely
   const bud=S.qs.reduce((a,q)=>a+(q.td||0),0);
   return {examKey,cfg,isFull,minutes:Math.max(1,Math.ceil(bud/60)),navNote:"rapid \u00b7 per-question clock \u00b7 forward only",blocked:null,
@@ -302,11 +338,13 @@ function deriveDelivery(){
   if(!isFull)timerSrc="proportional ("+(cfg.duration/cfgTotalQ(cfg)).toFixed(1)+" min/Q)";
  }else{ // locked exam — sectional delivery (v2.2: built into template)
   const present=cfg.order.filter(sec=>S.qs.some(q=>q.section===sec));
-  if(present.length<=1){minutes=cfg.secMinutes;navNote="single section \u00b7 official "+cfg.secMinutes+" min";timerSrc="official per-section"}
+  const custom=present.some(sec=>secMin(sec)!==cfg.secMinutes);
+  if(present.length<=1){const m=secMin(present[0]);minutes=m;navNote="single section \u00b7 "+m+" min";timerSrc=custom?"meta.sectionTimers":"official per-section"}
   else{
-   sectional={secMinutes:cfg.secMinutes,order:present};
-   minutes=present.length*cfg.secMinutes;
-   timerSrc="official sectional \u00b7 "+cfg.secMinutes+" min \u00d7 "+present.length;
+   const mins={};present.forEach(sec=>{mins[sec]=secMin(sec)});
+   sectional={secMinutes:cfg.secMinutes,order:present,mins:mins};
+   minutes=present.reduce((a,sec)=>a+mins[sec],0);
+   timerSrc=(custom?"meta.sectionTimers \u00b7 ":"official sectional \u00b7 ")+present.map(sec=>sec+" "+mins[sec]).join(" / ")+" min";
   }
  }
  const max=S.qs.length*mk.c;
@@ -328,7 +366,11 @@ function loadEnvelope(append){
   const merged=Object.assign({},S.meta);
   merged.sections=(merged.sections||[]).slice();
   (env.meta.sections||[]).forEach(sec=>{if(merged.sections.indexOf(sec)===-1)merged.sections.push(sec)});
-  if(env.meta.testType==="full")merged.testType="full";
+  if(env.meta.testType==="full"){
+   merged.testType="full";
+   // v2.5: the full envelope is authoritative for delivery settings (Batch 1's must not survive)
+   ["testName","timerMinutes","timerMode","sectionTimers","titaW"].forEach(k=>{if(k in env.meta)merged[k]=env.meta[k];else delete merged[k]});
+  }
   const qsNew=S.qs.concat(env.questions.map(q=>Object.assign({},q)));
   const report=runAudit(merged,qsNew);
   S.meta=merged;S.qs=qsNew;S.report=report;S.editing=null;S.pasteOpen=false;box.value="";
@@ -356,7 +398,13 @@ function saveEdit(id){
  q.answer=document.getElementById("e_ans").value;
  q.difficulty=document.getElementById("e_diff").value;
  q.explanation=document.getElementById("e_expl").value;
- if(q.kind!=="tita"){const opts=document.getElementById("e_opts").value.split("\n").filter(x=>x.trim()).slice(0,4);q.options=opts;q.answerIndex=opts.findIndex(o=>o.trim()===q.answer.trim())}
+ if(q.kind!=="tita"){
+  const oldOpts=(q.options||[]).map(o=>String(o).trim()),oldTags=Array.isArray(q.optionTags)?q.optionTags.slice():null;
+  const opts=document.getElementById("e_opts").value.split("\n").filter(x=>x.trim()).slice(0,4);q.options=opts;q.answerIndex=opts.findIndex(o=>o.trim()===q.answer.trim());
+  if(oldTags){ // v2.5: carry each tag with its option text; an edited distractor keeps the tag of the option in its slot
+   q.optionTags=opts.map((o,j)=>{if(j===q.answerIndex)return null;const k=oldOpts.indexOf(o.trim());const t=k>=0?oldTags[k]:oldTags[j];return t||null});
+  }
+ }
  S.editing=null;S.report=runAudit(S.meta,S.qs);render();
 }
 // ── In-app confirm (browser confirm() is blocked in sandboxed frames) ──
@@ -419,10 +467,10 @@ function exportHTML(){
   d.sectional.order.forEach(sec=>{
    const start=qsOut.length;
    S.qs.forEach(q=>{if(q.section===sec)qsOut.push(q)});
-   secPlan.push({sec:sec,minutes:d.sectional.secMinutes,start:start,end:qsOut.length-1});
+   secPlan.push({sec:sec,minutes:(d.sectional.mins&&d.sectional.mins[sec])||d.sectional.secMinutes,start:start,end:qsOut.length-1});
   });
  }
- const meta={title:d.title,exam:d.cfg.name,qcount:qsOut.length,minutes:d.minutes,c:d.mk.c,w:d.mk.w,titaW:d.mk.titaW,max:d.max,navNote:d.navNote,sectional:secPlan,rapid:!!d.rapid};
+ const meta={title:d.title,exam:d.cfg.name,qcount:qsOut.length,minutes:d.minutes,c:d.mk.c,w:d.mk.w,titaW:d.mk.titaW,titaWSec:d.mk.titaWSec||null,max:d.max,navNote:d.navNote,sectional:secPlan,rapid:!!d.rapid};
  const name=d.examKey.toLowerCase()+"_"+slug(d.title)+".html";
  const content=buildTestHTML(meta,qsOut,name);
  download(name,content,"text/html");openExportModal(name,content,"text/html");
@@ -436,7 +484,7 @@ function buildTestHTML(meta,qs,fileName){
  const data=JSON.stringify(qs).replace(/</g,"\\u003c");
  const hasTita=qs.some(q=>!(q.options&&q.options.length));
  const titaW=(meta.titaW!==undefined&&meta.titaW!==null)?meta.titaW:meta.w;
- const cfg=JSON.stringify({testName:meta.title,examName:meta.exam,maxMarks:meta.max,minutes:meta.minutes,c:meta.c,w:meta.w,titaW:titaW,hasTita:hasTita,navNote:meta.navNote||"free navigation",sectional:meta.sectional||null,fileName:fileName,snKey:"riim_session_"+slug(meta.title),bankPrefix:slug(meta.title),rapid:!!meta.rapid}).replace(/</g,"\\u003c");
+ const cfg=JSON.stringify({testName:meta.title,examName:meta.exam,maxMarks:meta.max,minutes:meta.minutes,c:meta.c,w:meta.w,titaW:titaW,titaWSec:meta.titaWSec||null,hasTita:hasTita,navNote:meta.navNote||"free navigation",sectional:meta.sectional||null,fileName:fileName,snKey:"riim_session_"+slug(meta.title),bankPrefix:slug(meta.title),rapid:!!meta.rapid}).replace(/</g,"\\u003c");
  return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -498,6 +546,8 @@ input.tita{background:var(--panel2);border:1px solid rgba(212,169,78,.4);color:v
 #palette button{width:34px;height:34px;border-radius:6px;border:1px solid rgba(232,228,216,.2);background:var(--panel2);color:var(--text);cursor:pointer;font-family:"DM Mono";font-size:12px}
 #palette .done{background:rgba(78,160,130,.25);border-color:rgba(78,160,130,.7)}
 #palette .cur{border-color:var(--gold)}
+#palette .rev{background:rgba(155,120,210,.3);border-color:rgba(175,140,230,.85)}
+#palette .rev.done{background:linear-gradient(135deg,rgba(155,120,210,.45) 50%,rgba(78,160,130,.45) 50%)}
 .legend{font-size:11px;color:var(--mut);margin-top:10px;line-height:2}
 .legend span{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:6px;vertical-align:-1px}
 .statGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px;margin:14px 0}
@@ -528,6 +578,7 @@ input.tita{background:var(--panel2);border:1px solid rgba(212,169,78,.4);color:v
  <select id="stuBatch"><option value="">-- Select your batch --</option>
   <optgroup label="Classroom"><option>A2701</option><option>A2702</option><option>A2703</option><option>A2704</option><option>A2705</option><option>A2706</option><option>A2707</option><option>A2708</option><option>A2709</option><option>A2710</option><option>A2711</option><option>A2712</option><option>A2714</option><option>A2715</option><option>A2716</option><option>A2717</option><option>A2718</option><option>A2719</option><option>A2720</option></optgroup>
   <optgroup label="School"><option>Zebar</option></optgroup>
+  <optgroup label="Online"><option>27E101</option><option>27E102</option><option>27E103</option><option>27E104</option><option>27E105</option><option>27E106</option><option>27E107</option><option>27E108</option><option>27E109</option><option>27E110</option><option>28E101</option><option>28E102</option><option>28E103</option><option>28E104</option><option>28E105</option><option>28E106</option><option>28E107</option><option>28E108</option><option>28E109</option><option>28E110</option></optgroup>
   <optgroup label="IPMAT 28"><option>Z2801</option><option>S2801</option><option>A2804</option><option>PN2801</option></optgroup>
   <optgroup label="Admin"><option>Admin</option></optgroup>
  </select>
@@ -550,12 +601,12 @@ input.tita{background:var(--panel2);border:1px solid rgba(212,169,78,.4);color:v
     <div id="optBox"></div>
    </div>
    <div class="card" style="display:flex;gap:10px;justify-content:space-between;flex-wrap:wrap">
-    <div><button class="btn ghost" id="prevBtn" onclick="nav(-1)">&#8249; Prev</button> <button class="btn" onclick="nav(1)">Next &#8250;</button></div>
+    <div><button class="btn ghost" id="prevBtn" onclick="nav(-1)">&#8249; Prev</button> <button class="btn" onclick="nav(1)">Next &#8250;</button> <button class="btn ghost" id="clrBtn" onclick="clearResp()">Clear response</button> <button class="btn ghost" id="mrkBtn" onclick="toggleMark()">Mark for review</button></div>
     <div><button class="btn ghost" id="endSecBtn" style="display:none" onclick="if(confirm('End this section early? You cannot return to it.'))endSectionEarly()">End Section &#8250;</button> <button class="btn green" id="submitBtn" onclick="if(confirm('Submit test?'))submitTest()">Submit</button></div>
    </div>
   </div>
   <div id="sidePanel" class="card"><h3>QUESTION PALETTE</h3><div id="palette"></div>
-   <div class="legend"><span style="background:rgba(78,160,130,.6)"></span>Answered<br><span style="background:#152136;border:1px solid #D4A94E"></span>Current</div>
+   <div class="legend"><span style="background:rgba(78,160,130,.6)"></span>Answered<br><span style="background:rgba(155,120,210,.55)"></span>Marked for review<br><span style="background:#152136;border:1px solid #D4A94E"></span>Current</div>
   </div>
  </div>
 </div>
@@ -628,6 +679,8 @@ var studentName="",studentPin="",studentBatch="";
 var currentQ=0,testOver=false,started=false;
 var answers=new Array(NQ).fill(null);
 var questionTimes=new Array(NQ).fill(0);
+var marked=new Array(NQ).fill(false);
+var deadline=0,tickCount=0; /* v2.5 wall-clock timer */
 var SEC=(CFG.sectional&&CFG.sectional.length)?CFG.sectional:null;
 var secIdx=0,elapsedPrior=0;
 var secondsLeft=SEC?SEC[0].minutes*60:CFG.minutes*60;
@@ -639,7 +692,7 @@ function isMCQ(q){return !!(q.options&&q.options.length)}
 /* ==================== SESSION AUTOSAVE / RESUME ==================== */
 function snSaveSession(){
  if(testOver||!started)return;
- snWriteJSON(SN_KEY,{file:FILE_NAME,testName:TEST_NAME,name:studentName,pin:studentPin,batch:studentBatch,currentQ:currentQ,answers:answers,questionTimes:questionTimes,secondsLeft:secondsLeft,secIdx:secIdx,elapsedPrior:elapsedPrior,qStartTs:qStartTs,ts:Date.now()});
+ snWriteJSON(SN_KEY,{file:FILE_NAME,testName:TEST_NAME,name:studentName,pin:studentPin,batch:studentBatch,currentQ:currentQ,answers:answers,questionTimes:questionTimes,marked:marked,secondsLeft:secondsLeft,deadline:deadline,secIdx:secIdx,elapsedPrior:elapsedPrior,qStartTs:qStartTs,ts:Date.now()});
 }
 function snClearSession(){try{localStorage.removeItem(SN_KEY)}catch(e){}}
 function snTryResume(){
@@ -658,6 +711,8 @@ function snTryResume(){
   elapsedPrior=typeof s.elapsedPrior==="number"?s.elapsedPrior:0;
   currentQ=Math.max(SEC[secIdx].start,Math.min(SEC[secIdx].end,currentQ));
  }
+ if(s.marked&&s.marked.length===NQ)marked=s.marked;
+ if(!RAPID&&typeof s.deadline==="number"&&s.deadline>0)deadline=s.deadline; /* v2.5: the clock kept running while away */
  if(RAPID&&typeof s.qStartTs==="number"&&s.qStartTs>0)pendingResumeStartTs=s.qStartTs;
  enterTest();
  return true;
@@ -683,23 +738,43 @@ function enterTest(){
  started=true;
  document.getElementById("loginScreen").style.display="none";
  document.getElementById("testScreen").style.display="block";
+ if(!RAPID){
+  if(!deadline)deadline=Date.now()+secondsLeft*1000;
+  catchUp();
+ }
  buildPalette();
  updateSecButtons();
  if(SEC)showSecBanner();
  if(!RAPID){
+  if(secondsLeft<=0){renderQuestion();submitTest();return} /* whole test ran out while away */
   tickInt=setInterval(function(){
-   secondsLeft--;
+   syncLeft();
    var t=document.getElementById("timer");if(t)t.textContent=fmtClock(secondsLeft);
-   if(secondsLeft%10===0)snSaveSession();
+   if(++tickCount%10===0)snSaveSession();
    if(secondsLeft<=0){if(SEC&&secIdx<SEC.length-1)advanceSection();else submitTest()}
   },1000);
  }else{
   var pb=document.getElementById("prevBtn");if(pb)pb.style.display="none";
   var rw=document.getElementById("rfTimerWrap");if(rw)rw.style.display="block";
+  var mb=document.getElementById("mrkBtn");if(mb)mb.style.display="none";
  }
  renderQuestion();
  snSaveSession();
 }
+function syncLeft(){secondsLeft=Math.round((deadline-Date.now())/1000)}
+function catchUp(){ /* v2.5: sections that expired while the student was away are closed, in order */
+ syncLeft();
+ while(SEC&&secondsLeft<=0&&secIdx<SEC.length-1){
+  elapsedPrior+=SEC[secIdx].minutes*60;
+  secIdx++;
+  deadline+=SEC[secIdx].minutes*60*1000;
+  currentQ=SEC[secIdx].start;
+  syncLeft();
+ }
+}
+function clearResp(){if(testOver)return;answers[currentQ]=null;snSaveSession();if(RAPID){var bs=document.querySelectorAll("#optBox .opt");for(var bi=0;bi<bs.length;bi++)bs[bi].classList.remove("sel");var ti=document.querySelector("#optBox input.tita");if(ti)ti.value="";paintPalette()}else renderQuestion()}
+function toggleMark(){if(testOver||RAPID)return;marked[currentQ]=!marked[currentQ];snSaveSession();paintPalette();paintMarkBtn()}
+function paintMarkBtn(){var b=document.getElementById("mrkBtn");if(b)b.textContent=marked[currentQ]?"Unmark review":"Mark for review"}
 function updateSecButtons(){
  var eb=document.getElementById("endSecBtn"),sb=document.getElementById("submitBtn");
  if(!SEC){if(eb)eb.style.display="none";return}
@@ -720,6 +795,7 @@ function advanceSection(){
  elapsedPrior+=SEC[secIdx].minutes*60-Math.max(0,secondsLeft);
  secIdx++;
  secondsLeft=SEC[secIdx].minutes*60;
+ deadline=Date.now()+secondsLeft*1000;
  currentQ=SEC[secIdx].start;
  buildPalette();updateSecButtons();showSecBanner();
  renderQuestion();snSaveSession();
@@ -743,6 +819,7 @@ function paintPalette(){
   var c=document.getElementById("pcell"+i);if(!c)continue;
   c.className="";
   if(answers[i]!==null&&answers[i]!=="")c.classList.add("done");
+  if(marked[i])c.classList.add("rev");
   if(i===currentQ)c.classList.add("cur");
  }
 }
@@ -784,7 +861,7 @@ function renderQuestion(){
   inp.oninput=function(){answers[currentQ]=this.value;snSaveSession();paintPalette()};
   box.appendChild(inp);
  }
- paintPalette();
+ paintPalette();paintMarkBtn();
  if(RAPID)rapidStartQuestion();
 }
 function nav(d){if(RAPID){if(d>0)rapidAdvance();return}markTime();var lo=SEC?SEC[secIdx].start:0,hi=SEC?SEC[secIdx].end:NQ-1;currentQ=Math.max(lo,Math.min(hi,currentQ+d));snSaveSession();renderQuestion()}
@@ -862,6 +939,7 @@ function titaNorm(v){
  if(t!==""&&isFinite(t))return String(Number(t));
  return s.toLowerCase();
 }
+function titaWFor(q){if(CFG.titaWSec&&CFG.titaWSec[q.section]!=null)return CFG.titaWSec[q.section];return CFG.titaW}
 function isCorrect(q,a){
  if(a===null||a==="")return false;
  if(isMCQ(q))return a===q.answerIndex;
@@ -907,7 +985,7 @@ function submitTest(){
   if(isCorrect(q,a)){correctCount++;score+=CFG.c}
   else{
    wrongCount++;
-   score+=(isMCQ(q)?CFG.w:CFG.titaW);
+   score+=(isMCQ(q)?CFG.w:titaWFor(q));
    wrongQuestions.push(i+1);
    sectionErrors[q.section]=(sectionErrors[q.section]||0)+1;
    topicErrorMap[q.format]=(topicErrorMap[q.format]||0)+1;
@@ -1108,11 +1186,12 @@ function downloadPDF(){
 /* ==================== PAGE LOAD ==================== */
 document.getElementById("lgTitle").textContent=TEST_NAME;
 var lgTime=CFG.rapid?("per-question clock \\u00b7 forward only \\u00b7 auto-advance at 0s \\u00b7 ~"+CFG.minutes+" min total"):SEC?(SEC.map(function(p){return p.sec+" "+p.minutes+"m"}).join(" \\u2192 ")+" \\u00b7 sectional lock \\u00b7 no return"):(CFG.minutes+" minutes \\u00b7 "+(CFG.navNote||"free navigation"));
-document.getElementById("lgMeta").innerHTML=NQ+" questions \\u00b7 +"+CFG.c+" / "+CFG.w+(CFG.hasTita?" \\u00b7 TITA wrong "+CFG.titaW:"")+" \\u00b7 Max "+MAX_MARKS+"<br>"+lgTime+" \\u00b7 auto-submit at 00:00";
+document.getElementById("lgMeta").innerHTML=NQ+" questions \\u00b7 +"+CFG.c+" / "+CFG.w+(CFG.hasTita?" \\u00b7 TITA wrong "+(CFG.titaWSec?QUESTIONS.filter(function(q){return !isMCQ(q)}).map(function(q){return q.section}).filter(function(v,i,a){return a.indexOf(v)===i}).map(function(sec){return sec+" "+titaWFor({section:sec})}).join(", "):CFG.titaW):"")+" \\u00b7 Max "+MAX_MARKS+"<br>"+lgTime+" \\u00b7 auto-submit at 00:00";
 document.getElementById("loginBtn").addEventListener("click",startTest);
 snFlushQueue();
 snTryResume();
 <\/script>
+<script>/* RIIM usage ping v1 */try{fetch("https://script.google.com/macros/s/AKfycbx5Ojm_zp4LfsMeelx5e06KNjVH1wfsXdV0keS4407m4FO1HU4EpVb7GKj-ibAsxnspeA/exec?action=ping&type=open&page="+encodeURIComponent(document.title||location.pathname),{mode:"no-cors"});}catch(_){}<\/script>
 </body>
 </html>`;
 }
@@ -1142,7 +1221,7 @@ function renderConsole(){
    h+='<span class="tag g">'+esc(cfg.name)+'</span><span class="tag b">'+esc(S.meta.testType||"?")+'</span>'+(cfg.provisional?'<span class="tag a">PROVISIONAL SPEC</span>':'');
    h+='<div class="full">'+esc(String(S.meta.testName||""))+'</div>';
    h+='<div class="full">'+(S.meta.sections||[]).map(s=>esc(s)+" "+((S.report&&S.report.counts[s])||0)+"/"+(cfg.sections[s]!=null?cfg.sections[s]:"?")).join(" \u00b7 ")+'</div>';
-   if(d&&!d.blocked)h+='<div class="full" style="color:var(--gold2)">'+d.minutes+' min ('+esc(d.timerSrc)+') \u00b7 +'+d.mk.c+' / '+d.mk.w+(d.mk.titaW!==undefined?' \u00b7 TITA '+d.mk.titaW:'')+' \u00b7 max '+d.max+' \u00b7 '+esc(d.navNote)+'</div>';
+   if(d&&!d.blocked)h+='<div class="full" style="color:var(--gold2)">'+d.minutes+' min ('+esc(d.timerSrc)+') \u00b7 +'+d.mk.c+' / '+d.mk.w+(d.mk.titaW!==undefined?' \u00b7 TITA '+(d.mk.titaWSec?Object.entries(d.mk.titaWSec).map(([k,v])=>k+' '+v).join(', ')+', else '+d.mk.titaW:d.mk.titaW):'')+' \u00b7 max '+d.max+' \u00b7 '+esc(d.navNote)+'</div>';
    if(d&&d.blocked)h+='<div class="full" style="color:var(--red)">\u26a0 '+esc(d.blocked)+'</div>';
    h+='</div></div>';
   }
@@ -1158,7 +1237,7 @@ function renderConsole(){
  // Exam-config reference
  h+='<div style="margin-top:auto;border-top:1px solid var(--line);padding-top:12px"><div class="lbl">EXAM CONFIG TABLE \u00b7 v2 \u00b7 18 AUG 2026</div>';
  Object.entries(EXAM_CONFIG).forEach(([k,c])=>{
-  h+='<div style="font-size:11px;color:var(--mut);margin-bottom:4px;line-height:1.5"><b style="color:var(--gold2)">'+esc(c.name)+'</b> \u00b7 '+cfgTotalQ(c)+'Q \u00b7 '+c.duration+'min \u00b7 +'+c.marking.c+'/'+c.marking.w+(c.marking.titaW!==undefined?' (TITA '+c.marking.titaW+')':'')+' \u00b7 '+(c.timing==="locked"?"LOCKED "+c.secMinutes+"min/sec":"single clock")+'</div>';
+  h+='<div style="font-size:11px;color:var(--mut);margin-bottom:4px;line-height:1.5"><b style="color:var(--gold2)">'+esc(c.name)+'</b> \u00b7 '+cfgTotalQ(c)+'Q \u00b7 '+c.duration+'min \u00b7 +'+c.marking.c+'/'+c.marking.w+(c.marking.titaW!==undefined?' (TITA '+(c.marking.titaWSec?Object.entries(c.marking.titaWSec).map(([k,v])=>k+' '+v).join(', ')+', else '+c.marking.titaW:c.marking.titaW)+')':'')+' \u00b7 '+(c.timing==="locked"?"LOCKED "+c.secMinutes+"min/sec":"single clock")+'</div>';
  });
  h+='</div>';
  if(S.notice)h+='<div class="noticeline">'+esc(S.notice)+'</div>';
@@ -1179,14 +1258,14 @@ function renderDesk(){
  S.qs.forEach((q,i)=>{
   const vOK=q.verified==="ok";
   h+='<div class="card'+(vOK?' appr':'')+'"><div class="qhead"><span class="tag g">Q'+(i+1)+'</span><span class="tag m">'+esc(q.section)+' \u00b7 '+esc(q.format)+'</span><span class="tag a">'+esc(q.difficulty||"")+'</span>'+(q.kind==="tita"?'<span class="tag b">TITA</span>':'')+(vOK?'<span class="tag gr">VERIFIED \u2713</span>':'<span class="tag" style="color:var(--red);background:rgba(192,85,85,.12);border-color:rgba(192,85,85,.4)">VERIFIED: '+esc(String(q.verified))+'</span>');
-  h+='<div class="acts"><button class="btn sm blue" onclick="startEdit(\''+esc(q.id)+'\')">\u270e Edit</button><button class="btn sm red" onclick="delQ(\''+esc(q.id)+'\')">\u2715</button></div></div>';
+  h+='<div class="acts"><button class="btn sm blue" onclick="startEdit('+esc(JSON.stringify(String(q.id)))+')">\u270e Edit</button><button class="btn sm red" onclick="delQ('+esc(JSON.stringify(String(q.id)))+')">\u2715</button></div></div>';
   if(q.passage)h+='<details><summary>base passage / dataset</summary><div>'+esc(q.passage)+'</div></details>';
   if(S.editing===q.id){
    h+='<div style="display:flex;flex-direction:column;gap:8px"><textarea id="e_stem" rows="3">'+esc(q.stem)+'</textarea>';
    if(q.kind!=="tita")h+='<textarea id="e_opts" rows="4" placeholder="One option per line">'+esc((q.options||[]).join("\n"))+'</textarea>';
    h+='<div class="editgrid"><input type="text" id="e_ans" style="font-family:\'DM Mono\';border-color:rgba(212,169,78,.5)" value="'+esc(q.answer)+'" placeholder="Correct answer (exact option text / TITA value)"><select id="e_diff">'+["Easy","Medium","Hard"].map(dd=>'<option'+(dd===q.difficulty?' selected':'')+'>'+dd+'</option>').join('')+'</select></div>';
    h+='<textarea id="e_expl" rows="2" placeholder="Explanation">'+esc(q.explanation)+'</textarea>';
-   h+='<div style="display:flex;gap:8px"><button class="btn sm gold" onclick="saveEdit(\''+esc(q.id)+'\')">Save changes</button><button class="btn sm" onclick="S.editing=null;render()">Cancel</button></div></div>';
+   h+='<div style="display:flex;gap:8px"><button class="btn sm gold" onclick="saveEdit('+esc(JSON.stringify(String(q.id)))+')">Save changes</button><button class="btn sm" onclick="S.editing=null;render()">Cancel</button></div></div>';
   } else {
    h+='<div class="stem">'+esc(q.stem)+'</div>';
    if(q.options&&q.options.length)h+='<ol class="opts">'+q.options.map((o,j)=>'<li class="'+(j===q.answerIndex?'key':'')+'">'+esc(o)+'</li>').join('')+'</ol>';
