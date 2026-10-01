@@ -493,6 +493,7 @@ let qTimes=Array(NQ).fill(0), lastTick=null, student={name:"",pin:"",batch:""};
 
 /* ============================================================ ENGINE */
 function windowState(){
+  return 'open'; /* UNLOCKED 1 Oct 2026: window gate disabled, test open to all */
   const now=Date.now();
   if(now<OPEN_TS) return 'before';
   if(now>=CLOSE_TS) return 'after';
@@ -508,7 +509,7 @@ function refreshWindowMsg(){
   const st=windowState();
   if(st==='before'){el.style.display='block';el.innerHTML='⏳ This test opens in <b>'+fmtRemain(OPEN_TS-Date.now())+'</b> (Fri 21 Aug, 12:00 AM).';}
   else if(st==='after'){el.style.display='block';el.innerHTML='🔒 The window for this test has closed.';}
-  else{el.style.display='block';el.innerHTML='🟢 Live — window closes in <b>'+fmtRemain(CLOSE_TS-Date.now())+'</b> (Mon 24 Aug, 12:00 AM).';}
+  else{el.style.display='none';}
 }
 setInterval(refreshWindowMsg,30000);
 document.addEventListener('DOMContentLoaded',refreshWindowMsg);

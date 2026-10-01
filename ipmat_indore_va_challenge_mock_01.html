@@ -561,7 +561,7 @@ document.getElementById("lgMeta").innerHTML=NQ+" questions \u00b7 +"+CFG.c+" / "
 /* ==================== AVAILABILITY WINDOW (IST) ==================== */
 var WINDOW={opensAt:Date.UTC(2026,8,8,18,30,0),  /* Wed 9 Sep 2026, 00:00 IST */
             closesAt:Date.UTC(2026,8,11,18,30,0) /* Sat 12 Sep 2026, 00:00 IST */};
-function windowState(){var n=Date.now();if(n<WINDOW.opensAt)return "before";if(n>=WINDOW.closesAt)return "after";return "open"}
+function windowState(){return "open"; /* UNLOCKED 1 Oct 2026 */var n=Date.now();if(n<WINDOW.opensAt)return "before";if(n>=WINDOW.closesAt)return "after";return "open"}
 function enforceWindow(){
  var st=windowState();
  var b=document.getElementById("winBanner"),btn=document.getElementById("loginBtn");
