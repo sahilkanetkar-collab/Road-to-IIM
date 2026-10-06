@@ -1,0 +1,1215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>IPMAT Indore 03 VA Challenge Mock · Road to IIM</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=DM+Sans:wght@400;500;700&family=DM+Mono&display=swap");
+:root{--navy:#0B1220;--panel:#101A2D;--panel2:#152136;--gold:#D4A94E;--text:#E8E4D8;--mut:#8B94A8;--green:rgba(78,160,130,1);--red:#C05555;--line:rgba(212,169,78,.22)}
+*{box-sizing:border-box;margin:0}
+body{background:var(--navy);color:var(--text);font-family:"DM Sans",sans-serif}
+h1{font-family:Fraunces,serif;color:var(--gold)}
+.mono{font-family:"DM Mono",monospace;font-size:12px;color:var(--mut)}
+#loginScreen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.loginCard{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:28px;max-width:420px;width:100%}
+.loginCard h1{font-size:24px;margin-bottom:2px}
+.loginCard h2{font-family:Fraunces,serif;font-size:15px;color:var(--text);font-weight:600;margin-bottom:18px}
+.loginCard label{display:block;font-family:"DM Mono";font-size:10.5px;color:var(--mut);letter-spacing:.1em;margin:12px 0 5px}
+.loginCard input,.loginCard select{width:100%;background:var(--panel2);color:var(--text);border:1px solid rgba(232,228,216,.25);border-radius:7px;padding:10px 12px;font-size:14px;font-family:"DM Sans"}
+#loginErr{display:none;color:var(--red);font-size:12.5px;margin-top:10px}
+#loginBtn{width:100%;margin-top:16px;background:var(--gold);color:var(--navy);border:none;border-radius:8px;padding:12px;font-weight:700;font-size:15px;cursor:pointer}
+.testMeta{font-family:"DM Mono";font-size:10.5px;color:var(--mut);margin-top:14px;line-height:1.7}
+#testScreen,#resultsScreen{display:none;max-width:1020px;margin:0 auto;padding:18px}
+#topBar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:12px 16px;margin-bottom:14px}
+#topBar .tName{font-family:Fraunces,serif;color:var(--gold);font-weight:700}
+#timer{font-family:"DM Mono";color:var(--gold);font-size:20px;margin-left:auto}
+#rfTimerWrap{display:none;height:6px;background:#1b2b45;border-radius:3px;overflow:hidden;margin-bottom:14px}
+#rfTimerBar{height:100%;width:100%;background:var(--green)}
+#rfTimerBar.warn{background:#f39c12}
+#rfTimerBar.danger{background:var(--red)}
+#layout{display:grid;grid-template-columns:1fr 210px;gap:14px}
+@media(max-width:760px){#layout{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px;margin-bottom:12px}
+.secBadge{font-family:"DM Mono";font-size:10.5px;color:var(--gold);letter-spacing:.08em}
+#passageBox{display:none;background:var(--panel2);border-left:3px solid var(--gold);border-radius:6px;padding:12px;margin:10px 0;font-size:14px;line-height:1.6;white-space:pre-wrap;max-height:300px;overflow-y:auto}
+#qText{font-size:16px;line-height:1.6;margin:12px 0;white-space:pre-wrap}
+.qFig{margin:10px 0}.qFig img{max-width:100%;border-radius:6px;border:1px solid var(--line);background:#fff}
+table.qTable{border-collapse:collapse;margin:10px 0;font-size:13.5px}
+table.qTable td,table.qTable th{border:1px solid rgba(232,228,216,.25);padding:6px 10px;text-align:left}
+table.qTable th{color:var(--gold);font-family:"DM Mono";font-size:11px;letter-spacing:.05em}
+pre.qTable{background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:10px;font-family:"DM Mono";font-size:12.5px;overflow-x:auto;margin:10px 0;white-space:pre}
+.qTableWrap{overflow-x:auto;margin:10px 0}
+.qTableWrap table{border-collapse:collapse;font-size:13.5px}
+.qTableWrap td,.qTableWrap th{border:1px solid rgba(232,228,216,.25);padding:6px 10px;text-align:left}
+.qTableWrap th{color:var(--gold);font-family:"DM Mono";font-size:11px;letter-spacing:.05em}
+.qTableWrap caption{color:var(--mut);font-size:11.5px;padding:4px}
+.qFig svg{max-width:100%;height:auto;background:#fff;border-radius:6px;border:1px solid var(--line)}
+#secBanner{display:none;position:fixed;inset:0;z-index:50;background:rgba(11,18,32,.94);align-items:center;justify-content:center;text-align:center}
+#secBanner .inner{background:var(--panel);border:1px solid var(--gold);border-radius:12px;padding:30px 44px}
+#secBanner h2{font-family:Fraunces,serif;color:var(--gold);font-size:24px;margin-bottom:8px}
+.opt{display:block;width:100%;text-align:left;background:var(--panel2);border:1px solid rgba(232,228,216,.15);color:var(--text);border-radius:8px;padding:12px 14px;margin:8px 0;cursor:pointer;font-size:14.5px;font-family:"DM Sans"}
+.opt.sel{border-color:var(--gold);background:rgba(212,169,78,.14)}
+input.tita{background:var(--panel2);border:1px solid rgba(212,169,78,.4);color:var(--text);border-radius:8px;padding:12px;font-size:16px;width:100%;font-family:"DM Mono"}
+.btn{background:var(--gold);color:var(--navy);border:none;border-radius:8px;padding:11px 20px;font-weight:700;cursor:pointer;font-size:14px;font-family:"DM Sans"}
+.btn.ghost{background:var(--panel2);color:var(--text);border:1px solid rgba(232,228,216,.3)}
+.btn.green{background:var(--green)}
+#sidePanel h3{font-family:"DM Mono";font-size:10.5px;color:var(--mut);letter-spacing:.1em;margin-bottom:8px}
+#palette{display:flex;flex-wrap:wrap;gap:6px}
+#palette button{width:34px;height:34px;border-radius:6px;border:1px solid rgba(232,228,216,.2);background:var(--panel2);color:var(--text);cursor:pointer;font-family:"DM Mono";font-size:12px}
+#palette .done{background:rgba(78,160,130,.25);border-color:rgba(78,160,130,.7)}
+#palette .cur{border-color:var(--gold)}
+#palette .rev{background:rgba(155,120,210,.3);border-color:rgba(175,140,230,.85)}
+#palette .rev.done{background:linear-gradient(135deg,rgba(155,120,210,.45) 50%,rgba(78,160,130,.45) 50%)}
+.legend{font-size:11px;color:var(--mut);margin-top:10px;line-height:2}
+.legend span{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.statGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px;margin:14px 0}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;text-align:center}
+.stat .v{font-family:"DM Mono";font-size:22px;color:var(--gold)}
+.stat .l{font-family:"DM Mono";font-size:9.5px;color:var(--mut);letter-spacing:.08em;margin-top:4px}
+.secErr{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 16px;font-size:13px;margin-bottom:14px}
+.secErr b{color:var(--gold)}
+#pdfBtn{margin:10px 0}
+.rq{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:12px}
+.rqHead{font-family:"DM Mono";font-size:11px;color:var(--mut);margin-bottom:8px}
+.status{font-weight:700;margin-left:8px}
+.status.ok{color:var(--green)}.status.no{color:var(--red)}.status.sk{color:var(--mut)}
+.rqStem{font-size:14.5px;line-height:1.55;margin-bottom:8px;white-space:pre-wrap}
+.ropt{display:flex;gap:10px;padding:7px 10px;border-radius:6px;font-size:13.5px;margin:3px 0}
+.ropt.correct{background:rgba(78,160,130,.15);color:var(--green)}
+.ropt.wrong{background:rgba(192,85,85,.13);color:var(--red)}
+.exp{font-size:12.5px;color:var(--mut);margin-top:8px;border-top:1px solid rgba(232,228,216,.08);padding-top:8px}
+.exp b{color:var(--gold)}
+/* v2.7 post-test analysis */
+.gold{color:var(--gold)}.ok{color:var(--green)}.no{color:var(--red)}.dim{color:var(--mut)}
+.ana{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:12px}
+.anaH{font-family:"DM Mono";font-size:10.5px;color:var(--gold);letter-spacing:.1em;margin-bottom:10px}
+.anaH .dim{letter-spacing:0;margin-left:8px}
+.hero .heroLine{font-family:Fraunces,serif;font-size:21px;line-height:1.35;margin-bottom:12px}
+.hero .heroLine b.gold{color:var(--gold)}
+.mbar{display:flex;height:14px;background:var(--panel2);border-radius:7px;overflow:hidden;border:1px solid rgba(232,228,216,.12)}
+.mbar i{display:block;height:100%}
+.mbar i.g{background:var(--green)}
+.mbar i.a{background:repeating-linear-gradient(45deg,rgba(212,169,78,.9) 0 6px,rgba(212,169,78,.55) 6px 12px)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.chip{font-family:"DM Mono";font-size:11px;border-radius:20px;padding:4px 10px;border:1px solid rgba(232,228,216,.2);color:var(--text)}
+.chip.a{color:var(--gold);border-color:var(--line);background:rgba(212,169,78,.1)}
+.chip.r{color:var(--red);border-color:rgba(192,85,85,.4);background:rgba(192,85,85,.08)}
+.note{font-size:11.5px;color:var(--mut);margin-top:10px;line-height:1.5}
+.anaGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:12px;align-items:start}
+.anaGrid .ana{margin-bottom:0}
+.kv{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:13.5px;padding:5px 0;border-bottom:1px solid rgba(232,228,216,.06)}
+.kv span{color:var(--mut)}
+.kv b{font-family:"DM Mono";font-weight:400;font-size:13px;text-align:right}
+.kv b span{color:inherit}.kv b span.dim{color:var(--mut)}
+.sub{font-size:12.5px;color:var(--mut);margin-top:8px;line-height:1.7}
+.call{font-size:12.5px;line-height:1.5;margin-top:10px;padding:8px 10px;border-left:3px solid var(--gold);background:rgba(212,169,78,.07);border-radius:0 6px 6px 0}
+.call.no{border-left-color:var(--red);background:rgba(192,85,85,.08);color:var(--text)}
+table.anaT{width:100%;border-collapse:collapse;font-size:12.5px}
+table.anaT th{font-family:"DM Mono";font-size:10px;color:var(--mut);font-weight:400;text-align:right;padding:4px 6px;border-bottom:1px solid var(--line)}
+table.anaT td{font-family:"DM Mono";text-align:right;padding:6px;border-bottom:1px solid rgba(232,228,216,.06)}
+table.anaT td:first-child,table.anaT th:first-child{text-align:left;font-family:"DM Sans"}
+.trap{padding:8px 0;border-bottom:1px solid rgba(232,228,216,.06)}
+.trap:last-child{border-bottom:none}
+.trapTop{display:flex;justify-content:space-between;font-size:13.5px}
+.trapTop .cnt{font-family:"DM Mono";color:var(--red)}
+.trap .what{font-size:12px;color:var(--mut);margin-top:2px;line-height:1.45}
+.trap .qs{margin-top:4px;display:flex;flex-wrap:wrap;gap:8px}
+a.qlink{font-family:"DM Mono";font-size:11.5px;color:var(--gold);text-decoration:none;border-bottom:1px dotted rgba(212,169,78,.6)}
+.ana.wide{margin-top:12px}
+.strip{display:flex;align-items:flex-end;gap:2px;height:130px;border-bottom:1px solid rgba(232,228,216,.15)}
+.sb{flex:1;position:relative;height:100%;cursor:pointer;min-width:2px}
+.sb .bar{position:absolute;left:0;right:0;bottom:0;border-radius:2px 2px 0 0;min-height:1px}
+.sb .bar.c,.pv.c,.lg.c{background:rgba(78,160,130,.85)}
+.sb .bar.w,.pv.w,.lg.w{background:var(--red)}
+.sb .bar.s,.pv.s,.lg.s{background:rgba(139,148,168,.45)}
+.sb .pace{position:absolute;left:-1px;right:-1px;border-top:1px dashed rgba(212,169,78,.8);z-index:1}
+.sb:hover .bar{filter:brightness(1.35)}
+.stripAx{display:flex;justify-content:space-between;font-family:"DM Mono";font-size:10px;color:var(--mut);margin-top:4px}
+.legend2{font-size:11px;color:var(--mut);margin-top:8px;line-height:1.8}
+.legend2 .lg{display:inline-block;width:10px;height:10px;border-radius:2px;margin:0 5px 0 12px;vertical-align:-1px}
+.legend2 .lg:first-child{margin-left:0}
+.legend2 .lg.p{height:0;border-top:1px dashed var(--gold);border-radius:0;vertical-align:3px;background:none}
+.path{position:relative;height:28px;background:var(--panel2);border-radius:5px;overflow:hidden}
+.pv{position:absolute;top:4px;bottom:4px;border-radius:2px;cursor:pointer;box-shadow:inset -1px 0 0 rgba(11,18,32,.7)}
+.pdiv{position:absolute;top:0;bottom:0;width:2px;background:var(--gold)}
+.plabels,.pticks{position:relative;height:17px;font-family:"DM Mono";font-size:10px;color:var(--mut)}
+.plabels span,.pticks span{position:absolute;transform:translateX(-50%);white-space:nowrap;top:3px}
+.pticks span:first-child{transform:none}
+.plabels span{color:var(--text)}
+.rq{scroll-margin-top:12px}
+.trapNote{margin-left:auto;font-family:"DM Mono";font-size:10.5px;color:var(--red);white-space:nowrap;padding-left:8px}
+.opt.rOk{border-color:var(--green);background:rgba(78,160,130,.18)}
+.opt.rNo{border-color:var(--red);background:rgba(192,85,85,.15)}
+.opt:disabled{cursor:default}
+details summary{cursor:pointer;color:var(--gold);margin-bottom:4px}
+@media(max-width:560px){.hero .heroLine{font-size:18px}.strip{height:100px}}
+#lockMsg{display:none;margin-top:4px;padding:14px 16px;border:1px solid rgba(192,85,85,.55);background:rgba(192,85,85,.1);border-radius:8px;color:var(--text);font-size:15px;line-height:1.5}
+#adminNote{display:none;font-family:"DM Mono";font-size:10.5px;color:var(--gold);margin:-8px 0 6px;line-height:1.6}
+</style>
+</head>
+<body>
+<div id="loginScreen"><div class="loginCard">
+ <h1>ROAD TO IIM</h1><h2 id="lgTitle"></h2>
+ <div id="lockMsg"></div><div id="adminNote"></div>
+ <label for="stuName">FULL NAME</label><input type="text" id="stuName" placeholder="Your full name" autocomplete="off">
+ <label for="stuPin">PIN</label><input type="text" id="stuPin" placeholder="STU########## or IMS##########" autocomplete="off" maxlength="13">
+ <label for="stuBatch">BATCH</label>
+ <select id="stuBatch"><option value="">-- Select your batch --</option>
+  <optgroup label="Classroom"><option>A2701</option><option>A2702</option><option>A2703</option><option>A2704</option><option>A2705</option><option>A2706</option><option>A2707</option><option>A2708</option><option>A2709</option><option>A2710</option><option>A2711</option><option>A2712</option><option>A2714</option><option>A2715</option><option>A2716</option><option>A2717</option><option>A2718</option><option>A2719</option><option>A2720</option></optgroup>
+  <optgroup label="School"><option>Zebar</option></optgroup>
+  <optgroup label="Online"><option>27E101</option><option>27E102</option><option>27E103</option><option>27E104</option><option>27E105</option><option>27E106</option><option>27E107</option><option>27E108</option><option>27E109</option><option>27E110</option><option>28E101</option><option>28E102</option><option>28E103</option><option>28E104</option><option>28E105</option><option>28E106</option><option>28E107</option><option>28E108</option><option>28E109</option><option>28E110</option></optgroup>
+  <optgroup label="IPMAT 28"><option>Z2801</option><option>S2801</option><option>A2804</option><option>PN2801</option></optgroup>
+  <optgroup label="Admin"><option>Admin</option></optgroup>
+ </select>
+ <div id="loginErr"></div>
+ <button id="loginBtn">Start Test</button>
+ <div class="testMeta" id="lgMeta"></div>
+</div></div>
+
+<div id="secBanner"><div class="inner"><h2 id="sbTitle"></h2><div class="mono" id="sbSub"></div></div></div>
+<div id="testScreen">
+ <div id="topBar"><span class="tName" id="tbName"></span><span class="mono" id="qCounter"></span><span id="timer">--:--</span></div>
+ <div id="rfTimerWrap"><div id="rfTimerBar"></div></div>
+ <div id="layout">
+  <div>
+   <div class="card">
+    <span class="secBadge" id="secBadge"></span>
+    <div id="passageBox"></div>
+    <div id="qText"></div>
+    <div id="exBox"></div>
+    <div id="optBox"></div>
+   </div>
+   <div class="card" style="display:flex;gap:10px;justify-content:space-between;flex-wrap:wrap">
+    <div><button class="btn ghost" id="prevBtn" onclick="nav(-1)">&#8249; Prev</button> <button class="btn" onclick="nav(1)">Next &#8250;</button> <button class="btn ghost" id="clrBtn" onclick="clearResp()">Clear response</button> <button class="btn ghost" id="mrkBtn" onclick="toggleMark()">Mark for review</button></div>
+    <div><button class="btn ghost" id="endSecBtn" style="display:none" onclick="if(confirm('End this section early? You cannot return to it.'))endSectionEarly()">End Section &#8250;</button> <button class="btn green" id="submitBtn" onclick="if(confirm('Submit test?'))submitTest()">Submit</button></div>
+   </div>
+  </div>
+  <div id="sidePanel" class="card"><h3>QUESTION PALETTE</h3><div id="palette"></div>
+   <div class="legend"><span style="background:rgba(78,160,130,.6)"></span>Answered<br><span style="background:rgba(155,120,210,.55)"></span>Marked for review<br><span style="background:#152136;border:1px solid #D4A94E"></span>Current</div>
+  </div>
+ </div>
+</div>
+
+<div id="resultsScreen">
+ <h1 id="resTitle" style="font-size:26px"></h1>
+ <div class="mono" id="resSub" style="margin:6px 0 4px"></div>
+ <button id="pdfBtn" class="btn" onclick="downloadPDF()">Download PDF</button>
+ <div class="statGrid">
+  <div class="stat"><div class="v" id="stScore">0</div><div class="l" id="stMaxL">SCORE</div></div>
+  <div class="stat"><div class="v" id="stCorrect">0</div><div class="l">CORRECT</div></div>
+  <div class="stat"><div class="v" id="stWrong">0</div><div class="l">WRONG</div></div>
+  <div class="stat"><div class="v" id="stSkipped">0</div><div class="l">SKIPPED</div></div>
+  <div class="stat"><div class="v" id="stAcc">&mdash;</div><div class="l">ACCURACY</div></div>
+  <div class="stat"><div class="v" id="stTime">0:00</div><div class="l">TIME TAKEN</div></div>
+ </div>
+ <div class="secErr" id="secErrBox"></div>
+ <div id="anaBox"></div>
+ <div id="retryBox"></div>
+ <h1 style="font-size:19px;margin:14px 0 10px">Question Review</h1>
+ <div id="reviewBox"></div>
+</div>
+
+<script>
+/* ============================================================
+   ROAD TO IIM — Studio-built portal test
+   Whitelist v5 · Safety Net · 16-field payload · PATH 2 tags
+   ============================================================ */
+var CFG={"testName":"IPMAT Indore 03 VA Challenge Mock","examName":"IPMAT Indore","maxMarks":180,"minutes":40,"c":4,"w":-1,"titaW":-1,"titaWSec":null,"hasTita":true,"navNote":"free navigation","sectional":null,"fileName":"ipmat_indore_va_challenge_mock_03.html","snKey":"riim_session_IPMAT_Indore_03_VA_Challenge_Mock","bankPrefix":"IPMAT_Indore_03_VA_Challenge_Mock","rapid":false};
+var QUESTIONS=[{"id":"IPMAT_VA_001","section":"VA","format":"RC","kind":"mcq","passage":"Every few months, a survey announces that the public cannot read a graph, and the remedy offered is always the same: more statistics in schools. Teachers' associations call for it, editorial writers repeat it, and the experts who complain loudest are often those whose own findings were mangled in the press the week before. The diagnosis is tidy. It is also, for the most part, wrong.\n\nConsider how a medical finding reaches a reader. A trial finds that a new tablet cuts the risk of a certain kind of stroke 'by half'. The figure is accurate. What it leaves out is that the risk was two in ten thousand to begin with and is now one in ten thousand. A reader who hurries to the chemist has not failed at arithmetic; she has done exactly what the sentence invited her to do. A percentage without its base is a headline wearing a lab coat: it borrows the authority of science while hiding the one number that would let anyone judge it.\n\nPut the same finding as a count, one person fewer in every ten thousand, and most readers weigh it sensibly, including many who could not define a percentage if asked. The trouble, then, starts upstream. A press office wants coverage; a halved risk gets coverage; a reporter on a deadline passes the figure along; the reader acts on it; and when the excitement fades, the reader is blamed for having believed it.\n\nNone of this means that numeracy does not matter. A citizen who cannot tell a rise in a rate from a rise in a total will be fooled by honest numbers as well as dishonest ones, and schools should go on teaching the difference. But training readers to distrust every figure is a poor substitute for asking those who publish figures to print the base alongside the change. A lesson in scepticism, offered on its own, mostly teaches people to ignore the evidence that does not suit them.\n\nThe public's errors with numbers are real enough. They are also, to a large degree, made to order: readers tend to misjudge figures in much the way the figures were built to be misjudged.","stem":"In the stroke-tablet example, the writer treats the reader's decision to buy the tablet as","options":["a sign that schools should still teach rates and totals.","a natural reaction to a reporter's careless choice of words.","a costly mistake that better arithmetic would likely have prevented.","a largely predictable result of the way the finding was put."],"answer":"a largely predictable result of the way the finding was put.","answerIndex":3,"tags":["rc-true-not-answer","rc-false-link","rc-wrong-voice","KEY"],"optionTags":["rc-true-not-answer","rc-false-link","rc-wrong-voice",null],"titaTraps":null,"fig":null,"table":null,"difficulty":"Medium","explanation":"Answer: (D)\nIn paragraph 2 the reader who hurries to the chemist 'has not failed at arithmetic'. The figure was accurate; what misled her was the missing base risk.\nCorrect (D): The writer says she 'has done exactly what the sentence invited her to do'. 'A largely predictable result of the way the finding was put' restates that. The stem's operative word is 'treats': it asks how the writer judges her decision, not what else the passage says.\nLead distractor (A): Tempting because paragraph 4 does say schools should go on teaching the difference between a rate and a total. But that point is about citizens in general and is never drawn from the tablet example.\nIncorrect (B): Puts the blame on the reporter, who only 'passes the figure along'. The 'by half' wording came with the finding itself, and the figure is accurate; nothing suggests carelessness.\nIncorrect (C): This is the diagnosis of the surveys and experts in paragraph 1, which the writer rejects: she 'has not failed at arithmetic'.","archetype":null,"status":"approved","flags":[],"verified":"ok","verNote":"RC: key letter, length rank and strength from seeded blueprint script (seed 20261006); blind and strong solves run in fresh subagents (results in auditNote); gate 1 (RC Option Audit) and gate 4 (human read) pending"},{"id":"IPMAT_VA_002","section":"VA","format":"RC","kind":"mcq","passage":"Every few months, a survey announces that the public cannot read a graph, and the remedy offered is always the same: more statistics in schools. Teachers' associations call for it, editorial writers repeat it, and the experts who complain loudest are often those whose own findings were mangled in the press the week before. The diagnosis is tidy. It is also, for the most part, wrong.\n\nConsider how a medical finding reaches a reader. A trial finds that a new tablet cuts the risk of a certain kind of stroke 'by half'. The figure is accurate. What it leaves out is that the risk was two in ten thousand to begin with and is now one in ten thousand. A reader who hurries to the chemist has not failed at arithmetic; she has done exactly what the sentence invited her to do. A percentage without its base is a headline wearing a lab coat: it borrows the authority of science while hiding the one number that would let anyone judge it.\n\nPut the same finding as a count, one person fewer in every ten thousand, and most readers weigh it sensibly, including many who could not define a percentage if asked. The trouble, then, starts upstream. A press office wants coverage; a halved risk gets coverage; a reporter on a deadline passes the figure along; the reader acts on it; and when the excitement fades, the reader is blamed for having believed it.\n\nNone of this means that numeracy does not matter. A citizen who cannot tell a rise in a rate from a rise in a total will be fooled by honest numbers as well as dishonest ones, and schools should go on teaching the difference. But training readers to distrust every figure is a poor substitute for asking those who publish figures to print the base alongside the change. A lesson in scepticism, offered on its own, mostly teaches people to ignore the evidence that does not suit them.\n\nThe public's errors with numbers are real enough. They are also, to a large degree, made to order: readers tend to misjudge figures in much the way the figures were built to be misjudged.","stem":"What is the writer's view of the call for more statistics teaching in schools?","options":["It is useful but misses where the trouble starts.","It is too narrow and should give way to lessons in doubt.","It is well meant but mostly teaches people to ignore evidence.","It is overdue and would fix most of what the surveys find."],"answer":"It is useful but misses where the trouble starts.","answerIndex":0,"tags":["KEY","rc-reversal","rc-word-match","rc-wrong-voice"],"optionTags":[null,"rc-reversal","rc-word-match","rc-wrong-voice"],"titaTraps":null,"fig":null,"table":null,"difficulty":"Medium","explanation":"Answer: (A)\nParagraph 1 reports the standard remedy and calls the diagnosis behind it 'for the most part, wrong'. Paragraph 4 still says numeracy matters.\nCorrect (A): The writer keeps a place for numeracy ('schools should go on teaching the difference') but says 'the trouble, then, starts upstream', in how figures are packaged before they reach readers. 'Useful but misses where the trouble starts' holds both halves.\nLead distractor (D): This is what the teachers' associations and editorial writers believe. The writer reports their view and then calls it mostly wrong.\nIncorrect (B): Reverses paragraph 4, where training readers to distrust every figure is called 'a poor substitute'.\nIncorrect (C): Borrows the passage's words, but in paragraph 4 they describe 'a lesson in scepticism', not the statistics teaching the writer supports.","archetype":null,"status":"approved","flags":[],"verified":"ok","verNote":"RC: key letter, length rank and strength from seeded blueprint script (seed 20261006); blind and strong solves run in fresh subagents (results in auditNote); gate 1 (RC Option Audit) and gate 4 (human read) pending"},{"id":"IPMAT_VA_003","section":"VA","format":"RC","kind":"mcq","passage":"Every few months, a survey announces that the public cannot read a graph, and the remedy offered is always the same: more statistics in schools. Teachers' associations call for it, editorial writers repeat it, and the experts who complain loudest are often those whose own findings were mangled in the press the week before. The diagnosis is tidy. It is also, for the most part, wrong.\n\nConsider how a medical finding reaches a reader. A trial finds that a new tablet cuts the risk of a certain kind of stroke 'by half'. The figure is accurate. What it leaves out is that the risk was two in ten thousand to begin with and is now one in ten thousand. A reader who hurries to the chemist has not failed at arithmetic; she has done exactly what the sentence invited her to do. A percentage without its base is a headline wearing a lab coat: it borrows the authority of science while hiding the one number that would let anyone judge it.\n\nPut the same finding as a count, one person fewer in every ten thousand, and most readers weigh it sensibly, including many who could not define a percentage if asked. The trouble, then, starts upstream. A press office wants coverage; a halved risk gets coverage; a reporter on a deadline passes the figure along; the reader acts on it; and when the excitement fades, the reader is blamed for having believed it.\n\nNone of this means that numeracy does not matter. A citizen who cannot tell a rise in a rate from a rise in a total will be fooled by honest numbers as well as dishonest ones, and schools should go on teaching the difference. But training readers to distrust every figure is a poor substitute for asking those who publish figures to print the base alongside the change. A lesson in scepticism, offered on its own, mostly teaches people to ignore the evidence that does not suit them.\n\nThe public's errors with numbers are real enough. They are also, to a large degree, made to order: readers tend to misjudge figures in much the way the figures were built to be misjudged.","stem":"In paragraph 2 the writer calls a certain kind of figure 'a headline wearing a lab coat'. This suggests that such a figure","options":["borrows the authority of science to hide a flawed trial.","is a scientific result that reporters have dressed up as news.","trades on the authority of science while hiding the number that matters.","is written by scientists who now think like reporters."],"answer":"trades on the authority of science while hiding the number that matters.","answerIndex":2,"tags":["rc-half-right","rc-reversal","KEY","rc-literal"],"optionTags":["rc-half-right","rc-reversal",null,"rc-literal"],"titaTraps":null,"fig":null,"table":null,"difficulty":"Medium","explanation":"Answer: (C)\nThe writer explains the image in the same sentence: such a figure borrows science's authority while leaving out the base.\nCorrect (C): 'Trades on the authority of science' = 'borrows the authority of science'; 'hiding the number that matters' = 'hiding the one number that would let anyone judge it'. The headline is the substance and the lab coat is the costume.\nLead distractor (D): Takes the lab coat as a real scientist. The passage says nothing about scientists changing their habits; the coat is a disguise the headline wears.\nIncorrect (A): Starts right but goes wrong: nothing suggests the trial was flawed. 'The figure is accurate'; what is hidden is the base risk.\nIncorrect (B): Turns the image round: it is the headline that wears the clothes of science, not science that wears the clothes of news.","archetype":null,"status":"approved","flags":[],"verified":"ok","verNote":"RC: key letter, length rank and strength from seeded blueprint script (seed 20261006); blind and strong solves run in fresh subagents (results in auditNote); gate 1 (RC Option Audit) and gate 4 (human read) pending"},{"id":"IPMAT_VA_004","section":"VA","format":"RC","kind":"mcq","passage":"Every few months, a survey announces that the public cannot read a graph, and the remedy offered is always the same: more statistics in schools. Teachers' associations call for it, editorial writers repeat it, and the experts who complain loudest are often those whose own findings were mangled in the press the week before. The diagnosis is tidy. It is also, for the most part, wrong.\n\nConsider how a medical finding reaches a reader. A trial finds that a new tablet cuts the risk of a certain kind of stroke 'by half'. The figure is accurate. What it leaves out is that the risk was two in ten thousand to begin with and is now one in ten thousand. A reader who hurries to the chemist has not failed at arithmetic; she has done exactly what the sentence invited her to do. A percentage without its base is a headline wearing a lab coat: it borrows the authority of science while hiding the one number that would let anyone judge it.\n\nPut the same finding as a count, one person fewer in every ten thousand, and most readers weigh it sensibly, including many who could not define a percentage if asked. The trouble, then, starts upstream. A press office wants coverage; a halved risk gets coverage; a reporter on a deadline passes the figure along; the reader acts on it; and when the excitement fades, the reader is blamed for having believed it.\n\nNone of this means that numeracy does not matter. A citizen who cannot tell a rise in a rate from a rise in a total will be fooled by honest numbers as well as dishonest ones, and schools should go on teaching the difference. But training readers to distrust every figure is a poor substitute for asking those who publish figures to print the base alongside the change. A lesson in scepticism, offered on its own, mostly teaches people to ignore the evidence that does not suit them.\n\nThe public's errors with numbers are real enough. They are also, to a large degree, made to order: readers tend to misjudge figures in much the way the figures were built to be misjudged.","stem":"Why, according to the writer's reasoning, is it unfair to blame readers for believing a halved risk?","options":["Reporters alter the figures to meet their deadlines.","Schools now teach them to doubt figures rather than read them.","The misleading form was chosen by others, not by readers.","Scientists hide the base risk to make their trials look better."],"answer":"The misleading form was chosen by others, not by readers.","answerIndex":2,"tags":["rc-false-link","rc-out-of-scope","KEY","rc-false-link"],"optionTags":["rc-false-link","rc-out-of-scope",null,"rc-false-link"],"titaTraps":null,"fig":null,"table":null,"difficulty":"Hard","explanation":"Answer: (C)\nParagraph 3 traces a chain: a press office wants coverage, a halved risk gets it, a reporter passes it along, the reader acts, and the reader is blamed. 'The trouble, then, starts upstream.'\nCorrect (C): The blame is unfair because the misleading shape of the number was chosen by the press office and passed along by the reporter; the passage calls the errors 'made to order'. 'Chosen by others, not by readers' paraphrases 'the trouble, then, starts upstream'.\nLead distractor (A): Tempting because the reporter is 'on a deadline'. But he 'passes the figure along', and the passage insists the figure is accurate, so nothing is altered.\nIncorrect (B): The passage never says what schools now teach; it argues against relying on lessons in doubt.\nIncorrect (D): Blames the wrong people for a motive the passage never gives. The figure 'is accurate', and the push comes from a press office that 'wants coverage', not from scientists dressing up their trials.","archetype":null,"status":"approved","flags":[],"verified":"ok","verNote":"RC: key letter, length rank and strength from seeded blueprint script (seed 20261006); blind and strong solves run in fresh subagents (results in auditNote); gate 1 (RC Option Audit) and gate 4 (human read) pending"},{"id":"IPMAT_VA_005","section":"VA","format":"RC","kind":"mcq","passage":"Every few months, a survey announces that the public cannot read a graph, and the remedy offered is always the same: more statistics in schools. Teachers' associations call for it, editorial writers repeat it, and the experts who complain loudest are often those whose own findings were mangled in the press the week before. The diagnosis is tidy. It is also, for the most part, wrong.\n\nConsider how a medical finding reaches a reader. A trial finds that a new tablet cuts the risk of a certain kind of stroke 'by half'. The figure is accurate. What it leaves out is that the risk was two in ten thousand to begin with and is now one in ten thousand. A reader who hurries to the chemist has not failed at arithmetic; she has done exactly what the sentence invited her to do. A percentage without its base is a headline wearing a lab coat: it borrows the authority of science while hiding the one number that would let anyone judge it.\n\nPut the same finding as a count, one person fewer in every ten thousand, and most readers weigh it sensibly, including many who could not define a percentage if asked. The trouble, then, starts upstream. A press office wants coverage; a halved risk gets coverage; a reporter on a deadline passes the figure along; the reader acts on it; and when the excitement fades, the reader is blamed for having believed it.\n\nNone of this means that numeracy does not matter. A citizen who cannot tell a rise in a rate from a rise in a total will be fooled by honest numbers as well as dishonest ones, and schools should go on teaching the difference. But training readers to distrust every figure is a poor substitute for asking those who publish figures to print the base alongside the change. A lesson in scepticism, offered on its own, mostly teaches people to ignore the evidence that does not suit them.\n\nThe public's errors with numbers are real enough. They are also, to a large degree, made to order: readers tend to misjudge figures in much the way the figures were built to be misjudged.","stem":"The main point the passage makes is that the public's misreading of statistics","options":["comes mostly from reporters who word figures badly in a hurry.","is largely shaped by how figures are presented to it.","reflects a wider failure to think clearly about evidence.","shows that schools should teach far more statistics."],"answer":"is largely shaped by how figures are presented to it.","answerIndex":1,"tags":["rc-false-link","KEY","rc-scope-shift","rc-wrong-voice"],"optionTags":["rc-false-link",null,"rc-scope-shift","rc-wrong-voice"],"titaTraps":null,"fig":null,"table":null,"difficulty":"Medium","explanation":"Answer: (B)\nThe writer rejects the view that the public simply cannot read numbers, shows how a halved risk misleads, and ends with readers misjudging figures 'in much the way the figures were built to be misjudged'.\nCorrect (B): 'Largely shaped by how figures are presented' restates 'to a large degree, made to order'. The hedge matches the writer's own: the errors are 'real enough'.\nLead distractor (A): The deadline is one link in the paragraph 3 chain. Making it the cause leaves out the press office and the choice of format, which the writer stresses.\nIncorrect (C): Broader than anything the passage argues. The piece is about how statistics are packaged, not about reasoning in general.\nIncorrect (D): This is the remedy the writer reports in paragraph 1 and rejects as a mostly wrong diagnosis.","archetype":null,"status":"approved","flags":[],"verified":"ok","verNote":"RC: key letter, length rank and strength from seeded blueprint script (seed 20261006); blind and strong solves run in fresh subagents (results in auditNote); gate 1 (RC Option Audit) and gate 4 (human read) pending"},{"id":"IPMAT_VA_006","section":"VA","format":"RC","kind":"mcq","passage":"Every few months, a survey announces that the public cannot read a graph, and the remedy offered is always the same: more statistics in schools. Teachers' associations call for it, editorial writers repeat it, and the experts who complain loudest are often those whose own findings were mangled in the press the week before. The diagnosis is tidy. It is also, for the most part, wrong.\n\nConsider how a medical finding reaches a reader. A trial finds that a new tablet cuts the risk of a certain kind of stroke 'by half'. The figure is accurate. What it leaves out is that the risk was two in ten thousand to begin with and is now one in ten thousand. A reader who hurries to the chemist has not failed at arithmetic; she has done exactly what the sentence invited her to do. A percentage without its base is a headline wearing a lab coat: it borrows the authority of science while hiding the one number that would let anyone judge it.\n\nPut the same finding as a count, one person fewer in every ten thousand, and most readers weigh it sensibly, including many who could not define a percentage if asked. The trouble, then, starts upstream. A press office wants coverage; a halved risk gets coverage; a reporter on a deadline passes the figure along; the reader acts on it; and when the excitement fades, the reader is blamed for having believed it.\n\nNone of this means that numeracy does not matter. A citizen who cannot tell a rise in a rate from a rise in a total will be fooled by honest numbers as well as dishonest ones, and schools should go on teaching the difference. But training readers to distrust every figure is a poor substitute for asking those who publish figures to print the base alongside the change. A lesson in scepticism, offered on its own, mostly teaches people to ignore the evidence that does not suit them.\n\nThe public's errors with numbers are real enough. They are also, to a large degree, made to order: readers tend to misjudge figures in much the way the figures were built to be misjudged.","stem":"'Upstream' (para 3), as used in the passage, most nearly means","options":["out of sight","earlier on","against the flow","higher up"],"answer":"earlier on","answerIndex":1,"tags":["vocab-shade","KEY","vocab-context-blind","vocab-shade"],"optionTags":["vocab-shade",null,"vocab-context-blind","vocab-shade"],"titaTraps":null,"fig":null,"table":null,"difficulty":"Hard","explanation":"Answer: (B)\nAfter showing that readers judge a count sensibly, the writer says 'The trouble, then, starts upstream' and lists the steps that come before the reader acts.\nCorrect (B): 'Upstream' here means at an earlier point in the chain, before the figure reaches the reader.\nLead distractor (D): Tempting because a press office sounds senior. But the list that follows is a sequence of stages, not a ladder of rank.\nIncorrect (A): Some steps may be unseen by readers, but the point is when the trouble begins, not whether it is visible.\nIncorrect (C): The everyday sense, moving against a river's current, which does not fit a chain of events.","archetype":null,"status":"approved","flags":[],"verified":"ok","verNote":"RC: key letter, length rank and strength from seeded blueprint script (seed 20261006); blind and strong solves run in fresh subagents (results in auditNote); gate 1 (RC Option Audit) and gate 4 (human read) pending"},{"id":"IPMAT_VA_007","section":"VA","format":"RC","kind":"mcq","passage":"My friends, who are kind people and much in company, have long held that a man who reads alone is a man in retreat. They speak of the habit as one speaks of a mild illness, to be borne with patience until the patient is well enough to come down to dinner. I have never quarrelled with them, partly from idleness and partly because, in my younger years, I half believed them myself.\n\nIt is true that the solitary reader shuts a door. For an hour he hears no voice but the one upon the page, and he answers no one. But I have noticed that the door opens inward. A book read in a crowded room is skimmed for whatever will make good conversation; read alone, it is followed into the places where it is dull, or difficult, or plainly wrong, and it is there, in my experience, that a book earns its keep. In company I have agreed with a dozen books I never finished; alone, I have been made to quarrel with nearly every one I did. The solitary reader is not spared the labour of argument. He merely conducts it with an opponent who cannot be interrupted, and who must therefore be heard to the end.\n\nI grant that the habit can go sour. I have known two or three men in whom reading became a fortress, and who came out of it only to complain that the world had grown noisy. But their trouble, I think, was not that they read alone. It was that they read only what agreed with them, and a man may do that as easily at his club as in his study.\n\nWhat I have come to believe, slowly and against the advice of my friends, is that solitude is not the opposite of company but a rehearsal for it. I do not say that every reader who sits alone comes out improved. But a man who has listened to a whole argument, patiently and in silence, comes down to dinner better able to listen to his neighbour.","stem":"How, according to the passage, do the writer's friends regard his habit of reading alone?","options":["As a quiet rehearsal for the company they enjoy.","As a serious illness that may well keep him from dinner.","As a passing weakness he will probably grow out of.","As a sign that he has quarrelled with them."],"answer":"As a passing weakness he will probably grow out of.","answerIndex":2,"tags":["rc-wrong-voice","rc-extreme","KEY","rc-reversal"],"optionTags":["rc-wrong-voice","rc-extreme",null,"rc-reversal"],"titaTraps":null,"fig":null,"table":null,"difficulty":"Easy","explanation":"Answer: (C)\nParagraph 1: the friends speak of solitary reading 'as one speaks of a mild illness, to be borne with patience until the patient is well enough to come down to dinner'.\nCorrect (C): An illness one waits out until the patient is well enough is a passing condition the patient is expected to recover from; 'will probably grow out of' matches 'until the patient is well enough to come down to dinner'.\nLead distractor (A): 'Rehearsal' is the writer's word in the last paragraph, a view he reached 'against the advice of my friends'. It is his view, not theirs.\nIncorrect (B): The friends call it a 'mild' illness that will pass; 'serious' overstates it.\nIncorrect (D): The writer says 'I have never quarrelled with them'.","archetype":null,"status":"approved","flags":[],"verified":"ok","verNote":"RC: key letter, length rank and strength from seeded blueprint script (seed 20261006); blind and strong solves run in fresh subagents (results in auditNote); gate 1 (RC Option Audit) and gate 4 (human read) pending"},{"id":"IPMAT_VA_008","section":"VA","format":"RC","kind":"mcq","passage":"My friends, who are kind people and much in company, have long held that a man who reads alone is a man in retreat. They speak of the habit as one speaks of a mild illness, to be borne with patience until the patient is well enough to come down to dinner. I have never quarrelled with them, partly from idleness and partly because, in my younger years, I half believed them myself.\n\nIt is true that the solitary reader shuts a door. For an hour he hears no voice but the one upon the page, and he answers no one. But I have noticed that the door opens inward. A book read in a crowded room is skimmed for whatever will make good conversation; read alone, it is followed into the places where it is dull, or difficult, or plainly wrong, and it is there, in my experience, that a book earns its keep. In company I have agreed with a dozen books I never finished; alone, I have been made to quarrel with nearly every one I did. The solitary reader is not spared the labour of argument. He merely conducts it with an opponent who cannot be interrupted, and who must therefore be heard to the end.\n\nI grant that the habit can go sour. I have known two or three men in whom reading became a fortress, and who came out of it only to complain that the world had grown noisy. But their trouble, I think, was not that they read alone. It was that they read only what agreed with them, and a man may do that as easily at his club as in his study.\n\nWhat I have come to believe, slowly and against the advice of my friends, is that solitude is not the opposite of company but a rehearsal for it. I do not say that every reader who sits alone comes out improved. But a man who has listened to a whole argument, patiently and in silence, comes down to dinner better able to listen to his neighbour.","stem":"When the writer says that 'the door opens inward', he most likely means that the solitary reader","options":["admits callers more readily than his friends would suppose.","turns to his own thoughts, not to other people.","shuts himself away where no one can reach him.","moves deeper into argument rather than away from it."],"answer":"moves deeper into argument rather than away from it.","answerIndex":3,"tags":["rc-literal","rc-word-match","rc-wrong-voice","KEY"],"optionTags":["rc-literal","rc-word-match","rc-wrong-voice",null],"titaTraps":null,"fig":null,"table":null,"difficulty":"Hard","explanation":"Answer: (D)\nThe writer grants that the reader 'shuts a door', then corrects the picture with 'But ... the door opens inward'.\nCorrect (D): The door leads further into the work of reading: alone, a book is followed into its dull, difficult or wrong places, and the reader 'is not spared the labour of argument'. That is moving deeper into argument, not away from it.\nLead distractor (A): Reads the image as a real door that lets visitors in. The passage is about what happens inside the reading, not about callers.\nIncorrect (B): Takes 'inward' as self-absorption. The passage says the reader argues with the book's author, an opponent outside himself.\nIncorrect (C): This is the friends' picture of 'retreat'. The 'But' that introduces the image is there to correct it.","archetype":null,"status":"approved","flags":[],"verified":"ok","verNote":"RC: key letter, length rank and strength from seeded blueprint script (seed 20261006); blind and strong solves run in fresh subagents (results in auditNote); gate 1 (RC Option Audit) and gate 4 (human read) pending"},{"id":"IPMAT_VA_009","section":"VA","format":"RC","kind":"mcq","passage":"My friends, who are kind people and much in company, have long held that a man who reads alone is a man in retreat. They speak of the habit as one speaks of a mild illness, to be borne with patience until the patient is well enough to come down to dinner. I have never quarrelled with them, partly from idleness and partly because, in my younger years, I half believed them myself.\n\nIt is true that the solitary reader shuts a door. For an hour he hears no voice but the one upon the page, and he answers no one. But I have noticed that the door opens inward. A book read in a crowded room is skimmed for whatever will make good conversation; read alone, it is followed into the places where it is dull, or difficult, or plainly wrong, and it is there, in my experience, that a book earns its keep. In company I have agreed with a dozen books I never finished; alone, I have been made to quarrel with nearly every one I did. The solitary reader is not spared the labour of argument. He merely conducts it with an opponent who cannot be interrupted, and who must therefore be heard to the end.\n\nI grant that the habit can go sour. I have known two or three men in whom reading became a fortress, and who came out of it only to complain that the world had grown noisy. But their trouble, I think, was not that they read alone. It was that they read only what agreed with them, and a man may do that as easily at his club as in his study.\n\nWhat I have come to believe, slowly and against the advice of my friends, is that solitude is not the opposite of company but a rehearsal for it. I do not say that every reader who sits alone comes out improved. But a man who has listened to a whole argument, patiently and in silence, comes down to dinner better able to listen to his neighbour.","stem":"The writer implies that when one argues with a person face to face, unlike in solitary reading, that person's argument","options":["carries more weight because it is spoken aloud.","is judged more fairly because others are listening.","is skimmed only for the points that make good talk.","is easily cut short before it reaches its end."],"answer":"is easily cut short before it reaches its end.","answerIndex":3,"tags":["rc-out-of-scope","rc-false-link","rc-word-match","KEY"],"optionTags":["rc-out-of-scope","rc-false-link","rc-word-match",null],"titaTraps":null,"fig":null,"table":null,"difficulty":"Hard","explanation":"Answer: (D)\nParagraph 2: alone, the reader argues 'with an opponent who cannot be interrupted, and who must therefore be heard to the end'.\nCorrect (D): The 'therefore' carries the inference: in live talk an opponent can be interrupted, so the other person's argument is easily cut short before its end.\nLead distractor (B): Joins two things in the passage, company and argument, with a cause it never states. If anything, the passage suggests the solitary reader gives the fuller hearing.\nIncorrect (A): Sounds sensible, but the passage says nothing about spoken arguments carrying more weight.\nIncorrect (C): Paragraph 2 says a book read in company is skimmed. A spoken argument cannot be skimmed; what the passage sets against solitary reading is interruption.","archetype":null,"status":"approved","flags":[],"verified":"ok","verNote":"RC: key letter, length rank and strength from seeded blueprint script (seed 20261006); blind and strong solves run in fresh subagents (results in auditNote); gate 1 (RC Option Audit) and gate 4 (human read) pending"},{"id":"IPMAT_VA_010","section":"VA","format":"RC","kind":"mcq","passage":"My friends, who are kind people and much in company, have long held that a man who reads alone is a man in retreat. They speak of the habit as one speaks of a mild illness, to be borne with patience until the patient is well enough to come down to dinner. I have never quarrelled with them, partly from idleness and partly because, in my younger years, I half believed them myself.\n\nIt is true that the solitary reader shuts a door. For an hour he hears no voice but the one upon the page, and he answers no one. But I have noticed that the door opens inward. A book read in a crowded room is skimmed for whatever will make good conversation; read alone, it is followed into the places where it is dull, or difficult, or plainly wrong, and it is there, in my experience, that a book earns its keep. In company I have agreed with a dozen books I never finished; alone, I have been made to quarrel with nearly every one I did. The solitary reader is not spared the labour of argument. He merely conducts it with an opponent who cannot be interrupted, and who must therefore be heard to the end.\n\nI grant that the habit can go sour. I have known two or three men in whom reading became a fortress, and who came out of it only to complain that the world had grown noisy. But their trouble, I think, was not that they read alone. It was that they read only what agreed with them, and a man may do that as easily at his club as in his study.\n\nWhat I have come to believe, slowly and against the advice of my friends, is that solitude is not the opposite of company but a rehearsal for it. I do not say that every reader who sits alone comes out improved. But a man who has listened to a whole argument, patiently and in silence, comes down to dinner better able to listen to his neighbour.","stem":"According to the writer, the men for whom reading 'became a fortress' went wrong because they","options":["complained that the world around them had grown noisy.","read alone, away from the company of their friends.","read only the books that agreed with what they already thought.","read at the club rather than in a quiet study."],"answer":"read only the books that agreed with what they already thought.","answerIndex":2,"tags":["rc-true-not-answer","rc-reversal","KEY","rc-word-match"],"optionTags":["rc-true-not-answer","rc-reversal",null,"rc-word-match"],"titaTraps":null,"fig":null,"table":null,"difficulty":"Medium","explanation":"Answer: (C)\nParagraph 3 concedes that the habit 'can go sour' in a few men, then gives the writer's diagnosis.\nCorrect (C): 'It was that they read only what agreed with them' = 'read only the books that agreed with what they already thought'. The stem asks for the cause, which is this.\nLead distractor (A): True, they did complain. But the complaint is what came out of the fortress, not the reason it was built; the stem asks why they went wrong.\nIncorrect (B): The writer says their trouble 'was not that they read alone'.\nIncorrect (D): Misuses the closing words: a man 'may do that as easily at his club as in his study'. The place does not matter.","archetype":null,"status":"approved","flags":[],"verified":"ok","verNote":"RC: key letter, length rank and strength from seeded blueprint script (seed 20261006); blind and strong solves run in fresh subagents (results in auditNote); gate 1 (RC Option Audit) and gate 4 (human read) pending"},{"id":"IPMAT_VA_011","section":"VA","format":"RC","kind":"mcq","passage":"My friends, who are kind people and much in company, have long held that a man who reads alone is a man in retreat. They speak of the habit as one speaks of a mild illness, to be borne with patience until the patient is well enough to come down to dinner. I have never quarrelled with them, partly from idleness and partly because, in my younger years, I half believed them myself.\n\nIt is true that the solitary reader shuts a door. For an hour he hears no voice but the one upon the page, and he answers no one. But I have noticed that the door opens inward. A book read in a crowded room is skimmed for whatever will make good conversation; read alone, it is followed into the places where it is dull, or difficult, or plainly wrong, and it is there, in my experience, that a book earns its keep. In company I have agreed with a dozen books I never finished; alone, I have been made to quarrel with nearly every one I did. The solitary reader is not spared the labour of argument. He merely conducts it with an opponent who cannot be interrupted, and who must therefore be heard to the end.\n\nI grant that the habit can go sour. I have known two or three men in whom reading became a fortress, and who came out of it only to complain that the world had grown noisy. But their trouble, I think, was not that they read alone. It was that they read only what agreed with them, and a man may do that as easily at his club as in his study.\n\nWhat I have come to believe, slowly and against the advice of my friends, is that solitude is not the opposite of company but a rehearsal for it. I do not say that every reader who sits alone comes out improved. But a man who has listened to a whole argument, patiently and in silence, comes down to dinner better able to listen to his neighbour.","stem":"The passage is chiefly concerned with showing that reading alone","options":["may improve a person's character in almost every way.","may leave a person better able to listen in company.","forces a reader to follow a book to its hard parts.","is a pleasant retreat that needs no excuse."],"answer":"may leave a person better able to listen in company.","answerIndex":1,"tags":["rc-scope-shift","KEY","rc-detail-as-main","rc-wrong-voice"],"optionTags":["rc-scope-shift",null,"rc-detail-as-main","rc-wrong-voice"],"titaTraps":null,"fig":null,"table":null,"difficulty":"Medium","explanation":"Answer: (B)\nThe essay moves from the friends' view (reading alone as retreat) through the image of the inward-opening door to its late thesis: solitude is 'a rehearsal' for company.\nCorrect (B): The last paragraph says a man who has listened to a whole argument in silence 'comes down to dinner better able to listen to his neighbour'. 'Better able to listen in company' states this.\nLead distractor (C): A true detail from paragraph 2, but it is a step in the argument, not where the argument ends up.\nIncorrect (A): Broader than the passage, which claims one benefit: better listening.\nIncorrect (D): Accepts the friends' word 'retreat', which the writer spends the essay correcting.","archetype":null,"status":"approved","flags":[],"verified":"ok","verNote":"RC: key letter, length rank and strength from seeded blueprint script (seed 20261006); blind and strong solves run in fresh subagents (results in auditNote); gate 1 (RC Option Audit) and gate 4 (human read) pending"},{"id":"IPMAT_VA_012","section":"VA","format":"RC","kind":"mcq","passage":"My friends, who are kind people and much in company, have long held that a man who reads alone is a man in retreat. They speak of the habit as one speaks of a mild illness, to be borne with patience until the patient is well enough to come down to dinner. I have never quarrelled with them, partly from idleness and partly because, in my younger years, I half believed them myself.\n\nIt is true that the solitary reader shuts a door. For an hour he hears no voice but the one upon the page, and he answers no one. But I have noticed that the door opens inward. A book read in a crowded room is skimmed for whatever will make good conversation; read alone, it is followed into the places where it is dull, or difficult, or plainly wrong, and it is there, in my experience, that a book earns its keep. In company I have agreed with a dozen books I never finished; alone, I have been made to quarrel with nearly every one I did. The solitary reader is not spared the labour of argument. He merely conducts it with an opponent who cannot be interrupted, and who must therefore be heard to the end.\n\nI grant that the habit can go sour. I have known two or three men in whom reading became a fortress, and who came out of it only to complain that the world had grown noisy. But their trouble, I think, was not that they read alone. It was that they read only what agreed with them, and a man may do that as easily at his club as in his study.\n\nWhat I have come to believe, slowly and against the advice of my friends, is that solitude is not the opposite of company but a rehearsal for it. I do not say that every reader who sits alone comes out improved. But a man who has listened to a whole argument, patiently and in silence, comes down to dinner better able to listen to his neighbour.","stem":"Which of the following is most nearly OPPOSITE in meaning to 'plainly' as used in paragraph 2?","options":["debatably","clearly","partly","ornately"],"answer":"debatably","answerIndex":0,"tags":["KEY","vocab-shade","vocab-shade","vocab-context-blind"],"optionTags":[null,"vocab-shade","vocab-shade","vocab-context-blind"],"titaTraps":null,"fig":null,"table":null,"difficulty":"Hard","explanation":"Answer: (A)\nParagraph 2 lists the places a solitary reader follows a book into: where it is 'dull, or difficult, or plainly wrong'.\nCorrect (A): In 'dull, or difficult, or plainly wrong', 'plainly' means obviously or beyond doubt. Its opposite in this sense is 'debatably': wrong only in a way one could argue about.\nLead distractor (C): Tempting because 'plainly wrong' sounds like 'wholly wrong'. But 'plainly' is about how obvious the error is, not how much of the book is wrong.\nIncorrect (B): A synonym of 'plainly' in this sense, not an opposite.\nIncorrect (D): The opposite of 'plainly' in its other sense, 'simply, without decoration' (plainly dressed), which does not fit 'plainly wrong'.","archetype":null,"status":"approved","flags":[],"verified":"ok","verNote":"RC: key letter, length rank and strength from seeded blueprint script (seed 20261006); blind and strong solves run in fresh subagents (results in auditNote); gate 1 (RC Option Audit) and gate 4 (human read) pending"},{"id":"IPMAT_VA_013","section":"VA","format":"Sentence Completion","kind":"mcq","passage":null,"stem":"Complete the following sentence by choosing the most appropriate word/phrase from the options given below.\nDrivers who ___ the new helmet rule will be fined on the spot, the traffic commissioner warned.","options":["flout","flaunt","float","flounce"],"answer":"flout","answerIndex":0,"tags":["KEY","confusable/homophone sibling","confusable/homophone sibling","confusable/homophone sibling"],"optionTags":[null,"vocab-sound-alike","vocab-sound-alike","vocab-sound-alike"],"titaTraps":null,"fig":null,"table":null,"difficulty":"Hard","explanation":"Answer: (A)\nCorrect (A): To flout a rule is to break it openly. Only drivers who break the rule would be fined.\nIncorrect (B): The sound-alike sibling: to flaunt is to show something off ('flaunt one's wealth'), not to break a rule.\nIncorrect (C): A sound-alike meaning to stay on the surface of water or to put forward an idea; it makes no sense with 'rule' here.\nIncorrect (D): A sound-alike meaning to move in an angry, showy way; it takes no object.","archetype":null,"status":"approved","flags":[],"verified":"ok","verNote":"VA: confusable flout/flaunt; 'will be fined' requires breaking the rule"},{"id":"IPMAT_VA_014","section":"VA","format":"Paragraph Completion","kind":"mcq","passage":null,"stem":"The paragraph given below has a sentence missing, which is indicated by a blank. From the choices given below the paragraph, choose the sentence that is most logically appropriate to complete the paragraph.\nWhen fuel prices rose sharply, many shipping companies made a simple discovery: a cargo ship that sails a little slower burns a great deal less fuel. Engineers explained that the resistance of water climbs steeply with speed, so a modest cut in speed brings a much larger cut in fuel. ____ Retailers had to order goods earlier, and some warehouses had to hold larger stocks to cover the gap. Even so, many firms kept the slower speeds after fuel became cheaper again, having found that customers rarely noticed the extra days.","options":["Many ports have also begun charging ships for the pollution they cause.","The saving came at a price, since every voyage now took several days longer.","Slower ships, it turned out, burned almost as much fuel as faster ones.","Some companies also fitted their ships with newer, more efficient propellers."],"answer":"The saving came at a price, since every voyage now took several days longer.","answerIndex":1,"tags":["off-topic insertion","KEY","stance contradiction","right topic, wrong focus"],"optionTags":["rc-out-of-scope",null,"rc-reversal","para-same-topic"],"titaTraps":null,"fig":null,"table":null,"difficulty":"Hard","explanation":"Answer: (B)\nCorrect (B): 'The saving' refers back to the fuel cut just explained, and 'several days longer' is what makes retailers order earlier and warehouses hold larger stocks. It is also what 'the extra days' in the last sentence refers to.\nIncorrect (A): Brings in port charges, which have nothing to do with ordering goods earlier.\nIncorrect (C): Contradicts the opening, where a slower ship burns 'a great deal less fuel'.\nIncorrect (D): On the topic of saving fuel, but it gives no reason why retailers would have to order earlier.","archetype":null,"status":"approved","flags":[],"verified":"ok","verNote":"VA: 'The saving' refers back; 'days longer' sets up ordering earlier and 'the extra days'"},{"id":"IPMAT_VA_015","section":"VA","format":"Cloze","kind":"mcq","passage":null,"stem":"The sentence below has words that are missing. Choose the best option from those given below to complete it.\nThe new curriculum is ___ on the idea that children learn best by doing, but critics fear that, without ___ guidance from teachers, such freedom may simply ___ the gap between strong and weak students.","options":["based; careless; widen","premised; careful; widen","premeditated; close; widen","founded; careful; narrow"],"answer":"premised; careful; widen","answerIndex":1,"tags":["polarity flip","KEY","near-miss sense","polarity flip"],"optionTags":["vocab-opposite",null,"vocab-shade","vocab-opposite"],"titaTraps":null,"fig":null,"table":null,"difficulty":"Medium","explanation":"Answer: (B)\nCorrect (B): 'Premised on' means based on; 'careful guidance' is what the critics fear will be missing; 'widen the gap' is the harm they fear. Every word fits its blank.\nIncorrect (A): Critics would not worry about the absence of 'careless' guidance.\nIncorrect (C): 'Premeditated' means planned in advance, usually of a crime; a curriculum is 'premised', not 'premeditated', on an idea.\nIncorrect (D): 'Narrow the gap' would be a good outcome, not something critics fear.","archetype":null,"status":"approved","flags":[],"verified":"ok","verNote":"VA: killers at positions 3, 2, 1 (narrow, careless, premeditated)"},{"id":"IPMAT_VA_016","section":"VA","format":"Paragraph Completion","kind":"mcq","passage":null,"stem":"The paragraph given below has a sentence missing, which is indicated by a blank. From the choices given below the paragraph, choose the sentence that is most logically appropriate to complete the paragraph.\nIn many smaller towns, the public library had become a quiet room of yellowing newspapers that few people visited. Over the last few years, a new kind of reader has filled its benches: young people preparing for competitive exams, who arrive when the doors open and leave when the lights go off. ____ Some libraries have responded by extending their hours, adding power points for laptops and setting aside rooms where silence is strictly kept. Librarians say the change has also brought back older readers, who come for the newspapers and stay because the place feels alive again.","options":["Coaching centres in these towns have meanwhile been raising their fees every year.","Few of them, however, stay for more than an hour at a stretch.","Most of them come not for the books but for a desk, a fan and hours without interruption.","Many of these aspirants have left jobs or college courses to prepare full-time."],"answer":"Most of them come not for the books but for a desk, a fan and hours without interruption.","answerIndex":2,"tags":["off-topic insertion","stance contradiction","KEY","right topic, wrong focus"],"optionTags":["rc-out-of-scope","rc-reversal",null,"para-same-topic"],"titaTraps":null,"fig":null,"table":null,"difficulty":"Medium","explanation":"Answer: (C)\nCorrect (C): 'Most of them' picks up the young aspirants of the sentence before, and the needs it names (a desk, a fan, quiet hours) are what the libraries then supply: longer hours, power points, silent rooms. 'Responded' in the next sentence needs exactly these needs to respond to.\nIncorrect (A): Brings in coaching fees, which the paragraph never discusses, and gives the libraries nothing to respond to.\nIncorrect (B): Contradicts the sentence before it: these readers stay from opening time until the lights go off.\nIncorrect (D): On topic, but it is about the aspirants' lives, not what they need from a library. It cannot explain the power points and silent rooms that follow.","archetype":null,"status":"approved","flags":[],"verified":"ok","verNote":"VA: 'Most of them' links to the aspirants; named needs are answered by 'responded by extending ... power points ... silence'"},{"id":"IPMAT_VA_017","section":"VA","format":"Sentence Completion","kind":"mcq","passage":null,"stem":"Complete the following sentence by choosing the most appropriate word/phrase from the options given below.\nThe cyclone ___ havoc on the coastal villages, flattening huts and uprooting coconut palms for miles.","options":["reeked","wreaked","wrecked","raked"],"answer":"wreaked","answerIndex":1,"tags":["confusable/homophone sibling","KEY","confusable/homophone sibling","collocation break"],"optionTags":["vocab-sound-alike",null,"vocab-sound-alike","sc-collocation"],"titaTraps":null,"fig":null,"table":null,"difficulty":"Medium","explanation":"Answer: (B)\nCorrect (B): 'Wreak havoc' is the fixed collocation for causing great damage; 'wreaked' is its past tense.\nIncorrect (A): A sound-alike meaning 'smelled strongly'.\nIncorrect (C): A sound-alike: one can wreck a boat, but the verb that goes with 'havoc' is 'wreak'.\nIncorrect (D): Does not collocate with 'havoc'.","archetype":null,"status":"approved","flags":[],"verified":"ok","verNote":"VA: collocation 'wreak havoc'"},{"id":"IPMAT_VA_018","section":"VA","format":"Sentence Correction","kind":"mcq","passage":null,"stem":"In the following sentence, the incorrect part of the sentence is underlined. Choose an alternative from the four given options so that the sentence is rendered correct.\nThe scheme aims [[to train teachers, improving school buildings and to reducing]] the number of students who drop out.","options":["to train teachers, improve school buildings and reduce","to train teachers, improving school buildings and to reducing","to train teachers, improve school buildings and to reducing","training teachers, improving school buildings and reducing"],"answer":"to train teachers, improve school buildings and reduce","answerIndex":0,"tags":["KEY","original span (both errors kept)","half-fix","new error introduced"],"optionTags":[null,"gram-sounds-right","gram-half-fix","gram-new-error"],"titaTraps":null,"fig":null,"table":null,"difficulty":"Hard","explanation":"Answer: (A)\nCorrect (A): After 'aims to', the three actions must be parallel: 'to train ..., improve ... and reduce'. The underlined part breaks the series twice, with 'improving' and 'to reducing'.\nIncorrect (B): The original: it keeps both breaks in the series.\nIncorrect (C): Fixes 'improve' but leaves 'to reducing'.\nIncorrect (D): The list is now parallel, but 'aims training' is wrong: 'aim' takes 'to' + verb or 'at' + -ing.","archetype":null,"status":"approved","flags":[],"verified":"ok","verNote":"VA: parallelism after 'aims to'; key is the only fully parallel infinitive series"},{"id":"IPMAT_VA_019","section":"VA","format":"Sentence Completion","kind":"mcq","passage":null,"stem":"Complete the following sentence by choosing the most appropriate word/phrase from the options given below.\nThe new code of conduct ___ the use of phones in the examination hall; anyone found with one will be disqualified.","options":["prescribes","inscribes","proscribes","describes"],"answer":"proscribes","answerIndex":2,"tags":["confusable/homophone sibling","confusable/homophone sibling","KEY","confusable/homophone sibling"],"optionTags":["vocab-sound-alike","vocab-sound-alike",null,"vocab-sound-alike"],"titaTraps":null,"fig":null,"table":null,"difficulty":"Hard","explanation":"Answer: (C)\nCorrect (C): To proscribe is to forbid. The second half of the sentence, disqualification for anyone found with a phone, shows that phones are banned.\nIncorrect (A): The confusable sibling: to prescribe is to lay down as required, nearly the opposite of a ban.\nIncorrect (B): Means to write or carve words on a surface.\nIncorrect (D): Fits the grammar but not the sense: the penalty shows a ban, not a description.","archetype":null,"status":"approved","flags":[],"verified":"ok","verNote":"VA: confusable proscribe/prescribe; disqualification clause requires 'forbids'"},{"id":"IPMAT_VA_020","section":"VA","format":"Parajumble","kind":"tita","passage":"1. The photographs from such drives are easy to take: rows of volunteers, freshly dug pits, a sapling in every hole.\n2. For this reason, foresters have long argued that a drive should be judged not by how many trees go into the ground but by how many are still standing five years later.\n3. What the photographs do not show is the second summer, when many of those saplings quietly die for want of water or care.\n4. Planting drives have become a favourite way for companies and cities to show that they take the climate seriously.\n5. By that measure, a village that waters two hundred saplings for three years may do more than a city that plants twenty thousand in a day.","stem":"The sentences given below, when properly sequenced, form a coherent paragraph. Each sentence is labelled with a number. Decide on the proper order for the sentences and key in this sequence of numbers as your answer. For example, a response such as 3412 is valid; 3412. or 3 4 1 2 are invalid.","options":[],"answer":"41325","answerIndex":null,"tags":[],"optionTags":null,"titaTraps":{"41352":"pj-pair-broken","42513":"pj-topic-link"},"fig":null,"table":null,"difficulty":"Hard","explanation":"Answer: 41325\nSentence 4: opens with the general claim about planting drives.\nSentence 1: 'such drives' needs the opener before it.\nSentence 3: 'What the photographs do not show' answers the photographs of the sentence before.\nSentence 2: 'For this reason' follows the dying saplings.\nSentence 5: 'By that measure' applies the foresters' test from the sentence before.","archetype":null,"status":"approved","flags":[],"verified":"ok","verNote":"VA: order fixed by 'such drives', 'What the photographs do not show', 'For this reason', 'By that measure'"},{"id":"IPMAT_VA_021","section":"VA","format":"Cloze","kind":"mcq","passage":null,"stem":"The sentence below has words that are missing. Choose the best option from those given below to complete it.\nThe lecture was so ___ in its detail that most students left the hall more ___ than when they had come in.","options":["convolution; puzzled","intricate; enlightened","convoluted; perplexed","tangled; bemusement"],"answer":"convoluted; perplexed","answerIndex":2,"tags":["category/part-of-speech error","polarity flip","KEY","category/part-of-speech error"],"optionTags":["vocab-category","vocab-opposite",null,"vocab-category"],"titaTraps":null,"fig":null,"table":null,"difficulty":"Medium","explanation":"Answer: (C)\nCorrect (C): 'Convoluted' (twisted and hard to follow) explains why students left 'more perplexed' than before.\nIncorrect (A): 'Convolution' is a noun; 'so ___ in its detail' needs an adjective.\nIncorrect (B): 'Enlightened' reverses the result: a lecture too complex to follow does not leave students clearer.\nIncorrect (D): 'Bemusement' is a noun; 'more ___ than' needs an adjective.","archetype":null,"status":"approved","flags":[],"verified":"ok","verNote":"VA: killers at positions 2, 1, 2 (enlightened, convolution, bemusement)"},{"id":"IPMAT_VA_022","section":"VA","format":"Sentence Correction","kind":"mcq","passage":null,"stem":"In the following sentence, the incorrect part of the sentence is underlined. Choose an alternative from the four given options so that the sentence is rendered correct.\nThe coach insisted that each player [[attends the session, regardless if]] it rained.","options":["attends the session, regardless if","attend the session, regardless if","attend the session, irregardless of whether","attend the session, regardless of whether"],"answer":"attend the session, regardless of whether","answerIndex":3,"tags":["original span (both errors kept)","half-fix","new error introduced","KEY"],"optionTags":["gram-sounds-right","gram-half-fix","gram-new-error",null],"titaTraps":null,"fig":null,"table":null,"difficulty":"Hard","explanation":"Answer: (D)\nCorrect (D): After 'insisted that' a demand takes the bare subjunctive: 'each player attend'. 'Regardless if' is non-standard; the standard phrase is 'regardless of whether'.\nIncorrect (A): The original: it keeps both errors.\nIncorrect (B): Fixes the subjunctive but keeps 'regardless if'.\nIncorrect (C): Fixes the subjunctive, but 'irregardless' is not standard English, so a new error replaces the old one.","archetype":null,"status":"approved","flags":[],"verified":"ok","verNote":"VA: subjunctive after 'insisted that'; 'regardless of whether'"},{"id":"IPMAT_VA_023","section":"VA","format":"Cloze","kind":"mcq","passage":null,"stem":"The sentence below has words that are missing. Choose the best option from those given below to complete it.\nArchivists warn that digital records, often assumed to be ___, can in fact ___ within a few years if the software needed to read them is not ___.","options":["permanent; vanish; maintained","indelible; flourish; kept up","ephemeral; vanish; updated","lasting; deteriorate; abandoned"],"answer":"permanent; vanish; maintained","answerIndex":0,"tags":["KEY","polarity flip","polarity flip","polarity flip"],"optionTags":[null,"vocab-opposite","vocab-opposite","vocab-opposite"],"titaTraps":null,"fig":null,"table":null,"difficulty":"Hard","explanation":"Answer: (A)\nCorrect (A): 'Often assumed to be permanent ... can in fact vanish' sets up the warning, and the condition is that the software is 'not maintained'.\nIncorrect (B): Records do not 'flourish' because software is neglected; the warning needs a loss.\nIncorrect (C): 'In fact' needs a contrast: records assumed 'ephemeral' vanishing would be no surprise.\nIncorrect (D): The danger arises if software is not maintained; 'not abandoned' reverses the condition.","archetype":null,"status":"approved","flags":[],"verified":"ok","verNote":"VA: killers at positions 3, 1, 2 (abandoned, ephemeral, flourish)"},{"id":"IPMAT_VA_024","section":"VA","format":"Parajumble","kind":"tita","passage":"1. If this is right, the night before an exam may be the worst time to give up sleep for one more hour of revision.\n2. Psychologists have long noticed that students who sleep after studying remember more than those who stay up.\n3. The usual explanation was simply that a rested mind works better.\n4. More recent work suggests a busier picture: during deep sleep, the brain appears to replay the day's learning, strengthening some connections and letting others fade.","stem":"The sentences given below, when properly sequenced, form a coherent paragraph. Each sentence is labelled with a number. Decide on the proper order for the sentences and key in this sequence of numbers as your answer. For example, a response such as 3412 is valid; 3412. or 3 4 1 2 are invalid.","options":[],"answer":"2341","answerIndex":null,"tags":[],"optionTags":null,"titaTraps":{"2314":"pj-pair-broken","2431":"pj-topic-link"},"fig":null,"table":null,"difficulty":"Medium","explanation":"Answer: 2341\nSentence 2: opens with the observation that needs explaining.\nSentence 3: 'The usual explanation' explains that observation.\nSentence 4: 'More recent work' revises the usual explanation.\nSentence 1: 'If this is right' draws a conclusion from the replay idea.","archetype":null,"status":"approved","flags":[],"verified":"ok","verNote":"VA: order fixed by 'The usual explanation', 'More recent work', 'If this is right'"},{"id":"IPMAT_VA_025","section":"VA","format":"RC","kind":"mcq","passage":"HOST: Welcome back. My guest today is a psychologist who has spent her career studying why people keep going at long, dull tasks: learning an instrument, preparing for an exam, rebuilding a business after it fails. Let me start with what most of our listeners believe. If you're struggling to keep going, you simply haven't found something you're passionate about. Find the passion, and the effort takes care of itself. Fair?\n\nPSYCHOLOGIST: Half fair. Passion is real, and I'd never tell anyone to do without it. But I've started dividing motivation into two kinds, and I call them sail and keel. Sail is the feeling: excitement, curiosity, the rush of a new start. When the wind is up, sail moves you faster than anything else. Keel is everything below the waterline: routines, promises to other people, a sense of who you are. You don't feel the keel. You only notice it when it's missing.\n\nHOST: Missing how?\n\nPSYCHOLOGIST: A boat with all sail and no keel goes wherever the wind goes. Think of the student who works furiously for the first three weeks of a course. Then the excitement fades and, this is the important part, she reads the fade as a verdict. She decides she was never meant for the subject, and she quits. The quitting isn't caused by the fading. It's caused by what she concludes from it.\n\nHOST: So you're saying passion doesn't matter.\n\nPSYCHOLOGIST: No, and that's the bit people mishear. A keel on its own doesn't take you anywhere; it only stops you drifting. Among the exam candidates I've worked with, the ones who lasted almost always had some sail. They liked something about the subject. But the ones who lasted longest were not the ones who liked it most. They were the ones who had built a routine that didn't ask them each morning how they felt.\n\nHOST: Can you build a keel on purpose?\n\nPSYCHOLOGIST: Slowly. You can't feel your way into one. You build it by doing the thing on days when you'd rather not, until doing it stops being a decision. Most people try the opposite. They wait for the wind, and they call the waiting 'getting ready'.\n\nHOST: That sounds a little harsh.\n\nPSYCHOLOGIST: Perhaps it is. But the wind always drops at some point. The only question is what's holding you steady when it does.","stem":"Which of the following best expresses the psychologist's main point?","options":["Staying power comes from habits that outlast the first excitement.","Students quit because their excitement fades over time.","Passion is of little use to anyone doing long, dull work.","Habits usually count for more than passion, whatever the goal is."],"answer":"Staying power comes from habits that outlast the first excitement.","answerIndex":0,"tags":["KEY","rc-false-link","rc-wrong-voice","rc-scope-shift"],"optionTags":[null,"rc-false-link","rc-wrong-voice","rc-scope-shift"],"titaTraps":null,"fig":null,"table":null,"difficulty":"Medium","explanation":"Answer: (A)\nThe psychologist calls the host's passion view 'half fair': sail matters, but what keeps people going over a long task is the keel.\nCorrect (A): The ones who lasted longest 'had built a routine that didn't ask them each morning how they felt', and the closing lines ask what holds you steady when the wind drops. 'Habits that outlast the first excitement' is the keel.\nLead distractor (C): This is the host's paraphrase, 'So you're saying passion doesn't matter', which the psychologist rejects: 'No, and that's the bit people mishear.'\nIncorrect (B): She says the opposite: 'The quitting isn't caused by the fading. It's caused by what she concludes from it.'\nIncorrect (D): Stretches her point beyond the interview, which is about lasting at long tasks. She never ranks habit above passion for every goal; she says sail is needed to move at all.","archetype":null,"status":"approved","flags":[],"verified":"ok","verNote":"RC: key letter, length rank and strength from seeded blueprint script (seed 20261006); blind and strong solves run in fresh subagents (results in auditNote); gate 1 (RC Option Audit) and gate 4 (human read) pending"},{"id":"IPMAT_VA_026","section":"VA","format":"RC","kind":"mcq","passage":"HOST: Welcome back. My guest today is a psychologist who has spent her career studying why people keep going at long, dull tasks: learning an instrument, preparing for an exam, rebuilding a business after it fails. Let me start with what most of our listeners believe. If you're struggling to keep going, you simply haven't found something you're passionate about. Find the passion, and the effort takes care of itself. Fair?\n\nPSYCHOLOGIST: Half fair. Passion is real, and I'd never tell anyone to do without it. But I've started dividing motivation into two kinds, and I call them sail and keel. Sail is the feeling: excitement, curiosity, the rush of a new start. When the wind is up, sail moves you faster than anything else. Keel is everything below the waterline: routines, promises to other people, a sense of who you are. You don't feel the keel. You only notice it when it's missing.\n\nHOST: Missing how?\n\nPSYCHOLOGIST: A boat with all sail and no keel goes wherever the wind goes. Think of the student who works furiously for the first three weeks of a course. Then the excitement fades and, this is the important part, she reads the fade as a verdict. She decides she was never meant for the subject, and she quits. The quitting isn't caused by the fading. It's caused by what she concludes from it.\n\nHOST: So you're saying passion doesn't matter.\n\nPSYCHOLOGIST: No, and that's the bit people mishear. A keel on its own doesn't take you anywhere; it only stops you drifting. Among the exam candidates I've worked with, the ones who lasted almost always had some sail. They liked something about the subject. But the ones who lasted longest were not the ones who liked it most. They were the ones who had built a routine that didn't ask them each morning how they felt.\n\nHOST: Can you build a keel on purpose?\n\nPSYCHOLOGIST: Slowly. You can't feel your way into one. You build it by doing the thing on days when you'd rather not, until doing it stops being a decision. Most people try the opposite. They wait for the wind, and they call the waiting 'getting ready'.\n\nHOST: That sounds a little harsh.\n\nPSYCHOLOGIST: Perhaps it is. But the wind always drops at some point. The only question is what's holding you steady when it does.","stem":"As the psychologist uses it, the term 'sail' refers to","options":["the push that other people's hopes give a person.","feelings that may drive effort for a while.","the goals a person usually sets before starting a task.","the excitement of a new start, which carries a person through."],"answer":"feelings that may drive effort for a while.","answerIndex":1,"tags":["rc-word-match","KEY","rc-out-of-scope","rc-half-right"],"optionTags":["rc-word-match",null,"rc-out-of-scope","rc-half-right"],"titaTraps":null,"fig":null,"table":null,"difficulty":"Medium","explanation":"Answer: (B)\nShe defines sail as 'the feeling: excitement, curiosity, the rush of a new start'.\nCorrect (B): Sail is 'the feeling', which moves you fast 'when the wind is up'. 'For a while' reflects her closing point that 'the wind always drops at some point'.\nLead distractor (D): Starts right (the rush of a new start) but ends wrong: sail does not carry anyone through, because the wind drops.\nIncorrect (A): Borrows 'other people' from her description of the keel ('promises to other people') and attaches it to the sail, which she defines as a feeling.\nIncorrect (C): A sensible reading of 'sail' as setting a course, but she defines sail as a feeling, not a goal.","archetype":null,"status":"approved","flags":[],"verified":"ok","verNote":"RC: key letter, length rank and strength from seeded blueprint script (seed 20261006); blind and strong solves run in fresh subagents (results in auditNote); gate 1 (RC Option Audit) and gate 4 (human read) pending"},{"id":"IPMAT_VA_027","section":"VA","format":"RC","kind":"mcq","passage":"HOST: Welcome back. My guest today is a psychologist who has spent her career studying why people keep going at long, dull tasks: learning an instrument, preparing for an exam, rebuilding a business after it fails. Let me start with what most of our listeners believe. If you're struggling to keep going, you simply haven't found something you're passionate about. Find the passion, and the effort takes care of itself. Fair?\n\nPSYCHOLOGIST: Half fair. Passion is real, and I'd never tell anyone to do without it. But I've started dividing motivation into two kinds, and I call them sail and keel. Sail is the feeling: excitement, curiosity, the rush of a new start. When the wind is up, sail moves you faster than anything else. Keel is everything below the waterline: routines, promises to other people, a sense of who you are. You don't feel the keel. You only notice it when it's missing.\n\nHOST: Missing how?\n\nPSYCHOLOGIST: A boat with all sail and no keel goes wherever the wind goes. Think of the student who works furiously for the first three weeks of a course. Then the excitement fades and, this is the important part, she reads the fade as a verdict. She decides she was never meant for the subject, and she quits. The quitting isn't caused by the fading. It's caused by what she concludes from it.\n\nHOST: So you're saying passion doesn't matter.\n\nPSYCHOLOGIST: No, and that's the bit people mishear. A keel on its own doesn't take you anywhere; it only stops you drifting. Among the exam candidates I've worked with, the ones who lasted almost always had some sail. They liked something about the subject. But the ones who lasted longest were not the ones who liked it most. They were the ones who had built a routine that didn't ask them each morning how they felt.\n\nHOST: Can you build a keel on purpose?\n\nPSYCHOLOGIST: Slowly. You can't feel your way into one. You build it by doing the thing on days when you'd rather not, until doing it stops being a decision. Most people try the opposite. They wait for the wind, and they call the waiting 'getting ready'.\n\nHOST: That sounds a little harsh.\n\nPSYCHOLOGIST: Perhaps it is. But the wind always drops at some point. The only question is what's holding you steady when it does.","stem":"The term 'keel', in the psychologist's account, refers to","options":["habits a person builds once passion has been found.","routines that keep a person steady and make feelings unneeded.","what keeps a person steady however they feel.","the hidden fears that stop a person from drifting."],"answer":"what keeps a person steady however they feel.","answerIndex":2,"tags":["rc-false-link","rc-half-right","KEY","rc-word-match"],"optionTags":["rc-false-link","rc-half-right",null,"rc-word-match"],"titaTraps":null,"fig":null,"table":null,"difficulty":"Hard","explanation":"Answer: (C)\nShe lists the keel as 'everything below the waterline: routines, promises to other people, a sense of who you are'.\nCorrect (C): 'You don't feel the keel', and it is 'what's holding you steady when it does' (when the wind drops). 'Steady however they feel' combines the two.\nLead distractor (A): Ties the keel to passion as if one followed the other. She says it is built 'by doing the thing on days when you'd rather not', not after passion is found.\nIncorrect (B): Starts right but goes too far: she says passion is real and she would 'never tell anyone to do without it'. The keel steadies; it does not replace the sail.\nIncorrect (D): Takes 'below the waterline' to mean something hidden and dark. Her list is routines, promises and a sense of self, not fears.","archetype":null,"status":"approved","flags":[],"verified":"ok","verNote":"RC: key letter, length rank and strength from seeded blueprint script (seed 20261006); blind and strong solves run in fresh subagents (results in auditNote); gate 1 (RC Option Audit) and gate 4 (human read) pending"},{"id":"IPMAT_VA_028","section":"VA","format":"RC","kind":"mcq","passage":"HOST: Welcome back. My guest today is a psychologist who has spent her career studying why people keep going at long, dull tasks: learning an instrument, preparing for an exam, rebuilding a business after it fails. Let me start with what most of our listeners believe. If you're struggling to keep going, you simply haven't found something you're passionate about. Find the passion, and the effort takes care of itself. Fair?\n\nPSYCHOLOGIST: Half fair. Passion is real, and I'd never tell anyone to do without it. But I've started dividing motivation into two kinds, and I call them sail and keel. Sail is the feeling: excitement, curiosity, the rush of a new start. When the wind is up, sail moves you faster than anything else. Keel is everything below the waterline: routines, promises to other people, a sense of who you are. You don't feel the keel. You only notice it when it's missing.\n\nHOST: Missing how?\n\nPSYCHOLOGIST: A boat with all sail and no keel goes wherever the wind goes. Think of the student who works furiously for the first three weeks of a course. Then the excitement fades and, this is the important part, she reads the fade as a verdict. She decides she was never meant for the subject, and she quits. The quitting isn't caused by the fading. It's caused by what she concludes from it.\n\nHOST: So you're saying passion doesn't matter.\n\nPSYCHOLOGIST: No, and that's the bit people mishear. A keel on its own doesn't take you anywhere; it only stops you drifting. Among the exam candidates I've worked with, the ones who lasted almost always had some sail. They liked something about the subject. But the ones who lasted longest were not the ones who liked it most. They were the ones who had built a routine that didn't ask them each morning how they felt.\n\nHOST: Can you build a keel on purpose?\n\nPSYCHOLOGIST: Slowly. You can't feel your way into one. You build it by doing the thing on days when you'd rather not, until doing it stops being a decision. Most people try the opposite. They wait for the wind, and they call the waiting 'getting ready'.\n\nHOST: That sounds a little harsh.\n\nPSYCHOLOGIST: Perhaps it is. But the wind always drops at some point. The only question is what's holding you steady when it does.","stem":"Which of the following does NOT reflect the psychologist's view?","options":["Most of those who lasted had no liking for the subject.","Many people mistake waiting for the right mood for actually getting ready.","No one can simply feel their way into a keel.","A person notices the keel only when it is missing."],"answer":"Most of those who lasted had no liking for the subject.","answerIndex":0,"tags":["KEY","rc-true-not-answer","rc-extreme","rc-extreme"],"optionTags":[null,"rc-true-not-answer","rc-extreme","rc-extreme"],"titaTraps":null,"fig":null,"table":null,"difficulty":"Hard","explanation":"Answer: (A)\nThree options restate things she says, two of them in words that sound too strong to be hers. One reverses what she says about the candidates who lasted.\nCorrect (A): She says 'the ones who lasted almost always had some sail. They liked something about the subject.' Saying most of them had no liking for it turns this round, so this is the option that does NOT reflect her view.\nLead distractor (C): Sounds too absolute, but it restates 'You can't feel your way into one.'\nIncorrect (B): Restates 'They wait for the wind, and they call the waiting getting ready.'\nIncorrect (D): Sounds overstated, but it restates 'You only notice it when it's missing.'","archetype":null,"status":"approved","flags":[],"verified":"ok","verNote":"RC: key letter, length rank and strength from seeded blueprint script (seed 20261006); blind and strong solves run in fresh subagents (results in auditNote); gate 1 (RC Option Audit) and gate 4 (human read) pending"},{"id":"IPMAT_VA_029","section":"VA","format":"RC","kind":"mcq","passage":"HOST: Welcome back. My guest today is a psychologist who has spent her career studying why people keep going at long, dull tasks: learning an instrument, preparing for an exam, rebuilding a business after it fails. Let me start with what most of our listeners believe. If you're struggling to keep going, you simply haven't found something you're passionate about. Find the passion, and the effort takes care of itself. Fair?\n\nPSYCHOLOGIST: Half fair. Passion is real, and I'd never tell anyone to do without it. But I've started dividing motivation into two kinds, and I call them sail and keel. Sail is the feeling: excitement, curiosity, the rush of a new start. When the wind is up, sail moves you faster than anything else. Keel is everything below the waterline: routines, promises to other people, a sense of who you are. You don't feel the keel. You only notice it when it's missing.\n\nHOST: Missing how?\n\nPSYCHOLOGIST: A boat with all sail and no keel goes wherever the wind goes. Think of the student who works furiously for the first three weeks of a course. Then the excitement fades and, this is the important part, she reads the fade as a verdict. She decides she was never meant for the subject, and she quits. The quitting isn't caused by the fading. It's caused by what she concludes from it.\n\nHOST: So you're saying passion doesn't matter.\n\nPSYCHOLOGIST: No, and that's the bit people mishear. A keel on its own doesn't take you anywhere; it only stops you drifting. Among the exam candidates I've worked with, the ones who lasted almost always had some sail. They liked something about the subject. But the ones who lasted longest were not the ones who liked it most. They were the ones who had built a routine that didn't ask them each morning how they felt.\n\nHOST: Can you build a keel on purpose?\n\nPSYCHOLOGIST: Slowly. You can't feel your way into one. You build it by doing the thing on days when you'd rather not, until doing it stops being a decision. Most people try the opposite. They wait for the wind, and they call the waiting 'getting ready'.\n\nHOST: That sounds a little harsh.\n\nPSYCHOLOGIST: Perhaps it is. But the wind always drops at some point. The only question is what's holding you steady when it does.","stem":"The view that finding one's passion makes the effort 'take care of itself' is","options":["shared by the two speakers, though each gives different reasons.","the psychologist's own view, with a caution about habit.","the host's own belief, which he defends.","the host's account of what most listeners believe."],"answer":"the host's account of what most listeners believe.","answerIndex":3,"tags":["rc-wrong-voice","rc-wrong-voice","rc-half-right","KEY"],"optionTags":["rc-wrong-voice","rc-wrong-voice","rc-half-right",null],"titaTraps":null,"fig":null,"table":null,"difficulty":"Medium","explanation":"Answer: (D)\nThe view appears in the host's first turn, introduced as the listeners' belief.\nCorrect (D): The host opens with 'what most of our listeners believe ... Find the passion, and the effort takes care of itself. Fair?' He reports the view and asks his guest to judge it.\nLead distractor (B): She grants that 'passion is real', but she calls the claim only 'half fair' and argues that routine matters more for lasting.\nIncorrect (A): Only the host introduces it, and he presents it as the listeners' belief; the psychologist accepts only half of it.\nIncorrect (C): Right speaker, wrong stance: the host reports it as 'what most of our listeners believe' and asks 'Fair?'. He puts it up for testing; he does not defend it.","archetype":null,"status":"approved","flags":[],"verified":"ok","verNote":"RC: key letter, length rank and strength from seeded blueprint script (seed 20261006); blind and strong solves run in fresh subagents (results in auditNote); gate 1 (RC Option Audit) and gate 4 (human read) pending"},{"id":"IPMAT_VA_030","section":"VA","format":"RC","kind":"mcq","passage":"HOST: Welcome back. My guest today is a psychologist who has spent her career studying why people keep going at long, dull tasks: learning an instrument, preparing for an exam, rebuilding a business after it fails. Let me start with what most of our listeners believe. If you're struggling to keep going, you simply haven't found something you're passionate about. Find the passion, and the effort takes care of itself. Fair?\n\nPSYCHOLOGIST: Half fair. Passion is real, and I'd never tell anyone to do without it. But I've started dividing motivation into two kinds, and I call them sail and keel. Sail is the feeling: excitement, curiosity, the rush of a new start. When the wind is up, sail moves you faster than anything else. Keel is everything below the waterline: routines, promises to other people, a sense of who you are. You don't feel the keel. You only notice it when it's missing.\n\nHOST: Missing how?\n\nPSYCHOLOGIST: A boat with all sail and no keel goes wherever the wind goes. Think of the student who works furiously for the first three weeks of a course. Then the excitement fades and, this is the important part, she reads the fade as a verdict. She decides she was never meant for the subject, and she quits. The quitting isn't caused by the fading. It's caused by what she concludes from it.\n\nHOST: So you're saying passion doesn't matter.\n\nPSYCHOLOGIST: No, and that's the bit people mishear. A keel on its own doesn't take you anywhere; it only stops you drifting. Among the exam candidates I've worked with, the ones who lasted almost always had some sail. They liked something about the subject. But the ones who lasted longest were not the ones who liked it most. They were the ones who had built a routine that didn't ask them each morning how they felt.\n\nHOST: Can you build a keel on purpose?\n\nPSYCHOLOGIST: Slowly. You can't feel your way into one. You build it by doing the thing on days when you'd rather not, until doing it stops being a decision. Most people try the opposite. They wait for the wind, and they call the waiting 'getting ready'.\n\nHOST: That sounds a little harsh.\n\nPSYCHOLOGIST: Perhaps it is. But the wind always drops at some point. The only question is what's holding you steady when it does.","stem":"When the host says her point 'sounds a little harsh', the psychologist responds by","options":["toning down what she said about people who wait for the wind.","denying that it is harsh and calling it merely realistic.","repeating her earlier claim that a keel is built only slowly.","granting that it may sound harsh while holding to her point."],"answer":"granting that it may sound harsh while holding to her point.","answerIndex":3,"tags":["rc-tone","rc-reversal","rc-true-not-answer","KEY"],"optionTags":["rc-tone","rc-reversal","rc-true-not-answer",null],"titaTraps":null,"fig":null,"table":null,"difficulty":"Easy","explanation":"Answer: (D)\nThe host's 'That sounds a little harsh' follows her remark that people wait for the wind and call the waiting 'getting ready'. She replies: 'Perhaps it is. But the wind always drops at some point.'\nCorrect (D): 'Perhaps it is' grants that the remark may sound harsh; the 'But' that follows keeps her argument standing. She concedes the tone, not the point.\nLead distractor (A): Tempting because she does meet the host halfway. But she takes nothing back: her reply ends by asking what holds you steady when the wind drops.\nIncorrect (B): Reverses 'Perhaps it is': she does not deny that the remark is harsh.\nIncorrect (C): True, she said a keel is built 'slowly', but that was her answer to an earlier question, not her reply to 'a little harsh'.","archetype":null,"status":"approved","flags":[],"verified":"ok","verNote":"RC: replaced after the 6 Oct 2026 audit (old Q30 repeated Q29's speaker-attribution design); tone item keyed by 'Perhaps it is. But ...'; blind-solved in a fresh subagent"},{"id":"IPMAT_VA_031","section":"VA","format":"Parajumble","kind":"tita","passage":"1. When a city renames a street, the new name usually appears on the signboards within weeks.\n2. Shopkeepers, rickshaw drivers and grandmothers go on giving directions by the old name, and theirs are the directions that work.\n3. It takes far longer to appear in the mouths of the people who live there.\n4. Every newcomer who asks the way therefore learns the old name first, and in some cities a street is still known by a name that was officially dropped before most of its residents were born.","stem":"The sentences given below, when properly sequenced, form a coherent paragraph. Each sentence is labelled with a number. Decide on the proper order for the sentences and key in this sequence of numbers as your answer. For example, a response such as 3412 is valid; 3412. or 3 4 1 2 are invalid.","options":[],"answer":"1324","answerIndex":null,"tags":[],"optionTags":null,"titaTraps":{"1234":"pj-topic-link","1342":"pj-pair-broken"},"fig":null,"table":null,"difficulty":"Hard","explanation":"Answer: 1324\nSentence 1: opens: 'When a city renames a street' needs nothing before it.\nSentence 3: 'It' is the new name, and 'far longer' contrasts with 'within weeks'.\nSentence 2: shows who keeps the old name alive and why their directions count.\nSentence 4: 'therefore' draws on the directions of the sentence before and closes with the general point.","archetype":null,"status":"approved","flags":[],"verified":"ok","verNote":"VA: order fixed by 'It' (the new name), 'far longer' vs 'within weeks', 'asks the way therefore'"},{"id":"IPMAT_VA_032","section":"VA","format":"Paragraph Completion","kind":"mcq","passage":null,"stem":"The paragraph given below has a sentence missing, which is indicated by a blank. From the choices given below the paragraph, choose the sentence that is most logically appropriate to complete the paragraph.\nTraffic police in several Indian cities have tried, at one time or another, to persuade drivers to honk less. Posters, fines and 'no-honking days' have each produced a brief lull, followed by a return to the old noise. Researchers who study driver behaviour say the campaigns misread why people honk: on crowded roads, the horn is less an expression of anger than a way of announcing one's presence to vehicles that cannot see each other. A driver who stops honking, in other words, may feel not calmer but less safe. ____","options":["Exhaust fumes from idling vehicles are an even greater danger to city dwellers.","This suggests that most drivers honk simply because they are frustrated.","Some drivers, it seems, honk out of sheer habit even on empty roads.","If so, quieter streets will need clearer sight lines more than better manners."],"answer":"If so, quieter streets will need clearer sight lines more than better manners.","answerIndex":3,"tags":["off-topic insertion","stance contradiction","right topic, wrong focus","KEY"],"optionTags":["rc-out-of-scope","rc-reversal","para-same-topic",null],"titaTraps":null,"fig":null,"table":null,"difficulty":"Hard","explanation":"Answer: (D)\nCorrect (D): 'If so' takes up the researchers' explanation. If drivers honk to be seen, appeals to manners will fail and what helps is letting vehicles see one another. The sentence closes the paragraph with the conclusion its argument licenses.\nIncorrect (A): Turns to air pollution, which the paragraph never mentions.\nIncorrect (B): Contradicts the researchers, who say the horn is 'less an expression of anger' than a signal.\nIncorrect (C): On topic, but it introduces a new cause (habit) instead of drawing the conclusion the paragraph has built towards.","archetype":null,"status":"approved","flags":[],"verified":"ok","verNote":"VA: 'If so' closes the argument that honking signals presence on crowded roads"},{"id":"IPMAT_VA_033","section":"VA","format":"Sentence Completion","kind":"mcq","passage":null,"stem":"Complete the following sentence by choosing the most appropriate word/phrase from the options given below.\nThe brochure promised that the course would double our scores within a month, but my cousin, who had sat through three such courses, told me to ___.","options":["take it to heart","take it with a pinch of salt","take it with a pinch of spice","take it with a dash of salt"],"answer":"take it with a pinch of salt","answerIndex":1,"tags":["real expression, wrong meaning","KEY","corrupted fixed expression","corrupted fixed expression"],"optionTags":["vocab-wrong-idiom",null,"gram-idiom","gram-idiom"],"titaTraps":null,"fig":null,"table":null,"difficulty":"Easy","explanation":"Answer: (B)\nCorrect (B): 'Take something with a pinch of salt' means to treat a claim with doubt. The cousin has sat through three such courses, so he is warning against believing the brochure's promise.\nIncorrect (A): A real idiom, but it means to be deeply affected by something, the opposite of the doubt the context calls for.\nIncorrect (C): A corrupted form: swapping 'salt' for 'spice' breaks the idiom.\nIncorrect (D): A corrupted form: the fixed expression is 'a pinch of salt', not 'a dash'.","archetype":null,"status":"approved","flags":[],"verified":"ok","verNote":"VA: idiom 'take with a pinch of salt' fixed by the cousin's experience of three such courses"},{"id":"IPMAT_VA_034","section":"VA","format":"Paragraph Completion","kind":"mcq","passage":null,"stem":"The paragraph given below has a sentence missing, which is indicated by a blank. From the choices given below the paragraph, choose the sentence that is most logically appropriate to complete the paragraph.\n____ Volunteers with screwdrivers and soldering irons sit at long tables, and residents bring in toasters, lamps and torn jackets that would otherwise be thrown away. Nothing is charged, though a jar for donations usually sits by the door. Organisers insist that the point is not only to save money: watching a repair, they say, teaches people that broken things can often be understood. That lesson, more than any single mended toaster, is what they hope visitors take home.","options":["In a growing number of towns, a church hall or library becomes a repair café for one afternoon a month.","Repair cafés exist mainly to save their visitors money on new appliances.","Such cafés began as a way for retired engineers to keep their skills in use.","Shoppers today are more willing than ever to buy second-hand clothes online."],"answer":"In a growing number of towns, a church hall or library becomes a repair café for one afternoon a month.","answerIndex":0,"tags":["KEY","stance contradiction","right topic, wrong focus","off-topic insertion"],"optionTags":[null,"rc-reversal","para-same-topic","rc-out-of-scope"],"titaTraps":null,"fig":null,"table":null,"difficulty":"Medium","explanation":"Answer: (A)\nCorrect (A): The paragraph needs an opener that sets the scene: 'Volunteers ... sit at long tables' needs a place and an occasion. This sentence introduces the repair café with a full noun phrase and no back-reference.\nIncorrect (B): Introduces the topic but contradicts the end of the paragraph, where the lesson matters 'more than any single mended toaster'.\nIncorrect (C): 'Such cafés' has nothing to refer back to at the opening, and the origin of the cafés is not what the paragraph goes on to describe.\nIncorrect (D): Introduces online second-hand shopping, which the paragraph never raises, and gives the volunteers no setting.","archetype":null,"status":"approved","flags":[],"verified":"ok","verNote":"VA: opener with full noun phrase sets the scene for 'Volunteers ... at long tables'"},{"id":"IPMAT_VA_035","section":"VA","format":"Sentence Correction","kind":"mcq","passage":null,"stem":"In the following sentence, the incorrect part of the sentence is underlined. Choose an alternative from the four given options so that the sentence is rendered correct.\nThe candidate [[whom the panel believed was the strongest have]] withdrawn her application.","options":["who the panel believed were the strongest has","who the panel believed was the strongest has","whom the panel believed was the strongest have","whom the panel believed was the strongest has"],"answer":"who the panel believed was the strongest has","answerIndex":1,"tags":["new error introduced","KEY","original span (both errors kept)","half-fix"],"optionTags":["gram-new-error",null,"gram-sounds-right","gram-half-fix"],"titaTraps":null,"fig":null,"table":null,"difficulty":"Hard","explanation":"Answer: (B)\nCorrect (B): 'The panel believed' is an inserted clause; the relative pronoun is the subject of 'was', so it must be 'who', not 'whom'. The main verb belongs to 'the candidate' and must be singular: 'has withdrawn'.\nIncorrect (A): Fixes 'who' and 'has' but adds 'were', which does not agree with 'who' standing for one candidate.\nIncorrect (C): The original: it keeps both errors.\nIncorrect (D): Fixes 'has' but keeps 'whom', the object form, where a subject is needed.","archetype":null,"status":"approved","flags":[],"verified":"ok","verNote":"VA: who as subject of 'was' across inserted 'the panel believed'; singular 'has'"},{"id":"IPMAT_VA_036","section":"VA","format":"Cloze","kind":"mcq","passage":null,"stem":"The sentence below has words that are missing. Choose the best option from those given below to complete it.\nRather than ___ the derelict mill, the council chose to ___ it as a museum, arguing that the town's history was too ___ to be bulldozed.","options":["level; desert; precious","demolish; restore; precious","raze; preserve; trivial","preserve; reopen; valuable"],"answer":"demolish; restore; precious","answerIndex":1,"tags":["polarity flip","KEY","polarity flip","polarity flip"],"optionTags":["vocab-opposite",null,"vocab-opposite","vocab-opposite"],"titaTraps":null,"fig":null,"table":null,"difficulty":"Medium","explanation":"Answer: (B)\nCorrect (B): 'Rather than demolish ... chose to restore' is the contrast, and 'too precious to be bulldozed' gives the council's reason.\nIncorrect (A): One does not 'desert' a building as a museum; the second blank needs a verb of saving.\nIncorrect (C): History that is 'too trivial to be bulldozed' makes no sense; the reason must favour saving the mill.\nIncorrect (D): 'Rather than preserve' sets up no contrast with reopening it as a museum.","archetype":null,"status":"approved","flags":[],"verified":"ok","verNote":"VA: killers at positions 3, 1, 2 (trivial, preserve, desert)"},{"id":"IPMAT_VA_037","section":"VA","format":"Sentence Completion","kind":"mcq","passage":null,"stem":"Complete the following sentence by choosing the most appropriate word/phrase from the options given below.\nThe much-advertised film festival turned out to be ___: half the screenings were cancelled, and the rest played to empty halls.","options":["a wet squib","a dark horse","a damp squid","a damp squib"],"answer":"a damp squib","answerIndex":3,"tags":["corrupted fixed expression","real expression, wrong meaning","corrupted fixed expression","KEY"],"optionTags":["gram-idiom","vocab-wrong-idiom","gram-idiom",null],"titaTraps":null,"fig":null,"table":null,"difficulty":"Medium","explanation":"Answer: (D)\nCorrect (D): 'A damp squib' is an event that fails to live up to its billing, like a firework that fizzles instead of going off. Heavy advertising followed by cancelled screenings and empty halls fits exactly.\nIncorrect (A): A corrupted form: the idiom is 'damp', not 'wet'.\nIncorrect (B): A real idiom, but it means a little-known competitor who unexpectedly does well.\nIncorrect (C): A corrupted form: a squid is a sea creature; the idiom uses 'squib', a small firework.","archetype":null,"status":"approved","flags":[],"verified":"ok","verNote":"VA: 'damp squib' fixed by 'much-advertised' against cancelled screenings and empty halls"},{"id":"IPMAT_VA_038","section":"VA","format":"Parajumble","kind":"tita","passage":"1. Yet the same code brought a worry of its own.\n2. The printed payment code, taped to a cart or a crate of onions, changed that almost overnight.\n3. A vendor who once counted cash in the evening now checks, between customers, whether each payment has really arrived.\n4. Customers no longer had to hunt for exact change, and vendors no longer had to turn away a sale for want of it.\n5. For years, a street vendor's biggest worry at the end of the day was the tin box of loose change and torn notes.","stem":"The sentences given below, when properly sequenced, form a coherent paragraph. Each sentence is labelled with a number. Decide on the proper order for the sentences and key in this sequence of numbers as your answer. For example, a response such as 3412 is valid; 3412. or 3 4 1 2 are invalid.","options":[],"answer":"52413","answerIndex":null,"tags":[],"optionTags":null,"titaTraps":{"25413":"pj-opener","52134":"pj-pair-broken"},"fig":null,"table":null,"difficulty":"Medium","explanation":"Answer: 52413\nSentence 5: opens the paragraph: it sets the scene with a full noun phrase and needs nothing before it.\nSentence 2: 'changed that' points back to the vendor's worry in the opener.\nSentence 4: spells out what the change meant for customers and vendors.\nSentence 1: 'Yet' cannot open; it turns from the benefits to 'a worry of its own', and 'the same code' needs the code introduced earlier.\nSentence 3: closes by describing the new worry.","archetype":null,"status":"approved","flags":[],"verified":"ok","verNote":"VA: order fixed by 'changed that', 'Yet the same code' and 'a worry of its own'"},{"id":"IPMAT_VA_039","section":"VA","format":"Sentence Completion","kind":"mcq","passage":null,"stem":"Complete the following sentence by choosing the most appropriate word/phrase from the options given below.\nAfter failing the driving test four times, Kavya was ready to ___, but her instructor persuaded her to book one more attempt.","options":["throw in the towel","throw down the towel","throw in the napkin","throw her weight around"],"answer":"throw in the towel","answerIndex":0,"tags":["KEY","corrupted fixed expression","corrupted fixed expression","real expression, wrong meaning"],"optionTags":[null,"gram-idiom","gram-idiom","vocab-wrong-idiom"],"titaTraps":null,"fig":null,"table":null,"difficulty":"Easy","explanation":"Answer: (A)\nCorrect (A): 'Throw in the towel' means to give up, from a boxer's corner conceding a fight. Four failures and an instructor who has to persuade her to try again show she was about to quit.\nIncorrect (B): A corrupted form that mixes 'throw in the towel' with 'throw down the gauntlet', which means to issue a challenge.\nIncorrect (C): A corrupted form: the idiom uses 'towel'.\nIncorrect (D): A real idiom, but it means to use one's power in a bullying way.","archetype":null,"status":"approved","flags":[],"verified":"ok","verNote":"VA: 'throw in the towel' fixed by 'but her instructor persuaded her' (she was about to give up)"},{"id":"IPMAT_VA_040","section":"VA","format":"Sentence Correction","kind":"mcq","passage":null,"stem":"In the following sentence, the incorrect part of the sentence is underlined. Choose an alternative from the four given options so that the sentence is rendered correct.\nLast week I [[had the mechanic to check the brakes, which were making a noise since]] Monday.","options":["had the mechanic check the brakes, which were making a noise since","had the mechanic to check the brakes, which were making a noise since","had the mechanic check the brakes, which had been making a noise since","got the mechanic check the brakes, which had been making a noise since"],"answer":"had the mechanic check the brakes, which had been making a noise since","answerIndex":2,"tags":["half-fix","original span (both errors kept)","KEY","new error introduced"],"optionTags":["gram-half-fix","gram-sounds-right",null,"gram-new-error"],"titaTraps":null,"fig":null,"table":null,"difficulty":"Hard","explanation":"Answer: (C)\nCorrect (C): The causative 'have someone do something' takes the bare infinitive: 'had the mechanic check'. An action that ran from an earlier past point up to another past time needs the past perfect continuous: 'had been making a noise since Monday'.\nIncorrect (A): Fixes the causative but keeps 'were making ... since', which needs 'had been making'.\nIncorrect (B): The original: it keeps both errors.\nIncorrect (D): Fixes the tense, but 'got' needs 'to' before the verb: 'got the mechanic to check'.","archetype":null,"status":"approved","flags":[],"verified":"ok","verNote":"VA: causative have + bare infinitive; past perfect continuous with 'since'"},{"id":"IPMAT_VA_041","section":"VA","format":"Cloze","kind":"mcq","passage":null,"stem":"The sentence below has words that are missing. Choose the best option from those given below to complete it.\nFar from being a ___ fad, the habit of reading on phones has proved remarkably ___, outlasting several predictions of its decline.","options":["passing; durable","transience; resilient","fleeting; fragile","ephemeral; endurance"],"answer":"passing; durable","answerIndex":0,"tags":["KEY","category/part-of-speech error","polarity flip","category/part-of-speech error"],"optionTags":[null,"vocab-category","vocab-opposite","vocab-category"],"titaTraps":null,"fig":null,"table":null,"difficulty":"Medium","explanation":"Answer: (A)\nCorrect (A): 'Far from being a passing fad' sets up the contrast, and 'remarkably durable' matches 'outlasting several predictions of its decline'.\nIncorrect (B): 'Transience' is a noun; the blank before 'fad' needs an adjective.\nIncorrect (C): 'Fragile' contradicts 'outlasting several predictions of its decline'.\nIncorrect (D): 'Endurance' is a noun; 'proved remarkably ___' needs an adjective.","archetype":null,"status":"approved","flags":[],"verified":"ok","verNote":"VA: killers at positions 2, 1, 2 (fragile, transience, endurance)"},{"id":"IPMAT_VA_042","section":"VA","format":"Sentence Completion","kind":"mcq","passage":null,"stem":"Complete the following sentence by choosing the most appropriate word/phrase from the options given below.\nWe had booked the hall and printed the invitations, so it came as a blow when the sponsorship deal ___ two days before the event.","options":["fell over","fell off","fell through","fell out"],"answer":"fell through","answerIndex":2,"tags":["corrupted fixed expression","corrupted fixed expression","KEY","real expression, wrong meaning"],"optionTags":["gram-idiom","gram-idiom",null,"vocab-wrong-idiom"],"titaTraps":null,"fig":null,"table":null,"difficulty":"Medium","explanation":"Answer: (C)\nCorrect (C): 'Fall through' means to fail to happen. A deal that collapses two days before the event is what turns the booking and the invitations into wasted effort.\nIncorrect (A): Wrong particle: 'fall over' means to topple physically and is not used of deals or plans.\nIncorrect (B): Wrong particle: 'fall off' is used of amounts that decline ('sales fell off'), not of plans that collapse.\nIncorrect (D): A real phrasal verb, but it means to quarrel; a deal cannot quarrel.","archetype":null,"status":"approved","flags":[],"verified":"ok","verNote":"VA: phrasal verb 'fall through' (fail to happen) fixed by 'came as a blow' after the bookings"},{"id":"IPMAT_VA_043","section":"VA","format":"Sentence Correction","kind":"mcq","passage":null,"stem":"In the following sentence, the incorrect part of the sentence is underlined. Choose an alternative from the four given options so that the sentence is rendered correct.\n[[Had the manager knew about the leak earlier, she will have]] called the plumber at once.","options":["Had the manager known about the leak earlier, she will have","If the manager knew about the leak earlier, she would have","Had the manager knew about the leak earlier, she will have","Had the manager known about the leak earlier, she would have"],"answer":"Had the manager known about the leak earlier, she would have","answerIndex":3,"tags":["half-fix","new error introduced","original span (both errors kept)","KEY"],"optionTags":["gram-half-fix","gram-tense-marker","gram-sounds-right",null],"titaTraps":null,"fig":null,"table":null,"difficulty":"Medium","explanation":"Answer: (D)\nCorrect (D): An inverted third conditional takes 'Had + past participle' ('Had the manager known') and a main clause with 'would have'. The underlined part has the wrong verb form ('knew') and the wrong modal ('will have'); only this option fixes both.\nIncorrect (A): Fixes 'known' but keeps 'will have', which cannot follow an unreal past condition.\nIncorrect (B): Fixes 'would have', but 'If the manager knew ... earlier' does not describe an unreal past; it needs 'had known'.\nIncorrect (C): The original: it keeps both errors.","archetype":null,"status":"approved","flags":[],"verified":"ok","verNote":"VA: inverted third conditional (Had + known ... would have); both errors fixed only in key"},{"id":"IPMAT_VA_044","section":"VA","format":"Parajumble","kind":"tita","passage":"1. Goods that had taken a week to float downstream could now reach the coast in a day.\n2. Today only the ferries remain, and few of their passengers know that the steps they climb were built for sacks of grain.\n3. In the old river port, the ghats were once so crowded with boats that a trader could cross the water by stepping from deck to deck.\n4. Then, within a single generation, the railway reached the town and the boats began to disappear.\n5. The boatmen, finding no cargo, sold their vessels for timber or turned them into ferries for pilgrims.","stem":"The sentences given below, when properly sequenced, form a coherent paragraph. Each sentence is labelled with a number. Decide on the proper order for the sentences and key in this sequence of numbers as your answer. For example, a response such as 3412 is valid; 3412. or 3 4 1 2 are invalid.","options":[],"answer":"34152","answerIndex":null,"tags":[],"optionTags":null,"titaTraps":{"34512":"pj-time-order","43152":"pj-opener"},"fig":null,"table":null,"difficulty":"Medium","explanation":"Answer: 34152\nSentence 3: opens: it pictures the port at its busiest, with no back-reference.\nSentence 4: 'Then' cannot open; it marks the change that ended that busy scene.\nSentence 1: explains why the railway emptied the river: goods now moved faster by rail.\nSentence 5: 'finding no cargo' is the boatmen's response to the loss described just before.\nSentence 2: 'Today' and 'only the ferries' close the sequence, picking up the ferries of the sentence before.","archetype":null,"status":"approved","flags":[],"verified":"ok","verNote":"VA: order fixed by 'Then', the cause-effect of rail and cargo, and 'Today only the ferries'"},{"id":"IPMAT_VA_045","section":"VA","format":"Cloze","kind":"mcq","passage":null,"stem":"The sentence below has words that are missing. Choose the best option from those given below to complete it.\nThe ___ of cheap flights has made distant cities feel near, yet residents of popular destinations increasingly ___ the crowds, complaining that their streets have been turned into ___ for visitors.","options":["adventure; resent; theme parks","advent; dislike; nurseries","arrival; welcome; playgrounds","advent; resent; playgrounds"],"answer":"advent; resent; playgrounds","answerIndex":3,"tags":["near-miss sense","near-miss sense","polarity flip","KEY"],"optionTags":["vocab-shade","vocab-shade","vocab-opposite",null],"titaTraps":null,"fig":null,"table":null,"difficulty":"Hard","explanation":"Answer: (D)\nCorrect (D): 'The advent of' means the arrival of; 'yet ... resent the crowds' supplies the contrast; streets 'turned into playgrounds for visitors' fits the complaint.\nIncorrect (A): 'The adventure of cheap flights' is the wrong word; the sentence needs 'advent', their arrival.\nIncorrect (B): A nursery is a place for small children or young plants; it does not describe streets overrun by tourists.\nIncorrect (C): Residents who complain do not 'welcome' the crowds; it breaks the 'yet' contrast.","archetype":null,"status":"approved","flags":[],"verified":"ok","verNote":"VA: killers at positions 2, 3, 1 (welcome, nurseries, adventure)"}];
+var SCRIPT_URL="https://script.google.com/macros/s/AKfycbx5Ojm_zp4LfsMeelx5e06KNjVH1wfsXdV0keS4407m4FO1HU4EpVb7GKj-ibAsxnspeA/exec";
+var TEST_NAME=CFG.testName, MAX_MARKS=CFG.maxMarks, FILE_NAME=CFG.fileName, SN_KEY=CFG.snKey;
+var NQ=QUESTIONS.length;
+var PIN_REGEX=/^(STU|IMS)\d{10}$/;
+var BLOCK_MSG="This PIN isn't on the active student list. Message Sahil Sir if you think this is a mistake.";
+
+/* ==================== WHITELIST RUNTIME BLOCK (v5 §17) ==================== */
+var WL_PROMISE=fetch("whitelist.json",{cache:"no-store"}).then(function(r){return r.ok?r.json():null}).catch(function(){return null});
+function normalizePin(pin){return String(pin).replace(/\D/g,"").replace(/^0+/,"")}
+async function isWhitelisted(pin,batch){
+ var WL;try{WL=await WL_PROMISE}catch(e){WL=null}
+ if(!WL)return true; /* FAIL-OPEN */
+ try{
+  var bypass=WL.bypass_batches||[];
+  if(bypass.indexOf(batch)!==-1)return true;
+  var norm=normalizePin(pin);
+  var admins=(WL.admin_pins||[]).map(String);
+  if(admins.indexOf(norm)!==-1)return true;
+  if(Array.isArray(WL.pins)){if(WL.pins.map(String).indexOf(norm)!==-1)return true}
+  else if(WL.pins&&typeof WL.pins==="object"){if(Object.prototype.hasOwnProperty.call(WL.pins,norm))return true}
+  return false;
+ }catch(e){return true}
+}
+
+/* ==================== SAFETY NET — retry queue ==================== */
+function snReadJSON(key,fallback){try{var v=localStorage.getItem(key);return v?JSON.parse(v):fallback}catch(e){return fallback}}
+function snWriteJSON(key,val){try{localStorage.setItem(key,JSON.stringify(val))}catch(e){}}
+function snUnqueue(id){var p=snReadJSON("riim_pending",[]);p=p.filter(function(x){return x.id!==id});snWriteJSON("riim_pending",p)}
+function snSendWithQueue(opts){
+ var p=snReadJSON("riim_pending",[]);
+ var id=Date.now()+"-"+Math.random().toString(36).slice(2);
+ p.push({id:id,opts:{method:opts.method,mode:opts.mode,headers:opts.headers,body:opts.body}});
+ snWriteJSON("riim_pending",p);
+ return fetch(SCRIPT_URL,opts).then(function(r){snUnqueue(id);return r});
+}
+function snFlushQueue(){
+ var p=snReadJSON("riim_pending",[]);
+ p.forEach(function(item){fetch(SCRIPT_URL,item.opts).then(function(){snUnqueue(item.id)}).catch(function(){})});
+}
+
+/* ==================== STATE ==================== */
+var studentName="",studentPin="",studentBatch="";
+var currentQ=0,testOver=false,started=false;
+var answers=new Array(NQ).fill(null);
+var questionTimes=new Array(NQ).fill(0);
+var marked=new Array(NQ).fill(false);
+var deadline=0,tickCount=0; /* v2.5 wall-clock timer */
+var SEC=(CFG.sectional&&CFG.sectional.length)?CFG.sectional:null;
+var secIdx=0,elapsedPrior=0;
+var secondsLeft=SEC?SEC[0].minutes*60:CFG.minutes*60;
+var tickInt=null,qShownTs=0;
+var qShownQ=-1,visits=[]; /* v2.7: on-device visit log for the results analysis (never sent) */
+var RAPID=!!CFG.rapid; /* v2.4 rapid mode */
+var qSecondsLeft=0,qStartTs=0,qInterval=null,pendingResumeStartTs=null;
+function isMCQ(q){return !!(q.options&&q.options.length)}
+
+/* ==================== SESSION AUTOSAVE / RESUME ==================== */
+function snSaveSession(){
+ if(testOver||!started)return;
+ snWriteJSON(SN_KEY,{file:FILE_NAME,testName:TEST_NAME,name:studentName,pin:studentPin,batch:studentBatch,currentQ:currentQ,answers:answers,questionTimes:questionTimes,marked:marked,secondsLeft:secondsLeft,deadline:deadline,secIdx:secIdx,elapsedPrior:elapsedPrior,qStartTs:qStartTs,visits:visits,ts:Date.now()});
+}
+function snClearSession(){try{localStorage.removeItem(SN_KEY)}catch(e){}}
+function snTryResume(){
+ var s=snReadJSON(SN_KEY,null);
+ if(!s||s.testName!==TEST_NAME)return false;
+ if(lockBlocks(s.batch))return false;
+ var answered=(s.answers||[]).filter(function(a){return a!==null&&a!==""}).length;
+ var ok=confirm("You have an unfinished attempt of "+TEST_NAME+" ("+answered+" question(s) answered). Resume where you left off?");
+ if(!ok){snClearSession();return false}
+ studentName=s.name;studentPin=s.pin;studentBatch=s.batch;
+ currentQ=Math.min(s.currentQ||0,NQ-1);
+ if(s.answers&&s.answers.length===NQ)answers=s.answers;
+ if(s.questionTimes&&s.questionTimes.length===NQ)questionTimes=s.questionTimes;
+ if(typeof s.secondsLeft==="number")secondsLeft=Math.max(10,s.secondsLeft);
+ if(SEC){
+  secIdx=Math.min(typeof s.secIdx==="number"?s.secIdx:0,SEC.length-1);
+  elapsedPrior=typeof s.elapsedPrior==="number"?s.elapsedPrior:0;
+  currentQ=Math.max(SEC[secIdx].start,Math.min(SEC[secIdx].end,currentQ));
+ }
+ if(s.marked&&s.marked.length===NQ)marked=s.marked;
+ if(Array.isArray(s.visits))visits=s.visits.filter(function(v){return v&&typeof v.q==="number"&&v.q>=0&&v.q<NQ});
+ if(!RAPID&&typeof s.deadline==="number"&&s.deadline>0)deadline=s.deadline; /* v2.5: the clock kept running while away */
+ if(RAPID&&typeof s.qStartTs==="number"&&s.qStartTs>0)pendingResumeStartTs=s.qStartTs;
+ enterTest();
+ return true;
+}
+
+/* ==================== LOGIN ==================== */
+function showLoginError(msg){var el=document.getElementById("loginErr");el.textContent=msg;el.style.display="block"}
+async function startTest(){
+ var name=document.getElementById("stuName").value.trim();
+ var pinEl=document.getElementById("stuPin");
+ var pin=pinEl.value.trim().toUpperCase();pinEl.value=pin;
+ var batch=document.getElementById("stuBatch").value;
+ if(!name){showLoginError("Please enter your full name.");return}
+ if(!PIN_REGEX.test(pin)){showLoginError("Invalid PIN. Format: STU########## or IMS##########.");return}
+ if(!batch){showLoginError("Please select your batch.");return}
+ if(lockBlocks(batch)){showLoginError(LOCK_MSG);return}
+ var allowed=await isWhitelisted(pin,batch);
+ if(!allowed){showLoginError(BLOCK_MSG);return}
+ studentName=name;studentPin=pin;studentBatch=batch;
+ document.getElementById("loginErr").style.display="none";
+ enterTest();
+}
+function enterTest(){
+ started=true;
+ document.getElementById("loginScreen").style.display="none";
+ document.getElementById("testScreen").style.display="block";
+ if(!RAPID){
+  if(!deadline)deadline=Date.now()+secondsLeft*1000;
+  catchUp();
+ }
+ buildPalette();
+ updateSecButtons();
+ if(SEC)showSecBanner();
+ if(!RAPID){
+  if(secondsLeft<=0){renderQuestion();submitTest();return} /* whole test ran out while away */
+  tickInt=setInterval(function(){
+   syncLeft();
+   var t=document.getElementById("timer");if(t)t.textContent=fmtClock(secondsLeft);
+   if(++tickCount%10===0)snSaveSession();
+   if(secondsLeft<=0){if(SEC&&secIdx<SEC.length-1)advanceSection();else submitTest()}
+  },1000);
+ }else{
+  var pb=document.getElementById("prevBtn");if(pb)pb.style.display="none";
+  var rw=document.getElementById("rfTimerWrap");if(rw)rw.style.display="block";
+  var mb=document.getElementById("mrkBtn");if(mb)mb.style.display="none";
+ }
+ renderQuestion();
+ snSaveSession();
+}
+function syncLeft(){secondsLeft=Math.round((deadline-Date.now())/1000)}
+function catchUp(){ /* v2.5: sections that expired while the student was away are closed, in order */
+ syncLeft();
+ while(SEC&&secondsLeft<=0&&secIdx<SEC.length-1){
+  elapsedPrior+=SEC[secIdx].minutes*60;
+  secIdx++;
+  deadline+=SEC[secIdx].minutes*60*1000;
+  currentQ=SEC[secIdx].start;
+  syncLeft();
+ }
+}
+function clearResp(){if(testOver)return;answers[currentQ]=null;snSaveSession();if(RAPID){var bs=document.querySelectorAll("#optBox .opt");for(var bi=0;bi<bs.length;bi++)bs[bi].classList.remove("sel");var ti=document.querySelector("#optBox input.tita");if(ti)ti.value="";paintPalette()}else renderQuestion()}
+function toggleMark(){if(testOver||RAPID)return;marked[currentQ]=!marked[currentQ];snSaveSession();paintPalette();paintMarkBtn()}
+function paintMarkBtn(){var b=document.getElementById("mrkBtn");if(b)b.textContent=marked[currentQ]?"Unmark review":"Mark for review"}
+function updateSecButtons(){
+ var eb=document.getElementById("endSecBtn"),sb=document.getElementById("submitBtn");
+ if(!SEC){if(eb)eb.style.display="none";return}
+ var last=secIdx===SEC.length-1;
+ if(eb)eb.style.display=last?"none":"inline-block";
+ if(sb)sb.style.display=last?"inline-block":"none";
+}
+function showSecBanner(){
+ var b=document.getElementById("secBanner");if(!b||!SEC)return;
+ document.getElementById("sbTitle").textContent="SECTION "+(secIdx+1)+" of "+SEC.length+" \u00b7 "+SEC[secIdx].sec;
+ document.getElementById("sbSub").textContent=SEC[secIdx].minutes+" minutes \u00b7 "+(SEC[secIdx].end-SEC[secIdx].start+1)+" questions \u00b7 no return once this section ends";
+ b.style.display="flex";
+ setTimeout(function(){b.style.display="none"},2600);
+}
+function advanceSection(){
+ if(!SEC||secIdx>=SEC.length-1)return;
+ markTime();
+ elapsedPrior+=SEC[secIdx].minutes*60-Math.max(0,secondsLeft);
+ secIdx++;
+ secondsLeft=SEC[secIdx].minutes*60;
+ deadline=Date.now()+secondsLeft*1000;
+ currentQ=SEC[secIdx].start;
+ buildPalette();updateSecButtons();showSecBanner();
+ renderQuestion();snSaveSession();
+}
+function endSectionEarly(){advanceSection()}
+
+/* ==================== PALETTE (free navigation) ==================== */
+function buildPalette(){
+ var pal=document.getElementById("palette");pal.innerHTML="";
+ var lo=SEC?SEC[secIdx].start:0,hi=SEC?SEC[secIdx].end:NQ-1;
+ for(var i=lo;i<=hi;i++){
+  (function(i){
+   var b=document.createElement("button");b.id="pcell"+i;b.textContent=i+1;
+   b.onclick=function(){jumpTo(i)};
+   pal.appendChild(b);
+  })(i);
+ }
+}
+function paintPalette(){
+ for(var i=0;i<NQ;i++){
+  var c=document.getElementById("pcell"+i);if(!c)continue;
+  c.className="";
+  if(answers[i]!==null&&answers[i]!=="")c.classList.add("done");
+  if(marked[i])c.classList.add("rev");
+  if(i===currentQ)c.classList.add("cur");
+ }
+}
+
+/* ==================== RENDER + PER-QUESTION TIME ==================== */
+function markTime(){
+ if(RAPID)return; /* v2.4: rapid records td-qSecondsLeft in rapidAdvance */
+ if(qShownTs){
+  var d=Math.round((Date.now()-qShownTs)/1000);
+  questionTimes[currentQ]+=d;
+  if(d>=1&&qShownQ===currentQ){ /* v2.7: one visit = from showing a question to leaving it */
+   var e=elapsedNow();
+   visits.push({q:currentQ,s:Math.max(0,e-d),d:d,a:answers[currentQ]});
+   if(visits.length>800)visits.shift();
+  }
+ }
+ qShownTs=Date.now();
+}
+function elapsedNow(){ /* seconds into the test on the test clock (sections ended early are not counted) */
+ if(RAPID)return 0;
+ var left=deadline?(deadline-Date.now())/1000:secondsLeft;
+ var base=SEC?elapsedPrior+SEC[secIdx].minutes*60:CFG.minutes*60;
+ return Math.max(0,Math.round(base-left));
+}
+function fmtClock(s){s=Math.max(0,s);return String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0")}
+function ulText(el,t){el.textContent="";String(t==null?"":t).split(/(\[\[[\s\S]*?\]\])/).forEach(function(p){if(!p)return;var m=p.match(/^\[\[([\s\S]*)\]\]$/);if(m){var u=document.createElement("u");u.textContent=m[1];el.appendChild(u)}else el.appendChild(document.createTextNode(p))})}
+function renderQuestion(){
+ var q=QUESTIONS[currentQ];
+ /* v2.7 fix: picking an option re-renders the same question; that must not restart its stopwatch */
+ if(!qShownTs||qShownQ!==currentQ){qShownTs=Date.now();qShownQ=currentQ}
+ document.getElementById("tbName").textContent=TEST_NAME;
+ var qc=document.getElementById("qCounter");
+ if(SEC){var sp=SEC[secIdx];qc.textContent=sp.sec+" \u00b7 Q "+(currentQ-sp.start+1)+" / "+(sp.end-sp.start+1)}
+ else qc.textContent="Q "+(currentQ+1)+" / "+NQ;
+ if(!RAPID)document.getElementById("timer").textContent=fmtClock(secondsLeft);
+ document.getElementById("secBadge").textContent=q.section;
+ var pB=document.getElementById("passageBox");
+ if(q.passage){pB.style.display="block";pB.textContent=q.passage}else{pB.style.display="none"}
+ ulText(document.getElementById("qText"),q.stem);
+ renderExhibit(q,document.getElementById("exBox"));
+ var box=document.getElementById("optBox");box.innerHTML="";
+ var letters=["A","B","C","D"];
+ if(isMCQ(q)){
+  q.options.forEach(function(opt,idx){
+   var d=document.createElement("button");
+   d.className="opt"+(answers[currentQ]===idx?" sel":"");
+   d.textContent=letters[idx]+". "+opt;
+   d.onclick=function(){answers[currentQ]=idx;snSaveSession();if(RAPID){var bs=box.querySelectorAll(".opt");for(var bi=0;bi<bs.length;bi++)bs[bi].classList.toggle("sel",bi===idx);paintPalette()}else{renderQuestion()}};
+   box.appendChild(d);
+  });
+ }else{
+  var inp=document.createElement("input");
+  inp.className="tita";inp.placeholder="Type your answer";
+  inp.value=answers[currentQ]||"";
+  inp.oninput=function(){answers[currentQ]=this.value;snSaveSession();paintPalette()};
+  box.appendChild(inp);
+ }
+ paintPalette();paintMarkBtn();
+ if(RAPID)rapidStartQuestion();
+}
+function nav(d){if(RAPID){if(d>0)rapidAdvance();return}markTime();var lo=SEC?SEC[secIdx].start:0,hi=SEC?SEC[secIdx].end:NQ-1;currentQ=Math.max(lo,Math.min(hi,currentQ+d));snSaveSession();renderQuestion()}
+function jumpTo(i){if(RAPID)return;if(SEC&&(i<SEC[secIdx].start||i>SEC[secIdx].end))return;markTime();currentQ=i;snSaveSession();renderQuestion()}
+
+/* ==================== RAPID MODE ENGINE (v2.4) ==================== */
+function rapidStartQuestion(){
+ if(!RAPID||testOver)return;
+ var q=QUESTIONS[currentQ],dur=q.td||30;
+ if(pendingResumeStartTs){
+  qStartTs=pendingResumeStartTs;pendingResumeStartTs=null;
+  var elapsed=Math.floor((Date.now()-qStartTs)/1000);
+  qSecondsLeft=Math.max(0,dur-elapsed);
+ }else{qStartTs=Date.now();qSecondsLeft=dur}
+ var bar=document.getElementById("rfTimerBar");
+ bar.style.transition="none";bar.style.width=((qSecondsLeft/dur)*100)+"%";
+ bar.classList.remove("warn","danger");
+ var fr=qSecondsLeft/dur;
+ if(fr<=0.25)bar.classList.add("danger");else if(fr<=0.5)bar.classList.add("warn");
+ void bar.offsetWidth; /* force reflow so the linear transition restarts */
+ bar.style.transition="width "+qSecondsLeft+"s linear";bar.style.width="0%";
+ document.getElementById("timer").textContent=qSecondsLeft+"s";
+ if(qInterval)clearInterval(qInterval);
+ snSaveSession(); /* persist fresh qStartTs so refresh-before-interaction still tracks */
+ if(qSecondsLeft<=0){setTimeout(rapidAdvance,50);return}
+ qInterval=setInterval(rapidTick,1000);
+}
+function rapidTick(){
+ qSecondsLeft--;if(qSecondsLeft<0)qSecondsLeft=0;
+ document.getElementById("timer").textContent=qSecondsLeft+"s";
+ var dur=QUESTIONS[currentQ].td||30;
+ var bar=document.getElementById("rfTimerBar"),fr=qSecondsLeft/dur;
+ if(fr<=0.25){bar.classList.remove("warn");bar.classList.add("danger")}
+ else if(fr<=0.5){bar.classList.add("warn")}
+ if(qSecondsLeft<=0)rapidAdvance();
+}
+function rapidAdvance(){
+ if(testOver)return;
+ clearInterval(qInterval);
+ questionTimes[currentQ]=(QUESTIONS[currentQ].td||30)-qSecondsLeft;
+ if(currentQ>=NQ-1){submitTest();return}
+ currentQ++;
+ snSaveSession();
+ renderQuestion();
+}
+
+/* ==================== FIG / TABLE EXHIBITS ==================== */
+function renderExhibit(q,host){
+ if(!host)return;host.innerHTML="";
+ if(q.fig){
+  var f=String(q.fig).trim();
+  if(f.slice(0,4).toLowerCase()==="<svg"){var w0=document.createElement("div");w0.className="qFig";w0.innerHTML=f;host.appendChild(w0)}
+  else if(/^(data:image|https?:)/.test(f)){var w=document.createElement("div");w.className="qFig";var im=document.createElement("img");im.src=f;im.alt="figure";w.appendChild(im);host.appendChild(w)}
+ }
+ if(q.table!=null&&q.table!==""){
+  var t=q.table,rows=null,heads=null;
+  if(Array.isArray(t))rows=t;
+  else if(t&&typeof t==="object"&&Array.isArray(t.rows)){rows=t.rows;heads=Array.isArray(t.headers)?t.headers:null}
+  if(rows&&rows.length&&Array.isArray(rows[0])){
+   var tb=document.createElement("table");tb.className="qTable";
+   if(heads){var tr0=document.createElement("tr");heads.forEach(function(hh){var th=document.createElement("th");th.textContent=String(hh);tr0.appendChild(th)});tb.appendChild(tr0)}
+   rows.forEach(function(r){var tr=document.createElement("tr");r.forEach(function(c){var td=document.createElement("td");td.textContent=String(c);tr.appendChild(td)});tb.appendChild(tr)});
+   host.appendChild(tb);
+  }else if(typeof t==="string"&&t.trim().charAt(0)==="<"){
+   var wt=document.createElement("div");wt.className="qTableWrap";wt.innerHTML=t;host.appendChild(wt);
+  }else{
+   var pre=document.createElement("pre");pre.className="qTable";pre.textContent=(typeof t==="string")?t:JSON.stringify(t,null,1);host.appendChild(pre);
+  }
+ }
+}
+/* ==================== SCORING HELPERS ==================== */
+function titaNorm(v){
+ var s=String(v==null?"":v).trim();
+ var t=s.replace(/[\s,]/g,"");
+ if(t!==""&&isFinite(t))return String(Number(t));
+ return s.toLowerCase();
+}
+function titaWFor(q){if(CFG.titaWSec&&CFG.titaWSec[q.section]!=null)return CFG.titaWSec[q.section];return CFG.titaW}
+function isCorrect(q,a){
+ if(a===null||a==="")return false;
+ if(isMCQ(q))return a===q.answerIndex;
+ if(q.format==="Parajumble")return String(a).trim()===String(q.answer); /* stem rule: 3412 valid; 3412. and 3 4 1 2 invalid */
+ return titaNorm(a)===titaNorm(q.answer);
+}
+
+/* ==================== MISTAKE BANK (spaced repetition) ==================== */
+function bankMistakes(){
+ try{
+  var bank=snReadJSON("riim_mistakes",[]);
+  var now=Date.now(),DAY=86400000;
+  QUESTIONS.forEach(function(q,i){
+   if(!isMCQ(q))return;
+   var chosen=answers[i];
+   if(chosen===null||chosen===q.answerIndex)return;
+   var k=CFG.bankPrefix+"-Q"+(i+1);
+   var existing=null;
+   for(var j=0;j<bank.length;j++){if(bank[j].k===k){existing=bank[j];break}}
+   if(existing){existing.box=1;existing.due=now+DAY;existing.chosen=chosen}
+   else{bank.push({k:k,stem:(q.passage?q.passage+"\n\n"+q.stem:q.stem),opts:q.options,ans:q.answerIndex,chosen:chosen,exp:q.explanation,sub:q.format,src:TEST_NAME,box:1,due:now+DAY})}
+  });
+  if(bank.length>300)bank=bank.slice(bank.length-300);
+  snWriteJSON("riim_mistakes",bank);
+ }catch(e){}
+}
+
+/* ==================== SUBMIT — 16-field payload ==================== */
+function fmtTime(totalSecs){var m=Math.floor(totalSecs/60);var s=totalSecs%60;return m+":"+(s<10?"0":"")+s}
+function submitTest(){
+ if(testOver)return;
+ testOver=true;
+ clearInterval(tickInt);
+ if(qInterval)clearInterval(qInterval);
+ if(RAPID&&qStartTs&&!questionTimes[currentQ]){questionTimes[currentQ]=Math.min(QUESTIONS[currentQ].td||30,Math.round((Date.now()-qStartTs)/1000))}
+ markTime();
+
+ var correctCount=0,wrongCount=0,skippedCount=0;
+ var sectionErrors={},topicErrorMap={},wrongQuestions=[];
+ var score=0;
+ QUESTIONS.forEach(function(q,i){
+  var a=answers[i];
+  if(a===null||a===""){skippedCount++;return}
+  if(isCorrect(q,a)){correctCount++;score+=CFG.c}
+  else{
+   wrongCount++;
+   score+=(isMCQ(q)?CFG.w:titaWFor(q));
+   wrongQuestions.push(i+1);
+   sectionErrors[q.section]=(sectionErrors[q.section]||0)+1;
+   topicErrorMap[q.format]=(topicErrorMap[q.format]||0)+1;
+  }
+ });
+ var totalSecs=RAPID?questionTimes.reduce(function(a,b){return a+(b||0)},0):(SEC?(elapsedPrior+SEC[secIdx].minutes*60-Math.max(0,secondsLeft)):(CFG.minutes*60-Math.max(0,secondsLeft)));
+ var timeTakenStr=fmtTime(totalSecs);
+
+ /* 16-field payload — explicit key:value, topicErrors is field 16 */
+ var payload={
+  testName:TEST_NAME,
+  name:studentName,
+  pin:studentPin,
+  batch:studentBatch,
+  score:score,
+  correct:correctCount,
+  wrong:wrongCount,
+  skipped:skippedCount,
+  maxMarks:MAX_MARKS,
+  timeTaken:timeTakenStr,
+  timestamp:new Date().toLocaleString("en-IN",{timeZone:"Asia/Kolkata"}),
+  sectionErrors:JSON.stringify(sectionErrors),
+  wrongQuestions:JSON.stringify(wrongQuestions),
+  studentAnswers:JSON.stringify(answers),
+  questionTimes:JSON.stringify(questionTimes),
+  topicErrors:JSON.stringify(topicErrorMap)
+ };
+
+ snSendWithQueue({method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain"},body:JSON.stringify(payload)}).catch(function(){});
+
+ bankMistakes();
+
+ try{
+  var res=snReadJSON("riim_results",[]);
+  res.push({testName:TEST_NAME,score:score,correct:correctCount,wrong:wrongCount,skipped:skippedCount,maxMarks:MAX_MARKS,timeTaken:timeTakenStr,ts:Date.now()});
+  if(res.length>200)res=res.slice(res.length-200);
+  snWriteJSON("riim_results",res);
+ }catch(e){}
+
+ snClearSession();
+ showResults(score,correctCount,wrongCount,skippedCount,timeTakenStr,sectionErrors,totalSecs);
+}
+
+/* ==================== RESULTS ==================== */
+function showResults(score,correct,wrong,skipped,timeStr,sectionErrors,totalSecs){
+ document.getElementById("testScreen").style.display="none";
+ document.getElementById("resultsScreen").style.display="block";
+ document.getElementById("resTitle").textContent=TEST_NAME+" \u2014 Results";
+ document.getElementById("resSub").textContent=studentName+" \u00b7 "+studentBatch+" \u00b7 "+new Date().toLocaleString("en-IN",{timeZone:"Asia/Kolkata"});
+ document.getElementById("stScore").textContent=score;
+ document.getElementById("stMaxL").textContent="SCORE / "+MAX_MARKS;
+ document.getElementById("stCorrect").textContent=correct;
+ document.getElementById("stWrong").textContent=wrong;
+ document.getElementById("stSkipped").textContent=skipped;
+ document.getElementById("stTime").textContent=timeStr;
+ document.getElementById("stAcc").textContent=(correct+wrong)?Math.round(100*correct/(correct+wrong))+"%":"\u2014";
+ var secParts=[];
+ for(var sk in sectionErrors){if(sectionErrors.hasOwnProperty(sk))secParts.push(sk+": "+sectionErrors[sk])}
+ document.getElementById("secErrBox").innerHTML="<b>Section errors</b> \u2014 "+(secParts.length?secParts.join(" \u00b7 "):"None");
+ /* v2.7: analysis + retry. Wrapped so a fault here can never blank the results screen. */
+ try{LAST_A=computeAnalysis(score,totalSecs);renderAnalysis(LAST_A)}catch(e){LAST_A=null;var ab=document.getElementById("anaBox");if(ab)ab.innerHTML=""}
+ try{renderRetry()}catch(e){var rb=document.getElementById("retryBox");if(rb)rb.innerHTML=""}
+
+ var letters=["A","B","C","D"];
+ var box=document.getElementById("reviewBox");box.innerHTML="";
+ QUESTIONS.forEach(function(q,i){
+  var a=answers[i];
+  var skippedQ=(a===null||a==="");
+  var ok=isCorrect(q,a);
+  var wrap=document.createElement("div");wrap.className="rq";wrap.id="rq"+i;
+  var head=document.createElement("div");head.className="rqHead";
+  var status=skippedQ?"<span class='status sk'>SKIPPED</span>":ok?"<span class='status ok'>CORRECT</span>":"<span class='status no'>WRONG</span>";
+  head.innerHTML="Q"+(i+1)+" \u00b7 "+escH(q.section)+" \u00b7 "+escH(q.format)+(diffOf(q)?" \u00b7 "+escH(q.difficulty):"")+" \u00b7 time "+fmtMS(questionTimes[i])+status;
+  wrap.appendChild(head);
+  if(q.passage&&(i===0||QUESTIONS[i-1].passage!==q.passage)){
+   var pv=document.createElement("div");pv.className="rqStem";
+   pv.style.fontStyle="italic";pv.style.opacity=".85";
+   pv.textContent="Passage: "+q.passage;
+   wrap.appendChild(pv);
+  }
+  var stem=document.createElement("div");stem.className="rqStem";ulText(stem,q.stem);wrap.appendChild(stem);
+  var exh=document.createElement("div");renderExhibit(q,exh);if(exh.childNodes.length)wrap.appendChild(exh);
+  if(isMCQ(q)){
+   q.options.forEach(function(opt,idx){
+    var r=document.createElement("div");r.className="ropt";
+    if(idx===q.answerIndex)r.classList.add("correct");
+    else if(idx===a)r.classList.add("wrong");
+    var l=document.createElement("div");l.textContent=letters[idx];
+    var t=document.createElement("div");t.textContent=opt;
+    r.appendChild(l);r.appendChild(t);
+    if(idx===a&&idx!==q.answerIndex){var tg=trapOf(q,a);if(tg){var tn=document.createElement("div");tn.className="trapNote";tn.textContent="trap: "+trapInfo(tg).name;r.appendChild(tn)}}
+    wrap.appendChild(r);
+   });
+  }else{
+   var yr=document.createElement("div");yr.className="ropt"+(skippedQ?"":(ok?" correct":" wrong"));
+   yr.textContent="Your answer: "+(skippedQ?"\u2014":a);
+   var ttg=trapOf(q,a);if(ttg){var ttn=document.createElement("div");ttn.className="trapNote";ttn.textContent="trap: "+trapInfo(ttg).name;yr.appendChild(ttn)}
+   wrap.appendChild(yr);
+   var kr=document.createElement("div");kr.className="ropt correct";
+   kr.textContent="Key: "+q.answer;
+   wrap.appendChild(kr);
+  }
+  var exp=document.createElement("div");exp.className="exp";
+  exp.innerHTML="<b>Explanation:</b> ";
+  exp.appendChild(document.createTextNode(q.explanation||""));
+  wrap.appendChild(exp);
+  box.appendChild(wrap);
+ });
+ window.scrollTo(0,0);
+}
+
+/* ==================== POST-TEST ANALYSIS (v2.7) ====================
+   Computed on this device from answers, questionTimes and the visit log.
+   Nothing here is sent anywhere: the 16-field payload is unchanged.
+   TRAPS: student-facing names for optionTags / titaTraps. Edit freely;
+   an unknown tag falls back to a readable version of the tag itself. */
+var TRAPS={
+ "rc-detail-as-main":["Detail as main idea","You picked a true detail when the question asked for the main point."],
+ "rc-extreme":["Overstated","It says more, or says it more strongly, than the passage supports."],
+ "rc-false-link":["False link","It joins two things from the passage with a reason or link the writer never makes."],
+ "rc-half-right":["Half right","Part of it matches the passage; the rest doesn't."],
+ "rc-literal":["Too literal","You read a figurative line at face value."],
+ "rc-out-of-scope":["Out of scope","It brings in something the passage never discusses."],
+ "rc-reversal":["Reversal","It flips what the passage says: the order, the direction or the cause."],
+ "rc-scope-shift":["Scope shift","Right topic, but wider or narrower than what the text actually claims."],
+ "va-scope-shift":["Scope shift","Right topic, but wider or narrower than what the text actually claims."],
+ "rc-tone":["Tone miss","Right direction, wrong strength or flavour of attitude."],
+ "rc-true-not-answer":["True, but not the answer","The passage supports it, but it doesn't answer the question asked."],
+ "rc-word-match":["Word match","It borrows the passage's words or images, not its meaning."],
+ "rc-wrong-voice":["Wrong voice","A view the passage reports or argues against, not the writer's own."],
+ "va-category-error":["Wrong kind of word","The word doesn't fit the kind of idea the blank needs."],
+ "va-collocation-break":["Doesn't go together","The word doesn't sit naturally with the words around it."],
+ "va-confusable-sibling":["Look-alike word","It looks or sounds like the right word but means something else."],
+ "va-corrupted-expression":["Twisted idiom","A familiar expression with one word changed."],
+ "va-half-fix":["Half fix","It corrects one error but leaves another standing."],
+ "va-new-error":["New error","It fixes the original error but brings in a fresh one."],
+ "va-off-topic-insertion":["Off-topic sentence","Related subject, but it breaks the paragraph's line of thought."],
+ "va-polarity-flip":["Wrong direction","The word pulls the opposite way from what the sentence's clues demand."],
+ "va-real-expression-wrong-meaning":["Real idiom, wrong meaning","A genuine expression, but it means something else here."],
+ "va-stance-contradiction":["Contradicts the paragraph","It goes against the position the paragraph takes."],
+ "vocab-context-blind":["Dictionary meaning, wrong context","A real meaning of the word, but not the one used here."],
+ "vocab-shade":["Wrong shade","Close in meaning, but the wrong nuance or strength."],
+ "pj-connector":["Missed connector","Your order ignores a linking word that ties two sentences together."],
+ "pj-antecedent":["Missed reference","A sentence points back (this, they, such) to something not yet introduced."],
+ "pj-conclusion-early":["Conclusion too early","The summing-up sentence comes before the argument is complete."]
+};
+var LAST_A=null;
+function trapInfo(tag){
+ var t=TRAPS[tag];
+ if(t)return {name:t[0],what:t[1]};
+ var n=String(tag).replace(/^[a-z]+-/,"").replace(/-/g," ");
+ return {name:n.charAt(0).toUpperCase()+n.slice(1),what:""};
+}
+function diffOf(q){
+ var d=String(q.difficulty||"").trim().toLowerCase();
+ if(!d)return null;
+ if(d.indexOf("hard")!==-1)return "hard";
+ if(d.charAt(0)==="e")return "easy";
+ if(d.charAt(0)==="m")return "medium";
+ return null;
+}
+function penOf(q){return isMCQ(q)?CFG.w:titaWFor(q)}
+function trapOf(q,a){
+ if(a===null||a===""||a===undefined||isCorrect(q,a))return null;
+ if(isMCQ(q)){
+  var t=Array.isArray(q.optionTags)?q.optionTags[a]:null;
+  return (typeof t==="string"&&t.trim())?t.trim():null;
+ }
+ if(q.titaTraps&&typeof q.titaTraps==="object"){
+  var na=String(a).replace(/[\s,]/g,"");
+  for(var k in q.titaTraps){
+   if(Object.prototype.hasOwnProperty.call(q.titaTraps,k)&&String(k).replace(/[\s,]/g,"")===na)return q.titaTraps[k];
+  }
+ }
+ return null;
+}
+function secOfQ(i){if(!SEC)return null;for(var s=0;s<SEC.length;s++){if(i>=SEC[s].start&&i<=SEC[s].end)return s}return null}
+function paceOf(i){
+ if(RAPID)return QUESTIONS[i].td||30;
+ var s=secOfQ(i);
+ if(s!==null)return SEC[s].minutes*60/(SEC[s].end-SEC[s].start+1);
+ return CFG.minutes*60/NQ;
+}
+function availSecs(){
+ if(RAPID)return QUESTIONS.reduce(function(a,q){return a+(q.td||30)},0);
+ if(SEC)return SEC.reduce(function(a,p){return a+p.minutes*60},0);
+ return CFG.minutes*60;
+}
+function fmtMS(s){s=Math.max(0,Math.round(s||0));return Math.floor(s/60)+":"+String(s%60).padStart(2,"0")}
+function sgn(n){return n>0?"+"+n:(n<0?"−"+(-n):"0")}
+function sgnA(n){return n>0?"+"+n:(n<0?"-"+(-n):"0")}
+function blank(x){return x===null||x===""||x===undefined}
+function sameAns(q,x,y){if(blank(x)||blank(y))return blank(x)&&blank(y);return isMCQ(q)?x===y:titaNorm(x)===titaNorm(y)}
+function escH(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}
+function capW(s){return s.charAt(0).toUpperCase()+s.slice(1)}
+function outWord(o){return o==="c"?"right":(o==="w"?"wrong":"blank")}
+
+function computeAnalysis(score,totalSecs){
+ var A={score:score,max:MAX_MARKS,used:totalSecs||0,avail:availSecs(),c:0,w:0,s:0,neg:0,tC:0,tW:0,tS:0,out:[],
+  hasDiff:false,hasTags:false,emW:0,emWGain:0,emS:0,emSGain:0,hardWrongN:0,hardWrongT:0,
+  traps:[],trapped:0,timedOut:0,slow:[],secs:[],journey:null,reach:null,acc:null,mpm:null,
+  diff:{easy:{n:0,o:0,c:0,w:0,s:0,net:0,t:0},medium:{n:0,o:0,c:0,w:0,s:0,net:0,t:0},hard:{n:0,o:0,c:0,w:0,s:0,net:0,t:0}}};
+ var trapMap={};
+ QUESTIONS.forEach(function(q,i){
+  var a=answers[i],sk=blank(a),ok=!sk&&isCorrect(q,a),t=questionTimes[i]||0;
+  var o=sk?"s":(ok?"c":"w");
+  A.out.push(o);
+  if(o==="c"){A.c++;A.tC+=t}
+  else if(o==="w"){A.w++;A.tW+=t;A.neg+=-penOf(q)}
+  else{A.s++;A.tS+=t}
+  if(RAPID&&sk&&t>=(q.td||30))A.timedOut++;
+  var d=diffOf(q);
+  if(d){
+   A.hasDiff=true;
+   var b=A.diff[d];b.n++;b.t+=t;if(t>0)b.o++;
+   if(o==="c"){b.c++;b.net+=CFG.c}else if(o==="w"){b.w++;b.net+=penOf(q)}else b.s++;
+   if(d!=="hard"){
+    if(o==="w"){A.emW++;A.emWGain+=CFG.c-penOf(q)}
+    else if(o==="s"){A.emS++;A.emSGain+=CFG.c}
+   }else if(o==="w"){A.hardWrongN++;A.hardWrongT+=t}
+  }
+  if(Array.isArray(q.optionTags)||(q.titaTraps&&typeof q.titaTraps==="object"))A.hasTags=true;
+  var tg=trapOf(q,a);
+  if(tg){
+   var inf=trapInfo(tg);
+   if(!trapMap[inf.name]){trapMap[inf.name]={name:inf.name,what:inf.what,qs:[]};A.traps.push(trapMap[inf.name])}
+   trapMap[inf.name].qs.push(i);A.trapped++;
+  }
+ });
+ A.traps.sort(function(x,y){return y.qs.length-x.qs.length});
+ A.acc=(A.c+A.w)?Math.round(100*A.c/(A.c+A.w)):null;
+ if(A.hasDiff)A.reach=score+A.emWGain+A.emSGain;
+ if(A.used>=60)A.mpm=score/(A.used/60);
+ A.slow=questionTimes.map(function(t,i){return {i:i,t:t||0}}).filter(function(x){return x.t>0}).sort(function(x,y){return y.t-x.t}).slice(0,3);
+ var order=[],bySec={};
+ QUESTIONS.forEach(function(q,i){
+  var k=q.section||"-";
+  if(!bySec[k]){bySec[k]={sec:k,n:0,c:0,w:0,s:0,score:0,t:0};order.push(k)}
+  var b=bySec[k],o=A.out[i];b.n++;b.t+=questionTimes[i]||0;
+  if(o==="c"){b.c++;b.score+=CFG.c}else if(o==="w"){b.w++;b.score+=penOf(q)}else b.s++;
+ });
+ if(order.length>1)A.secs=order.map(function(k){return bySec[k]});
+ if(!RAPID&&visits.length)A.journey=computeJourney(A);
+ return A;
+}
+
+function computeJourney(A){
+ var J={firstN:0,firstOk:0,backN:0,backOk:0,toRight:0,toWrong:0,swapGain:0,swapLoss:0,never:[],neverEM:0,late:[],longest:null,T:0,secStart:{}};
+ var byQ={};
+ visits.forEach(function(v){
+  (byQ[v.q]=byQ[v.q]||[]).push(v);
+  if(!J.longest||v.d>J.longest.d)J.longest=v;
+  J.T=Math.max(J.T,v.s+v.d);
+ });
+ if(SEC){SEC.forEach(function(p,k){var m=null;for(var i=p.start;i<=p.end;i++){(byQ[i]||[]).forEach(function(v){if(m===null||v.s<m)m=v.s})}J.secStart[k]=m})}
+ QUESTIONS.forEach(function(q,i){
+  var vs=byQ[i],d=diffOf(q),em=(d==="easy"||d==="medium");
+  if(!vs||!vs.length){J.never.push(i);if(em)J.neverEM++;return}
+  var a=answers[i],fa=vs[0].a;
+  if(!blank(fa)){J.firstN++;if(isCorrect(q,fa))J.firstOk++}
+  else if(!blank(a)){J.backN++;if(isCorrect(q,a))J.backOk++}
+  var fn=null;
+  for(var k=0;k<vs.length;k++){if(!blank(vs[k].a)){fn=vs[k].a;break}}
+  if(fn!==null&&!blank(a)&&!sameAns(q,fn,a)){
+   var was=isCorrect(q,fn),now=isCorrect(q,a);
+   if(!was&&now){J.toRight++;J.swapGain+=CFG.c-penOf(q)}
+   else if(was&&!now){J.toWrong++;J.swapLoss+=CFG.c-penOf(q)}
+  }
+  if(em){
+   var s0=0,dur=CFG.minutes*60,si=secOfQ(i);
+   if(si!==null){s0=J.secStart[si]||0;dur=SEC[si].minutes*60}
+   if(vs[0].s-s0>=0.75*dur)J.late.push(i);
+  }
+ });
+ J.T=Math.max(J.T,A.used,1);
+ return J;
+}
+
+/* ---------- on-screen panels ---------- */
+function qLink(i){return "<a href=\"#rq"+i+"\" class=\"qlink\">Q"+(i+1)+"</a>"}
+function okMark(o){return o==="c"?"<span class=\"ok\">&#10003;</span>":(o==="w"?"<span class=\"no\">&#10007;</span>":"<span class=\"dim\">&mdash;</span>")}
+function kv(k,v,cls){return "<div class=\"kv\"><span>"+k+"</span><b"+(cls?" class=\""+cls+"\"":"")+">"+v+"</b></div>"}
+function plural(n,one,many){return n+" "+(n===1?one:many)}
+
+function cardTime(A){
+ var H="<div class=\"ana\"><div class=\"anaH\">TIME</div>";
+ H+=kv("Time used",fmtMS(A.used)+" <span class=\"dim\">of "+fmtMS(A.avail)+"</span>");
+ H+=kv("On answers you got right",fmtMS(A.tC),"ok");
+ H+=kv("On answers you got wrong",fmtMS(A.tW),"no");
+ if(A.tS>=1)H+=kv("On questions left blank",fmtMS(A.tS),"dim");
+ if(A.mpm!==null)H+=kv("Marks per minute",A.mpm.toFixed(1));
+ if(RAPID&&A.timedOut)H+=kv("Clock ran out, no answer",A.timedOut,"no");
+ if(A.slow.length)H+="<div class=\"sub\">Slowest: "+A.slow.map(function(x){return qLink(x.i)+" "+fmtMS(x.t)+" "+okMark(A.out[x.i])}).join(" &middot; ")+"</div>";
+ if(A.w&&A.tW>=120)H+="<div class=\"call no\">"+fmtMS(A.tW)+" went into answers that "+(A.neg>0?"cost you "+plural(A.neg,"mark","marks"):"scored nothing")+".</div>";
+ return H+"</div>";
+}
+function cardDiff(A){
+ if(!A.hasDiff)return "";
+ var H="<div class=\"ana\"><div class=\"anaH\">BY DIFFICULTY</div><table class=\"anaT\"><tr><th></th><th>Qs</th><th>&#10003;</th><th>&#10007;</th><th>&mdash;</th><th>Net</th><th>Avg time</th></tr>";
+ ["easy","medium","hard"].forEach(function(k){
+  var b=A.diff[k];if(!b.n)return;
+  H+="<tr><td>"+capW(k)+"</td><td>"+b.n+"</td><td>"+b.c+"</td><td>"+b.w+"</td><td>"+b.s+"</td><td class=\""+(b.net<0?"no":(b.net>0?"ok":""))+"\">"+sgn(b.net)+"</td><td>"+(b.o?fmtMS(b.t/b.o):"&mdash;")+"</td></tr>";
+ });
+ H+="</table>";
+ var hb=A.diff.hard;
+ if(hb.c+hb.w>=2&&hb.net<0)H+="<div class=\"call no\">Hard questions cost you "+plural(-hb.net,"mark","marks")+" net. Leaving them blank would have scored higher.</div>";
+ else if(A.hardWrongN&&A.hardWrongT>=120)H+="<div class=\"call\">"+fmtMS(A.hardWrongT)+" spent on Hard questions you got wrong.</div>";
+ if(A.emS)H+="<div class=\"call\">"+plural(A.emS,"Easy or Medium question","Easy or Medium questions")+" left blank: worth +"+A.emSGain+" if right.</div>";
+ return H+"</div>";
+}
+function cardTraps(A){
+ if(!A.hasTags)return "";
+ var H="<div class=\"ana\"><div class=\"anaH\">TRAPS THAT CAUGHT YOU</div>";
+ if(!A.traps.length)return H+"<div class=\"sub\">"+(A.w?"None of your wrong answers landed on a tagged trap.":"No trap caught you on this test.")+"</div></div>";
+ H+="<div class=\"sub\" style=\"margin-top:0\">Behind "+A.trapped+" of your "+plural(A.w,"wrong answer","wrong answers")+":</div>";
+ A.traps.forEach(function(t){
+  H+="<div class=\"trap\"><div class=\"trapTop\"><b>"+escH(t.name)+"</b><span class=\"cnt\">&times;"+t.qs.length+"</span></div>"+(t.what?"<div class=\"what\">"+escH(t.what)+"</div>":"")+"<div class=\"qs\">"+t.qs.map(qLink).join(" ")+"</div></div>";
+ });
+ return H+"</div>";
+}
+function cardPath(A){
+ var J=A.journey;if(!J)return "";
+ var H="<div class=\"ana\"><div class=\"anaH\">HOW YOU MOVED</div>";
+ if(J.firstN)H+=kv("Right on the first look",Math.round(100*J.firstOk/J.firstN)+"% <span class=\"dim\">("+J.firstOk+" of "+J.firstN+")</span>");
+ if(J.backN)H+=kv("Came back and answered",J.backN+" <span class=\"dim\">("+J.backOk+" right)</span>");
+ if(J.toRight||J.toWrong)H+=kv("Changed answers",(J.toRight?"<span class=\"ok\">"+J.toRight+" wrong&rarr;right +"+J.swapGain+"</span>":"")+(J.toRight&&J.toWrong?"<br>":"")+(J.toWrong?"<span class=\"no\">"+J.toWrong+" right&rarr;wrong &minus;"+J.swapLoss+"</span>":""));
+ if(J.never.length)H+=kv("Never opened",J.never.length+(J.neverEM?" <span class=\"dim\">("+J.neverEM+" Easy/Medium)</span>":""),J.neverEM?"no":"");
+ if(J.longest&&J.longest.d>=60)H+=kv("Longest single stay",fmtMS(J.longest.d)+" on "+qLink(J.longest.q)+" "+okMark(A.out[J.longest.q]));
+ if(J.late.length)H+="<div class=\"call\">"+(J.late.length===1?"1 Easy or Medium question was":J.late.length+" Easy or Medium questions were")+" first opened in the last quarter of the clock: "+J.late.map(qLink).join(" ")+"</div>";
+ if(J.toWrong>J.toRight)H+="<div class=\"call no\">Second thoughts cost you marks this time. Change an answer only when you can say what was wrong with the first one.</div>";
+ return H+"</div>";
+}
+function cardSecs(A){
+ if(!A.secs.length)return "";
+ var H="<div class=\"ana\"><div class=\"anaH\">BY SECTION</div><table class=\"anaT\"><tr><th></th><th>Score</th><th>&#10003;</th><th>&#10007;</th><th>&mdash;</th><th>Acc</th><th>Time</th></tr>";
+ A.secs.forEach(function(b){
+  var att=b.c+b.w;
+  H+="<tr><td>"+escH(b.sec)+"</td><td>"+sgn(b.score).replace("+","")+"</td><td>"+b.c+"</td><td>"+b.w+"</td><td>"+b.s+"</td><td>"+(att?Math.round(100*b.c/att)+"%":"&mdash;")+"</td><td>"+fmtMS(b.t)+"</td></tr>";
+ });
+ return H+"</table></div>";
+}
+function stripHTML(A){
+ var top=1,paces={},i;
+ for(i=0;i<NQ;i++){var p=paceOf(i);top=Math.max(top,questionTimes[i]||0,p);paces[Math.round(p)]=1}
+ top*=1.1;
+ var onePace=Object.keys(paces).length===1;
+ var H="<div class=\"ana wide\"><div class=\"anaH\">TIME ON EACH QUESTION <span class=\"dim\">tap a bar to jump to it</span></div><div class=\"strip\""+(NQ>40?" style=\"gap:1px\"":"")+">";
+ for(i=0;i<NQ;i++){
+  var t=questionTimes[i]||0,o=A.out[i];
+  H+="<div class=\"sb\" data-q=\""+i+"\" title=\"Q"+(i+1)+" &middot; "+fmtMS(t)+" &middot; "+outWord(o)+"\"><i class=\"pace\" style=\"bottom:"+(100*paceOf(i)/top).toFixed(1)+"%\"></i><i class=\"bar "+o+"\" style=\"height:"+(100*t/top).toFixed(1)+"%\"></i></div>";
+ }
+ H+="</div><div class=\"stripAx\"><span>Q1</span><span>longest bar "+fmtMS(Math.max.apply(null,questionTimes.concat([0])))+"</span><span>Q"+NQ+"</span></div>";
+ H+="<div class=\"legend2\"><span class=\"lg c\"></span>right<span class=\"lg w\"></span>wrong<span class=\"lg s\"></span>blank<span class=\"lg p\"></span>"+(RAPID?"the question's own clock":(onePace?"even pace, "+fmtMS(paceOf(0))+" a question":"even pace for its section"))+"</div></div>";
+ return H;
+}
+function pathHTML(A){
+ var J=A.journey,T=J.T;
+ var H="<div class=\"ana wide\"><div class=\"anaH\">YOUR PATH THROUGH THE TEST <span class=\"dim\">each block is one visit to a question, coloured by how it ended</span></div><div class=\"path\">";
+ visits.forEach(function(v){
+  H+="<i class=\"pv "+A.out[v.q]+"\" data-q=\""+v.q+"\" style=\"left:"+(100*v.s/T).toFixed(2)+"%;width:"+Math.max(0.2,100*v.d/T).toFixed(2)+"%\" title=\"Q"+(v.q+1)+" &middot; "+fmtMS(v.d)+" (from "+fmtMS(v.s)+")\"></i>";
+ });
+ if(SEC){SEC.forEach(function(p,k){if(k>0&&J.secStart[k]!==null&&J.secStart[k]!==undefined)H+="<i class=\"pdiv\" style=\"left:"+(100*J.secStart[k]/T).toFixed(2)+"%\" title=\""+escH(p.sec)+" starts\"></i>"})}
+ H+="</div><div class=\"plabels\">";
+ var long=visits.filter(function(v){return v.d>=Math.max(90,2*paceOf(v.q))}).sort(function(x,y){return y.d-x.d}).slice(0,6).sort(function(x,y){return x.s-y.s});
+ var lastX=-100;
+ long.forEach(function(v){var x=100*(v.s+v.d/2)/T;if(x-lastX<13)return;lastX=x;H+="<span style=\"left:"+x.toFixed(2)+"%\">Q"+(v.q+1)+" "+fmtMS(v.d)+"</span>"});
+ H+="</div><div class=\"pticks\">";
+ var step=T<=2700?300:600;
+ for(var x=0;x<=T;x+=step)H+="<span style=\"left:"+(100*x/T).toFixed(2)+"%\">"+Math.round(x/60)+"m</span>";
+ return H+"</div></div>";
+}
+function renderAnalysis(A){
+ var box=document.getElementById("anaBox");if(!box)return;
+ var H="<div class=\"ana hero\"><div class=\"anaH\">WHERE YOUR MARKS WENT</div>";
+ H+="<div class=\"heroLine\">You scored <b>"+sgn(A.score).replace("+","")+"</b> of "+A.max+"."+(A.reach!==null&&A.reach>A.score?" Within reach: <b class=\"gold\">"+A.reach+"</b>.":"")+"</div>";
+ var green=Math.max(0,A.score),amber=A.reach!==null?Math.max(0,A.reach)-green:0;
+ if(A.max>0)H+="<div class=\"mbar\"><i class=\"g\" style=\"width:"+(100*green/A.max).toFixed(2)+"%\"></i><i class=\"a\" style=\"width:"+(100*Math.max(0,amber)/A.max).toFixed(2)+"%\"></i></div>";
+ var chips=[];
+ if(A.acc!==null)chips.push("<span class=\"chip\">accuracy "+A.acc+"%</span>");
+ if(A.emW)chips.push("<span class=\"chip a\">"+A.emW+" Easy/Medium wrong &middot; +"+A.emWGain+"</span>");
+ if(A.emS)chips.push("<span class=\"chip a\">"+A.emS+" Easy/Medium blank &middot; +"+A.emSGain+"</span>");
+ if(A.neg)chips.push("<span class=\"chip r\">&minus;"+A.neg+" lost to negative marking</span>");
+ if(chips.length)H+="<div class=\"chips\">"+chips.join("")+"</div>";
+ if(A.reach!==null)H+="<div class=\"note\">Within reach = your score plus every mark on the Easy and Medium questions you got wrong or left blank. Hard questions are left out.</div>";
+ H+="</div><div class=\"anaGrid\">"+cardTime(A)+cardDiff(A)+cardTraps(A)+cardPath(A)+cardSecs(A)+"</div>";
+ H+=stripHTML(A);
+ if(A.journey)H+=pathHTML(A);
+ box.innerHTML=H;
+ var hits=box.querySelectorAll("[data-q]");
+ for(var k=0;k<hits.length;k++){hits[k].onclick=function(){var el=document.getElementById("rq"+this.getAttribute("data-q"));if(el)el.scrollIntoView({behavior:"smooth",block:"start"})}}
+}
+
+/* ---------- retry wrong answers (no clock) ---------- */
+var RETRY={done:0,right:0,n:0};
+function renderRetry(){
+ var box=document.getElementById("retryBox");if(!box)return;
+ box.innerHTML="";
+ var idx=[];
+ QUESTIONS.forEach(function(q,i){if(!blank(answers[i])&&!isCorrect(q,answers[i]))idx.push(i)});
+ if(!idx.length)return;
+ RETRY={done:0,right:0,n:idx.length};
+ var h=document.createElement("h1");h.style.cssText="font-size:19px;margin:18px 0 6px";h.textContent="Retry your wrong answers";box.appendChild(h);
+ var n=document.createElement("div");n.className="note";n.style.marginBottom="10px";
+ n.textContent="No clock this time. Right on retry usually means the first miss was pressure or a slip; wrong again points to something to study.";
+ box.appendChild(n);
+ var tl=document.createElement("div");tl.className="secErr";tl.id="retryTally";box.appendChild(tl);
+ idx.forEach(function(i){box.appendChild(retryCard(i))});
+ paintTally();
+}
+function paintTally(){
+ var t=document.getElementById("retryTally");if(!t)return;
+ t.innerHTML="<b>Retried "+RETRY.done+" of "+RETRY.n+"</b>"+(RETRY.done?" &middot; <span class=\"ok\">right "+RETRY.right+"</span> &middot; <span class=\"no\">wrong again "+(RETRY.done-RETRY.right)+"</span>":"");
+}
+function retryCard(i){
+ var q=QUESTIONS[i],letters=["A","B","C","D"];
+ var w=document.createElement("div");w.className="rq";
+ var hd=document.createElement("div");hd.className="rqHead";hd.textContent="Q"+(i+1)+" · "+q.section+(diffOf(q)?" · "+q.difficulty:"");w.appendChild(hd);
+ if(q.passage){
+  var det=document.createElement("details");var sm=document.createElement("summary");sm.className="mono";sm.textContent="Show passage";det.appendChild(sm);
+  var pv=document.createElement("div");pv.className="rqStem";pv.style.marginTop="6px";pv.textContent=q.passage;det.appendChild(pv);w.appendChild(det);
+ }
+ var st=document.createElement("div");st.className="rqStem";ulText(st,q.stem);w.appendChild(st);
+ var ex=document.createElement("div");renderExhibit(q,ex);if(ex.childNodes.length)w.appendChild(ex);
+ var res=document.createElement("div");res.className="exp";res.style.display="none";
+ function finish(ok,keyText){
+  RETRY.done++;if(ok)RETRY.right++;paintTally();
+  res.style.display="block";
+  res.innerHTML="<b>"+(ok?"Right this time.":"Still not it.")+"</b> Key: "+escH(keyText)+"<br>";
+  res.appendChild(document.createTextNode(q.explanation||""));
+ }
+ if(isMCQ(q)){
+  q.options.forEach(function(opt,k){
+   var b=document.createElement("button");b.className="opt";b.textContent=letters[k]+". "+opt;
+   b.onclick=function(){
+    var bs=w.querySelectorAll("button.opt");for(var j=0;j<bs.length;j++)bs[j].disabled=true;
+    var ok=(k===q.answerIndex);b.classList.add(ok?"rOk":"rNo");if(!ok&&bs[q.answerIndex])bs[q.answerIndex].classList.add("rOk");
+    finish(ok,letters[q.answerIndex]);
+   };
+   w.appendChild(b);
+  });
+ }else{
+  var row=document.createElement("div");row.style.cssText="display:flex;gap:8px;margin-top:6px";
+  var inp=document.createElement("input");inp.className="tita";inp.placeholder="Type your answer";
+  var cb=document.createElement("button");cb.className="btn";cb.textContent="Check";
+  cb.onclick=function(){
+   if(!inp.value.trim())return;
+   inp.disabled=true;cb.disabled=true;
+   var ok=isCorrect(q,inp.value);inp.style.borderColor=ok?"var(--green)":"var(--red)";
+   finish(ok,String(q.answer));
+  };
+  row.appendChild(inp);row.appendChild(cb);w.appendChild(row);
+ }
+ w.appendChild(res);
+ return w;
+}
+
+/* ---------- PDF text ---------- */
+function analysisLines(A){
+ var L=[],dot="   ·   ";
+ var first="Score "+sgnA(A.score).replace("+","")+" / "+A.max+(A.acc!==null?dot+"Accuracy "+A.acc+"%":"");
+ if(A.reach!==null&&A.reach>A.score)first+=dot+"Within reach: "+A.reach+" (Easy/Medium wrong "+A.emW+", +"+A.emWGain+"; Easy/Medium blank "+A.emS+", +"+A.emSGain+")";
+ if(A.neg)first+=dot+"Lost to negative marking: "+A.neg;
+ L.push(["Where your marks went",[first]]);
+ var t=["Time used "+fmtMS(A.used)+" of "+fmtMS(A.avail)+dot+"on right answers "+fmtMS(A.tC)+dot+"on wrong answers "+fmtMS(A.tW)+(A.tS>=1?dot+"on blanks "+fmtMS(A.tS):"")+(A.mpm!==null?dot+A.mpm.toFixed(1)+" marks a minute":"")];
+ if(A.slow.length)t.push("Slowest: "+A.slow.map(function(x){return "Q"+(x.i+1)+" "+fmtMS(x.t)+" ("+outWord(A.out[x.i])+")"}).join(", "));
+ if(RAPID&&A.timedOut)t.push("Clock ran out with no answer: "+A.timedOut);
+ L.push(["Time",t]);
+ if(A.hasDiff){
+  var d=[];
+  ["easy","medium","hard"].forEach(function(k){var b=A.diff[k];if(!b.n)return;d.push(capW(k)+": "+b.n+" Qs"+dot+b.c+" right"+dot+b.w+" wrong"+dot+b.s+" blank"+dot+"net "+sgnA(b.net)+(b.o?dot+"avg "+fmtMS(b.t/b.o):""))});
+  L.push(["By difficulty",d]);
+ }
+ if(A.traps.length)L.push(["Traps that caught you",A.traps.map(function(tr){return tr.name+" x"+tr.qs.length+" ("+tr.qs.map(function(i){return "Q"+(i+1)}).join(", ")+")"+(tr.what?" - "+tr.what:"")})]);
+ if(A.journey){
+  var J=A.journey,j=[];
+  if(J.firstN)j.push("Right on the first look: "+Math.round(100*J.firstOk/J.firstN)+"% ("+J.firstOk+" of "+J.firstN+")");
+  if(J.backN)j.push("Came back and answered: "+J.backN+" ("+J.backOk+" right)");
+  if(J.toRight||J.toWrong)j.push("Changed answers: "+J.toRight+" wrong to right (+"+J.swapGain+"), "+J.toWrong+" right to wrong (-"+J.swapLoss+")");
+  if(J.never.length)j.push("Never opened: "+J.never.length+(J.neverEM?" ("+J.neverEM+" Easy/Medium)":""));
+  if(J.late.length)j.push("Easy/Medium first opened in the last quarter of the clock: "+J.late.map(function(i){return "Q"+(i+1)}).join(", "));
+  if(J.longest&&J.longest.d>=60)j.push("Longest single stay: "+fmtMS(J.longest.d)+" on Q"+(J.longest.q+1));
+  if(j.length)L.push(["How you moved",j]);
+ }
+ if(A.secs.length)L.push(["By section",A.secs.map(function(b){var att=b.c+b.w;return b.sec+": score "+sgnA(b.score).replace("+","")+dot+b.c+" right"+dot+b.w+" wrong"+dot+b.s+" blank"+dot+"accuracy "+(att?Math.round(100*b.c/att)+"%":"-")+dot+"time "+fmtMS(b.t)})]);
+ return L;
+}
+
+/* ==================== DOWNLOAD PDF ==================== */
+function downloadPDF(){
+ var jsPDFctor=(window.jspdf&&window.jspdf.jsPDF)||window.jsPDF;
+ if(!jsPDFctor){alert("PDF library failed to load. Please check your connection and try again.");return}
+ var doc=new jsPDFctor({unit:"pt",format:"a4"});
+ var pageW=doc.internal.pageSize.getWidth();
+ var pageH=doc.internal.pageSize.getHeight();
+ var margin=40,y=margin;
+ var letters=["A","B","C","D"];
+ function newPageIfNeeded(h){if(y+h>pageH-margin){doc.addPage();y=margin}}
+ function writeWrapped(text,x,maxW,size,style){
+  doc.setFont("helvetica",style||"normal");doc.setFontSize(size);
+  var lines=doc.splitTextToSize(text,maxW);
+  for(var i=0;i<lines.length;i++){newPageIfNeeded(size+4);doc.text(lines[i],x,y);y+=size+4}
+ }
+ doc.setFont("helvetica","bold");doc.setFontSize(16);doc.setTextColor(13,27,42);
+ doc.text("ROAD TO IIM",margin,y);y+=20;
+ doc.setFontSize(13);doc.setTextColor(201,168,76);
+ doc.text(TEST_NAME,margin,y);y+=18;
+ doc.setFont("helvetica","normal");doc.setFontSize(10);doc.setTextColor(60,60,60);
+ var dateStr=new Date().toLocaleString("en-IN",{timeZone:"Asia/Kolkata"});
+ doc.text(studentName+" \u00b7 "+studentBatch+" \u00b7 "+dateStr,margin,y);y+=16;
+ doc.setDrawColor(201,168,76);doc.line(margin,y,pageW-margin,y);y+=16;
+ doc.setTextColor(0,0,0);doc.setFont("helvetica","bold");doc.setFontSize(11);
+ doc.text("Summary",margin,y);y+=14;
+ doc.setFont("helvetica","normal");doc.setFontSize(10);
+ var summary="Score: "+document.getElementById("stScore").textContent+" / "+MAX_MARKS+"   \u00b7   Correct: "+document.getElementById("stCorrect").textContent+"   \u00b7   Wrong: "+document.getElementById("stWrong").textContent+"   \u00b7   Skipped: "+document.getElementById("stSkipped").textContent+"   \u00b7   Accuracy: "+document.getElementById("stAcc").textContent+"   \u00b7   Time: "+document.getElementById("stTime").textContent;
+ writeWrapped(summary,margin,pageW-2*margin,10);y+=4;
+ var secErrText=(document.getElementById("secErrBox").textContent||"").replace(/\s+/g," ").trim();
+ if(secErrText){writeWrapped(secErrText,margin,pageW-2*margin,10);y+=6}
+ try{ /* v2.7 analysis */
+  if(LAST_A){
+   doc.setDrawColor(200,200,200);doc.line(margin,y,pageW-margin,y);y+=14;
+   doc.setFont("helvetica","bold");doc.setFontSize(12);doc.setTextColor(13,27,42);
+   newPageIfNeeded(20);doc.text("Analysis",margin,y);y+=14;
+   analysisLines(LAST_A).forEach(function(sec){
+    newPageIfNeeded(30);
+    doc.setTextColor(150,115,40);writeWrapped(sec[0],margin,pageW-2*margin,10,"bold");y+=1;
+    doc.setTextColor(30,30,30);
+    sec[1].forEach(function(ln){writeWrapped(ln,margin+10,pageW-2*margin-10,9.5,"normal")});
+    y+=5;
+   });
+   doc.setTextColor(0,0,0);
+  }
+ }catch(e){}
+ doc.setDrawColor(200,200,200);doc.line(margin,y,pageW-margin,y);y+=14;
+ doc.setFont("helvetica","bold");doc.setFontSize(12);doc.setTextColor(13,27,42);
+ doc.text("Question Review",margin,y);y+=16;
+ QUESTIONS.forEach(function(q,i){
+  var a=answers[i];
+  var skippedQ=(a===null||a==="");
+  var ok=isCorrect(q,a);
+  var statusLabel=skippedQ?"SKIPPED":(ok?"CORRECT":"WRONG");
+  newPageIfNeeded(60);
+  doc.setFont("helvetica","bold");doc.setFontSize(10);doc.setTextColor(13,27,42);
+  writeWrapped("Q"+(i+1)+"  \u00b7  "+q.section+" \u00b7 "+q.format+(diffOf(q)?" \u00b7 "+q.difficulty:"")+" \u00b7 time "+fmtMS(questionTimes[i])+"   ["+statusLabel+"]",margin,pageW-2*margin,10,"bold");y+=1;
+  if(q.passage&&(i===0||QUESTIONS[i-1].passage!==q.passage)){
+   doc.setTextColor(90,90,90);
+   writeWrapped("Passage: "+q.passage,margin,pageW-2*margin,8,"italic");y+=2;
+  }
+  doc.setTextColor(0,0,0);
+  writeWrapped(String(q.stem).replace(/\[\[|\]\]/g,'"'),margin,pageW-2*margin,10,"normal");y+=2;
+  if(q.table!=null&&q.table!==""){
+   var trows=Array.isArray(q.table)?q.table:(q.table&&Array.isArray(q.table.rows)?(Array.isArray(q.table.headers)?[q.table.headers].concat(q.table.rows):q.table.rows):null);
+   doc.setTextColor(40,40,40);
+   if(trows){trows.forEach(function(r){writeWrapped(Array.isArray(r)?r.map(String).join("  |  "):String(r),margin+12,pageW-2*margin-12,8.5,"normal")})}
+   else{
+    var ttxt=String(q.table);
+    if(ttxt.trim().charAt(0)==="<")ttxt=ttxt.replace(new RegExp("</tr>","gi"),"\n").replace(new RegExp("</t[dh]>","gi"),"  |  ").replace(new RegExp("<[^>]+>","g")," ").replace(new RegExp("&amp;","g"),"&").replace(new RegExp("&nbsp;","g")," ");
+    ttxt.split("\n").forEach(function(ln){ln=ln.replace(new RegExp("[ ]+","g")," ").trim();if(ln)writeWrapped(ln,margin+12,pageW-2*margin-12,8.5,"normal")});
+   }
+   doc.setTextColor(0,0,0);y+=2;
+  }
+  if(q.fig){doc.setTextColor(120,120,120);writeWrapped("[Figure \u2014 shown in the on-screen review]",margin+12,pageW-2*margin-12,8.5,"italic");doc.setTextColor(0,0,0)}
+  if(isMCQ(q)){
+   q.options.forEach(function(opt,idx){
+    var marker="";
+    if(idx===q.answerIndex)marker="   [correct]";
+    else if(idx===a){marker="   [your choice]";var ptg=trapOf(q,a);if(ptg)marker+="  trap: "+trapInfo(ptg).name}
+    if(idx===q.answerIndex)doc.setTextColor(30,120,60);
+    else if(idx===a)doc.setTextColor(180,50,50);
+    else doc.setTextColor(60,60,60);
+    writeWrapped(letters[idx]+")  "+opt+marker,margin+12,pageW-2*margin-12,10,"normal");
+   });
+  }else{
+   doc.setTextColor(skippedQ?120:(ok?30:180),skippedQ?120:(ok?120:50),skippedQ?120:(ok?60:50));
+   var pttg=trapOf(q,a);
+   writeWrapped("Your answer: "+(skippedQ?"-":a)+(pttg?"   trap: "+trapInfo(pttg).name:""),margin+12,pageW-2*margin-12,10,"normal");
+   doc.setTextColor(30,120,60);
+   writeWrapped("Key: "+q.answer,margin+12,pageW-2*margin-12,10,"normal");
+  }
+  doc.setTextColor(0,0,0);y+=2;
+  doc.setFont("helvetica","bold");doc.setFontSize(9);
+  newPageIfNeeded(14);
+  doc.text("Explanation:",margin,y);y+=11;
+  doc.setFont("helvetica","normal");doc.setFontSize(9);
+  writeWrapped(q.explanation||"",margin,pageW-2*margin,9,"normal");
+  y+=10;
+  doc.setDrawColor(230,230,230);
+  newPageIfNeeded(6);
+  doc.line(margin,y,pageW-margin,y);y+=12;
+ });
+ var safeName=(studentName||"student").replace(/[^A-Za-z0-9]+/g,"_").slice(0,40);
+ var d=new Date();
+ var dateTag=d.getFullYear()+String(d.getMonth()+1).padStart(2,"0")+String(d.getDate()).padStart(2,"0");
+ doc.save(CFG.bankPrefix+"_"+safeName+"_"+dateTag+".pdf");
+}
+
+/* ==================== TEST LOCK ====================
+   LOCKED=true: students who open this page see only LOCK_MSG and cannot start.
+   Admin preview: open the page with ?admin=1 and pick the Admin batch.
+   To open the test to students, set LOCKED=false. */
+var LOCKED=true;
+var LOCK_MSG="You are not authorized to view this test.";
+var ADMIN_VIEW=/[?&]admin(=|&|$)/.test(location.search);
+function lockBlocks(batch){return LOCKED&&!(ADMIN_VIEW&&batch==="Admin")}
+function applyLock(){
+ if(!LOCKED)return true;
+ if(ADMIN_VIEW){var an=document.getElementById("adminNote");an.textContent="ADMIN PREVIEW \u00b7 locked for students \u00b7 select the Admin batch to start";an.style.display="block";return true}
+ var card=document.querySelector(".loginCard");
+ Array.prototype.forEach.call(card.children,function(el){if(el.tagName!=="H1"&&el.id!=="lgTitle"&&el.id!=="lockMsg")el.style.display="none"});
+ var m=document.getElementById("lockMsg");m.textContent=LOCK_MSG;m.style.display="block";
+ return false;
+}
+
+/* ==================== PAGE LOAD ==================== */
+document.getElementById("lgTitle").textContent=TEST_NAME;
+var lgTime=CFG.rapid?("per-question clock \u00b7 forward only \u00b7 auto-advance at 0s \u00b7 ~"+CFG.minutes+" min total"):SEC?(SEC.map(function(p){return p.sec+" "+p.minutes+"m"}).join(" \u2192 ")+" \u00b7 sectional lock \u00b7 no return"):(CFG.minutes+" minutes \u00b7 "+(CFG.navNote||"free navigation"));
+document.getElementById("lgMeta").innerHTML=NQ+" questions \u00b7 +"+CFG.c+" / "+CFG.w+(CFG.hasTita?" \u00b7 TITA wrong "+(CFG.titaWSec?QUESTIONS.filter(function(q){return !isMCQ(q)}).map(function(q){return q.section}).filter(function(v,i,a){return a.indexOf(v)===i}).map(function(sec){return sec+" "+titaWFor({section:sec})}).join(", "):CFG.titaW):"")+" \u00b7 Max "+MAX_MARKS+"<br>"+lgTime+" \u00b7 auto-submit at 00:00";
+document.getElementById("loginBtn").addEventListener("click",startTest);
+snFlushQueue();
+if(applyLock())snTryResume();
+</script>
+<script>/* RIIM usage ping v1 */try{fetch("https://script.google.com/macros/s/AKfycbx5Ojm_zp4LfsMeelx5e06KNjVH1wfsXdV0keS4407m4FO1HU4EpVb7GKj-ibAsxnspeA/exec?action=ping&type=open&page="+encodeURIComponent(document.title||location.pathname),{mode:"no-cors"});}catch(_){}</script>
+</body>
+</html>
