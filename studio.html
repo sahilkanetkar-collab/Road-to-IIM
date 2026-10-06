@@ -114,7 +114,15 @@ details div{font-size:13px;color:var(--mut);white-space:pre-wrap;padding:8px 0;l
 
 <script>
 // ══════════════════════════════════════════════════════════════
-//  TEST BUILDER STUDIO v2.5 — ASSEMBLY & EXPORT ONLY
+//  TEST BUILDER STUDIO v2.6 — ASSEMBLY & EXPORT ONLY
+//  v2.6 (6 Oct 2026): export template —
+//   · Test screen no longer shows the question type, difficulty or
+//     TITA tag next to the question: the badge shows the section only.
+//     Review page and PDF still show the type after submission;
+//     topicErrors still come from q.format.
+//   · [[...]] in a stem renders as an underline on the test screen
+//     and review page (PDF prints it in quotes), so sentence-
+//     correction items no longer show raw brackets.
 //  v2.5 (24 Sep 2026): audit fixes —
 //   · ⊕ Append: a testType "full" envelope now sets the merged
 //     testName / timerMinutes / timerMode / sectionTimers / titaW
@@ -831,6 +839,7 @@ function markTime(){
  qShownTs=Date.now();
 }
 function fmtClock(s){s=Math.max(0,s);return String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0")}
+function ulText(el,t){el.textContent="";String(t==null?"":t).split(/(\\[\\[[\\s\\S]*?\\]\\])/).forEach(function(p){if(!p)return;var m=p.match(/^\\[\\[([\\s\\S]*)\\]\\]$/);if(m){var u=document.createElement("u");u.textContent=m[1];el.appendChild(u)}else el.appendChild(document.createTextNode(p))})}
 function renderQuestion(){
  var q=QUESTIONS[currentQ];
  qShownTs=Date.now();
@@ -839,10 +848,10 @@ function renderQuestion(){
  if(SEC){var sp=SEC[secIdx];qc.textContent=sp.sec+" \\u00b7 Q "+(currentQ-sp.start+1)+" / "+(sp.end-sp.start+1)}
  else qc.textContent="Q "+(currentQ+1)+" / "+NQ;
  if(!RAPID)document.getElementById("timer").textContent=fmtClock(secondsLeft);
- document.getElementById("secBadge").textContent=q.section+" \\u00b7 "+q.format+" \\u00b7 "+q.difficulty+(isMCQ(q)?"":" \\u00b7 TITA");
+ document.getElementById("secBadge").textContent=q.section;
  var pB=document.getElementById("passageBox");
  if(q.passage){pB.style.display="block";pB.textContent=q.passage}else{pB.style.display="none"}
- document.getElementById("qText").textContent=q.stem;
+ ulText(document.getElementById("qText"),q.stem);
  renderExhibit(q,document.getElementById("exBox"));
  var box=document.getElementById("optBox");box.innerHTML="";
  var letters=["A","B","C","D"];
@@ -1062,7 +1071,7 @@ function showResults(score,correct,wrong,skipped,timeStr,sectionErrors){
    pv.textContent="Passage: "+q.passage;
    wrap.appendChild(pv);
   }
-  var stem=document.createElement("div");stem.className="rqStem";stem.textContent=q.stem;wrap.appendChild(stem);
+  var stem=document.createElement("div");stem.className="rqStem";ulText(stem,q.stem);wrap.appendChild(stem);
   var exh=document.createElement("div");renderExhibit(q,exh);if(exh.childNodes.length)wrap.appendChild(exh);
   if(isMCQ(q)){
    q.options.forEach(function(opt,idx){
@@ -1137,7 +1146,7 @@ function downloadPDF(){
    writeWrapped("Passage: "+q.passage,margin,pageW-2*margin,8,"italic");y+=2;
   }
   doc.setTextColor(0,0,0);
-  writeWrapped(q.stem,margin,pageW-2*margin,10,"normal");y+=2;
+  writeWrapped(String(q.stem).replace(/\\[\\[|\\]\\]/g,'"'),margin,pageW-2*margin,10,"normal");y+=2;
   if(q.table!=null&&q.table!==""){
    var trows=Array.isArray(q.table)?q.table:(q.table&&Array.isArray(q.table.rows)?(Array.isArray(q.table.headers)?[q.table.headers].concat(q.table.rows):q.table.rows):null);
    doc.setTextColor(40,40,40);
