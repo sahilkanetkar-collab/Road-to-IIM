@@ -80,72 +80,84 @@ input.tita{background:var(--panel2);border:1px solid rgba(212,169,78,.4);color:v
 .ropt.wrong{background:rgba(192,85,85,.13);color:var(--red)}
 .exp{font-size:12.5px;color:var(--mut);margin-top:8px;border-top:1px solid rgba(232,228,216,.08);padding-top:8px}
 .exp b{color:var(--gold)}
-/* v2.7 post-test analysis */
-.gold{color:var(--gold)}.ok{color:var(--green)}.no{color:var(--red)}.dim{color:var(--mut)}
+/* v2.8 post-test analysis */
+.ok{color:var(--green)}.no{color:var(--red)}.dim{color:var(--mut)}.gold{color:var(--gold)}
 .ana{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:12px}
 .anaH{font-family:"DM Mono";font-size:10.5px;color:var(--gold);letter-spacing:.1em;margin-bottom:10px}
 .anaH .dim{letter-spacing:0;margin-left:8px}
-.hero .heroLine{font-family:Fraunces,serif;font-size:21px;line-height:1.35;margin-bottom:12px}
-.hero .heroLine b.gold{color:var(--gold)}
-.mbar{display:flex;height:14px;background:var(--panel2);border-radius:7px;overflow:hidden;border:1px solid rgba(232,228,216,.12)}
-.mbar i{display:block;height:100%}
-.mbar i.g{background:var(--green)}
-.mbar i.a{background:repeating-linear-gradient(45deg,rgba(212,169,78,.9) 0 6px,rgba(212,169,78,.55) 6px 12px)}
-.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
-.chip{font-family:"DM Mono";font-size:11px;border-radius:20px;padding:4px 10px;border:1px solid rgba(232,228,216,.2);color:var(--text)}
-.chip.a{color:var(--gold);border-color:var(--line);background:rgba(212,169,78,.1)}
-.chip.r{color:var(--red);border-color:rgba(192,85,85,.4);background:rgba(192,85,85,.08)}
-.note{font-size:11.5px;color:var(--mut);margin-top:10px;line-height:1.5}
-.anaGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:12px;align-items:start}
+.ana.verdict{border-color:rgba(212,169,78,.55);background:linear-gradient(180deg,rgba(212,169,78,.09),var(--panel) 70%);padding:20px}
+.vH{font-family:Fraunces,serif;font-size:22px;line-height:1.35}
+.vS{font-size:14.5px;line-height:1.55;margin-top:6px;color:var(--text);opacity:.88}
+.vAlso{font-size:12.5px;color:var(--mut);margin-top:8px}
+.doNext{margin-top:16px;border-top:1px solid var(--line);padding-top:12px}
+.dnH{font-family:"DM Mono";font-size:10px;color:var(--mut);letter-spacing:.1em;margin-bottom:6px}
+.doNext ol{margin:0;padding-left:20px}
+.doNext li{font-size:13.5px;line-height:1.55;margin:5px 0}
+.doNext li::marker{color:var(--gold);font-family:"DM Mono"}
+.doNext a{color:var(--gold);text-decoration:none;border-bottom:1px dotted rgba(212,169,78,.6)}
+.sub0{font-size:12.5px;color:var(--mut);margin:-2px 0 12px;line-height:1.5}
+.sub{font-size:12.5px;color:var(--mut);margin-top:10px;line-height:1.7}
+.note{font-size:11.5px;color:var(--mut);line-height:1.5}
+.anaGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:12px;align-items:start;margin-bottom:12px}
 .anaGrid .ana{margin-bottom:0}
+.trapGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px}
+.trap{background:var(--panel2);border-radius:8px;padding:11px 13px;border-left:3px solid var(--red)}
+.trapTop{display:flex;justify-content:space-between;gap:8px;font-size:14px}
+.trapTop .cnt{font-family:"DM Mono";color:var(--red)}
+.trap .what{font-size:12px;color:var(--mut);margin-top:3px;line-height:1.45}
+.trap .fix{font-size:12.8px;margin-top:8px;line-height:1.5}
+.trap .fix b{display:block;color:var(--gold);font-family:"DM Mono";font-weight:400;font-size:9.5px;letter-spacing:.1em;margin-bottom:2px}
+.trap .qs{margin-top:8px;display:flex;flex-wrap:wrap;gap:8px}
+a.qlink{font-family:"DM Mono";font-size:11.5px;color:var(--gold);text-decoration:none;border-bottom:1px dotted rgba(212,169,78,.6)}
+.rung{padding:9px 0;border-bottom:1px solid rgba(232,228,216,.06)}
+.rung:first-of-type{padding-top:0}
+.rung:last-child{border-bottom:none;padding-bottom:0}
+.rungTop{display:flex;justify-content:space-between;align-items:baseline;font-size:13.5px}
+.rungTop b{font-family:"DM Mono";font-weight:400;font-size:13px}
+.mini,.cbar{display:flex;overflow:hidden;background:var(--panel2)}
+.mini{height:8px;border-radius:4px;margin:7px 0 5px}
+.cbar{height:16px;border-radius:5px;margin-bottom:10px}
+.mini i,.cbar i{display:block;height:100%}
+.mini i.c,.cbar i.c,.lgd.c,.palLeg .sw.c{background:rgba(78,160,130,.85)}
+.mini i.w,.cbar i.w,.lgd.w,.palLeg .sw.w{background:var(--red)}
+.mini i.s,.cbar i.s,.lgd.s,.palLeg .sw.s{background:rgba(139,148,168,.5)}
+.cbar i.u{background:repeating-linear-gradient(90deg,transparent 0 4px,rgba(232,228,216,.12) 4px 5px)}
+.lgd.u{background:transparent;box-shadow:inset 0 0 0 1px rgba(232,228,216,.3)}
+.rungSub{font-size:11.5px;color:var(--mut)}
 .kv{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:13.5px;padding:5px 0;border-bottom:1px solid rgba(232,228,216,.06)}
 .kv span{color:var(--mut)}
 .kv b{font-family:"DM Mono";font-weight:400;font-size:13px;text-align:right}
-.kv b span{color:inherit}.kv b span.dim{color:var(--mut)}
-.sub{font-size:12.5px;color:var(--mut);margin-top:8px;line-height:1.7}
-.call{font-size:12.5px;line-height:1.5;margin-top:10px;padding:8px 10px;border-left:3px solid var(--gold);background:rgba(212,169,78,.07);border-radius:0 6px 6px 0}
-.call.no{border-left-color:var(--red);background:rgba(192,85,85,.08);color:var(--text)}
+.kv b span.ok{color:var(--green)}.kv b span.no{color:var(--red)}.kv b span.dim{color:var(--mut)}
+.lgd{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:8px;vertical-align:-1px}
 table.anaT{width:100%;border-collapse:collapse;font-size:12.5px}
 table.anaT th{font-family:"DM Mono";font-size:10px;color:var(--mut);font-weight:400;text-align:right;padding:4px 6px;border-bottom:1px solid var(--line)}
 table.anaT td{font-family:"DM Mono";text-align:right;padding:6px;border-bottom:1px solid rgba(232,228,216,.06)}
 table.anaT td:first-child,table.anaT th:first-child{text-align:left;font-family:"DM Sans"}
-.trap{padding:8px 0;border-bottom:1px solid rgba(232,228,216,.06)}
-.trap:last-child{border-bottom:none}
-.trapTop{display:flex;justify-content:space-between;font-size:13.5px}
-.trapTop .cnt{font-family:"DM Mono";color:var(--red)}
-.trap .what{font-size:12px;color:var(--mut);margin-top:2px;line-height:1.45}
-.trap .qs{margin-top:4px;display:flex;flex-wrap:wrap;gap:8px}
-a.qlink{font-family:"DM Mono";font-size:11.5px;color:var(--gold);text-decoration:none;border-bottom:1px dotted rgba(212,169,78,.6)}
-.ana.wide{margin-top:12px}
-.strip{display:flex;align-items:flex-end;gap:2px;height:130px;border-bottom:1px solid rgba(232,228,216,.15)}
-.sb{flex:1;position:relative;height:100%;cursor:pointer;min-width:2px}
-.sb .bar{position:absolute;left:0;right:0;bottom:0;border-radius:2px 2px 0 0;min-height:1px}
-.sb .bar.c,.pv.c,.lg.c{background:rgba(78,160,130,.85)}
-.sb .bar.w,.pv.w,.lg.w{background:var(--red)}
-.sb .bar.s,.pv.s,.lg.s{background:rgba(139,148,168,.45)}
-.sb .pace{position:absolute;left:-1px;right:-1px;border-top:1px dashed rgba(212,169,78,.8);z-index:1}
-.sb:hover .bar{filter:brightness(1.35)}
-.stripAx{display:flex;justify-content:space-between;font-family:"DM Mono";font-size:10px;color:var(--mut);margin-top:4px}
-.legend2{font-size:11px;color:var(--mut);margin-top:8px;line-height:1.8}
-.legend2 .lg{display:inline-block;width:10px;height:10px;border-radius:2px;margin:0 5px 0 12px;vertical-align:-1px}
-.legend2 .lg:first-child{margin-left:0}
-.legend2 .lg.p{height:0;border-top:1px dashed var(--gold);border-radius:0;vertical-align:3px;background:none}
-.path{position:relative;height:28px;background:var(--panel2);border-radius:5px;overflow:hidden}
-.pv{position:absolute;top:4px;bottom:4px;border-radius:2px;cursor:pointer;box-shadow:inset -1px 0 0 rgba(11,18,32,.7)}
-.pdiv{position:absolute;top:0;bottom:0;width:2px;background:var(--gold)}
-.plabels,.pticks{position:relative;height:17px;font-family:"DM Mono";font-size:10px;color:var(--mut)}
-.plabels span,.pticks span{position:absolute;transform:translateX(-50%);white-space:nowrap;top:3px}
-.pticks span:first-child{transform:none}
-.plabels span{color:var(--text)}
+.palSec{font-family:"DM Mono";font-size:10.5px;color:var(--mut);letter-spacing:.06em;margin:12px 0 6px}
+.palSec:first-of-type{margin-top:0}
+.pal2{display:grid;grid-template-columns:repeat(auto-fill,minmax(54px,1fr));gap:6px}
+.pt{position:relative;height:50px;border-radius:7px;border:1px solid rgba(232,228,216,.16);background:var(--panel2);cursor:pointer;overflow:hidden;font-family:"DM Mono";padding:6px 7px}
+.pt .pn{display:block;font-size:13px;color:var(--text)}
+.pt .ptm{display:block;font-size:10px;color:var(--mut);margin-top:3px}
+.pt i{position:absolute;left:0;bottom:0;height:3px;background:var(--gold);opacity:.85}
+.pt.c{background:rgba(78,160,130,.15);border-color:rgba(78,160,130,.55)}
+.pt.w{background:rgba(192,85,85,.24);border-color:rgba(192,85,85,.75)}
+.pt.n{border-style:dashed;opacity:.5}
+.pt.slow .ptm{color:var(--gold)}
+.pt .tdot{position:absolute;top:7px;right:7px;width:7px;height:7px;border-radius:50%;background:var(--text);box-shadow:0 0 0 2px rgba(192,85,85,.6)}
+.pt:hover{filter:brightness(1.25)}
+.palLeg{font-size:11px;color:var(--mut);margin-top:10px;line-height:1.9}
+.palLeg .sw{display:inline-block;width:11px;height:11px;border-radius:3px;margin:0 5px 0 12px;vertical-align:-1px}
+.palLeg .sw:first-child{margin-left:0}
+.palLeg .sw.n{border:1px dashed rgba(232,228,216,.5)}
+.palLeg .sw.t{width:7px;height:7px;border-radius:50%;background:var(--text);box-shadow:0 0 0 2px rgba(192,85,85,.6);vertical-align:0}
 .rq{scroll-margin-top:12px}
 .trapNote{margin-left:auto;font-family:"DM Mono";font-size:10.5px;color:var(--red);white-space:nowrap;padding-left:8px}
 .opt.rOk{border-color:var(--green);background:rgba(78,160,130,.18)}
 .opt.rNo{border-color:var(--red);background:rgba(192,85,85,.15)}
 .opt:disabled{cursor:default}
 details summary{cursor:pointer;color:var(--gold);margin-bottom:4px}
-@media(max-width:560px){.hero .heroLine{font-size:18px}.strip{height:100px}}
-#lockMsg{display:none;margin-top:4px;padding:14px 16px;border:1px solid rgba(192,85,85,.55);background:rgba(192,85,85,.1);border-radius:8px;color:var(--text);font-size:15px;line-height:1.5}
-#adminNote{display:none;font-family:"DM Mono";font-size:10.5px;color:var(--gold);margin:-8px 0 6px;line-height:1.6}
+@media(max-width:560px){.vH{font-size:19px}.pal2{grid-template-columns:repeat(auto-fill,minmax(48px,1fr))}}
 </style>
 </head>
 <body>
@@ -201,6 +213,7 @@ details summary{cursor:pointer;color:var(--gold);margin-bottom:4px}
   <div class="stat"><div class="v" id="stWrong">0</div><div class="l">WRONG</div></div>
   <div class="stat"><div class="v" id="stSkipped">0</div><div class="l">SKIPPED</div></div>
   <div class="stat"><div class="v" id="stAcc">&mdash;</div><div class="l">ACCURACY</div></div>
+  <div class="stat"><div class="v" id="stTax">&mdash;</div><div class="l">GUESSING TAX</div></div>
   <div class="stat"><div class="v" id="stTime">0:00</div><div class="l">TIME TAKEN</div></div>
  </div>
  <div class="secErr" id="secErrBox"></div>
@@ -701,47 +714,64 @@ function showResults(score,correct,wrong,skipped,timeStr,sectionErrors,totalSecs
  window.scrollTo(0,0);
 }
 
-/* ==================== POST-TEST ANALYSIS (v2.7) ====================
+/* ==================== POST-TEST ANALYSIS (v2.8) ====================
    Computed on this device from answers, questionTimes and the visit log.
    Nothing here is sent anywhere: the 16-field payload is unchanged.
-   TRAPS: student-facing names for optionTags / titaTraps. Edit freely;
-   an unknown tag falls back to a readable version of the tag itself. */
+   TRAPS: for each optionTags / titaTraps tag, the student-facing name,
+   what the trap is, and the counter-move. Edit freely; an unknown tag
+   falls back to a readable version of the tag itself. */
 var TRAPS={
- "rc-detail-as-main":["Detail as main idea","You picked a true detail when the question asked for the main point."],
- "rc-extreme":["Overstated","It says more, or says it more strongly, than the passage supports."],
- "rc-false-link":["False link","It joins two things from the passage with a reason or link the writer never makes."],
- "rc-half-right":["Half right","Part of it matches the passage; the rest doesn't."],
- "rc-literal":["Too literal","You read a figurative line at face value."],
- "rc-out-of-scope":["Out of scope","It brings in something the passage never discusses."],
- "rc-reversal":["Reversal","It flips what the passage says: the order, the direction or the cause."],
- "rc-scope-shift":["Scope shift","Right topic, but wider or narrower than what the text actually claims."],
- "va-scope-shift":["Scope shift","Right topic, but wider or narrower than what the text actually claims."],
- "rc-tone":["Tone miss","Right direction, wrong strength or flavour of attitude."],
- "rc-true-not-answer":["True, but not the answer","The passage supports it, but it doesn't answer the question asked."],
- "rc-word-match":["Word match","It borrows the passage's words or images, not its meaning."],
- "rc-wrong-voice":["Wrong voice","A view the passage reports or argues against, not the writer's own."],
- "va-category-error":["Wrong kind of word","The word doesn't fit the kind of idea the blank needs."],
- "va-collocation-break":["Doesn't go together","The word doesn't sit naturally with the words around it."],
- "va-confusable-sibling":["Look-alike word","It looks or sounds like the right word but means something else."],
- "va-corrupted-expression":["Twisted idiom","A familiar expression with one word changed."],
- "va-half-fix":["Half fix","It corrects one error but leaves another standing."],
- "va-new-error":["New error","It fixes the original error but brings in a fresh one."],
- "va-off-topic-insertion":["Off-topic sentence","Related subject, but it breaks the paragraph's line of thought."],
- "va-polarity-flip":["Wrong direction","The word pulls the opposite way from what the sentence's clues demand."],
- "va-real-expression-wrong-meaning":["Real idiom, wrong meaning","A genuine expression, but it means something else here."],
- "va-stance-contradiction":["Contradicts the paragraph","It goes against the position the paragraph takes."],
- "vocab-context-blind":["Dictionary meaning, wrong context","A real meaning of the word, but not the one used here."],
- "vocab-shade":["Wrong shade","Close in meaning, but the wrong nuance or strength."],
- "pj-connector":["Missed connector","Your order ignores a linking word that ties two sentences together."],
- "pj-antecedent":["Missed reference","A sentence points back (this, they, such) to something not yet introduced."],
- "pj-conclusion-early":["Conclusion too early","The summing-up sentence comes before the argument is complete."]
+ "rc-detail-as-main":["Detail as main idea","A true detail offered as the main point.","Ask whether the writer would use it as the title. A detail can be true and still be too small to be the point."],
+ "rc-extreme":["Overstated","It says more, or says it more strongly, than the passage does.","Circle strong words (always, only, entirely, never) and pick the option exactly as strong as the text."],
+ "rc-false-link":["False link","It joins two things from the passage with a reason the writer never gives.","Find the line that links the two ideas. If the passage never connects them, neither should you."],
+ "rc-half-right":["Half right","One half matches the passage; the other half doesn't.","Read every option to its last word. One wrong half sinks the whole option."],
+ "rc-literal":["Too literal","A figurative line read at face value.","For an image or metaphor, ask what it does in the argument, not what it describes."],
+ "rc-out-of-scope":["Out of scope","It brings in something the passage never discusses.","If you cannot point to the line that supports it, rule it out."],
+ "rc-reversal":["Reversal","It flips the passage: the order, the direction or the cause.","Trace before/after and cause/effect back in the text before you commit."],
+ "rc-scope-shift":["Scope shift","Right topic, but wider or narrower than the text's claim.","Match the scope words: most vs all, some vs every, one city vs every city."],
+ "va-scope-shift":["Scope shift","Right topic, but wider or narrower than the paragraph's claim.","Match the scope words: most vs all, some vs every, one case vs every case."],
+ "rc-tone":["Tone miss","Right direction, wrong strength or flavour of attitude.","Fix the direction first (for or against), then the strength (mild or harsh)."],
+ "rc-true-not-answer":["True, but not the answer","Supported by the passage, but it doesn't answer this question.","Reread the question before confirming. True is not enough; it has to answer what was asked."],
+ "rc-word-match":["Word match","It borrows the passage's words, not its meaning.","Familiar words are bait. Put the line in your own words, then match the meaning."],
+ "rc-wrong-voice":["Wrong voice","A view the passage reports or argues against, not the writer's own.","Ask whose view it is: the writer's, or someone the writer quotes or rejects?"],
+ "va-category-error":["Wrong kind of word","The word doesn't fit the kind of idea the blank needs.","Decide what the blank must do (describe, judge, act) before you read the options."],
+ "va-collocation-break":["Doesn't go together","The word doesn't sit naturally with its neighbours.","Say the phrase in full. English pairs certain words by habit; trust the natural pairing."],
+ "va-confusable-sibling":["Look-alike word","Looks or sounds like the right word but means something else.","Slow down on look-alikes and pin each word's exact meaning before choosing."],
+ "va-corrupted-expression":["Twisted idiom","A familiar expression with one word changed.","Idioms are fixed. If one word differs from the original, the whole option is wrong."],
+ "va-half-fix":["Half fix","It corrects one error but leaves another standing.","List every error in the underlined part first. The answer must fix all of them."],
+ "va-new-error":["New error","It fixes the original error but brings in a new one.","Read your chosen option as a fresh sentence and check it end to end."],
+ "va-off-topic-insertion":["Off-topic sentence","Same subject, but it breaks the paragraph's line of thought.","The missing line must carry the argument forward, not just stay on the subject."],
+ "va-polarity-flip":["Wrong direction","The word pulls the opposite way from the sentence's clues.","Mark the clue words around the blank and decide positive or negative before you look at the options."],
+ "va-real-expression-wrong-meaning":["Real idiom, wrong meaning","A genuine expression that means something else here.","Check what the idiom means, not just whether it exists."],
+ "va-stance-contradiction":["Contradicts the paragraph","It argues against the position the paragraph takes.","Name the paragraph's stance first; reject anything that pulls the other way."],
+ "vocab-context-blind":["Dictionary meaning, wrong context","A real meaning of the word, but not the one used here.","Put each option back into the sentence. The context decides the meaning, not the dictionary."],
+ "vocab-shade":["Wrong shade","Close in meaning, but the wrong nuance or strength.","Between near-synonyms, pick the one whose strength and tone fit the sentence."],
+ "pj-connector":["Missed connector","The order ignores a linking word that ties two sentences.","Find the connectors (however, thus, also) and fix which sentence each one must follow."],
+ "pj-antecedent":["Missed reference","A 'this', 'they' or 'such' points to something not yet introduced.","Every pointer word needs its noun earlier. Place that sentence before it."],
+ "pj-conclusion-early":["Conclusion too early","The summing-up sentence comes before the argument is complete.","The summary goes last. Check that every point it sums up has already been made."],
+ /* tag set used from IPMAT Indore 03 onward */
+ "gram-half-fix":["Half fix","It corrects one error but leaves another standing.","List every error in the underlined part first. The answer must fix all of them."],
+ "gram-new-error":["New error","It fixes the original error but brings in a new one.","Read your chosen option as a fresh sentence and check it end to end."],
+ "gram-sounds-right":["Sounds right, isn't","It reads smoothly but breaks a rule.","Don't trust your ear on an underlined part. Check the rules: agreement, parallel form, case, idiom."],
+ "gram-tense-marker":["Tense clash","The verb forms don't match the time or condition the sentence sets up.","Find the time marker (if, had, by then, since) and make every verb agree with it."],
+ "gram-idiom":["Twisted idiom","A familiar expression with one word changed.","Idioms are fixed. If one word differs from the original, the whole option is wrong."],
+ "vocab-wrong-idiom":["Real idiom, wrong meaning","A genuine expression that means something else here.","Check what the idiom means, not just whether it exists."],
+ "vocab-opposite":["Wrong direction","The word pulls the opposite way from the sentence's clues.","Mark the clue words around the blank and decide positive or negative before you look at the options."],
+ "vocab-sound-alike":["Sound-alike","It sounds like the right word but means something else.","Slow down on look-alikes and pin each word's exact meaning before choosing."],
+ "vocab-category":["Wrong word form","Right idea, wrong part of speech or form for the blank.","Decide what the blank needs grammatically (noun, adjective, verb) before you weigh meanings."],
+ "sc-collocation":["Doesn't go together","The word doesn't sit naturally with its neighbours.","Say the phrase in full. English pairs certain words by habit; trust the natural pairing."],
+ "para-same-topic":["Same topic, no link","On the paragraph's subject, but it doesn't connect to the lines around the blank.","Read the sentences on both sides of the blank. The answer must link to both, not just share the topic."],
+ "pj-opener":["Wrong opener","The paragraph starts with a sentence that depends on another.","The opening sentence must stand alone: no 'this', 'however' or 'also' that needs something before it."],
+ "pj-pair-broken":["Broken pair","Two sentences that must sit together are split apart.","Lock the obvious pairs first (claim and example, question and answer), then order the blocks."],
+ "pj-time-order":["Time order","The events are out of sequence.","Mark dates and sequence words (first, later, by then) and order the events by them."],
+ "pj-topic-link":["Topic link","Sentences joined because they share words, not because one follows from the other.","Join sentences by logic (cause, contrast, example), not by repeated words."]
 };
 var LAST_A=null;
 function trapInfo(tag){
  var t=TRAPS[tag];
- if(t)return {name:t[0],what:t[1]};
+ if(t)return {name:t[0],what:t[1],fix:t[2]};
  var n=String(tag).replace(/^[a-z]+-/,"").replace(/-/g," ");
- return {name:n.charAt(0).toUpperCase()+n.slice(1),what:""};
+ return {name:n.charAt(0).toUpperCase()+n.slice(1),what:"",fix:""};
 }
 function diffOf(q){
  var d=String(q.difficulty||"").trim().toLowerCase();
@@ -786,11 +816,12 @@ function sameAns(q,x,y){if(blank(x)||blank(y))return blank(x)&&blank(y);return i
 function escH(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}
 function capW(s){return s.charAt(0).toUpperCase()+s.slice(1)}
 function outWord(o){return o==="c"?"right":(o==="w"?"wrong":"blank")}
+function plural(n,one,many){return n+" "+(n===1?one:many)}
 
 function computeAnalysis(score,totalSecs){
  var A={score:score,max:MAX_MARKS,used:totalSecs||0,avail:availSecs(),c:0,w:0,s:0,neg:0,tC:0,tW:0,tS:0,out:[],
-  hasDiff:false,hasTags:false,emW:0,emWGain:0,emS:0,emSGain:0,hardWrongN:0,hardWrongT:0,
-  traps:[],trapped:0,timedOut:0,slow:[],secs:[],journey:null,reach:null,acc:null,mpm:null,
+  hasDiff:false,hasTags:false,emW:0,emS:0,emSq:[],traps:[],trapped:0,trapMarks:0,timedOut:0,bankN:0,
+  sinks:[],secs:[],journey:null,acc:null,verdict:null,
   diff:{easy:{n:0,o:0,c:0,w:0,s:0,net:0,t:0},medium:{n:0,o:0,c:0,w:0,s:0,net:0,t:0},hard:{n:0,o:0,c:0,w:0,s:0,net:0,t:0}}};
  var trapMap={};
  QUESTIONS.forEach(function(q,i){
@@ -798,7 +829,7 @@ function computeAnalysis(score,totalSecs){
   var o=sk?"s":(ok?"c":"w");
   A.out.push(o);
   if(o==="c"){A.c++;A.tC+=t}
-  else if(o==="w"){A.w++;A.tW+=t;A.neg+=-penOf(q)}
+  else if(o==="w"){A.w++;A.tW+=t;A.neg+=-penOf(q);if(isMCQ(q))A.bankN++}
   else{A.s++;A.tS+=t}
   if(RAPID&&sk&&t>=(q.td||30))A.timedOut++;
   var d=diffOf(q);
@@ -806,24 +837,20 @@ function computeAnalysis(score,totalSecs){
    A.hasDiff=true;
    var b=A.diff[d];b.n++;b.t+=t;if(t>0)b.o++;
    if(o==="c"){b.c++;b.net+=CFG.c}else if(o==="w"){b.w++;b.net+=penOf(q)}else b.s++;
-   if(d!=="hard"){
-    if(o==="w"){A.emW++;A.emWGain+=CFG.c-penOf(q)}
-    else if(o==="s"){A.emS++;A.emSGain+=CFG.c}
-   }else if(o==="w"){A.hardWrongN++;A.hardWrongT+=t}
+   if(d!=="hard"){if(o==="w")A.emW++;else if(o==="s"){A.emS++;if(!(RAPID&&t>=(q.td||30)))A.emSq.push(i)}} /* rapid: a question whose clock ran out counts under the clock, not as a skip */
   }
   if(Array.isArray(q.optionTags)||(q.titaTraps&&typeof q.titaTraps==="object"))A.hasTags=true;
   var tg=trapOf(q,a);
   if(tg){
-   var inf=trapInfo(tg);
-   if(!trapMap[inf.name]){trapMap[inf.name]={name:inf.name,what:inf.what,qs:[]};A.traps.push(trapMap[inf.name])}
-   trapMap[inf.name].qs.push(i);A.trapped++;
+   var inf=trapInfo(tg),sw=CFG.c-penOf(q);
+   if(!trapMap[inf.name]){trapMap[inf.name]={name:inf.name,what:inf.what,fix:inf.fix,qs:[],marks:0};A.traps.push(trapMap[inf.name])}
+   trapMap[inf.name].qs.push(i);trapMap[inf.name].marks+=sw;A.trapped++;A.trapMarks+=sw;
   }
+  if(!RAPID&&t>=Math.max(90,2*paceOf(i)))A.sinks.push({i:i,t:t});
  });
- A.traps.sort(function(x,y){return y.qs.length-x.qs.length});
+ A.traps.sort(function(x,y){return (y.qs.length-x.qs.length)||(y.marks-x.marks)});
+ A.sinks.sort(function(x,y){return y.t-x.t});A.sinks=A.sinks.slice(0,3);
  A.acc=(A.c+A.w)?Math.round(100*A.c/(A.c+A.w)):null;
- if(A.hasDiff)A.reach=score+A.emWGain+A.emSGain;
- if(A.used>=60)A.mpm=score/(A.used/60);
- A.slow=questionTimes.map(function(t,i){return {i:i,t:t||0}}).filter(function(x){return x.t>0}).sort(function(x,y){return y.t-x.t}).slice(0,3);
  var order=[],bySec={};
  QUESTIONS.forEach(function(q,i){
   var k=q.section||"-";
@@ -832,94 +859,140 @@ function computeAnalysis(score,totalSecs){
   if(o==="c"){b.c++;b.score+=CFG.c}else if(o==="w"){b.w++;b.score+=penOf(q)}else b.s++;
  });
  if(order.length>1)A.secs=order.map(function(k){return bySec[k]});
- if(!RAPID&&visits.length)A.journey=computeJourney(A);
+ if(!RAPID&&visits.length)A.journey=computeJourney();
+ A.verdict=buildVerdict(A);
  return A;
 }
 
-function computeJourney(A){
- var J={firstN:0,firstOk:0,backN:0,backOk:0,toRight:0,toWrong:0,swapGain:0,swapLoss:0,never:[],neverEM:0,late:[],longest:null,T:0,secStart:{}};
- var byQ={};
- visits.forEach(function(v){
-  (byQ[v.q]=byQ[v.q]||[]).push(v);
-  if(!J.longest||v.d>J.longest.d)J.longest=v;
-  J.T=Math.max(J.T,v.s+v.d);
- });
- if(SEC){SEC.forEach(function(p,k){var m=null;for(var i=p.start;i<=p.end;i++){(byQ[i]||[]).forEach(function(v){if(m===null||v.s<m)m=v.s})}J.secStart[k]=m})}
+function computeJourney(){
+ var J={never:[],neverEM:0,changed:0,toRight:0,toWrong:0,gain:0,loss:0},byQ={};
+ visits.forEach(function(v){(byQ[v.q]=byQ[v.q]||[]).push(v)});
  QUESTIONS.forEach(function(q,i){
-  var vs=byQ[i],d=diffOf(q),em=(d==="easy"||d==="medium");
-  if(!vs||!vs.length){J.never.push(i);if(em)J.neverEM++;return}
-  var a=answers[i],fa=vs[0].a;
-  if(!blank(fa)){J.firstN++;if(isCorrect(q,fa))J.firstOk++}
-  else if(!blank(a)){J.backN++;if(isCorrect(q,a))J.backOk++}
+  var vs=byQ[i],a=answers[i],d=diffOf(q);
+  if(!vs||!vs.length){
+   if(blank(a)&&!(questionTimes[i]>0)){J.never.push(i);if(d==="easy"||d==="medium")J.neverEM++}
+   return;
+  }
   var fn=null;
   for(var k=0;k<vs.length;k++){if(!blank(vs[k].a)){fn=vs[k].a;break}}
   if(fn!==null&&!blank(a)&&!sameAns(q,fn,a)){
-   var was=isCorrect(q,fn),now=isCorrect(q,a);
-   if(!was&&now){J.toRight++;J.swapGain+=CFG.c-penOf(q)}
-   else if(was&&!now){J.toWrong++;J.swapLoss+=CFG.c-penOf(q)}
-  }
-  if(em){
-   var s0=0,dur=CFG.minutes*60,si=secOfQ(i);
-   if(si!==null){s0=J.secStart[si]||0;dur=SEC[si].minutes*60}
-   if(vs[0].s-s0>=0.75*dur)J.late.push(i);
+   J.changed++;
+   var was=isCorrect(q,fn),now=isCorrect(q,a),sw=CFG.c-penOf(q);
+   if(!was&&now){J.toRight++;J.gain+=sw}
+   else if(was&&!now){J.toWrong++;J.loss+=sw}
   }
  });
- J.T=Math.max(J.T,A.used,1);
  return J;
+}
+
+/* The verdict: the biggest single leak, ranked by marks, in plain words. */
+function buildVerdict(A){
+ var C=[],J=A.journey,hb=A.diff.hard,never=J?J.never:[],top=A.traps[0],spare=Math.max(0,A.avail-A.used);
+ if(A.trapped>=2&&top)C.push({k:"trap",m:A.trapMarks});
+ var bl=A.emSq.filter(function(i){return never.indexOf(i)===-1}).length;
+ if(bl)C.push({k:"blank",m:bl*CFG.c,n:bl});
+ if(never.length>=3)C.push({k:"never",m:Math.max(1,J.neverEM)*CFG.c,n:never.length});
+ if(A.hasDiff&&hb.c+hb.w>=2&&hb.net<0)C.push({k:"hard",m:-hb.net});
+ if(J&&J.loss>J.gain)C.push({k:"second",m:J.loss-J.gain});
+ if(RAPID&&A.timedOut>=3)C.push({k:"clock",m:A.timedOut*CFG.c/2});
+ C.sort(function(x,y){return y.m-x.m});
+ function line(c){
+  var n=c.n,m=c.m;
+  if(c.k==="trap")return {h:(A.trapped===A.w?"All "+A.w+" of your wrong answers":A.trapped+" of your "+plural(A.w,"wrong answer","wrong answers"))+" fell for a set trap.",s:"Together they cost "+plural(A.trapMarks,"mark","marks")+". The one to fix first: “"+top.name+"”, "+plural(top.qs.length,"time","times")+"."};
+  if(c.k==="blank")return {h:"You left "+plural(n,"Easy or Medium question","Easy or Medium questions")+" blank.",s:"That is up to "+m+" marks that needed no new concept."};
+  if(c.k==="never")return {h:"You never opened "+plural(n,"question","questions")+(J.neverEM?", "+J.neverEM+" of them Easy or Medium":"")+".",s:spare>=60?"You still had "+fmtMS(spare)+" on the clock when you finished.":"The clock ran out before you reached them."};
+  if(c.k==="hard")return {h:"Hard questions cost you "+plural(m,"mark","marks")+" net.",s:hb.c+" right, "+hb.w+" wrong: leaving them blank would have scored higher."};
+  if(c.k==="second")return {h:"Changing answers cost you "+plural(m,"mark","marks")+".",s:plural(J.toWrong,"right answer","right answers")+" changed to wrong; "+J.toRight+" wrong changed to right."};
+  return {h:"The clock ran out on "+plural(A.timedOut,"question","questions")+".",s:"Each of those scored zero without an attempt."};
+ }
+ var V={h:"",s:"",also:"",acts:[]};
+ if(C.length&&C[0].m>=CFG.c){
+  var L=line(C[0]);V.h=L.h;V.s=L.s;
+  if(C[1]&&C[1].m>=CFG.c)V.also=line(C[1]).h;
+ }else if(A.acc!==null&&A.acc>=80&&!A.emS){
+  V.h="A clean attempt: "+A.acc+"% accuracy and nothing easy left blank.";
+  V.s="Next step: take on more of the Hard questions.";
+ }else{
+  V.h="You scored "+A.score+" of "+A.max+(A.acc!==null?" at "+A.acc+"% accuracy":"")+".";
+  V.s="No single leak stands out. Go through the review below, question by question.";
+ }
+ var seen={};
+ function act(t,href){if(seen[t])return;seen[t]=1;V.acts.push({t:t,href:href||null})}
+ C.forEach(function(c){
+  if(c.m<CFG.c)return;
+  if(c.k==="trap"&&top.fix)act("Beat “"+top.name+"”: "+top.fix);
+  else if(c.k==="never"&&spare>=60)act("Use the whole clock: before you end a section or submit, open every question you have not seen.");
+  else if(c.k==="blank"&&RAPID)act("Decide in time: if you can rule out one option, answer and move on.");
+  else if(c.k==="blank"||c.k==="never")act("First pass: answer every Easy and Medium question before you give time to a Hard one.");
+  else if(c.k==="hard")act("Attempt a Hard question only after you have ruled out two options.");
+  else if(c.k==="second")act("Keep your first answer unless you can name what is wrong with it.");
+  else if(c.k==="clock")act("Decide in time: if you can rule out one option, answer and move on.");
+ });
+ V.acts=V.acts.slice(0,2);
+ if(A.bankN)act((A.bankN===A.w?"Your "+plural(A.bankN,"wrong answer is","wrong answers are"):A.bankN+" of your wrong answers are")+" now in your Mistake Bank. They come back for revision tomorrow.","mistake_bank.html");
+ return V;
 }
 
 /* ---------- on-screen panels ---------- */
 function qLink(i){return "<a href=\"#rq"+i+"\" class=\"qlink\">Q"+(i+1)+"</a>"}
 function okMark(o){return o==="c"?"<span class=\"ok\">&#10003;</span>":(o==="w"?"<span class=\"no\">&#10007;</span>":"<span class=\"dim\">&mdash;</span>")}
 function kv(k,v,cls){return "<div class=\"kv\"><span>"+k+"</span><b"+(cls?" class=\""+cls+"\"":"")+">"+v+"</b></div>"}
-function plural(n,one,many){return n+" "+(n===1?one:many)}
 
-function cardTime(A){
- var H="<div class=\"ana\"><div class=\"anaH\">TIME</div>";
- H+=kv("Time used",fmtMS(A.used)+" <span class=\"dim\">of "+fmtMS(A.avail)+"</span>");
- H+=kv("On answers you got right",fmtMS(A.tC),"ok");
- H+=kv("On answers you got wrong",fmtMS(A.tW),"no");
- if(A.tS>=1)H+=kv("On questions left blank",fmtMS(A.tS),"dim");
- if(A.mpm!==null)H+=kv("Marks per minute",A.mpm.toFixed(1));
- if(RAPID&&A.timedOut)H+=kv("Clock ran out, no answer",A.timedOut,"no");
- if(A.slow.length)H+="<div class=\"sub\">Slowest: "+A.slow.map(function(x){return qLink(x.i)+" "+fmtMS(x.t)+" "+okMark(A.out[x.i])}).join(" &middot; ")+"</div>";
- if(A.w&&A.tW>=120)H+="<div class=\"call no\">"+fmtMS(A.tW)+" went into answers that "+(A.neg>0?"cost you "+plural(A.neg,"mark","marks"):"scored nothing")+".</div>";
- return H+"</div>";
-}
-function cardDiff(A){
- if(!A.hasDiff)return "";
- var H="<div class=\"ana\"><div class=\"anaH\">BY DIFFICULTY</div><table class=\"anaT\"><tr><th></th><th>Qs</th><th>&#10003;</th><th>&#10007;</th><th>&mdash;</th><th>Net</th><th>Avg time</th></tr>";
- ["easy","medium","hard"].forEach(function(k){
-  var b=A.diff[k];if(!b.n)return;
-  H+="<tr><td>"+capW(k)+"</td><td>"+b.n+"</td><td>"+b.c+"</td><td>"+b.w+"</td><td>"+b.s+"</td><td class=\""+(b.net<0?"no":(b.net>0?"ok":""))+"\">"+sgn(b.net)+"</td><td>"+(b.o?fmtMS(b.t/b.o):"&mdash;")+"</td></tr>";
- });
- H+="</table>";
- var hb=A.diff.hard;
- if(hb.c+hb.w>=2&&hb.net<0)H+="<div class=\"call no\">Hard questions cost you "+plural(-hb.net,"mark","marks")+" net. Leaving them blank would have scored higher.</div>";
- else if(A.hardWrongN&&A.hardWrongT>=120)H+="<div class=\"call\">"+fmtMS(A.hardWrongT)+" spent on Hard questions you got wrong.</div>";
- if(A.emS)H+="<div class=\"call\">"+plural(A.emS,"Easy or Medium question","Easy or Medium questions")+" left blank: worth +"+A.emSGain+" if right.</div>";
+function cardVerdict(A){
+ var V=A.verdict,H="<div class=\"ana verdict\"><div class=\"anaH\">YOUR VERDICT</div>";
+ H+="<div class=\"vH\">"+escH(V.h)+"</div>";
+ if(V.s)H+="<div class=\"vS\">"+escH(V.s)+"</div>";
+ if(V.also)H+="<div class=\"vAlso\">Also: "+escH(V.also)+"</div>";
+ if(V.acts.length){
+  H+="<div class=\"doNext\"><div class=\"dnH\">DO THIS NEXT</div><ol>";
+  V.acts.forEach(function(a){H+="<li>"+(a.href?"<a href=\""+a.href+"\">"+escH(a.t)+"</a>":escH(a.t))+"</li>"});
+  H+="</ol></div>";
+ }
  return H+"</div>";
 }
 function cardTraps(A){
  if(!A.hasTags)return "";
  var H="<div class=\"ana\"><div class=\"anaH\">TRAPS THAT CAUGHT YOU</div>";
- if(!A.traps.length)return H+"<div class=\"sub\">"+(A.w?"None of your wrong answers landed on a tagged trap.":"No trap caught you on this test.")+"</div></div>";
- H+="<div class=\"sub\" style=\"margin-top:0\">Behind "+A.trapped+" of your "+plural(A.w,"wrong answer","wrong answers")+":</div>";
+ if(!A.traps.length)return H+"<div class=\"sub0\">"+(A.w?"None of your wrong answers matched a set trap.":"No trap caught you this time.")+"</div></div>";
+ H+="<div class=\"sub0\">Every wrong option in this test was built on a known trap. Here are the ones you picked, most frequent first, each with its counter.</div><div class=\"trapGrid\">";
  A.traps.forEach(function(t){
-  H+="<div class=\"trap\"><div class=\"trapTop\"><b>"+escH(t.name)+"</b><span class=\"cnt\">&times;"+t.qs.length+"</span></div>"+(t.what?"<div class=\"what\">"+escH(t.what)+"</div>":"")+"<div class=\"qs\">"+t.qs.map(qLink).join(" ")+"</div></div>";
+  H+="<div class=\"trap\"><div class=\"trapTop\"><b>"+escH(t.name)+"</b><span class=\"cnt\">&times;"+t.qs.length+"</span></div>";
+  if(t.what)H+="<div class=\"what\">"+escH(t.what)+"</div>";
+  if(t.fix)H+="<div class=\"fix\"><b>COUNTER</b>"+escH(t.fix)+"</div>";
+  H+="<div class=\"qs\">"+t.qs.map(qLink).join(" ")+"</div></div>";
+ });
+ return H+"</div></div>";
+}
+function cardLadder(A){
+ if(!A.hasDiff)return "";
+ var H="<div class=\"ana\"><div class=\"anaH\">EASY &middot; MEDIUM &middot; HARD</div>";
+ ["easy","medium","hard"].forEach(function(k){
+  var b=A.diff[k];if(!b.n)return;
+  H+="<div class=\"rung\"><div class=\"rungTop\"><span>"+capW(k)+" <span class=\"dim\">&middot; "+plural(b.n,"question","questions")+"</span></span><b class=\""+(b.net<0?"no":(b.net>0?"ok":"dim"))+"\">net "+sgn(b.net)+"</b></div>";
+  H+="<div class=\"mini\"><i class=\"c\" style=\"width:"+(100*b.c/b.n).toFixed(1)+"%\"></i><i class=\"w\" style=\"width:"+(100*b.w/b.n).toFixed(1)+"%\"></i><i class=\"s\" style=\"width:"+(100*b.s/b.n).toFixed(1)+"%\"></i></div>";
+  H+="<div class=\"rungSub\">"+b.c+" right &middot; "+b.w+" wrong &middot; "+b.s+" blank"+(b.o?" &middot; avg "+fmtMS(b.t/b.o):"")+"</div></div>";
  });
  return H+"</div>";
 }
-function cardPath(A){
- var J=A.journey;if(!J)return "";
- var H="<div class=\"ana\"><div class=\"anaH\">HOW YOU MOVED</div>";
- if(J.firstN)H+=kv("Right on the first look",Math.round(100*J.firstOk/J.firstN)+"% <span class=\"dim\">("+J.firstOk+" of "+J.firstN+")</span>");
- if(J.backN)H+=kv("Came back and answered",J.backN+" <span class=\"dim\">("+J.backOk+" right)</span>");
- if(J.toRight||J.toWrong)H+=kv("Changed answers",(J.toRight?"<span class=\"ok\">"+J.toRight+" wrong&rarr;right +"+J.swapGain+"</span>":"")+(J.toRight&&J.toWrong?"<br>":"")+(J.toWrong?"<span class=\"no\">"+J.toWrong+" right&rarr;wrong &minus;"+J.swapLoss+"</span>":""));
- if(J.never.length)H+=kv("Never opened",J.never.length+(J.neverEM?" <span class=\"dim\">("+J.neverEM+" Easy/Medium)</span>":""),J.neverEM?"no":"");
- if(J.longest&&J.longest.d>=60)H+=kv("Longest single stay",fmtMS(J.longest.d)+" on "+qLink(J.longest.q)+" "+okMark(A.out[J.longest.q]));
- if(J.late.length)H+="<div class=\"call\">"+(J.late.length===1?"1 Easy or Medium question was":J.late.length+" Easy or Medium questions were")+" first opened in the last quarter of the clock: "+J.late.map(qLink).join(" ")+"</div>";
- if(J.toWrong>J.toRight)H+="<div class=\"call no\">Second thoughts cost you marks this time. Change an answer only when you can say what was wrong with the first one.</div>";
+function cardClock(A){
+ var unused=Math.max(0,A.avail-A.used),tot=Math.max(1,A.tC+A.tW+A.tS+unused);
+ function seg(cls,v){return v>0?"<i class=\""+cls+"\" style=\"width:"+(100*v/tot).toFixed(2)+"%\"></i>":""}
+ var H="<div class=\"ana\"><div class=\"anaH\">WHERE THE CLOCK WENT</div><div class=\"cbar\">"+seg("c",A.tC)+seg("w",A.tW)+seg("s",A.tS)+seg("u",unused)+"</div>";
+ H+=kv("<span class=\"lgd c\"></span>Questions you got right",fmtMS(A.tC));
+ H+=kv("<span class=\"lgd w\"></span>Questions you got wrong",fmtMS(A.tW));
+ if(A.tS>=1)H+=kv("<span class=\"lgd s\"></span>Questions left blank",fmtMS(A.tS));
+ if(unused>=1)H+=kv("<span class=\"lgd u\"></span>Not used",fmtMS(unused));
+ if(A.sinks.length)H+="<div class=\"sub\">Time sinks, at twice the even pace or more: "+A.sinks.map(function(x){return qLink(x.i)+" "+fmtMS(x.t)+" "+okMark(A.out[x.i])}).join(" &middot; ")+"</div>";
+ if(RAPID&&A.timedOut)H+="<div class=\"sub\">The clock ran out on "+plural(A.timedOut,"question","questions")+".</div>";
+ return H+"</div>";
+}
+function cardSecond(A){
+ var J=A.journey;if(!J||!J.changed)return "";
+ var same=J.changed-J.toRight-J.toWrong;
+ var H="<div class=\"ana\"><div class=\"anaH\">SECOND THOUGHTS</div><div class=\"sub0\">You changed "+plural(J.changed,"answer","answers")+" after first marking "+(J.changed===1?"it":"them")+".</div>";
+ H+=kv("Wrong &rarr; right","<span class=\"ok\">"+J.toRight+(J.gain?" &middot; +"+J.gain:"")+"</span>");
+ H+=kv("Right &rarr; wrong","<span class=\"no\">"+J.toWrong+(J.loss?" &middot; &minus;"+J.loss:"")+"</span>");
+ if(same)H+=kv("Wrong &rarr; still wrong","<span class=\"dim\">"+same+"</span>");
  return H+"</div>";
 }
 function cardSecs(A){
@@ -927,62 +1000,40 @@ function cardSecs(A){
  var H="<div class=\"ana\"><div class=\"anaH\">BY SECTION</div><table class=\"anaT\"><tr><th></th><th>Score</th><th>&#10003;</th><th>&#10007;</th><th>&mdash;</th><th>Acc</th><th>Time</th></tr>";
  A.secs.forEach(function(b){
   var att=b.c+b.w;
-  H+="<tr><td>"+escH(b.sec)+"</td><td>"+sgn(b.score).replace("+","")+"</td><td>"+b.c+"</td><td>"+b.w+"</td><td>"+b.s+"</td><td>"+(att?Math.round(100*b.c/att)+"%":"&mdash;")+"</td><td>"+fmtMS(b.t)+"</td></tr>";
+  H+="<tr><td>"+escH(b.sec)+"</td><td>"+b.score+"</td><td>"+b.c+"</td><td>"+b.w+"</td><td>"+b.s+"</td><td>"+(att?Math.round(100*b.c/att)+"%":"&mdash;")+"</td><td>"+fmtMS(b.t)+"</td></tr>";
  });
  return H+"</table></div>";
 }
-function stripHTML(A){
- var top=1,paces={},i;
- for(i=0;i<NQ;i++){var p=paceOf(i);top=Math.max(top,questionTimes[i]||0,p);paces[Math.round(p)]=1}
- top*=1.1;
- var onePace=Object.keys(paces).length===1;
- var H="<div class=\"ana wide\"><div class=\"anaH\">TIME ON EACH QUESTION <span class=\"dim\">tap a bar to jump to it</span></div><div class=\"strip\""+(NQ>40?" style=\"gap:1px\"":"")+">";
- for(i=0;i<NQ;i++){
-  var t=questionTimes[i]||0,o=A.out[i];
-  H+="<div class=\"sb\" data-q=\""+i+"\" title=\"Q"+(i+1)+" &middot; "+fmtMS(t)+" &middot; "+outWord(o)+"\"><i class=\"pace\" style=\"bottom:"+(100*paceOf(i)/top).toFixed(1)+"%\"></i><i class=\"bar "+o+"\" style=\"height:"+(100*t/top).toFixed(1)+"%\"></i></div>";
+function paletteHTML(A){
+ var J=A.journey,never={},trapQ={};
+ if(J)J.never.forEach(function(i){never[i]=1});
+ A.traps.forEach(function(t){t.qs.forEach(function(i){trapQ[i]=1})});
+ function tile(i){
+  var o=A.out[i],t=questionTimes[i]||0,full=RAPID?(QUESTIONS[i].td||30):2*paceOf(i);
+  var slow=!RAPID&&t>=Math.max(60,2*paceOf(i));
+  var cls="pt "+(never[i]?"n":o)+(slow?" slow":"");
+  var tip="Q"+(i+1)+" · "+(never[i]?"never opened":fmtMS(t)+" · "+outWord(o))+(trapQ[i]?" · trap":"");
+  return "<div class=\""+cls+"\" data-q=\""+i+"\" title=\""+tip+"\"><span class=\"pn\">"+(i+1)+"</span><span class=\"ptm\">"+(never[i]?"&ndash;":fmtMS(t))+"</span>"+(trapQ[i]?"<span class=\"tdot\"></span>":"")+"<i style=\"width:"+Math.min(100,100*t/full).toFixed(1)+"%\"></i></div>";
  }
- H+="</div><div class=\"stripAx\"><span>Q1</span><span>longest bar "+fmtMS(Math.max.apply(null,questionTimes.concat([0])))+"</span><span>Q"+NQ+"</span></div>";
- H+="<div class=\"legend2\"><span class=\"lg c\"></span>right<span class=\"lg w\"></span>wrong<span class=\"lg s\"></span>blank<span class=\"lg p\"></span>"+(RAPID?"the question's own clock":(onePace?"even pace, "+fmtMS(paceOf(0))+" a question":"even pace for its section"))+"</div></div>";
- return H;
-}
-function pathHTML(A){
- var J=A.journey,T=J.T;
- var H="<div class=\"ana wide\"><div class=\"anaH\">YOUR PATH THROUGH THE TEST <span class=\"dim\">each block is one visit to a question, coloured by how it ended</span></div><div class=\"path\">";
- visits.forEach(function(v){
-  H+="<i class=\"pv "+A.out[v.q]+"\" data-q=\""+v.q+"\" style=\"left:"+(100*v.s/T).toFixed(2)+"%;width:"+Math.max(0.2,100*v.d/T).toFixed(2)+"%\" title=\"Q"+(v.q+1)+" &middot; "+fmtMS(v.d)+" (from "+fmtMS(v.s)+")\"></i>";
- });
- if(SEC){SEC.forEach(function(p,k){if(k>0&&J.secStart[k]!==null&&J.secStart[k]!==undefined)H+="<i class=\"pdiv\" style=\"left:"+(100*J.secStart[k]/T).toFixed(2)+"%\" title=\""+escH(p.sec)+" starts\"></i>"})}
- H+="</div><div class=\"plabels\">";
- var long=visits.filter(function(v){return v.d>=Math.max(90,2*paceOf(v.q))}).sort(function(x,y){return y.d-x.d}).slice(0,6).sort(function(x,y){return x.s-y.s});
- var lastX=-100;
- long.forEach(function(v){var x=100*(v.s+v.d/2)/T;if(x-lastX<13)return;lastX=x;H+="<span style=\"left:"+x.toFixed(2)+"%\">Q"+(v.q+1)+" "+fmtMS(v.d)+"</span>"});
- H+="</div><div class=\"pticks\">";
- var step=T<=2700?300:600;
- for(var x=0;x<=T;x+=step)H+="<span style=\"left:"+(100*x/T).toFixed(2)+"%\">"+Math.round(x/60)+"m</span>";
- return H+"</div></div>";
+ var H="<div class=\"ana\"><div class=\"anaH\">YOUR PALETTE, REPLAYED <span class=\"dim\">tap a number to open that question</span></div>";
+ if(SEC){SEC.forEach(function(p){H+="<div class=\"palSec\">"+escH(p.sec)+"</div><div class=\"pal2\">";for(var i=p.start;i<=p.end;i++)H+=tile(i);H+="</div>"})}
+ else{H+="<div class=\"pal2\">";for(var j=0;j<NQ;j++)H+=tile(j);H+="</div>"}
+ H+="<div class=\"palLeg\"><span class=\"sw c\"></span>right<span class=\"sw w\"></span>wrong<span class=\"sw s\"></span>blank"+(J&&J.never.length?"<span class=\"sw n\"></span>never opened":"")+(A.traps.length?"<span class=\"sw t\"></span>fell for a trap":"");
+ H+="<br>The gold line under each number is the time spent: "+(RAPID?"a full line means that question's clock ran out.":"half a line is even pace, a full line is twice even pace or more.")+"</div>";
+ return H+"</div>";
 }
 function renderAnalysis(A){
  var box=document.getElementById("anaBox");if(!box)return;
- var H="<div class=\"ana hero\"><div class=\"anaH\">WHERE YOUR MARKS WENT</div>";
- H+="<div class=\"heroLine\">You scored <b>"+sgn(A.score).replace("+","")+"</b> of "+A.max+"."+(A.reach!==null&&A.reach>A.score?" Within reach: <b class=\"gold\">"+A.reach+"</b>.":"")+"</div>";
- var green=Math.max(0,A.score),amber=A.reach!==null?Math.max(0,A.reach)-green:0;
- if(A.max>0)H+="<div class=\"mbar\"><i class=\"g\" style=\"width:"+(100*green/A.max).toFixed(2)+"%\"></i><i class=\"a\" style=\"width:"+(100*Math.max(0,amber)/A.max).toFixed(2)+"%\"></i></div>";
- var chips=[];
- if(A.acc!==null)chips.push("<span class=\"chip\">accuracy "+A.acc+"%</span>");
- if(A.emW)chips.push("<span class=\"chip a\">"+A.emW+" Easy/Medium wrong &middot; +"+A.emWGain+"</span>");
- if(A.emS)chips.push("<span class=\"chip a\">"+A.emS+" Easy/Medium blank &middot; +"+A.emSGain+"</span>");
- if(A.neg)chips.push("<span class=\"chip r\">&minus;"+A.neg+" lost to negative marking</span>");
- if(chips.length)H+="<div class=\"chips\">"+chips.join("")+"</div>";
- if(A.reach!==null)H+="<div class=\"note\">Within reach = your score plus every mark on the Easy and Medium questions you got wrong or left blank. Hard questions are left out.</div>";
- H+="</div><div class=\"anaGrid\">"+cardTime(A)+cardDiff(A)+cardTraps(A)+cardPath(A)+cardSecs(A)+"</div>";
- H+=stripHTML(A);
- if(A.journey)H+=pathHTML(A);
+ var tx=document.getElementById("stTax");if(tx)tx.textContent=A.neg?"−"+A.neg:"0";
+ var H=cardVerdict(A)+cardTraps(A);
+ H+="<div class=\"anaGrid\">"+cardLadder(A)+cardClock(A)+cardSecond(A)+cardSecs(A)+"</div>";
+ H+=paletteHTML(A);
  box.innerHTML=H;
  var hits=box.querySelectorAll("[data-q]");
  for(var k=0;k<hits.length;k++){hits[k].onclick=function(){var el=document.getElementById("rq"+this.getAttribute("data-q"));if(el)el.scrollIntoView({behavior:"smooth",block:"start"})}}
 }
 
-/* ---------- retry wrong answers (no clock) ---------- */
+/* ---------- retry wrong questions (no clock) ---------- */
 var RETRY={done:0,right:0,n:0};
 function renderRetry(){
  var box=document.getElementById("retryBox");if(!box)return;
@@ -991,9 +1042,9 @@ function renderRetry(){
  QUESTIONS.forEach(function(q,i){if(!blank(answers[i])&&!isCorrect(q,answers[i]))idx.push(i)});
  if(!idx.length)return;
  RETRY={done:0,right:0,n:idx.length};
- var h=document.createElement("h1");h.style.cssText="font-size:19px;margin:18px 0 6px";h.textContent="Retry your wrong answers";box.appendChild(h);
+ var h=document.createElement("h1");h.style.cssText="font-size:19px;margin:18px 0 6px";h.textContent="Retry Wrong Questions";box.appendChild(h);
  var n=document.createElement("div");n.className="note";n.style.marginBottom="10px";
- n.textContent="No clock this time. Right on retry usually means the first miss was pressure or a slip; wrong again points to something to study.";
+ n.textContent="No clock this time. If you get it now, the first miss was a slip or the pressure. If you miss it again, that topic needs revision.";
  box.appendChild(n);
  var tl=document.createElement("div");tl.className="secErr";tl.id="retryTally";box.appendChild(tl);
  idx.forEach(function(i){box.appendChild(retryCard(i))});
@@ -1001,7 +1052,7 @@ function renderRetry(){
 }
 function paintTally(){
  var t=document.getElementById("retryTally");if(!t)return;
- t.innerHTML="<b>Retried "+RETRY.done+" of "+RETRY.n+"</b>"+(RETRY.done?" &middot; <span class=\"ok\">right "+RETRY.right+"</span> &middot; <span class=\"no\">wrong again "+(RETRY.done-RETRY.right)+"</span>":"");
+ t.innerHTML="<b>Retried "+RETRY.done+" of "+RETRY.n+"</b>"+(RETRY.done?" &middot; <span class=\"ok\">now right "+RETRY.right+"</span> &middot; <span class=\"no\">still wrong "+(RETRY.done-RETRY.right)+"</span>":"");
 }
 function retryCard(i){
  var q=QUESTIONS[i],letters=["A","B","C","D"];
@@ -1017,7 +1068,7 @@ function retryCard(i){
  function finish(ok,keyText){
   RETRY.done++;if(ok)RETRY.right++;paintTally();
   res.style.display="block";
-  res.innerHTML="<b>"+(ok?"Right this time.":"Still not it.")+"</b> Key: "+escH(keyText)+"<br>";
+  res.innerHTML="<b>"+(ok?"Got it this time.":"Not yet.")+"</b> Key: "+escH(keyText)+"<br>";
   res.appendChild(document.createTextNode(q.explanation||""));
  }
  if(isMCQ(q)){
@@ -1046,34 +1097,28 @@ function retryCard(i){
  return w;
 }
 
-/* ---------- PDF text ---------- */
+/* ---------- PDF text (plain characters only: the PDF font has no minus sign or arrows) ---------- */
 function analysisLines(A){
- var L=[],dot="   ·   ";
- var first="Score "+sgnA(A.score).replace("+","")+" / "+A.max+(A.acc!==null?dot+"Accuracy "+A.acc+"%":"");
- if(A.reach!==null&&A.reach>A.score)first+=dot+"Within reach: "+A.reach+" (Easy/Medium wrong "+A.emW+", +"+A.emWGain+"; Easy/Medium blank "+A.emS+", +"+A.emSGain+")";
- if(A.neg)first+=dot+"Lost to negative marking: "+A.neg;
- L.push(["Where your marks went",[first]]);
- var t=["Time used "+fmtMS(A.used)+" of "+fmtMS(A.avail)+dot+"on right answers "+fmtMS(A.tC)+dot+"on wrong answers "+fmtMS(A.tW)+(A.tS>=1?dot+"on blanks "+fmtMS(A.tS):"")+(A.mpm!==null?dot+A.mpm.toFixed(1)+" marks a minute":"")];
- if(A.slow.length)t.push("Slowest: "+A.slow.map(function(x){return "Q"+(x.i+1)+" "+fmtMS(x.t)+" ("+outWord(A.out[x.i])+")"}).join(", "));
- if(RAPID&&A.timedOut)t.push("Clock ran out with no answer: "+A.timedOut);
- L.push(["Time",t]);
+ var L=[],V=A.verdict,dot="   ·   ",J=A.journey;
+ var v=[V.h+(V.s?" "+V.s:"")];
+ if(V.also)v.push("Also: "+V.also);
+ v.push((A.acc!==null?"Accuracy "+A.acc+"%"+dot:"")+"Guessing tax "+(A.neg?"-"+A.neg:"0")+dot+"Time "+fmtMS(A.used)+" of "+fmtMS(A.avail));
+ L.push(["Your verdict",v]);
+ if(V.acts.length)L.push(["Do this next",V.acts.map(function(a,k){return (k+1)+". "+a.t})]);
+ if(A.traps.length)L.push(["Traps that caught you",A.traps.map(function(t){return t.name+" x"+t.qs.length+" ("+t.qs.map(function(i){return "Q"+(i+1)}).join(", ")+")"+(t.what?": "+t.what:"")+(t.fix?" Counter: "+t.fix:"")})]);
  if(A.hasDiff){
   var d=[];
   ["easy","medium","hard"].forEach(function(k){var b=A.diff[k];if(!b.n)return;d.push(capW(k)+": "+b.n+" Qs"+dot+b.c+" right"+dot+b.w+" wrong"+dot+b.s+" blank"+dot+"net "+sgnA(b.net)+(b.o?dot+"avg "+fmtMS(b.t/b.o):""))});
-  L.push(["By difficulty",d]);
+  L.push(["Easy / Medium / Hard",d]);
  }
- if(A.traps.length)L.push(["Traps that caught you",A.traps.map(function(tr){return tr.name+" x"+tr.qs.length+" ("+tr.qs.map(function(i){return "Q"+(i+1)}).join(", ")+")"+(tr.what?" - "+tr.what:"")})]);
- if(A.journey){
-  var J=A.journey,j=[];
-  if(J.firstN)j.push("Right on the first look: "+Math.round(100*J.firstOk/J.firstN)+"% ("+J.firstOk+" of "+J.firstN+")");
-  if(J.backN)j.push("Came back and answered: "+J.backN+" ("+J.backOk+" right)");
-  if(J.toRight||J.toWrong)j.push("Changed answers: "+J.toRight+" wrong to right (+"+J.swapGain+"), "+J.toWrong+" right to wrong (-"+J.swapLoss+")");
-  if(J.never.length)j.push("Never opened: "+J.never.length+(J.neverEM?" ("+J.neverEM+" Easy/Medium)":""));
-  if(J.late.length)j.push("Easy/Medium first opened in the last quarter of the clock: "+J.late.map(function(i){return "Q"+(i+1)}).join(", "));
-  if(J.longest&&J.longest.d>=60)j.push("Longest single stay: "+fmtMS(J.longest.d)+" on Q"+(J.longest.q+1));
-  if(j.length)L.push(["How you moved",j]);
- }
- if(A.secs.length)L.push(["By section",A.secs.map(function(b){var att=b.c+b.w;return b.sec+": score "+sgnA(b.score).replace("+","")+dot+b.c+" right"+dot+b.w+" wrong"+dot+b.s+" blank"+dot+"accuracy "+(att?Math.round(100*b.c/att)+"%":"-")+dot+"time "+fmtMS(b.t)})]);
+ var unused=Math.max(0,A.avail-A.used);
+ var t=["Right "+fmtMS(A.tC)+dot+"wrong "+fmtMS(A.tW)+(A.tS>=1?dot+"blank "+fmtMS(A.tS):"")+(unused>=1?dot+"not used "+fmtMS(unused):"")];
+ if(A.sinks.length)t.push("Time sinks: "+A.sinks.map(function(x){return "Q"+(x.i+1)+" "+fmtMS(x.t)+" ("+outWord(A.out[x.i])+")"}).join(", "));
+ if(RAPID&&A.timedOut)t.push("The clock ran out on "+plural(A.timedOut,"question","questions"));
+ if(J&&J.never.length)t.push("Never opened: "+J.never.map(function(i){return "Q"+(i+1)}).join(", "));
+ L.push(["Where the clock went",t]);
+ if(J&&J.changed)L.push(["Second thoughts",["Changed "+plural(J.changed,"answer","answers")+": "+J.toRight+" wrong to right (+"+J.gain+"), "+J.toWrong+" right to wrong (-"+J.loss+")"]]);
+ if(A.secs.length)L.push(["By section",A.secs.map(function(b){var att=b.c+b.w;return b.sec+": score "+b.score+dot+b.c+" right"+dot+b.w+" wrong"+dot+b.s+" blank"+dot+"accuracy "+(att?Math.round(100*b.c/att)+"%":"-")+dot+"time "+fmtMS(b.t)})]);
  return L;
 }
 
