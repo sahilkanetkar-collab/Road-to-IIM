@@ -114,7 +114,15 @@ details div{font-size:13px;color:var(--mut);white-space:pre-wrap;padding:8px 0;l
 
 <script>
 // ══════════════════════════════════════════════════════════════
-//  TEST BUILDER STUDIO v2.8 — ASSEMBLY & EXPORT ONLY
+//  TEST BUILDER STUDIO v2.8.1 — ASSEMBLY & EXPORT ONLY
+//  v2.8.1 (7 Oct 2026): three hand fixes from the Indore 03/04 uploads
+//  now come out of the exporter:
+//   · Parajumbles marked by the stem rule: 3412 valid; 3412. and
+//     3 4 1 2 invalid (q.format "Parajumble"; other TITA unchanged).
+//   · The login card no longer shows the desk's internal "deliberate
+//     override of sectional lock" note; students see "free navigation".
+//   · TRAPS names five more tags: gram-mood, gram-hypercorrection,
+//     gram-pronoun, gram-parallelism, sc-register.
 //  v2.8 (7 Oct 2026): results analysis rebuilt in Road to IIM's own
 //  form; v2.7's panels followed sectionaltest.com's report too closely.
 //   · YOUR VERDICT: the biggest single leak, ranked by marks (traps,
@@ -513,7 +521,7 @@ function exportHTML(){
    secPlan.push({sec:sec,minutes:(d.sectional.mins&&d.sectional.mins[sec])||d.sectional.secMinutes,start:start,end:qsOut.length-1});
   });
  }
- const meta={title:d.title,exam:d.cfg.name,qcount:qsOut.length,minutes:d.minutes,c:d.mk.c,w:d.mk.w,titaW:d.mk.titaW,titaWSec:d.mk.titaWSec||null,max:d.max,navNote:d.navNote,sectional:secPlan,rapid:!!d.rapid};
+ const meta={title:d.title,exam:d.cfg.name,qcount:qsOut.length,minutes:d.minutes,c:d.mk.c,w:d.mk.w,titaW:d.mk.titaW,titaWSec:d.mk.titaWSec||null,max:d.max,navNote:/override/.test(d.navNote)?"free navigation":d.navNote, /* v2.8.1: the desk note is internal; students see plain wording */sectional:secPlan,rapid:!!d.rapid};
  const name=d.examKey.toLowerCase()+"_"+slug(d.title)+".html";
  const content=buildTestHTML(meta,qsOut,name);
  download(name,content,"text/html");openExportModal(name,content,"text/html");
@@ -1086,6 +1094,7 @@ function titaWFor(q){if(CFG.titaWSec&&CFG.titaWSec[q.section]!=null)return CFG.t
 function isCorrect(q,a){
  if(a===null||a==="")return false;
  if(isMCQ(q))return a===q.answerIndex;
+ if(q.format==="Parajumble")return String(a).trim()===String(q.answer); /* stem rule: 3412 valid; 3412. and 3 4 1 2 invalid */
  return titaNorm(a)===titaNorm(q.answer);
 }
 
@@ -1290,7 +1299,13 @@ var TRAPS={
  "pj-opener":["Wrong opener","The paragraph starts with a sentence that depends on another.","The opening sentence must stand alone: no 'this', 'however' or 'also' that needs something before it."],
  "pj-pair-broken":["Broken pair","Two sentences that must sit together are split apart.","Lock the obvious pairs first (claim and example, question and answer), then order the blocks."],
  "pj-time-order":["Time order","The events are out of sequence.","Mark dates and sequence words (first, later, by then) and order the events by them."],
- "pj-topic-link":["Topic link","Sentences joined because they share words, not because one follows from the other.","Join sentences by logic (cause, contrast, example), not by repeated words."]
+ "pj-topic-link":["Topic link","Sentences joined because they share words, not because one follows from the other.","Join sentences by logic (cause, contrast, example), not by repeated words."],
+ /* added with IPMAT Indore 04 */
+ "gram-mood":["Wrong mood","The verb ignores the mood the sentence calls for: an unreal condition, a wish or a demand.","An unreal past condition takes 'had + verb'; after insist that, suggest that or demand that, use the base verb (take, not takes)."],
+ "gram-hypercorrection":["Over-correction","A formal-sounding form, often 'whom', used where the plain one is right.","Cover any inserted clause and test with he/him: if 'he' fits, the word is 'who'. Formal-sounding is not the same as correct."],
+ "gram-pronoun":["Pronoun mismatch","The pronoun doesn't agree with the noun it refers to.","Find the noun the pronoun points back to and match it in number and gender."],
+ "gram-parallelism":["Broken parallel","The items in a list don't share the same grammatical form.","Line up every item in the list; each must take the same form (to cut, reduce, ensure)."],
+ "sc-register":["Wrong register","The word is too grand, too casual or too technical for the sentence.","Match the sentence's tone: a plain sentence wants a plain word, a formal one a formal word."]
 };
 var LAST_A=null;
 function trapInfo(tag){
