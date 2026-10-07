@@ -132,6 +132,7 @@ header{
 .eventcard .live-dot{width:7px;height:7px;border-radius:50%;background:#e74c3c;animation:evpulse 1.2s infinite;}
 @keyframes evpulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(231,76,60,.6);}50%{opacity:.6;box-shadow:0 0 0 5px rgba(231,76,60,0);}}
 .eventcard .nu-title{font-family:'Fraunces',serif;font-size:1.05rem;font-weight:600;}
+.eventcard .nu-title,.eventcard .nu-sub{display:block;}
 .eventcard .nu-sub{font-size:.74rem;color:var(--dim);margin-top:2px;}
 .eventcard .ev-timer{font-variant-numeric:tabular-nums;color:var(--ivory);font-weight:600;}
 .eventcard .nu-go{
@@ -141,6 +142,7 @@ header{
 }
 .eventcard.locked{cursor:default;}
 .eventcard.locked .nu-go{background:rgba(146,152,176,.25);color:var(--dim);}
+.eventcard.locked.tap{cursor:pointer;}
 @media (max-width:560px){
   .eventcard{flex-wrap:wrap;}
   .eventcard .nu-go{width:100%;text-align:center;}
@@ -390,6 +392,7 @@ const MANIFEST = [
       {t:"IPMATind 02 VA Challenge", url:"ipmat_indore_va_challenge_mock_02.html", sheetName:"IPMAT Indore 02 VA Challenge Mock", windowed:true},
       {t:"IPMATind 03 VA Challenge", url:"ipmat_indore_va_challenge_mock_03.html", sheetName:"IPMAT Indore 03 VA Challenge Mock", windowed:true},
       {t:"IPMATind 04 VA Challenge", url:"ipmat_indore_va_challenge_mock_04.html", sheetName:"IPMAT Indore 04 VA Challenge Mock", windowed:true},
+      {t:"IPMATind 05 VA Challenge", url:"ipmat_indore_va_challenge_mock_05.html", sheetName:"IPMAT Indore 05 VA Challenge Mock", windowed:true},
     ]},
   { id:"rapid", name:"Rapid Fire", desc:"Short bursts, no feedback till the end",
     tests:[
@@ -738,6 +741,16 @@ const EVENTS = [
     opensAt: Date.UTC(2026,8,27,18,30,0),   /* Mon 28 Sep 2026, 00:00 IST */
     closesAt: Date.UTC(2026,8,30,18,30,0)   /* Thu 1 Oct 2026, 00:00 IST */
   },
+  /* locked:true = the card is flashed but the test is locked: tapping opens the test page,
+     which shows "You are not authorized to view this test." When the test is unlocked,
+     drop locked:true and the card becomes a normal LIVE card. */
+  { t:"IPMAT Indore 05 VA Challenge Mock",
+    sub:"IPMAT Indore VARC section \u00b7 45 Qs \u00b7 40 min \u00b7 +4/\u22121",
+    url:"ipmat_indore_va_challenge_mock_05.html",
+    locked:true,
+    opensAt: Date.UTC(2026,9,7,14,30,0),    /* Wed 7 Oct 2026, 20:00 IST */
+    closesAt: Date.UTC(2026,9,13,18,30,0)   /* Wed 14 Oct 2026, 00:00 IST */
+  },
 ];
 
 function fmtRemain(ms){
@@ -756,6 +769,15 @@ function updateEventCard(){
   document.getElementById('evTitle').textContent=ev.t;
   const dot=document.getElementById('evDot'), go=document.getElementById('evGo'),
         sub=document.getElementById('evSub'), eb=document.getElementById('evEyebrow');
+  if(ev.locked && now >= ev.opensAt){
+    card.style.display='flex'; card.classList.add('locked','tap');
+    eb.innerHTML='<span class="live-dot"></span>NEW \u00b7 CHALLENGE SERIES';
+    sub.innerHTML=ev.sub;
+    go.textContent='\ud83d\udd12 Locked';
+    card.onclick=()=>{ location.href = PORTAL_BASE + ev.url; };
+    return;
+  }
+  card.classList.remove('tap');
   if(now < ev.opensAt){
     card.style.display='flex'; card.classList.add('locked');
     dot.style.display='none';
