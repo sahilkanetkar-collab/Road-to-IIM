@@ -121,6 +121,9 @@ header{
   color:var(--ivory);font-family:'DM Sans',sans-serif;width:calc(100% - 2*clamp(20px,6vw,72px));
   transition:box-shadow .2s ease, transform .2s ease;
 }
+.eventcard.hero{background:linear-gradient(150deg,rgba(212,169,78,.22),rgba(20,26,51,.75));border:1.5px solid rgba(212,169,78,.9);box-shadow:0 0 22px rgba(212,169,78,.25);}
+.eventcard.hero .nu-eyebrow{color:#D4A94E;}
+.eventcard.hero .nu-title{font-size:1.18rem;}
 .eventcard:hover{box-shadow:0 0 26px rgba(231,140,80,.35);transform:translateY(-1px);}
 .eventcard .spark{
   width:36px;height:36px;flex:0 0 36px;border-radius:50%;
@@ -324,15 +327,7 @@ footer{position:relative;z-index:2;padding:20px clamp(20px,6vw,72px) 40px;font-s
   <div class="count" id="skyCount"></div>
 </div>
 
-<button class="eventcard" id="eventCard">
-  <span class="spark">⚡</span>
-  <span class="nu-body">
-    <span class="nu-eyebrow" id="evEyebrow"><span class="live-dot" id="evDot"></span>LIMITED WINDOW</span>
-    <span class="nu-title" id="evTitle"></span>
-    <span class="nu-sub" id="evSub"></span>
-  </span>
-  <span class="nu-go" id="evGo">Enter</span>
-</button>
+<div id="eventCards"></div>
 
 <button class="nextup" id="nextUp">
   <div class="spark">✦</div>
@@ -753,6 +748,16 @@ const EVENTS = [
     opensAt: Date.UTC(2026,9,8,14,0,0),     /* Thu 8 Oct 2026, 19:30 IST */
     closesAt: Date.UTC(2026,9,14,18,30,0)   /* Thu 15 Oct 2026, 00:00 IST */
   },
+  /* hero:true = gold, shown above every other card. eyebrow overrides the top label.
+     noWindow:true = open-anytime test (no "Ends in" countdown once unlocked). */
+  { t:"Adaptive Test 01",
+    sub:"Vocab + Grammar \u00b7 20 Qs that adjust to you \u00b7 30 min \u00b7 level 1\u20135",
+    url:"RoadToIIM_Adaptive01_VocabGrammar.html",
+    locked:true, hero:true, noWindow:true,
+    eyebrow:"\u2605 FIRST EVER \u00b7 ADAPTIVE TEST",
+    opensAt: Date.UTC(2026,9,10,12,30,0),   /* Sat 10 Oct 2026, 18:00 IST */
+    closesAt: Date.UTC(2026,11,31,18,30,0)  /* Fri 1 Jan 2027, 00:00 IST */
+  },
 ];
 
 function fmtRemain(ms){
@@ -764,36 +769,39 @@ function fmtRemain(ms){
 }
 
 function updateEventCard(){
-  const card=document.getElementById('eventCard');
+  /* one card per not-yet-closed event; hero cards first */
+  const box=document.getElementById('eventCards');
   const now=Date.now();
-  const ev=EVENTS.find(e=>now < e.closesAt);   /* first not-yet-closed event */
-  if(!ev){ card.style.display='none'; return; }
-  document.getElementById('evTitle').textContent=ev.t;
-  const dot=document.getElementById('evDot'), go=document.getElementById('evGo'),
-        sub=document.getElementById('evSub'), eb=document.getElementById('evEyebrow');
-  if(ev.locked && now >= ev.opensAt){
-    card.style.display='flex'; card.classList.add('locked','tap');
-    eb.innerHTML='<span class="live-dot"></span>NEW \u00b7 CHALLENGE SERIES';
-    sub.innerHTML=ev.sub;
-    go.textContent='\ud83d\udd12 Locked';
-    card.onclick=()=>{ location.href = PORTAL_BASE + ev.url; };
-    return;
-  }
-  card.classList.remove('tap');
-  if(now < ev.opensAt){
-    card.style.display='flex'; card.classList.add('locked');
-    dot.style.display='none';
-    eb.childNodes[1].textContent='';
-    eb.innerHTML='<span class="live-dot" id="evDot" style="display:none"></span>OPENS SOON';
-    sub.innerHTML=ev.sub+' · Opens in <span class="ev-timer">'+fmtRemain(ev.opensAt-now)+'</span>';
-    go.textContent='Locked'; card.onclick=null;
-  }else{
-    card.style.display='flex'; card.classList.remove('locked');
-    eb.innerHTML='<span class="live-dot"></span>LIVE · LIMITED WINDOW';
-    sub.innerHTML=ev.sub+' · Ends in <span class="ev-timer">'+fmtRemain(ev.closesAt-now)+'</span>';
-    go.textContent='Enter';
-    card.onclick=()=>{ location.href = PORTAL_BASE + ev.url; };
-  }
+  const evs=EVENTS.filter(e=>now < e.closesAt).sort((a,b)=>(b.hero?1:0)-(a.hero?1:0));
+  while(box.children.length>evs.length) box.removeChild(box.lastChild);
+  evs.forEach((ev,i)=>{
+    let card=box.children[i];
+    if(!card){
+      card=document.createElement('button');
+      card.innerHTML='<span class="spark"></span><span class="nu-body"><span class="nu-eyebrow"></span><span class="nu-title"></span><span class="nu-sub"></span></span><span class="nu-go"></span>';
+      box.appendChild(card);
+    }
+    card.className='eventcard'+(ev.hero?' hero':'');
+    card.style.display='flex';
+    card.querySelector('.spark').textContent=ev.hero?'\u2726':'\u26a1';
+    card.querySelector('.nu-title').textContent=ev.t;
+    const eb=card.querySelector('.nu-eyebrow'), sub=card.querySelector('.nu-sub'), go=card.querySelector('.nu-go');
+    const open=()=>{ location.href = PORTAL_BASE + ev.url; };
+    if(ev.locked && now >= ev.opensAt){
+      card.classList.add('locked','tap');
+      eb.innerHTML='<span class="live-dot"></span>'+(ev.eyebrow||'NEW \u00b7 CHALLENGE SERIES');
+      sub.innerHTML=ev.sub; go.textContent='\ud83d\udd12 Locked'; card.onclick=open;
+    }else if(now < ev.opensAt){
+      card.classList.add('locked');
+      eb.innerHTML='OPENS SOON';
+      sub.innerHTML=ev.sub+' \u00b7 Opens in <span class="ev-timer">'+fmtRemain(ev.opensAt-now)+'</span>';
+      go.textContent='Locked'; card.onclick=null;
+    }else{
+      eb.innerHTML='<span class="live-dot"></span>'+(ev.eyebrow||'LIVE \u00b7 LIMITED WINDOW');
+      sub.innerHTML=ev.noWindow?ev.sub:ev.sub+' \u00b7 Ends in <span class="ev-timer">'+fmtRemain(ev.closesAt-now)+'</span>';
+      go.textContent=ev.noWindow?'Start':'Enter'; card.onclick=open;
+    }
+  });
 }
 setInterval(updateEventCard,1000);
 updateEventCard();
