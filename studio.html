@@ -114,7 +114,25 @@ details div{font-size:13px;color:var(--mut);white-space:pre-wrap;padding:8px 0;l
 
 <script>
 // ══════════════════════════════════════════════════════════════
-//  TEST BUILDER STUDIO v2.8.1 — ASSEMBLY & EXPORT ONLY
+//  TEST BUILDER STUDIO v2.9 ("CEREBRUS") — ASSEMBLY & EXPORT ONLY
+//  v2.9 (15 Oct 2026): ADAPTIVE RAPID MODE — meta.timerMode
+//  "perQuestion" + meta.adaptive {serve, start} exports a rapid test
+//  that routes by band: right → one band up, wrong/blank/timed out →
+//  one band down; first unused question of the band, nearest band if
+//  empty; stops after `serve` questions, maxMarks = serve × c.
+//   · Resume re-serves the stored sequence (IDs + bands); a refresh
+//     never re-rolls the routing. Early Submit fills the remaining
+//     slots as unanswered (routing down), so the attempt is always
+//     `serve` long.
+//   · Payload: same 16 fields. wrongQuestions = real IDs; student
+//     Answers / questionTimes = objects keyed by real ID in served
+//     order. Unserved pool questions appear nowhere.
+//   · Results: "You climbed to" + band strip inside the Easy · Medium
+//     · Hard card; PDF gets the same as one line. Mistake Bank keys
+//     on the real ID.
+//   · Gate 1: adaptive checks + per-band key balance.
+//   · Non-adaptive exports are byte-identical to v2.8.1 (every
+//     template insert is empty without meta.adaptive).
 //  v2.8.1 (7 Oct 2026): three hand fixes from the Indore 03/04 uploads
 //  now come out of the exporter:
 //   · Parajumbles marked by the stem rule: 3412 valid; 3412. and
@@ -297,6 +315,17 @@ function runAudit(meta,qs){
  if(rapid&&meta.sectionTimers)errs.push("meta.sectionTimers and timerMode \u2018perQuestion\u2019 are mutually exclusive.");
  if(rapid&&meta.timerMinutes!=null)warns.push("meta.timerMinutes is ignored in rapid mode \u2014 per-question td values govern.");
  if(!rapid&&cfg.timing==="locked"&&tt==="full"&&meta.timerMinutes!=null)warns.push("meta.timerMinutes = "+meta.timerMinutes+" replaces the sectional lock with ONE clock for the whole mock. Set timerMinutes to null for the official "+cfg.secMinutes+"-min sections.");
+ // v2.9 adaptive rapid — meta checks
+ const adaptive=meta.adaptive!=null;
+ if(adaptive){
+  const ad=meta.adaptive;
+  if(typeof ad!=="object"||Array.isArray(ad))errs.push("meta.adaptive must be an object like {\"serve\":35,\"start\":\"medium\"}.");
+  else{
+   if(!Number.isInteger(ad.serve)||ad.serve<1)errs.push("meta.adaptive.serve must be a whole number of questions (got \u2018"+String(ad.serve)+"\u2019).");
+   if(ad.start!=null&&["easy","medium","hard"].indexOf(String(ad.start).trim().toLowerCase())===-1)errs.push("meta.adaptive.start must be easy, medium or hard (got \u2018"+String(ad.start)+"\u2019).");
+  }
+  if(!rapid)errs.push("meta.adaptive needs meta.timerMode \u2018perQuestion\u2019 \u2014 adaptive delivery is a rapid-mode feature.");
+ }
  if(meta.titaW!=null&&(typeof meta.titaW!=="number"||meta.titaW>0))errs.push("meta.titaW must be 0 or a negative number (got \u2018"+meta.titaW+"\u2019).");
  if(meta.sectionTimers!=null){
   if(typeof meta.sectionTimers!=="object"||Array.isArray(meta.sectionTimers))errs.push("meta.sectionTimers must be an object like {\"QA-SA\":40}.");
@@ -307,6 +336,7 @@ function runAudit(meta,qs){
  // Per-question checks
  const counts={},ids={},stems={};
  const R1=[],R3=[],R4=[],badSec=[],badStatus=[];
+ const adBadDiff=[],adBands={easy:[],medium:[],hard:[]}; // v2.9
  qs.forEach((q,i)=>{
   const tag=q.id?String(q.id):("index "+i);
   if(!q.id)errs.push("Question at index "+i+" has no id.");
@@ -318,6 +348,12 @@ function runAudit(meta,qs){
   if(!q.stem||!String(q.stem).trim())errs.push(tag+": empty stem.");
   else{const key=[String(q.stem).trim(),String(q.passage||"").trim(),(Array.isArray(q.options)?q.options.map(o=>String(o).trim()).join("\u241F"):"")].join("\u2400");if(stems[key])warns.push("Exact duplicate question: "+tag+" repeats "+stems[key]+" (identical stem, passage, and options).");else stems[key]=tag}
   if(!q.format||!String(q.format).trim())warns.push(tag+": empty format label \u2014 topicErrors tracking will fragment.");
+  if(adaptive){
+   const dl=String(q.difficulty??"").trim().toLowerCase();
+   if(["easy","medium","hard"].indexOf(dl)===-1)adBadDiff.push(tag+" ("+String(q.difficulty)+")");
+   else adBands[dl].push(q);
+   if(!rapid&&(q.kind==="tita"||!(q.options&&q.options.length)))errs.push(tag+": adaptive mode is MCQ only.");
+  }
   if(rapid){
    if(q.kind==="tita"||!(q.options&&q.options.length))errs.push(tag+": TITA is not supported in rapid mode (per-question clock is tap-and-advance only).");
    if(!Number.isInteger(q.td)||q.td<10||q.td>300)errs.push(tag+": rapid mode needs integer td between 10 and 300 seconds (got "+String(q.td)+").");
@@ -361,7 +397,28 @@ function runAudit(meta,qs){
    else if(have!==want)warns.push(sec+": "+have+" question(s) vs official section count "+want+" \u2014 fine for a drill, flagging for awareness.");
   }
  });
- if(rapid&&!errs.length){const bud=qs.reduce((a,q)=>a+(q.td||0),0);warns.push("Rapid budget: "+Math.floor(bud/60)+"m"+String(bud%60).padStart(2,"0")+"s across "+qs.length+" Q \u2014 per-question clocks, no master timer.")}
+ if(adaptive&&meta.adaptive&&typeof meta.adaptive==="object"&&Number.isInteger(meta.adaptive.serve)){
+  const serve=meta.adaptive.serve;
+  if(adBadDiff.length)errs.push("Adaptive: difficulty must be easy, medium or hard on every question: "+adBadDiff.join(" \u00b7 "));
+  if(serve>qs.length)errs.push("Adaptive: serve ("+serve+") is larger than the pool ("+qs.length+" questions).");
+  else{
+   const tot=adBands.easy.length+adBands.medium.length+adBands.hard.length;
+   if(tot<serve)errs.push("HARD BLOCK \u2014 adaptive pool has "+tot+" usable question(s), fewer than serve ("+serve+").");
+  }
+  ["easy","medium","hard"].forEach(b=>{
+   const n=adBands[b].length;
+   if(n<serve/3)warns.push("Adaptive: "+b+" band has "+n+" question(s), under serve/3 ("+(Math.round(serve/3*10)/10)+") \u2014 the router may fall back to a neighbouring band.");
+   const mcq=adBands[b].filter(q=>Array.isArray(q.options)&&q.options.length===4&&Number.isInteger(q.answerIndex));
+   if(mcq.length>=4){ // per-band key balance (not whole-pool)
+    const k=[0,0,0,0];mcq.forEach(q=>{if(q.answerIndex>=0&&q.answerIndex<4)k[q.answerIndex]++});
+    const cap=Math.ceil(mcq.length/4)+1;
+    if(k.some(x=>x===0)||k.some(x=>x>cap))warns.push("Adaptive key balance \u2014 "+b+" band A/B/C/D = "+k.join("/")+" (want roughly even, none above "+cap+", none at 0).");
+   }
+  });
+ }
+ if(rapid&&!errs.length){const bud=qs.reduce((a,q)=>a+(q.td||0),0);
+  if(adaptive&&meta.adaptive&&Number.isInteger(meta.adaptive.serve)){const est=Math.round(bud/qs.length*meta.adaptive.serve);warns.push("Adaptive rapid: serves "+meta.adaptive.serve+" of "+qs.length+" \u00b7 starts "+String(meta.adaptive.start||"medium").toLowerCase()+" \u00b7 ~"+Math.floor(est/60)+"m"+String(est%60).padStart(2,"0")+"s at the pool's average td \u00b7 max "+(meta.adaptive.serve*cfg.marking.c)+".")}
+  else warns.push("Rapid budget: "+Math.floor(bud/60)+"m"+String(bud%60).padStart(2,"0")+"s across "+qs.length+" Q \u2014 per-question clocks, no master timer.")}
  return {errs,warns,counts,examKey};
 }
 
@@ -374,6 +431,15 @@ function deriveDelivery(){
  if(typeof S.meta.titaW==="number"){mk.titaW=S.meta.titaW;mk.titaWSec=null} // v2.5 envelope override applies to all TITA
  const st=(S.meta.sectionTimers&&typeof S.meta.sectionTimers==="object")?S.meta.sectionTimers:{};
  const secMin=sec=>(typeof st[sec]==="number"&&st[sec]>0)?st[sec]:cfg.secMinutes;
+ if(S.meta.timerMode==="perQuestion"&&S.meta.adaptive&&typeof S.meta.adaptive==="object"){ // v2.9 adaptive rapid
+  const bud=S.qs.reduce((a,q)=>a+(q.td||0),0),serve=S.meta.adaptive.serve;
+  const st=String(S.meta.adaptive.start||"medium").trim().toLowerCase();
+  const est=Math.round(bud/S.qs.length*serve);
+  return {examKey,cfg,isFull,minutes:Math.max(1,Math.ceil(est/60)),navNote:"adaptive rapid \u00b7 serves "+serve+" of "+S.qs.length+" \u00b7 per-question clock \u00b7 forward only",blocked:null,
+   timerSrc:"per-question td (~"+Math.floor(est/60)+"m"+String(est%60).padStart(2,"0")+"s for "+serve+" served)",mk,max:serve*mk.c,sectional:null,rapid:true,
+   adaptive:{serve:serve,start:["easy","medium","hard"].indexOf(st)===-1?"medium":st},
+   title:String(S.meta.testName||cfg.name+" \u00b7 Test")};
+ }
  if(S.meta.timerMode==="perQuestion"){ // v2.4 rapid — bypasses single/locked timing entirely
   const bud=S.qs.reduce((a,q)=>a+(q.td||0),0);
   return {examKey,cfg,isFull,minutes:Math.max(1,Math.ceil(bud/60)),navNote:"rapid \u00b7 per-question clock \u00b7 forward only",blocked:null,
@@ -522,11 +588,91 @@ function exportHTML(){
   });
  }
  const meta={title:d.title,exam:d.cfg.name,qcount:qsOut.length,minutes:d.minutes,c:d.mk.c,w:d.mk.w,titaW:d.mk.titaW,titaWSec:d.mk.titaWSec||null,max:d.max,navNote:/override/.test(d.navNote)?"free navigation":d.navNote, /* v2.8.1: the desk note is internal; students see plain wording */sectional:secPlan,rapid:!!d.rapid};
+ if(d.adaptive)meta.adaptive=d.adaptive; // v2.9
  const name=d.examKey.toLowerCase()+"_"+slug(d.title)+".html";
  const content=buildTestHTML(meta,qsOut,name);
  download(name,content,"text/html");openExportModal(name,content,"text/html");
  S.notice="Exported \u00b7 "+S.qs.length+" Q \u00b7 "+d.minutes+" min ("+d.timerSrc+") \u00b7 max "+d.max+" \u00b7 "+d.navNote;
 }
+
+// ── v2.9 adaptive runtime (inserted into the export only when meta.adaptive is set) ──
+const AD_CSS=String.raw`
+/* v2.9 adaptive band strip */
+.adStrip{display:flex;align-items:flex-end;gap:2px;height:58px;margin:10px 0 6px;padding:0 1px}
+.adStrip i{flex:1 1 0;min-width:0;height:16px;border-radius:3px;font-style:normal;font-family:"DM Mono";font-size:9px;line-height:16px;text-align:center;color:var(--navy);overflow:hidden;cursor:pointer}
+.adStrip i.b1{margin-bottom:20px}.adStrip i.b2{margin-bottom:40px}
+.adStrip i.c{background:rgba(78,160,130,.85)}.adStrip i.w{background:var(--red)}.adStrip i.s{background:rgba(139,148,168,.5)}
+.adAxis{display:flex;justify-content:space-between;font-family:"DM Mono";font-size:9.5px;color:var(--mut)}
+@media(max-width:480px){.adStrip i{font-size:0}}`;
+const AD_HEAD=String.raw`
+/* ==================== ADAPTIVE ROUTER (v2.9) ====================
+   QUESTIONS starts as the whole pool; it becomes the SERVED list,
+   filled one slot at a time. Right answer: one band up. Wrong, blank
+   or timed out: one band down. First unused question of the band;
+   if that band is empty, the nearest band with stock. */
+var AD=CFG.adaptive,POOL=QUESTIONS,AD_B=["easy","medium","hard"],adSeq=[],adBands=[],adTargets=[]; /* adBands = served question's band; adTargets = band the student had earned (routing state) */
+QUESTIONS=new Array(AD.serve);NQ=AD.serve;
+function adBandOf(q){var d=diffOf(q);var b=d?AD_B.indexOf(d):1;return b<0?1:b}
+function adFirstLeft(b){for(var i=0;i<POOL.length;i++){if(adBandOf(POOL[i])===b&&adSeq.indexOf(i)===-1)return i}return -1}
+function adPick(t,dir){
+ var p=adFirstLeft(t);if(p!==-1)return {p:p,b:t};
+ var alt=t===0?[1,2]:(t===2?[1,0]:(dir>0?[2,0]:[0,2])); /* empty band: nearest first; medium empty follows the move */
+ for(var k=0;k<alt.length;k++){p=adFirstLeft(alt[k]);if(p!==-1)return {p:p,b:alt[k]}}
+ return null;
+}
+function adServe(k,t,dir){var r=adPick(t,dir);if(!r)return false;adSeq[k]=r.p;adBands[k]=r.b;adTargets[k]=t;QUESTIONS[k]=POOL[r.p];return true}
+function adRoute(k){
+ if(k+1>=NQ||QUESTIONS[k+1])return; /* already served (resume): never re-roll */
+ var a=answers[k],ok=!(a===null||a===""||a===undefined)&&isCorrect(QUESTIONS[k],a);
+ var dir=ok?1:-1;
+ adServe(k+1,Math.max(0,Math.min(2,adTargets[k]+dir)),dir); /* route from the earned band, not a fallback */
+}
+function adFillRest(){for(var k=0;k<NQ-1;k++){if(!QUESTIONS[k+1])adRoute(k)}}
+function adIdList(){return adSeq.map(function(p){return String(POOL[p].id)})}
+function adRestore(s){
+ if(!Array.isArray(s.adIds)||!s.adIds.length||s.adIds.length>NQ)return false;
+ var seq=[];
+ for(var k=0;k<s.adIds.length;k++){
+  var p=-1;for(var i=0;i<POOL.length;i++){if(String(POOL[i].id)===String(s.adIds[k])){p=i;break}}
+  if(p===-1||seq.indexOf(p)!==-1)return false;seq.push(p);
+ }
+ adSeq=seq;adBands=seq.map(function(p){return adBandOf(POOL[p])});
+ adTargets=(Array.isArray(s.adTargets)&&s.adTargets.length===seq.length)?s.adTargets.map(function(t){return Math.max(0,Math.min(2,t|0))}):adBands.slice();
+ QUESTIONS=new Array(NQ);for(var j=0;j<seq.length;j++)QUESTIONS[j]=POOL[seq[j]];
+ if(typeof s.currentQ!=="number"||s.currentQ>seq.length-1)s.currentQ=seq.length-1;
+ return true;
+}
+function adPayload(P){
+ var wq=[],sa={},qt={};
+ QUESTIONS.forEach(function(q,i){
+  var id=String(q.id),a=answers[i];
+  sa[id]=(a===undefined?null:a);qt[id]=questionTimes[i]||0;
+  if(!(a===null||a===""||a===undefined)&&!isCorrect(q,a))wq.push(id);
+ });
+ P.wrongQuestions=JSON.stringify(wq);P.studentAnswers=JSON.stringify(sa);P.questionTimes=JSON.stringify(qt);
+}
+function adTop(){var t=0;for(var k=0;k<adTargets.length;k++)if(adTargets[k]>t)t=adTargets[k];return t}
+function adClimbHTML(A){
+ var L=["E","M","H"],H='<div class="rung"><div class="rungTop"><span>You climbed to: <b class="gold" style="font-family:Fraunces,serif;font-size:15px">'+capW(AD_B[adTop()])+'</b></span><b class="dim">'+plural(adBands.length,"question","questions")+' served</b></div>';
+ H+='<div class="adStrip">';
+ for(var k=0;k<adBands.length;k++){
+  var o=A.out[k]||"s";
+  H+='<i class="b'+adBands[k]+' '+o+'" data-q="'+k+'" title="Q'+(k+1)+' &middot; '+capW(AD_B[adBands[k]])+' &middot; '+outWord(o)+'">'+L[adBands[k]]+'</i>';
+ }
+ H+='</div><div class="adAxis"><span>Q1</span><span>Q'+adBands.length+'</span></div>';
+ H+='<div class="rungSub" style="margin-top:6px">Each block is one question, in the order you got them. Higher means harder. A right answer took you up a level; a wrong or blank one took you down.</div></div>';
+ return H;
+}
+function adPdfLine(){
+ var L=["E","M","H"];
+ return "You climbed to: "+capW(AD_B[adTop()])+". Level of each question in order: "+adBands.map(function(b){return L[b]}).join(" ");
+}
+function adLoginNote(){
+ var m=document.getElementById("lgMeta");
+ if(m)m.innerHTML+="<br>adaptive &middot; a right answer makes the next question harder, a wrong or blank one makes it easier";
+}
+adServe(0,AD_B.indexOf(String(AD.start||"medium"))===-1?1:AD_B.indexOf(String(AD.start||"medium")),0);
+`;
 
 // ── Portal-wired test export (Road to IIM production format) ──
 const SCRIPT_URL="https://script.google.com/macros/s/AKfycbx5Ojm_zp4LfsMeelx5e06KNjVH1wfsXdV0keS4407m4FO1HU4EpVb7GKj-ibAsxnspeA/exec";
@@ -535,7 +681,10 @@ function buildTestHTML(meta,qs,fileName){
  const data=JSON.stringify(qs).replace(/</g,"\\u003c");
  const hasTita=qs.some(q=>!(q.options&&q.options.length));
  const titaW=(meta.titaW!==undefined&&meta.titaW!==null)?meta.titaW:meta.w;
- const cfg=JSON.stringify({testName:meta.title,examName:meta.exam,maxMarks:meta.max,minutes:meta.minutes,c:meta.c,w:meta.w,titaW:titaW,titaWSec:meta.titaWSec||null,hasTita:hasTita,navNote:meta.navNote||"free navigation",sectional:meta.sectional||null,fileName:fileName,snKey:"riim_session_"+slug(meta.title),bankPrefix:slug(meta.title),rapid:!!meta.rapid}).replace(/</g,"\\u003c");
+ const cfgO={testName:meta.title,examName:meta.exam,maxMarks:meta.max,minutes:meta.minutes,c:meta.c,w:meta.w,titaW:titaW,titaWSec:meta.titaWSec||null,hasTita:hasTita,navNote:meta.navNote||"free navigation",sectional:meta.sectional||null,fileName:fileName,snKey:"riim_session_"+slug(meta.title),bankPrefix:slug(meta.title),rapid:!!meta.rapid};
+ const AD=meta.adaptive||null; // v2.9: every AD insert below is "" without it, so non-adaptive exports stay byte-identical
+ if(AD)cfgO.adaptive=AD;
+ const cfg=JSON.stringify(cfgO).replace(/</g,"\\u003c");
  return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -695,7 +844,7 @@ table.anaT td:first-child,table.anaT th:first-child{text-align:left;font-family:
 .opt.rNo{border-color:var(--red);background:rgba(192,85,85,.15)}
 .opt:disabled{cursor:default}
 details summary{cursor:pointer;color:var(--gold);margin-bottom:4px}
-@media(max-width:560px){.vH{font-size:19px}.pal2{grid-template-columns:repeat(auto-fill,minmax(48px,1fr))}}
+@media(max-width:560px){.vH{font-size:19px}.pal2{grid-template-columns:repeat(auto-fill,minmax(48px,1fr))}}${AD?AD_CSS:""}
 </style>
 </head>
 <body>
@@ -769,7 +918,7 @@ var CFG=${cfg};
 var QUESTIONS=${data};
 var SCRIPT_URL="https://script.google.com/macros/s/AKfycbx5Ojm_zp4LfsMeelx5e06KNjVH1wfsXdV0keS4407m4FO1HU4EpVb7GKj-ibAsxnspeA/exec";
 var TEST_NAME=CFG.testName, MAX_MARKS=CFG.maxMarks, FILE_NAME=CFG.fileName, SN_KEY=CFG.snKey;
-var NQ=QUESTIONS.length;
+var NQ=QUESTIONS.length;${AD?AD_HEAD:""}
 var PIN_REGEX=/^(STU|IMS)\\d{10}$/;
 var BLOCK_MSG="This PIN isn't on the active student list. Message Sahil Sir if you think this is a mistake.";
 
@@ -826,7 +975,7 @@ function isMCQ(q){return !!(q.options&&q.options.length)}
 /* ==================== SESSION AUTOSAVE / RESUME ==================== */
 function snSaveSession(){
  if(testOver||!started)return;
- snWriteJSON(SN_KEY,{file:FILE_NAME,testName:TEST_NAME,name:studentName,pin:studentPin,batch:studentBatch,currentQ:currentQ,answers:answers,questionTimes:questionTimes,marked:marked,secondsLeft:secondsLeft,deadline:deadline,secIdx:secIdx,elapsedPrior:elapsedPrior,qStartTs:qStartTs,visits:visits,ts:Date.now()});
+ snWriteJSON(SN_KEY,{file:FILE_NAME,testName:TEST_NAME,name:studentName,pin:studentPin,batch:studentBatch,currentQ:currentQ,answers:answers,questionTimes:questionTimes,marked:marked,secondsLeft:secondsLeft,deadline:deadline,secIdx:secIdx,elapsedPrior:elapsedPrior,qStartTs:qStartTs,visits:visits${AD?",adIds:adIdList(),adBands:adBands,adTargets:adTargets":""},ts:Date.now()});
 }
 function snClearSession(){try{localStorage.removeItem(SN_KEY)}catch(e){}}
 function snTryResume(){
@@ -834,7 +983,7 @@ function snTryResume(){
  if(!s||s.testName!==TEST_NAME)return false;
  var answered=(s.answers||[]).filter(function(a){return a!==null&&a!==""}).length;
  var ok=confirm("You have an unfinished attempt of "+TEST_NAME+" ("+answered+" question(s) answered). Resume where you left off?");
- if(!ok){snClearSession();return false}
+ if(!ok){snClearSession();return false}${AD?"\n if(!adRestore(s)){snClearSession();alert(\"Could not restore the earlier attempt. Starting fresh.\");return false}":""}
  studentName=s.name;studentPin=s.pin;studentBatch=s.batch;
  currentQ=Math.min(s.currentQ||0,NQ-1);
  if(s.answers&&s.answers.length===NQ)answers=s.answers;
@@ -1053,7 +1202,7 @@ function rapidAdvance(){
  if(testOver)return;
  clearInterval(qInterval);
  questionTimes[currentQ]=(QUESTIONS[currentQ].td||30)-qSecondsLeft;
- if(currentQ>=NQ-1){submitTest();return}
+ if(currentQ>=NQ-1){submitTest();return}${AD?"\n adRoute(currentQ); /* v2.9: serve the next slot from the band this answer earned */":""}
  currentQ++;
  snSaveSession();
  renderQuestion();
@@ -1107,7 +1256,7 @@ function bankMistakes(){
    if(!isMCQ(q))return;
    var chosen=answers[i];
    if(chosen===null||chosen===q.answerIndex)return;
-   var k=CFG.bankPrefix+"-Q"+(i+1);
+   var k=CFG.bankPrefix+"-Q"+(i+1);${AD?"\n   k=CFG.bankPrefix+\"-\"+q.id; /* v2.9: positions differ per attempt */":""}
    var existing=null;
    for(var j=0;j<bank.length;j++){if(bank[j].k===k){existing=bank[j];break}}
    if(existing){existing.box=1;existing.due=now+DAY;existing.chosen=chosen}
@@ -1126,7 +1275,7 @@ function submitTest(){
  clearInterval(tickInt);
  if(qInterval)clearInterval(qInterval);
  if(RAPID&&qStartTs&&!questionTimes[currentQ]){questionTimes[currentQ]=Math.min(QUESTIONS[currentQ].td||30,Math.round((Date.now()-qStartTs)/1000))}
- markTime();
+ markTime();${AD?"\n adFillRest(); /* v2.9: early submit \u2014 unreached slots are served as unanswered */":""}
 
  var correctCount=0,wrongCount=0,skippedCount=0;
  var sectionErrors={},topicErrorMap={},wrongQuestions=[];
@@ -1164,7 +1313,7 @@ function submitTest(){
   studentAnswers:JSON.stringify(answers),
   questionTimes:JSON.stringify(questionTimes),
   topicErrors:JSON.stringify(topicErrorMap)
- };
+ };${AD?"\n adPayload(payload); /* v2.9: same 16 fields; IDs instead of positions */":""}
 
  snSendWithQueue({method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain"},body:JSON.stringify(payload)}).catch(function(){});
 
@@ -1512,7 +1661,7 @@ function cardLadder(A){
   H+="<div class=\\"rung\\"><div class=\\"rungTop\\"><span>"+capW(k)+" <span class=\\"dim\\">&middot; "+plural(b.n,"question","questions")+"</span></span><b class=\\""+(b.net<0?"no":(b.net>0?"ok":"dim"))+"\\">net "+sgn(b.net)+"</b></div>";
   H+="<div class=\\"mini\\"><i class=\\"c\\" style=\\"width:"+(100*b.c/b.n).toFixed(1)+"%\\"></i><i class=\\"w\\" style=\\"width:"+(100*b.w/b.n).toFixed(1)+"%\\"></i><i class=\\"s\\" style=\\"width:"+(100*b.s/b.n).toFixed(1)+"%\\"></i></div>";
   H+="<div class=\\"rungSub\\">"+b.c+" right &middot; "+b.w+" wrong &middot; "+b.s+" blank"+(b.o?" &middot; avg "+fmtMS(b.t/b.o):"")+"</div></div>";
- });
+ });${AD?"\n H+=adClimbHTML(A);":""}
  return H+"</div>";
 }
 function cardClock(A){
@@ -1650,7 +1799,7 @@ function analysisLines(A){
  if(A.hasDiff){
   var d=[];
   ["easy","medium","hard"].forEach(function(k){var b=A.diff[k];if(!b.n)return;d.push(capW(k)+": "+b.n+" Qs"+dot+b.c+" right"+dot+b.w+" wrong"+dot+b.s+" blank"+dot+"net "+sgnA(b.net)+(b.o?dot+"avg "+fmtMS(b.t/b.o):""))});
-  L.push(["Easy / Medium / Hard",d]);
+  ${AD?"d.push(adPdfLine());":""}L.push(["Easy / Medium / Hard",d]);
  }
  var unused=Math.max(0,A.avail-A.used);
  var t=["Right "+fmtMS(A.tC)+dot+"wrong "+fmtMS(A.tW)+(A.tS>=1?dot+"blank "+fmtMS(A.tS):"")+(unused>=1?dot+"not used "+fmtMS(unused):"")];
@@ -1775,7 +1924,7 @@ function downloadPDF(){
 document.getElementById("lgTitle").textContent=TEST_NAME;
 var lgTime=CFG.rapid?("per-question clock \\u00b7 forward only \\u00b7 auto-advance at 0s \\u00b7 ~"+CFG.minutes+" min total"):SEC?(SEC.map(function(p){return p.sec+" "+p.minutes+"m"}).join(" \\u2192 ")+" \\u00b7 sectional lock \\u00b7 no return"):(CFG.minutes+" minutes \\u00b7 "+(CFG.navNote||"free navigation"));
 document.getElementById("lgMeta").innerHTML=NQ+" questions \\u00b7 +"+CFG.c+" / "+CFG.w+(CFG.hasTita?" \\u00b7 TITA wrong "+(CFG.titaWSec?QUESTIONS.filter(function(q){return !isMCQ(q)}).map(function(q){return q.section}).filter(function(v,i,a){return a.indexOf(v)===i}).map(function(sec){return sec+" "+titaWFor({section:sec})}).join(", "):CFG.titaW):"")+" \\u00b7 Max "+MAX_MARKS+"<br>"+lgTime+" \\u00b7 auto-submit at 00:00";
-document.getElementById("loginBtn").addEventListener("click",startTest);
+document.getElementById("loginBtn").addEventListener("click",startTest);${AD?"\nadLoginNote();":""}
 snFlushQueue();
 snTryResume();
 <\/script>
