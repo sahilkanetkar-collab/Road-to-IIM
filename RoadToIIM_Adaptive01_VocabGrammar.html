@@ -574,7 +574,7 @@ function applyLock(){
    resumed and submitted after it closes. Admin preview (?admin=1 + Admin batch) ignores the window. */
 var WINDOW={opensAt:Date.UTC(2026,9,11,14,30,0),  /* Sun 11 Oct 2026, 8:00 PM IST */
             closesAt:Date.UTC(2026,9,13,18,30,0) /* Wed 14 Oct 2026, 12:00 AM IST */};
-function windowState(){var n=Date.now();if(n<WINDOW.opensAt)return "before";if(n>=WINDOW.closesAt)return "after";return "open"}
+function windowState(){return "open"; /* OPEN ANYTIME from 16 Oct 2026 (moved to Grammar Drills); delete this return to re-enable the window */ var n=Date.now();if(n<WINDOW.opensAt)return "before";if(n>=WINDOW.closesAt)return "after";return "open"}
 function windowMsg(st){return st==="before"
  ?"This test opens Sunday 11 October, 8:00 PM IST and closes Wednesday 14 October, 12:00 AM IST."
  :"This test window has closed (it ran 11\u201313 October). Scores are no longer accepted."}
