@@ -358,8 +358,8 @@ const PORTAL_BASE = ""; // same directory as the test files
 /* ═══ MANIFEST ═══
    sheetName matches the exact testName written to All Responses.
    matchNum lets "Road to IIM Test 19" and "Road to IIM Paper 19" both count. */
-const MANIFEST = [
-  { id:"standard", name:"Standard Tests", desc:"Full 30-minute mixed VA papers · +4 / −1",
+const MANIFEST_ALL = [
+  { id:"standard", hidden:true, name:"Standard Tests", desc:"Full 30-minute mixed VA papers · +4 / −1",
     tests:[
       {t:"Test 9",  url:"RoadToIIM_Test9_OnlineTest.html",  matchNum:9},
       {t:"Test 11", url:"RoadToIIM_Test11_OnlineTest.html", matchNum:11},
@@ -380,16 +380,16 @@ const MANIFEST = [
   { id:"challenge", name:"Challenge Series", desc:"Limited-window mocks · real exam patterns",
     tests:[
       {t:"UGAT-B VA Challenge", url:"RoadToIIM_UGATB_VA_ChallengeMock.html", sheetName:"UGAT-B VA Challenge Mock"},
-      {t:"IPMATind VA Challenge", url:"RoadToIIM_IPMATind_VA_ChallengeMock.html", sheetName:"IPMATind VA Challenge Mock"},
-      {t:"IPMATind 01 VA Challenge", url:"ipmat_indore_va_challenge_mock_01.html", sheetName:"IPMAT Indore 01 VA Challenge Mock", windowed:true},
+      {t:"IPMATind VA Challenge", url:"RoadToIIM_IPMATind_VA_ChallengeMock.html", hidden:true, sheetName:"IPMATind VA Challenge Mock"},
+      {t:"IPMATind 01 VA Challenge", url:"ipmat_indore_va_challenge_mock_01.html", hidden:true, sheetName:"IPMAT Indore 01 VA Challenge Mock", windowed:true},
       {t:"UGAT Mock 005", url:"ugat_iimb_UGAT_Mock_005.html", sheetName:"UGAT Mock 005", windowed:true},
       {t:"UGAT Mock 006", url:"ugat_iimb_UGAT_Mock_006_Verbal.html", sheetName:"UGAT Mock 006 — Verbal", windowed:true},
-      {t:"IPMATind 02 VA Challenge", url:"ipmat_indore_va_challenge_mock_02.html", sheetName:"IPMAT Indore 02 VA Challenge Mock", windowed:true},
-      {t:"IPMATind 03 VA Challenge", url:"ipmat_indore_va_challenge_mock_03.html", sheetName:"IPMAT Indore 03 VA Challenge Mock", windowed:true},
-      {t:"IPMATind 04 VA Challenge", url:"ipmat_indore_va_challenge_mock_04.html", sheetName:"IPMAT Indore 04 VA Challenge Mock", windowed:true},
-      {t:"IPMATind 05 VA Challenge", url:"ipmat_indore_va_challenge_mock_05.html", sheetName:"IPMAT Indore 05 VA Challenge Mock", windowed:true},
+      {t:"IPMATind 02 VA Challenge", url:"ipmat_indore_va_challenge_mock_02.html", hidden:true, sheetName:"IPMAT Indore 02 VA Challenge Mock", windowed:true},
+      {t:"IPMATind 03 VA Challenge", url:"ipmat_indore_va_challenge_mock_03.html", hidden:true, sheetName:"IPMAT Indore 03 VA Challenge Mock", windowed:true},
+      {t:"IPMATind 04 VA Challenge", url:"ipmat_indore_va_challenge_mock_04.html", hidden:true, sheetName:"IPMAT Indore 04 VA Challenge Mock", windowed:true},
+      {t:"IPMATind 05 VA Challenge", url:"ipmat_indore_va_challenge_mock_05.html", hidden:true, sheetName:"IPMAT Indore 05 VA Challenge Mock", windowed:true},
       {t:"UGAT Mock 7", url:"ugat_iimb_UGAT_Mock_7_VA_Sectional.html", sheetName:"UGAT Mock 7 — VA Sectional", windowed:true},
-      {t:"Adaptive Test 01", url:"RoadToIIM_Adaptive01_VocabGrammar.html", sheetName:"Adaptive Test 01", windowed:true, featured:true, isNew:true, windowNote:"Live Sun 11 Oct 8 pm – Tue 13 Oct midnight"},
+      {t:"Adaptive Test 01", url:"RoadToIIM_Adaptive01_VocabGrammar.html", sheetName:"Adaptive Test 01", windowed:true},
     ]},
   { id:"rapid", name:"Rapid Fire", desc:"Short bursts, no feedback till the end",
     tests:[
@@ -427,7 +427,11 @@ const MANIFEST = [
       {t:"RV04 Conditionals · Medium", url:"ipmat_indore_RV04_Conditionals_Medium.html", sheetName:"RV04 Conditionals \u2014 Medium"},
       {t:"RV04 Conditionals · Hard",   url:"ipmat_indore_RV04_Conditionals_Hard.html",   sheetName:"RV04 Conditionals \u2014 Hard"},
     ]},
-  { id:"rc", name:"RC Series & Drills", desc:"Passages, alerts, skeletons",
+  { id:"grammar", name:"Grammar Drills", desc:"Quick grammar reps · UGAT pattern",
+    tests:[
+      {t:"First drills arrive soon", placeholder:true},
+    ]},
+  { id:"rc", hidden:true, name:"RC Series & Drills", desc:"Passages, alerts, skeletons",
     tests:[
       {t:"RC Series 01", url:"RoadToIIM_RC_Series01.html", sheetName:"RC Series 01"},
       {t:"RC Series 02", url:"RoadToIIM_RC_Series02.html", sheetName:"RC Series 02"},
@@ -435,19 +439,19 @@ const MANIFEST = [
       {t:"RC Drill 04",  url:"RoadToIIM_RC_Series04_RCDrill.html", sheetName:"Road to IIM RC Series 04"},
       {t:"RC Drill 05",  url:"RoadToIIM_RC_Series05_RCDrill.html", sheetName:"Road to IIM RC Series 05"},
     ]},
-  { id:"concept", name:"Concept Tests", desc:"Straight from class decks",
+  { id:"concept", hidden:true, name:"Concept Tests", desc:"Straight from class decks",
     tests:[
       {t:"Word Web I",    url:"RoadToIIM_ConceptTest01_WordWebI.html",     sheetName:"Concept Test 1"},
       {t:"Word Web II",   url:"RoadToIIM_ConceptTest02_WordWebII.html",    sheetName:"Concept Test 2"},
       {t:"The Impostors", url:"RoadToIIM_ConceptTest03_TheImpostors.html", sheetName:"Concept Test 3"},
       {t:"Cumulative",    url:"RoadToIIM_ConceptTest04_Cumulative.html",   sheetName:"Concept Test 4"},
     ]},
-  { id:"vault", name:"The Vault", desc:"Your words and your mistakes, banked daily",
+  { id:"vault", hidden:true, name:"The Vault", desc:"Your words and your mistakes, banked daily",
     tests:[
       {t:"The Vault",    url:"the_vault_v4.html", soon:true, isNew:true},
       {t:"Mistake Bank", url:"mistake_bank.html", soon:true},
     ]},
-  { id:"skills", name:"Skill Building", desc:"Daily habits that compound",
+  { id:"skills", hidden:true, name:"Skill Building", desc:"Daily habits that compound",
     tests:[
       {t:"IWP", url:"iwp_week1_session.html", soon:true},
       {t:"RLS", url:"RLS_Week1.html",         soon:true},
@@ -455,6 +459,14 @@ const MANIFEST = [
       {t:"Aeon Condenser", url:"aeon_condenser.html", soon:true},
     ]},
 ];
+
+/* UGAT focus (16 Oct 2026): hidden:true on a section or a test keeps it in the repo
+   but off the homepage. Delete the flag to bring it back. */
+const MANIFEST = MANIFEST_ALL.filter(f=>!f.hidden)
+  .map(f=>({...f, tests:f.tests.filter(t=>!t.hidden)}));
+/* order: Challenge first (opens by default), then Rapid Fire, Revisers, Grammar Drills */
+const ORDER=["challenge","rapid","revisers","grammar"];
+MANIFEST.sort((a,b)=>ORDER.indexOf(a.id)-ORDER.indexOf(b.id));
 
 /* ═══ STARFIELD (dieted: fewer stars, ~30fps) ═══ */
 const cv=document.getElementById('stars'),cx=cv.getContext('2d');
@@ -529,7 +541,7 @@ let openId=MANIFEST[0].id, PROFILE=null, PIN=null;
 function famProgress(fam){
   /* invite-only tests count only once done — they never appear as a missing star
      for students who aren't on the list */
-  const trackable=fam.tests.filter(t=>!t.soon && ((!t.invite && !t.windowed) || isDone(t,PROFILE).done));
+  const trackable=fam.tests.filter(t=>!t.soon && !t.placeholder && ((!t.invite && !t.windowed) || isDone(t,PROFILE).done));
   const done=trackable.filter(t=>isDone(t,PROFILE).done).length;
   return {done, total:trackable.length};
 }
@@ -567,7 +579,7 @@ function computeNextUp(){
   let firstUnlit=null, firstNew=null;
   MANIFEST.forEach(fam=>{
     fam.tests.forEach(test=>{
-      if(test.soon||test.invite) return;
+      if(test.soon||test.invite||test.placeholder) return;
       const done=isDone(test,PROFILE).done;
       if(done) return;
       if(test.isNew && !firstNew) firstNew={fam,test};
@@ -605,7 +617,8 @@ function render(){
     l.className='leaf'+(st.done?' done':'')+(test.isNew&&!st.done?' new':'')+(test.featured&&!st.done?' featured':'');
     l.style.setProperty('--i',i++);
     const scoreBit = st.done && typeof st.best==='number' ? ` · <span class="score">${st.best}</span>` : '';
-    const sub = test.windowNote&&!st.done ? test.windowNote
+    const sub = test.placeholder ? 'New sphere \u00b7 drills unlock here'
+              : test.windowNote&&!st.done ? test.windowNote
               : test.invite&&!st.done ? "Invite-only · access checked at login"
               : test.soon ? 'Open anytime · tracking coming soon'
               : (st.done?'Best'+scoreBit:'Not yet lit');
