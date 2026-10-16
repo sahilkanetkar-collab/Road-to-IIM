@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Adaptive Test 02 · Road to IIM</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=DM+Sans:wght@400;500;700&family=DM+Mono&display=swap");
+:root{--navy:#0B1220;--panel:#101A2D;--panel2:#152136;--gold:#D4A94E;--text:#E8E4D8;--mut:#8B94A8;--green:rgba(78,160,130,1);--red:#C05555;--line:rgba(212,169,78,.22)}
+*{box-sizing:border-box;margin:0}
+body{background:var(--navy);color:var(--text);font-family:"DM Sans",sans-serif}
+h1{font-family:Fraunces,serif;color:var(--gold)}
+.mono{font-family:"DM Mono",monospace;font-size:12px;color:var(--mut)}
+#loginScreen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.loginCard{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:28px;max-width:440px;width:100%}
+.loginCard h1{font-size:24px;margin-bottom:2px}
+.loginCard h2{font-family:Fraunces,serif;font-size:15px;color:var(--text);font-weight:600;margin-bottom:14px}
+.loginCard label{display:block;font-family:"DM Mono";font-size:10.5px;color:var(--mut);letter-spacing:.1em;margin:12px 0 5px}
+.loginCard input,.loginCard select{width:100%;background:var(--panel2);color:var(--text);border:1px solid rgba(232,228,216,.25);border-radius:7px;padding:10px 12px;font-size:14px;font-family:"DM Sans"}
+#loginErr{display:none;color:var(--red);font-size:12.5px;margin-top:10px}
+#lockMsg{display:none;color:var(--text);background:var(--panel2);border:1px solid var(--red);border-radius:8px;padding:14px;font-size:14.5px;margin-top:8px}
+#winBanner{display:none;color:var(--text);background:var(--panel2);border:1px solid var(--gold);border-radius:8px;padding:14px;font-size:14.5px;margin-top:8px}
+#adminNote{display:none;color:var(--gold);font-family:"DM Mono";font-size:10.5px;letter-spacing:.06em;margin-bottom:6px}
+#loginBtn{width:100%;margin-top:16px;background:var(--gold);color:var(--navy);border:none;border-radius:8px;padding:12px;font-weight:700;font-size:15px;cursor:pointer}
+.testMeta{font-family:"DM Mono";font-size:10.5px;color:var(--mut);margin-top:14px;line-height:1.7}
+.how{background:var(--panel2);border-left:3px solid var(--gold);border-radius:6px;padding:10px 12px;margin:4px 0 6px;font-size:12.5px;line-height:1.55}
+.how b{color:var(--gold);font-family:"DM Mono";font-size:10px;letter-spacing:.1em;display:block;margin-bottom:4px}
+.how ul{padding-left:16px}
+#testScreen,#resultsScreen{display:none;max-width:820px;margin:0 auto;padding:18px}
+#topBar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:12px 16px;margin-bottom:10px}
+#topBar .tName{font-family:Fraunces,serif;color:var(--gold);font-weight:700}
+#timer{font-family:"DM Mono";color:var(--gold);font-size:20px;margin-left:auto}
+#ticks{display:flex;gap:4px;margin:0 2px 12px}
+#ticks i{flex:1;height:5px;border-radius:3px;background:#1b2b45}
+#ticks i.done{background:rgba(212,169,78,.55)}
+#ticks i.cur{background:var(--gold)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px;margin-bottom:12px}
+.secBadge{font-family:"DM Mono";font-size:10.5px;color:var(--gold);letter-spacing:.08em}
+#qText{font-size:16px;line-height:1.6;margin:12px 0;white-space:pre-wrap}
+.opt{display:block;width:100%;text-align:left;background:var(--panel2);border:1px solid rgba(232,228,216,.15);color:var(--text);border-radius:8px;padding:12px 14px;margin:8px 0;cursor:pointer;font-size:14.5px;font-family:"DM Sans"}
+.opt.sel{border-color:var(--gold);background:rgba(212,169,78,.14)}
+.btn{background:var(--gold);color:var(--navy);border:none;border-radius:8px;padding:11px 20px;font-weight:700;cursor:pointer;font-size:14px;font-family:"DM Sans"}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn.ghost{background:var(--panel2);color:var(--text);border:1px solid rgba(232,228,216,.3)}
+.ctrl{display:flex;gap:10px;justify-content:space-between;flex-wrap:wrap;align-items:center}
+.hint{font-size:11.5px;color:var(--mut);margin-top:10px}
+.lvlHero{display:flex;gap:16px;flex-wrap:wrap;align-items:stretch;margin:14px 0}
+.lvlMain{flex:1 1 220px;background:var(--panel);border:1px solid var(--gold);border-radius:12px;padding:18px}
+.lvlMain .big{font-family:Fraunces,serif;font-size:44px;color:var(--gold);line-height:1}
+.lvlMain .big small{font-size:18px;color:var(--mut)}
+.lvlMain .nm{font-family:"DM Mono";font-size:11px;letter-spacing:.12em;color:var(--text);margin-top:6px}
+.lvlMain .ex{font-size:12.5px;color:var(--mut);margin-top:8px;line-height:1.5}
+.lvlSide{flex:1 1 220px;display:flex;flex-direction:column;gap:10px}
+.strand{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.strand .t{font-family:"DM Mono";font-size:10px;letter-spacing:.1em;color:var(--mut)}
+.strand .v{font-family:"DM Mono";font-size:20px;color:var(--gold)}
+.meter{height:6px;border-radius:3px;background:#1b2b45;margin-top:6px;overflow:hidden}
+.meter i{display:block;height:100%;background:var(--gold)}
+.statGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:10px;margin:14px 0}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px;text-align:center}
+.stat .v{font-family:"DM Mono";font-size:20px;color:var(--gold)}
+.stat .l{font-family:"DM Mono";font-size:9.5px;color:var(--mut);letter-spacing:.08em;margin-top:4px}
+.pathCard svg{width:100%;height:auto;display:block}
+.pathCard .lg{font-size:11px;color:var(--mut);margin-top:6px}
+.pathCard .lg span{display:inline-block;width:9px;height:9px;border-radius:50%;margin:0 5px 0 10px;vertical-align:-1px}
+.secErr{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 16px;font-size:13px;margin-bottom:14px;line-height:1.6}
+.secErr b{color:var(--gold)}
+#pdfBtn{margin:4px 0}
+.rq{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:12px}
+.rqHead{font-family:"DM Mono";font-size:11px;color:var(--mut);margin-bottom:8px}
+.status{font-weight:700;margin-left:8px}
+.status.ok{color:var(--green)}.status.no{color:var(--red)}.status.sk{color:var(--mut)}
+.rqStem{font-size:14.5px;line-height:1.55;margin-bottom:8px;white-space:pre-wrap}
+.ropt{display:flex;gap:10px;padding:7px 10px;border-radius:6px;font-size:13.5px;margin:3px 0}
+.ropt.correct{background:rgba(78,160,130,.15);color:var(--green)}
+.ropt.wrong{background:rgba(192,85,85,.13);color:var(--red)}
+.exp{font-size:12.5px;color:var(--mut);margin-top:8px;border-top:1px solid rgba(232,228,216,.08);padding-top:8px}
+.exp b{color:var(--gold)}
+</style>
+</head>
+<body>
+<div id="loginScreen"><div class="loginCard">
+ <h1>ROAD TO IIM</h1><h2 id="lgTitle"></h2>
+ <div id="adminNote"></div><div id="lockMsg"></div><div id="winBanner"></div>
+ <div class="how" id="howBox"><b>HOW THIS TEST WORKS</b><ul>
+  <li>The first question is of medium difficulty. Every answer decides the next one: get it right and the next question gets harder; get it wrong and it gets easier.</li>
+  <li>You cannot go back. Each answer is locked once you confirm it.</li>
+  <li>Skip only if you truly don't know. A wrong guess pulls your level down more than a skip does.</li>
+  <li>Your result is a level from 1 to 5, not a raw score. Two students can both get 12 right and still reach different levels.</li>
+  <li>Grammar follows formal British exam conventions.</li>
+ </ul></div>
+ <label for="stuName">FULL NAME</label><input type="text" id="stuName" placeholder="Your full name" autocomplete="off">
+ <label for="stuPin">PIN</label><input type="text" id="stuPin" placeholder="STU########## or IMS##########" autocomplete="off" maxlength="13">
+ <label for="stuBatch">BATCH</label>
+ <select id="stuBatch"><option value="">-- Select your batch --</option>
+  <optgroup label="Classroom"><option>A2701</option><option>A2702</option><option>A2703</option><option>A2704</option><option>A2705</option><option>A2706</option><option>A2707</option><option>A2708</option><option>A2709</option><option>A2710</option><option>A2711</option><option>A2712</option><option>A2714</option><option>A2715</option><option>A2716</option><option>A2717</option><option>A2718</option><option>A2719</option><option>A2720</option></optgroup>
+  <optgroup label="School"><option>Zebar</option></optgroup>
+  <optgroup label="Online"><option>27E101</option><option>27E102</option><option>27E103</option><option>27E104</option><option>27E105</option><option>27E106</option><option>27E107</option><option>27E108</option><option>27E109</option><option>27E110</option><option>28E101</option><option>28E102</option><option>28E103</option><option>28E104</option><option>28E105</option><option>28E106</option><option>28E107</option><option>28E108</option><option>28E109</option><option>28E110</option></optgroup>
+  <optgroup label="IPMAT 28"><option>Z2801</option><option>S2801</option><option>A2804</option><option>PN2801</option></optgroup>
+  <optgroup label="Admin"><option>Admin</option></optgroup>
+ </select>
+ <div id="loginErr"></div>
+ <button id="loginBtn">Start Test</button>
+ <div class="testMeta" id="lgMeta"></div>
+</div></div>
+
+<div id="testScreen">
+ <div id="topBar"><span class="tName" id="tbName"></span><span class="mono" id="qCounter"></span><span id="timer">--:--</span></div>
+ <div id="ticks"></div>
+ <div class="card">
+  <span class="secBadge" id="secBadge"></span>
+  <div id="qText"></div>
+  <div id="optBox"></div>
+ </div>
+ <div class="card">
+  <div class="ctrl">
+   <div><button class="btn ghost" id="skipBtn" onclick="commitAnswer(true)">Skip</button> <button class="btn" id="nextBtn" onclick="commitAnswer(false)" disabled>Confirm &amp; Next &#8250;</button></div>
+   <div><button class="btn ghost" id="endBtn" onclick="if(confirm('End the test now? The questions you have not reached will count as skipped.'))submitTest()">End test</button></div>
+  </div>
+  <div class="hint">Your answer locks when you confirm. There is no going back.</div>
+ </div>
+</div>
+
+<div id="resultsScreen">
+ <h1 id="resTitle" style="font-size:26px"></h1>
+ <div class="mono" id="resSub" style="margin:6px 0 4px"></div>
+ <button id="pdfBtn" class="btn" onclick="downloadPDF()">Download PDF</button>
+ <div class="lvlHero">
+  <div class="lvlMain"><div class="mono" style="letter-spacing:.1em">YOUR LEVEL</div><div class="big" id="lvBig"></div><div class="nm" id="lvName"></div><div class="ex" id="lvEx"></div></div>
+  <div class="lvlSide">
+   <div class="strand"><div class="t">VERBS &amp; AGREEMENT</div><div class="v" id="lvV"></div><div class="meter"><i id="mtV"></i></div></div>
+   <div class="strand"><div class="t">SENTENCE STRUCTURE</div><div class="v" id="lvG"></div><div class="meter"><i id="mtG"></i></div></div>
+  </div>
+ </div>
+ <div class="statGrid">
+  <div class="stat"><div class="v" id="stScore">0</div><div class="l">ADAPTIVE SCORE / 100</div></div>
+  <div class="stat"><div class="v" id="stCorrect">0</div><div class="l">CORRECT</div></div>
+  <div class="stat"><div class="v" id="stWrong">0</div><div class="l">WRONG</div></div>
+  <div class="stat"><div class="v" id="stSkipped">0</div><div class="l">SKIPPED</div></div>
+  <div class="stat"><div class="v" id="stTime">0:00</div><div class="l">TIME TAKEN</div></div>
+ </div>
+ <div class="card pathCard"><div class="mono" style="letter-spacing:.1em;margin-bottom:8px">YOUR PATH · DIFFICULTY OF EACH QUESTION YOU GOT</div><div id="pathSvg"></div>
+  <div class="lg"><span style="background:var(--green);margin-left:0"></span>Correct<span style="background:var(--red)"></span>Wrong<span style="background:var(--mut)"></span>Skipped</div></div>
+ <div class="secErr" id="secErrBox"></div>
+ <h1 style="font-size:19px;margin:14px 0 10px">Question Review</h1>
+ <div id="reviewBox"></div>
+</div>
+
+<script>
+/* ============================================================
+   ROAD TO IIM — Adaptive Test engine v1 (Oct 2026)
+   Whitelist v5 · Safety Net · 16-field payload · PATH 2 tags
+   Ability model: 3-parameter logistic (a=1.7 scaled, c=0.2),
+   item difficulty b = band - 3, EAP estimate on a N(0,1) prior.
+   Next item: nearest band to the current estimate, strands
+   alternate V/G, least-used format first, never repeats.
+   ============================================================ */
+var CFG={"testName":"Adaptive Test 02","maxMarks":100,"minutes":30,"nItems":20,"fileName":"RoadToIIM_Adaptive02_Grammar.html","snKey":"riim_session_Adaptive_Test_02","bankPrefix":"Adaptive_Test_02"};
+var POOL=[{"id": "V1-01", "strand": "V", "band": 1, "format": "Grammar Fill in the Blank", "topic": "Subject-Verb Agreement", "stem": "Choose the correct option to fill the blank: My friend and his sister ______ coming to the party tonight.", "options": ["has been", "are", "was", "is"], "answerIndex": 1, "explanation": "Two subjects joined by 'and' take a plural verb: my friend and his sister are. Trap: 'is' - 'sister' sits right before the verb, but the subject is both people."}, {"id": "V1-02", "strand": "V", "band": 1, "format": "Grammar Fill in the Blank", "topic": "Tenses", "stem": "Choose the correct option to fill the blank: Look! The children ______ in the garden right now.", "options": ["are playing", "played", "play", "have played"], "answerIndex": 0, "explanation": "'Look!' and 'right now' show an action happening at this moment, which needs the present continuous: are playing. Trap: 'play' - the simple present is for habits, not for what is happening now."}, {"id": "V1-03", "strand": "V", "band": 1, "format": "Error Spotting", "topic": "Subject-Verb Agreement", "stem": "Exactly one part of this sentence contains an error. Which part?\n\nThe cost / of these shoes / are higher / than I expected.", "options": ["The cost", "of these shoes", "are higher", "than I expected."], "answerIndex": 2, "explanation": "The subject is 'the cost', which is singular: the cost is higher. Trap: 'of these shoes' - the plural 'shoes' sits next to the verb, but it is not the subject."}, {"id": "V1-04", "strand": "V", "band": 1, "format": "Sentence Correction", "topic": "Tenses", "stem": "Choose the grammatically correct sentence.", "options": ["I have finished my homework yesterday.", "I have finish my homework yesterday.", "I had finish my homework yesterday.", "I finished my homework yesterday."], "answerIndex": 3, "explanation": "'Yesterday' is a finished time, so it takes the simple past: I finished. Trap: 'have finished ... yesterday' - the present perfect cannot sit with a finished time. The other two use the base form 'finish' where a past participle or past form is needed."}, {"id": "V1-05", "strand": "V", "band": 1, "format": "Grammar Fill in the Blank", "topic": "Pronouns", "stem": "Choose the correct option to fill the blank: Let ______ handle the rest of the work.", "options": ["ourselves", "our", "we", "us"], "answerIndex": 3, "explanation": "'Let' is followed by an object pronoun: let us (let me, let them). Trap: 'we' - it feels like the subject of 'handle', but after 'let' the object form is required."}, {"id": "V1-06", "strand": "V", "band": 1, "format": "Grammar Fill in the Blank", "topic": "Verb Forms", "stem": "Choose the correct option to fill the blank: She enjoys ______ novels in the evening.", "options": ["read", "reading", "to reading", "to read"], "answerIndex": 1, "explanation": "'Enjoy' is always followed by the -ing form: enjoys reading. Trap: 'to read' - many verbs take 'to', but 'enjoy' does not."}, {"id": "V1-07", "strand": "V", "band": 1, "format": "Error Spotting", "topic": "Tenses", "stem": "Exactly one part of this sentence contains an error. Which part?\n\nWhen I reached / the station, / the train has / already left.", "options": ["When I reached", "the station,", "the train has", "already left."], "answerIndex": 2, "explanation": "Two past actions: the train left before I reached. The earlier one needs the past perfect: the train had already left. Trap: 'already left' - 'already' is fine; the problem is the helper verb 'has'."}, {"id": "V1-08", "strand": "V", "band": 1, "format": "Grammar Fill in the Blank", "topic": "Conditionals", "stem": "Choose the correct option to fill the blank: If you heat ice, it ______.", "options": ["melts", "would melt", "will have melted", "melted"], "answerIndex": 0, "explanation": "A scientific fact or general truth uses the present in both halves (zero conditional): If you heat ice, it melts. Trap: 'would melt' - 'would' is for imaginary situations, but this always happens."}, {"id": "V1-09", "strand": "V", "band": 1, "format": "Sentence Correction", "topic": "Pronouns", "stem": "Choose the grammatically correct sentence.", "options": ["The teacher gave the prize to Riya and I.", "The teacher gave the prize to I and Riya.", "The teacher gave the prize to Riya and myself.", "The teacher gave the prize to Riya and me."], "answerIndex": 3, "explanation": "After 'to', the pronoun is an object: to Riya and me. Test it by removing Riya: 'gave the prize to me'. Trap: 'Riya and I' - it sounds formal, but 'gave the prize to I' is clearly wrong. 'Myself' is only for when the subject acts on itself."}, {"id": "V1-10", "strand": "V", "band": 1, "format": "Grammar Fill in the Blank", "topic": "Subject-Verb Agreement", "stem": "Choose the correct option to fill the blank: There ______ many reasons to start early.", "options": ["has been", "are", "was", "is"], "answerIndex": 1, "explanation": "In a 'there' sentence the real subject comes after the verb: many reasons, which is plural, so there are. Trap: 'is' - 'there' looks like the subject, but it is only a placeholder."}, {"id": "V2-01", "strand": "V", "band": 2, "format": "Grammar Fill in the Blank", "topic": "Subject-Verb Agreement", "stem": "Choose the correct option to fill the blank: The colour of the curtains ______ faded in the sun.", "options": ["has", "are", "were", "have"], "answerIndex": 0, "explanation": "The subject is 'the colour', which is singular: the colour has faded. Trap: 'have' - 'curtains' is next to the verb, but it is part of the 'of' phrase."}, {"id": "V2-02", "strand": "V", "band": 2, "format": "Error Spotting", "topic": "Subject-Verb Agreement", "stem": "Exactly one part of this sentence contains an error. Which part?\n\nThe bouquet of roses / that he bought / were placed / on the table.", "options": ["The bouquet of roses", "that he bought", "were placed", "on the table."], "answerIndex": 2, "explanation": "The subject is 'the bouquet', which is singular: the bouquet was placed. Trap: 'that he bought' - this clause is fine; the plural 'roses' is what pulls students toward 'were'."}, {"id": "V2-03", "strand": "V", "band": 2, "format": "Grammar Fill in the Blank", "topic": "Tenses", "stem": "Choose the correct option to fill the blank: By the time the guests arrived, we ______ dinner.", "options": ["have cooked", "cooked", "will have cooked", "had cooked"], "answerIndex": 3, "explanation": "'By the time' + a past event needs the past perfect for the earlier action: we had cooked. Trap: 'cooked' - the simple past loses the 'already finished before' meaning that 'by the time' demands."}, {"id": "V2-04", "strand": "V", "band": 2, "format": "Grammar Fill in the Blank", "topic": "Conditionals", "stem": "Choose the correct option to fill the blank: If she ______ more time, she would join the drama club.", "options": ["would have", "had", "will have", "has"], "answerIndex": 1, "explanation": "'Would join' shows an imaginary present situation (second conditional), so the 'if' clause takes the past: If she had more time. Trap: 'would have' - 'would' never goes in the 'if' clause."}, {"id": "V2-05", "strand": "V", "band": 2, "format": "Sentence Correction", "topic": "Pronouns", "stem": "Choose the grammatically correct sentence.", "options": ["The manager and I will attend the meeting.", "The manager and myself will attend the meeting.", "The manager and me will attend the meeting.", "Myself and the manager will attend the meeting."], "answerIndex": 0, "explanation": "The pronoun is part of the subject, so it takes the subject form: the manager and I. Test it alone: 'I will attend'. Trap: 'myself' - it sounds formal, but a reflexive pronoun needs 'I' earlier in the same sentence to point back to."}, {"id": "V2-06", "strand": "V", "band": 2, "format": "Grammar Fill in the Blank", "topic": "Verb Forms", "stem": "Choose the correct option to fill the blank: He is used to ______ up early for his shift.", "options": ["get", "have gotten", "be getting", "getting"], "answerIndex": 3, "explanation": "In 'be used to', 'to' is a preposition, so it takes the -ing form: is used to getting. Trap: 'get' - students confuse it with 'used to get' (a past habit), which has no 'is'."}, {"id": "V2-07", "strand": "V", "band": 2, "format": "Error Spotting", "topic": "Tenses", "stem": "Exactly one part of this sentence contains an error. Which part?\n\nShe has been / working in this company / since five years / and loves it.", "options": ["She has been", "working in this company", "since five years", "and loves it."], "answerIndex": 2, "explanation": "With the perfect tense, a length of time takes 'for' and a point in time takes 'since': for five years. Trap: 'She has been' - the tense is correct; only the time word is wrong."}, {"id": "V2-08", "strand": "V", "band": 2, "format": "Grammar Fill in the Blank", "topic": "Verb Forms", "stem": "Choose the correct option to fill the blank: The letter ______ yesterday by the clerk.", "options": ["has been posted", "was posted", "is posted", "posted"], "answerIndex": 1, "explanation": "The letter did not post itself, so the verb must be passive, and 'yesterday' needs the past: was posted. Trap: 'has been posted' - passive is right, but the present perfect cannot take 'yesterday'."}, {"id": "V2-09", "strand": "V", "band": 2, "format": "Sentence Correction", "topic": "Subject-Verb Agreement", "stem": "Choose the grammatically correct sentence.", "options": ["Mathematics is my favourite subject.", "The mathematics are my favourite subject.", "Mathematics were my favourite subjects.", "Mathematics are my favourite subject."], "answerIndex": 0, "explanation": "Names of subjects ending in -s (mathematics, physics, economics) are singular: Mathematics is. Trap: 'Mathematics are' - the -s looks plural, but it is one subject."}, {"id": "V2-10", "strand": "V", "band": 2, "format": "Grammar Fill in the Blank", "topic": "Pronouns", "stem": "Choose the correct option to fill the blank: To ______ did you give the keys?", "options": ["whose", "which", "whom", "who"], "answerIndex": 2, "explanation": "After a preposition ('to'), the object form is needed: to whom. Trap: 'who' - it is common in speech, but 'to who' is wrong in formal grammar."}, {"id": "V3-01", "strand": "V", "band": 3, "format": "Grammar Fill in the Blank", "topic": "Subject-Verb Agreement", "stem": "Choose the correct option to fill the blank: Either the principal or the teachers ______ going to address the parents.", "options": ["was", "is", "has been", "are"], "answerIndex": 3, "explanation": "With 'either ... or', the verb agrees with the nearer subject: the teachers are. Trap: 'is' - 'the principal' comes first, but the verb follows the subject closest to it."}, {"id": "V3-02", "strand": "V", "band": 3, "format": "Grammar Fill in the Blank", "topic": "Tenses", "stem": "Choose the correct option to fill the blank: I ______ for an hour when the bus finally came.", "options": ["was waited", "had been waiting", "am waiting", "have been waiting"], "answerIndex": 1, "explanation": "An action that continued up to a past moment (when the bus came) takes the past perfect continuous: had been waiting. Trap: 'have been waiting' - right idea, wrong time frame: it reaches up to now, not up to a past event."}, {"id": "V3-03", "strand": "V", "band": 3, "format": "Error Spotting", "topic": "Conditionals", "stem": "Exactly one part of this sentence contains an error. Which part?\n\nIf he would have / listened to my advice, / he would not / be in trouble now.", "options": ["If he would have", "listened to my advice,", "he would not", "be in trouble now."], "answerIndex": 0, "explanation": "'Would' never goes in the 'if' clause. The past condition needs the past perfect: If he had listened. Trap: 'he would not' - the result clause is correct; this is a mixed conditional (past cause, present result)."}, {"id": "V3-04", "strand": "V", "band": 3, "format": "Grammar Fill in the Blank", "topic": "Verb Forms", "stem": "Choose the correct option to fill the blank: The bridge ______ by the time the monsoon arrives next year.", "options": ["will have been completed", "is completing", "will complete", "will have completed"], "answerIndex": 0, "explanation": "A bridge is built by someone, so the verb is passive, and 'by the time ... next year' needs the future perfect: will have been completed. Trap: 'will have completed' - the tense is right but it is active, which makes the bridge do the completing."}, {"id": "V3-05", "strand": "V", "band": 3, "format": "Sentence Correction", "topic": "Subject-Verb Agreement", "stem": "Choose the grammatically correct sentence.", "options": ["A number of student have applied for the scholarship.", "A number of students is applying for the scholarship.", "A number of students have applied for the scholarship.", "A number of students has applied for the scholarship."], "answerIndex": 2, "explanation": "'A number of' means 'many' and takes a plural verb: a number of students have. Trap: 'has applied' - 'a number' looks singular, but only 'the number of' takes a singular verb."}, {"id": "V3-06", "strand": "V", "band": 3, "format": "Grammar Fill in the Blank", "topic": "Pronouns", "stem": "Choose the correct option to fill the blank: The house, ______ roof was damaged in the storm, is being repaired.", "options": ["who's", "that's", "which", "whose"], "answerIndex": 3, "explanation": "The roof belongs to the house, so a possessive relative pronoun is needed: whose roof. Trap: 'who's' - it sounds the same, but it means 'who is'."}, {"id": "V3-07", "strand": "V", "band": 3, "format": "Grammar Fill in the Blank", "topic": "Verb Forms", "stem": "Choose the correct option to fill the blank: The doctor insisted that the patient ______ complete rest.", "options": ["taking", "take", "to taking", "to take"], "answerIndex": 1, "explanation": "After 'insist that', formal English uses the base form for every subject: that the patient take. Trap: 'to take' - 'insist' never takes a 'to' form; that pattern belongs to verbs like 'ask' or 'want'."}, {"id": "V3-08", "strand": "V", "band": 3, "format": "Error Spotting", "topic": "Subject-Verb Agreement", "stem": "Exactly one part of this sentence contains an error. Which part?\n\nEvery boy and every girl / in the class / have been / given a tablet.", "options": ["Every boy and every girl", "in the class", "have been", "given a tablet."], "answerIndex": 2, "explanation": "When 'every' or 'each' comes before nouns joined by 'and', the verb is singular: every boy and every girl has been. Trap: 'Every boy and every girl' - two nouns joined by 'and' usually take a plural verb, but 'every' makes each one count singly."}, {"id": "V3-09", "strand": "V", "band": 3, "format": "Grammar Fill in the Blank", "topic": "Conditionals", "stem": "Choose the correct option to fill the blank: If the tickets had been cheaper, more people ______ the show.", "options": ["would attend", "had attended", "will attend", "would have attended"], "answerIndex": 3, "explanation": "A past condition that did not happen (third conditional) takes 'would have + past participle': would have attended. Trap: 'had attended' - the past perfect belongs in the 'if' clause, not in the result."}, {"id": "V3-10", "strand": "V", "band": 3, "format": "Sentence Correction", "topic": "Tenses", "stem": "Choose the grammatically correct sentence.", "options": ["She told me that she completes the report the previous day.", "She told me that she has completed the report the previous day.", "She told me that she had completed the report the previous day.", "She told me that she has been completing the report the previous day."], "answerIndex": 2, "explanation": "In reported speech after a past verb ('told'), an earlier past action moves back to the past perfect: she had completed. Trap: 'has completed' - the present perfect cannot sit with 'the previous day'."}, {"id": "V4-01", "strand": "V", "band": 4, "format": "Grammar Fill in the Blank", "topic": "Subject-Verb Agreement", "stem": "Choose the correct option to fill the blank: Kavya is one of the few students who ______ submitted every assignment on time.", "options": ["have", "is", "has", "was"], "answerIndex": 0, "explanation": "'Who' refers to 'the few students' (plural), not to 'one': students who have submitted. Trap: 'has' - 'Kavya is one' makes the singular feel right, but the clause describes the group."}, {"id": "V4-02", "strand": "V", "band": 4, "format": "Error Spotting", "topic": "Conditionals", "stem": "Exactly one part of this sentence contains an error. Which part?\n\nI wish / I would have studied / harder before / the exam.", "options": ["I wish", "I would have studied", "harder before", "the exam."], "answerIndex": 1, "explanation": "A wish about the past takes the past perfect: I wish I had studied. Trap: 'harder before' - the comparison is fine; the error is 'would have' in a wish clause."}, {"id": "V4-03", "strand": "V", "band": 4, "format": "Grammar Fill in the Blank", "topic": "Subject-Verb Agreement", "stem": "Choose the correct option to fill the blank: Each and every member of the team ______ been warned.", "options": ["are", "were", "have", "has"], "answerIndex": 3, "explanation": "'Each and every' makes the subject singular: each and every member has been warned. Trap: 'have' - 'team' and 'every member' suggest many people, but 'each' counts them one by one."}, {"id": "V4-04", "strand": "V", "band": 4, "format": "Grammar Fill in the Blank", "topic": "Tenses", "stem": "Choose the correct option to fill the blank: This is the third time this week that the lift ______ down.", "options": ["is breaking", "had broken", "has broken", "broke"], "answerIndex": 2, "explanation": "'This is the first/second/third time' is always followed by the present perfect: has broken. Trap: 'broke' - each breakdown happened in the past, but this fixed pattern links them to now."}, {"id": "V4-05", "strand": "V", "band": 4, "format": "Sentence Correction", "topic": "Conditionals", "stem": "Choose the grammatically correct sentence.", "options": ["Were he to apply, he would surely get the job.", "Were he to apply, he will surely get the job.", "Was he to apply, he would surely get the job.", "Were he applied, he would surely get the job."], "answerIndex": 0, "explanation": "'Were he to apply' is the inverted form of 'If he were to apply', an unlikely condition, which takes 'would': he would surely get. Trap: 'Was he to apply' - only 'were' can be inverted to make a condition."}, {"id": "V4-06", "strand": "V", "band": 4, "format": "Grammar Fill in the Blank", "topic": "Verb Forms", "stem": "Choose the correct option to fill the blank: She regretted ______ her old friend so harshly.", "options": ["to speak to", "had spoken to", "to have spoken to", "having spoken to"], "answerIndex": 3, "explanation": "To regret something already done, use 'regret + -ing' (or 'having + past participle'): regretted having spoken. Trap: 'to speak to' - 'regret to' is for announcing bad news now (We regret to inform you)."}, {"id": "V4-07", "strand": "V", "band": 4, "format": "Error Spotting", "topic": "Subject-Verb Agreement", "stem": "Exactly one part of this sentence contains an error. Which part?\n\nMany a student / have failed / this paper / in the past.", "options": ["Many a student", "have failed", "this paper", "in the past."], "answerIndex": 1, "explanation": "'Many a' is followed by a singular noun and a singular verb: many a student has failed. Trap: 'Many a student' - 'many' suggests a plural, but 'many a' is a fixed singular phrase."}, {"id": "V4-08", "strand": "V", "band": 4, "format": "Sentence Correction", "topic": "Subject-Verb Agreement", "stem": "Choose the grammatically correct sentence.", "options": ["The bread and the butter is his usual breakfast.", "Bread and butter were his usual breakfasts.", "Bread and butter is his usual breakfast.", "Bread and butter are his usual breakfast."], "answerIndex": 2, "explanation": "When two nouns joined by 'and' form one idea or one dish, the verb is singular: bread and butter is. Trap: 'The bread and the butter is' - repeating 'the' splits them into two separate things, which would need 'are'."}, {"id": "V4-09", "strand": "V", "band": 4, "format": "Grammar Fill in the Blank", "topic": "Tenses", "stem": "Choose the correct option to fill the blank: By next June, she ______ in this school for a decade.", "options": ["will have taught", "would teach", "will teach", "has taught"], "answerIndex": 0, "explanation": "'By' + a future point, with a length of time, needs the future perfect: will have taught. Trap: 'has taught' - right idea of duration, but the present perfect stops at now, not at next June."}, {"id": "V4-10", "strand": "V", "band": 4, "format": "Error Spotting", "topic": "Subject-Verb Agreement", "stem": "Exactly one part of this sentence contains an error. Which part?\n\nA pair of scissors / were lying / on the table / near the window.", "options": ["A pair of scissors", "were lying", "on the table", "near the window."], "answerIndex": 1, "explanation": "'Scissors' alone is plural, but the subject here is 'a pair', which is singular: a pair of scissors was lying. Trap: 'A pair of scissors' - this phrase is correct; it just changes the verb to singular."}, {"id": "V5-01", "strand": "V", "band": 5, "format": "Grammar Fill in the Blank", "topic": "Subject-Verb Agreement", "stem": "Choose the correct option to fill the blank: What the students need most ______ regular practice and timely feedback.", "options": ["have been", "is", "were", "are"], "answerIndex": 1, "explanation": "A 'what' clause as the subject is treated as one idea and takes a singular verb: What they need is. Trap: 'are' - 'practice and feedback' after the verb look plural, but they are the complement, not the subject."}, {"id": "V5-02", "strand": "V", "band": 5, "format": "Sentence Correction", "topic": "Conditionals", "stem": "Choose the grammatically correct sentence.", "options": ["If she took the job in Delhi, she would have been a manager by now.", "If she would have taken the job in Delhi, she would be a manager by now.", "Had she taken the job in Delhi, she will be a manager by now.", "If she had taken the job in Delhi, she would be a manager by now."], "answerIndex": 3, "explanation": "Past cause, present result: a mixed conditional. 'If' + past perfect, then 'would' + base form: had taken ... would be. Trap: 'Had she taken ... she will be' - the inversion is correct, but the result needs 'would', not 'will'."}, {"id": "V5-03", "strand": "V", "band": 5, "format": "Error Spotting", "topic": "Tenses", "stem": "Exactly one part of this sentence contains an error. Which part?\n\nLast year the museum, / which was built in 1890, / has been renovated / at great cost.", "options": ["Last year the museum,", "which was built in 1890,", "has been renovated", "at great cost."], "answerIndex": 2, "explanation": "'Last year' is a finished time, so the main verb must be simple past: was renovated. Trap: 'which was built in 1890' - this clause is correct; it is the main verb that clashes with 'last year'."}, {"id": "V5-04", "strand": "V", "band": 5, "format": "Grammar Fill in the Blank", "topic": "Subject-Verb Agreement", "stem": "Choose the correct option to fill the blank: Not only the students but also the principal ______ surprised by the decision.", "options": ["are", "have been", "were", "was"], "answerIndex": 3, "explanation": "With 'not only ... but also', the verb agrees with the nearer subject: the principal was. Trap: 'were' - the sentence mentions many people, but the subject next to the verb is singular."}, {"id": "V5-05", "strand": "V", "band": 5, "format": "Grammar Fill in the Blank", "topic": "Pronouns", "stem": "Choose the correct option to fill the blank: Give the form to ______ is sitting at the front desk.", "options": ["whom", "whoever", "whomever", "whose"], "answerIndex": 1, "explanation": "The pronoun is the subject of 'is sitting', so it takes the subject form: whoever is sitting. Trap: 'whomever' - 'to' makes the object form look right, but the object of 'to' is the whole clause, and inside it the pronoun is the subject."}, {"id": "V5-06", "strand": "V", "band": 5, "format": "Grammar Fill in the Blank", "topic": "Verb Forms", "stem": "Choose the correct option to fill the blank: There ______ be a cinema on this street, but it closed years ago.", "options": ["use to", "would", "used to", "was used to"], "answerIndex": 2, "explanation": "A past state that is no longer true takes 'used to': there used to be. Trap: 'would' - it can describe repeated past actions (we would play cricket), but not past states like 'be'."}, {"id": "V5-07", "strand": "V", "band": 5, "format": "Error Spotting", "topic": "Conditionals", "stem": "Exactly one part of this sentence contains an error. Which part?\n\nUnless you do not / submit the form / by Monday, / your seat will be cancelled.", "options": ["Unless you do not", "submit the form", "by Monday,", "your seat will be cancelled."], "answerIndex": 0, "explanation": "'Unless' already means 'if not', so adding 'not' makes a double negative: Unless you submit. Trap: 'your seat will be cancelled' - the result clause is correct for a real condition."}, {"id": "V5-08", "strand": "V", "band": 5, "format": "Sentence Correction", "topic": "Verb Forms", "stem": "Choose the grammatically correct sentence.", "options": ["She suggested that he apply for the post.", "She suggested him to apply for the post.", "She suggested to apply him for the post.", "She suggested him that he should apply for the post."], "answerIndex": 0, "explanation": "'Suggest' is followed by a 'that' clause (or an -ing form), never by 'him + to': suggested that he apply. Trap: 'suggested him to apply' - it copies the pattern of 'advise/ask him to', which 'suggest' does not allow."}, {"id": "V5-09", "strand": "V", "band": 5, "format": "Grammar Fill in the Blank", "topic": "Subject-Verb Agreement", "stem": "Choose the correct option to fill the blank: Two-thirds of the cake ______ already been eaten.", "options": ["are", "were", "has", "have"], "answerIndex": 2, "explanation": "With fractions, the verb follows the noun after 'of'. 'The cake' is singular: two-thirds of the cake has. Trap: 'have' - 'two-thirds' looks plural, but it is a part of one cake."}, {"id": "V5-10", "strand": "V", "band": 5, "format": "Error Spotting", "topic": "Tenses", "stem": "Exactly one part of this sentence contains an error. Which part?\n\nI have been knowing / him since / we were / in school together.", "options": ["I have been knowing", "him since", "we were", "in school together."], "answerIndex": 0, "explanation": "'Know' describes a state, not an action, so it does not take a continuous form: I have known him. Trap: 'him since' - 'since' with a point in time is correct here."}, {"id": "G1-01", "strand": "G", "band": 1, "format": "Grammar Fill in the Blank", "topic": "Articles & Determiners", "stem": "Choose the correct option to fill the blank: She waited for ______ hour outside the office.", "options": ["some", "a", "the", "an"], "answerIndex": 3, "explanation": "'Hour' begins with a vowel sound (the h is silent), so it takes 'an': an hour. Trap: 'a' - the word starts with the letter h, but articles follow the sound, not the spelling."}, {"id": "G1-02", "strand": "G", "band": 1, "format": "Grammar Fill in the Blank", "topic": "Prepositions & Idioms", "stem": "Choose the correct option to fill the blank: She is good ______ mathematics.", "options": ["at", "in", "on", "with"], "answerIndex": 0, "explanation": "The fixed phrase is 'good at' a skill or subject: good at mathematics. Trap: 'in' - 'good in' is a common slip, but the correct pairing is 'good at'."}, {"id": "G1-03", "strand": "G", "band": 1, "format": "Error Spotting", "topic": "Comparisons", "stem": "Exactly one part of this sentence contains an error. Which part?\n\nThis book is / more better / than the one / I read last week.", "options": ["This book is", "more better", "than the one", "I read last week."], "answerIndex": 1, "explanation": "'Better' is already a comparative; adding 'more' doubles it: This book is better. Trap: 'than the one' - this part is correct; 'than' properly follows a comparative."}, {"id": "G1-04", "strand": "G", "band": 1, "format": "Grammar Fill in the Blank", "topic": "Connectors", "stem": "Choose the correct option to fill the blank: ______ it was raining, we went for a walk.", "options": ["Unless", "Despite", "Although", "Because"], "answerIndex": 2, "explanation": "The two ideas contrast (rain, yet a walk), and a full clause follows, so 'although' fits. Trap: 'Despite' - it shows contrast too, but it must be followed by a noun or -ing form (despite the rain), not a clause."}, {"id": "G1-05", "strand": "G", "band": 1, "format": "Sentence Correction", "topic": "Articles & Determiners", "stem": "Choose the grammatically correct sentence.", "options": ["He gave me a useful advice.", "He gave me an useful advice.", "He gave me some useful advices.", "He gave me some useful advice."], "answerIndex": 3, "explanation": "'Advice' is uncountable: no 'a', no plural. Use 'some advice' or 'a piece of advice'. Trap: 'some useful advices' - 'some' is right, but 'advice' never takes -s."}, {"id": "G1-06", "strand": "G", "band": 1, "format": "Grammar Fill in the Blank", "topic": "Comparisons", "stem": "Choose the correct option to fill the blank: Of the three sisters, Priya is the ______.", "options": ["tallest", "taller", "more taller", "most tall"], "answerIndex": 0, "explanation": "Comparing more than two people needs the superlative: the tallest. Trap: 'taller' - the comparative is for two; here there are three."}, {"id": "G1-07", "strand": "G", "band": 1, "format": "Error Spotting", "topic": "Prepositions & Idioms", "stem": "Exactly one part of this sentence contains an error. Which part?\n\nShe married / with a doctor / from Pune / last year.", "options": ["She married", "with a doctor", "from Pune", "last year."], "answerIndex": 1, "explanation": "'Marry' takes a direct object with no preposition: she married a doctor ('got married to' is also correct). Trap: 'from Pune' - this preposition is correct; the extra word is 'with'."}, {"id": "G1-08", "strand": "G", "band": 1, "format": "Grammar Fill in the Blank", "topic": "Articles & Determiners", "stem": "Choose the correct option to fill the blank: There is ______ milk left in the fridge, so buy some.", "options": ["few", "many", "little", "a few"], "answerIndex": 2, "explanation": "'Milk' is uncountable, so it takes 'little', and 'so buy some' shows there is hardly any: little milk. Trap: 'few' - same meaning, but 'few' is only for countable nouns."}, {"id": "G1-09", "strand": "G", "band": 1, "format": "Sentence Correction", "topic": "Parallelism", "stem": "Choose the grammatically correct sentence.", "options": ["She likes swimming, reading and to paint.", "She likes swimming, reading and painting.", "She likes to swim, reading and painting.", "She likes swim, read and painting."], "answerIndex": 1, "explanation": "Items in a list must share the same form: swimming, reading and painting. Trap: 'swimming, reading and to paint' - each word is correct, but the last item breaks the pattern."}, {"id": "G1-10", "strand": "G", "band": 1, "format": "Grammar Fill in the Blank", "topic": "Connectors", "stem": "Choose the correct option to fill the blank: He was tired, ______ he finished his work.", "options": ["unless", "because", "so", "yet"], "answerIndex": 3, "explanation": "Being tired would stop most people, so the link is contrast: tired, yet he finished. Trap: 'so' - it shows result, but being tired does not cause someone to finish their work."}, {"id": "G2-01", "strand": "G", "band": 2, "format": "Grammar Fill in the Blank", "topic": "Prepositions & Idioms", "stem": "Choose the correct option to fill the blank: She was accused ______ stealing the files.", "options": ["about", "with", "for", "of"], "answerIndex": 3, "explanation": "The fixed pairing is 'accused of': accused of stealing. Trap: 'for' - 'blamed for' and 'punished for' use it, so students carry it over, but 'accuse' takes 'of'."}, {"id": "G2-02", "strand": "G", "band": 2, "format": "Sentence Correction", "topic": "Modifiers", "stem": "Choose the grammatically correct sentence.", "options": ["While walking to school, a stray dog followed me.", "Walking to school, a stray dog was noticed following me.", "Walking to school, I noticed a stray dog following me.", "Walking to school, a stray dog started following me."], "answerIndex": 2, "explanation": "An opening '-ing' phrase must describe the subject right after the comma. I was walking to school, so 'I' must follow. Trap: 'While walking to school, a stray dog...' - adding 'while' does not help; it still says the dog was walking to school."}, {"id": "G2-03", "strand": "G", "band": 2, "format": "Grammar Fill in the Blank", "topic": "Comparisons", "stem": "Choose the correct option to fill the blank: Her handwriting is neater than ______ of her brother.", "options": ["those", "this", "it", "that"], "answerIndex": 3, "explanation": "Compare handwriting with handwriting, not with a person. 'That' stands for 'the handwriting': neater than that of her brother. Trap: 'those' - right idea, but 'handwriting' is singular."}, {"id": "G2-04", "strand": "G", "band": 2, "format": "Error Spotting", "topic": "Articles & Determiners", "stem": "Exactly one part of this sentence contains an error. Which part?\n\nThe Ganga is / one of holiest / rivers / in India.", "options": ["The Ganga is", "one of holiest", "rivers", "in India."], "answerIndex": 1, "explanation": "A superlative needs 'the': one of the holiest rivers. Trap: 'The Ganga is' - rivers do take 'the', so this part is correct."}, {"id": "G2-05", "strand": "G", "band": 2, "format": "Grammar Fill in the Blank", "topic": "Connectors", "stem": "Choose the correct option to fill the blank: He studied hard ______ he would not fail again.", "options": ["as if", "so that", "such that", "in order"], "answerIndex": 1, "explanation": "Purpose followed by a full clause takes 'so that': studied hard so that he would not fail. Trap: 'in order' - it shows purpose too, but it needs 'to' (in order not to fail) or 'that', not a bare clause."}, {"id": "G2-06", "strand": "G", "band": 2, "format": "Sentence Correction", "topic": "Parallelism", "stem": "Choose the grammatically correct sentence.", "options": ["The coach expects his players to be fit, focused and disciplined.", "The coach expects his players to be fit, focused and have discipline.", "The coach expects his players to be fit, having focus and disciplined.", "The coach expects his players fitness, focused and to be disciplined."], "answerIndex": 0, "explanation": "All three qualities follow 'to be', so all three must be adjectives: fit, focused and disciplined. Trap: 'and have discipline' - the meaning is the same, but the last item switches from an adjective to a verb phrase."}, {"id": "G2-07", "strand": "G", "band": 2, "format": "Grammar Fill in the Blank", "topic": "Prepositions & Idioms", "stem": "Choose the correct option to fill the blank: I prefer tea ______ coffee.", "options": ["from", "than", "to", "against"], "answerIndex": 2, "explanation": "'Prefer' takes 'to': prefer tea to coffee. Trap: 'than' - preference feels like a comparison, but 'than' goes with 'rather' (I would rather have tea than coffee)."}, {"id": "G2-08", "strand": "G", "band": 2, "format": "Error Spotting", "topic": "Redundancy", "stem": "Exactly one part of this sentence contains an error. Which part?\n\nPlease return back / the books / to the library / by Friday.", "options": ["Please return back", "the books", "to the library", "by Friday."], "answerIndex": 0, "explanation": "'Return' already means 'give back', so 'back' repeats it: Please return the books. Trap: 'to the library' - the preposition is correct; the extra word is 'back'."}, {"id": "G2-09", "strand": "G", "band": 2, "format": "Grammar Fill in the Blank", "topic": "Articles & Determiners", "stem": "Choose the correct option to fill the blank: ______ of the two roads leads to the market.", "options": ["All", "Every", "Each", "Both"], "answerIndex": 2, "explanation": "'Each' works with two or more and takes a singular verb: Each of the two roads leads. Trap: 'Both' - it fits 'two', but it needs a plural verb (both roads lead), and the sentence has 'leads'."}, {"id": "G2-10", "strand": "G", "band": 2, "format": "Grammar Fill in the Blank", "topic": "Comparisons", "stem": "Choose the correct option to fill the blank: This is the ______ film I have ever seen.", "options": ["worse", "most bad", "baddest", "worst"], "answerIndex": 3, "explanation": "'Bad' is irregular: bad, worse, worst. 'The ... I have ever seen' needs the superlative: the worst. Trap: 'worse' - it is the comparative, used for two things."}, {"id": "G3-01", "strand": "G", "band": 3, "format": "Grammar Fill in the Blank", "topic": "Connectors", "stem": "Choose the correct option to fill the blank: She is not only a good singer ______ a talented dancer.", "options": ["but also", "and also", "as well", "but even"], "answerIndex": 0, "explanation": "'Not only' always pairs with 'but also': not only a singer but also a dancer. Trap: 'and also' - it sounds natural, but it breaks the fixed pair."}, {"id": "G3-02", "strand": "G", "band": 3, "format": "Sentence Correction", "topic": "Parallelism", "stem": "Choose the grammatically correct sentence.", "options": ["Not only he visited Delhi but also Agra and Jaipur.", "He not only visited Delhi but also Agra and Jaipur.", "He visited not only Delhi but also visited Agra and Jaipur.", "He visited not only Delhi but also Agra and Jaipur."], "answerIndex": 3, "explanation": "'Not only' and 'but also' must be followed by the same kind of word. Both should be followed by places: not only Delhi but also Agra. Trap: 'He not only visited Delhi but also Agra' - 'not only' is followed by a verb but 'but also' by places."}, {"id": "G3-03", "strand": "G", "band": 3, "format": "Grammar Fill in the Blank", "topic": "Comparisons", "stem": "Choose the correct option to fill the blank: The climate of Bengaluru is milder than ______ Chennai.", "options": ["it of", "that of", "those of", "of"], "answerIndex": 1, "explanation": "Compare climate with climate: milder than that of Chennai ('that' = the climate). Trap: 'of' - without 'that', the sentence compares a climate with a city."}, {"id": "G3-04", "strand": "G", "band": 3, "format": "Sentence Correction", "topic": "Modifiers", "stem": "Choose the grammatically correct sentence.", "options": ["Having finished the report, the manager sent it to the client.", "Having been finished, the manager sent the report to the client.", "Having finished the report, it was sent to the client by the manager.", "The report having finished, the manager sent it to the client."], "answerIndex": 0, "explanation": "The person who finished the report must come right after the comma: Having finished the report, the manager... Trap: 'it was sent ... by the manager' - the manager is in the sentence, but 'it' (the report) is placed as the one who finished."}, {"id": "G3-05", "strand": "G", "band": 3, "format": "Grammar Fill in the Blank", "topic": "Prepositions & Idioms", "stem": "Choose the correct option to fill the blank: He insisted ______ paying for dinner.", "options": ["for", "in", "at", "on"], "answerIndex": 3, "explanation": "The fixed pairing is 'insist on': insisted on paying. Trap: 'for' - payment suggests 'for', but the verb decides the preposition."}, {"id": "G3-06", "strand": "G", "band": 3, "format": "Error Spotting", "topic": "Connectors", "stem": "Exactly one part of this sentence contains an error. Which part?\n\nThough he worked hard, / but he could not / clear the exam / on his first attempt.", "options": ["Though he worked hard,", "but he could not", "clear the exam", "on his first attempt."], "answerIndex": 1, "explanation": "'Though' and 'but' both show contrast; using both doubles the link. Drop 'but': Though he worked hard, he could not clear the exam. Trap: 'Though he worked hard,' - 'though' is fine; the extra word is 'but'."}, {"id": "G3-07", "strand": "G", "band": 3, "format": "Grammar Fill in the Blank", "topic": "Word Order", "stem": "Choose the correct option to fill the blank: Not until the results were announced ______ how close the contest had been.", "options": ["we realised", "had we realise", "did we realise", "we did realise"], "answerIndex": 2, "explanation": "A sentence that opens with 'not until' inverts the main clause, like a question: did we realise. Trap: 'we realised' - normal order is correct without 'not until' at the front, but not with it."}, {"id": "G3-08", "strand": "G", "band": 3, "format": "Sentence Correction", "topic": "Comparisons", "stem": "Choose the grammatically correct sentence.", "options": ["Her salary is higher than her husband's.", "Her salary is higher than her husband.", "Her salary is higher than of her husband.", "Her salary is more higher than her husband's."], "answerIndex": 0, "explanation": "Compare salary with salary: than her husband's (salary). Trap: 'higher than her husband' - it compares a salary with a person."}, {"id": "G3-09", "strand": "G", "band": 3, "format": "Grammar Fill in the Blank", "topic": "Articles & Determiners", "stem": "Choose the correct option to fill the blank: ______ rich should help the poor.", "options": ["Some", "The", "A", "An"], "answerIndex": 1, "explanation": "'The' + adjective names a whole group of people and takes a plural verb: the rich, the poor. Trap: 'Some' - 'some rich' leaves 'rich' without a noun, which only 'the' allows."}, {"id": "G3-10", "strand": "G", "band": 3, "format": "Error Spotting", "topic": "Redundancy", "stem": "Exactly one part of this sentence contains an error. Which part?\n\nHe repeated / the same mistake / again / in the final exam.", "options": ["He repeated", "the same mistake", "again", "in the final exam."], "answerIndex": 2, "explanation": "'Repeat' already means 'do again', so 'again' adds nothing: He repeated the same mistake in the final exam. Trap: 'the same mistake' - 'same' is natural with 'repeated' and is accepted; the extra word is 'again'."}, {"id": "G4-01", "strand": "G", "band": 4, "format": "Error Spotting", "topic": "Word Order", "stem": "Exactly one part of this sentence contains an error. Which part?\n\nNever before / I have seen / such a crowd / at the station.", "options": ["Never before", "I have seen", "such a crowd", "at the station."], "answerIndex": 1, "explanation": "When 'never' or 'never before' starts a sentence, the helper verb comes before the subject: Never before have I seen. Trap: 'Never before' - starting with it is fine; it is what forces the inversion."}, {"id": "G4-02", "strand": "G", "band": 4, "format": "Grammar Fill in the Blank", "topic": "Comparisons", "stem": "Choose the correct option to fill the blank: He is as clever as, if not cleverer ______, his brother.", "options": ["as", "to", "from", "than"], "answerIndex": 3, "explanation": "Both comparisons must be complete: as clever as ... cleverer than. Each needs its own linking word. Trap: 'as' - it repeats the first comparison and leaves 'cleverer' without 'than'."}, {"id": "G4-03", "strand": "G", "band": 4, "format": "Sentence Correction", "topic": "Parallelism", "stem": "Choose the grammatically correct sentence.", "options": ["She was praised for both her courage as well as her honesty.", "She was both praised for her courage and her honesty.", "She was praised both for her courage and for her honesty.", "She was praised both for her courage and her honesty."], "answerIndex": 2, "explanation": "What follows 'both' must match what follows 'and': both for her courage and for her honesty. Trap: 'for both her courage as well as' - 'both' pairs only with 'and', never with 'as well as'."}, {"id": "G4-04", "strand": "G", "band": 4, "format": "Grammar Fill in the Blank", "topic": "Prepositions & Idioms", "stem": "Choose the correct option to fill the blank: The decision was taken ______ consultation with the staff.", "options": ["by", "in", "with", "on"], "answerIndex": 1, "explanation": "The fixed phrase is 'in consultation with': in consultation with the staff. Trap: 'with' - 'with' already follows 'consultation', so it cannot also come before it."}, {"id": "G4-05", "strand": "G", "band": 4, "format": "Sentence Correction", "topic": "Modifiers", "stem": "Choose the grammatically correct sentence.", "options": ["After reading the novel, the film was found disappointing.", "After reading the novel, the film seemed disappointing to me.", "After having read the novel, the film disappointed me.", "After reading the novel, I found the film disappointing."], "answerIndex": 3, "explanation": "The opening phrase describes whoever read the novel, so that person must come right after the comma: After reading the novel, I found... Trap: 'the film seemed disappointing to me' - 'me' is in the sentence, but too late; the film is placed as the reader."}, {"id": "G4-06", "strand": "G", "band": 4, "format": "Grammar Fill in the Blank", "topic": "Connectors", "stem": "Choose the correct option to fill the blank: Take an umbrella ______ it should rain.", "options": ["in case", "unless", "provided", "so that"], "answerIndex": 0, "explanation": "'In case' means 'as a precaution against something happening': take an umbrella in case it rains. Trap: 'provided' - it means 'only if', which makes taking the umbrella depend on rain that has not yet happened."}, {"id": "G4-07", "strand": "G", "band": 4, "format": "Sentence Correction", "topic": "Articles & Determiners", "stem": "Choose the grammatically correct sentence.", "options": ["Less people attended the meeting than expected.", "Lesser people attended the meeting than expected.", "Fewer people attended the meeting than expected.", "Few people attended the meeting than expected."], "answerIndex": 2, "explanation": "'People' is countable, so it takes 'fewer': fewer people. Trap: 'Less people' - very common in speech, but 'less' is for uncountable nouns (less time). 'Few' cannot be followed by 'than'; only the comparative 'fewer' can."}, {"id": "G4-08", "strand": "G", "band": 4, "format": "Grammar Fill in the Blank", "topic": "Word Order", "stem": "Choose the correct option to fill the blank: Only after the guests had left ______ the mess in the hall.", "options": ["we noticed", "did we notice", "we did notice", "noticed we"], "answerIndex": 1, "explanation": "'Only after ...' at the start of a sentence inverts the main clause: did we notice. Trap: 'noticed we' - inversion needs a helper verb (did) before the subject, not the main verb."}, {"id": "G4-09", "strand": "G", "band": 4, "format": "Error Spotting", "topic": "Prepositions & Idioms", "stem": "Exactly one part of this sentence contains an error. Which part?\n\nThe committee comprises of / seven members, / all of whom / are teachers.", "options": ["The committee comprises of", "seven members,", "all of whom", "are teachers."], "answerIndex": 0, "explanation": "'Comprise' takes no preposition: The committee comprises seven members. ('Consists of' or 'is composed of' would need 'of'.) Trap: 'all of whom' - 'whom' is correct after 'of'."}, {"id": "G4-10", "strand": "G", "band": 4, "format": "Grammar Fill in the Blank", "topic": "Comparisons", "stem": "Choose the correct option to fill the blank: Of the two plans, this one is ______.", "options": ["the better", "the best", "best", "more better"], "answerIndex": 0, "explanation": "When choosing between exactly two, formal English uses the comparative: the better of the two. Trap: 'the best' - the superlative is for three or more."}, {"id": "G5-01", "strand": "G", "band": 5, "format": "Sentence Correction", "topic": "Modifiers", "stem": "Choose the grammatically correct sentence.", "options": ["To get a good seat, early arrival is a must.", "To get a good seat, the doors must be reached early.", "To get a good seat, you must arrive early.", "To get a good seat, arriving early is essential."], "answerIndex": 2, "explanation": "An opening 'to' phrase of purpose must connect to the person doing the action: To get a good seat, you must... Trap: 'arriving early is essential' - it sounds smooth, but 'arriving' cannot get a seat; a person must."}, {"id": "G5-02", "strand": "G", "band": 5, "format": "Grammar Fill in the Blank", "topic": "Comparisons", "stem": "Choose the correct option to fill the blank: Her performance this year was ______ that of last year.", "options": ["superior from", "superior than", "more superior to", "superior to"], "answerIndex": 3, "explanation": "'Superior' already means 'better than' and takes 'to': superior to. Trap: 'more superior to' - the preposition is right, but 'more' doubles the comparison."}, {"id": "G5-03", "strand": "G", "band": 5, "format": "Error Spotting", "topic": "Parallelism", "stem": "Exactly one part of this sentence contains an error. Which part?\n\nThe new policy aims / at reducing costs, / improving quality / and to increase sales.", "options": ["The new policy aims", "at reducing costs,", "improving quality", "and to increase sales."], "answerIndex": 3, "explanation": "All three aims follow 'at', so they must all be -ing forms: reducing, improving and increasing. Trap: 'improving quality' - it matches 'reducing'; only the last item breaks the pattern."}, {"id": "G5-04", "strand": "G", "band": 5, "format": "Grammar Fill in the Blank", "topic": "Word Order", "stem": "Choose the correct option to fill the blank: So loud ______ that the neighbours complained.", "options": ["the music had", "the music was", "was the music", "did the music"], "answerIndex": 2, "explanation": "'So + adjective' at the start of a sentence inverts the verb and subject: So loud was the music. Trap: 'the music was' - correct only in normal order (The music was so loud that...)."}, {"id": "G5-05", "strand": "G", "band": 5, "format": "Sentence Correction", "topic": "Connectors", "stem": "Choose the grammatically correct sentence.", "options": ["Same as I said earlier, the plan has flaws.", "As I said earlier, the plan has flaws.", "Like I said earlier, the plan has flaws.", "Like as I said earlier, the plan has flaws."], "answerIndex": 1, "explanation": "Before a clause (subject + verb), formal English uses 'as'; 'like' takes only a noun: as I said, but like my father. Trap: 'Like I said' - very common in speech, but marked wrong in formal grammar."}, {"id": "G5-06", "strand": "G", "band": 5, "format": "Grammar Fill in the Blank", "topic": "Prepositions & Idioms", "stem": "Choose the correct option to fill the blank: The minister was charged ______ negligence.", "options": ["with", "about", "for", "of"], "answerIndex": 0, "explanation": "'Charged' takes 'with' (charged with negligence), while 'accused' takes 'of'. Trap: 'of' - students carry over 'accused of', but the two verbs take different prepositions."}, {"id": "G5-07", "strand": "G", "band": 5, "format": "Error Spotting", "topic": "Word Order", "stem": "Exactly one part of this sentence contains an error. Which part?\n\nUnder no circumstances / you should / share your PIN / with anyone.", "options": ["Under no circumstances", "you should", "share your PIN", "with anyone."], "answerIndex": 1, "explanation": "A negative phrase at the start of a sentence moves the helper verb before the subject: Under no circumstances should you share. Trap: 'Under no circumstances' - the opening is correct; it is what triggers the inversion."}, {"id": "G5-08", "strand": "G", "band": 5, "format": "Grammar Fill in the Blank", "topic": "Connectors", "stem": "Choose the correct option to fill the blank: ______ his illness, he attended every class.", "options": ["Even though", "Although", "Nevertheless", "Notwithstanding"], "answerIndex": 3, "explanation": "A noun phrase (his illness) follows, so the link must work like a preposition: Notwithstanding his illness. Trap: 'Although' - it shows the right contrast but needs a full clause (although he was ill)."}, {"id": "G5-09", "strand": "G", "band": 5, "format": "Sentence Correction", "topic": "Parallelism", "stem": "Choose the grammatically correct sentence.", "options": ["Either you can pay now or at the counter.", "You can pay either now or either at the counter.", "You can pay either now or at the counter.", "You can either pay now or at the counter."], "answerIndex": 2, "explanation": "What follows 'either' must match what follows 'or'. 'Now' and 'at the counter' both say when or where, so 'either' goes right before 'now'. Trap: 'either pay now or at the counter' - it puts a verb after 'either' but no verb after 'or'."}, {"id": "G5-10", "strand": "G", "band": 5, "format": "Error Spotting", "topic": "Comparisons", "stem": "Exactly one part of this sentence contains an error. Which part?\n\nUnlike Chennai, / the summers in Delhi / are extremely hot / and dry.", "options": ["Unlike Chennai,", "the summers in Delhi", "are extremely hot", "and dry."], "answerIndex": 0, "explanation": "The sentence compares a city with summers. Like must match like: Unlike those in Chennai, the summers in Delhi are... Trap: 'the summers in Delhi' - this part is correct; the opening phrase names the wrong thing to compare."}];
+var SCRIPT_URL="https://script.google.com/macros/s/AKfycbx5Ojm_zp4LfsMeelx5e06KNjVH1wfsXdV0keS4407m4FO1HU4EpVb7GKj-ibAsxnspeA/exec";
+var TEST_NAME=CFG.testName, MAX_MARKS=CFG.maxMarks, FILE_NAME=CFG.fileName, SN_KEY=CFG.snKey, NQ=CFG.nItems;
+var PIN_REGEX=/^(STU|IMS)\d{10}$/;
+var BLOCK_MSG="This PIN isn't on the active student list. Message Sahil Sir if you think this is a mistake.";
+var BAND_NAMES=["","Foundation","Developing","Exam-ready","Strong","Elite"];
+var BAND_EX=["",
+ "You are building the basics. Lock in core agreement, tense and preposition rules before moving on to exam-level traps.",
+ "The basics are in place. The next step is to stop falling for the nearest-noun trap and for look-alike forms such as since/for and less/fewer.",
+ "You handle median exam-level grammar. Push on the less familiar rules: conditionals, inversion, parallelism and dangling modifiers.",
+ "You are clearing questions that most aspirants miss. The remaining gap is the subtlest rules: mixed conditionals, fixed pairs and agreement exceptions.",
+ "Top-band performance: you held up on the hardest grammar items in the pool."];
+var STRAND_NAME={V:"Verbs & Agreement",G:"Sentence Structure"};
+var POOL_BY_ID={};POOL.forEach(function(q){POOL_BY_ID[q.id]=q});
+
+/* ==================== ABILITY MODEL ==================== */
+var GRID=[];for(var gi=-40;gi<=40;gi++)GRID.push(gi/10);
+function pCorrect(theta,band){return 0.2+0.8/(1+Math.exp(-1.7*(theta-(band-3))))}
+function eap(resp){
+ var num=0,num2=0,den=0;
+ for(var i=0;i<GRID.length;i++){
+  var t=GRID[i],w=Math.exp(-t*t/2);
+  for(var j=0;j<resp.length;j++){var p=pCorrect(t,resp[j].band);w*=resp[j].ok?p:(1-p)}
+  num+=t*w;num2+=t*t*w;den+=w;
+ }
+ var m=num/den;return{theta:m,se:Math.sqrt(Math.max(0,num2/den-m*m))};
+}
+function clamp(x,a,b){return Math.max(a,Math.min(b,x))}
+function levelOf(theta){return clamp(theta+3,1,5)}
+function adaptiveScore(theta){return Math.round(100*(clamp(theta,-2.5,2.5)+2.5)/5)}
+function responses(strand){
+ var r=[];seq.forEach(function(s){if(s.ans===null||s.ans===undefined)return;var q=POOL_BY_ID[s.id];if(strand&&q.strand!==strand)return;r.push({band:q.band,ok:s.ans===q.answerIndex})});
+ return r;
+}
+
+/* ==================== WHITELIST RUNTIME BLOCK (v5 §17) ==================== */
+var WL_PROMISE=fetch("whitelist.json",{cache:"no-store"}).then(function(r){return r.ok?r.json():null}).catch(function(){return null});
+function normalizePin(pin){return String(pin).replace(/\D/g,"").replace(/^0+/,"")}
+async function isWhitelisted(pin,batch){
+ var WL;try{WL=await WL_PROMISE}catch(e){WL=null}
+ if(!WL)return true; /* FAIL-OPEN */
+ try{
+  var bypass=WL.bypass_batches||[];
+  if(bypass.indexOf(batch)!==-1)return true;
+  var norm=normalizePin(pin);
+  var admins=(WL.admin_pins||[]).map(String);
+  if(admins.indexOf(norm)!==-1)return true;
+  if(Array.isArray(WL.pins)){if(WL.pins.map(String).indexOf(norm)!==-1)return true}
+  else if(WL.pins&&typeof WL.pins==="object"){if(Object.prototype.hasOwnProperty.call(WL.pins,norm))return true}
+  return false;
+ }catch(e){return true}
+}
+
+/* ==================== SAFETY NET — retry queue ==================== */
+function snReadJSON(key,fallback){try{var v=localStorage.getItem(key);return v?JSON.parse(v):fallback}catch(e){return fallback}}
+function snWriteJSON(key,val){try{localStorage.setItem(key,JSON.stringify(val))}catch(e){}}
+function snUnqueue(id){var p=snReadJSON("riim_pending",[]);p=p.filter(function(x){return x.id!==id});snWriteJSON("riim_pending",p)}
+function snSendWithQueue(opts){
+ var p=snReadJSON("riim_pending",[]);
+ var id=Date.now()+"-"+Math.random().toString(36).slice(2);
+ p.push({id:id,opts:{method:opts.method,mode:opts.mode,headers:opts.headers,body:opts.body}});
+ snWriteJSON("riim_pending",p);
+ return fetch(SCRIPT_URL,opts).then(function(r){snUnqueue(id);return r});
+}
+function snFlushQueue(){
+ var p=snReadJSON("riim_pending",[]);
+ p.forEach(function(item){fetch(SCRIPT_URL,item.opts).then(function(){snUnqueue(item.id)}).catch(function(){})});
+}
+
+/* ==================== STATE ==================== */
+var studentName="",studentPin="",studentBatch="";
+var seq=[];           /* committed: {id, ans (index|null), t (seconds)} */
+var cur=null;         /* current: {id, sel, tPrior} */
+var testOver=false,started=false,deadline=0,tickInt=null,shownTs=0,secondsLeft=CFG.minutes*60,tickCount=0;
+
+/* ==================== ITEM SELECTION ==================== */
+function pickNext(){
+ var strand=(seq.length%2===0)?"V":"G";
+ var est=eap(responses()).theta;
+ var target=clamp(Math.round(est+3),1,5);
+ var used={};seq.forEach(function(s){used[s.id]=1});if(cur)used[cur.id]=1;
+ var order=[target];for(var d=1;d<=4;d++){order.push(target+d);order.push(target-d)}
+ /* when the estimate sits below the target band, look easier first */
+ if(est+3<target){order=[target];for(var e=1;e<=4;e++){order.push(target-e);order.push(target+e)}}
+ var fmtUse={};seq.forEach(function(s){var q=POOL_BY_ID[s.id];if(q.strand===strand)fmtUse[q.format]=(fmtUse[q.format]||0)+1});
+ for(var k=0;k<order.length;k++){
+  var b=order[k];if(b<1||b>5)continue;
+  var c=POOL.filter(function(q){return q.strand===strand&&q.band===b&&!used[q.id]});
+  if(!c.length)continue;
+  var lo=Math.min.apply(null,c.map(function(q){return fmtUse[q.format]||0}));
+  c=c.filter(function(q){return (fmtUse[q.format]||0)===lo});
+  return c[Math.floor(Math.random()*c.length)].id;
+ }
+ return null;
+}
+
+/* ==================== SESSION AUTOSAVE / RESUME ==================== */
+function snSaveSession(){
+ if(testOver||!started)return;
+ var curSave=cur?{id:cur.id,sel:cur.sel,tPrior:cur.tPrior+Math.round((Date.now()-shownTs)/1000)}:null;
+ snWriteJSON(SN_KEY,{file:FILE_NAME,testName:TEST_NAME,name:studentName,pin:studentPin,batch:studentBatch,seq:seq,cur:curSave,deadline:deadline,ts:Date.now()});
+}
+function snClearSession(){try{localStorage.removeItem(SN_KEY)}catch(e){}}
+function snTryResume(){
+ var s=snReadJSON(SN_KEY,null);
+ if(!s||s.testName!==TEST_NAME||!Array.isArray(s.seq))return false;
+ var ok=confirm("You have an unfinished attempt of "+TEST_NAME+" ("+s.seq.length+" of "+NQ+" questions done). Resume where you left off?");
+ if(!ok){snClearSession();return false}
+ studentName=s.name;studentPin=s.pin;studentBatch=s.batch;
+ seq=s.seq.filter(function(x){return POOL_BY_ID[x.id]});
+ cur=(s.cur&&POOL_BY_ID[s.cur.id])?{id:s.cur.id,sel:(typeof s.cur.sel==="number"?s.cur.sel:null),tPrior:s.cur.tPrior||0}:null;
+ if(typeof s.deadline==="number"&&s.deadline>0)deadline=s.deadline; /* the clock kept running while away */
+ enterTest();
+ return true;
+}
+
+/* ==================== LOGIN ==================== */
+function showLoginError(msg){var el=document.getElementById("loginErr");el.textContent=msg;el.style.display="block"}
+async function startTest(){
+ var name=document.getElementById("stuName").value.trim();
+ var pinEl=document.getElementById("stuPin");
+ var pin=pinEl.value.trim().toUpperCase();pinEl.value=pin;
+ var batch=document.getElementById("stuBatch").value;
+ if(!name){showLoginError("Please enter your full name.");return}
+ if(!PIN_REGEX.test(pin)){showLoginError("Invalid PIN. Format: STU########## or IMS##########.");return}
+ if(!batch){showLoginError("Please select your batch.");return}
+ if(lockBlocks(batch)){showLoginError(LOCK_MSG);return}
+ if(windowBlocks(batch)){showLoginError(windowMsg(windowState()));return}
+ var allowed=await isWhitelisted(pin,batch);
+ if(!allowed){showLoginError(BLOCK_MSG);return}
+ studentName=name;studentPin=pin;studentBatch=batch;
+ document.getElementById("loginErr").style.display="none";
+ enterTest();
+}
+function enterTest(){
+ started=true;
+ document.getElementById("loginScreen").style.display="none";
+ document.getElementById("testScreen").style.display="block";
+ document.getElementById("tbName").textContent=TEST_NAME;
+ if(!deadline)deadline=Date.now()+secondsLeft*1000;
+ syncLeft();
+ if(secondsLeft<=0||seq.length>=NQ){submitTest();return}
+ tickInt=setInterval(function(){
+  syncLeft();
+  document.getElementById("timer").textContent=fmtClock(secondsLeft);
+  if(++tickCount%10===0)snSaveSession();
+  if(secondsLeft<=0)submitTest();
+ },1000);
+ if(!cur){var id=pickNext();if(!id){submitTest();return}cur={id:id,sel:null,tPrior:0}}
+ renderQuestion();
+ snSaveSession();
+}
+function syncLeft(){secondsLeft=Math.round((deadline-Date.now())/1000)}
+function fmtClock(s){s=Math.max(0,s);return String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0")}
+
+/* ==================== RENDER ==================== */
+function renderQuestion(){
+ var q=POOL_BY_ID[cur.id];
+ shownTs=Date.now();
+ var n=seq.length+1;
+ document.getElementById("qCounter").textContent="Question "+n+" of "+NQ;
+ document.getElementById("timer").textContent=fmtClock(secondsLeft);
+ var tk=document.getElementById("ticks");tk.innerHTML="";
+ for(var i=0;i<NQ;i++){var t=document.createElement("i");if(i<seq.length)t.className="done";else if(i===seq.length)t.className="cur";tk.appendChild(t)}
+ document.getElementById("secBadge").textContent=STRAND_NAME[q.strand].toUpperCase();
+ document.getElementById("qText").textContent=q.stem;
+ var box=document.getElementById("optBox");box.innerHTML="";
+ q.options.forEach(function(opt,idx){
+  var b=document.createElement("button");b.className="opt"+(cur.sel===idx?" sel":"");
+  b.textContent=String.fromCharCode(65+idx)+".  "+opt;
+  b.onclick=function(){cur.sel=idx;var all=box.querySelectorAll(".opt");for(var j=0;j<all.length;j++)all[j].classList.toggle("sel",j===idx);document.getElementById("nextBtn").disabled=false;snSaveSession()};
+  box.appendChild(b);
+ });
+ var nb=document.getElementById("nextBtn");
+ nb.disabled=(cur.sel===null);
+ nb.innerHTML=(n===NQ?"Confirm &amp; Finish":"Confirm &amp; Next &#8250;");
+ window.scrollTo(0,0);
+}
+function commitAnswer(skip){
+ if(testOver||!cur)return;
+ if(!skip&&cur.sel===null)return;
+ var t=cur.tPrior+Math.round((Date.now()-shownTs)/1000);
+ seq.push({id:cur.id,ans:skip?null:cur.sel,t:t});
+ cur=null;
+ if(seq.length>=NQ){submitTest();return}
+ var id=pickNext();
+ if(!id){submitTest();return}
+ cur={id:id,sel:null,tPrior:0};
+ snSaveSession();
+ renderQuestion();
+}
+
+/* ==================== MISTAKE BANK (spaced repetition) ==================== */
+function bankMistakes(){
+ try{
+  var bank=snReadJSON("riim_mistakes",[]);
+  var now=Date.now(),DAY=86400000;
+  seq.forEach(function(s){
+   var q=POOL_BY_ID[s.id];
+   if(s.ans===null||s.ans===q.answerIndex)return;
+   var k=CFG.bankPrefix+"-"+q.id;
+   var existing=null;
+   for(var j=0;j<bank.length;j++){if(bank[j].k===k){existing=bank[j];break}}
+   if(existing){existing.box=1;existing.due=now+DAY;existing.chosen=s.ans}
+   else{bank.push({k:k,stem:q.stem,opts:q.options,ans:q.answerIndex,chosen:s.ans,exp:q.explanation,sub:q.format,src:TEST_NAME,box:1,due:now+DAY})}
+  });
+  if(bank.length>300)bank=bank.slice(bank.length-300);
+  snWriteJSON("riim_mistakes",bank);
+ }catch(e){}
+}
+
+/* ==================== SUBMIT — 16-field payload ==================== */
+function fmtTime(totalSecs){var m=Math.floor(totalSecs/60);var s=totalSecs%60;return m+":"+(s<10?"0":"")+s}
+var RESULT=null;
+function submitTest(){
+ if(testOver)return;
+ testOver=true;
+ clearInterval(tickInt);
+ /* an answer selected but not confirmed when time ran out is not counted */
+ if(cur){seq.push({id:cur.id,ans:null,t:cur.tPrior+Math.round((Date.now()-shownTs)/1000),unconfirmed:true});cur=null}
+ if(seq.length>NQ)seq=seq.slice(0,NQ);
+
+ var correctCount=0,wrongCount=0,skippedCount=0;
+ var sectionErrors={},topicErrorMap={},wrongQuestions=[],studentAnswers=[],questionTimes=[];
+ seq.forEach(function(s,i){
+  var q=POOL_BY_ID[s.id];
+  questionTimes.push(s.t||0);
+  if(s.ans===null){skippedCount++;studentAnswers.push(null);return}
+  studentAnswers.push(q.id+":"+String.fromCharCode(65+s.ans));
+  if(s.ans===q.answerIndex)correctCount++;
+  else{
+   wrongCount++;wrongQuestions.push(i+1);
+   var sn=STRAND_NAME[q.strand];sectionErrors[sn]=(sectionErrors[sn]||0)+1;
+   var tk=q.topic||q.format;topicErrorMap[tk]=(topicErrorMap[tk]||0)+1;
+  }
+ });
+ for(var u=seq.length;u<NQ;u++){skippedCount++;studentAnswers.push(null);questionTimes.push(0)}
+ var all=eap(responses()),ev=eap(responses("V")),eg=eap(responses("G"));
+ var score=adaptiveScore(all.theta);
+ var totalSecs=Math.min(CFG.minutes*60,seq.reduce(function(a,s){return a+(s.t||0)},0));
+ var timeTakenStr=fmtTime(totalSecs);
+
+ /* 16-field payload — explicit key:value, topicErrors is field 16 */
+ var payload={
+  testName:TEST_NAME,
+  name:studentName,
+  pin:studentPin,
+  batch:studentBatch,
+  score:score,
+  correct:correctCount,
+  wrong:wrongCount,
+  skipped:skippedCount,
+  maxMarks:MAX_MARKS,
+  timeTaken:timeTakenStr,
+  timestamp:new Date().toLocaleString("en-IN",{timeZone:"Asia/Kolkata"}),
+  sectionErrors:JSON.stringify(sectionErrors),
+  wrongQuestions:JSON.stringify(wrongQuestions),
+  studentAnswers:JSON.stringify(studentAnswers),
+  questionTimes:JSON.stringify(questionTimes),
+  topicErrors:JSON.stringify(topicErrorMap)
+ };
+
+ snSendWithQueue({method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain"},body:JSON.stringify(payload)}).catch(function(){});
+
+ bankMistakes();
+
+ try{
+  var res=snReadJSON("riim_results",[]);
+  res.push({testName:TEST_NAME,score:score,correct:correctCount,wrong:wrongCount,skipped:skippedCount,maxMarks:MAX_MARKS,timeTaken:timeTakenStr,ts:Date.now()});
+  if(res.length>200)res=res.slice(res.length-200);
+  snWriteJSON("riim_results",res);
+ }catch(e){}
+
+ snClearSession();
+ RESULT={score:score,correct:correctCount,wrong:wrongCount,skipped:skippedCount,time:timeTakenStr,level:levelOf(all.theta),lv:levelOf(ev.theta),lg:levelOf(eg.theta),nV:responses("V").length,nG:responses("G").length,sectionErrors:sectionErrors,topicErrors:topicErrorMap};
+ showResults();
+}
+
+/* ==================== RESULTS ==================== */
+function bandOfLevel(l){return clamp(Math.round(l),1,5)}
+function pathSVG(){
+ var W=360,H=170,L=22,R=8,T=10,B=22,n=Math.max(seq.length,1);
+ var x=function(i){return L+(n===1?0:(W-L-R)*i/(n-1))},y=function(b){return T+(H-T-B)*(5-b)/4};
+ var s='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Difficulty of each question you were given">';
+ for(var b=1;b<=5;b++){s+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+y(b)+'" y2="'+y(b)+'" stroke="rgba(232,228,216,.08)"/><text x="'+(L-10)+'" y="'+(y(b)+4)+'" fill="#8B94A8" font-family="DM Mono" font-size="10" text-anchor="end">'+b+'</text>'}
+ var pts=seq.map(function(st,i){return x(i)+","+y(POOL_BY_ID[st.id].band)}).join(" ");
+ s+='<polyline points="'+pts+'" fill="none" stroke="rgba(212,169,78,.45)" stroke-width="2"/>';
+ seq.forEach(function(st,i){
+  var q=POOL_BY_ID[st.id],col=st.ans===null?"#8B94A8":(st.ans===q.answerIndex?"rgba(78,160,130,1)":"#C05555");
+  s+='<circle cx="'+x(i)+'" cy="'+y(q.band)+'" r="5" fill="'+col+'" stroke="#0B1220" stroke-width="2"><title>Q'+(i+1)+' · band '+q.band+'</title></circle>';
+  s+='<text x="'+x(i)+'" y="'+(H-6)+'" fill="#8B94A8" font-family="DM Mono" font-size="8.5" text-anchor="middle">'+(i+1)+'</text>';
+ });
+ return s+'</svg>';
+}
+function showResults(){
+ var R0=RESULT;
+ document.getElementById("testScreen").style.display="none";
+ document.getElementById("resultsScreen").style.display="block";
+ document.getElementById("resTitle").textContent=TEST_NAME+" — Results";
+ document.getElementById("resSub").textContent=studentName+" · "+studentBatch+" · "+new Date().toLocaleString("en-IN",{timeZone:"Asia/Kolkata"});
+ var bn=bandOfLevel(R0.level);
+ document.getElementById("lvBig").innerHTML=R0.level.toFixed(1)+" <small>/ 5</small>";
+ document.getElementById("lvName").textContent=BAND_NAMES[bn].toUpperCase();
+ document.getElementById("lvEx").textContent=BAND_EX[bn];
+ function strandTxt(l,n){return n?l.toFixed(1)+" · "+BAND_NAMES[bandOfLevel(l)]:"— not enough answers"}
+ document.getElementById("lvV").textContent=strandTxt(R0.lv,R0.nV);
+ document.getElementById("lvG").textContent=strandTxt(R0.lg,R0.nG);
+ document.getElementById("mtV").style.width=(R0.nV?(R0.lv-1)/4*100:0)+"%";
+ document.getElementById("mtG").style.width=(R0.nG?(R0.lg-1)/4*100:0)+"%";
+ document.getElementById("stScore").textContent=R0.score;
+ document.getElementById("stCorrect").textContent=R0.correct;
+ document.getElementById("stWrong").textContent=R0.wrong;
+ document.getElementById("stSkipped").textContent=R0.skipped;
+ document.getElementById("stTime").textContent=R0.time;
+ document.getElementById("pathSvg").innerHTML=seq.length?pathSVG():'<div class="mono">No questions answered.</div>';
+ var tp=[];for(var k in R0.topicErrors)if(R0.topicErrors.hasOwnProperty(k))tp.push([k,R0.topicErrors[k]]);
+ tp.sort(function(a,b){return b[1]-a[1]});
+ document.getElementById("secErrBox").innerHTML="<b>Where you lost ground</b> — "+(tp.length?tp.map(function(p){return p[0]+": "+p[1]}).join(" · "):"No wrong answers")+
+  "<br><span style='color:var(--mut);font-size:12px'>Your level weighs the difficulty of every question you got right or wrong, so it is a fairer measure than a count of correct answers. Skipped questions do not move it.</span>";
+
+ var letters=["A","B","C","D"];
+ var box=document.getElementById("reviewBox");box.innerHTML="";
+ seq.forEach(function(s,i){
+  var q=POOL_BY_ID[s.id],a=s.ans,skippedQ=(a===null),ok=(!skippedQ&&a===q.answerIndex);
+  var wrap=document.createElement("div");wrap.className="rq";
+  var head=document.createElement("div");head.className="rqHead";
+  var status=skippedQ?"<span class='status sk'>"+(s.unconfirmed?"NOT CONFIRMED":"SKIPPED")+"</span>":ok?"<span class='status ok'>CORRECT</span>":"<span class='status no'>WRONG</span>";
+  head.innerHTML="Q"+(i+1)+" · "+STRAND_NAME[q.strand]+" · "+q.format+" · band "+q.band+" ("+BAND_NAMES[q.band]+")"+status;
+  wrap.appendChild(head);
+  var stem=document.createElement("div");stem.className="rqStem";stem.textContent=q.stem;wrap.appendChild(stem);
+  q.options.forEach(function(opt,idx){
+   var r=document.createElement("div");r.className="ropt";
+   if(idx===q.answerIndex)r.classList.add("correct");else if(idx===a)r.classList.add("wrong");
+   var l=document.createElement("div");l.textContent=letters[idx];
+   var t=document.createElement("div");t.textContent=opt;
+   r.appendChild(l);r.appendChild(t);wrap.appendChild(r);
+  });
+  var exp=document.createElement("div");exp.className="exp";exp.innerHTML="<b>Explanation:</b> ";
+  exp.appendChild(document.createTextNode(q.explanation||""));
+  wrap.appendChild(exp);box.appendChild(wrap);
+ });
+ window.scrollTo(0,0);
+}
+
+/* ==================== DOWNLOAD PDF ==================== */
+function downloadPDF(){
+ var jsPDFctor=(window.jspdf&&window.jspdf.jsPDF)||window.jsPDF;
+ if(!jsPDFctor){alert("PDF library failed to load. Please check your connection and try again.");return}
+ var doc=new jsPDFctor({unit:"pt",format:"a4"});
+ var pageW=doc.internal.pageSize.getWidth(),pageH=doc.internal.pageSize.getHeight();
+ var margin=40,y=margin,letters=["A","B","C","D"],R0=RESULT;
+ function newPageIfNeeded(h){if(y+h>pageH-margin){doc.addPage();y=margin}}
+ function writeWrapped(text,x,maxW,size,style){
+  doc.setFont("helvetica",style||"normal");doc.setFontSize(size);
+  var lines=doc.splitTextToSize(text,maxW);
+  for(var i=0;i<lines.length;i++){newPageIfNeeded(size+4);doc.text(lines[i],x,y);y+=size+4}
+ }
+ doc.setFont("helvetica","bold");doc.setFontSize(16);doc.setTextColor(13,27,42);
+ doc.text("ROAD TO IIM",margin,y);y+=20;
+ doc.setFontSize(13);doc.setTextColor(201,168,76);doc.text(TEST_NAME,margin,y);y+=18;
+ doc.setFont("helvetica","normal");doc.setFontSize(10);doc.setTextColor(60,60,60);
+ doc.text(studentName+" · "+studentBatch+" · "+new Date().toLocaleString("en-IN",{timeZone:"Asia/Kolkata"}),margin,y);y+=16;
+ doc.setDrawColor(201,168,76);doc.line(margin,y,pageW-margin,y);y+=16;
+ doc.setTextColor(0,0,0);doc.setFont("helvetica","bold");doc.setFontSize(12);
+ doc.text("Level "+R0.level.toFixed(1)+" / 5  -  "+BAND_NAMES[bandOfLevel(R0.level)],margin,y);y+=16;
+ writeWrapped("Verbs & Agreement: "+(R0.nV?R0.lv.toFixed(1):"-")+"   ·   Sentence Structure: "+(R0.nG?R0.lg.toFixed(1):"-")+"   ·   Adaptive score: "+R0.score+" / 100",margin,pageW-2*margin,10);
+ writeWrapped("Correct: "+R0.correct+"   ·   Wrong: "+R0.wrong+"   ·   Skipped: "+R0.skipped+"   ·   Time: "+R0.time,margin,pageW-2*margin,10);
+ writeWrapped(BAND_EX[bandOfLevel(R0.level)],margin,pageW-2*margin,9.5,"italic");y+=4;
+ var path=seq.map(function(s,i){var q=POOL_BY_ID[s.id];return "Q"+(i+1)+" b"+q.band+" "+(s.ans===null?"skip":(s.ans===q.answerIndex?"right":"wrong"))}).join("  |  ");
+ writeWrapped("Path (difficulty band and result): "+path,margin,pageW-2*margin,8.5);y+=4;
+ var tp=[];for(var k in R0.topicErrors)if(R0.topicErrors.hasOwnProperty(k))tp.push(k+": "+R0.topicErrors[k]);
+ writeWrapped("Where you lost ground: "+(tp.length?tp.join("  \u00b7  "):"no wrong answers"),margin,pageW-2*margin,9.5);
+ y+=4;doc.setDrawColor(200,200,200);doc.line(margin,y,pageW-margin,y);y+=14;
+ doc.setFont("helvetica","bold");doc.setFontSize(12);doc.setTextColor(13,27,42);
+ doc.text("Question Review",margin,y);y+=16;
+ seq.forEach(function(s,i){
+  var q=POOL_BY_ID[s.id],a=s.ans,skippedQ=(a===null),ok=(!skippedQ&&a===q.answerIndex);
+  newPageIfNeeded(60);
+  doc.setFont("helvetica","bold");doc.setFontSize(10);doc.setTextColor(13,27,42);
+  doc.text("Q"+(i+1)+"  ·  "+STRAND_NAME[q.strand]+" · "+q.format+" · band "+q.band+"   ["+(skippedQ?"SKIPPED":(ok?"CORRECT":"WRONG"))+"]",margin,y);y+=12;
+  doc.setTextColor(0,0,0);writeWrapped(q.stem,margin,pageW-2*margin,10,"normal");y+=2;
+  q.options.forEach(function(opt,idx){
+   var marker=idx===q.answerIndex?"   (correct)":(idx===a?"   (your choice)":"");
+   if(idx===q.answerIndex)doc.setTextColor(30,120,60);else if(idx===a)doc.setTextColor(180,50,50);else doc.setTextColor(60,60,60);
+   writeWrapped(letters[idx]+")  "+opt+marker,margin+12,pageW-2*margin-12,10,"normal");
+  });
+  doc.setTextColor(0,0,0);y+=2;
+  doc.setFont("helvetica","bold");doc.setFontSize(9);newPageIfNeeded(14);doc.text("Explanation:",margin,y);y+=11;
+  writeWrapped(q.explanation||"",margin,pageW-2*margin,9,"normal");
+  y+=10;doc.setDrawColor(230,230,230);newPageIfNeeded(6);doc.line(margin,y,pageW-margin,y);y+=12;
+ });
+ var safeName=(studentName||"student").replace(/[^A-Za-z0-9]+/g,"_").slice(0,40);
+ var d=new Date(),dateTag=d.getFullYear()+String(d.getMonth()+1).padStart(2,"0")+String(d.getDate()).padStart(2,"0");
+ doc.save(CFG.bankPrefix+"_"+safeName+"_"+dateTag+".pdf");
+}
+
+/* ==================== TEST LOCK ====================
+   LOCKED=true: students who open this page see only LOCK_MSG and cannot start.
+   Admin preview: open the page with ?admin=1 and pick the Admin batch.
+   To open the test to students, set LOCKED=false. */
+var LOCKED=true; /* LOCKED until Sahil Sir approves (Gate 2/3). Set to false to open. */
+var LOCK_MSG="You are not authorized to view this test.";
+var ADMIN_VIEW=/[?&]admin(=|&|$)/.test(location.search);
+function lockBlocks(batch){return LOCKED&&!(ADMIN_VIEW&&batch==="Admin")}
+function applyLock(){
+ if(!LOCKED)return true;
+ if(ADMIN_VIEW){var an=document.getElementById("adminNote");an.textContent="ADMIN PREVIEW · locked for students · select the Admin batch to start";an.style.display="block";return true}
+ var card=document.querySelector(".loginCard");
+ Array.prototype.forEach.call(card.children,function(el){if(el.tagName!=="H1"&&el.id!=="lgTitle"&&el.id!=="lockMsg")el.style.display="none"});
+ var m=document.getElementById("lockMsg");m.textContent=LOCK_MSG;m.style.display="block";
+ return false;
+}
+
+/* ==================== AVAILABILITY WINDOW (IST) ====================
+   Students can start only inside the window. A test started inside the window can still be
+   resumed and submitted after it closes. Admin preview (?admin=1 + Admin batch) ignores the window. */
+var WINDOW={opensAt:Date.UTC(2026,9,11,14,30,0),  /* Sun 11 Oct 2026, 8:00 PM IST */
+            closesAt:Date.UTC(2026,9,13,18,30,0) /* Wed 14 Oct 2026, 12:00 AM IST */};
+function windowState(){return "open"; /* open-anytime test: no availability window */ var n=Date.now();if(n<WINDOW.opensAt)return "before";if(n>=WINDOW.closesAt)return "after";return "open"}
+function windowMsg(st){return st==="before"
+ ?"This test opens Sunday 11 October, 8:00 PM IST and closes Wednesday 14 October, 12:00 AM IST."
+ :"This test window has closed (it ran 11\u201313 October). Scores are no longer accepted."}
+function windowBlocks(batch){return windowState()!=="open"&&!(ADMIN_VIEW&&batch==="Admin")}
+function enforceWindow(){
+ if(started)return;
+ var st=windowState(),b=document.getElementById("winBanner"),btn=document.getElementById("loginBtn");
+ if(st==="open"||ADMIN_VIEW){b.style.display="none";btn.disabled=false;btn.style.opacity="1";btn.textContent="Start Test";return}
+ b.textContent=windowMsg(st);b.style.display="block";
+ btn.disabled=true;btn.style.opacity=".45";btn.textContent=st==="before"?"Opens Soon":"Window Closed";
+}
+
+/* ==================== PAGE LOAD ==================== */
+document.getElementById("lgTitle").textContent=TEST_NAME+" · Grammar";
+document.getElementById("lgMeta").innerHTML=NQ+" questions · adapts to you · "+CFG.minutes+" minutes · forward only<br>Result: level 1–5 and an adaptive score out of 100 · auto-submit at 00:00";
+document.getElementById("loginBtn").addEventListener("click",startTest);
+snFlushQueue();
+if(applyLock()){enforceWindow();setInterval(enforceWindow,30000);snTryResume();}
+</script>
+<script>/* RIIM usage ping v1 */try{fetch("https://script.google.com/macros/s/AKfycbx5Ojm_zp4LfsMeelx5e06KNjVH1wfsXdV0keS4407m4FO1HU4EpVb7GKj-ibAsxnspeA/exec?action=ping&type=open&page="+encodeURIComponent(document.title||location.pathname),{mode:"no-cors"});}catch(_){}</script>
+</body>
+</html>
