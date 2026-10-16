@@ -556,7 +556,7 @@ function downloadPDF(){
    LOCKED=true: students who open this page see only LOCK_MSG and cannot start.
    Admin preview: open the page with ?admin=1 and pick the Admin batch.
    To open the test to students, set LOCKED=false. */
-var LOCKED=true; /* LOCKED until Sahil Sir approves (Gate 2/3). Set to false to open. */
+var LOCKED=false; /* UNLOCKED 16 Oct 2026 */
 var LOCK_MSG="You are not authorized to view this test.";
 var ADMIN_VIEW=/[?&]admin(=|&|$)/.test(location.search);
 function lockBlocks(batch){return LOCKED&&!(ADMIN_VIEW&&batch==="Admin")}
