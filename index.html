@@ -124,6 +124,9 @@ header{
 .eventcard.hero{background:linear-gradient(150deg,rgba(212,169,78,.22),rgba(20,26,51,.75));border:1.5px solid rgba(212,169,78,.9);box-shadow:0 0 22px rgba(212,169,78,.25);}
 .eventcard.hero .nu-eyebrow{color:#D4A94E;}
 .eventcard.hero .nu-title{font-size:1.18rem;}
+.eventcard.flash{animation:evflash 1.6s ease-in-out infinite;}
+@keyframes evflash{0%,100%{box-shadow:0 0 14px rgba(212,169,78,.25);border-color:rgba(212,169,78,.6)}50%{box-shadow:0 0 34px rgba(212,169,78,.75);border-color:rgba(255,214,120,1)}}
+@media (prefers-reduced-motion:reduce){.eventcard.flash{animation:none}}
 .eventcard:hover{box-shadow:0 0 26px rgba(231,140,80,.35);transform:translateY(-1px);}
 .eventcard .spark{
   width:36px;height:36px;flex:0 0 36px;border-radius:50%;
@@ -405,7 +408,8 @@ const MANIFEST_ALL = [
       {t:"Rapid Fire 11", url:"RoadToIIM_SpeedTest11_VocabGrammar.html", sheetName:"Rapid Fire Test 11"},
       {t:"Rapid Fire 12", url:"RoadToIIM_SpeedTest12_VocabGrammar.html", sheetName:"Rapid Fire Test 12"},
       {t:"Rapid Fire 13", url:"RoadToIIM_SpeedTest13_VocabGrammar.html", sheetName:"Rapid Fire Test 13"},
-      {t:"Rapid Fire 14", url:"RoadToIIM_SpeedTest14_VocabGrammar.html", sheetName:"Rapid Fire Test 14", isNew:true},
+      {t:"Rapid Fire 14", url:"RoadToIIM_SpeedTest14_VocabGrammar.html", sheetName:"Rapid Fire Test 14"},
+      {t:"Rapid Fire 15 · Adaptive", url:"RoadToIIM_SpeedTest15_VocabGrammar.html", sheetName:"Rapid Fire Test 15", isNew:true},
     ]},
   { id:"revisers", name:"Revisers", desc:"One concept, three levels · climb in order",
     tests:[
@@ -765,6 +769,14 @@ const EVENTS = [
     opensAt: Date.UTC(2026,9,11,14,30,0),   /* Sun 11 Oct 2026, 20:00 IST */
     closesAt: Date.UTC(2026,9,13,18,30,0)   /* Wed 14 Oct 2026, 00:00 IST */
   },
+  { t:"Rapid Fire 15",
+    sub:"Vocab + Grammar \u00b7 35 Qs that adjust to you \u00b7 per-question clock \u00b7 +4/\u22121",
+    url:"RoadToIIM_SpeedTest15_VocabGrammar.html",
+    hero:true, noWindow:true, flash:true,
+    eyebrow:"NEW \u00b7 RAPID FIRE \u00b7 ADAPTIVE",
+    opensAt: Date.UTC(2026,9,18,11,0,0),    /* Sun 18 Oct 2026, 16:30 IST */
+    closesAt: Date.UTC(2026,9,24,18,30,0)   /* card leaves the main screen Sun 25 Oct 2026, 00:00 IST; test stays in Rapid Fire */
+  },
 ];
 
 function fmtRemain(ms){
@@ -788,7 +800,7 @@ function updateEventCard(){
       card.innerHTML='<span class="spark"></span><span class="nu-body"><span class="nu-eyebrow"></span><span class="nu-title"></span><span class="nu-sub"></span></span><span class="nu-go"></span>';
       box.appendChild(card);
     }
-    card.className='eventcard'+(ev.hero?' hero':'');
+    card.className='eventcard'+(ev.hero?' hero':'')+(ev.flash?' flash':'');
     card.style.display='flex';
     card.querySelector('.spark').textContent=ev.hero?'\u2726':'\u26a1';
     card.querySelector('.nu-title').textContent=ev.t;

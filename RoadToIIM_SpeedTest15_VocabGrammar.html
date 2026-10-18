@@ -1,0 +1,1328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Rapid Fire Test 15 · Road to IIM</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=DM+Sans:wght@400;500;700&family=DM+Mono&display=swap");
+:root{--navy:#0B1220;--panel:#101A2D;--panel2:#152136;--gold:#D4A94E;--text:#E8E4D8;--mut:#8B94A8;--green:rgba(78,160,130,1);--red:#C05555;--line:rgba(212,169,78,.22)}
+*{box-sizing:border-box;margin:0}
+body{background:var(--navy);color:var(--text);font-family:"DM Sans",sans-serif}
+h1{font-family:Fraunces,serif;color:var(--gold)}
+.mono{font-family:"DM Mono",monospace;font-size:12px;color:var(--mut)}
+#loginScreen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.loginCard{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:28px;max-width:420px;width:100%}
+.loginCard h1{font-size:24px;margin-bottom:2px}
+.loginCard h2{font-family:Fraunces,serif;font-size:15px;color:var(--text);font-weight:600;margin-bottom:18px}
+.loginCard label{display:block;font-family:"DM Mono";font-size:10.5px;color:var(--mut);letter-spacing:.1em;margin:12px 0 5px}
+.loginCard input,.loginCard select{width:100%;background:var(--panel2);color:var(--text);border:1px solid rgba(232,228,216,.25);border-radius:7px;padding:10px 12px;font-size:14px;font-family:"DM Sans"}
+#loginErr{display:none;color:var(--red);font-size:12.5px;margin-top:10px}
+#loginBtn{width:100%;margin-top:16px;background:var(--gold);color:var(--navy);border:none;border-radius:8px;padding:12px;font-weight:700;font-size:15px;cursor:pointer}
+.testMeta{font-family:"DM Mono";font-size:10.5px;color:var(--mut);margin-top:14px;line-height:1.7}
+#testScreen,#resultsScreen{display:none;max-width:1020px;margin:0 auto;padding:18px}
+#topBar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:12px 16px;margin-bottom:14px}
+#topBar .tName{font-family:Fraunces,serif;color:var(--gold);font-weight:700}
+#timer{font-family:"DM Mono";color:var(--gold);font-size:20px;margin-left:auto}
+#rfTimerWrap{display:none;height:6px;background:#1b2b45;border-radius:3px;overflow:hidden;margin-bottom:14px}
+#rfTimerBar{height:100%;width:100%;background:var(--green)}
+#rfTimerBar.warn{background:#f39c12}
+#rfTimerBar.danger{background:var(--red)}
+#layout{display:grid;grid-template-columns:1fr 210px;gap:14px}
+@media(max-width:760px){#layout{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px;margin-bottom:12px}
+.secBadge{font-family:"DM Mono";font-size:10.5px;color:var(--gold);letter-spacing:.08em}
+#passageBox{display:none;background:var(--panel2);border-left:3px solid var(--gold);border-radius:6px;padding:12px;margin:10px 0;font-size:14px;line-height:1.6;white-space:pre-wrap;max-height:300px;overflow-y:auto}
+#qText{font-size:16px;line-height:1.6;margin:12px 0;white-space:pre-wrap}
+.qFig{margin:10px 0}.qFig img{max-width:100%;border-radius:6px;border:1px solid var(--line);background:#fff}
+table.qTable{border-collapse:collapse;margin:10px 0;font-size:13.5px}
+table.qTable td,table.qTable th{border:1px solid rgba(232,228,216,.25);padding:6px 10px;text-align:left}
+table.qTable th{color:var(--gold);font-family:"DM Mono";font-size:11px;letter-spacing:.05em}
+pre.qTable{background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:10px;font-family:"DM Mono";font-size:12.5px;overflow-x:auto;margin:10px 0;white-space:pre}
+.qTableWrap{overflow-x:auto;margin:10px 0}
+.qTableWrap table{border-collapse:collapse;font-size:13.5px}
+.qTableWrap td,.qTableWrap th{border:1px solid rgba(232,228,216,.25);padding:6px 10px;text-align:left}
+.qTableWrap th{color:var(--gold);font-family:"DM Mono";font-size:11px;letter-spacing:.05em}
+.qTableWrap caption{color:var(--mut);font-size:11.5px;padding:4px}
+.qFig svg{max-width:100%;height:auto;background:#fff;border-radius:6px;border:1px solid var(--line)}
+#secBanner{display:none;position:fixed;inset:0;z-index:50;background:rgba(11,18,32,.94);align-items:center;justify-content:center;text-align:center}
+#secBanner .inner{background:var(--panel);border:1px solid var(--gold);border-radius:12px;padding:30px 44px}
+#secBanner h2{font-family:Fraunces,serif;color:var(--gold);font-size:24px;margin-bottom:8px}
+.opt{display:block;width:100%;text-align:left;background:var(--panel2);border:1px solid rgba(232,228,216,.15);color:var(--text);border-radius:8px;padding:12px 14px;margin:8px 0;cursor:pointer;font-size:14.5px;font-family:"DM Sans"}
+.opt.sel{border-color:var(--gold);background:rgba(212,169,78,.14)}
+input.tita{background:var(--panel2);border:1px solid rgba(212,169,78,.4);color:var(--text);border-radius:8px;padding:12px;font-size:16px;width:100%;font-family:"DM Mono"}
+.btn{background:var(--gold);color:var(--navy);border:none;border-radius:8px;padding:11px 20px;font-weight:700;cursor:pointer;font-size:14px;font-family:"DM Sans"}
+.btn.ghost{background:var(--panel2);color:var(--text);border:1px solid rgba(232,228,216,.3)}
+.btn.green{background:var(--green)}
+#sidePanel h3{font-family:"DM Mono";font-size:10.5px;color:var(--mut);letter-spacing:.1em;margin-bottom:8px}
+#palette{display:flex;flex-wrap:wrap;gap:6px}
+#palette button{width:34px;height:34px;border-radius:6px;border:1px solid rgba(232,228,216,.2);background:var(--panel2);color:var(--text);cursor:pointer;font-family:"DM Mono";font-size:12px}
+#palette .done{background:rgba(78,160,130,.25);border-color:rgba(78,160,130,.7)}
+#palette .cur{border-color:var(--gold)}
+#palette .rev{background:rgba(155,120,210,.3);border-color:rgba(175,140,230,.85)}
+#palette .rev.done{background:linear-gradient(135deg,rgba(155,120,210,.45) 50%,rgba(78,160,130,.45) 50%)}
+.legend{font-size:11px;color:var(--mut);margin-top:10px;line-height:2}
+.legend span{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.statGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px;margin:14px 0}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;text-align:center}
+.stat .v{font-family:"DM Mono";font-size:22px;color:var(--gold)}
+.stat .l{font-family:"DM Mono";font-size:9.5px;color:var(--mut);letter-spacing:.08em;margin-top:4px}
+.secErr{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 16px;font-size:13px;margin-bottom:14px}
+.secErr b{color:var(--gold)}
+#pdfBtn{margin:10px 0}
+.rq{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:12px}
+.rqHead{font-family:"DM Mono";font-size:11px;color:var(--mut);margin-bottom:8px}
+.status{font-weight:700;margin-left:8px}
+.status.ok{color:var(--green)}.status.no{color:var(--red)}.status.sk{color:var(--mut)}
+.rqStem{font-size:14.5px;line-height:1.55;margin-bottom:8px;white-space:pre-wrap}
+.ropt{display:flex;gap:10px;padding:7px 10px;border-radius:6px;font-size:13.5px;margin:3px 0}
+.ropt.correct{background:rgba(78,160,130,.15);color:var(--green)}
+.ropt.wrong{background:rgba(192,85,85,.13);color:var(--red)}
+.exp{font-size:12.5px;color:var(--mut);margin-top:8px;border-top:1px solid rgba(232,228,216,.08);padding-top:8px}
+.exp b{color:var(--gold)}
+/* v2.8 post-test analysis */
+.ok{color:var(--green)}.no{color:var(--red)}.dim{color:var(--mut)}.gold{color:var(--gold)}
+.ana{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:12px}
+.anaH{font-family:"DM Mono";font-size:10.5px;color:var(--gold);letter-spacing:.1em;margin-bottom:10px}
+.anaH .dim{letter-spacing:0;margin-left:8px}
+.ana.verdict{border-color:rgba(212,169,78,.55);background:linear-gradient(180deg,rgba(212,169,78,.09),var(--panel) 70%);padding:20px}
+.vH{font-family:Fraunces,serif;font-size:22px;line-height:1.35}
+.vS{font-size:14.5px;line-height:1.55;margin-top:6px;color:var(--text);opacity:.88}
+.vAlso{font-size:12.5px;color:var(--mut);margin-top:8px}
+.doNext{margin-top:16px;border-top:1px solid var(--line);padding-top:12px}
+.dnH{font-family:"DM Mono";font-size:10px;color:var(--mut);letter-spacing:.1em;margin-bottom:6px}
+.doNext ol{margin:0;padding-left:20px}
+.doNext li{font-size:13.5px;line-height:1.55;margin:5px 0}
+.doNext li::marker{color:var(--gold);font-family:"DM Mono"}
+.doNext a{color:var(--gold);text-decoration:none;border-bottom:1px dotted rgba(212,169,78,.6)}
+.sub0{font-size:12.5px;color:var(--mut);margin:-2px 0 12px;line-height:1.5}
+.sub{font-size:12.5px;color:var(--mut);margin-top:10px;line-height:1.7}
+.note{font-size:11.5px;color:var(--mut);line-height:1.5}
+.anaGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:12px;align-items:start;margin-bottom:12px}
+.anaGrid .ana{margin-bottom:0}
+.trapGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px}
+.trap{background:var(--panel2);border-radius:8px;padding:11px 13px;border-left:3px solid var(--red)}
+.trapTop{display:flex;justify-content:space-between;gap:8px;font-size:14px}
+.trapTop .cnt{font-family:"DM Mono";color:var(--red)}
+.trap .what{font-size:12px;color:var(--mut);margin-top:3px;line-height:1.45}
+.trap .fix{font-size:12.8px;margin-top:8px;line-height:1.5}
+.trap .fix b{display:block;color:var(--gold);font-family:"DM Mono";font-weight:400;font-size:9.5px;letter-spacing:.1em;margin-bottom:2px}
+.trap .qs{margin-top:8px;display:flex;flex-wrap:wrap;gap:8px}
+a.qlink{font-family:"DM Mono";font-size:11.5px;color:var(--gold);text-decoration:none;border-bottom:1px dotted rgba(212,169,78,.6)}
+.rung{padding:9px 0;border-bottom:1px solid rgba(232,228,216,.06)}
+.rung:first-of-type{padding-top:0}
+.rung:last-child{border-bottom:none;padding-bottom:0}
+.rungTop{display:flex;justify-content:space-between;align-items:baseline;font-size:13.5px}
+.rungTop b{font-family:"DM Mono";font-weight:400;font-size:13px}
+.mini,.cbar{display:flex;overflow:hidden;background:var(--panel2)}
+.mini{height:8px;border-radius:4px;margin:7px 0 5px}
+.cbar{height:16px;border-radius:5px;margin-bottom:10px}
+.mini i,.cbar i{display:block;height:100%}
+.mini i.c,.cbar i.c,.lgd.c,.palLeg .sw.c{background:rgba(78,160,130,.85)}
+.mini i.w,.cbar i.w,.lgd.w,.palLeg .sw.w{background:var(--red)}
+.mini i.s,.cbar i.s,.lgd.s,.palLeg .sw.s{background:rgba(139,148,168,.5)}
+.cbar i.u{background:repeating-linear-gradient(90deg,transparent 0 4px,rgba(232,228,216,.12) 4px 5px)}
+.lgd.u{background:transparent;box-shadow:inset 0 0 0 1px rgba(232,228,216,.3)}
+.rungSub{font-size:11.5px;color:var(--mut)}
+.kv{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:13.5px;padding:5px 0;border-bottom:1px solid rgba(232,228,216,.06)}
+.kv span{color:var(--mut)}
+.kv b{font-family:"DM Mono";font-weight:400;font-size:13px;text-align:right}
+.kv b span.ok{color:var(--green)}.kv b span.no{color:var(--red)}.kv b span.dim{color:var(--mut)}
+.lgd{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:8px;vertical-align:-1px}
+table.anaT{width:100%;border-collapse:collapse;font-size:12.5px}
+table.anaT th{font-family:"DM Mono";font-size:10px;color:var(--mut);font-weight:400;text-align:right;padding:4px 6px;border-bottom:1px solid var(--line)}
+table.anaT td{font-family:"DM Mono";text-align:right;padding:6px;border-bottom:1px solid rgba(232,228,216,.06)}
+table.anaT td:first-child,table.anaT th:first-child{text-align:left;font-family:"DM Sans"}
+.palSec{font-family:"DM Mono";font-size:10.5px;color:var(--mut);letter-spacing:.06em;margin:12px 0 6px}
+.palSec:first-of-type{margin-top:0}
+.pal2{display:grid;grid-template-columns:repeat(auto-fill,minmax(54px,1fr));gap:6px}
+.pt{position:relative;height:50px;border-radius:7px;border:1px solid rgba(232,228,216,.16);background:var(--panel2);cursor:pointer;overflow:hidden;font-family:"DM Mono";padding:6px 7px}
+.pt .pn{display:block;font-size:13px;color:var(--text)}
+.pt .ptm{display:block;font-size:10px;color:var(--mut);margin-top:3px}
+.pt i{position:absolute;left:0;bottom:0;height:3px;background:var(--gold);opacity:.85}
+.pt.c{background:rgba(78,160,130,.15);border-color:rgba(78,160,130,.55)}
+.pt.w{background:rgba(192,85,85,.24);border-color:rgba(192,85,85,.75)}
+.pt.n{border-style:dashed;opacity:.5}
+.pt.slow .ptm{color:var(--gold)}
+.pt .tdot{position:absolute;top:7px;right:7px;width:7px;height:7px;border-radius:50%;background:var(--text);box-shadow:0 0 0 2px rgba(192,85,85,.6)}
+.pt:hover{filter:brightness(1.25)}
+.palLeg{font-size:11px;color:var(--mut);margin-top:10px;line-height:1.9}
+.palLeg .sw{display:inline-block;width:11px;height:11px;border-radius:3px;margin:0 5px 0 12px;vertical-align:-1px}
+.palLeg .sw:first-child{margin-left:0}
+.palLeg .sw.n{border:1px dashed rgba(232,228,216,.5)}
+.palLeg .sw.t{width:7px;height:7px;border-radius:50%;background:var(--text);box-shadow:0 0 0 2px rgba(192,85,85,.6);vertical-align:0}
+.rq{scroll-margin-top:12px}
+.trapNote{margin-left:auto;font-family:"DM Mono";font-size:10.5px;color:var(--red);white-space:nowrap;padding-left:8px}
+.opt.rOk{border-color:var(--green);background:rgba(78,160,130,.18)}
+.opt.rNo{border-color:var(--red);background:rgba(192,85,85,.15)}
+.opt:disabled{cursor:default}
+details summary{cursor:pointer;color:var(--gold);margin-bottom:4px}
+@media(max-width:560px){.vH{font-size:19px}.pal2{grid-template-columns:repeat(auto-fill,minmax(48px,1fr))}}
+/* v2.9 adaptive band strip */
+.adStrip{display:flex;align-items:flex-end;gap:2px;height:58px;margin:10px 0 6px;padding:0 1px}
+.adStrip i{flex:1 1 0;min-width:0;height:16px;border-radius:3px;font-style:normal;font-family:"DM Mono";font-size:9px;line-height:16px;text-align:center;color:var(--navy);overflow:hidden;cursor:pointer}
+.adStrip i.b1{margin-bottom:20px}.adStrip i.b2{margin-bottom:40px}
+.adStrip i.c{background:rgba(78,160,130,.85)}.adStrip i.w{background:var(--red)}.adStrip i.s{background:rgba(139,148,168,.5)}
+.adAxis{display:flex;justify-content:space-between;font-family:"DM Mono";font-size:9.5px;color:var(--mut)}
+@media(max-width:480px){.adStrip i{font-size:0}}
+</style>
+</head>
+<body>
+<div id="loginScreen"><div class="loginCard">
+ <h1>ROAD TO IIM</h1><h2 id="lgTitle"></h2>
+ <label for="stuName">FULL NAME</label><input type="text" id="stuName" placeholder="Your full name" autocomplete="off">
+ <label for="stuPin">PIN</label><input type="text" id="stuPin" placeholder="STU########## or IMS##########" autocomplete="off" maxlength="13">
+ <label for="stuBatch">BATCH</label>
+ <select id="stuBatch"><option value="">-- Select your batch --</option>
+  <optgroup label="Classroom"><option>A2701</option><option>A2702</option><option>A2703</option><option>A2704</option><option>A2705</option><option>A2706</option><option>A2707</option><option>A2708</option><option>A2709</option><option>A2710</option><option>A2711</option><option>A2712</option><option>A2714</option><option>A2715</option><option>A2716</option><option>A2717</option><option>A2718</option><option>A2719</option><option>A2720</option></optgroup>
+  <optgroup label="School"><option>Zebar</option></optgroup>
+  <optgroup label="Online"><option>27E101</option><option>27E102</option><option>27E103</option><option>27E104</option><option>27E105</option><option>27E106</option><option>27E107</option><option>27E108</option><option>27E109</option><option>27E110</option><option>28E101</option><option>28E102</option><option>28E103</option><option>28E104</option><option>28E105</option><option>28E106</option><option>28E107</option><option>28E108</option><option>28E109</option><option>28E110</option></optgroup>
+  <optgroup label="IPMAT 28"><option>Z2801</option><option>S2801</option><option>A2804</option><option>PN2801</option></optgroup>
+  <optgroup label="Admin"><option>Admin</option></optgroup>
+ </select>
+ <div id="loginErr"></div>
+ <button id="loginBtn">Start Test</button>
+ <div class="testMeta" id="lgMeta"></div>
+</div></div>
+
+<div id="secBanner"><div class="inner"><h2 id="sbTitle"></h2><div class="mono" id="sbSub"></div></div></div>
+<div id="testScreen">
+ <div id="topBar"><span class="tName" id="tbName"></span><span class="mono" id="qCounter"></span><span id="timer">--:--</span></div>
+ <div id="rfTimerWrap"><div id="rfTimerBar"></div></div>
+ <div id="layout">
+  <div>
+   <div class="card">
+    <span class="secBadge" id="secBadge"></span>
+    <div id="passageBox"></div>
+    <div id="qText"></div>
+    <div id="exBox"></div>
+    <div id="optBox"></div>
+   </div>
+   <div class="card" style="display:flex;gap:10px;justify-content:space-between;flex-wrap:wrap">
+    <div><button class="btn ghost" id="prevBtn" onclick="nav(-1)">&#8249; Prev</button> <button class="btn" onclick="nav(1)">Next &#8250;</button> <button class="btn ghost" id="clrBtn" onclick="clearResp()">Clear response</button> <button class="btn ghost" id="mrkBtn" onclick="toggleMark()">Mark for review</button></div>
+    <div><button class="btn ghost" id="endSecBtn" style="display:none" onclick="if(confirm('End this section early? You cannot return to it.'))endSectionEarly()">End Section &#8250;</button> <button class="btn green" id="submitBtn" onclick="if(confirm('Submit test?'))submitTest()">Submit</button></div>
+   </div>
+  </div>
+  <div id="sidePanel" class="card"><h3>QUESTION PALETTE</h3><div id="palette"></div>
+   <div class="legend"><span style="background:rgba(78,160,130,.6)"></span>Answered<br><span style="background:rgba(155,120,210,.55)"></span>Marked for review<br><span style="background:#152136;border:1px solid #D4A94E"></span>Current</div>
+  </div>
+ </div>
+</div>
+
+<div id="resultsScreen">
+ <h1 id="resTitle" style="font-size:26px"></h1>
+ <div class="mono" id="resSub" style="margin:6px 0 4px"></div>
+ <button id="pdfBtn" class="btn" onclick="downloadPDF()">Download PDF</button>
+ <div class="statGrid">
+  <div class="stat"><div class="v" id="stScore">0</div><div class="l" id="stMaxL">SCORE</div></div>
+  <div class="stat"><div class="v" id="stCorrect">0</div><div class="l">CORRECT</div></div>
+  <div class="stat"><div class="v" id="stWrong">0</div><div class="l">WRONG</div></div>
+  <div class="stat"><div class="v" id="stSkipped">0</div><div class="l">SKIPPED</div></div>
+  <div class="stat"><div class="v" id="stAcc">&mdash;</div><div class="l">ACCURACY</div></div>
+  <div class="stat"><div class="v" id="stTax">&mdash;</div><div class="l">GUESSING TAX</div></div>
+  <div class="stat"><div class="v" id="stTime">0:00</div><div class="l">TIME TAKEN</div></div>
+ </div>
+ <div class="secErr" id="secErrBox"></div>
+ <div id="anaBox"></div>
+ <div id="retryBox"></div>
+ <h1 style="font-size:19px;margin:14px 0 10px">Question Review</h1>
+ <div id="reviewBox"></div>
+</div>
+
+<script>
+/* ============================================================
+   ROAD TO IIM — Studio-built portal test
+   Whitelist v5 · Safety Net · 16-field payload · PATH 2 tags
+   ============================================================ */
+var CFG={"testName":"Rapid Fire Test 15","examName":"IPMAT Indore","maxMarks":140,"minutes":18,"c":4,"w":-1,"titaW":0,"titaWSec":{"VA":-1},"hasTita":false,"navNote":"adaptive rapid · serves 35 of 45 · per-question clock · forward only","sectional":null,"fileName":"ipmat_indore_Rapid_Fire_Test_15.html","snKey":"riim_session_Rapid_Fire_Test_15","bankPrefix":"Rapid_Fire_Test_15","rapid":true,"adaptive":{"serve":35,"start":"medium"}};
+var QUESTIONS=[{"id":"Q01","section":"VA","format":"Fill in the Blank","kind":"mcq","td":25,"stem":"The new metro line has proved a ____ for daily commuters, cutting their travel time nearly in half.","options":["boon","bane","hurdle","burden"],"answer":"boon","answerIndex":0,"difficulty":"easy","explanation":"Answer: boon (a blessing, something helpful). Halving travel time is a benefit, so the blank needs a positive word. Bane = a cause of misery — the opposite; students who skim past 'cutting their travel time' pick it. Hurdle = an obstacle; burden = a heavy load. All three wrong options are negative and clash with the benefit described.","verified":"ok","status":"approved"},{"id":"Q02","section":"VA","format":"Idioms","kind":"mcq","td":25,"stem":"Instead of answering the reporter's question directly, the spokesperson kept ____.","options":["beating the bush around","beating about the bush","going round the bend","barking up the wrong tree"],"answer":"beating about the bush","answerIndex":1,"difficulty":"easy","explanation":"Answer: beating about the bush = avoiding the main point. The trap is 'beating the bush around' — the right words in the wrong order; the fixed form is 'beat about (or around) the bush'. 'Going round the bend' = going mad. 'Barking up the wrong tree' = pursuing a mistaken idea — tempting because the spokesperson is on the wrong track, but the sentence is about evasion, not error.","verified":"ok","status":"approved"},{"id":"Q03","section":"VA","format":"SVA","kind":"mcq","td":35,"stem":"Neither the coach nor the players ____ happy with the umpire's decision.","options":["was","has been","were","is"],"answer":"were","answerIndex":2,"difficulty":"easy","explanation":"Answer: were. With 'neither…nor', the verb agrees with the nearer subject — 'the players' (plural). The trap is 'was': students treat 'neither' as always singular. 'Is' fails on both tense and number; 'has been' is singular and also breaks the past-tense context.","verified":"ok","status":"approved"},{"id":"Q04","section":"VA","format":"Fill in the Blank","kind":"mcq","td":25,"stem":"Despite losing the first two sets, the young player remained ____ and fought back to win the match.","options":["dejected","complacent","indifferent","resolute"],"answer":"resolute","answerIndex":3,"difficulty":"easy","explanation":"Answer: resolute = firmly determined. 'Fought back to win' demands determination. Dejected = sad and disheartened — the trap, since losing two sets would make most people dejected, but 'despite' signals the opposite. Complacent = smugly satisfied (no one is complacent after losing). Indifferent = not caring, which contradicts fighting back.","verified":"ok","status":"approved"},{"id":"Q05","section":"VA","format":"Tenses","kind":"mcq","td":35,"stem":"By the time the ambulance arrived, the injured man ____ unconscious for twenty minutes.","options":["was","had been","has been","would have been"],"answer":"had been","answerIndex":1,"difficulty":"easy","explanation":"Answer: had been. An action that continued up to a point in the past ('by the time the ambulance arrived') takes the past perfect. The trap is 'was': simple past ignores the 'for twenty minutes' duration before another past event. 'Has been' is present perfect — wrong time frame. 'Would have been' is conditional; nothing here is hypothetical.","verified":"ok","status":"approved"},{"id":"Q06","section":"VA","format":"Word Usage","kind":"mcq","td":25,"stem":"Which sentence uses the word 'ADVERSE' correctly?","options":["Heavy rain had an adverse effect on the harvest.","He is adverse to waking up early on weekends.","The old committee remained adverse to any change in the syllabus.","The shy boy was adverse to speaking in public."],"answer":"Heavy rain had an adverse effect on the harvest.","answerIndex":0,"difficulty":"easy","explanation":"Answer: A. Adverse = harmful or unfavourable (adverse effect, adverse weather). Options B, C and D all need 'averse' = strongly disliking or opposed to (averse to waking early, averse to change, averse to speaking). The trap is the near-identical spelling: students who know only one of the pair accept 'adverse to'. Tip: people are averse; conditions and effects are adverse.","verified":"ok","status":"approved"},{"id":"Q07","section":"VA","format":"Pronouns","kind":"mcq","td":35,"stem":"Between you and ____, the plan is unlikely to work.","options":["I","myself","mine","me"],"answer":"me","answerIndex":3,"difficulty":"easy","explanation":"Answer: me. 'Between' is a preposition, so it takes the object form: between you and me. The trap is 'I' — an over-correction by students who think 'and I' always sounds more correct. 'Myself' is reflexive and needs a matching subject ('I hurt myself'). 'Mine' is possessive and makes no sense here.","verified":"ok","status":"approved"},{"id":"Q08","section":"VA","format":"One Word Substitution","kind":"mcq","td":25,"stem":"One who eats both plants and meat","options":["herbivore","carnivore","omnivore","insectivore"],"answer":"omnivore","answerIndex":2,"difficulty":"easy","explanation":"Answer: omnivore (omni = all, vore = eat). Herbivore eats only plants; carnivore eats only meat — each picks one half of the definition, which is the trap. Insectivore eats insects. All four share the '-vore' (eat) root; only 'omni' covers both plants and meat.","verified":"ok","status":"approved"},{"id":"Q09","section":"VA","format":"Idioms","kind":"mcq","td":25,"stem":"My cousin lives abroad, so we meet only ____.","options":["once in a blue moon","once upon a blue moon","over the moon","at the eleventh hour"],"answer":"once in a blue moon","answerIndex":0,"difficulty":"easy","explanation":"Answer: once in a blue moon = very rarely. The trap is 'once upon a blue moon', a blend with the fairy-tale opener 'once upon a time' — not a real idiom. 'Over the moon' = delighted. 'At the eleventh hour' = at the last moment. Only the first describes how often the cousins meet.","verified":"ok","status":"approved"},{"id":"Q10","section":"VA","format":"Modifiers","kind":"mcq","td":35,"stem":"Which sentence is free of a dangling modifier?","options":["Walking to school, the rain drenched my uniform.","Walking to school, my uniform got drenched by the rain.","Walking to school, I got drenched by the rain.","The rain drenched my uniform, walking to school."],"answer":"Walking to school, I got drenched by the rain.","answerIndex":2,"difficulty":"easy","explanation":"Answer: C. An opening phrase like 'Walking to school' must be followed by the person doing the walking — 'I'. In A, the rain walks to school; in B, the uniform does — B is the trap because it sounds smooth and the uniform seems connected to the speaker. D just moves the phrase to the end, so it still attaches to the rain.","verified":"ok","status":"approved"},{"id":"Q11","section":"VA","format":"Roots","kind":"mcq","td":30,"stem":"The root 'chron' means 'time'. Which word means 'arranged in the order in which events happened'?","options":["chronic","chronicle","synchronization","chronological"],"answer":"chronological","answerIndex":3,"difficulty":"easy","explanation":"Answer: chronological = in time order. All four carry 'chron'. Chronic = lasting a long time (a chronic illness). Chronicle = a written record of events — the trap, because chronicles are often in time order, but the word names the record, not the arrangement. Synchronization = making things happen at the same time.","verified":"ok","status":"approved"},{"id":"Q12","section":"VA","format":"Parallelism","kind":"mcq","td":35,"stem":"The workshop teaches participants to speak clearly, to listen carefully and ____.","options":["writing persuasively","to write persuasively","persuasive writing","that they write persuasively"],"answer":"to write persuasively","answerIndex":1,"difficulty":"easy","explanation":"Answer: to write persuasively. The list already has two 'to + verb' items (to speak, to listen), so the third must match. 'Writing persuasively' is the trap — it reads naturally but switches to a gerund. 'Persuasive writing' turns the verb into a noun. 'That they write persuasively' switches to a clause.","verified":"ok","status":"approved"},{"id":"Q13","section":"VA","format":"Fill in the Blank","kind":"mcq","td":25,"stem":"The teacher's ____ explanation cleared every doubt in a single class; even the weakest students understood.","options":["vague","verbose","lucid","lengthy"],"answer":"lucid","answerIndex":2,"difficulty":"easy","explanation":"Answer: lucid = clear and easy to understand. Vague = unclear — the opposite. The trap is 'verbose' (using too many words) or 'lengthy': students assume a thorough explanation must be long, but 'in a single class' and 'even the weakest students understood' point to clarity, not length.","verified":"ok","status":"approved"},{"id":"Q14","section":"VA","format":"Word Usage","kind":"mcq","td":25,"stem":"Which sentence uses the word 'PRINCIPLE' correctly?","options":["She refused the bribe as a matter of principle.","The principle called my parents to school.","The principle amount of the loan is ₹5 lakh.","Our principle guest arrived very late for the event."],"answer":"She refused the bribe as a matter of principle.","answerIndex":0,"difficulty":"easy","explanation":"Answer: A. Principle = a rule or belief (a matter of principle). B, C and D all need 'principal': the head of a school (B), the original sum of a loan (C), and 'main' (D, principal guest). The trap is the identical pronunciation. Tip: principal can be a person or mean 'main'; principle is always a rule or belief.","verified":"ok","status":"approved"},{"id":"Q15","section":"VA","format":"Prepositions","kind":"mcq","td":35,"stem":"He was accused ____ cheating in the exam.","options":["for","of","with","about"],"answer":"of","answerIndex":1,"difficulty":"easy","explanation":"Answer: of. The fixed pattern is 'accused of' something. The trap is 'for' — students mix up 'accused of' with 'blamed for' or 'punished for'. 'Charged with' takes 'with', which makes 'with' tempting too. 'About' does not follow 'accused'.","verified":"ok","status":"approved"},{"id":"Q16","section":"VA","format":"Fill in the Blank","kind":"mcq","td":25,"stem":"The minister's speech was so ____ that even his supporters could not tell where he stood on the issue.","options":["categorical","incisive","nebulous","forthright"],"answer":"nebulous","answerIndex":2,"difficulty":"medium","explanation":"Answer: nebulous = vague, unclear. If supporters could not tell his position, the speech lacked clarity. Categorical = absolutely clear and direct; forthright = frank and outspoken; incisive = sharp and penetrating. All three are the opposite of what the context needs — the trap is 'incisive', which students pick because it sounds intellectually impressive.","verified":"ok","status":"approved"},{"id":"Q17","section":"VA","format":"Idioms","kind":"mcq","td":25,"stem":"With the deadline only hours away, the editor decided to ____ and publish the story without a final check.","options":["throw caution to the wind","throw caution into the air","throw in the towel","throw down the gauntlet"],"answer":"throw caution to the wind","answerIndex":0,"difficulty":"medium","explanation":"Answer: throw caution to the wind = act recklessly, ignoring risk. Publishing without a check fits. 'Throw caution into the air' is a corrupted version of the idiom — the trap for students who half-know it. 'Throw in the towel' = give up (the editor did not give up; she published). 'Throw down the gauntlet' = issue a challenge.","verified":"ok","status":"approved"},{"id":"Q18","section":"VA","format":"SVA","kind":"mcq","td":35,"stem":"The number of applicants for the scholarship ____ risen sharply this year, while a number of seats ____ still vacant.","options":["have; is","have; are","has; is","has; are"],"answer":"has; are","answerIndex":3,"difficulty":"medium","explanation":"Answer: has; are. 'The number of' is singular (it refers to one figure), so 'has'. 'A number of' means 'many', so it is plural — 'are'. The trap is 'has; is': students fix the first blank and then treat 'a number of' the same way. 'Have; are' gets only the second right; 'have; is' gets both wrong.","verified":"ok","status":"approved"},{"id":"Q19","section":"VA","format":"Word Usage","kind":"mcq","td":25,"stem":"Which sentence uses the word 'DISINTERESTED' correctly?","options":["The students looked disinterested during the dull lecture.","A disinterested umpire is essential for a fair match.","He was so disinterested in cricket that he never watched any match.","She grew disinterested in the novel after page ten."],"answer":"A disinterested umpire is essential for a fair match.","answerIndex":1,"difficulty":"medium","explanation":"Answer: B. Disinterested = impartial, having nothing to gain from the outcome — exactly what a fair umpire must be. A, C and D all mean 'not interested', which is 'uninterested'. The trap: in casual speech many people use disinterested for bored, so three fluent sentences look right. In exam usage, disinterested ≠ uninterested.","verified":"ok","status":"approved"},{"id":"Q20","section":"VA","format":"Tenses","kind":"mcq","td":35,"stem":"Hardly ____ the stage when the lights went out.","options":["had he reached","he had just reached","did he reach","he reached"],"answer":"had he reached","answerIndex":0,"difficulty":"medium","explanation":"Answer: had he reached. 'Hardly…when' needs the past perfect (the first action finished just before the second), and a negative-sense opener like 'Hardly' triggers inversion: had + subject. The trap is 'he had just reached' — correct tense but no inversion. 'Did he reach' inverts but uses the wrong tense. 'He reached' fails on both.","verified":"ok","status":"approved"},{"id":"Q21","section":"VA","format":"Roots","kind":"mcq","td":30,"stem":"The root 'fid' means 'faith, trust'. Which word does NOT come from this root?","options":["fidelity","confide","fidget","perfidious"],"answer":"fidget","answerIndex":2,"difficulty":"medium","explanation":"Answer: fidget (to make small restless movements) — it comes from an old word 'fidge', not from 'fid'. Fidelity = faithfulness; confide = to trust someone with a secret; perfidious = treacherous, breaking faith (per- = through/away). The trap is 'perfidious': because it means the opposite of faithful, students assume it cannot share the root.","verified":"ok","status":"approved"},{"id":"Q22","section":"VA","format":"Pronouns","kind":"mcq","td":35,"stem":"The candidate ____ the panel believed would win was eliminated in the first round.","options":["whom","who","whomever","who's"],"answer":"who","answerIndex":1,"difficulty":"medium","explanation":"Answer: who. Remove the inserted clause 'the panel believed': the candidate who would win. 'Who' is the subject of 'would win'. The trap is 'whom' — students see 'the panel believed' and think the pronoun is an object. 'Whomever' is wrong in case and refers to an unspecified person. 'Who's' = who is.","verified":"ok","status":"approved"},{"id":"Q23","section":"VA","format":"One Word Substitution","kind":"mcq","td":25,"stem":"Government by the wealthy","options":["aristocracy","oligarchy","autocracy","plutocracy"],"answer":"plutocracy","answerIndex":3,"difficulty":"medium","explanation":"Answer: plutocracy (pluto = wealth). The trap is oligarchy = rule by a small group — rich elites are often a small group, but oligarchy is defined by size, not wealth. Aristocracy = rule by a hereditary noble class. Autocracy = rule by one person with absolute power.","verified":"ok","status":"approved"},{"id":"Q24","section":"VA","format":"Idioms","kind":"mcq","td":25,"stem":"The two rival parties, which had fought bitterly for years, finally decided to ____ and form an alliance.","options":["bury the axe","burn their bridges","break the ice","bury the hatchet"],"answer":"bury the hatchet","answerIndex":3,"difficulty":"medium","explanation":"Answer: bury the hatchet = end a quarrel and make peace. 'Bury the axe' is the trap — a corrupted form with a synonym swapped in; idioms do not allow substitutions. 'Burn their bridges' = destroy any chance of going back — the opposite of an alliance. 'Break the ice' = ease the first awkwardness when people meet, which is too small for years of bitter rivalry.","verified":"ok","status":"approved"},{"id":"Q25","section":"VA","format":"Modifiers","kind":"mcq","td":35,"stem":"Choose the sentence in which the opening phrase is correctly attached to its subject.","options":["Having finished the assignment, Arjun switched on the TV.","Having finished the assignment, the TV was switched on by Arjun.","Having been finished, Arjun switched on the TV after the assignment.","The TV was switched on by Arjun, having finished the assignment."],"answer":"Having finished the assignment, Arjun switched on the TV.","answerIndex":0,"difficulty":"medium","explanation":"Answer: A. 'Having finished the assignment' must attach to the doer, Arjun, who must come right after the comma. B is the trap: Arjun appears in the sentence, so it feels fine, but the subject after the comma is 'the TV'. C makes Arjun the one who was finished. D leaves the phrase dangling off 'the TV' at the end.","verified":"ok","status":"approved"},{"id":"Q26","section":"VA","format":"Fill in the Blank","kind":"mcq","td":25,"stem":"Far from being a fleeting trend, the shift to digital payments in India has proved ____.","options":["ephemeral","transient","enduring","evanescent"],"answer":"enduring","answerIndex":2,"difficulty":"medium","explanation":"Answer: enduring = lasting. 'Far from being a fleeting trend' signals a contrast, so the blank must mean the opposite of fleeting. Ephemeral, transient and evanescent all mean short-lived — they are synonyms of 'fleeting'. The trap: students match the blank to the most visible word in the sentence ('fleeting') and miss the 'far from'.","verified":"ok","status":"approved"},{"id":"Q27","section":"VA","format":"Parallelism","kind":"mcq","td":35,"stem":"The report criticised the agency not only for delaying the project ____.","options":["but also it overspent the budget","but also for exceeding its budget","but also exceeding its budget","but it also went on to exceed the budget"],"answer":"but also for exceeding its budget","answerIndex":1,"difficulty":"medium","explanation":"Answer: but also for exceeding its budget. 'Not only for delaying' must be balanced by 'but also for exceeding' — same preposition, same gerund form. The trap is C: it has the gerund but drops 'for', so the halves no longer match. A and D switch to full clauses ('it overspent', 'it also went on to exceed').","verified":"ok","status":"approved"},{"id":"Q28","section":"VA","format":"Fill in the Blank","kind":"mcq","td":25,"stem":"The scientist's ____ approach — checking every reading three times — made her results hard to dispute.","options":["cavalier","perfunctory","haphazard","meticulous"],"answer":"meticulous","answerIndex":3,"difficulty":"medium","explanation":"Answer: meticulous = extremely careful about detail. Checking every reading three times is meticulous. Cavalier = careless and offhand; haphazard = without order or plan. The trap is 'perfunctory' = done routinely with minimum effort — students who know it means 'done as a duty' think repeated checking is a routine duty.","verified":"ok","status":"approved"},{"id":"Q29","section":"VA","format":"Word Usage","kind":"mcq","td":25,"stem":"Which sentence uses the word 'FLOUT' correctly?","options":["The company was fined for flouting safety norms.","She loves to flout her new phone in class.","He flouted his wealth at every family party.","The actor flouted his fitness on social media every day."],"answer":"The company was fined for flouting safety norms.","answerIndex":0,"difficulty":"medium","explanation":"Answer: A. Flout = openly disregard a rule or law (flouting norms). B, C and D all need 'flaunt' = show off. The trap is the near-identical sound and spelling: both words describe bold public behaviour. Tip: you flout rules; you flaunt possessions.","verified":"ok","status":"approved"},{"id":"Q30","section":"VA","format":"Sentence Correction","kind":"mcq","td":35,"stem":"The bracketed part may contain an error. Choose the best replacement.\nThe board insisted that the chairman [resigns immediately].","options":["resigns immediately","resign immediately","should resigns immediately","had resigned immediately"],"answer":"resign immediately","answerIndex":1,"difficulty":"medium","explanation":"Answer: resign immediately. After verbs of demand like insist, demand, recommend, the 'that' clause takes the base form of the verb (the subjunctive): insisted that he resign. The trap is the original 'resigns' — normal agreement rules make it look right. 'Should resigns' mixes a modal with an -s verb. 'Had resigned' changes the meaning to something already done.","verified":"ok","status":"approved"},{"id":"Q31","section":"VA","format":"Fill in the Blank","kind":"mcq","td":25,"stem":"The critic's review was ____: in just three lines, she dismantled a novel the author had spent ten years writing.","options":["prolix","trenchant","fulsome","circuitous"],"answer":"trenchant","answerIndex":1,"difficulty":"hard","explanation":"Answer: trenchant = sharp, forceful and effective. Three lines that dismantle a book are trenchant. Prolix = tediously wordy and circuitous = roundabout — both clash with 'in just three lines'. The trap is 'fulsome', which students misread as 'full, complete'; it actually means excessive and insincere praise, the opposite of a demolition.","verified":"ok","status":"approved"},{"id":"Q32","section":"VA","format":"Idioms","kind":"mcq","td":25,"stem":"Rather than admit that the policy had failed, the ministry chose to ____ by setting up a committee to 'study the matter'.","options":["kick the bucket","kick the can further up the road","kick up a storm","kick the can down the road"],"answer":"kick the can down the road","answerIndex":3,"difficulty":"hard","explanation":"Answer: kick the can down the road = postpone a difficult decision. A committee to 'study the matter' delays action. 'Kick the can further up the road' is the trap — a corrupted form that changes the fixed words. 'Kick the bucket' = die. 'Kick up a storm' = cause a big public fuss, the opposite of quietly delaying.","verified":"ok","status":"approved"},{"id":"Q33","section":"VA","format":"SVA","kind":"mcq","td":35,"stem":"Each of the reports, along with its annexures, ____ to be submitted by Friday, and neither the director nor his deputies ____ willing to extend the deadline.","options":["has; are","have; is","has; is","have; are"],"answer":"has; are","answerIndex":0,"difficulty":"hard","explanation":"Answer: has; are. 'Each' is the subject of the first clause — singular; 'along with its annexures' is a side phrase that does not change the number. In 'neither…nor', the verb follows the nearer subject, 'his deputies' — plural. The trap is 'have; are': students let 'annexures' pull the first verb into the plural. 'Has; is' fixes the first and misses the second.","verified":"ok","status":"approved"},{"id":"Q34","section":"VA","format":"Word Usage","kind":"mcq","td":25,"stem":"Which sentence uses the word 'ENERVATE' correctly?","options":["The coach's pep talk enervated the team before the final.","A strong coffee always enervates me before an exam.","The long, humid afternoon left the workers enervated.","The cheering crowd enervated the runners for the last lap."],"answer":"The long, humid afternoon left the workers enervated.","answerIndex":2,"difficulty":"hard","explanation":"Answer: C. Enervate = to drain of energy, to weaken — a humid afternoon leaves workers enervated. A, B and D all use it to mean 'energise', which is exactly backwards. The trap is the look-alike: enervate sounds like 'energise' and 'nerve', so students assume it means to fire up. It comes from Latin for 'remove the sinews'.","verified":"ok","status":"approved"},{"id":"Q35","section":"VA","format":"Modifiers","kind":"mcq","td":35,"stem":"Choose the sentence that is free of a modifier error.","options":["Born in a small village in Bihar, the novelist's early books describe rural life.","Born in a small village in Bihar, rural life fills the novelist's early books.","The novelist's early books, born in a small village in Bihar, describe rural life.","Born in a Bihar village, the novelist drew on rural life in her early books."],"answer":"Born in a Bihar village, the novelist drew on rural life in her early books.","answerIndex":3,"difficulty":"hard","explanation":"Answer: D. 'Born in a Bihar village' must attach to the person born — the novelist. A is the trap: 'the novelist's' appears right after the comma, but the possessive is only a describer; the actual subject is 'books', so the books were born in the village. B makes rural life the one born; C openly says the books were born.","verified":"ok","status":"approved"},{"id":"Q36","section":"VA","format":"One Word Substitution","kind":"mcq","td":25,"stem":"Excessively fond of or submissive to one's wife","options":["uxoricide","uxorious","misogamist","philogynist"],"answer":"uxorious","answerIndex":1,"difficulty":"hard","explanation":"Answer: uxorious (uxor = wife). The trap is uxoricide — same root, but it means the killing of one's wife. Misogamist = one who hates marriage. Philogynist = one who loves women in general — tempting because of 'fond of', but the definition is specifically about one's wife.","verified":"ok","status":"approved"},{"id":"Q37","section":"VA","format":"Parallelism","kind":"mcq","td":35,"stem":"Neither by raising taxes nor ____ can the state close its deficit.","options":["by cutting subsidies alone","cutting subsidies alone","subsidies being cut alone","will cutting subsidies alone"],"answer":"by cutting subsidies alone","answerIndex":0,"difficulty":"hard","explanation":"Answer: by cutting subsidies alone. 'Neither by raising taxes' must be matched by 'nor by + -ing': both halves start with 'by'. The trap is 'cutting subsidies alone' — it has the right gerund but drops 'by', breaking the pair. 'Subsidies being cut alone' switches to a passive phrase. 'Will cutting' wrongly adds a verb because students feel the inversion needs one.","verified":"ok","status":"approved"},{"id":"Q38","section":"VA","format":"Fill in the Blank","kind":"mcq","td":25,"stem":"Once a bustling trading hub, the port town has fallen into ____ since the new highway bypassed it.","options":["dissonance","decadence","desuetude","disrepute"],"answer":"desuetude","answerIndex":2,"difficulty":"hard","explanation":"Answer: desuetude = a state of disuse. A town the traffic no longer reaches has fallen out of use. The trap is 'decadence' = moral or cultural decline — students read 'fallen into decline'. Disrepute = bad reputation (nothing here suggests scandal). Dissonance = clash or discord. 'Fallen into disuse' is exactly what desuetude means.","verified":"ok","status":"approved"},{"id":"Q39","section":"VA","format":"Idioms","kind":"mcq","td":25,"stem":"Having promised voters free electricity, the government now has ____ — the scheme is too costly to continue and too popular to scrap.","options":["a white elephant","a tiger by the tail","a feather in its cap","a dark horse"],"answer":"a tiger by the tail","answerIndex":1,"difficulty":"hard","explanation":"Answer: a tiger by the tail = a situation you can neither safely continue nor safely abandon — exactly 'too costly to continue, too popular to scrap'. The trap is 'a white elephant' = a costly possession that is useless; the scheme is costly but popular, not useless, and white elephant says nothing about being unable to let go. Feather in its cap = an achievement; dark horse = an unexpected winner.","verified":"ok","status":"approved"},{"id":"Q40","section":"VA","format":"Prepositions","kind":"mcq","td":35,"stem":"The new rules are not applicable ____ students who enrolled before 2024, and such students will be exempted ____ the fee hike.","options":["for; from","on; from","to; of","to; from"],"answer":"to; from","answerIndex":3,"difficulty":"hard","explanation":"Answer: to; from. The standard collocations are 'applicable to' and 'exempted from'. The trap is 'for; from' — 'applicable for' is a common error by analogy with 'eligible for'. 'On; from' gets only the second right. 'To; of' fixes the first and breaks the second.","verified":"ok","status":"approved"},{"id":"Q41","section":"VA","format":"Word Choice","kind":"mcq","td":25,"stem":"The young intern was so ____ that she believed a prank email announcing a ₹1 crore bonus for every employee.","options":["credulous","credible","creditable","incredulous"],"answer":"credulous","answerIndex":0,"difficulty":"hard","explanation":"Answer: credulous = too ready to believe things. Credible = believable (it describes the email, not the believer) — the trap, because students link 'believe' with 'credible'. Creditable = deserving praise. Incredulous = unwilling to believe — the exact opposite, picked by those who mix up the pair.","verified":"ok","status":"approved"},{"id":"Q42","section":"VA","format":"Sentence Correction","kind":"mcq","td":35,"stem":"The bracketed part may contain an error. Choose the best replacement.\n[Scarcely had the results been declared than] the protests began.","options":["Scarcely had the results been declared than","Scarcely the results had been declared when","Scarcely had the results been declared when","No sooner had the results been declared when"],"answer":"Scarcely had the results been declared when","answerIndex":2,"difficulty":"hard","explanation":"Answer: Scarcely had the results been declared when. 'Scarcely' pairs with 'when'; 'no sooner' pairs with 'than'. The original mixes the two. B uses 'when' but drops the inversion that 'Scarcely' requires. D is the over-correction trap: it swaps in 'No sooner' to match 'than' in the student's head but then keeps 'when' — the same mismatch reversed.","verified":"ok","status":"approved"},{"id":"Q43","section":"VA","format":"Fill in the Blank","kind":"mcq","td":25,"stem":"The ____ of the old guard — their refusal to consider any reform at all — eventually cost the party its majority.","options":["insouciance","incorruptibility","indolence","intransigence"],"answer":"intransigence","answerIndex":3,"difficulty":"hard","explanation":"Answer: intransigence = stubborn refusal to change or compromise, defined right in the dash. Insouciance = carefree unconcern; indolence = laziness — both suggest not bothering, not actively refusing. The trap is 'incorruptibility' = being impossible to bribe: students read 'refusal' as principled resistance, but refusing all reform is stubbornness, not honesty.","verified":"ok","status":"approved"},{"id":"Q44","section":"VA","format":"Word Usage","kind":"mcq","td":25,"stem":"Which sentence uses the word 'NOISOME' correctly?","options":["A noisome stench rose from the clogged drain.","The noisome traffic kept the baby awake all night.","Our noisome neighbours played loud music till 2 a.m.","The noisome crowd chanted slogans outside the stadium."],"answer":"A noisome stench rose from the clogged drain.","answerIndex":0,"difficulty":"hard","explanation":"Answer: A. Noisome = offensive or harmful, especially foul-smelling — a noisome stench. B, C and D all use it to mean 'noisy', which it does not mean. The trap is the spelling: 'noisome' looks like 'noise' + '-some'. It is actually related to 'annoy'.","verified":"ok","status":"approved"},{"id":"Q45","section":"VA","format":"Pronouns","kind":"mcq","td":35,"stem":"Choose the grammatically correct sentence.","options":["Everyone except Meera and I has finished their essay.","Everyone except Meera and me has finished the essay.","Everyone except Meera and myself have finished the essay.","Everyone except Meera and I have finished the essay."],"answer":"Everyone except Meera and me has finished the essay.","answerIndex":1,"difficulty":"hard","explanation":"Answer: B. 'Except' is a preposition, so it takes the object form 'me'; 'everyone' is singular, so 'has'. A is the trap: the verb is right, but 'Meera and I' is an over-correction. C uses a reflexive 'myself' with no matching subject and a plural verb. D gets both decisions wrong.","verified":"ok","status":"approved"}];
+var SCRIPT_URL="https://script.google.com/macros/s/AKfycbx5Ojm_zp4LfsMeelx5e06KNjVH1wfsXdV0keS4407m4FO1HU4EpVb7GKj-ibAsxnspeA/exec";
+var TEST_NAME=CFG.testName, MAX_MARKS=CFG.maxMarks, FILE_NAME=CFG.fileName, SN_KEY=CFG.snKey;
+var NQ=QUESTIONS.length;
+/* ==================== ADAPTIVE ROUTER (v2.9) ====================
+   QUESTIONS starts as the whole pool; it becomes the SERVED list,
+   filled one slot at a time. Right answer: one band up. Wrong, blank
+   or timed out: one band down. First unused question of the band;
+   if that band is empty, the nearest band with stock. */
+var AD=CFG.adaptive,POOL=QUESTIONS,AD_B=["easy","medium","hard"],adSeq=[],adBands=[],adTargets=[]; /* adBands = served question's band; adTargets = band the student had earned (routing state) */
+QUESTIONS=new Array(AD.serve);NQ=AD.serve;
+function adBandOf(q){var d=diffOf(q);var b=d?AD_B.indexOf(d):1;return b<0?1:b}
+function adFirstLeft(b){for(var i=0;i<POOL.length;i++){if(adBandOf(POOL[i])===b&&adSeq.indexOf(i)===-1)return i}return -1}
+function adPick(t,dir){
+ var p=adFirstLeft(t);if(p!==-1)return {p:p,b:t};
+ var alt=t===0?[1,2]:(t===2?[1,0]:(dir>0?[2,0]:[0,2])); /* empty band: nearest first; medium empty follows the move */
+ for(var k=0;k<alt.length;k++){p=adFirstLeft(alt[k]);if(p!==-1)return {p:p,b:alt[k]}}
+ return null;
+}
+function adServe(k,t,dir){var r=adPick(t,dir);if(!r)return false;adSeq[k]=r.p;adBands[k]=r.b;adTargets[k]=t;QUESTIONS[k]=POOL[r.p];return true}
+function adRoute(k){
+ if(k+1>=NQ||QUESTIONS[k+1])return; /* already served (resume): never re-roll */
+ var a=answers[k],ok=!(a===null||a===""||a===undefined)&&isCorrect(QUESTIONS[k],a);
+ var dir=ok?1:-1;
+ adServe(k+1,Math.max(0,Math.min(2,adTargets[k]+dir)),dir); /* route from the earned band, not a fallback */
+}
+function adFillRest(){for(var k=0;k<NQ-1;k++){if(!QUESTIONS[k+1])adRoute(k)}}
+function adIdList(){return adSeq.map(function(p){return String(POOL[p].id)})}
+function adRestore(s){
+ if(!Array.isArray(s.adIds)||!s.adIds.length||s.adIds.length>NQ)return false;
+ var seq=[];
+ for(var k=0;k<s.adIds.length;k++){
+  var p=-1;for(var i=0;i<POOL.length;i++){if(String(POOL[i].id)===String(s.adIds[k])){p=i;break}}
+  if(p===-1||seq.indexOf(p)!==-1)return false;seq.push(p);
+ }
+ adSeq=seq;adBands=seq.map(function(p){return adBandOf(POOL[p])});
+ adTargets=(Array.isArray(s.adTargets)&&s.adTargets.length===seq.length)?s.adTargets.map(function(t){return Math.max(0,Math.min(2,t|0))}):adBands.slice();
+ QUESTIONS=new Array(NQ);for(var j=0;j<seq.length;j++)QUESTIONS[j]=POOL[seq[j]];
+ if(typeof s.currentQ!=="number"||s.currentQ>seq.length-1)s.currentQ=seq.length-1;
+ return true;
+}
+function adPayload(P){
+ var wq=[],sa={},qt={};
+ QUESTIONS.forEach(function(q,i){
+  var id=String(q.id),a=answers[i];
+  sa[id]=(a===undefined?null:a);qt[id]=questionTimes[i]||0;
+  if(!(a===null||a===""||a===undefined)&&!isCorrect(q,a))wq.push(id);
+ });
+ P.wrongQuestions=JSON.stringify(wq);P.studentAnswers=JSON.stringify(sa);P.questionTimes=JSON.stringify(qt);
+}
+function adTop(){var t=0;for(var k=0;k<adTargets.length;k++)if(adTargets[k]>t)t=adTargets[k];return t}
+function adClimbHTML(A){
+ var L=["E","M","H"],H='<div class="rung"><div class="rungTop"><span>You climbed to: <b class="gold" style="font-family:Fraunces,serif;font-size:15px">'+capW(AD_B[adTop()])+'</b></span><b class="dim">'+plural(adBands.length,"question","questions")+' served</b></div>';
+ H+='<div class="adStrip">';
+ for(var k=0;k<adBands.length;k++){
+  var o=A.out[k]||"s";
+  H+='<i class="b'+adBands[k]+' '+o+'" data-q="'+k+'" title="Q'+(k+1)+' &middot; '+capW(AD_B[adBands[k]])+' &middot; '+outWord(o)+'">'+L[adBands[k]]+'</i>';
+ }
+ H+='</div><div class="adAxis"><span>Q1</span><span>Q'+adBands.length+'</span></div>';
+ H+='<div class="rungSub" style="margin-top:6px">Each block is one question, in the order you got them. Higher means harder. A right answer took you up a level; a wrong or blank one took you down.</div></div>';
+ return H;
+}
+function adPdfLine(){
+ var L=["E","M","H"];
+ return "You climbed to: "+capW(AD_B[adTop()])+". Level of each question in order: "+adBands.map(function(b){return L[b]}).join(" ");
+}
+function adLoginNote(){
+ var m=document.getElementById("lgMeta");
+ if(m)m.innerHTML+="<br>adaptive &middot; a right answer makes the next question harder, a wrong or blank one makes it easier";
+}
+adServe(0,AD_B.indexOf(String(AD.start||"medium"))===-1?1:AD_B.indexOf(String(AD.start||"medium")),0);
+
+var PIN_REGEX=/^(STU|IMS)\d{10}$/;
+var BLOCK_MSG="This PIN isn't on the active student list. Message Sahil Sir if you think this is a mistake.";
+
+/* ==================== WHITELIST RUNTIME BLOCK (v5 §17) ==================== */
+var WL_PROMISE=fetch("whitelist.json",{cache:"no-store"}).then(function(r){return r.ok?r.json():null}).catch(function(){return null});
+function normalizePin(pin){return String(pin).replace(/\D/g,"").replace(/^0+/,"")}
+async function isWhitelisted(pin,batch){
+ var WL;try{WL=await WL_PROMISE}catch(e){WL=null}
+ if(!WL)return true; /* FAIL-OPEN */
+ try{
+  var bypass=WL.bypass_batches||[];
+  if(bypass.indexOf(batch)!==-1)return true;
+  var norm=normalizePin(pin);
+  var admins=(WL.admin_pins||[]).map(String);
+  if(admins.indexOf(norm)!==-1)return true;
+  if(Array.isArray(WL.pins)){if(WL.pins.map(String).indexOf(norm)!==-1)return true}
+  else if(WL.pins&&typeof WL.pins==="object"){if(Object.prototype.hasOwnProperty.call(WL.pins,norm))return true}
+  return false;
+ }catch(e){return true}
+}
+
+/* ==================== SAFETY NET — retry queue ==================== */
+function snReadJSON(key,fallback){try{var v=localStorage.getItem(key);return v?JSON.parse(v):fallback}catch(e){return fallback}}
+function snWriteJSON(key,val){try{localStorage.setItem(key,JSON.stringify(val))}catch(e){}}
+function snUnqueue(id){var p=snReadJSON("riim_pending",[]);p=p.filter(function(x){return x.id!==id});snWriteJSON("riim_pending",p)}
+function snSendWithQueue(opts){
+ var p=snReadJSON("riim_pending",[]);
+ var id=Date.now()+"-"+Math.random().toString(36).slice(2);
+ p.push({id:id,opts:{method:opts.method,mode:opts.mode,headers:opts.headers,body:opts.body}});
+ snWriteJSON("riim_pending",p);
+ return fetch(SCRIPT_URL,opts).then(function(r){snUnqueue(id);return r});
+}
+function snFlushQueue(){
+ var p=snReadJSON("riim_pending",[]);
+ p.forEach(function(item){fetch(SCRIPT_URL,item.opts).then(function(){snUnqueue(item.id)}).catch(function(){})});
+}
+
+/* ==================== STATE ==================== */
+var studentName="",studentPin="",studentBatch="";
+var currentQ=0,testOver=false,started=false;
+var answers=new Array(NQ).fill(null);
+var questionTimes=new Array(NQ).fill(0);
+var marked=new Array(NQ).fill(false);
+var deadline=0,tickCount=0; /* v2.5 wall-clock timer */
+var SEC=(CFG.sectional&&CFG.sectional.length)?CFG.sectional:null;
+var secIdx=0,elapsedPrior=0;
+var secondsLeft=SEC?SEC[0].minutes*60:CFG.minutes*60;
+var tickInt=null,qShownTs=0;
+var qShownQ=-1,visits=[]; /* v2.7: on-device visit log for the results analysis (never sent) */
+var RAPID=!!CFG.rapid; /* v2.4 rapid mode */
+var qSecondsLeft=0,qStartTs=0,qInterval=null,pendingResumeStartTs=null;
+function isMCQ(q){return !!(q.options&&q.options.length)}
+
+/* ==================== SESSION AUTOSAVE / RESUME ==================== */
+function snSaveSession(){
+ if(testOver||!started)return;
+ snWriteJSON(SN_KEY,{file:FILE_NAME,testName:TEST_NAME,name:studentName,pin:studentPin,batch:studentBatch,currentQ:currentQ,answers:answers,questionTimes:questionTimes,marked:marked,secondsLeft:secondsLeft,deadline:deadline,secIdx:secIdx,elapsedPrior:elapsedPrior,qStartTs:qStartTs,visits:visits,adIds:adIdList(),adBands:adBands,adTargets:adTargets,ts:Date.now()});
+}
+function snClearSession(){try{localStorage.removeItem(SN_KEY)}catch(e){}}
+function snTryResume(){
+ var s=snReadJSON(SN_KEY,null);
+ if(!s||s.testName!==TEST_NAME)return false;
+ var answered=(s.answers||[]).filter(function(a){return a!==null&&a!==""}).length;
+ var ok=confirm("You have an unfinished attempt of "+TEST_NAME+" ("+answered+" question(s) answered). Resume where you left off?");
+ if(!ok){snClearSession();return false}
+ if(!adRestore(s)){snClearSession();alert("Could not restore the earlier attempt. Starting fresh.");return false}
+ studentName=s.name;studentPin=s.pin;studentBatch=s.batch;
+ currentQ=Math.min(s.currentQ||0,NQ-1);
+ if(s.answers&&s.answers.length===NQ)answers=s.answers;
+ if(s.questionTimes&&s.questionTimes.length===NQ)questionTimes=s.questionTimes;
+ if(typeof s.secondsLeft==="number")secondsLeft=Math.max(10,s.secondsLeft);
+ if(SEC){
+  secIdx=Math.min(typeof s.secIdx==="number"?s.secIdx:0,SEC.length-1);
+  elapsedPrior=typeof s.elapsedPrior==="number"?s.elapsedPrior:0;
+  currentQ=Math.max(SEC[secIdx].start,Math.min(SEC[secIdx].end,currentQ));
+ }
+ if(s.marked&&s.marked.length===NQ)marked=s.marked;
+ if(Array.isArray(s.visits))visits=s.visits.filter(function(v){return v&&typeof v.q==="number"&&v.q>=0&&v.q<NQ});
+ if(!RAPID&&typeof s.deadline==="number"&&s.deadline>0)deadline=s.deadline; /* v2.5: the clock kept running while away */
+ if(RAPID&&typeof s.qStartTs==="number"&&s.qStartTs>0)pendingResumeStartTs=s.qStartTs;
+ enterTest();
+ return true;
+}
+
+/* ==================== LOGIN ==================== */
+function showLoginError(msg){var el=document.getElementById("loginErr");el.textContent=msg;el.style.display="block"}
+async function startTest(){
+ var name=document.getElementById("stuName").value.trim();
+ var pinEl=document.getElementById("stuPin");
+ var pin=pinEl.value.trim().toUpperCase();pinEl.value=pin;
+ var batch=document.getElementById("stuBatch").value;
+ if(!name){showLoginError("Please enter your full name.");return}
+ if(!PIN_REGEX.test(pin)){showLoginError("Invalid PIN. Format: STU########## or IMS##########.");return}
+ if(!batch){showLoginError("Please select your batch.");return}
+ var allowed=await isWhitelisted(pin,batch);
+ if(!allowed){showLoginError(BLOCK_MSG);return}
+ studentName=name;studentPin=pin;studentBatch=batch;
+ document.getElementById("loginErr").style.display="none";
+ enterTest();
+}
+function enterTest(){
+ started=true;
+ document.getElementById("loginScreen").style.display="none";
+ document.getElementById("testScreen").style.display="block";
+ if(!RAPID){
+  if(!deadline)deadline=Date.now()+secondsLeft*1000;
+  catchUp();
+ }
+ buildPalette();
+ updateSecButtons();
+ if(SEC)showSecBanner();
+ if(!RAPID){
+  if(secondsLeft<=0){renderQuestion();submitTest();return} /* whole test ran out while away */
+  tickInt=setInterval(function(){
+   syncLeft();
+   var t=document.getElementById("timer");if(t)t.textContent=fmtClock(secondsLeft);
+   if(++tickCount%10===0)snSaveSession();
+   if(secondsLeft<=0){if(SEC&&secIdx<SEC.length-1)advanceSection();else submitTest()}
+  },1000);
+ }else{
+  var pb=document.getElementById("prevBtn");if(pb)pb.style.display="none";
+  var rw=document.getElementById("rfTimerWrap");if(rw)rw.style.display="block";
+  var mb=document.getElementById("mrkBtn");if(mb)mb.style.display="none";
+ }
+ renderQuestion();
+ snSaveSession();
+}
+function syncLeft(){secondsLeft=Math.round((deadline-Date.now())/1000)}
+function catchUp(){ /* v2.5: sections that expired while the student was away are closed, in order */
+ syncLeft();
+ while(SEC&&secondsLeft<=0&&secIdx<SEC.length-1){
+  elapsedPrior+=SEC[secIdx].minutes*60;
+  secIdx++;
+  deadline+=SEC[secIdx].minutes*60*1000;
+  currentQ=SEC[secIdx].start;
+  syncLeft();
+ }
+}
+function clearResp(){if(testOver)return;answers[currentQ]=null;snSaveSession();if(RAPID){var bs=document.querySelectorAll("#optBox .opt");for(var bi=0;bi<bs.length;bi++)bs[bi].classList.remove("sel");var ti=document.querySelector("#optBox input.tita");if(ti)ti.value="";paintPalette()}else renderQuestion()}
+function toggleMark(){if(testOver||RAPID)return;marked[currentQ]=!marked[currentQ];snSaveSession();paintPalette();paintMarkBtn()}
+function paintMarkBtn(){var b=document.getElementById("mrkBtn");if(b)b.textContent=marked[currentQ]?"Unmark review":"Mark for review"}
+function updateSecButtons(){
+ var eb=document.getElementById("endSecBtn"),sb=document.getElementById("submitBtn");
+ if(!SEC){if(eb)eb.style.display="none";return}
+ var last=secIdx===SEC.length-1;
+ if(eb)eb.style.display=last?"none":"inline-block";
+ if(sb)sb.style.display=last?"inline-block":"none";
+}
+function showSecBanner(){
+ var b=document.getElementById("secBanner");if(!b||!SEC)return;
+ document.getElementById("sbTitle").textContent="SECTION "+(secIdx+1)+" of "+SEC.length+" \u00b7 "+SEC[secIdx].sec;
+ document.getElementById("sbSub").textContent=SEC[secIdx].minutes+" minutes \u00b7 "+(SEC[secIdx].end-SEC[secIdx].start+1)+" questions \u00b7 no return once this section ends";
+ b.style.display="flex";
+ setTimeout(function(){b.style.display="none"},2600);
+}
+function advanceSection(){
+ if(!SEC||secIdx>=SEC.length-1)return;
+ markTime();
+ elapsedPrior+=SEC[secIdx].minutes*60-Math.max(0,secondsLeft);
+ secIdx++;
+ secondsLeft=SEC[secIdx].minutes*60;
+ deadline=Date.now()+secondsLeft*1000;
+ currentQ=SEC[secIdx].start;
+ buildPalette();updateSecButtons();showSecBanner();
+ renderQuestion();snSaveSession();
+}
+function endSectionEarly(){advanceSection()}
+
+/* ==================== PALETTE (free navigation) ==================== */
+function buildPalette(){
+ var pal=document.getElementById("palette");pal.innerHTML="";
+ var lo=SEC?SEC[secIdx].start:0,hi=SEC?SEC[secIdx].end:NQ-1;
+ for(var i=lo;i<=hi;i++){
+  (function(i){
+   var b=document.createElement("button");b.id="pcell"+i;b.textContent=i+1;
+   b.onclick=function(){jumpTo(i)};
+   pal.appendChild(b);
+  })(i);
+ }
+}
+function paintPalette(){
+ for(var i=0;i<NQ;i++){
+  var c=document.getElementById("pcell"+i);if(!c)continue;
+  c.className="";
+  if(answers[i]!==null&&answers[i]!=="")c.classList.add("done");
+  if(marked[i])c.classList.add("rev");
+  if(i===currentQ)c.classList.add("cur");
+ }
+}
+
+/* ==================== RENDER + PER-QUESTION TIME ==================== */
+function markTime(){
+ if(RAPID)return; /* v2.4: rapid records td-qSecondsLeft in rapidAdvance */
+ if(qShownTs){
+  var d=Math.round((Date.now()-qShownTs)/1000);
+  questionTimes[currentQ]+=d;
+  if(d>=1&&qShownQ===currentQ){ /* v2.7: one visit = from showing a question to leaving it */
+   var e=elapsedNow();
+   visits.push({q:currentQ,s:Math.max(0,e-d),d:d,a:answers[currentQ]});
+   if(visits.length>800)visits.shift();
+  }
+ }
+ qShownTs=Date.now();
+}
+function elapsedNow(){ /* seconds into the test on the test clock (sections ended early are not counted) */
+ if(RAPID)return 0;
+ var left=deadline?(deadline-Date.now())/1000:secondsLeft;
+ var base=SEC?elapsedPrior+SEC[secIdx].minutes*60:CFG.minutes*60;
+ return Math.max(0,Math.round(base-left));
+}
+function fmtClock(s){s=Math.max(0,s);return String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0")}
+function ulText(el,t){el.textContent="";String(t==null?"":t).split(/(\[\[[\s\S]*?\]\])/).forEach(function(p){if(!p)return;var m=p.match(/^\[\[([\s\S]*)\]\]$/);if(m){var u=document.createElement("u");u.textContent=m[1];el.appendChild(u)}else el.appendChild(document.createTextNode(p))})}
+function renderQuestion(){
+ var q=QUESTIONS[currentQ];
+ /* v2.7 fix: picking an option re-renders the same question; that must not restart its stopwatch */
+ if(!qShownTs||qShownQ!==currentQ){qShownTs=Date.now();qShownQ=currentQ}
+ document.getElementById("tbName").textContent=TEST_NAME;
+ var qc=document.getElementById("qCounter");
+ if(SEC){var sp=SEC[secIdx];qc.textContent=sp.sec+" \u00b7 Q "+(currentQ-sp.start+1)+" / "+(sp.end-sp.start+1)}
+ else qc.textContent="Q "+(currentQ+1)+" / "+NQ;
+ if(!RAPID)document.getElementById("timer").textContent=fmtClock(secondsLeft);
+ document.getElementById("secBadge").textContent=q.section;
+ var pB=document.getElementById("passageBox");
+ if(q.passage){pB.style.display="block";pB.textContent=q.passage}else{pB.style.display="none"}
+ ulText(document.getElementById("qText"),q.stem);
+ renderExhibit(q,document.getElementById("exBox"));
+ var box=document.getElementById("optBox");box.innerHTML="";
+ var letters=["A","B","C","D"];
+ if(isMCQ(q)){
+  q.options.forEach(function(opt,idx){
+   var d=document.createElement("button");
+   d.className="opt"+(answers[currentQ]===idx?" sel":"");
+   d.textContent=letters[idx]+". "+opt;
+   d.onclick=function(){answers[currentQ]=idx;snSaveSession();if(RAPID){var bs=box.querySelectorAll(".opt");for(var bi=0;bi<bs.length;bi++)bs[bi].classList.toggle("sel",bi===idx);paintPalette()}else{renderQuestion()}};
+   box.appendChild(d);
+  });
+ }else{
+  var inp=document.createElement("input");
+  inp.className="tita";inp.placeholder="Type your answer";
+  inp.value=answers[currentQ]||"";
+  inp.oninput=function(){answers[currentQ]=this.value;snSaveSession();paintPalette()};
+  box.appendChild(inp);
+ }
+ paintPalette();paintMarkBtn();
+ if(RAPID)rapidStartQuestion();
+}
+function nav(d){if(RAPID){if(d>0)rapidAdvance();return}markTime();var lo=SEC?SEC[secIdx].start:0,hi=SEC?SEC[secIdx].end:NQ-1;currentQ=Math.max(lo,Math.min(hi,currentQ+d));snSaveSession();renderQuestion()}
+function jumpTo(i){if(RAPID)return;if(SEC&&(i<SEC[secIdx].start||i>SEC[secIdx].end))return;markTime();currentQ=i;snSaveSession();renderQuestion()}
+
+/* ==================== RAPID MODE ENGINE (v2.4) ==================== */
+function rapidStartQuestion(){
+ if(!RAPID||testOver)return;
+ var q=QUESTIONS[currentQ],dur=q.td||30;
+ if(pendingResumeStartTs){
+  qStartTs=pendingResumeStartTs;pendingResumeStartTs=null;
+  var elapsed=Math.floor((Date.now()-qStartTs)/1000);
+  qSecondsLeft=Math.max(0,dur-elapsed);
+ }else{qStartTs=Date.now();qSecondsLeft=dur}
+ var bar=document.getElementById("rfTimerBar");
+ bar.style.transition="none";bar.style.width=((qSecondsLeft/dur)*100)+"%";
+ bar.classList.remove("warn","danger");
+ var fr=qSecondsLeft/dur;
+ if(fr<=0.25)bar.classList.add("danger");else if(fr<=0.5)bar.classList.add("warn");
+ void bar.offsetWidth; /* force reflow so the linear transition restarts */
+ bar.style.transition="width "+qSecondsLeft+"s linear";bar.style.width="0%";
+ document.getElementById("timer").textContent=qSecondsLeft+"s";
+ if(qInterval)clearInterval(qInterval);
+ snSaveSession(); /* persist fresh qStartTs so refresh-before-interaction still tracks */
+ if(qSecondsLeft<=0){setTimeout(rapidAdvance,50);return}
+ qInterval=setInterval(rapidTick,1000);
+}
+function rapidTick(){
+ qSecondsLeft--;if(qSecondsLeft<0)qSecondsLeft=0;
+ document.getElementById("timer").textContent=qSecondsLeft+"s";
+ var dur=QUESTIONS[currentQ].td||30;
+ var bar=document.getElementById("rfTimerBar"),fr=qSecondsLeft/dur;
+ if(fr<=0.25){bar.classList.remove("warn");bar.classList.add("danger")}
+ else if(fr<=0.5){bar.classList.add("warn")}
+ if(qSecondsLeft<=0)rapidAdvance();
+}
+function rapidAdvance(){
+ if(testOver)return;
+ clearInterval(qInterval);
+ questionTimes[currentQ]=(QUESTIONS[currentQ].td||30)-qSecondsLeft;
+ if(currentQ>=NQ-1){submitTest();return}
+ adRoute(currentQ); /* v2.9: serve the next slot from the band this answer earned */
+ currentQ++;
+ snSaveSession();
+ renderQuestion();
+}
+
+/* ==================== FIG / TABLE EXHIBITS ==================== */
+function renderExhibit(q,host){
+ if(!host)return;host.innerHTML="";
+ if(q.fig){
+  var f=String(q.fig).trim();
+  if(f.slice(0,4).toLowerCase()==="<svg"){var w0=document.createElement("div");w0.className="qFig";w0.innerHTML=f;host.appendChild(w0)}
+  else if(/^(data:image|https?:)/.test(f)){var w=document.createElement("div");w.className="qFig";var im=document.createElement("img");im.src=f;im.alt="figure";w.appendChild(im);host.appendChild(w)}
+ }
+ if(q.table!=null&&q.table!==""){
+  var t=q.table,rows=null,heads=null;
+  if(Array.isArray(t))rows=t;
+  else if(t&&typeof t==="object"&&Array.isArray(t.rows)){rows=t.rows;heads=Array.isArray(t.headers)?t.headers:null}
+  if(rows&&rows.length&&Array.isArray(rows[0])){
+   var tb=document.createElement("table");tb.className="qTable";
+   if(heads){var tr0=document.createElement("tr");heads.forEach(function(hh){var th=document.createElement("th");th.textContent=String(hh);tr0.appendChild(th)});tb.appendChild(tr0)}
+   rows.forEach(function(r){var tr=document.createElement("tr");r.forEach(function(c){var td=document.createElement("td");td.textContent=String(c);tr.appendChild(td)});tb.appendChild(tr)});
+   host.appendChild(tb);
+  }else if(typeof t==="string"&&t.trim().charAt(0)==="<"){
+   var wt=document.createElement("div");wt.className="qTableWrap";wt.innerHTML=t;host.appendChild(wt);
+  }else{
+   var pre=document.createElement("pre");pre.className="qTable";pre.textContent=(typeof t==="string")?t:JSON.stringify(t,null,1);host.appendChild(pre);
+  }
+ }
+}
+/* ==================== SCORING HELPERS ==================== */
+function titaNorm(v){
+ var s=String(v==null?"":v).trim();
+ var t=s.replace(/[\s,]/g,"");
+ if(t!==""&&isFinite(t))return String(Number(t));
+ return s.toLowerCase();
+}
+function titaWFor(q){if(CFG.titaWSec&&CFG.titaWSec[q.section]!=null)return CFG.titaWSec[q.section];return CFG.titaW}
+function isCorrect(q,a){
+ if(a===null||a==="")return false;
+ if(isMCQ(q))return a===q.answerIndex;
+ if(q.format==="Parajumble")return String(a).trim()===String(q.answer); /* stem rule: 3412 valid; 3412. and 3 4 1 2 invalid */
+ return titaNorm(a)===titaNorm(q.answer);
+}
+
+/* ==================== MISTAKE BANK (spaced repetition) ==================== */
+function bankMistakes(){
+ try{
+  var bank=snReadJSON("riim_mistakes",[]);
+  var now=Date.now(),DAY=86400000;
+  QUESTIONS.forEach(function(q,i){
+   if(!isMCQ(q))return;
+   var chosen=answers[i];
+   if(chosen===null||chosen===q.answerIndex)return;
+   var k=CFG.bankPrefix+"-Q"+(i+1);
+   k=CFG.bankPrefix+"-"+q.id; /* v2.9: positions differ per attempt */
+   var existing=null;
+   for(var j=0;j<bank.length;j++){if(bank[j].k===k){existing=bank[j];break}}
+   if(existing){existing.box=1;existing.due=now+DAY;existing.chosen=chosen}
+   else{bank.push({k:k,stem:(q.passage?q.passage+"\n\n"+q.stem:q.stem),opts:q.options,ans:q.answerIndex,chosen:chosen,exp:q.explanation,sub:q.format,src:TEST_NAME,box:1,due:now+DAY})}
+  });
+  if(bank.length>300)bank=bank.slice(bank.length-300);
+  snWriteJSON("riim_mistakes",bank);
+ }catch(e){}
+}
+
+/* ==================== SUBMIT — 16-field payload ==================== */
+function fmtTime(totalSecs){var m=Math.floor(totalSecs/60);var s=totalSecs%60;return m+":"+(s<10?"0":"")+s}
+function submitTest(){
+ if(testOver)return;
+ testOver=true;
+ clearInterval(tickInt);
+ if(qInterval)clearInterval(qInterval);
+ if(RAPID&&qStartTs&&!questionTimes[currentQ]){questionTimes[currentQ]=Math.min(QUESTIONS[currentQ].td||30,Math.round((Date.now()-qStartTs)/1000))}
+ markTime();
+ adFillRest(); /* v2.9: early submit — unreached slots are served as unanswered */
+
+ var correctCount=0,wrongCount=0,skippedCount=0;
+ var sectionErrors={},topicErrorMap={},wrongQuestions=[];
+ var score=0;
+ QUESTIONS.forEach(function(q,i){
+  var a=answers[i];
+  if(a===null||a===""){skippedCount++;return}
+  if(isCorrect(q,a)){correctCount++;score+=CFG.c}
+  else{
+   wrongCount++;
+   score+=(isMCQ(q)?CFG.w:titaWFor(q));
+   wrongQuestions.push(i+1);
+   sectionErrors[q.section]=(sectionErrors[q.section]||0)+1;
+   topicErrorMap[q.format]=(topicErrorMap[q.format]||0)+1;
+  }
+ });
+ var totalSecs=RAPID?questionTimes.reduce(function(a,b){return a+(b||0)},0):(SEC?(elapsedPrior+SEC[secIdx].minutes*60-Math.max(0,secondsLeft)):(CFG.minutes*60-Math.max(0,secondsLeft)));
+ var timeTakenStr=fmtTime(totalSecs);
+
+ /* 16-field payload — explicit key:value, topicErrors is field 16 */
+ var payload={
+  testName:TEST_NAME,
+  name:studentName,
+  pin:studentPin,
+  batch:studentBatch,
+  score:score,
+  correct:correctCount,
+  wrong:wrongCount,
+  skipped:skippedCount,
+  maxMarks:MAX_MARKS,
+  timeTaken:timeTakenStr,
+  timestamp:new Date().toLocaleString("en-IN",{timeZone:"Asia/Kolkata"}),
+  sectionErrors:JSON.stringify(sectionErrors),
+  wrongQuestions:JSON.stringify(wrongQuestions),
+  studentAnswers:JSON.stringify(answers),
+  questionTimes:JSON.stringify(questionTimes),
+  topicErrors:JSON.stringify(topicErrorMap)
+ };
+ adPayload(payload); /* v2.9: same 16 fields; IDs instead of positions */
+
+ snSendWithQueue({method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain"},body:JSON.stringify(payload)}).catch(function(){});
+
+ bankMistakes();
+
+ try{
+  var res=snReadJSON("riim_results",[]);
+  res.push({testName:TEST_NAME,score:score,correct:correctCount,wrong:wrongCount,skipped:skippedCount,maxMarks:MAX_MARKS,timeTaken:timeTakenStr,ts:Date.now()});
+  if(res.length>200)res=res.slice(res.length-200);
+  snWriteJSON("riim_results",res);
+ }catch(e){}
+
+ snClearSession();
+ showResults(score,correctCount,wrongCount,skippedCount,timeTakenStr,sectionErrors,totalSecs);
+}
+
+/* ==================== RESULTS ==================== */
+function showResults(score,correct,wrong,skipped,timeStr,sectionErrors,totalSecs){
+ document.getElementById("testScreen").style.display="none";
+ document.getElementById("resultsScreen").style.display="block";
+ document.getElementById("resTitle").textContent=TEST_NAME+" \u2014 Results";
+ document.getElementById("resSub").textContent=studentName+" \u00b7 "+studentBatch+" \u00b7 "+new Date().toLocaleString("en-IN",{timeZone:"Asia/Kolkata"});
+ document.getElementById("stScore").textContent=score;
+ document.getElementById("stMaxL").textContent="SCORE / "+MAX_MARKS;
+ document.getElementById("stCorrect").textContent=correct;
+ document.getElementById("stWrong").textContent=wrong;
+ document.getElementById("stSkipped").textContent=skipped;
+ document.getElementById("stTime").textContent=timeStr;
+ document.getElementById("stAcc").textContent=(correct+wrong)?Math.round(100*correct/(correct+wrong))+"%":"\u2014";
+ var secParts=[];
+ for(var sk in sectionErrors){if(sectionErrors.hasOwnProperty(sk))secParts.push(sk+": "+sectionErrors[sk])}
+ document.getElementById("secErrBox").innerHTML="<b>Section errors</b> \u2014 "+(secParts.length?secParts.join(" \u00b7 "):"None");
+ /* v2.7: analysis + retry. Wrapped so a fault here can never blank the results screen. */
+ try{LAST_A=computeAnalysis(score,totalSecs);renderAnalysis(LAST_A)}catch(e){LAST_A=null;var ab=document.getElementById("anaBox");if(ab)ab.innerHTML=""}
+ try{renderRetry()}catch(e){var rb=document.getElementById("retryBox");if(rb)rb.innerHTML=""}
+
+ var letters=["A","B","C","D"];
+ var box=document.getElementById("reviewBox");box.innerHTML="";
+ QUESTIONS.forEach(function(q,i){
+  var a=answers[i];
+  var skippedQ=(a===null||a==="");
+  var ok=isCorrect(q,a);
+  var wrap=document.createElement("div");wrap.className="rq";wrap.id="rq"+i;
+  var head=document.createElement("div");head.className="rqHead";
+  var status=skippedQ?"<span class='status sk'>SKIPPED</span>":ok?"<span class='status ok'>CORRECT</span>":"<span class='status no'>WRONG</span>";
+  head.innerHTML="Q"+(i+1)+" \u00b7 "+escH(q.section)+" \u00b7 "+escH(q.format)+(diffOf(q)?" \u00b7 "+escH(q.difficulty):"")+" \u00b7 time "+fmtMS(questionTimes[i])+status;
+  wrap.appendChild(head);
+  if(q.passage&&(i===0||QUESTIONS[i-1].passage!==q.passage)){
+   var pv=document.createElement("div");pv.className="rqStem";
+   pv.style.fontStyle="italic";pv.style.opacity=".85";
+   pv.textContent="Passage: "+q.passage;
+   wrap.appendChild(pv);
+  }
+  var stem=document.createElement("div");stem.className="rqStem";ulText(stem,q.stem);wrap.appendChild(stem);
+  var exh=document.createElement("div");renderExhibit(q,exh);if(exh.childNodes.length)wrap.appendChild(exh);
+  if(isMCQ(q)){
+   q.options.forEach(function(opt,idx){
+    var r=document.createElement("div");r.className="ropt";
+    if(idx===q.answerIndex)r.classList.add("correct");
+    else if(idx===a)r.classList.add("wrong");
+    var l=document.createElement("div");l.textContent=letters[idx];
+    var t=document.createElement("div");t.textContent=opt;
+    r.appendChild(l);r.appendChild(t);
+    if(idx===a&&idx!==q.answerIndex){var tg=trapOf(q,a);if(tg){var tn=document.createElement("div");tn.className="trapNote";tn.textContent="trap: "+trapInfo(tg).name;r.appendChild(tn)}}
+    wrap.appendChild(r);
+   });
+  }else{
+   var yr=document.createElement("div");yr.className="ropt"+(skippedQ?"":(ok?" correct":" wrong"));
+   yr.textContent="Your answer: "+(skippedQ?"\u2014":a);
+   var ttg=trapOf(q,a);if(ttg){var ttn=document.createElement("div");ttn.className="trapNote";ttn.textContent="trap: "+trapInfo(ttg).name;yr.appendChild(ttn)}
+   wrap.appendChild(yr);
+   var kr=document.createElement("div");kr.className="ropt correct";
+   kr.textContent="Key: "+q.answer;
+   wrap.appendChild(kr);
+  }
+  var exp=document.createElement("div");exp.className="exp";
+  exp.innerHTML="<b>Explanation:</b> ";
+  exp.appendChild(document.createTextNode(q.explanation||""));
+  wrap.appendChild(exp);
+  box.appendChild(wrap);
+ });
+ window.scrollTo(0,0);
+}
+
+/* ==================== POST-TEST ANALYSIS (v2.8) ====================
+   Computed on this device from answers, questionTimes and the visit log.
+   Nothing here is sent anywhere: the 16-field payload is unchanged.
+   TRAPS: for each optionTags / titaTraps tag, the student-facing name,
+   what the trap is, and the counter-move. Edit freely; an unknown tag
+   falls back to a readable version of the tag itself. */
+var TRAPS={
+ "rc-detail-as-main":["Detail as main idea","A true detail offered as the main point.","Ask whether the writer would use it as the title. A detail can be true and still be too small to be the point."],
+ "rc-extreme":["Overstated","It says more, or says it more strongly, than the passage does.","Circle strong words (always, only, entirely, never) and pick the option exactly as strong as the text."],
+ "rc-false-link":["False link","It joins two things from the passage with a reason the writer never gives.","Find the line that links the two ideas. If the passage never connects them, neither should you."],
+ "rc-half-right":["Half right","One half matches the passage; the other half doesn't.","Read every option to its last word. One wrong half sinks the whole option."],
+ "rc-literal":["Too literal","A figurative line read at face value.","For an image or metaphor, ask what it does in the argument, not what it describes."],
+ "rc-out-of-scope":["Out of scope","It brings in something the passage never discusses.","If you cannot point to the line that supports it, rule it out."],
+ "rc-reversal":["Reversal","It flips the passage: the order, the direction or the cause.","Trace before/after and cause/effect back in the text before you commit."],
+ "rc-scope-shift":["Scope shift","Right topic, but wider or narrower than the text's claim.","Match the scope words: most vs all, some vs every, one city vs every city."],
+ "va-scope-shift":["Scope shift","Right topic, but wider or narrower than the paragraph's claim.","Match the scope words: most vs all, some vs every, one case vs every case."],
+ "rc-tone":["Tone miss","Right direction, wrong strength or flavour of attitude.","Fix the direction first (for or against), then the strength (mild or harsh)."],
+ "rc-true-not-answer":["True, but not the answer","Supported by the passage, but it doesn't answer this question.","Reread the question before confirming. True is not enough; it has to answer what was asked."],
+ "rc-word-match":["Word match","It borrows the passage's words, not its meaning.","Familiar words are bait. Put the line in your own words, then match the meaning."],
+ "rc-wrong-voice":["Wrong voice","A view the passage reports or argues against, not the writer's own.","Ask whose view it is: the writer's, or someone the writer quotes or rejects?"],
+ "va-category-error":["Wrong kind of word","The word doesn't fit the kind of idea the blank needs.","Decide what the blank must do (describe, judge, act) before you read the options."],
+ "va-collocation-break":["Doesn't go together","The word doesn't sit naturally with its neighbours.","Say the phrase in full. English pairs certain words by habit; trust the natural pairing."],
+ "va-confusable-sibling":["Look-alike word","Looks or sounds like the right word but means something else.","Slow down on look-alikes and pin each word's exact meaning before choosing."],
+ "va-corrupted-expression":["Twisted idiom","A familiar expression with one word changed.","Idioms are fixed. If one word differs from the original, the whole option is wrong."],
+ "va-half-fix":["Half fix","It corrects one error but leaves another standing.","List every error in the underlined part first. The answer must fix all of them."],
+ "va-new-error":["New error","It fixes the original error but brings in a new one.","Read your chosen option as a fresh sentence and check it end to end."],
+ "va-off-topic-insertion":["Off-topic sentence","Same subject, but it breaks the paragraph's line of thought.","The missing line must carry the argument forward, not just stay on the subject."],
+ "va-polarity-flip":["Wrong direction","The word pulls the opposite way from the sentence's clues.","Mark the clue words around the blank and decide positive or negative before you look at the options."],
+ "va-real-expression-wrong-meaning":["Real idiom, wrong meaning","A genuine expression that means something else here.","Check what the idiom means, not just whether it exists."],
+ "va-stance-contradiction":["Contradicts the paragraph","It argues against the position the paragraph takes.","Name the paragraph's stance first; reject anything that pulls the other way."],
+ "vocab-context-blind":["Dictionary meaning, wrong context","A real meaning of the word, but not the one used here.","Put each option back into the sentence. The context decides the meaning, not the dictionary."],
+ "vocab-shade":["Wrong shade","Close in meaning, but the wrong nuance or strength.","Between near-synonyms, pick the one whose strength and tone fit the sentence."],
+ "pj-connector":["Missed connector","The order ignores a linking word that ties two sentences.","Find the connectors (however, thus, also) and fix which sentence each one must follow."],
+ "pj-antecedent":["Missed reference","A 'this', 'they' or 'such' points to something not yet introduced.","Every pointer word needs its noun earlier. Place that sentence before it."],
+ "pj-conclusion-early":["Conclusion too early","The summing-up sentence comes before the argument is complete.","The summary goes last. Check that every point it sums up has already been made."],
+ /* tag set used from IPMAT Indore 03 onward */
+ "gram-half-fix":["Half fix","It corrects one error but leaves another standing.","List every error in the underlined part first. The answer must fix all of them."],
+ "gram-new-error":["New error","It fixes the original error but brings in a new one.","Read your chosen option as a fresh sentence and check it end to end."],
+ "gram-sounds-right":["Sounds right, isn't","It reads smoothly but breaks a rule.","Don't trust your ear on an underlined part. Check the rules: agreement, parallel form, case, idiom."],
+ "gram-tense-marker":["Tense clash","The verb forms don't match the time or condition the sentence sets up.","Find the time marker (if, had, by then, since) and make every verb agree with it."],
+ "gram-idiom":["Twisted idiom","A familiar expression with one word changed.","Idioms are fixed. If one word differs from the original, the whole option is wrong."],
+ "vocab-wrong-idiom":["Real idiom, wrong meaning","A genuine expression that means something else here.","Check what the idiom means, not just whether it exists."],
+ "vocab-opposite":["Wrong direction","The word pulls the opposite way from the sentence's clues.","Mark the clue words around the blank and decide positive or negative before you look at the options."],
+ "vocab-sound-alike":["Sound-alike","It sounds like the right word but means something else.","Slow down on look-alikes and pin each word's exact meaning before choosing."],
+ "vocab-category":["Wrong word form","Right idea, wrong part of speech or form for the blank.","Decide what the blank needs grammatically (noun, adjective, verb) before you weigh meanings."],
+ "sc-collocation":["Doesn't go together","The word doesn't sit naturally with its neighbours.","Say the phrase in full. English pairs certain words by habit; trust the natural pairing."],
+ "para-same-topic":["Same topic, no link","On the paragraph's subject, but it doesn't connect to the lines around the blank.","Read the sentences on both sides of the blank. The answer must link to both, not just share the topic."],
+ "pj-opener":["Wrong opener","The paragraph starts with a sentence that depends on another.","The opening sentence must stand alone: no 'this', 'however' or 'also' that needs something before it."],
+ "pj-pair-broken":["Broken pair","Two sentences that must sit together are split apart.","Lock the obvious pairs first (claim and example, question and answer), then order the blocks."],
+ "pj-time-order":["Time order","The events are out of sequence.","Mark dates and sequence words (first, later, by then) and order the events by them."],
+ "pj-topic-link":["Topic link","Sentences joined because they share words, not because one follows from the other.","Join sentences by logic (cause, contrast, example), not by repeated words."],
+ /* added with IPMAT Indore 04 */
+ "gram-mood":["Wrong mood","The verb ignores the mood the sentence calls for: an unreal condition, a wish or a demand.","An unreal past condition takes 'had + verb'; after insist that, suggest that or demand that, use the base verb (take, not takes)."],
+ "gram-hypercorrection":["Over-correction","A formal-sounding form, often 'whom', used where the plain one is right.","Cover any inserted clause and test with he/him: if 'he' fits, the word is 'who'. Formal-sounding is not the same as correct."],
+ "gram-pronoun":["Pronoun mismatch","The pronoun doesn't agree with the noun it refers to.","Find the noun the pronoun points back to and match it in number and gender."],
+ "gram-parallelism":["Broken parallel","The items in a list don't share the same grammatical form.","Line up every item in the list; each must take the same form (to cut, reduce, ensure)."],
+ "sc-register":["Wrong register","The word is too grand, too casual or too technical for the sentence.","Match the sentence's tone: a plain sentence wants a plain word, a formal one a formal word."]
+};
+var LAST_A=null;
+function trapInfo(tag){
+ var t=TRAPS[tag];
+ if(t)return {name:t[0],what:t[1],fix:t[2]};
+ var n=String(tag).replace(/^[a-z]+-/,"").replace(/-/g," ");
+ return {name:n.charAt(0).toUpperCase()+n.slice(1),what:"",fix:""};
+}
+function diffOf(q){
+ var d=String(q.difficulty||"").trim().toLowerCase();
+ if(!d)return null;
+ if(d.indexOf("hard")!==-1)return "hard";
+ if(d.charAt(0)==="e")return "easy";
+ if(d.charAt(0)==="m")return "medium";
+ return null;
+}
+function penOf(q){return isMCQ(q)?CFG.w:titaWFor(q)}
+function trapOf(q,a){
+ if(a===null||a===""||a===undefined||isCorrect(q,a))return null;
+ if(isMCQ(q)){
+  var t=Array.isArray(q.optionTags)?q.optionTags[a]:null;
+  return (typeof t==="string"&&t.trim())?t.trim():null;
+ }
+ if(q.titaTraps&&typeof q.titaTraps==="object"){
+  var na=String(a).replace(/[\s,]/g,"");
+  for(var k in q.titaTraps){
+   if(Object.prototype.hasOwnProperty.call(q.titaTraps,k)&&String(k).replace(/[\s,]/g,"")===na)return q.titaTraps[k];
+  }
+ }
+ return null;
+}
+function secOfQ(i){if(!SEC)return null;for(var s=0;s<SEC.length;s++){if(i>=SEC[s].start&&i<=SEC[s].end)return s}return null}
+function paceOf(i){
+ if(RAPID)return QUESTIONS[i].td||30;
+ var s=secOfQ(i);
+ if(s!==null)return SEC[s].minutes*60/(SEC[s].end-SEC[s].start+1);
+ return CFG.minutes*60/NQ;
+}
+function availSecs(){
+ if(RAPID)return QUESTIONS.reduce(function(a,q){return a+(q.td||30)},0);
+ if(SEC)return SEC.reduce(function(a,p){return a+p.minutes*60},0);
+ return CFG.minutes*60;
+}
+function fmtMS(s){s=Math.max(0,Math.round(s||0));return Math.floor(s/60)+":"+String(s%60).padStart(2,"0")}
+function sgn(n){return n>0?"+"+n:(n<0?"−"+(-n):"0")}
+function sgnA(n){return n>0?"+"+n:(n<0?"-"+(-n):"0")}
+function blank(x){return x===null||x===""||x===undefined}
+function sameAns(q,x,y){if(blank(x)||blank(y))return blank(x)&&blank(y);return isMCQ(q)?x===y:titaNorm(x)===titaNorm(y)}
+function escH(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}
+function capW(s){return s.charAt(0).toUpperCase()+s.slice(1)}
+function outWord(o){return o==="c"?"right":(o==="w"?"wrong":"blank")}
+function plural(n,one,many){return n+" "+(n===1?one:many)}
+
+function computeAnalysis(score,totalSecs){
+ var A={score:score,max:MAX_MARKS,used:totalSecs||0,avail:availSecs(),c:0,w:0,s:0,neg:0,tC:0,tW:0,tS:0,out:[],
+  hasDiff:false,hasTags:false,emW:0,emS:0,emSq:[],traps:[],trapped:0,trapMarks:0,timedOut:0,bankN:0,
+  sinks:[],secs:[],journey:null,acc:null,verdict:null,
+  diff:{easy:{n:0,o:0,c:0,w:0,s:0,net:0,t:0},medium:{n:0,o:0,c:0,w:0,s:0,net:0,t:0},hard:{n:0,o:0,c:0,w:0,s:0,net:0,t:0}}};
+ var trapMap={};
+ QUESTIONS.forEach(function(q,i){
+  var a=answers[i],sk=blank(a),ok=!sk&&isCorrect(q,a),t=questionTimes[i]||0;
+  var o=sk?"s":(ok?"c":"w");
+  A.out.push(o);
+  if(o==="c"){A.c++;A.tC+=t}
+  else if(o==="w"){A.w++;A.tW+=t;A.neg+=-penOf(q);if(isMCQ(q))A.bankN++}
+  else{A.s++;A.tS+=t}
+  if(RAPID&&sk&&t>=(q.td||30))A.timedOut++;
+  var d=diffOf(q);
+  if(d){
+   A.hasDiff=true;
+   var b=A.diff[d];b.n++;b.t+=t;if(t>0)b.o++;
+   if(o==="c"){b.c++;b.net+=CFG.c}else if(o==="w"){b.w++;b.net+=penOf(q)}else b.s++;
+   if(d!=="hard"){if(o==="w")A.emW++;else if(o==="s"){A.emS++;if(!(RAPID&&t>=(q.td||30)))A.emSq.push(i)}} /* rapid: a question whose clock ran out counts under the clock, not as a skip */
+  }
+  if(Array.isArray(q.optionTags)||(q.titaTraps&&typeof q.titaTraps==="object"))A.hasTags=true;
+  var tg=trapOf(q,a);
+  if(tg){
+   var inf=trapInfo(tg),sw=CFG.c-penOf(q);
+   if(!trapMap[inf.name]){trapMap[inf.name]={name:inf.name,what:inf.what,fix:inf.fix,qs:[],marks:0};A.traps.push(trapMap[inf.name])}
+   trapMap[inf.name].qs.push(i);trapMap[inf.name].marks+=sw;A.trapped++;A.trapMarks+=sw;
+  }
+  if(!RAPID&&t>=Math.max(90,2*paceOf(i)))A.sinks.push({i:i,t:t});
+ });
+ A.traps.sort(function(x,y){return (y.qs.length-x.qs.length)||(y.marks-x.marks)});
+ A.sinks.sort(function(x,y){return y.t-x.t});A.sinks=A.sinks.slice(0,3);
+ A.acc=(A.c+A.w)?Math.round(100*A.c/(A.c+A.w)):null;
+ var order=[],bySec={};
+ QUESTIONS.forEach(function(q,i){
+  var k=q.section||"-";
+  if(!bySec[k]){bySec[k]={sec:k,n:0,c:0,w:0,s:0,score:0,t:0};order.push(k)}
+  var b=bySec[k],o=A.out[i];b.n++;b.t+=questionTimes[i]||0;
+  if(o==="c"){b.c++;b.score+=CFG.c}else if(o==="w"){b.w++;b.score+=penOf(q)}else b.s++;
+ });
+ if(order.length>1)A.secs=order.map(function(k){return bySec[k]});
+ if(!RAPID&&visits.length)A.journey=computeJourney();
+ A.verdict=buildVerdict(A);
+ return A;
+}
+
+function computeJourney(){
+ var J={never:[],neverEM:0,changed:0,toRight:0,toWrong:0,gain:0,loss:0},byQ={};
+ visits.forEach(function(v){(byQ[v.q]=byQ[v.q]||[]).push(v)});
+ QUESTIONS.forEach(function(q,i){
+  var vs=byQ[i],a=answers[i],d=diffOf(q);
+  if(!vs||!vs.length){
+   if(blank(a)&&!(questionTimes[i]>0)){J.never.push(i);if(d==="easy"||d==="medium")J.neverEM++}
+   return;
+  }
+  var fn=null;
+  for(var k=0;k<vs.length;k++){if(!blank(vs[k].a)){fn=vs[k].a;break}}
+  if(fn!==null&&!blank(a)&&!sameAns(q,fn,a)){
+   J.changed++;
+   var was=isCorrect(q,fn),now=isCorrect(q,a),sw=CFG.c-penOf(q);
+   if(!was&&now){J.toRight++;J.gain+=sw}
+   else if(was&&!now){J.toWrong++;J.loss+=sw}
+  }
+ });
+ return J;
+}
+
+/* The verdict: the biggest single leak, ranked by marks, in plain words. */
+function buildVerdict(A){
+ var C=[],J=A.journey,hb=A.diff.hard,never=J?J.never:[],top=A.traps[0],spare=Math.max(0,A.avail-A.used);
+ if(A.trapped>=2&&top)C.push({k:"trap",m:A.trapMarks});
+ var bl=A.emSq.filter(function(i){return never.indexOf(i)===-1}).length;
+ if(bl)C.push({k:"blank",m:bl*CFG.c,n:bl});
+ if(never.length>=3)C.push({k:"never",m:Math.max(1,J.neverEM)*CFG.c,n:never.length});
+ if(A.hasDiff&&hb.c+hb.w>=2&&hb.net<0)C.push({k:"hard",m:-hb.net});
+ if(J&&J.loss>J.gain)C.push({k:"second",m:J.loss-J.gain});
+ if(RAPID&&A.timedOut>=3)C.push({k:"clock",m:A.timedOut*CFG.c/2});
+ C.sort(function(x,y){return y.m-x.m});
+ function line(c){
+  var n=c.n,m=c.m;
+  if(c.k==="trap")return {h:(A.trapped===A.w?"All "+A.w+" of your wrong answers":A.trapped+" of your "+plural(A.w,"wrong answer","wrong answers"))+" fell for a set trap.",s:"Together they cost "+plural(A.trapMarks,"mark","marks")+". The one to fix first: “"+top.name+"”, "+plural(top.qs.length,"time","times")+"."};
+  if(c.k==="blank")return {h:"You left "+plural(n,"Easy or Medium question","Easy or Medium questions")+" blank.",s:"That is up to "+m+" marks that needed no new concept."};
+  if(c.k==="never")return {h:"You never opened "+plural(n,"question","questions")+(J.neverEM?", "+J.neverEM+" of them Easy or Medium":"")+".",s:spare>=60?"You still had "+fmtMS(spare)+" on the clock when you finished.":"The clock ran out before you reached them."};
+  if(c.k==="hard")return {h:"Hard questions cost you "+plural(m,"mark","marks")+" net.",s:hb.c+" right, "+hb.w+" wrong: leaving them blank would have scored higher."};
+  if(c.k==="second")return {h:"Changing answers cost you "+plural(m,"mark","marks")+".",s:plural(J.toWrong,"right answer","right answers")+" changed to wrong; "+J.toRight+" wrong changed to right."};
+  return {h:"The clock ran out on "+plural(A.timedOut,"question","questions")+".",s:"Each of those scored zero without an attempt."};
+ }
+ var V={h:"",s:"",also:"",acts:[]};
+ if(C.length&&C[0].m>=CFG.c){
+  var L=line(C[0]);V.h=L.h;V.s=L.s;
+  if(C[1]&&C[1].m>=CFG.c)V.also=line(C[1]).h;
+ }else if(A.acc!==null&&A.acc>=80&&!A.emS){
+  V.h="A clean attempt: "+A.acc+"% accuracy and nothing easy left blank.";
+  V.s="Next step: take on more of the Hard questions.";
+ }else{
+  V.h="You scored "+A.score+" of "+A.max+(A.acc!==null?" at "+A.acc+"% accuracy":"")+".";
+  V.s="No single leak stands out. Go through the review below, question by question.";
+ }
+ var seen={};
+ function act(t,href){if(seen[t])return;seen[t]=1;V.acts.push({t:t,href:href||null})}
+ C.forEach(function(c){
+  if(c.m<CFG.c)return;
+  if(c.k==="trap"&&top.fix)act("Beat “"+top.name+"”: "+top.fix);
+  else if(c.k==="never"&&spare>=60)act("Use the whole clock: before you end a section or submit, open every question you have not seen.");
+  else if(c.k==="blank"&&RAPID)act("Decide in time: if you can rule out one option, answer and move on.");
+  else if(c.k==="blank"||c.k==="never")act("First pass: answer every Easy and Medium question before you give time to a Hard one.");
+  else if(c.k==="hard")act("Attempt a Hard question only after you have ruled out two options.");
+  else if(c.k==="second")act("Keep your first answer unless you can name what is wrong with it.");
+  else if(c.k==="clock")act("Decide in time: if you can rule out one option, answer and move on.");
+ });
+ V.acts=V.acts.slice(0,2);
+ if(A.bankN)act((A.bankN===A.w?"Your "+plural(A.bankN,"wrong answer is","wrong answers are"):A.bankN+" of your wrong answers are")+" now in your Mistake Bank. They come back for revision tomorrow.","mistake_bank.html");
+ return V;
+}
+
+/* ---------- on-screen panels ---------- */
+function qLink(i){return "<a href=\"#rq"+i+"\" class=\"qlink\">Q"+(i+1)+"</a>"}
+function okMark(o){return o==="c"?"<span class=\"ok\">&#10003;</span>":(o==="w"?"<span class=\"no\">&#10007;</span>":"<span class=\"dim\">&mdash;</span>")}
+function kv(k,v,cls){return "<div class=\"kv\"><span>"+k+"</span><b"+(cls?" class=\""+cls+"\"":"")+">"+v+"</b></div>"}
+
+function cardVerdict(A){
+ var V=A.verdict,H="<div class=\"ana verdict\"><div class=\"anaH\">YOUR VERDICT</div>";
+ H+="<div class=\"vH\">"+escH(V.h)+"</div>";
+ if(V.s)H+="<div class=\"vS\">"+escH(V.s)+"</div>";
+ if(V.also)H+="<div class=\"vAlso\">Also: "+escH(V.also)+"</div>";
+ if(V.acts.length){
+  H+="<div class=\"doNext\"><div class=\"dnH\">DO THIS NEXT</div><ol>";
+  V.acts.forEach(function(a){H+="<li>"+(a.href?"<a href=\""+a.href+"\">"+escH(a.t)+"</a>":escH(a.t))+"</li>"});
+  H+="</ol></div>";
+ }
+ return H+"</div>";
+}
+function cardTraps(A){
+ if(!A.hasTags)return "";
+ var H="<div class=\"ana\"><div class=\"anaH\">TRAPS THAT CAUGHT YOU</div>";
+ if(!A.traps.length)return H+"<div class=\"sub0\">"+(A.w?"None of your wrong answers matched a set trap.":"No trap caught you this time.")+"</div></div>";
+ H+="<div class=\"sub0\">Every wrong option in this test was built on a known trap. Here are the ones you picked, most frequent first, each with its counter.</div><div class=\"trapGrid\">";
+ A.traps.forEach(function(t){
+  H+="<div class=\"trap\"><div class=\"trapTop\"><b>"+escH(t.name)+"</b><span class=\"cnt\">&times;"+t.qs.length+"</span></div>";
+  if(t.what)H+="<div class=\"what\">"+escH(t.what)+"</div>";
+  if(t.fix)H+="<div class=\"fix\"><b>COUNTER</b>"+escH(t.fix)+"</div>";
+  H+="<div class=\"qs\">"+t.qs.map(qLink).join(" ")+"</div></div>";
+ });
+ return H+"</div></div>";
+}
+function cardLadder(A){
+ if(!A.hasDiff)return "";
+ var H="<div class=\"ana\"><div class=\"anaH\">EASY &middot; MEDIUM &middot; HARD</div>";
+ ["easy","medium","hard"].forEach(function(k){
+  var b=A.diff[k];if(!b.n)return;
+  H+="<div class=\"rung\"><div class=\"rungTop\"><span>"+capW(k)+" <span class=\"dim\">&middot; "+plural(b.n,"question","questions")+"</span></span><b class=\""+(b.net<0?"no":(b.net>0?"ok":"dim"))+"\">net "+sgn(b.net)+"</b></div>";
+  H+="<div class=\"mini\"><i class=\"c\" style=\"width:"+(100*b.c/b.n).toFixed(1)+"%\"></i><i class=\"w\" style=\"width:"+(100*b.w/b.n).toFixed(1)+"%\"></i><i class=\"s\" style=\"width:"+(100*b.s/b.n).toFixed(1)+"%\"></i></div>";
+  H+="<div class=\"rungSub\">"+b.c+" right &middot; "+b.w+" wrong &middot; "+b.s+" blank"+(b.o?" &middot; avg "+fmtMS(b.t/b.o):"")+"</div></div>";
+ });
+ H+=adClimbHTML(A);
+ return H+"</div>";
+}
+function cardClock(A){
+ var unused=Math.max(0,A.avail-A.used),tot=Math.max(1,A.tC+A.tW+A.tS+unused);
+ function seg(cls,v){return v>0?"<i class=\""+cls+"\" style=\"width:"+(100*v/tot).toFixed(2)+"%\"></i>":""}
+ var H="<div class=\"ana\"><div class=\"anaH\">WHERE THE CLOCK WENT</div><div class=\"cbar\">"+seg("c",A.tC)+seg("w",A.tW)+seg("s",A.tS)+seg("u",unused)+"</div>";
+ H+=kv("<span class=\"lgd c\"></span>Questions you got right",fmtMS(A.tC));
+ H+=kv("<span class=\"lgd w\"></span>Questions you got wrong",fmtMS(A.tW));
+ if(A.tS>=1)H+=kv("<span class=\"lgd s\"></span>Questions left blank",fmtMS(A.tS));
+ if(unused>=1)H+=kv("<span class=\"lgd u\"></span>Not used",fmtMS(unused));
+ if(A.sinks.length)H+="<div class=\"sub\">Time sinks, at twice the even pace or more: "+A.sinks.map(function(x){return qLink(x.i)+" "+fmtMS(x.t)+" "+okMark(A.out[x.i])}).join(" &middot; ")+"</div>";
+ if(RAPID&&A.timedOut)H+="<div class=\"sub\">The clock ran out on "+plural(A.timedOut,"question","questions")+".</div>";
+ return H+"</div>";
+}
+function cardSecond(A){
+ var J=A.journey;if(!J||!J.changed)return "";
+ var same=J.changed-J.toRight-J.toWrong;
+ var H="<div class=\"ana\"><div class=\"anaH\">SECOND THOUGHTS</div><div class=\"sub0\">You changed "+plural(J.changed,"answer","answers")+" after first marking "+(J.changed===1?"it":"them")+".</div>";
+ H+=kv("Wrong &rarr; right","<span class=\"ok\">"+J.toRight+(J.gain?" &middot; +"+J.gain:"")+"</span>");
+ H+=kv("Right &rarr; wrong","<span class=\"no\">"+J.toWrong+(J.loss?" &middot; &minus;"+J.loss:"")+"</span>");
+ if(same)H+=kv("Wrong &rarr; still wrong","<span class=\"dim\">"+same+"</span>");
+ return H+"</div>";
+}
+function cardSecs(A){
+ if(!A.secs.length)return "";
+ var H="<div class=\"ana\"><div class=\"anaH\">BY SECTION</div><table class=\"anaT\"><tr><th></th><th>Score</th><th>&#10003;</th><th>&#10007;</th><th>&mdash;</th><th>Acc</th><th>Time</th></tr>";
+ A.secs.forEach(function(b){
+  var att=b.c+b.w;
+  H+="<tr><td>"+escH(b.sec)+"</td><td>"+b.score+"</td><td>"+b.c+"</td><td>"+b.w+"</td><td>"+b.s+"</td><td>"+(att?Math.round(100*b.c/att)+"%":"&mdash;")+"</td><td>"+fmtMS(b.t)+"</td></tr>";
+ });
+ return H+"</table></div>";
+}
+function paletteHTML(A){
+ var J=A.journey,never={},trapQ={};
+ if(J)J.never.forEach(function(i){never[i]=1});
+ A.traps.forEach(function(t){t.qs.forEach(function(i){trapQ[i]=1})});
+ function tile(i){
+  var o=A.out[i],t=questionTimes[i]||0,full=RAPID?(QUESTIONS[i].td||30):2*paceOf(i);
+  var slow=!RAPID&&t>=Math.max(60,2*paceOf(i));
+  var cls="pt "+(never[i]?"n":o)+(slow?" slow":"");
+  var tip="Q"+(i+1)+" · "+(never[i]?"never opened":fmtMS(t)+" · "+outWord(o))+(trapQ[i]?" · trap":"");
+  return "<div class=\""+cls+"\" data-q=\""+i+"\" title=\""+tip+"\"><span class=\"pn\">"+(i+1)+"</span><span class=\"ptm\">"+(never[i]?"&ndash;":fmtMS(t))+"</span>"+(trapQ[i]?"<span class=\"tdot\"></span>":"")+"<i style=\"width:"+Math.min(100,100*t/full).toFixed(1)+"%\"></i></div>";
+ }
+ var H="<div class=\"ana\"><div class=\"anaH\">YOUR PALETTE, REPLAYED <span class=\"dim\">tap a number to open that question</span></div>";
+ if(SEC){SEC.forEach(function(p){H+="<div class=\"palSec\">"+escH(p.sec)+"</div><div class=\"pal2\">";for(var i=p.start;i<=p.end;i++)H+=tile(i);H+="</div>"})}
+ else{H+="<div class=\"pal2\">";for(var j=0;j<NQ;j++)H+=tile(j);H+="</div>"}
+ H+="<div class=\"palLeg\"><span class=\"sw c\"></span>right<span class=\"sw w\"></span>wrong<span class=\"sw s\"></span>blank"+(J&&J.never.length?"<span class=\"sw n\"></span>never opened":"")+(A.traps.length?"<span class=\"sw t\"></span>fell for a trap":"");
+ H+="<br>The gold line under each number is the time spent: "+(RAPID?"a full line means that question's clock ran out.":"half a line is even pace, a full line is twice even pace or more.")+"</div>";
+ return H+"</div>";
+}
+function renderAnalysis(A){
+ var box=document.getElementById("anaBox");if(!box)return;
+ var tx=document.getElementById("stTax");if(tx)tx.textContent=A.neg?"−"+A.neg:"0";
+ var H=cardVerdict(A)+cardTraps(A);
+ H+="<div class=\"anaGrid\">"+cardLadder(A)+cardClock(A)+cardSecond(A)+cardSecs(A)+"</div>";
+ H+=paletteHTML(A);
+ box.innerHTML=H;
+ var hits=box.querySelectorAll("[data-q]");
+ for(var k=0;k<hits.length;k++){hits[k].onclick=function(){var el=document.getElementById("rq"+this.getAttribute("data-q"));if(el)el.scrollIntoView({behavior:"smooth",block:"start"})}}
+}
+
+/* ---------- retry wrong questions (no clock) ---------- */
+var RETRY={done:0,right:0,n:0};
+function renderRetry(){
+ var box=document.getElementById("retryBox");if(!box)return;
+ box.innerHTML="";
+ var idx=[];
+ QUESTIONS.forEach(function(q,i){if(!blank(answers[i])&&!isCorrect(q,answers[i]))idx.push(i)});
+ if(!idx.length)return;
+ RETRY={done:0,right:0,n:idx.length};
+ var h=document.createElement("h1");h.style.cssText="font-size:19px;margin:18px 0 6px";h.textContent="Retry Wrong Questions";box.appendChild(h);
+ var n=document.createElement("div");n.className="note";n.style.marginBottom="10px";
+ n.textContent="No clock this time. If you get it now, the first miss was a slip or the pressure. If you miss it again, that topic needs revision.";
+ box.appendChild(n);
+ var tl=document.createElement("div");tl.className="secErr";tl.id="retryTally";box.appendChild(tl);
+ idx.forEach(function(i){box.appendChild(retryCard(i))});
+ paintTally();
+}
+function paintTally(){
+ var t=document.getElementById("retryTally");if(!t)return;
+ t.innerHTML="<b>Retried "+RETRY.done+" of "+RETRY.n+"</b>"+(RETRY.done?" &middot; <span class=\"ok\">now right "+RETRY.right+"</span> &middot; <span class=\"no\">still wrong "+(RETRY.done-RETRY.right)+"</span>":"");
+}
+function retryCard(i){
+ var q=QUESTIONS[i],letters=["A","B","C","D"];
+ var w=document.createElement("div");w.className="rq";
+ var hd=document.createElement("div");hd.className="rqHead";hd.textContent="Q"+(i+1)+" · "+q.section+(diffOf(q)?" · "+q.difficulty:"");w.appendChild(hd);
+ if(q.passage){
+  var det=document.createElement("details");var sm=document.createElement("summary");sm.className="mono";sm.textContent="Show passage";det.appendChild(sm);
+  var pv=document.createElement("div");pv.className="rqStem";pv.style.marginTop="6px";pv.textContent=q.passage;det.appendChild(pv);w.appendChild(det);
+ }
+ var st=document.createElement("div");st.className="rqStem";ulText(st,q.stem);w.appendChild(st);
+ var ex=document.createElement("div");renderExhibit(q,ex);if(ex.childNodes.length)w.appendChild(ex);
+ var res=document.createElement("div");res.className="exp";res.style.display="none";
+ function finish(ok,keyText){
+  RETRY.done++;if(ok)RETRY.right++;paintTally();
+  res.style.display="block";
+  res.innerHTML="<b>"+(ok?"Got it this time.":"Not yet.")+"</b> Key: "+escH(keyText)+"<br>";
+  res.appendChild(document.createTextNode(q.explanation||""));
+ }
+ if(isMCQ(q)){
+  q.options.forEach(function(opt,k){
+   var b=document.createElement("button");b.className="opt";b.textContent=letters[k]+". "+opt;
+   b.onclick=function(){
+    var bs=w.querySelectorAll("button.opt");for(var j=0;j<bs.length;j++)bs[j].disabled=true;
+    var ok=(k===q.answerIndex);b.classList.add(ok?"rOk":"rNo");if(!ok&&bs[q.answerIndex])bs[q.answerIndex].classList.add("rOk");
+    finish(ok,letters[q.answerIndex]);
+   };
+   w.appendChild(b);
+  });
+ }else{
+  var row=document.createElement("div");row.style.cssText="display:flex;gap:8px;margin-top:6px";
+  var inp=document.createElement("input");inp.className="tita";inp.placeholder="Type your answer";
+  var cb=document.createElement("button");cb.className="btn";cb.textContent="Check";
+  cb.onclick=function(){
+   if(!inp.value.trim())return;
+   inp.disabled=true;cb.disabled=true;
+   var ok=isCorrect(q,inp.value);inp.style.borderColor=ok?"var(--green)":"var(--red)";
+   finish(ok,String(q.answer));
+  };
+  row.appendChild(inp);row.appendChild(cb);w.appendChild(row);
+ }
+ w.appendChild(res);
+ return w;
+}
+
+/* ---------- PDF text (plain characters only: the PDF font has no minus sign or arrows) ---------- */
+function analysisLines(A){
+ var L=[],V=A.verdict,dot="   ·   ",J=A.journey;
+ var v=[V.h+(V.s?" "+V.s:"")];
+ if(V.also)v.push("Also: "+V.also);
+ v.push((A.acc!==null?"Accuracy "+A.acc+"%"+dot:"")+"Guessing tax "+(A.neg?"-"+A.neg:"0")+dot+"Time "+fmtMS(A.used)+" of "+fmtMS(A.avail));
+ L.push(["Your verdict",v]);
+ if(V.acts.length)L.push(["Do this next",V.acts.map(function(a,k){return (k+1)+". "+a.t})]);
+ if(A.traps.length)L.push(["Traps that caught you",A.traps.map(function(t){return t.name+" x"+t.qs.length+" ("+t.qs.map(function(i){return "Q"+(i+1)}).join(", ")+")"+(t.what?": "+t.what:"")+(t.fix?" Counter: "+t.fix:"")})]);
+ if(A.hasDiff){
+  var d=[];
+  ["easy","medium","hard"].forEach(function(k){var b=A.diff[k];if(!b.n)return;d.push(capW(k)+": "+b.n+" Qs"+dot+b.c+" right"+dot+b.w+" wrong"+dot+b.s+" blank"+dot+"net "+sgnA(b.net)+(b.o?dot+"avg "+fmtMS(b.t/b.o):""))});
+  d.push(adPdfLine());L.push(["Easy / Medium / Hard",d]);
+ }
+ var unused=Math.max(0,A.avail-A.used);
+ var t=["Right "+fmtMS(A.tC)+dot+"wrong "+fmtMS(A.tW)+(A.tS>=1?dot+"blank "+fmtMS(A.tS):"")+(unused>=1?dot+"not used "+fmtMS(unused):"")];
+ if(A.sinks.length)t.push("Time sinks: "+A.sinks.map(function(x){return "Q"+(x.i+1)+" "+fmtMS(x.t)+" ("+outWord(A.out[x.i])+")"}).join(", "));
+ if(RAPID&&A.timedOut)t.push("The clock ran out on "+plural(A.timedOut,"question","questions"));
+ if(J&&J.never.length)t.push("Never opened: "+J.never.map(function(i){return "Q"+(i+1)}).join(", "));
+ L.push(["Where the clock went",t]);
+ if(J&&J.changed)L.push(["Second thoughts",["Changed "+plural(J.changed,"answer","answers")+": "+J.toRight+" wrong to right (+"+J.gain+"), "+J.toWrong+" right to wrong (-"+J.loss+")"]]);
+ if(A.secs.length)L.push(["By section",A.secs.map(function(b){var att=b.c+b.w;return b.sec+": score "+b.score+dot+b.c+" right"+dot+b.w+" wrong"+dot+b.s+" blank"+dot+"accuracy "+(att?Math.round(100*b.c/att)+"%":"-")+dot+"time "+fmtMS(b.t)})]);
+ return L;
+}
+
+/* ==================== DOWNLOAD PDF ==================== */
+function downloadPDF(){
+ var jsPDFctor=(window.jspdf&&window.jspdf.jsPDF)||window.jsPDF;
+ if(!jsPDFctor){alert("PDF library failed to load. Please check your connection and try again.");return}
+ var doc=new jsPDFctor({unit:"pt",format:"a4"});
+ var pageW=doc.internal.pageSize.getWidth();
+ var pageH=doc.internal.pageSize.getHeight();
+ var margin=40,y=margin;
+ var letters=["A","B","C","D"];
+ function newPageIfNeeded(h){if(y+h>pageH-margin){doc.addPage();y=margin}}
+ function writeWrapped(text,x,maxW,size,style){
+  doc.setFont("helvetica",style||"normal");doc.setFontSize(size);
+  var lines=doc.splitTextToSize(text,maxW);
+  for(var i=0;i<lines.length;i++){newPageIfNeeded(size+4);doc.text(lines[i],x,y);y+=size+4}
+ }
+ doc.setFont("helvetica","bold");doc.setFontSize(16);doc.setTextColor(13,27,42);
+ doc.text("ROAD TO IIM",margin,y);y+=20;
+ doc.setFontSize(13);doc.setTextColor(201,168,76);
+ doc.text(TEST_NAME,margin,y);y+=18;
+ doc.setFont("helvetica","normal");doc.setFontSize(10);doc.setTextColor(60,60,60);
+ var dateStr=new Date().toLocaleString("en-IN",{timeZone:"Asia/Kolkata"});
+ doc.text(studentName+" \u00b7 "+studentBatch+" \u00b7 "+dateStr,margin,y);y+=16;
+ doc.setDrawColor(201,168,76);doc.line(margin,y,pageW-margin,y);y+=16;
+ doc.setTextColor(0,0,0);doc.setFont("helvetica","bold");doc.setFontSize(11);
+ doc.text("Summary",margin,y);y+=14;
+ doc.setFont("helvetica","normal");doc.setFontSize(10);
+ var summary="Score: "+document.getElementById("stScore").textContent+" / "+MAX_MARKS+"   \u00b7   Correct: "+document.getElementById("stCorrect").textContent+"   \u00b7   Wrong: "+document.getElementById("stWrong").textContent+"   \u00b7   Skipped: "+document.getElementById("stSkipped").textContent+"   \u00b7   Accuracy: "+document.getElementById("stAcc").textContent+"   \u00b7   Time: "+document.getElementById("stTime").textContent;
+ writeWrapped(summary,margin,pageW-2*margin,10);y+=4;
+ var secErrText=(document.getElementById("secErrBox").textContent||"").replace(/\s+/g," ").trim();
+ if(secErrText){writeWrapped(secErrText,margin,pageW-2*margin,10);y+=6}
+ try{ /* v2.7 analysis */
+  if(LAST_A){
+   doc.setDrawColor(200,200,200);doc.line(margin,y,pageW-margin,y);y+=14;
+   doc.setFont("helvetica","bold");doc.setFontSize(12);doc.setTextColor(13,27,42);
+   newPageIfNeeded(20);doc.text("Analysis",margin,y);y+=14;
+   analysisLines(LAST_A).forEach(function(sec){
+    newPageIfNeeded(30);
+    doc.setTextColor(150,115,40);writeWrapped(sec[0],margin,pageW-2*margin,10,"bold");y+=1;
+    doc.setTextColor(30,30,30);
+    sec[1].forEach(function(ln){writeWrapped(ln,margin+10,pageW-2*margin-10,9.5,"normal")});
+    y+=5;
+   });
+   doc.setTextColor(0,0,0);
+  }
+ }catch(e){}
+ doc.setDrawColor(200,200,200);doc.line(margin,y,pageW-margin,y);y+=14;
+ doc.setFont("helvetica","bold");doc.setFontSize(12);doc.setTextColor(13,27,42);
+ doc.text("Question Review",margin,y);y+=16;
+ QUESTIONS.forEach(function(q,i){
+  var a=answers[i];
+  var skippedQ=(a===null||a==="");
+  var ok=isCorrect(q,a);
+  var statusLabel=skippedQ?"SKIPPED":(ok?"CORRECT":"WRONG");
+  newPageIfNeeded(60);
+  doc.setFont("helvetica","bold");doc.setFontSize(10);doc.setTextColor(13,27,42);
+  writeWrapped("Q"+(i+1)+"  \u00b7  "+q.section+" \u00b7 "+q.format+(diffOf(q)?" \u00b7 "+q.difficulty:"")+" \u00b7 time "+fmtMS(questionTimes[i])+"   ["+statusLabel+"]",margin,pageW-2*margin,10,"bold");y+=1;
+  if(q.passage&&(i===0||QUESTIONS[i-1].passage!==q.passage)){
+   doc.setTextColor(90,90,90);
+   writeWrapped("Passage: "+q.passage,margin,pageW-2*margin,8,"italic");y+=2;
+  }
+  doc.setTextColor(0,0,0);
+  writeWrapped(String(q.stem).replace(/\[\[|\]\]/g,'"'),margin,pageW-2*margin,10,"normal");y+=2;
+  if(q.table!=null&&q.table!==""){
+   var trows=Array.isArray(q.table)?q.table:(q.table&&Array.isArray(q.table.rows)?(Array.isArray(q.table.headers)?[q.table.headers].concat(q.table.rows):q.table.rows):null);
+   doc.setTextColor(40,40,40);
+   if(trows){trows.forEach(function(r){writeWrapped(Array.isArray(r)?r.map(String).join("  |  "):String(r),margin+12,pageW-2*margin-12,8.5,"normal")})}
+   else{
+    var ttxt=String(q.table);
+    if(ttxt.trim().charAt(0)==="<")ttxt=ttxt.replace(new RegExp("</tr>","gi"),"\n").replace(new RegExp("</t[dh]>","gi"),"  |  ").replace(new RegExp("<[^>]+>","g")," ").replace(new RegExp("&amp;","g"),"&").replace(new RegExp("&nbsp;","g")," ");
+    ttxt.split("\n").forEach(function(ln){ln=ln.replace(new RegExp("[ ]+","g")," ").trim();if(ln)writeWrapped(ln,margin+12,pageW-2*margin-12,8.5,"normal")});
+   }
+   doc.setTextColor(0,0,0);y+=2;
+  }
+  if(q.fig){doc.setTextColor(120,120,120);writeWrapped("[Figure \u2014 shown in the on-screen review]",margin+12,pageW-2*margin-12,8.5,"italic");doc.setTextColor(0,0,0)}
+  if(isMCQ(q)){
+   q.options.forEach(function(opt,idx){
+    var marker="";
+    if(idx===q.answerIndex)marker="   [correct]";
+    else if(idx===a){marker="   [your choice]";var ptg=trapOf(q,a);if(ptg)marker+="  trap: "+trapInfo(ptg).name}
+    if(idx===q.answerIndex)doc.setTextColor(30,120,60);
+    else if(idx===a)doc.setTextColor(180,50,50);
+    else doc.setTextColor(60,60,60);
+    writeWrapped(letters[idx]+")  "+opt+marker,margin+12,pageW-2*margin-12,10,"normal");
+   });
+  }else{
+   doc.setTextColor(skippedQ?120:(ok?30:180),skippedQ?120:(ok?120:50),skippedQ?120:(ok?60:50));
+   var pttg=trapOf(q,a);
+   writeWrapped("Your answer: "+(skippedQ?"-":a)+(pttg?"   trap: "+trapInfo(pttg).name:""),margin+12,pageW-2*margin-12,10,"normal");
+   doc.setTextColor(30,120,60);
+   writeWrapped("Key: "+q.answer,margin+12,pageW-2*margin-12,10,"normal");
+  }
+  doc.setTextColor(0,0,0);y+=2;
+  doc.setFont("helvetica","bold");doc.setFontSize(9);
+  newPageIfNeeded(14);
+  doc.text("Explanation:",margin,y);y+=11;
+  doc.setFont("helvetica","normal");doc.setFontSize(9);
+  writeWrapped(q.explanation||"",margin,pageW-2*margin,9,"normal");
+  y+=10;
+  doc.setDrawColor(230,230,230);
+  newPageIfNeeded(6);
+  doc.line(margin,y,pageW-margin,y);y+=12;
+ });
+ var safeName=(studentName||"student").replace(/[^A-Za-z0-9]+/g,"_").slice(0,40);
+ var d=new Date();
+ var dateTag=d.getFullYear()+String(d.getMonth()+1).padStart(2,"0")+String(d.getDate()).padStart(2,"0");
+ doc.save(CFG.bankPrefix+"_"+safeName+"_"+dateTag+".pdf");
+}
+
+/* ==================== PAGE LOAD ==================== */
+document.getElementById("lgTitle").textContent=TEST_NAME;
+var lgTime=CFG.rapid?("per-question clock \u00b7 forward only \u00b7 auto-advance at 0s \u00b7 ~"+CFG.minutes+" min total"):SEC?(SEC.map(function(p){return p.sec+" "+p.minutes+"m"}).join(" \u2192 ")+" \u00b7 sectional lock \u00b7 no return"):(CFG.minutes+" minutes \u00b7 "+(CFG.navNote||"free navigation"));
+document.getElementById("lgMeta").innerHTML=NQ+" questions \u00b7 +"+CFG.c+" / "+CFG.w+(CFG.hasTita?" \u00b7 TITA wrong "+(CFG.titaWSec?QUESTIONS.filter(function(q){return !isMCQ(q)}).map(function(q){return q.section}).filter(function(v,i,a){return a.indexOf(v)===i}).map(function(sec){return sec+" "+titaWFor({section:sec})}).join(", "):CFG.titaW):"")+" \u00b7 Max "+MAX_MARKS+"<br>"+lgTime+" \u00b7 auto-submit at 00:00";
+document.getElementById("loginBtn").addEventListener("click",startTest);
+adLoginNote();
+snFlushQueue();
+snTryResume();
+</script>
+<script>/* RIIM usage ping v1 */try{fetch("https://script.google.com/macros/s/AKfycbx5Ojm_zp4LfsMeelx5e06KNjVH1wfsXdV0keS4407m4FO1HU4EpVb7GKj-ibAsxnspeA/exec?action=ping&type=open&page="+encodeURIComponent(document.title||location.pathname),{mode:"no-cors"});}catch(_){}</script>
+</body>
+</html>
