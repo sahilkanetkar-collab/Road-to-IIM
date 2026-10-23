@@ -1,0 +1,587 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Christ Programme Compass</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: counselling desk — sticky section nav, compare table, programme dossiers, then a two-column strength matcher (sliders | ranked fits) */
+:root{
+  --bg:#F3F5F8; --surface:#FFFFFF; --ink:#16202C; --muted:#5A6676; --line:#D9DFE7;
+  --accent:#2C5A88; --accent-soft:#E3ECF6; --ochre:#B87618; --ochre-soft:#FBF0DE;
+  --good:#2E7D4F; --good-soft:#E2F2E8; --warn:#A8620F; --bad:#B23A3A; --bad-soft:#F8E4E4;
+  --display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body:"Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0F151D; --surface:#17202B; --ink:#E6ECF3; --muted:#9AA7B7; --line:#2A3644;
+  --accent:#7FAEDD; --accent-soft:#1D2D40; --ochre:#E2A54E; --ochre-soft:#332613;
+  --good:#6CC08F; --good-soft:#16301F; --warn:#E2A54E; --bad:#E58383; --bad-soft:#3A1E1E; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0F151D; --surface:#17202B; --ink:#E6ECF3; --muted:#9AA7B7; --line:#2A3644;
+  --accent:#7FAEDD; --accent-soft:#1D2D40; --ochre:#E2A54E; --ochre-soft:#332613;
+  --good:#6CC08F; --good-soft:#16301F; --warn:#E2A54E; --bad:#E58383; --bad-soft:#3A1E1E; color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+.wrap{max-width:1120px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;line-height:1.15;margin:0}
+h1{font-size:clamp(1.9rem,4.5vw,2.8rem);font-weight:700;letter-spacing:-.01em}
+h2{font-size:1.6rem;font-weight:700}
+h3{font-size:1.2rem;font-weight:700}
+p{margin:0}
+.eyebrow{font-family:var(--mono);font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+header.top{background:var(--surface);border-bottom:1px solid var(--line)}
+header.top .wrap{padding-block:32px 24px;display:grid;gap:12px}
+header.top .lede{max-width:68ch;color:var(--muted);font-size:1.05rem}
+.facts{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.chip{font-family:var(--mono);font-size:.75rem;padding:4px 10px;border-radius:999px;background:var(--accent-soft);color:var(--accent);white-space:nowrap}
+.chip.o{background:var(--ochre-soft);color:var(--ochre)}
+
+nav.sec{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--surface);border-bottom:1px solid var(--line)}
+nav.sec .wrap{display:flex;gap:4px;overflow-x:auto;padding-block:8px}
+nav.sec a{text-decoration:none;color:var(--muted);font-weight:600;padding:6px 12px;border-radius:6px;white-space:nowrap;font-size:.95rem}
+nav.sec a:hover{background:var(--accent-soft);color:var(--accent)}
+
+section{padding-block:40px;display:grid;gap:20px}
+section+section{border-top:1px solid var(--line)}
+.sechead{display:grid;gap:6px;max-width:72ch}
+.sechead p{color:var(--muted)}
+
+/* compare table */
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:1040px;font-size:.93rem}
+th,td{padding:10px 12px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
+thead th{font-family:var(--display);font-size:.98rem;background:var(--accent-soft);color:var(--ink)}
+tbody th{font-family:var(--mono);font-weight:600;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);width:130px}
+tbody tr:last-child>*{border-bottom:none}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+/* dossiers */
+.dossiers{display:grid;gap:16px}
+.dos{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:22px;display:grid;gap:14px}
+.dos-head{display:flex;flex-wrap:wrap;gap:10px;align-items:baseline;justify-content:space-between}
+.dos-head .meta{display:flex;flex-wrap:wrap;gap:6px}
+.dos .one{color:var(--muted);max-width:75ch}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px}
+.cols>div{min-width:0;display:grid;gap:6px;align-content:start}
+.cols h4{margin:0;font-family:var(--mono);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
+ul{margin:0;padding-left:1.1em;display:grid;gap:4px}
+.verdict{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.verdict>div{border-radius:8px;padding:12px 14px;min-width:0}
+.yes{background:var(--good-soft)} .yes h4{color:var(--good)}
+.no{background:var(--bad-soft)} .no h4{color:var(--bad)}
+.verdict h4{margin:0 0 4px;font-family:var(--mono);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase}
+details{border-top:1px dashed var(--line);padding-top:10px}
+summary{cursor:pointer;font-weight:600;color:var(--accent)}
+.sems{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:10px}
+.sem{font-size:.88rem;background:var(--bg);border-radius:6px;padding:10px 12px;min-width:0}
+.sem b{font-family:var(--mono);font-size:.72rem;color:var(--muted);display:block;margin-bottom:2px;letter-spacing:.06em}
+.flag{border-left:3px solid var(--ochre);background:var(--ochre-soft);padding:10px 14px;border-radius:0 8px 8px 0;font-size:.93rem}
+
+/* matcher */
+.matcher{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:20px;align-items:start}
+@media (max-width:820px){.matcher{grid-template-columns:1fr}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px;display:grid;gap:16px;min-width:0}
+.row2{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+label.f{display:grid;gap:4px;font-weight:600;font-size:.92rem}
+input[type=text],select,textarea{font:inherit;font-size:.95rem;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);width:100%}
+textarea{min-height:110px;resize:vertical}
+.slider{display:grid;gap:2px}
+.slider .lab{display:flex;justify-content:space-between;gap:8px;font-weight:600;font-size:.93rem}
+.slider .lab output{font-family:var(--mono);color:var(--accent)}
+.slider .hint{font-size:.8rem;color:var(--muted);display:flex;justify-content:space-between;gap:8px}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+button{font:inherit;font-weight:600;font-size:.9rem;padding:8px 14px;border-radius:6px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+button.pri{background:var(--accent);color:var(--surface);border-color:var(--accent)}
+button:hover{border-color:var(--accent)}
+.results{display:grid;gap:10px}
+.res{border:1px solid var(--line);border-radius:10px;padding:14px;display:grid;gap:8px;background:var(--surface)}
+.res.top{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.res.inel{opacity:.72}
+.res-h{display:flex;justify-content:space-between;gap:10px;align-items:baseline;flex-wrap:wrap}
+.res-h .score{font-family:var(--mono);font-weight:600;font-size:1.25rem;font-variant-numeric:tabular-nums}
+.bar{height:8px;border-radius:999px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent);border-radius:999px}
+.res.inel .bar i{background:var(--muted)}
+.why{font-size:.88rem;color:var(--muted);display:grid;gap:2px}
+.why .plus{color:var(--good)} .why .minus{color:var(--bad)}
+.pill{font-family:var(--mono);font-size:.7rem;padding:2px 8px;border-radius:999px;letter-spacing:.04em}
+.pill.ok{background:var(--good-soft);color:var(--good)}
+.pill.x{background:var(--bad-soft);color:var(--bad)}
+.toast{font-size:.85rem;color:var(--good)}
+.qs{columns:2 280px;column-gap:24px}
+.qs li{break-inside:avoid;margin-bottom:6px}
+.src li{font-size:.9rem}
+footer{padding-block:28px;color:var(--muted);font-size:.85rem;border-top:1px solid var(--line)}
+@media (prefers-reduced-motion:no-preference){.bar i{transition:width .35s ease}}
+</style>
+
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <span class="eyebrow">Counselling tool · Christ University · 2027 intake</span>
+    <h1>Christ Programme Compass</h1>
+    <p class="lede">Six management routes at CHRIST (Deemed to be University), laid side by side: what each one teaches, how it teaches, what it costs and where it leads. Sit with the student, rate their strengths in the matcher, and talk through the result.</p>
+    <div class="facts">
+      <span class="chip">Phase 1 applications close 25 Nov 2026</span>
+      <span class="chip">Test date not yet published (past cycles: early Dec)</span>
+      <span class="chip o">Integrated MBA needs CU-IBMAT</span>
+      <span class="chip">₹8,000 registration fee, non-refundable</span>
+      <span class="chip">NAAC A+ · NIRF 2023 #57 (latest Christ cites) · AACSB member</span>
+    </div>
+  </div>
+</header>
+
+<nav class="sec" aria-label="Sections">
+  <div class="wrap">
+    <a href="#compare">At a glance</a>
+    <a href="#duel">Compare two</a>
+    <a href="#programmes">Programmes</a>
+    <a href="#tests">Admission tests</a>
+    <a href="#match">Strength matcher</a>
+    <a href="#ask">Questions to ask</a>
+    <a href="#sources">Sources</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+<section id="compare">
+  <div class="sechead">
+    <span class="eyebrow">01 · The six options</span>
+    <h2>At a glance</h2>
+    <p>Fees are for students from outside Karnataka (an Ahmedabad student pays this rate), taken from Christ's 2027 fee panels where published. Central BBA Honours and the specialised tracks are estimates from older panels, and the FinTech page had not been updated for 2027 when checked. Add hostel and food on top of every option.</p>
+  </div>
+  <div class="tbl">
+    <table>
+      <thead><tr><td></td><th scope="col">BBA (Honours)</th><th>BBA specialised tracks</th><th>BBA Applied Finance with FinTech</th><th>BBA Decision Science</th><th>B.Com Branding &amp; Entrepreneurship</th><th>Integrated MBA</th></tr></thead>
+      <tbody>
+        <tr><th>Length</th><td>4 yrs (Honours). NEP allows an earlier exit with a degree; confirm terms with Christ</td><td>4 yrs (Honours structure)</td><td>Not stated. Page says fee is "fixed for four years" but lists 3 fee years</td><td>3 yrs</td><td>Curriculum shows 8 semesters; fee table shows 3 yrs</td><td>5 yrs, 10 semesters. Exit after 3 yrs not stated</td></tr>
+        <tr><th>Campus</th><td>Central, Yeshwanthpur, Kengeri, Delhi NCR, Pune Lavasa</td><td>Yeshwanthpur, Bannerghatta Rd, Delhi NCR</td><td>Kengeri</td><td>Central only</td><td>Central only</td><td>Central only</td></tr>
+        <tr><th>Fee / year</th><td class="num">Central: ₹2.60L (Yrs 1–3), ₹3.30L (Yr 4) on the 2025 panel; expect ≈ ₹2.75–2.90L for 2027<br>Yeshwanthpur / Kengeri: ₹2.86L<br>Lavasa: ₹2.58L</td><td class="num">≈ ₹2.80L</td><td class="num">₹3.26L (2026 panel; 2027 not yet posted)</td><td class="num">₹3.05L → 3.25L → 3.45L</td><td class="num">₹4.01L</td><td class="num">₹5.46L</td></tr>
+        <tr><th>Rough total</th><td class="num">≈ ₹8.5L for 3 yrs<br>≈ ₹12L for 4 yrs*</td><td class="num">≈ ₹8.4L for 3 yrs<br>≈ ₹12L for 4 yrs*</td><td class="num">₹9.8L for 3 yrs</td><td class="num">₹9.75L</td><td class="num">₹12L (3 yrs) – ₹16L (4 yrs)</td><td class="num">≈ ₹27.3L</td></tr>
+        <tr><th>Living cost</th><td colspan="6">Our estimate: about ₹1.5–2L a year on top for hostel or PG plus food in Bangalore. Christ's men's hall (Bannerghatta Rd, 2026-27) lists ₹81,000 triple / ₹96,000 twin plus ₹5,000 deposit, food extra; the women's hall page found (Kengeri, 2025-26) lists ₹71,000 / ₹86,000 for PG students. Both lists may be PG-only. UG hostel seats are limited; many students take PGs near campus.</td></tr>
+        <tr><th>Eligibility</th><td>12th pass, any stream (Lavasa: 50%)</td><td>12th pass, any stream</td><td>12th pass, any stream</td><td>60% in Science/Commerce with Maths, Stats or CS</td><td>60% in Commerce or Science (no Humanities)</td><td>12th pass, any stream</td></tr>
+        <tr><th>Entry test</th><td colspan="5">Christ UG selection: entrance test, then assessment and interview (Christ's wording). Coaching sites describe the second stage as a skill assessment, micro-presentation and personal interview.</td><td>CU-IBMAT, then assessment and interview</td></tr>
+        <tr><th>Core flavour</th><td>Generalist; specialise in Year 3</td><td>Fixed double specialisation from Day 1</td><td>Finance plus programming and fintech, with Zell Education and Deloitte</td><td>Data, coding, ML with Mu Sigma apprenticeship</td><td>Branding, marketing, venture building</td><td>BBA + MBA; Finance or Marketing major, Analytics minor</td></tr>
+        <tr><th>Outcome signal</th><td>No programme-wise data for Central. Only the Lavasa page states a figure: ₹4–9 LPA start. Coaching sites quote ₹5–6.5 LPA average for Christ BBA overall</td><td>No programme-wise data published</td><td>No placement data; aims at BFSI and fintech roles</td><td>Employment offers from Mu Sigma for eligible students</td><td>Page claims 100% placement; new programme</td><td>First batch joined 2026; no placement record yet</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="eyebrow" style="text-transform:none;letter-spacing:0">* The 2027 fee tables list only 3 years for 4-year BBAs. Christ's 2025 Central panel and 2024 Bannerghatta panel both priced Year 4 about 27% higher than Years 1–3. Budget for that.</p>
+</section>
+
+<section id="duel">
+  <div class="sechead">
+    <span class="eyebrow">02 · The actual question</span>
+    <h2>Compare two</h2>
+    <p>When a student asks "X or Y?", pick both here. Only the rows where they differ are shown, followed by the verdict for each.</p>
+  </div>
+  <div class="row2" style="max-width:720px">
+    <label class="f">Option X<select id="dA"></select></label>
+    <label class="f">Option Y<select id="dB"></select></label>
+  </div>
+  <div class="tbl"><table id="duelTbl" style="min-width:0"><thead><tr><td></td><th scope="col" id="dAh"></th><th scope="col" id="dBh"></th></tr></thead><tbody id="duelBody"></tbody></table></div>
+  <div class="verdict" id="duelVerdict"></div>
+</section>
+
+<section id="programmes">
+  <div class="sechead">
+    <span class="eyebrow">03 · Dossiers</span>
+    <h2>The programmes, one by one</h2>
+    <p>Each dossier covers course content, teaching style and career outcomes, then a plain verdict: who should pick it and who should think twice.</p>
+  </div>
+  <div class="dossiers" id="dossiers"></div>
+</section>
+
+<section id="tests">
+  <div class="sechead">
+    <span class="eyebrow">04 · Getting in</span>
+    <h2>Admission tests</h2>
+    <p>Two different written tests, then an assessment and interview stage. Christ's pages say only "entrance test, assessment, interview"; the labels skill assessment and micro-presentation come from coaching sites and past candidates. Christ has not published the full 2027 calendar; past cycles ran later phases (around April and May) for students who miss Phase 1, with fewer seats left each time.</p>
+  </div>
+  <div class="cols">
+    <div class="dos">
+      <h3>Christ entrance test (all UG programmes except Integrated MBA)</h3>
+      <div class="tbl"><table style="min-width:0"><tbody>
+        <tr><th>English</th><td class="num">25</td></tr>
+        <tr><th>Reasoning</th><td class="num">25</td></tr>
+        <tr><th>General knowledge</th><td class="num">20</td></tr>
+        <tr><th>Mathematics</th><td class="num">20</td></tr>
+        <tr><th>Data interpretation</th><td class="num">20</td></tr>
+        <tr><th>Basic accounting</th><td class="num">10</td></tr>
+        <tr><th>Total</th><td class="num">120 Q · +1 / −0.25</td></tr>
+      </tbody></table></div>
+      <p style="font-size:.9rem;color:var(--muted)">Section split from coaching sources; reported time varies between 90 and 120 minutes. Check the admit card.</p>
+    </div>
+    <div class="dos">
+      <h3>CU-IBMAT (Integrated MBA)</h3>
+      <div class="tbl"><table style="min-width:0"><tbody>
+        <tr><th>Verbal &amp; RC</th><td class="num">50</td></tr>
+        <tr><th>Quant, LR &amp; DI</th><td class="num">50</td></tr>
+        <tr><th>Current affairs &amp; ethics</th><td class="num">20</td></tr>
+        <tr><th>Total</th><td class="num">120 Q · 90 min · +1 / −0.25</td></tr>
+      </tbody></table></div>
+      <p style="font-size:.9rem;color:var(--muted)">From Christ's own programme page. At 45 seconds a question, it rewards speed. Verbal carries 42% of the paper.</p>
+    </div>
+    <div class="dos">
+      <h3>After the written test</h3>
+      <ul>
+        <li><b>Assessment and interview</b> (described by coaching sites as skill assessment, micro-presentation and PI): only students with strong test scores are called. Christ does not publish the format or marks.</li>
+        <li><b>Prep focus:</b> a short talk on a general topic, and clear answers to "why this programme" and "why Christ".</li>
+        <li><b>Money:</b> first-year fee is due within 7 days of the result, often before IPMAT results.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="match">
+  <div class="sechead">
+    <span class="eyebrow">05 · In the session</span>
+    <h2>Strength matcher</h2>
+    <p>Rate the student 1 to 5 on each line together, honestly. The matcher scores each programme by how close the student is to the profile that programme rewards, and checks eligibility. Treat the ranking as a conversation starter, not a decision.</p>
+  </div>
+  <div class="matcher">
+    <div class="panel" id="inputs">
+      <div class="row2">
+        <label class="f">Student name<input type="text" id="sname" placeholder="e.g. Riya Shah"></label>
+        <label class="f">Class 12 stream
+          <select id="stream"><option value="com">Commerce</option><option value="sci">Science</option><option value="hum">Humanities</option></select></label>
+        <label class="f">Maths / Stats / CS in 12th?
+          <select id="maths"><option value="yes">Yes</option><option value="no">No</option></select></label>
+        <label class="f">Expected Class 12 %
+          <select id="pct"><option value="90">90 and above</option><option value="75">75 – 89</option><option value="60">60 – 74</option><option value="50">50 – 59</option></select></label>
+      </div>
+      <div id="sliders" style="display:grid;gap:14px"></div>
+      <div class="btns">
+        <button class="pri" id="newstu">New student</button>
+        <button id="sample">Load example student</button>
+      </div>
+      <details>
+        <summary>Tune how much each trait matters</summary>
+        <p style="font-size:.88rem;color:var(--muted);margin:8px 0">The starting weights are a counsellor's judgement, not survey data. If you find the matcher over- or under-rates a trait after a few sessions, change it here. 1.0 is the default; 0 switches a trait off. Saved in this browser.</p>
+        <div id="tuners" style="display:grid;gap:8px"></div>
+        <div class="btns" style="margin-top:8px"><button id="tunereset">Reset weights</button></div>
+        <details style="margin-top:10px"><summary>What each programme rewards (ideal score per trait)</summary><p style="font-size:.82rem;color:var(--muted);margin:8px 0 0">Each cell is the ideal slider value and its weight. A "+" means only falling short of the ideal counts against the student; without it, being far above also counts. Budget and years-to-job ideals assume about ₹1.75L a year for hostel and food.</p><div class="tbl" style="margin-top:8px"><table id="idealTbl" style="min-width:0;font-size:.82rem"></table></div></details>
+      </details>
+    </div>
+    <div class="panel">
+      <div class="res-h"><h3>Best fit for <span id="who">this student</span></h3><span class="eyebrow">Fit score / 100</span></div>
+      <div class="results" id="results"></div>
+      <label class="f">Session notes (saved in this browser only)<textarea id="notes" placeholder="What the student said, doubts, next steps…"></textarea></label>
+      <div class="btns"><button id="copy">Copy summary for WhatsApp</button><span class="toast" id="toast" aria-live="polite"></span></div>
+      <textarea id="copyfallback" hidden readonly></textarea>
+    </div>
+  </div>
+</section>
+
+<section id="ask">
+  <div class="sechead">
+    <span class="eyebrow">06 · Prompts</span>
+    <h2>Questions to ask before deciding</h2>
+    <p>These bring out the things the sliders cannot capture.</p>
+  </div>
+  <ul class="qs">
+    <li>Is Christ the main plan or the backup for IPMAT? Christ's first-year fee falls due within 7 days of the result, often before IIM results.</li>
+    <li>What did you enjoy most in Class 11–12: solving numericals, writing, debating, organising events, or building something?</li>
+    <li>Have you ever written code? Did you like it when it broke and you had to fix it?</li>
+    <li>Do you want a job at 21, or are you fine studying till 22–23 for a master's?</li>
+    <li>Is there a family business or a business idea you want to run?</li>
+    <li>What can the family spend in total, including Bangalore hostel and living costs?</li>
+    <li>Would you rather prepare for CAT later and do an MBA elsewhere, or lock in an MBA now?</li>
+    <li>Do you want to study abroad at some point? The Integrated MBA builds in an international immersion.</li>
+    <li>Which campus can you live with? Half of these options are only at Central campus. Pune Lavasa is closer to Ahmedabad and cheaper, and its page calls the BBA fully residential (confirm, since the same page also says day scholar), but it is remote.</li>
+    <li>Have you checked the cancellation and refund rules on the offer letter?</li>
+    <li>For the Integrated MBA: what happens if you want to leave after 3 years? Christ's page does not say whether you exit with a BBA. Ask admissions in writing before paying.</li>
+    <li>For any 4-year BBA: is the 4th year worth the extra fee for you, or will you exit after 3 and start working or preparing for CAT?</li>
+  </ul>
+</section>
+
+<section id="sources">
+  <div class="sechead">
+    <span class="eyebrow">07 · Checked 23 Oct 2026</span>
+    <h2>Sources and caveats</h2>
+  </div>
+  <div class="flag">No BBA in Entrepreneurship appears in Christ's 2027 programme lists. Its dedicated entrepreneurship degree is the B.Com (Branding and Entrepreneurship) at Central campus, which is the one covered here. Every BBA also carries Entrepreneurship Development as a core course in Semester 4.</div>
+  <div class="flag">The strength matcher's weights are a counsellor's judgement, not research data. Tune them in the matcher panel as you learn what works.</div>
+  <div class="flag">Placement figures for Christ BBAs are thin. Christ publishes MBA placement reports, not programme-wise BBA ones. Third-party sites quote university-wide averages around ₹6.5–7 LPA, which mix all programmes. Fees "may rise by a nominal amount" each year, per Christ.</div>
+  <ul class="src">
+    <li><a href="https://byc.christuniversity.in//courses/OTM1" target="_blank" rel="noopener">Integrated MBA: curriculum, CU-IBMAT pattern, 2027 fees</a></li>
+    <li><a href="https://lavasa.christuniversity.in//courses/NTY1" target="_blank" rel="noopener">BBA Decision Science: Mu Sigma model, curriculum, fees</a></li>
+    <li><a href="https://christuniversity.in/courses/OTIz" target="_blank" rel="noopener">BBA Applied Finance with FinTech, Kengeri: partners, fees</a></li>
+    <li><a href="https://wpbgr.christuniversity.in/courses/bangalore-bannerghatta-road-campus/school-of-business-and-management/business-and-management/bachelor-of-business-administration-bba-strategy-and-business-analytics-honours-honours-with-research-3" target="_blank" rel="noopener">BBA Strategy &amp; Business Analytics: 2024 fee table with Year 4</a></li>
+    <li><a href="https://christuniversity.in/christ-hall-(hostel-for-men)" target="_blank" rel="noopener">Christ Hall hostel fees 2026-27</a></li>
+    <li><a href="https://time4education.com/local/articlecms/page.php?id=9072" target="_blank" rel="noopener">TIME: Christ entrance test section split</a></li>
+    <li><a href="https://www.toprankers.com/christ-bba-vs-ipmat" target="_blank" rel="noopener">Toprankers: Christ BBA vs IPM fees and placements</a></li>
+    <li><a href="https://christuniversity.in/courses/NjU5" target="_blank" rel="noopener">B.Com (Branding and Entrepreneurship): curriculum, eligibility, fees</a></li>
+    <li><a href="https://wpcu.christuniversity.in/?p=18066" target="_blank" rel="noopener">BBA (Honours), Bangalore Central: 2025 fee panel showing Year 4</a></li>
+    <li><a href="https://christuniversity.in/courses/Nzc1" target="_blank" rel="noopener">BBA (Honours), Yeshwanthpur: specialisations, curriculum, fees</a></li>
+    <li><a href="https://christuniversity.in/courses/Nzc0" target="_blank" rel="noopener">BBA (Honours), Kengeri: 2027 fees</a></li>
+    <li><a href="https://www.careerlauncher.com/blogs/after-12/christ-university-imba/" target="_blank" rel="noopener">Career Launcher: Integrated MBA starts 2026</a></li>
+    <li><a href="https://collegedunia.com/qna/question/32409-how-is-the-bba-in-entrepreneurship-course-at-christ-university" target="_blank" rel="noopener">Collegedunia Q&amp;A: no BBA Entrepreneurship at Christ</a></li>
+    <li><a href="https://christuniversity.in/courses/ODMz" target="_blank" rel="noopener">BBA (Honours), Lavasa: curriculum and stated starting packages</a></li>
+    <li><a href="https://lavasa.christuniversity.in/department-course-menu/UGP/1/31/12" target="_blank" rel="noopener">School of Business and Management: MBA placement record</a></li>
+    <li><a href="https://ipmcareer.com/christ-university-bba-integrated-mba-admission-2027/" target="_blank" rel="noopener">IPM Careers: 2027 campus-wise BBA list and dates</a></li>
+    <li><a href="https://cracku.in/christ-cuet-exam-dates-2027/" target="_blank" rel="noopener">Cracku: tentative 2027 phases</a></li>
+  </ul>
+</section>
+</main>
+<footer><div class="wrap">Prepared for mentoring sessions. Confirm fees and dates on christuniversity.in before a student pays.</div></footer>
+
+<script>
+const P = [
+ { id:"bbah", name:"BBA (Honours / Honours with Research)", short:"BBA (Honours)",
+   meta:["4 yrs","5 campuses","≈ ₹2.6–2.9L / yr"],
+   one:"Christ's flagship BBA. Two years of broad business basics, then a functional specialisation, then an Honours year of consulting-style projects. The Honours with Research route makes graduates eligible to apply for PhDs.",
+   content:["Yr 1: management, accounting, marketing, business maths, economics, statistics, AI & spreadsheets","Yr 2: HR, corporate accounting, business analytics, strategy, research methods, entrepreneurship development","Yr 3: specialise in Finance, Marketing, HR or Business Analytics (Yeshwanthpur offers all four; Lavasa offers Finance and Marketing)","Yr 4: business model innovation, AI for decisions, crisis management, consulting and problem solving, global online certificates (IBM, INSEAD and others at Lavasa)"],
+   pedagogy:["Case studies, simulations, live projects, continuous evaluation","Industry Review Project in Sem 4 (study a real company)","12-week summer internship in Sem 5, a second internship in Year 4","Research papers in later years; faculty mentor for each student","Social intervention project in Year 1","Honours vs Honours with Research: same first three years. In Year 4 the Research route swaps some coursework for a supervised research project; under NEP it is usually open only to students above a CGPA cut-off, so it is decided later, not at admission"],
+   outcomes:["No programme-wise placement data for the Central campus. Only the Lavasa page states a figure: ₹4–9 LPA starting for Finance roles, ₹4–8 LPA for Marketing","Coaching sites quote ₹5–6.5 LPA average for Christ BBA overall, with highs near ₹10 LPA","Typical first roles: analyst, credit or banking associate, marketing or digital executive, HR coordinator","A large share of Christ BBAs go on to CAT / MBA; Honours with Research supports PhD applications abroad"],
+   yes:"The student is unsure of their exact interest and wants time to explore before choosing a field. Also a solid pick for students targeting CAT later. For an Ahmedabad family that wants a closer, supervised setting, the Pune Lavasa version costs ₹2.58L a year and its page calls it fully residential (confirm with Christ).",
+   no:"The student already knows they want deep tech or a 5-year MBA track, or the family wants a job in 3 years (the 4th year adds cost; check exit rules).",
+   sems:[["Sem 1","Management & Behavioural Process, Financial Accounting, Marketing, Business Maths"],["Sem 2","Financial Management, Business Economics, Business Statistics, AI & Spreadsheets"],["Sem 3","HR Management, Corporate Accounting, Business Analytics, electives (pitching, fintech, visual storytelling)"],["Sem 4","Strategic Management, Entrepreneurship Development, Research Methodology, Industry Review Project"],["Sem 5","Taxation, Summer Internship (6 credits), specialisation electives"],["Sem 6","Law & Ethics, Management Accounting, Project, specialisation electives"],["Sem 7","Business Model Innovation, AI for Decisions, Crisis Management, Internship"],["Sem 8","Global Leadership, Business Consulting, Process Improvement"]] },
+ { id:"bbas", name:"BBA specialised tracks", short:"BBA specialised",
+   meta:["4 yrs","Yeshwanthpur, Bannerghatta Rd, Delhi NCR","≈ ₹2.80L / yr"],
+   one:"Same Honours structure, but the specialisation is fixed from admission: Finance & Economics, Finance & International Business, Finance & Marketing Analytics, Strategy & Business Analytics, Marketing & Tourism (Bannerghatta Rd) or FinTech (Delhi NCR). Christ has not published semester plans for these tracks (the Bannerghatta page says the syllabus will be updated soon), so this dossier is thinner than the others. Ask admissions for the track syllabus before a student commits.",
+   content:["Shares the BBA Honours core of management, accounting, economics, statistics","Adds a fixed second discipline from Year 1 (economics, international business, marketing analytics, strategy, fintech)","Christ has not published separate semester plans for these tracks on the pages checked"],
+   pedagogy:["Same toolkit as BBA Honours: cases, projects, internships","Finance-heavy tracks lean on spreadsheets, valuation, markets"],
+   outcomes:["No programme-wise placement data published","Natural feeders into finance, banking, consulting analyst roles, and MSc / MBA in finance"],
+   yes:"The student already knows they like finance or economics and wants it from Day 1.",
+   no:"The student is still exploring, or is weak with numbers. Picking a fixed finance track too early can backfire.",
+   sems:null },
+ { id:"fin", name:"BBA Applied Finance with FinTech", short:"BBA Applied Finance with FinTech",
+   meta:["Duration not stated","Kengeri campus","₹3.26L / yr (2026 panel)"],
+   one:"A finance BBA with a technology layer, run with Zell Education and Deloitte. It sits between the specialised finance tracks and Decision Science: more coding than a normal BBA, less than Decision Science, and open to all streams.",
+   content:["Finance foundations, financial markets, banking systems, macroeconomics","Programming, data structures, database management, data analytics","Blockchain, AI and machine learning, digital payments, robo-advisory, RegTech","Social innovation in the future of finance"],
+   pedagogy:["Theory paired with practical training, per Christ","Industry partners Zell Education and Deloitte","Semester plan not yet published"],
+   outcomes:["No placement data published; the page targets BFSI and fintech careers","Likely roles: banking and payments operations, fintech analyst, risk and compliance, audit with technology"],
+   yes:"The student likes finance and is curious about tech, but would not survive the Decision Science coding load. Open to Humanities students too.",
+   no:"The student wants a proven track record. This is a new programme with little public detail, so ask admissions for the semester plan before deciding.",
+   sems:null },
+ { id:"ds", name:"BBA Decision Science (Industry Integrated)", short:"BBA Decision Science",
+   meta:["3 yrs","Central campus","₹3.05L → 3.45L / yr"],
+   one:"A BBA built around an apprenticeship with Mu Sigma, a decision-science firm. Students study at Christ and train at Mu Sigma at the same time; the last two semesters are mostly industry immersion. Eligible students get employment offers from Mu Sigma.",
+   content:["Business core (accounting, finance, marketing, HR, strategy) plus a heavy tech stack","Computational thinking, data structures & algorithms, web design, DBMS, Python & OOP","Operations research, time-series forecasting, machine learning, big-data tools, deep learning, generative AI","Tracks: AI & Decision Science, Data Engineering, Business Intelligence, Leadership & Project Management"],
+   pedagogy:["Apprenticeship-embedded degree under UGC 2020 guidelines","Industry Immersion I (10 credits) and II (8 credits) at Mu Sigma","Capstone project, live projects, Art of Problem Solving course","Least classroom-centred of the six in the final year"],
+   outcomes:["Employment offers from Mu Sigma on successful completion (for eligible students)","Roles: decision scientist, data analyst, BI analyst, data engineer, ML engineer","Christ markets 100% placement assurance; salary figures are not published on the page"],
+   yes:"The student is strong in maths, enjoys coding and logic puzzles, and wants a job at 21 with real work experience already on the CV.",
+   no:"The student dislikes programming or scores below 60% (not eligible). One employer dominates the outcome, so ask if the student is comfortable with that.",
+   sems:[["Sem 1","Management, Accounting, Marketing, Maths for Decisions, Computational Thinking & Programming"],["Sem 2","Financial Mgmt, Economics, Statistics, Data Structures & Algorithms, Web Design"],["Sem 3","HR, Operations Research, DBMS, Python & OOP, Data Visualisation"],["Sem 4","Strategy, Entrepreneurship, Time Series, Machine Learning, Big Data, EDA in R"],["Sem 5","Taxation, Generative AI, Deep Learning, Industry Immersion I"],["Sem 6","Law & Ethics, Management Accounting, Industry Immersion II, Capstone"]] },
+ { id:"bce", name:"B.Com (Branding and Entrepreneurship)", short:"B.Com Branding & Entrepreneurship",
+   meta:["8-sem curriculum","Central campus","₹4.01L / yr"],
+   one:"Christ's dedicated entrepreneurship degree, run by the Department of Professional Studies. It mixes commerce basics with branding, advertising, storytelling and startup building. Every semester includes an 'Agency M' practicum where students do real branding work for a different type of client.",
+   content:["Commerce base: accounting, cost accounting, economics, financial management, taxation, valuation, risk","Branding: brand management, integrated marketing communication, advertising, brand design, campaign and media planning, ad film making","Venture: entrepreneurial venture management, ESG for entrepreneurs, digital-marketing venture, business strategy, negotiation","Tracks: Branding & Advertising, Entrepreneurship & Innovation, Digital Marketing & Media, Strategic Business Development"],
+   pedagogy:["Agency M practicum each term with real clients: NGOs → kirana stores → lifestyle brands → small manufacturers → startups","Leadership through theatre, two semesters of storytelling","Business simulations, live campaigns, startup mentoring and innovation labs"],
+   outcomes:["Roles: brand executive, digital marketer, campaign manager, business development","For the entrepreneurship track, the real outcome is a venture or a family business run better","Page shows a 100% placement banner; treat with care, as the programme is new and no data is published"],
+   yes:"The student is creative, loves marketing, content and pitching, or has a family business to grow. Good for students who learn by doing.",
+   no:"The student is from Humanities (not eligible), wants a finance or analytics career, or the family budget is tight. This is the costliest option after the Integrated MBA.",
+   sems:[["Sem 1","Marketing & Brand Mgmt, Financial Accounting, Management & Entrepreneurship, Theatre; Agency M: branding basics"],["Sem 2","Consumer Behaviour, Integrated Marketing Communication, Economics; Agency M: NGOs"],["Sem 3","Cost Accounting, Advertising, Market Research, Business Law, Storytelling I; Agency M: kirana stores"],["Sem 4","Content Mgmt, Venture Mgmt, Consumer Insights, Financial Mgmt, Brand Design; Agency M: lifestyle brands"],["Sem 5","ESG for Entrepreneurs, Campaign Mgmt, Digital Marketing, Media & PR; Agency M: SME manufacturers"],["Sem 6","Marketing Analytics, Ad Film Making, Taxation, Digital Venture; Agency M: startups"],["Sem 7","International Business, Valuation, Martech, Business Strategy"],["Sem 8","Risk Mgmt, Corporate Governance, Business Leadership, Negotiation"]] },
+ { id:"imba", name:"Integrated MBA (iMBA)", short:"Integrated MBA",
+   meta:["5 yrs","Central campus","₹5.46L / yr"],
+   one:"Christ's answer to the IIM IPM: a 10-semester BBA + MBA with its own entrance test. Students major in Finance or Marketing with a minor in Business Analytics. The first batch joined in 2026.",
+   content:["Yrs 1–2: maths, micro & macro economics, psychology, sociology, philosophy of decision-making, geopolitics, accounting, statistics, R","Yr 3: financial management, marketing analytics, AI & ML for managers, blockchain, taxation, law, entrepreneurship & incubation","Yrs 4–5: Finance (valuation, derivatives, M&A, treasury, fintech, climate finance) or Marketing (consumer psychology, martech, neuromarketing, brand storytelling)","Dissertation or capstone in the final semester"],
+   pedagogy:["International immersion with a partner university (Sem 5) and semester-exchange option","NGO community engagement project, summer internship (Sem 7), industry immersion internship (Sem 9)","Bloomberg Terminal access; life-skill labs from yoga to theatre to team-building treks","Most liberal-arts breadth of the six in the first two years"],
+   outcomes:["No placement record yet; the first batch graduates in 2031","For reference, Christ's SBM placement page reports 95%+ placement for its 2-year MBA across about 1,000 students a year; that cohort enters via CAT/XAT, so it is weak evidence for the iMBA","Listed roles: financial analyst, IB associate, product manager, brand manager, strategy consultant, family business leader","Against IPM Indore (figures per Toprankers): about ₹27L vs about ₹38L in fees, but IIM Indore reported an average near ₹29.6 LPA in 2025. Christ cannot match that brand","Christ's page does not say whether a student can exit after 3 years with a BBA"],
+   yes:"The student wants an MBA for sure, likes the IPM-style broad curriculum, wants international exposure, and the family is comfortable with about ₹27L in fees. Also a sensible fallback for an IPMAT aspirant who misses the IIMs but wants the same 5-year format.",
+   no:"The student might crack CAT and get an IIM later, wants to keep options open after 3 years, or budget is a stretch. ROI is unproven.",
+   sems:[["Sem 1","Maths for Management, Microeconomics, Management Theory, Psychology at Work"],["Sem 2","Accounting for Decisions, Macroeconomics, Sociology, Political Structure, Prompt Engineering lab"],["Sem 3","Design Thinking, Statistics, Marketing, Philosophy of Decision-Making, Theatre storytelling lab"],["Sem 4","Research Methods, Geopolitics & Strategy, Workforce Mgmt, Indian Knowledge Systems, Cost Accounting, R lab"],["Sem 5","Financial Mgmt, Marketing Analytics, AI & ML, Corporate Law, International Immersion, NGO project"],["Sem 6","Blockchain, Taxation, Regulation, Labour Law, Entrepreneurship & Incubation, ESG"],["Sem 7","Operational Decision Models, Finance/Marketing electives, Summer Internship"],["Sem 8","Ethics & Sustainability, Industry 5.0, Organisation Design, electives, trekking lab"],["Sem 9","Industry Immersion Internship, Public Policy, electives (M&A, treasury, omnichannel)"],["Sem 10","Leadership & Transformation, electives, Dissertation / Capstone"]] }
+];
+
+/* Head-to-head facts. Same row keys for every programme so differences can be shown. */
+const FACTS = {
+ bbah:{"Length":"4 years (Honours); NEP exit after 3 possible, confirm with Christ","Campus":"Central, Yeshwanthpur, Kengeri, Delhi NCR, Pune Lavasa","Fee per year":"≈ ₹2.75–2.90L (Central), ₹2.86L (Yeshwanthpur/Kengeri), ₹2.58L (Lavasa); Year 4 ≈ 27% higher","Total fees":"≈ ₹8.5L for 3 yrs, ≈ ₹12L for 4 yrs","Eligibility":"12th pass, any stream (Lavasa: 50%)","Entry test":"Christ UG selection: entrance test, then assessment and interview","Specialisation":"Chosen in Year 3: Finance, Marketing, HR or Business Analytics","Coding load":"Low: spreadsheets, R basics, one analytics course","Work experience built in":"12-week internship in Year 3, another in Year 4","Who hires / outcome":"Analyst, banking, marketing, HR roles; many go on to CAT. Lavasa page: ₹4–9 LPA","Exit if plans change":"Flexible: can stop at 3 years or go for CAT after","Risk":"Generalist degree; outcome depends on the student's own effort"},
+ bbas:{"Length":"4 years (Honours structure)","Campus":"Yeshwanthpur, Bannerghatta Rd, Delhi NCR","Fee per year":"≈ ₹2.80L; Year 4 ≈ 27% higher","Total fees":"≈ ₹8.4L for 3 yrs, ≈ ₹12L for 4 yrs","Eligibility":"12th pass, any stream","Entry test":"Christ UG selection: entrance test, then assessment and interview","Specialisation":"Fixed at admission: Finance & Economics, Finance & IB, Finance & Marketing Analytics, Strategy & Business Analytics, Marketing & Tourism (Bannerghatta Rd), FinTech (Delhi NCR)","Coding load":"Not published; analytics tracks will be heavier than finance tracks","Work experience built in":"Internships as in BBA Honours","Who hires / outcome":"Finance, banking, consulting analyst roles; no programme-wise data","Exit if plans change":"Locked into the track from Year 1","Risk":"Christ has not published semester plans for these tracks"},
+ fin:{"Length":"Not stated by Christ: page says fee fixed for four years but lists 3 fee years","Campus":"Kengeri","Fee per year":"₹3.26L","Total fees":"≈ ₹9.8L for 3 yrs (2026 panel)","Eligibility":"12th pass, any stream","Entry test":"Christ UG selection: entrance test, then assessment and interview","Specialisation":"Fixed: applied finance with fintech, partners Zell Education and Deloitte","Coding load":"Medium: programming, data structures, databases","Work experience built in":"Practical training with partners; details not published","Who hires / outcome":"BFSI and fintech roles; no placement data yet","Exit if plans change":"Unclear until Christ states the duration","Risk":"New programme, little public detail"},
+ ds:{"Length":"3 years","Campus":"Central only","Fee per year":"₹3.05L → 3.25L → 3.45L","Total fees":"₹9.75L","Eligibility":"60% in Science/Commerce with Maths, Stats or CS","Entry test":"Christ UG selection: entrance test, then assessment and interview","Specialisation":"AI & Decision Science, Data Engineering, BI, or Leadership & Project Management","Coding load":"High: Python, algorithms, ML, deep learning, big data","Work experience built in":"Apprenticeship at Mu Sigma; Semesters 5–6 mostly on site","Who hires / outcome":"Employment offers from Mu Sigma for eligible students; Christ markets 100% placement assurance","Exit if plans change":"Hard to switch: the degree is built around one employer","Risk":"Single-employer dependence; demanding workload"},
+ bce:{"Length":"Curriculum shows 8 semesters; fee table shows 3 years","Campus":"Central only","Fee per year":"₹4.01L","Total fees":"₹12L (3 yrs) to ₹16L (4 yrs)","Eligibility":"60% in Commerce or Science; Humanities not eligible","Entry test":"Christ UG selection: entrance test, then assessment and interview","Specialisation":"Branding & Advertising, Entrepreneurship & Innovation, Digital Marketing & Media, Strategic Business Development","Coding load":"None; marketing analytics only","Work experience built in":"Agency M practicum every semester with real clients","Who hires / outcome":"Brand, digital marketing, campaign, business development roles; page claims 100% placement, no data","Exit if plans change":"Commerce degree, so CA/CMA/MBA routes stay open","Risk":"New programme; costliest option after the Integrated MBA"},
+ imba:{"Length":"5 years, 10 semesters","Campus":"Central only","Fee per year":"₹5.46L","Total fees":"≈ ₹27.3L","Eligibility":"12th pass, any stream","Entry test":"CU-IBMAT (120 Q, 90 min, 50 Verbal), then assessment and interview","Specialisation":"Major in Finance or Marketing, minor in Business Analytics","Coding load":"Low to medium: R, AI/ML for managers, blockchain concepts","Work experience built in":"Summer internship (Yr 4), industry immersion internship (Yr 5), international immersion (Yr 3)","Who hires / outcome":"No record yet; first batch graduates 2031. Christ's 2-year MBA (CAT/XAT entry) reports 95%+ placement, a different cohort","Exit if plans change":"Exit after 3 years with a BBA is not stated on Christ's page; ask in writing","Risk":"Unproven ROI at ₹27L; cannot be compared with IIM IPM brand"}
+};
+
+/* Matcher dimensions. mode "min": only falling short hurts. mode "match": distance either way hurts. */
+const D = [
+ {k:"quant", n:"Comfort with maths and numbers", lo:"Avoids it", hi:"Loves it"},
+ {k:"code", n:"Interest in coding and tech", lo:"None", hi:"Codes for fun"},
+ {k:"finance", n:"Interest in finance and markets", lo:"None", hi:"Follows markets"},
+ {k:"creative", n:"Creativity, design and storytelling", lo:"Low", hi:"Very high"},
+ {k:"venture", n:"Drive to start or run a business", lo:"Wants a job", hi:"Wants to build"},
+ {k:"people", n:"Interest in people and teams (HR, leadership)", lo:"Low", hi:"High"},
+ {k:"speak", n:"Communication and presenting", lo:"Shy", hi:"Confident"},
+ {k:"global", n:"Wants international exposure", lo:"Not needed", hi:"Very keen"},
+ {k:"horizon", n:"Years willing to study before a job", lo:"3 years", hi:"5 years", steps:["3 yrs","3–4 yrs","4 yrs","4–5 yrs","5 yrs"]},
+ {k:"budget", n:"Family budget for the whole course (fees + hostel and food)", lo:"≤ ₹10L", hi:"₹27L+", steps:["≤ ₹10L","₹10–13L","₹13–17L","₹17–27L","₹27L+"]}
+];
+// [ideal, weight, mode]
+const W = {
+ bbah:{quant:[3,1,"min"],code:[2,.4,"match"],finance:[3,.5,"match"],creative:[3,.4,"match"],venture:[3,.5,"match"],people:[3,.6,"match"],speak:[3,.5,"min"],global:[2,.3,"match"],horizon:[2.5,1,"match"],budget:[3.5,1.2,"min"]},
+ bbas:{quant:[4,1.2,"min"],code:[2,.3,"match"],finance:[5,1.6,"match"],creative:[2,.3,"match"],venture:[2,.3,"match"],people:[2,.3,"match"],speak:[3,.4,"min"],global:[3,.5,"match"],horizon:[2.5,.8,"match"],budget:[3.5,1.2,"min"]},
+ fin:{quant:[4,1.2,"min"],code:[3.5,1.3,"match"],finance:[5,1.6,"match"],creative:[2,.3,"match"],venture:[2,.3,"match"],people:[2,.3,"match"],speak:[3,.4,"min"],global:[2,.3,"match"],horizon:[2,.8,"match"],budget:[3,1.2,"min"]},
+ ds:{quant:[5,2,"min"],code:[5,2.2,"match"],finance:[2,.3,"match"],creative:[2,.3,"match"],venture:[2,.4,"match"],people:[2,.3,"match"],speak:[2,.3,"min"],global:[1,.2,"match"],horizon:[1,1,"match"],budget:[3,1.2,"min"]},
+ bce:{quant:[2,.5,"min"],code:[1,.3,"match"],finance:[2,.4,"match"],creative:[5,2,"match"],venture:[5,2,"match"],people:[3,.5,"match"],speak:[4,1,"min"],global:[2,.3,"match"],horizon:[2,.4,"match"],budget:[4,1.3,"min"]},
+ imba:{quant:[4,1,"min"],code:[2,.3,"match"],finance:[4,.9,"match"],creative:[3,.3,"match"],venture:[3,.5,"match"],people:[3,.5,"match"],speak:[4,1,"min"],global:[5,1.5,"match"],horizon:[5,2,"min"],budget:[5,1.6,"min"]}
+};
+
+function eligible(id, s){
+  const r=[];
+  if(id==="ds"){
+    if(s.stream==="hum") r.push("needs Science or Commerce");
+    if(s.maths==="no") r.push("needs Maths, Stats or CS in 12th");
+    if(+s.pct<60) r.push("needs 60% in 12th");
+  }
+  if(id==="bce"){
+    if(s.stream==="hum") r.push("needs Commerce or Science");
+    if(+s.pct<60) r.push("needs 60% in 12th");
+  }
+  return r;
+}
+
+let TUNE={}; D.forEach(d=>TUNE[d.k]=1);
+function score(id, v){
+  let tot=0, wsum=0; const plus=[], minus=[];
+  for(const d of D){
+    const [ideal,w0,mode]=W[id][d.k]; const w=w0*(TUNE[d.k]??1); const x=v[d.k];
+    let gap = mode==="min" ? Math.max(0, ideal-x) : Math.abs(ideal-x);
+    tot += w*gap; wsum += w*4;
+    if(w>=1){ if(gap<0.5) plus.push(d.n.toLowerCase()); else if(gap>=2) minus.push(d.n.toLowerCase()); }
+  }
+  // stretch: a 25% weighted gap already means a poor fit, so map 0..0.5 onto 100..0
+  const fit = wsum? Math.max(0, Math.round(100*(1-2*tot/wsum))) : 0;
+  return {fit, plus, minus};
+}
+
+// --- render dossiers
+const dz=document.getElementById("dossiers");
+dz.innerHTML = P.map(p=>`
+ <article class="dos" id="p-${p.id}">
+  <div class="dos-head"><h3>${p.name}</h3><div class="meta">${p.meta.map((m,i)=>`<span class="chip${i==2?' o':''}">${m}</span>`).join("")}</div></div>
+  <p class="one">${p.one}</p>
+  <div class="cols">
+   <div><h4>What you study</h4><ul>${p.content.map(c=>`<li>${c}</li>`).join("")}</ul></div>
+   <div><h4>How it is taught</h4><ul>${p.pedagogy.map(c=>`<li>${c}</li>`).join("")}</ul></div>
+   <div><h4>Where it leads</h4><ul>${p.outcomes.map(c=>`<li>${c}</li>`).join("")}</ul></div>
+  </div>
+  <div class="verdict"><div class="yes"><h4>Pick it if</h4><p>${p.yes}</p></div><div class="no"><h4>Think twice if</h4><p>${p.no}</p></div></div>
+  ${p.sems?`<details><summary>Semester-by-semester</summary><div class="sems">${p.sems.map(s=>`<div class="sem"><b>${s[0].toUpperCase()}</b>${s[1]}</div>`).join("")}</div></details>`:""}
+ </article>`).join("");
+
+// --- sliders
+const sl=document.getElementById("sliders");
+sl.innerHTML = D.map(d=>`
+ <div class="slider"><div class="lab"><label for="r-${d.k}">${d.n}</label><output id="o-${d.k}">3</output></div>
+ <input type="range" id="r-${d.k}" min="1" max="5" step="1" value="3">
+ <div class="hint"><span>${d.lo}</span><span>${d.hi}</span></div></div>`).join("");
+
+const $=id=>document.getElementById(id);
+
+// --- weight tuners + ideal table
+$("tuners").innerHTML = D.map(d=>`
+ <div class="slider"><div class="lab"><label for="t-${d.k}">${d.n}</label><output id="to-${d.k}">1.0</output></div>
+ <input type="range" id="t-${d.k}" min="0" max="2" step="0.25" value="1"></div>`).join("");
+$("idealTbl").innerHTML = `<thead><tr><th>Trait</th>${P.map(p=>`<th>${p.short}</th>`).join("")}</tr></thead><tbody>${D.map(d=>`<tr><th style="width:auto;text-transform:none;letter-spacing:0;font-family:var(--body);font-size:.82rem">${d.n}</th>${P.map(p=>{const [i,w,m]=W[p.id][d.k];return `<td class="num">${i}${m==="min"?"+":""} <span style="color:var(--muted)">×${w}</span></td>`}).join("")}</tr>`).join("")}</tbody>`;
+function readTune(){D.forEach(d=>{TUNE[d.k]=+$("t-"+d.k).value;$("to-"+d.k).textContent=TUNE[d.k].toFixed(2).replace(/0$/,"");});try{localStorage.setItem("cpc-tune",JSON.stringify(TUNE))}catch(e){}}
+D.forEach(d=>$("t-"+d.k).addEventListener("input",()=>{readTune();update();}));
+$("tunereset").addEventListener("click",()=>{D.forEach(d=>$("t-"+d.k).value=1);readTune();update();});
+
+// --- head-to-head
+const selA=$("dA"), selB=$("dB");
+P.forEach(p=>{selA.add(new Option(p.short,p.id));selB.add(new Option(p.short,p.id));});
+selA.value="bbah"; selB.value="imba";
+function duel(){
+  const a=P.find(p=>p.id===selA.value), b=P.find(p=>p.id===selB.value);
+  $("dAh").textContent=a.short; $("dBh").textContent=b.short;
+  const keys=Object.keys(FACTS[a.id]);
+  const diff=keys.filter(k=>FACTS[a.id][k]!==FACTS[b.id][k]);
+  $("duelBody").innerHTML = a.id===b.id ? `<tr><td colspan="3">Pick two different programmes.</td></tr>` :
+    diff.map(k=>`<tr><th>${k}</th><td>${FACTS[a.id][k]}</td><td>${FACTS[b.id][k]}</td></tr>`).join("") +
+    (diff.length<keys.length?`<tr><td colspan="3" style="color:var(--muted);font-size:.85rem">Same for both: ${keys.filter(k=>!diff.includes(k)).join(", ")}.</td></tr>`:"");
+  $("duelVerdict").innerHTML = a.id===b.id ? "" : `<div class="yes"><h4>Choose ${a.short} if</h4><p>${a.yes}</p></div><div class="yes"><h4>Choose ${b.short} if</h4><p>${b.yes}</p></div>`;
+  try{localStorage.setItem("cpc-duel",selA.value+"|"+selB.value)}catch(e){}
+}
+selA.addEventListener("change",duel); selB.addEventListener("change",duel);
+
+function state(){
+  const v={}; D.forEach(d=>v[d.k]=+$("r-"+d.k).value);
+  return {v, stream:$("stream").value, maths:$("maths").value, pct:$("pct").value, name:$("sname").value.trim()};
+}
+let last=[]; let touched=false;
+function update(){
+  const s=state();
+  const allOff=D.every(d=>(TUNE[d.k]??1)===0);
+  D.forEach(d=>{const st=d.steps; $("o-"+d.k).textContent = st? st[s.v[d.k]-1] : s.v[d.k];});
+  $("who").textContent = s.name || "this student";
+  const rows = P.map(p=>{const sc=score(p.id,s.v); const el=eligible(p.id,s); return {p,...sc,el};})
+    .sort((a,b)=>(a.el.length>0)-(b.el.length>0) || b.fit-a.fit);
+  last=rows;
+  if(!touched){ $("results").innerHTML=`<p style="color:var(--muted)">Move a slider or load the example student to see fits. Starting a session with every trait at 3 would just favour the generalist BBA.</p>`; try{localStorage.setItem("cpc-state",JSON.stringify(s));}catch(e){} return; }
+  if(allOff){ $("results").innerHTML=`<p style="color:var(--muted)">All trait weights are set to 0, so nothing can be scored. Reset weights in the tuning panel.</p>`; return; }
+  $("results").innerHTML = rows.map((r,i)=>`
+   <div class="res${i===0&&!r.el.length?' top':''}${r.el.length?' inel':''}">
+    <div class="res-h"><a href="#p-${r.p.id}" style="text-decoration:none;color:inherit"><strong>${r.p.short}</strong></a>
+      <span>${r.el.length?'<span class="pill x">Not eligible</span> ':'<span class="pill ok">Eligible</span> '}<span class="score">${r.fit}</span></span></div>
+    <div class="bar"><i style="width:${r.fit}%"></i></div>
+    <div class="why">
+     ${r.el.length?`<span class="minus">Eligibility: ${r.el.join("; ")}</span>`:""}
+     ${r.plus.length?`<span class="plus">Matches on: ${r.plus.slice(0,3).join(", ")}</span>`:""}
+     ${r.minus.length?`<span class="minus">Gaps: ${r.minus.slice(0,3).join(", ")}</span>`:""}
+    </div></div>`).join("");
+  try{localStorage.setItem("cpc-state",JSON.stringify(s));}catch(e){}
+}
+document.querySelectorAll("#sliders input,#sname,#stream,#maths,#pct").forEach(el=>el.addEventListener("input",()=>{touched=true;update();}));
+
+$("sample").addEventListener("click",()=>{
+  touched=true;
+  const ex={quant:4,code:2,finance:4,creative:3,venture:2,people:3,speak:4,global:4,horizon:4,budget:3};
+  D.forEach(d=>$("r-"+d.k).value=ex[d.k]);
+  $("sname").value="Example: Riya (Commerce, 85%)"; $("stream").value="com"; $("maths").value="yes"; $("pct").value="75"; update();
+});
+$("newstu").addEventListener("click",()=>{
+  touched=false;
+  D.forEach(d=>$("r-"+d.k).value=3);
+  $("sname").value=""; $("stream").value="com"; $("maths").value="yes"; $("pct").value="75";
+  $("notes").value=""; try{localStorage.removeItem("cpc-notes")}catch(e){}
+  update(); $("sname").focus();
+});
+
+$("notes").addEventListener("input",e=>{try{localStorage.setItem("cpc-notes",e.target.value)}catch(_){}});
+
+$("copy").addEventListener("click",()=>{
+  const s=state();
+  const lines=[`Christ options for ${s.name||"student"}:`];
+  last.forEach((r,i)=>lines.push(`${i+1}. ${r.p.short} – fit ${r.fit}/100${r.el.length?" (not eligible: "+r.el.join("; ")+")":""}`));
+  const top=last.find(r=>!r.el.length);
+  if(top){ lines.push("", `Best fit: ${top.p.short}. Pick it if: ${top.p.yes}`); }
+  const n=$("notes").value.trim(); if(n) lines.push("", "Notes: "+n);
+  lines.push("", "Christ Phase 1 applications close 25 Nov 2026. Confirm fees on christuniversity.in.");
+  const txt=lines.join("\n");
+  const ok=()=>{$("copyfallback").hidden=true;$("toast").textContent="Copied";setTimeout(()=>$("toast").textContent="",2000)};
+  try{
+    navigator.clipboard.writeText(txt).then(ok).catch(()=>fallback(txt));
+  }catch(e){fallback(txt)}
+});
+function fallback(txt){const t=$("copyfallback");t.hidden=false;t.value=txt;t.focus();t.select();$("toast").textContent="Text selected below: press Ctrl+C / Cmd+C";setTimeout(()=>$("toast").textContent="",6000);}
+
+// restore or open in example state
+(function init(){
+  let restored=false;
+  try{
+    const s=JSON.parse(localStorage.getItem("cpc-state")||"null");
+    if(s&&s.v){D.forEach(d=>{if(s.v[d.k])$("r-"+d.k).value=s.v[d.k]});if(s.stream)$("stream").value=s.stream;if(s.maths)$("maths").value=s.maths;if(s.pct)$("pct").value=s.pct;$("sname").value=s.name||"";restored=true;touched=true;}
+    $("notes").value=localStorage.getItem("cpc-notes")||"";
+    const t=JSON.parse(localStorage.getItem("cpc-tune")||"null"); if(t) D.forEach(d=>{if(t[d.k]!=null)$("t-"+d.k).value=t[d.k]});
+    const du=(localStorage.getItem("cpc-duel")||"").split("|"); if(du.length===2&&P.some(p=>p.id===du[0])&&P.some(p=>p.id===du[1])){selA.value=du[0];selB.value=du[1];}
+  }catch(e){}
+  readTune(); duel();
+  if(!restored) $("sample").click(); else update();
+})();
+</script>
+
+</body>
+</html>
