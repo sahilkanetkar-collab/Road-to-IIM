@@ -1,0 +1,1262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>UGAT Mock 8 — VA Sectional · Road to IIM</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=DM+Sans:wght@400;500;700&family=DM+Mono&display=swap");
+:root{--navy:#0B1220;--panel:#101A2D;--panel2:#152136;--gold:#D4A94E;--text:#E8E4D8;--mut:#8B94A8;--green:rgba(78,160,130,1);--red:#C05555;--line:rgba(212,169,78,.22)}
+*{box-sizing:border-box;margin:0}
+body{background:var(--navy);color:var(--text);font-family:"DM Sans",sans-serif}
+h1{font-family:Fraunces,serif;color:var(--gold)}
+.mono{font-family:"DM Mono",monospace;font-size:12px;color:var(--mut)}
+#loginScreen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.loginCard{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:28px;max-width:420px;width:100%}
+.loginCard h1{font-size:24px;margin-bottom:2px}
+.loginCard h2{font-family:Fraunces,serif;font-size:15px;color:var(--text);font-weight:600;margin-bottom:18px}
+.loginCard label{display:block;font-family:"DM Mono";font-size:10.5px;color:var(--mut);letter-spacing:.1em;margin:12px 0 5px}
+.loginCard input,.loginCard select{width:100%;background:var(--panel2);color:var(--text);border:1px solid rgba(232,228,216,.25);border-radius:7px;padding:10px 12px;font-size:14px;font-family:"DM Sans"}
+#loginErr{display:none;color:var(--red);font-size:12.5px;margin-top:10px}
+#loginBtn{width:100%;margin-top:16px;background:var(--gold);color:var(--navy);border:none;border-radius:8px;padding:12px;font-weight:700;font-size:15px;cursor:pointer}
+.testMeta{font-family:"DM Mono";font-size:10.5px;color:var(--mut);margin-top:14px;line-height:1.7}
+#testScreen,#resultsScreen{display:none;max-width:1020px;margin:0 auto;padding:18px}
+#topBar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:12px 16px;margin-bottom:14px}
+#topBar .tName{font-family:Fraunces,serif;color:var(--gold);font-weight:700}
+#timer{font-family:"DM Mono";color:var(--gold);font-size:20px;margin-left:auto}
+#rfTimerWrap{display:none;height:6px;background:#1b2b45;border-radius:3px;overflow:hidden;margin-bottom:14px}
+#rfTimerBar{height:100%;width:100%;background:var(--green)}
+#rfTimerBar.warn{background:#f39c12}
+#rfTimerBar.danger{background:var(--red)}
+#layout{display:grid;grid-template-columns:1fr 210px;gap:14px}
+@media(max-width:760px){#layout{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px;margin-bottom:12px}
+.secBadge{font-family:"DM Mono";font-size:10.5px;color:var(--gold);letter-spacing:.08em}
+#passageBox{display:none;background:var(--panel2);border-left:3px solid var(--gold);border-radius:6px;padding:12px;margin:10px 0;font-size:14px;line-height:1.6;white-space:pre-wrap;max-height:300px;overflow-y:auto}
+#qText{font-size:16px;line-height:1.6;margin:12px 0;white-space:pre-wrap}
+.qFig{margin:10px 0}.qFig img{max-width:100%;border-radius:6px;border:1px solid var(--line);background:#fff}
+table.qTable{border-collapse:collapse;margin:10px 0;font-size:13.5px}
+table.qTable td,table.qTable th{border:1px solid rgba(232,228,216,.25);padding:6px 10px;text-align:left}
+table.qTable th{color:var(--gold);font-family:"DM Mono";font-size:11px;letter-spacing:.05em}
+pre.qTable{background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:10px;font-family:"DM Mono";font-size:12.5px;overflow-x:auto;margin:10px 0;white-space:pre}
+.qTableWrap{overflow-x:auto;margin:10px 0}
+.qTableWrap table{border-collapse:collapse;font-size:13.5px}
+.qTableWrap td,.qTableWrap th{border:1px solid rgba(232,228,216,.25);padding:6px 10px;text-align:left}
+.qTableWrap th{color:var(--gold);font-family:"DM Mono";font-size:11px;letter-spacing:.05em}
+.qTableWrap caption{color:var(--mut);font-size:11.5px;padding:4px}
+.qFig svg{max-width:100%;height:auto;background:#fff;border-radius:6px;border:1px solid var(--line)}
+#secBanner{display:none;position:fixed;inset:0;z-index:50;background:rgba(11,18,32,.94);align-items:center;justify-content:center;text-align:center}
+#secBanner .inner{background:var(--panel);border:1px solid var(--gold);border-radius:12px;padding:30px 44px}
+#secBanner h2{font-family:Fraunces,serif;color:var(--gold);font-size:24px;margin-bottom:8px}
+.opt{display:block;width:100%;text-align:left;background:var(--panel2);border:1px solid rgba(232,228,216,.15);color:var(--text);border-radius:8px;padding:12px 14px;margin:8px 0;cursor:pointer;font-size:14.5px;font-family:"DM Sans"}
+.opt.sel{border-color:var(--gold);background:rgba(212,169,78,.14)}
+input.tita{background:var(--panel2);border:1px solid rgba(212,169,78,.4);color:var(--text);border-radius:8px;padding:12px;font-size:16px;width:100%;font-family:"DM Mono"}
+.btn{background:var(--gold);color:var(--navy);border:none;border-radius:8px;padding:11px 20px;font-weight:700;cursor:pointer;font-size:14px;font-family:"DM Sans"}
+.btn.ghost{background:var(--panel2);color:var(--text);border:1px solid rgba(232,228,216,.3)}
+.btn.green{background:var(--green)}
+#sidePanel h3{font-family:"DM Mono";font-size:10.5px;color:var(--mut);letter-spacing:.1em;margin-bottom:8px}
+#palette{display:flex;flex-wrap:wrap;gap:6px}
+#palette button{width:34px;height:34px;border-radius:6px;border:1px solid rgba(232,228,216,.2);background:var(--panel2);color:var(--text);cursor:pointer;font-family:"DM Mono";font-size:12px}
+#palette .done{background:rgba(78,160,130,.25);border-color:rgba(78,160,130,.7)}
+#palette .cur{border-color:var(--gold)}
+#palette .rev{background:rgba(155,120,210,.3);border-color:rgba(175,140,230,.85)}
+#palette .rev.done{background:linear-gradient(135deg,rgba(155,120,210,.45) 50%,rgba(78,160,130,.45) 50%)}
+.legend{font-size:11px;color:var(--mut);margin-top:10px;line-height:2}
+.legend span{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.statGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px;margin:14px 0}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;text-align:center}
+.stat .v{font-family:"DM Mono";font-size:22px;color:var(--gold)}
+.stat .l{font-family:"DM Mono";font-size:9.5px;color:var(--mut);letter-spacing:.08em;margin-top:4px}
+.secErr{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 16px;font-size:13px;margin-bottom:14px}
+.secErr b{color:var(--gold)}
+#pdfBtn{margin:10px 0}
+.rq{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:12px}
+.rqHead{font-family:"DM Mono";font-size:11px;color:var(--mut);margin-bottom:8px}
+.status{font-weight:700;margin-left:8px}
+.status.ok{color:var(--green)}.status.no{color:var(--red)}.status.sk{color:var(--mut)}
+.rqStem{font-size:14.5px;line-height:1.55;margin-bottom:8px;white-space:pre-wrap}
+.ropt{display:flex;gap:10px;padding:7px 10px;border-radius:6px;font-size:13.5px;margin:3px 0}
+.ropt.correct{background:rgba(78,160,130,.15);color:var(--green)}
+.ropt.wrong{background:rgba(192,85,85,.13);color:var(--red)}
+.exp{font-size:12.5px;color:var(--mut);margin-top:8px;border-top:1px solid rgba(232,228,216,.08);padding-top:8px}
+.exp b{color:var(--gold)}
+/* v2.8 post-test analysis */
+.ok{color:var(--green)}.no{color:var(--red)}.dim{color:var(--mut)}.gold{color:var(--gold)}
+.ana{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:12px}
+.anaH{font-family:"DM Mono";font-size:10.5px;color:var(--gold);letter-spacing:.1em;margin-bottom:10px}
+.anaH .dim{letter-spacing:0;margin-left:8px}
+.ana.verdict{border-color:rgba(212,169,78,.55);background:linear-gradient(180deg,rgba(212,169,78,.09),var(--panel) 70%);padding:20px}
+.vH{font-family:Fraunces,serif;font-size:22px;line-height:1.35}
+.vS{font-size:14.5px;line-height:1.55;margin-top:6px;color:var(--text);opacity:.88}
+.vAlso{font-size:12.5px;color:var(--mut);margin-top:8px}
+.doNext{margin-top:16px;border-top:1px solid var(--line);padding-top:12px}
+.dnH{font-family:"DM Mono";font-size:10px;color:var(--mut);letter-spacing:.1em;margin-bottom:6px}
+.doNext ol{margin:0;padding-left:20px}
+.doNext li{font-size:13.5px;line-height:1.55;margin:5px 0}
+.doNext li::marker{color:var(--gold);font-family:"DM Mono"}
+.doNext a{color:var(--gold);text-decoration:none;border-bottom:1px dotted rgba(212,169,78,.6)}
+.sub0{font-size:12.5px;color:var(--mut);margin:-2px 0 12px;line-height:1.5}
+.sub{font-size:12.5px;color:var(--mut);margin-top:10px;line-height:1.7}
+.note{font-size:11.5px;color:var(--mut);line-height:1.5}
+.anaGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:12px;align-items:start;margin-bottom:12px}
+.anaGrid .ana{margin-bottom:0}
+.trapGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px}
+.trap{background:var(--panel2);border-radius:8px;padding:11px 13px;border-left:3px solid var(--red)}
+.trapTop{display:flex;justify-content:space-between;gap:8px;font-size:14px}
+.trapTop .cnt{font-family:"DM Mono";color:var(--red)}
+.trap .what{font-size:12px;color:var(--mut);margin-top:3px;line-height:1.45}
+.trap .fix{font-size:12.8px;margin-top:8px;line-height:1.5}
+.trap .fix b{display:block;color:var(--gold);font-family:"DM Mono";font-weight:400;font-size:9.5px;letter-spacing:.1em;margin-bottom:2px}
+.trap .qs{margin-top:8px;display:flex;flex-wrap:wrap;gap:8px}
+a.qlink{font-family:"DM Mono";font-size:11.5px;color:var(--gold);text-decoration:none;border-bottom:1px dotted rgba(212,169,78,.6)}
+.rung{padding:9px 0;border-bottom:1px solid rgba(232,228,216,.06)}
+.rung:first-of-type{padding-top:0}
+.rung:last-child{border-bottom:none;padding-bottom:0}
+.rungTop{display:flex;justify-content:space-between;align-items:baseline;font-size:13.5px}
+.rungTop b{font-family:"DM Mono";font-weight:400;font-size:13px}
+.mini,.cbar{display:flex;overflow:hidden;background:var(--panel2)}
+.mini{height:8px;border-radius:4px;margin:7px 0 5px}
+.cbar{height:16px;border-radius:5px;margin-bottom:10px}
+.mini i,.cbar i{display:block;height:100%}
+.mini i.c,.cbar i.c,.lgd.c,.palLeg .sw.c{background:rgba(78,160,130,.85)}
+.mini i.w,.cbar i.w,.lgd.w,.palLeg .sw.w{background:var(--red)}
+.mini i.s,.cbar i.s,.lgd.s,.palLeg .sw.s{background:rgba(139,148,168,.5)}
+.cbar i.u{background:repeating-linear-gradient(90deg,transparent 0 4px,rgba(232,228,216,.12) 4px 5px)}
+.lgd.u{background:transparent;box-shadow:inset 0 0 0 1px rgba(232,228,216,.3)}
+.rungSub{font-size:11.5px;color:var(--mut)}
+.kv{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:13.5px;padding:5px 0;border-bottom:1px solid rgba(232,228,216,.06)}
+.kv span{color:var(--mut)}
+.kv b{font-family:"DM Mono";font-weight:400;font-size:13px;text-align:right}
+.kv b span.ok{color:var(--green)}.kv b span.no{color:var(--red)}.kv b span.dim{color:var(--mut)}
+.lgd{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:8px;vertical-align:-1px}
+table.anaT{width:100%;border-collapse:collapse;font-size:12.5px}
+table.anaT th{font-family:"DM Mono";font-size:10px;color:var(--mut);font-weight:400;text-align:right;padding:4px 6px;border-bottom:1px solid var(--line)}
+table.anaT td{font-family:"DM Mono";text-align:right;padding:6px;border-bottom:1px solid rgba(232,228,216,.06)}
+table.anaT td:first-child,table.anaT th:first-child{text-align:left;font-family:"DM Sans"}
+.palSec{font-family:"DM Mono";font-size:10.5px;color:var(--mut);letter-spacing:.06em;margin:12px 0 6px}
+.palSec:first-of-type{margin-top:0}
+.pal2{display:grid;grid-template-columns:repeat(auto-fill,minmax(54px,1fr));gap:6px}
+.pt{position:relative;height:50px;border-radius:7px;border:1px solid rgba(232,228,216,.16);background:var(--panel2);cursor:pointer;overflow:hidden;font-family:"DM Mono";padding:6px 7px}
+.pt .pn{display:block;font-size:13px;color:var(--text)}
+.pt .ptm{display:block;font-size:10px;color:var(--mut);margin-top:3px}
+.pt i{position:absolute;left:0;bottom:0;height:3px;background:var(--gold);opacity:.85}
+.pt.c{background:rgba(78,160,130,.15);border-color:rgba(78,160,130,.55)}
+.pt.w{background:rgba(192,85,85,.24);border-color:rgba(192,85,85,.75)}
+.pt.n{border-style:dashed;opacity:.5}
+.pt.slow .ptm{color:var(--gold)}
+.pt .tdot{position:absolute;top:7px;right:7px;width:7px;height:7px;border-radius:50%;background:var(--text);box-shadow:0 0 0 2px rgba(192,85,85,.6)}
+.pt:hover{filter:brightness(1.25)}
+.palLeg{font-size:11px;color:var(--mut);margin-top:10px;line-height:1.9}
+.palLeg .sw{display:inline-block;width:11px;height:11px;border-radius:3px;margin:0 5px 0 12px;vertical-align:-1px}
+.palLeg .sw:first-child{margin-left:0}
+.palLeg .sw.n{border:1px dashed rgba(232,228,216,.5)}
+.palLeg .sw.t{width:7px;height:7px;border-radius:50%;background:var(--text);box-shadow:0 0 0 2px rgba(192,85,85,.6);vertical-align:0}
+.rq{scroll-margin-top:12px}
+.trapNote{margin-left:auto;font-family:"DM Mono";font-size:10.5px;color:var(--red);white-space:nowrap;padding-left:8px}
+.opt.rOk{border-color:var(--green);background:rgba(78,160,130,.18)}
+.opt.rNo{border-color:var(--red);background:rgba(192,85,85,.15)}
+.opt:disabled{cursor:default}
+details summary{cursor:pointer;color:var(--gold);margin-bottom:4px}
+@media(max-width:560px){.vH{font-size:19px}.pal2{grid-template-columns:repeat(auto-fill,minmax(48px,1fr))}}
+</style>
+</head>
+<body>
+<div id="loginScreen"><div class="loginCard">
+ <h1>ROAD TO IIM</h1><h2 id="lgTitle"></h2>
+ <label for="stuName">FULL NAME</label><input type="text" id="stuName" placeholder="Your full name" autocomplete="off">
+ <label for="stuPin">PIN</label><input type="text" id="stuPin" placeholder="STU########## or IMS##########" autocomplete="off" maxlength="13">
+ <label for="stuBatch">BATCH</label>
+ <select id="stuBatch"><option value="">-- Select your batch --</option>
+  <optgroup label="Classroom"><option>A2701</option><option>A2702</option><option>A2703</option><option>A2704</option><option>A2705</option><option>A2706</option><option>A2707</option><option>A2708</option><option>A2709</option><option>A2710</option><option>A2711</option><option>A2712</option><option>A2714</option><option>A2715</option><option>A2716</option><option>A2717</option><option>A2718</option><option>A2719</option><option>A2720</option></optgroup>
+  <optgroup label="School"><option>Zebar</option></optgroup>
+  <optgroup label="Online"><option>27E101</option><option>27E102</option><option>27E103</option><option>27E104</option><option>27E105</option><option>27E106</option><option>27E107</option><option>27E108</option><option>27E109</option><option>27E110</option><option>28E101</option><option>28E102</option><option>28E103</option><option>28E104</option><option>28E105</option><option>28E106</option><option>28E107</option><option>28E108</option><option>28E109</option><option>28E110</option></optgroup>
+  <optgroup label="IPMAT 28"><option>Z2801</option><option>S2801</option><option>A2804</option><option>PN2801</option></optgroup>
+  <optgroup label="Admin"><option>Admin</option></optgroup>
+ </select>
+ <div id="loginErr"></div>
+ <button id="loginBtn">Start Test</button>
+ <div class="testMeta" id="lgMeta"></div>
+</div></div>
+
+<div id="secBanner"><div class="inner"><h2 id="sbTitle"></h2><div class="mono" id="sbSub"></div></div></div>
+<div id="testScreen">
+ <div id="topBar"><span class="tName" id="tbName"></span><span class="mono" id="qCounter"></span><span id="timer">--:--</span></div>
+ <div id="rfTimerWrap"><div id="rfTimerBar"></div></div>
+ <div id="layout">
+  <div>
+   <div class="card">
+    <span class="secBadge" id="secBadge"></span>
+    <div id="passageBox"></div>
+    <div id="qText"></div>
+    <div id="exBox"></div>
+    <div id="optBox"></div>
+   </div>
+   <div class="card" style="display:flex;gap:10px;justify-content:space-between;flex-wrap:wrap">
+    <div><button class="btn ghost" id="prevBtn" onclick="nav(-1)">&#8249; Prev</button> <button class="btn" onclick="nav(1)">Next &#8250;</button> <button class="btn ghost" id="clrBtn" onclick="clearResp()">Clear response</button> <button class="btn ghost" id="mrkBtn" onclick="toggleMark()">Mark for review</button></div>
+    <div><button class="btn ghost" id="endSecBtn" style="display:none" onclick="if(confirm('End this section early? You cannot return to it.'))endSectionEarly()">End Section &#8250;</button> <button class="btn green" id="submitBtn" onclick="if(confirm('Submit test?'))submitTest()">Submit</button></div>
+   </div>
+  </div>
+  <div id="sidePanel" class="card"><h3>QUESTION PALETTE</h3><div id="palette"></div>
+   <div class="legend"><span style="background:rgba(78,160,130,.6)"></span>Answered<br><span style="background:rgba(155,120,210,.55)"></span>Marked for review<br><span style="background:#152136;border:1px solid #D4A94E"></span>Current</div>
+  </div>
+ </div>
+</div>
+
+<div id="resultsScreen">
+ <h1 id="resTitle" style="font-size:26px"></h1>
+ <div class="mono" id="resSub" style="margin:6px 0 4px"></div>
+ <button id="pdfBtn" class="btn" onclick="downloadPDF()">Download PDF</button>
+ <div class="statGrid">
+  <div class="stat"><div class="v" id="stScore">0</div><div class="l" id="stMaxL">SCORE</div></div>
+  <div class="stat"><div class="v" id="stCorrect">0</div><div class="l">CORRECT</div></div>
+  <div class="stat"><div class="v" id="stWrong">0</div><div class="l">WRONG</div></div>
+  <div class="stat"><div class="v" id="stSkipped">0</div><div class="l">SKIPPED</div></div>
+  <div class="stat"><div class="v" id="stAcc">&mdash;</div><div class="l">ACCURACY</div></div>
+  <div class="stat"><div class="v" id="stTax">&mdash;</div><div class="l">GUESSING TAX</div></div>
+  <div class="stat"><div class="v" id="stTime">0:00</div><div class="l">TIME TAKEN</div></div>
+ </div>
+ <div class="secErr" id="secErrBox"></div>
+ <div id="anaBox"></div>
+ <div id="retryBox"></div>
+ <h1 style="font-size:19px;margin:14px 0 10px">Question Review</h1>
+ <div id="reviewBox"></div>
+</div>
+
+<script>
+/* ============================================================
+   ROAD TO IIM — Studio-built portal test
+   Whitelist v5 · Safety Net · 16-field payload · PATH 2 tags
+   ============================================================ */
+var CFG={"testName":"UGAT Mock 8 — VA Sectional","examName":"UGAT IIM Bangalore","maxMarks":45,"minutes":30,"c":3,"w":-1,"titaW":-1,"titaWSec":null,"hasTita":false,"navNote":"free navigation","sectional":null,"fileName":"ugat_iimb_UGAT_Mock_8_VA_Sectional.html","snKey":"riim_session_UGAT_Mock_8_VA_Sectional","bankPrefix":"UGAT_Mock_8_VA_Sectional","rapid":false};
+var QUESTIONS=[{"id": "UGAT_VA_001", "section": "VA", "format": "Odd Sentence Out", "kind": "mcq", "passage": null, "stem": "Five statements are given below, four of which follow a common thread.\n1. Loggerhead hatchlings in a tank that reproduces the magnetic field off northern Portugal turn in the direction that would keep them inside the warm North Atlantic gyre.\n2. Homing pigeons carrying small magnets on their heads lose their bearings on overcast days, when they cannot fall back on the position of the sun.\n3. Young sockeye salmon appear to inherit a magnetic map that guides them from the open Pacific back to the river in which they hatched.\n4. Engineers testing underwater drones have copied the turtle's magnetic map so that the vehicles can find their way where satellite signals cannot reach.\n5. European robins in cages orient toward their migratory heading by sensing the magnetic field, but lose that ability when weak radio noise from electrical equipment reaches them.\nIdentify the statement that does not follow the common thread.", "options": ["Statement 2", "Statement 5", "Statement 1", "Statement 4"], "answer": "Statement 4", "answerIndex": 3, "difficulty": "Easy", "explanation": "Answer: (d) Statement 4\nThe common thread is evidence that animals find their way using the Earth's magnetic field: turtle hatchlings (1), pigeons whose magnetic sense is jammed by magnets (2), salmon with an inherited magnetic map (3) and robins whose magnetic compass fails under radio noise (5). Statement 4 uses the same words, \"turtle\", \"magnetic map\" and \"find their way\", but its subject is engineers building drones. It is about a human use of the idea, not about how animals navigate.\nStatement 2 never names the magnetic field, but the magnets on the pigeons' heads disrupt their magnetic sense, and the pigeons lose their way only when they cannot use the sun instead. It is on the thread.\nStatement 5 mentions human-made radio noise, which tempts a reader to set it beside statement 4, but its subject is the robins' own magnetic sense. It is on the thread.\nStatement 1 is on the thread: hatchlings steer by a reproduced magnetic field.", "optionTags": ["va-surface-mismatch", "va-near-thread", "va-on-thread", null], "status": "approved", "flags": [], "verified": "ok", "verNote": "Thread checked sentence by sentence: 1, 2, 3, 5 are animal magnetic navigation; 4 is human engineering. Statement 4 shares 'turtle', 'magnetic map' and 'find their way' so it cannot be spotted by an off-topic word. Statement 3 left out of the options. Lengths 18-28 words checked by code."}, {"id": "UGAT_VA_002", "section": "VA", "format": "Idioms", "kind": "mcq", "passage": null, "stem": "Select the most appropriate phrase to substitute the underlined group of words in the given sentence.\nWith the transfer window closing that night, the club's appeal to the league was [[a final, desperate attempt]] to avoid relegation.", "options": ["a last-ditch attempt", "a long shot", "a leap in the dark", "a shot in the dark"], "answer": "a last-ditch attempt", "answerIndex": 0, "difficulty": "Medium", "explanation": "Answer: (a)\nCorrect: A last-ditch attempt is a final effort made in desperation when everything else has failed. That matches both halves of the underlined phrase, \"final\" and \"desperate\".\nIncorrect, a long shot: An attempt with little chance of success. The appeal may well have been one, but the idiom says nothing about it being the last resort. It covers \"desperate\" and misses \"final\".\nIncorrect, a leap in the dark: An action whose consequences cannot be foreseen. It describes risk, not a final effort.\nIncorrect, a shot in the dark: A guess made with little or no information. It shares \"shot\" with \"a long shot\" but means a guess, not an attempt made at the last moment.", "optionTags": [null, "va-neighbour-meaning", "va-neighbour-meaning", "va-shared-word"], "status": "approved", "flags": [], "verified": "ok", "verNote": "All four are standard English idioms and each makes sense in the sentence; none appears in the spec lists or the 2025 papers. Only 'a last-ditch attempt' carries both 'final' and 'desperate'."}, {"id": "UGAT_VA_003", "section": "VA", "format": "Word in Context", "kind": "mcq", "passage": null, "stem": "Examine the following statement:\nResidents were deeply [[exercised]] about the plan to close the only footbridge across the railway line.\nChoose the option that best uses the underlined word in a context similar to how it is used in the statement.", "options": ["Officials exercised great care in wording the notice, knowing that residents would read it closely.", "The tenant exercised her right to renew the lease for a further three years.", "Shareholders grew exercised when the board hinted that the dividend might be skipped for a second year.", "The trainer exercised the horses on the beach at dawn before the monsoon set in."], "answer": "Shareholders grew exercised when the board hinted that the dividend might be skipped for a second year.", "answerIndex": 2, "difficulty": "Medium", "explanation": "Answer: (c)\nIn the statement, \"exercised\" means worried and agitated: the residents were troubled by the plan.\nCorrect: Shareholders \"grew exercised\" when they heard the dividend might be skipped. They became anxious and upset, the same sense.\nIncorrect, officials exercised great care: The sentence is about concern and careful readers, which makes this tempting, but here \"exercised\" means used or applied (they applied care), not worried.\nIncorrect, the tenant exercised her right: To exercise a right is to make use of it, a different sense.\nIncorrect, the trainer exercised the horses: Physical exercise, the commonest sense.", "optionTags": ["va-near-meaning", "va-confusable-sense", null, "va-everyday-sense"], "status": "approved", "flags": [], "verified": "ok", "verNote": "Four distinct senses of 'exercise' (agitated, apply a quality, use a right, physical training); only the key shares the statement's sense. All four sentences are natural English."}, {"id": "UGAT_VA_004", "section": "VA", "format": "Parts of Speech", "kind": "mcq", "passage": null, "stem": "In which sentence does 'that' function as a relative pronoun?", "options": ["The committee announced on Monday that its report would run to forty pages.", "Nobody had expected the committee's report to run quite that long.", "That was the longest report the committee had released in a decade.", "The report that the committee released on Monday runs to forty pages."], "answer": "The report that the committee released on Monday runs to forty pages.", "answerIndex": 3, "difficulty": "Easy", "explanation": "Answer: (d)\nA relative pronoun introduces a clause that describes a noun and stands for that noun inside the clause.\nCorrect: In \"The report that the committee released\", \"that\" introduces a clause describing \"report\" and stands for it as the object of \"released\" (the committee released the report).\nIncorrect, \"announced ... that its report would run\": Here \"that\" is a conjunction. It introduces what was announced, and it does not stand for any noun inside its clause. This is the closest trap, because it also opens a clause.\nIncorrect, \"quite that long\": Here \"that\" is an adverb meaning \"so\", modifying \"long\".\nIncorrect, \"That was the longest report\": Here \"that\" is a demonstrative pronoun, the subject of \"was\".", "optionTags": ["va-conjunction-use", "va-adverb-use", "va-demonstrative-use", null], "status": "approved", "flags": [], "verified": "ok", "verNote": "One function per sentence: relative pronoun, conjunction, adverb, demonstrative pronoun."}, {"id": "UGAT_VA_005", "section": "VA", "format": "Tenses", "kind": "mcq", "passage": null, "stem": "Select the option that most accurately maintains the correct tense sequence and logical chronology of actions.\nBy the time the rescue team reached the village, the river already rose above the embankment and most families fled to the school on the hill.", "options": ["By the time the rescue team reached the village, the river had already risen above the embankment and most families fled to the school on the hill.", "By the time the rescue team reached the village, the river already rose above the embankment and most families fled to the school on the hill.", "By the time the rescue team reached the village, the river had already risen above the embankment and most families had fled to the school on the hill.", "By the time the rescue team reached the village, the river had already risen above the embankment and most families have fled to the school on the hill."], "answer": "By the time the rescue team reached the village, the river had already risen above the embankment and most families had fled to the school on the hill.", "answerIndex": 2, "difficulty": "Medium", "explanation": "Answer: (c)\n\"By the time the rescue team reached the village\" sets a point in the past. Both the river's rise and the families' flight were complete before that point, so both need the past perfect: \"had already risen\" and \"had fled\".\nIncorrect, \"had already risen ... fled\": Fixes the first verb but leaves \"fled\" in the simple past, as though the families fled after the team arrived. This is a half-fix.\nIncorrect, \"already rose ... fled\": The original sentence, with neither verb fixed.\nIncorrect, \"had already risen ... have fled\": Fixes the first verb but introduces a new error. The present perfect \"have fled\" cannot sit inside a narrative set in the past.", "optionTags": ["va-half-fix", "va-original-error", null, "va-new-error"], "status": "approved", "flags": [], "verified": "ok", "verNote": "Original span appears as one option; one half-fix; one option introducing a new error; only the key puts both completed actions in the past perfect."}, {"id": "UGAT_VA_006", "section": "VA", "format": "Parajumble (MCQ)", "kind": "mcq", "passage": null, "stem": "The following sentences are in jumbled order. Arrange them in the most logical sequence to form a meaningful paragraph.\nA. For the railway companies, whose timetables had to hold along an entire line, the difference was an expensive nuisance.\nB. Noon in Bristol used to arrive some ten minutes after noon in London, because each town set its clocks by the sun overhead.\nC. Their solution, adopted line by line through the 1840s, was to run every train on London time and to leave the towns to make of it what they would.\nD. Some towns held out for years, and the clock on Bristol's Corn Exchange still carries two minute hands, one for local time and one for the railway's, but Parliament settled the matter in 1880.", "options": ["BCAD", "BACD", "ABCD", "BADC"], "answer": "BACD", "answerIndex": 1, "difficulty": "Medium", "explanation": "Answer: (b) BACD\nB opens: it sets out the ten-minute gap between Bristol and London and refers back to nothing.\nA follows B: \"the difference\" needs an antecedent, which is B's ten-minute gap.\nC follows A: \"Their solution\" belongs to \"the railway companies\" in A; nobody else in the paragraph has a problem to solve.\nD closes: the towns \"held out\" against the railway time that C introduces, until Parliament settled the matter.\nIncorrect, BCAD: Puts C straight after B, so \"Their solution\" would have to belong to the towns of B, but the solution is applied \"line by line\" to trains.\nIncorrect, ABCD: Opens with A, which reads like an opening sentence, but \"the difference\" has nothing to refer back to.\nIncorrect, BADC: Has the towns holding out before C introduces the railway time they held out against, and leaves \"Their\" in C pointing to the towns.", "optionTags": ["va-pj-referent", null, "va-pj-opener", "va-pj-chronology"], "status": "approved", "flags": [], "verified": "ok", "verNote": "All 24 orders checked by code against four constraints (B first; A after B; C immediately after A; D after C); only BACD passes. Three options share the opener B and three share the closer D, so neither end gives the order away. Facts: Bristol is about 10 minutes behind London; railways adopted London time through the 1840s; the Corn Exchange clock has two minute hands; the Statutes (Definition of Time) Act was passed in 1880."}, {"id": "UGAT_VA_007", "section": "VA", "format": "Fill-Ups (multi-blank)", "kind": "mcq", "passage": null, "stem": "Complete the following sentences using the most appropriate words in all three blanks.\nThe restorer brought to the damaged altarpiece a ______ touch that her colleagues found almost maddening, and one she had settled on before the first swab: in eight months she removed only the yellowed varnish, and wherever the paint had flaked away she left the bare wood showing rather than guess at what had once been there. Her report on the work was ______ and ran to ninety pages; years later a successor used it to undo her steps one by one, because it recorded every solvent she had applied and the day on which she had applied it. Critics who had hoped for a brighter, cleaner panel were disappointed, but even they conceded that the result was ______: nothing a visitor now sees is anything the original painter did not put there.", "options": ["tentative / thorough / faithful", "sparing / discursive / honest", "restrained / exhaustive / authentic", "measured / meticulous / pristine"], "answer": "restrained / exhaustive / authentic", "answerIndex": 2, "difficulty": "Hard", "explanation": "Answer: (c)\nBlank 1: \"one she had settled on before the first swab\" and \"rather than guess at what had once been there\". She held back on purpose and on principle, so \"restrained\".\nBlank 2: \"a successor used it to undo her steps one by one, because it recorded every solvent she had applied and the day on which she had applied it\". The report left nothing out, so \"exhaustive\".\nBlank 3: \"nothing a visitor now sees is anything the original painter did not put there\". Everything left on the panel is the painter's own work, so \"authentic\".\nIncorrect, tentative / thorough / faithful: \"thorough\" and \"faithful\" both fit, but \"tentative\" means hesitant and unsure. Her colleagues' impatience and the eight months tempt it, but she \"had settled on\" her approach \"before the first swab\".\nIncorrect, sparing / discursive / honest: \"sparing\" and \"honest\" both fit, but \"discursive\" means rambling from point to point. \"Ninety pages\" tempts it, but a report a successor could follow step by step was systematic, not rambling.\nIncorrect, measured / meticulous / pristine: \"measured\" and \"meticulous\" both fit, but \"pristine\" means spotless and fresh, as if new. The panel still shows \"the bare wood\" where paint had flaked, and the critics who wanted it \"brighter, cleaner\" were disappointed.", "optionTags": ["va-near-miss-sense", "va-near-miss-sense", null, "va-near-miss-sense"], "status": "approved", "flags": [], "verified": "ok", "verNote": "Each distractor fits two blanks and fails on one, by nuance not antonym; the failing blank is 1, 2 and 3 in turn. A6 checks run by code (see auditNote). Window packet delivered; window gate pending."}, {"id": "UGAT_VA_008", "section": "VA", "format": "Reading Comprehension (2×4)", "kind": "mcq", "passage": "Read the following passage and answer the question.\n\nAsk a publisher what makes a translation good, and the answer is likely to be that the reader should never notice it: the ideal version, on this view, reads as though it had been written in the reader's own language. A sterner school of scholars holds the opposite, that a translator's first loyalty is to the words on the page, and that any sentence which departs from them, however graceful, is a small betrayal.\n\nBoth camps assume that fidelity is a matter of matching, and there they share a mistake. A joke rendered word for word in another language is accurate and no longer funny; a proverb carried across intact becomes a curiosity rather than a piece of advice. What the translator owes the original is not its vocabulary but its effect, and because effects depend on what a reader already knows, the translator must sometimes change the words precisely in order to keep faith with them.\n\nNone of this is a licence for invention. The translators I most admire are slow and anxious workers, more often tempted to cut a flourish than to add one. But their anxiety is not about the dictionary; it is about the reader on the far side. A translation is a bridge built for one particular river: it must carry its load across, and it is judged at the bank where it lands, not at the bank from which it set out.", "stem": "According to the passage, what mistake do the publishers and the sterner school of scholars share?", "options": ["Each insists that a good translation must read as though written in the reader's language.", "Each assumes that a faithful translation is one that matches its original.", "Each assumes that changing a word is the surest way to preserve an original's effect.", "Each underestimates how slowly and anxiously the best translators work."], "answer": "Each assumes that a faithful translation is one that matches its original.", "answerIndex": 1, "difficulty": "Easy", "explanation": "Answer: (b)\nExplanation: Paragraph 2 opens: \"Both camps assume that fidelity is a matter of matching, and there they share a mistake.\" The publishers match the feel of native writing; the scholars match the words.\nCorrect: \"fidelity is a matter of matching\" = \"a faithful translation is one that matches its original\".\nLead distractor (wrong voice): Reading \"as though it had been written in the reader's own language\" is the publishers' view only. The scholars hold \"the opposite\". The word \"Each\" makes this option wrong.\nIncorrect (reversal): The author, not either camp, says the words must sometimes change to keep the effect, and the author never says changing words is the \"surest\" way.\nIncorrect: The slow, anxious translators appear in paragraph 3 as the author's own models; the passage never says either camp underestimates them.", "optionTags": ["rc-wrong-voice", null, "rc-reversal", "rc-word-match"], "status": "approved", "flags": [], "verified": "ok", "verNote": "Option length ranks and the 1.5x band checked by code; hedging parity checked; one-word, near-miss and double-key passes done. RC gates 1-4 not yet run."}, {"id": "UGAT_VA_009", "section": "VA", "format": "Reading Comprehension (2×4)", "kind": "mcq", "passage": "Read the following passage and answer the question.\n\nAsk a publisher what makes a translation good, and the answer is likely to be that the reader should never notice it: the ideal version, on this view, reads as though it had been written in the reader's own language. A sterner school of scholars holds the opposite, that a translator's first loyalty is to the words on the page, and that any sentence which departs from them, however graceful, is a small betrayal.\n\nBoth camps assume that fidelity is a matter of matching, and there they share a mistake. A joke rendered word for word in another language is accurate and no longer funny; a proverb carried across intact becomes a curiosity rather than a piece of advice. What the translator owes the original is not its vocabulary but its effect, and because effects depend on what a reader already knows, the translator must sometimes change the words precisely in order to keep faith with them.\n\nNone of this is a licence for invention. The translators I most admire are slow and anxious workers, more often tempted to cut a flourish than to add one. But their anxiety is not about the dictionary; it is about the reader on the far side. A translation is a bridge built for one particular river: it must carry its load across, and it is judged at the bank where it lands, not at the bank from which it set out.", "stem": "According to the passage, why must a translator sometimes change the words of the original?", "options": ["The effect of a text depends on what its readers already know.", "Effects depend on readers' knowledge, so a translator may add whatever helps them.", "Readers should not be able to tell that they are reading a translation.", "The translators the author admires are more tempted to cut than to add."], "answer": "The effect of a text depends on what its readers already know.", "answerIndex": 0, "difficulty": "Medium", "explanation": "Answer: (a)\nExplanation: Paragraph 2 gives the reason: \"because effects depend on what a reader already knows, the translator must sometimes change the words precisely in order to keep faith with them.\"\nCorrect: Restates that reason. Words that worked on one set of readers may not work on another.\nLead distractor (half-right): The first half is the passage's reason, but the second half says the translator \"may add whatever helps them\". Paragraph 3 rules that out: \"None of this is a licence for invention.\"\nIncorrect (wrong voice): This is the publishers' ideal from paragraph 1, which the author says rests on a mistake.\nIncorrect (true but not the answer): True of the author's admired translators (paragraph 3), but it describes how they work, not why words must change.", "optionTags": [null, "rc-half-right", "rc-wrong-voice", "rc-true-not-answer"], "status": "approved", "flags": [], "verified": "ok", "verNote": "Option length ranks and the 1.5x band checked by code; hedging parity checked; one-word, near-miss and double-key passes done. RC gates 1-4 not yet run."}, {"id": "UGAT_VA_010", "section": "VA", "format": "Reading Comprehension (2×4)", "kind": "mcq", "passage": "Read the following passage and answer the question.\n\nAsk a publisher what makes a translation good, and the answer is likely to be that the reader should never notice it: the ideal version, on this view, reads as though it had been written in the reader's own language. A sterner school of scholars holds the opposite, that a translator's first loyalty is to the words on the page, and that any sentence which departs from them, however graceful, is a small betrayal.\n\nBoth camps assume that fidelity is a matter of matching, and there they share a mistake. A joke rendered word for word in another language is accurate and no longer funny; a proverb carried across intact becomes a curiosity rather than a piece of advice. What the translator owes the original is not its vocabulary but its effect, and because effects depend on what a reader already knows, the translator must sometimes change the words precisely in order to keep faith with them.\n\nNone of this is a licence for invention. The translators I most admire are slow and anxious workers, more often tempted to cut a flourish than to add one. But their anxiety is not about the dictionary; it is about the reader on the far side. A translation is a bridge built for one particular river: it must carry its load across, and it is judged at the bank where it lands, not at the bank from which it set out.", "stem": "Identify the main theme of the passage.", "options": ["A joke or proverb rendered word for word can stay accurate yet lose the point it had in the original.", "Faithfulness to a source, in translation, adaptation or reporting, lies in its effect rather than its wording.", "Being faithful to an original means keeping its effect on readers, which can require changing its words.", "A translation succeeds when readers cannot tell it was translated, as publishers have long held."], "answer": "Being faithful to an original means keeping its effect on readers, which can require changing its words.", "answerIndex": 2, "difficulty": "Medium", "explanation": "Answer: (c)\nExplanation: The author reports two views, rejects the assumption they share, and argues that what a translator owes the original \"is not its vocabulary but its effect\". Paragraph 3 guards that claim against misuse and closes on the bridge image.\nCorrect: Captures the thesis and its consequence, that words may have to change.\nLead distractor (too narrow): The joke and the proverb are the examples in paragraph 2 that support the thesis. They are not the theme.\nIncorrect (too broad): Extends the claim to adaptation and reporting; the passage speaks only of translation.\nIncorrect (wrong voice): The publishers' view, which the author says shares the camps' mistake.", "optionTags": ["rc-detail-as-main", "rc-scope-shift", null, "rc-wrong-voice"], "status": "approved", "flags": [], "verified": "ok", "verNote": "Option length ranks and the 1.5x band checked by code; hedging parity checked; one-word, near-miss and double-key passes done. RC gates 1-4 not yet run."}, {"id": "UGAT_VA_011", "section": "VA", "format": "Reading Comprehension (2×4)", "kind": "mcq", "passage": "Read the following passage and answer the question.\n\nAsk a publisher what makes a translation good, and the answer is likely to be that the reader should never notice it: the ideal version, on this view, reads as though it had been written in the reader's own language. A sterner school of scholars holds the opposite, that a translator's first loyalty is to the words on the page, and that any sentence which departs from them, however graceful, is a small betrayal.\n\nBoth camps assume that fidelity is a matter of matching, and there they share a mistake. A joke rendered word for word in another language is accurate and no longer funny; a proverb carried across intact becomes a curiosity rather than a piece of advice. What the translator owes the original is not its vocabulary but its effect, and because effects depend on what a reader already knows, the translator must sometimes change the words precisely in order to keep faith with them.\n\nNone of this is a licence for invention. The translators I most admire are slow and anxious workers, more often tempted to cut a flourish than to add one. But their anxiety is not about the dictionary; it is about the reader on the far side. A translation is a bridge built for one particular river: it must carry its load across, and it is judged at the bank where it lands, not at the bank from which it set out.", "stem": "The author would most likely contend that a translator who replaces a pun in the original with a different pun that works in the new language has:", "options": ["kept the original's effect, but at a cost to fidelity that a careful translator should regret.", "taken a liberty of invention that the author's idea of fidelity does not permit.", "committed a small betrayal of the original, however graceful the new pun may be.", "kept faith with the original by keeping the effect it was written to have."], "answer": "kept faith with the original by keeping the effect it was written to have.", "answerIndex": 3, "difficulty": "Hard", "explanation": "Answer: (d)\nExplanation: For the author, a joke translated word for word \"is accurate and no longer funny\", and the translator \"must sometimes change the words precisely in order to keep faith with them\". Swapping one pun for another that works keeps the joke's effect.\nCorrect: \"keep faith with them\" by preserving \"its effect\".\nLead distractor (half-right): Agrees that the effect is kept, but then counts it as \"a cost to fidelity\". For the author, keeping the effect is fidelity.\nIncorrect: \"None of this is a licence for invention\" warns against adding what the original lacks. A pun put in place of a pun adds nothing the original did not have, so it is not invention.\nIncorrect (wrong voice): \"a small betrayal\", however graceful, is the sterner scholars' verdict on any departure from the words, a view the author rejects.", "optionTags": ["rc-half-right", "rc-false-link", "rc-wrong-voice", null], "status": "approved", "flags": [], "verified": "ok", "verNote": "Option length ranks and the 1.5x band checked by code; hedging parity checked; one-word, near-miss and double-key passes done. RC gates 1-4 not yet run."}, {"id": "UGAT_VA_012", "section": "VA", "format": "Reading Comprehension (2×4)", "kind": "mcq", "passage": "Read the following passage and answer the question.\n\nWhen seventy-four firms in a mid-sized European economy agreed in 2024 to try a four-day week without cutting pay, the campaigners behind the trial presented it as a test of rest. Tired staff, they argued, waste much of the fifth day anyway; give them a long weekend and they will return sharper and finish the same work in less time.\n\nThe final evaluation, published this autumn, supports the outcome but not the explanation. Output held steady or rose at most of the firms that completed the six months, and resignations fell by more than a third. Yet when the researchers compared firms whose results improved with those whose results merely held, the difference lay less in how rested employees said they felt than in what their managers had cut. The firms that gained had halved their standing meetings, replaced weekly status reports with a shared dashboard and stopped copying whole teams on routine email. The extra day off, in the researchers' phrase, was \"the occasion rather than the cause\": a deadline that forced changes managers had long discussed and never made.\n\nThe arrangement did not suit everyone. Nine firms, most of them running shifts in care homes or warehouses, withdrew within two months, because a day off for one worker meant overtime for another. Six months is also a short time, and whether the gains survive once the novelty fades is something the report says it cannot yet judge.\n\nIts practical advice is accordingly modest: a firm tempted by the four-day week should audit its meetings first. The broader lesson is less comfortable for champions and critics alike. If the shorter week works chiefly by making waste visible, a firm that removes the waste might keep much of the gain without giving up the day.", "stem": "According to the passage, what did the researchers find set apart the firms whose results improved?", "options": ["Their managers had cut back meetings, status reports and routine email.", "Their employees said they felt more rested after the long weekend.", "Resignations among their staff fell by more than a third.", "They did not run shifts, so one worker's day off made no overtime for another."], "answer": "Their managers had cut back meetings, status reports and routine email.", "answerIndex": 0, "difficulty": "Medium", "explanation": "Answer: (a)\nExplanation: Comparing the firms that improved with those that merely held, the researchers found \"the difference lay less in how rested employees said they felt than in what their managers had cut\": meetings halved, status reports replaced, email copying stopped.\nCorrect: Names what the managers cut.\nLead distractor: Feeling rested is the campaigners' explanation. The researchers found that rest was not what made the difference (\"less in how rested employees said they felt\").\nIncorrect (true but not the answer): Resignations did fall by more than a third, but across the trial, not as the feature that separated improving firms from steady ones.\nIncorrect: Shifts belong to paragraph 3 and explain why nine firms withdrew, not why some firms gained.", "optionTags": [null, "rc-false-link", "rc-true-not-answer", "rc-word-match"], "status": "approved", "flags": [], "verified": "ok", "verNote": "Option length ranks and the 1.5x band checked by code; hedging parity checked; one-word, near-miss and double-key passes done. RC gates 1-4 not yet run."}, {"id": "UGAT_VA_013", "section": "VA", "format": "Reading Comprehension (2×4)", "kind": "mcq", "passage": "Read the following passage and answer the question.\n\nWhen seventy-four firms in a mid-sized European economy agreed in 2024 to try a four-day week without cutting pay, the campaigners behind the trial presented it as a test of rest. Tired staff, they argued, waste much of the fifth day anyway; give them a long weekend and they will return sharper and finish the same work in less time.\n\nThe final evaluation, published this autumn, supports the outcome but not the explanation. Output held steady or rose at most of the firms that completed the six months, and resignations fell by more than a third. Yet when the researchers compared firms whose results improved with those whose results merely held, the difference lay less in how rested employees said they felt than in what their managers had cut. The firms that gained had halved their standing meetings, replaced weekly status reports with a shared dashboard and stopped copying whole teams on routine email. The extra day off, in the researchers' phrase, was \"the occasion rather than the cause\": a deadline that forced changes managers had long discussed and never made.\n\nThe arrangement did not suit everyone. Nine firms, most of them running shifts in care homes or warehouses, withdrew within two months, because a day off for one worker meant overtime for another. Six months is also a short time, and whether the gains survive once the novelty fades is something the report says it cannot yet judge.\n\nIts practical advice is accordingly modest: a firm tempted by the four-day week should audit its meetings first. The broader lesson is less comfortable for champions and critics alike. If the shorter week works chiefly by making waste visible, a firm that removes the waste might keep much of the gain without giving up the day.", "stem": "Select the real-life situation that best reflects the broader lesson the passage draws.", "options": ["A firm keeps its five-day week but scraps most standing meetings, and its output seems to rise.", "A firm gives staff a long weekend so that they come back rested and seem to work faster.", "A firm that moves to a four-day week finds that fewer of its staff resign.", "A warehouse that switches to a four-day week finds it must pay overtime to cover the shifts left empty."], "answer": "A firm keeps its five-day week but scraps most standing meetings, and its output seems to rise.", "answerIndex": 0, "difficulty": "Medium", "explanation": "Answer: (a)\nExplanation: The broader lesson is the last sentence: if the shorter week \"works chiefly by making waste visible, a firm that removes the waste might keep much of the gain without giving up the day\".\nCorrect: A firm removes the waste (standing meetings), keeps the five-day week and still gains.\nLead distractor (wrong voice): This is the campaigners' theory of rest, which the evaluation \"does not\" support as the explanation.\nIncorrect (true but not the answer): Matches a finding of the trial (resignations fell), not the lesson drawn from it.\nIncorrect: Matches the paragraph 3 reason some firms withdrew, not the broader lesson.", "optionTags": [null, "rc-wrong-voice", "rc-true-not-answer", "rc-word-match"], "status": "approved", "flags": [], "verified": "ok", "verNote": "Option length ranks and the 1.5x band checked by code; hedging parity checked; one-word, near-miss and double-key passes done. RC gates 1-4 not yet run."}, {"id": "UGAT_VA_014", "section": "VA", "format": "Reading Comprehension (2×4)", "kind": "mcq", "passage": "Read the following passage and answer the question.\n\nWhen seventy-four firms in a mid-sized European economy agreed in 2024 to try a four-day week without cutting pay, the campaigners behind the trial presented it as a test of rest. Tired staff, they argued, waste much of the fifth day anyway; give them a long weekend and they will return sharper and finish the same work in less time.\n\nThe final evaluation, published this autumn, supports the outcome but not the explanation. Output held steady or rose at most of the firms that completed the six months, and resignations fell by more than a third. Yet when the researchers compared firms whose results improved with those whose results merely held, the difference lay less in how rested employees said they felt than in what their managers had cut. The firms that gained had halved their standing meetings, replaced weekly status reports with a shared dashboard and stopped copying whole teams on routine email. The extra day off, in the researchers' phrase, was \"the occasion rather than the cause\": a deadline that forced changes managers had long discussed and never made.\n\nThe arrangement did not suit everyone. Nine firms, most of them running shifts in care homes or warehouses, withdrew within two months, because a day off for one worker meant overtime for another. Six months is also a short time, and whether the gains survive once the novelty fades is something the report says it cannot yet judge.\n\nIts practical advice is accordingly modest: a firm tempted by the four-day week should audit its meetings first. The broader lesson is less comfortable for champions and critics alike. If the shorter week works chiefly by making waste visible, a firm that removes the waste might keep much of the gain without giving up the day.", "stem": "Which statement, if true, would weaken the researchers' explanation of the trial's results the most?", "options": ["Staff at improving and steady firms alike said they felt more rested than before the trial.", "Firms whose results merely held had cut meetings and reports as deeply as those that gained.", "Nine firms, most of them running shifts in care homes or warehouses, left the trial within two months.", "Most of the firms that completed the trial chose to keep the four-day week afterwards."], "answer": "Firms whose results merely held had cut meetings and reports as deeply as those that gained.", "answerIndex": 1, "difficulty": "Hard", "explanation": "Answer: (b)\nExplanation: The researchers explain the better results by what managers cut, because the cuts are what separated the improving firms from those that merely held. If the steady firms had cut just as deeply, the cuts could not explain the difference.\nCorrect: Removes the one difference the explanation rests on.\nLead distractor: If both groups felt equally rested, rest cannot explain why one group did better. This fits the researchers' account, so it supports the explanation rather than weakening it.\nIncorrect (true but not the answer): Restates paragraph 3; it does not touch the explanation of why some firms gained.\nIncorrect: Whether firms kept the four-day week says nothing about why their results changed.", "optionTags": ["rc-reversal", null, "rc-true-not-answer", "rc-out-of-scope"], "status": "approved", "flags": [], "verified": "ok", "verNote": "Option length ranks and the 1.5x band checked by code; hedging parity checked; one-word, near-miss and double-key passes done. RC gates 1-4 not yet run."}, {"id": "UGAT_VA_015", "section": "VA", "format": "Reading Comprehension (2×4)", "kind": "mcq", "passage": "Read the following passage and answer the question.\n\nWhen seventy-four firms in a mid-sized European economy agreed in 2024 to try a four-day week without cutting pay, the campaigners behind the trial presented it as a test of rest. Tired staff, they argued, waste much of the fifth day anyway; give them a long weekend and they will return sharper and finish the same work in less time.\n\nThe final evaluation, published this autumn, supports the outcome but not the explanation. Output held steady or rose at most of the firms that completed the six months, and resignations fell by more than a third. Yet when the researchers compared firms whose results improved with those whose results merely held, the difference lay less in how rested employees said they felt than in what their managers had cut. The firms that gained had halved their standing meetings, replaced weekly status reports with a shared dashboard and stopped copying whole teams on routine email. The extra day off, in the researchers' phrase, was \"the occasion rather than the cause\": a deadline that forced changes managers had long discussed and never made.\n\nThe arrangement did not suit everyone. Nine firms, most of them running shifts in care homes or warehouses, withdrew within two months, because a day off for one worker meant overtime for another. Six months is also a short time, and whether the gains survive once the novelty fades is something the report says it cannot yet judge.\n\nIts practical advice is accordingly modest: a firm tempted by the four-day week should audit its meetings first. The broader lesson is less comfortable for champions and critics alike. If the shorter week works chiefly by making waste visible, a firm that removes the waste might keep much of the gain without giving up the day.", "stem": "Select the option that most accurately summarises the passage.", "options": ["A four-day-week trial shows that rested employees return sharper and finish the same work in less time.", "Shorter working weeks tend to raise output in most economies because they push firms to remove wasted work.", "Firms that halved their meetings and dropped status reports did better in the trial than those that merely held steady.", "A four-day-week trial suggests the gains came mainly from cutting waste, which firms might do without a shorter week."], "answer": "A four-day-week trial suggests the gains came mainly from cutting waste, which firms might do without a shorter week.", "answerIndex": 3, "difficulty": "Medium", "explanation": "Answer: (d)\nExplanation: The passage reports a trial whose outcome was good, finds the gain came from what managers cut rather than from rest, notes the trial's limits, and draws the lesson that a firm might remove the waste without giving up the day.\nCorrect: Covers the finding, its cause and the broader lesson.\nLead distractor (wrong voice): The campaigners' explanation, which the evaluation \"does not\" support.\nIncorrect (too broad): Turns one trial in one economy into a claim about \"most economies\", and drops the lesson that the day itself may not be needed.\nIncorrect (too narrow): A true detail from paragraph 2 that leaves out the passage's point.", "optionTags": ["rc-wrong-voice", "rc-scope-shift", "rc-detail-as-main", null], "status": "approved", "flags": [], "verified": "ok", "verNote": "Option length ranks and the 1.5x band checked by code; hedging parity checked; one-word, near-miss and double-key passes done. RC gates 1-4 not yet run."}];
+var SCRIPT_URL="https://script.google.com/macros/s/AKfycbx5Ojm_zp4LfsMeelx5e06KNjVH1wfsXdV0keS4407m4FO1HU4EpVb7GKj-ibAsxnspeA/exec";
+var TEST_NAME=CFG.testName, MAX_MARKS=CFG.maxMarks, FILE_NAME=CFG.fileName, SN_KEY=CFG.snKey;
+var NQ=QUESTIONS.length;
+var PIN_REGEX=/^(STU|IMS)\d{10}$/;
+var BLOCK_MSG="This PIN isn't on the active student list. Message Sahil Sir if you think this is a mistake.";
+
+/* ==================== WHITELIST RUNTIME BLOCK (v5 §17) ==================== */
+var WL_PROMISE=fetch("whitelist.json",{cache:"no-store"}).then(function(r){return r.ok?r.json():null}).catch(function(){return null});
+function normalizePin(pin){return String(pin).replace(/\D/g,"").replace(/^0+/,"")}
+async function isWhitelisted(pin,batch){
+ var WL;try{WL=await WL_PROMISE}catch(e){WL=null}
+ if(!WL)return true; /* FAIL-OPEN */
+ try{
+  var bypass=WL.bypass_batches||[];
+  if(bypass.indexOf(batch)!==-1)return true;
+  var norm=normalizePin(pin);
+  var admins=(WL.admin_pins||[]).map(String);
+  if(admins.indexOf(norm)!==-1)return true;
+  if(Array.isArray(WL.pins)){if(WL.pins.map(String).indexOf(norm)!==-1)return true}
+  else if(WL.pins&&typeof WL.pins==="object"){if(Object.prototype.hasOwnProperty.call(WL.pins,norm))return true}
+  return false;
+ }catch(e){return true}
+}
+
+/* ==================== SAFETY NET — retry queue ==================== */
+function snReadJSON(key,fallback){try{var v=localStorage.getItem(key);return v?JSON.parse(v):fallback}catch(e){return fallback}}
+function snWriteJSON(key,val){try{localStorage.setItem(key,JSON.stringify(val))}catch(e){}}
+function snUnqueue(id){var p=snReadJSON("riim_pending",[]);p=p.filter(function(x){return x.id!==id});snWriteJSON("riim_pending",p)}
+function snSendWithQueue(opts){
+ var p=snReadJSON("riim_pending",[]);
+ var id=Date.now()+"-"+Math.random().toString(36).slice(2);
+ p.push({id:id,opts:{method:opts.method,mode:opts.mode,headers:opts.headers,body:opts.body}});
+ snWriteJSON("riim_pending",p);
+ return fetch(SCRIPT_URL,opts).then(function(r){snUnqueue(id);return r});
+}
+function snFlushQueue(){
+ var p=snReadJSON("riim_pending",[]);
+ p.forEach(function(item){fetch(SCRIPT_URL,item.opts).then(function(){snUnqueue(item.id)}).catch(function(){})});
+}
+
+/* ==================== STATE ==================== */
+var studentName="",studentPin="",studentBatch="";
+var currentQ=0,testOver=false,started=false;
+var answers=new Array(NQ).fill(null);
+var questionTimes=new Array(NQ).fill(0);
+var marked=new Array(NQ).fill(false);
+var deadline=0,tickCount=0; /* v2.5 wall-clock timer */
+var SEC=(CFG.sectional&&CFG.sectional.length)?CFG.sectional:null;
+var secIdx=0,elapsedPrior=0;
+var secondsLeft=SEC?SEC[0].minutes*60:CFG.minutes*60;
+var tickInt=null,qShownTs=0;
+var qShownQ=-1,visits=[]; /* v2.7: on-device visit log for the results analysis (never sent) */
+var RAPID=!!CFG.rapid; /* v2.4 rapid mode */
+var qSecondsLeft=0,qStartTs=0,qInterval=null,pendingResumeStartTs=null;
+function isMCQ(q){return !!(q.options&&q.options.length)}
+
+/* ==================== SESSION AUTOSAVE / RESUME ==================== */
+function snSaveSession(){
+ if(testOver||!started)return;
+ snWriteJSON(SN_KEY,{file:FILE_NAME,testName:TEST_NAME,name:studentName,pin:studentPin,batch:studentBatch,currentQ:currentQ,answers:answers,questionTimes:questionTimes,marked:marked,secondsLeft:secondsLeft,deadline:deadline,secIdx:secIdx,elapsedPrior:elapsedPrior,qStartTs:qStartTs,visits:visits,ts:Date.now()});
+}
+function snClearSession(){try{localStorage.removeItem(SN_KEY)}catch(e){}}
+function snTryResume(){
+ var s=snReadJSON(SN_KEY,null);
+ if(!s||s.testName!==TEST_NAME)return false;
+ var answered=(s.answers||[]).filter(function(a){return a!==null&&a!==""}).length;
+ var ok=confirm("You have an unfinished attempt of "+TEST_NAME+" ("+answered+" question(s) answered). Resume where you left off?");
+ if(!ok){snClearSession();return false}
+ studentName=s.name;studentPin=s.pin;studentBatch=s.batch;
+ currentQ=Math.min(s.currentQ||0,NQ-1);
+ if(s.answers&&s.answers.length===NQ)answers=s.answers;
+ if(s.questionTimes&&s.questionTimes.length===NQ)questionTimes=s.questionTimes;
+ if(typeof s.secondsLeft==="number")secondsLeft=Math.max(10,s.secondsLeft);
+ if(SEC){
+  secIdx=Math.min(typeof s.secIdx==="number"?s.secIdx:0,SEC.length-1);
+  elapsedPrior=typeof s.elapsedPrior==="number"?s.elapsedPrior:0;
+  currentQ=Math.max(SEC[secIdx].start,Math.min(SEC[secIdx].end,currentQ));
+ }
+ if(s.marked&&s.marked.length===NQ)marked=s.marked;
+ if(Array.isArray(s.visits))visits=s.visits.filter(function(v){return v&&typeof v.q==="number"&&v.q>=0&&v.q<NQ});
+ if(!RAPID&&typeof s.deadline==="number"&&s.deadline>0)deadline=s.deadline; /* v2.5: the clock kept running while away */
+ if(RAPID&&typeof s.qStartTs==="number"&&s.qStartTs>0)pendingResumeStartTs=s.qStartTs;
+ enterTest();
+ return true;
+}
+
+/* ==================== LOGIN ==================== */
+function showLoginError(msg){var el=document.getElementById("loginErr");el.textContent=msg;el.style.display="block"}
+async function startTest(){
+ var name=document.getElementById("stuName").value.trim();
+ var pinEl=document.getElementById("stuPin");
+ var pin=pinEl.value.trim().toUpperCase();pinEl.value=pin;
+ var batch=document.getElementById("stuBatch").value;
+ if(!name){showLoginError("Please enter your full name.");return}
+ if(!PIN_REGEX.test(pin)){showLoginError("Invalid PIN. Format: STU########## or IMS##########.");return}
+ if(!batch){showLoginError("Please select your batch.");return}
+ var allowed=await isWhitelisted(pin,batch);
+ if(!allowed){showLoginError(BLOCK_MSG);return}
+ studentName=name;studentPin=pin;studentBatch=batch;
+ document.getElementById("loginErr").style.display="none";
+ enterTest();
+}
+function enterTest(){
+ started=true;
+ document.getElementById("loginScreen").style.display="none";
+ document.getElementById("testScreen").style.display="block";
+ if(!RAPID){
+  if(!deadline)deadline=Date.now()+secondsLeft*1000;
+  catchUp();
+ }
+ buildPalette();
+ updateSecButtons();
+ if(SEC)showSecBanner();
+ if(!RAPID){
+  if(secondsLeft<=0){renderQuestion();submitTest();return} /* whole test ran out while away */
+  tickInt=setInterval(function(){
+   syncLeft();
+   var t=document.getElementById("timer");if(t)t.textContent=fmtClock(secondsLeft);
+   if(++tickCount%10===0)snSaveSession();
+   if(secondsLeft<=0){if(SEC&&secIdx<SEC.length-1)advanceSection();else submitTest()}
+  },1000);
+ }else{
+  var pb=document.getElementById("prevBtn");if(pb)pb.style.display="none";
+  var rw=document.getElementById("rfTimerWrap");if(rw)rw.style.display="block";
+  var mb=document.getElementById("mrkBtn");if(mb)mb.style.display="none";
+ }
+ renderQuestion();
+ snSaveSession();
+}
+function syncLeft(){secondsLeft=Math.round((deadline-Date.now())/1000)}
+function catchUp(){ /* v2.5: sections that expired while the student was away are closed, in order */
+ syncLeft();
+ while(SEC&&secondsLeft<=0&&secIdx<SEC.length-1){
+  elapsedPrior+=SEC[secIdx].minutes*60;
+  secIdx++;
+  deadline+=SEC[secIdx].minutes*60*1000;
+  currentQ=SEC[secIdx].start;
+  syncLeft();
+ }
+}
+function clearResp(){if(testOver)return;answers[currentQ]=null;snSaveSession();if(RAPID){var bs=document.querySelectorAll("#optBox .opt");for(var bi=0;bi<bs.length;bi++)bs[bi].classList.remove("sel");var ti=document.querySelector("#optBox input.tita");if(ti)ti.value="";paintPalette()}else renderQuestion()}
+function toggleMark(){if(testOver||RAPID)return;marked[currentQ]=!marked[currentQ];snSaveSession();paintPalette();paintMarkBtn()}
+function paintMarkBtn(){var b=document.getElementById("mrkBtn");if(b)b.textContent=marked[currentQ]?"Unmark review":"Mark for review"}
+function updateSecButtons(){
+ var eb=document.getElementById("endSecBtn"),sb=document.getElementById("submitBtn");
+ if(!SEC){if(eb)eb.style.display="none";return}
+ var last=secIdx===SEC.length-1;
+ if(eb)eb.style.display=last?"none":"inline-block";
+ if(sb)sb.style.display=last?"inline-block":"none";
+}
+function showSecBanner(){
+ var b=document.getElementById("secBanner");if(!b||!SEC)return;
+ document.getElementById("sbTitle").textContent="SECTION "+(secIdx+1)+" of "+SEC.length+" \u00b7 "+SEC[secIdx].sec;
+ document.getElementById("sbSub").textContent=SEC[secIdx].minutes+" minutes \u00b7 "+(SEC[secIdx].end-SEC[secIdx].start+1)+" questions \u00b7 no return once this section ends";
+ b.style.display="flex";
+ setTimeout(function(){b.style.display="none"},2600);
+}
+function advanceSection(){
+ if(!SEC||secIdx>=SEC.length-1)return;
+ markTime();
+ elapsedPrior+=SEC[secIdx].minutes*60-Math.max(0,secondsLeft);
+ secIdx++;
+ secondsLeft=SEC[secIdx].minutes*60;
+ deadline=Date.now()+secondsLeft*1000;
+ currentQ=SEC[secIdx].start;
+ buildPalette();updateSecButtons();showSecBanner();
+ renderQuestion();snSaveSession();
+}
+function endSectionEarly(){advanceSection()}
+
+/* ==================== PALETTE (free navigation) ==================== */
+function buildPalette(){
+ var pal=document.getElementById("palette");pal.innerHTML="";
+ var lo=SEC?SEC[secIdx].start:0,hi=SEC?SEC[secIdx].end:NQ-1;
+ for(var i=lo;i<=hi;i++){
+  (function(i){
+   var b=document.createElement("button");b.id="pcell"+i;b.textContent=i+1;
+   b.onclick=function(){jumpTo(i)};
+   pal.appendChild(b);
+  })(i);
+ }
+}
+function paintPalette(){
+ for(var i=0;i<NQ;i++){
+  var c=document.getElementById("pcell"+i);if(!c)continue;
+  c.className="";
+  if(answers[i]!==null&&answers[i]!=="")c.classList.add("done");
+  if(marked[i])c.classList.add("rev");
+  if(i===currentQ)c.classList.add("cur");
+ }
+}
+
+/* ==================== RENDER + PER-QUESTION TIME ==================== */
+function markTime(){
+ if(RAPID)return; /* v2.4: rapid records td-qSecondsLeft in rapidAdvance */
+ if(qShownTs){
+  var d=Math.round((Date.now()-qShownTs)/1000);
+  questionTimes[currentQ]+=d;
+  if(d>=1&&qShownQ===currentQ){ /* v2.7: one visit = from showing a question to leaving it */
+   var e=elapsedNow();
+   visits.push({q:currentQ,s:Math.max(0,e-d),d:d,a:answers[currentQ]});
+   if(visits.length>800)visits.shift();
+  }
+ }
+ qShownTs=Date.now();
+}
+function elapsedNow(){ /* seconds into the test on the test clock (sections ended early are not counted) */
+ if(RAPID)return 0;
+ var left=deadline?(deadline-Date.now())/1000:secondsLeft;
+ var base=SEC?elapsedPrior+SEC[secIdx].minutes*60:CFG.minutes*60;
+ return Math.max(0,Math.round(base-left));
+}
+function fmtClock(s){s=Math.max(0,s);return String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0")}
+function ulText(el,t){el.textContent="";String(t==null?"":t).split(/(\[\[[\s\S]*?\]\])/).forEach(function(p){if(!p)return;var m=p.match(/^\[\[([\s\S]*)\]\]$/);if(m){var u=document.createElement("u");u.textContent=m[1];el.appendChild(u)}else el.appendChild(document.createTextNode(p))})}
+function renderQuestion(){
+ var q=QUESTIONS[currentQ];
+ /* v2.7 fix: picking an option re-renders the same question; that must not restart its stopwatch */
+ if(!qShownTs||qShownQ!==currentQ){qShownTs=Date.now();qShownQ=currentQ}
+ document.getElementById("tbName").textContent=TEST_NAME;
+ var qc=document.getElementById("qCounter");
+ if(SEC){var sp=SEC[secIdx];qc.textContent=sp.sec+" \u00b7 Q "+(currentQ-sp.start+1)+" / "+(sp.end-sp.start+1)}
+ else qc.textContent="Q "+(currentQ+1)+" / "+NQ;
+ if(!RAPID)document.getElementById("timer").textContent=fmtClock(secondsLeft);
+ document.getElementById("secBadge").textContent=q.section;
+ var pB=document.getElementById("passageBox");
+ if(q.passage){pB.style.display="block";pB.textContent=q.passage}else{pB.style.display="none"}
+ ulText(document.getElementById("qText"),q.stem);
+ renderExhibit(q,document.getElementById("exBox"));
+ var box=document.getElementById("optBox");box.innerHTML="";
+ var letters=["A","B","C","D"];
+ if(isMCQ(q)){
+  q.options.forEach(function(opt,idx){
+   var d=document.createElement("button");
+   d.className="opt"+(answers[currentQ]===idx?" sel":"");
+   d.textContent=letters[idx]+". "+opt;
+   d.onclick=function(){answers[currentQ]=idx;snSaveSession();if(RAPID){var bs=box.querySelectorAll(".opt");for(var bi=0;bi<bs.length;bi++)bs[bi].classList.toggle("sel",bi===idx);paintPalette()}else{renderQuestion()}};
+   box.appendChild(d);
+  });
+ }else{
+  var inp=document.createElement("input");
+  inp.className="tita";inp.placeholder="Type your answer";
+  inp.value=answers[currentQ]||"";
+  inp.oninput=function(){answers[currentQ]=this.value;snSaveSession();paintPalette()};
+  box.appendChild(inp);
+ }
+ paintPalette();paintMarkBtn();
+ if(RAPID)rapidStartQuestion();
+}
+function nav(d){if(RAPID){if(d>0)rapidAdvance();return}markTime();var lo=SEC?SEC[secIdx].start:0,hi=SEC?SEC[secIdx].end:NQ-1;currentQ=Math.max(lo,Math.min(hi,currentQ+d));snSaveSession();renderQuestion()}
+function jumpTo(i){if(RAPID)return;if(SEC&&(i<SEC[secIdx].start||i>SEC[secIdx].end))return;markTime();currentQ=i;snSaveSession();renderQuestion()}
+
+/* ==================== RAPID MODE ENGINE (v2.4) ==================== */
+function rapidStartQuestion(){
+ if(!RAPID||testOver)return;
+ var q=QUESTIONS[currentQ],dur=q.td||30;
+ if(pendingResumeStartTs){
+  qStartTs=pendingResumeStartTs;pendingResumeStartTs=null;
+  var elapsed=Math.floor((Date.now()-qStartTs)/1000);
+  qSecondsLeft=Math.max(0,dur-elapsed);
+ }else{qStartTs=Date.now();qSecondsLeft=dur}
+ var bar=document.getElementById("rfTimerBar");
+ bar.style.transition="none";bar.style.width=((qSecondsLeft/dur)*100)+"%";
+ bar.classList.remove("warn","danger");
+ var fr=qSecondsLeft/dur;
+ if(fr<=0.25)bar.classList.add("danger");else if(fr<=0.5)bar.classList.add("warn");
+ void bar.offsetWidth; /* force reflow so the linear transition restarts */
+ bar.style.transition="width "+qSecondsLeft+"s linear";bar.style.width="0%";
+ document.getElementById("timer").textContent=qSecondsLeft+"s";
+ if(qInterval)clearInterval(qInterval);
+ snSaveSession(); /* persist fresh qStartTs so refresh-before-interaction still tracks */
+ if(qSecondsLeft<=0){setTimeout(rapidAdvance,50);return}
+ qInterval=setInterval(rapidTick,1000);
+}
+function rapidTick(){
+ qSecondsLeft--;if(qSecondsLeft<0)qSecondsLeft=0;
+ document.getElementById("timer").textContent=qSecondsLeft+"s";
+ var dur=QUESTIONS[currentQ].td||30;
+ var bar=document.getElementById("rfTimerBar"),fr=qSecondsLeft/dur;
+ if(fr<=0.25){bar.classList.remove("warn");bar.classList.add("danger")}
+ else if(fr<=0.5){bar.classList.add("warn")}
+ if(qSecondsLeft<=0)rapidAdvance();
+}
+function rapidAdvance(){
+ if(testOver)return;
+ clearInterval(qInterval);
+ questionTimes[currentQ]=(QUESTIONS[currentQ].td||30)-qSecondsLeft;
+ if(currentQ>=NQ-1){submitTest();return}
+ currentQ++;
+ snSaveSession();
+ renderQuestion();
+}
+
+/* ==================== FIG / TABLE EXHIBITS ==================== */
+function renderExhibit(q,host){
+ if(!host)return;host.innerHTML="";
+ if(q.fig){
+  var f=String(q.fig).trim();
+  if(f.slice(0,4).toLowerCase()==="<svg"){var w0=document.createElement("div");w0.className="qFig";w0.innerHTML=f;host.appendChild(w0)}
+  else if(/^(data:image|https?:)/.test(f)){var w=document.createElement("div");w.className="qFig";var im=document.createElement("img");im.src=f;im.alt="figure";w.appendChild(im);host.appendChild(w)}
+ }
+ if(q.table!=null&&q.table!==""){
+  var t=q.table,rows=null,heads=null;
+  if(Array.isArray(t))rows=t;
+  else if(t&&typeof t==="object"&&Array.isArray(t.rows)){rows=t.rows;heads=Array.isArray(t.headers)?t.headers:null}
+  if(rows&&rows.length&&Array.isArray(rows[0])){
+   var tb=document.createElement("table");tb.className="qTable";
+   if(heads){var tr0=document.createElement("tr");heads.forEach(function(hh){var th=document.createElement("th");th.textContent=String(hh);tr0.appendChild(th)});tb.appendChild(tr0)}
+   rows.forEach(function(r){var tr=document.createElement("tr");r.forEach(function(c){var td=document.createElement("td");td.textContent=String(c);tr.appendChild(td)});tb.appendChild(tr)});
+   host.appendChild(tb);
+  }else if(typeof t==="string"&&t.trim().charAt(0)==="<"){
+   var wt=document.createElement("div");wt.className="qTableWrap";wt.innerHTML=t;host.appendChild(wt);
+  }else{
+   var pre=document.createElement("pre");pre.className="qTable";pre.textContent=(typeof t==="string")?t:JSON.stringify(t,null,1);host.appendChild(pre);
+  }
+ }
+}
+/* ==================== SCORING HELPERS ==================== */
+function titaNorm(v){
+ var s=String(v==null?"":v).trim();
+ var t=s.replace(/[\s,]/g,"");
+ if(t!==""&&isFinite(t))return String(Number(t));
+ return s.toLowerCase();
+}
+function titaWFor(q){if(CFG.titaWSec&&CFG.titaWSec[q.section]!=null)return CFG.titaWSec[q.section];return CFG.titaW}
+function isCorrect(q,a){
+ if(a===null||a==="")return false;
+ if(isMCQ(q))return a===q.answerIndex;
+ if(q.format==="Parajumble")return String(a).trim()===String(q.answer); /* stem rule: 3412 valid; 3412. and 3 4 1 2 invalid */
+ return titaNorm(a)===titaNorm(q.answer);
+}
+
+/* ==================== MISTAKE BANK (spaced repetition) ==================== */
+function bankMistakes(){
+ try{
+  var bank=snReadJSON("riim_mistakes",[]);
+  var now=Date.now(),DAY=86400000;
+  QUESTIONS.forEach(function(q,i){
+   if(!isMCQ(q))return;
+   var chosen=answers[i];
+   if(chosen===null||chosen===q.answerIndex)return;
+   var k=CFG.bankPrefix+"-Q"+(i+1);
+   var existing=null;
+   for(var j=0;j<bank.length;j++){if(bank[j].k===k){existing=bank[j];break}}
+   if(existing){existing.box=1;existing.due=now+DAY;existing.chosen=chosen}
+   else{bank.push({k:k,stem:(q.passage?q.passage+"\n\n"+q.stem:q.stem),opts:q.options,ans:q.answerIndex,chosen:chosen,exp:q.explanation,sub:q.format,src:TEST_NAME,box:1,due:now+DAY})}
+  });
+  if(bank.length>300)bank=bank.slice(bank.length-300);
+  snWriteJSON("riim_mistakes",bank);
+ }catch(e){}
+}
+
+/* ==================== SUBMIT — 16-field payload ==================== */
+function fmtTime(totalSecs){var m=Math.floor(totalSecs/60);var s=totalSecs%60;return m+":"+(s<10?"0":"")+s}
+function submitTest(){
+ if(testOver)return;
+ testOver=true;
+ clearInterval(tickInt);
+ if(qInterval)clearInterval(qInterval);
+ if(RAPID&&qStartTs&&!questionTimes[currentQ]){questionTimes[currentQ]=Math.min(QUESTIONS[currentQ].td||30,Math.round((Date.now()-qStartTs)/1000))}
+ markTime();
+
+ var correctCount=0,wrongCount=0,skippedCount=0;
+ var sectionErrors={},topicErrorMap={},wrongQuestions=[];
+ var score=0;
+ QUESTIONS.forEach(function(q,i){
+  var a=answers[i];
+  if(a===null||a===""){skippedCount++;return}
+  if(isCorrect(q,a)){correctCount++;score+=CFG.c}
+  else{
+   wrongCount++;
+   score+=(isMCQ(q)?CFG.w:titaWFor(q));
+   wrongQuestions.push(i+1);
+   sectionErrors[q.section]=(sectionErrors[q.section]||0)+1;
+   topicErrorMap[q.format]=(topicErrorMap[q.format]||0)+1;
+  }
+ });
+ var totalSecs=RAPID?questionTimes.reduce(function(a,b){return a+(b||0)},0):(SEC?(elapsedPrior+SEC[secIdx].minutes*60-Math.max(0,secondsLeft)):(CFG.minutes*60-Math.max(0,secondsLeft)));
+ var timeTakenStr=fmtTime(totalSecs);
+
+ /* 16-field payload — explicit key:value, topicErrors is field 16 */
+ var payload={
+  testName:TEST_NAME,
+  name:studentName,
+  pin:studentPin,
+  batch:studentBatch,
+  score:score,
+  correct:correctCount,
+  wrong:wrongCount,
+  skipped:skippedCount,
+  maxMarks:MAX_MARKS,
+  timeTaken:timeTakenStr,
+  timestamp:new Date().toLocaleString("en-IN",{timeZone:"Asia/Kolkata"}),
+  sectionErrors:JSON.stringify(sectionErrors),
+  wrongQuestions:JSON.stringify(wrongQuestions),
+  studentAnswers:JSON.stringify(answers),
+  questionTimes:JSON.stringify(questionTimes),
+  topicErrors:JSON.stringify(topicErrorMap)
+ };
+
+ snSendWithQueue({method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain"},body:JSON.stringify(payload)}).catch(function(){});
+
+ bankMistakes();
+
+ try{
+  var res=snReadJSON("riim_results",[]);
+  res.push({testName:TEST_NAME,score:score,correct:correctCount,wrong:wrongCount,skipped:skippedCount,maxMarks:MAX_MARKS,timeTaken:timeTakenStr,ts:Date.now()});
+  if(res.length>200)res=res.slice(res.length-200);
+  snWriteJSON("riim_results",res);
+ }catch(e){}
+
+ snClearSession();
+ showResults(score,correctCount,wrongCount,skippedCount,timeTakenStr,sectionErrors,totalSecs);
+}
+
+/* ==================== RESULTS ==================== */
+function showResults(score,correct,wrong,skipped,timeStr,sectionErrors,totalSecs){
+ document.getElementById("testScreen").style.display="none";
+ document.getElementById("resultsScreen").style.display="block";
+ document.getElementById("resTitle").textContent=TEST_NAME+" \u2014 Results";
+ document.getElementById("resSub").textContent=studentName+" \u00b7 "+studentBatch+" \u00b7 "+new Date().toLocaleString("en-IN",{timeZone:"Asia/Kolkata"});
+ document.getElementById("stScore").textContent=score;
+ document.getElementById("stMaxL").textContent="SCORE / "+MAX_MARKS;
+ document.getElementById("stCorrect").textContent=correct;
+ document.getElementById("stWrong").textContent=wrong;
+ document.getElementById("stSkipped").textContent=skipped;
+ document.getElementById("stTime").textContent=timeStr;
+ document.getElementById("stAcc").textContent=(correct+wrong)?Math.round(100*correct/(correct+wrong))+"%":"\u2014";
+ var secParts=[];
+ for(var sk in sectionErrors){if(sectionErrors.hasOwnProperty(sk))secParts.push(sk+": "+sectionErrors[sk])}
+ document.getElementById("secErrBox").innerHTML="<b>Section errors</b> \u2014 "+(secParts.length?secParts.join(" \u00b7 "):"None");
+ /* v2.7: analysis + retry. Wrapped so a fault here can never blank the results screen. */
+ try{LAST_A=computeAnalysis(score,totalSecs);renderAnalysis(LAST_A)}catch(e){LAST_A=null;var ab=document.getElementById("anaBox");if(ab)ab.innerHTML=""}
+ try{renderRetry()}catch(e){var rb=document.getElementById("retryBox");if(rb)rb.innerHTML=""}
+
+ var letters=["A","B","C","D"];
+ var box=document.getElementById("reviewBox");box.innerHTML="";
+ QUESTIONS.forEach(function(q,i){
+  var a=answers[i];
+  var skippedQ=(a===null||a==="");
+  var ok=isCorrect(q,a);
+  var wrap=document.createElement("div");wrap.className="rq";wrap.id="rq"+i;
+  var head=document.createElement("div");head.className="rqHead";
+  var status=skippedQ?"<span class='status sk'>SKIPPED</span>":ok?"<span class='status ok'>CORRECT</span>":"<span class='status no'>WRONG</span>";
+  head.innerHTML="Q"+(i+1)+" \u00b7 "+escH(q.section)+" \u00b7 "+escH(q.format)+(diffOf(q)?" \u00b7 "+escH(q.difficulty):"")+" \u00b7 time "+fmtMS(questionTimes[i])+status;
+  wrap.appendChild(head);
+  if(q.passage&&(i===0||QUESTIONS[i-1].passage!==q.passage)){
+   var pv=document.createElement("div");pv.className="rqStem";
+   pv.style.fontStyle="italic";pv.style.opacity=".85";
+   pv.textContent="Passage: "+q.passage;
+   wrap.appendChild(pv);
+  }
+  var stem=document.createElement("div");stem.className="rqStem";ulText(stem,q.stem);wrap.appendChild(stem);
+  var exh=document.createElement("div");renderExhibit(q,exh);if(exh.childNodes.length)wrap.appendChild(exh);
+  if(isMCQ(q)){
+   q.options.forEach(function(opt,idx){
+    var r=document.createElement("div");r.className="ropt";
+    if(idx===q.answerIndex)r.classList.add("correct");
+    else if(idx===a)r.classList.add("wrong");
+    var l=document.createElement("div");l.textContent=letters[idx];
+    var t=document.createElement("div");t.textContent=opt;
+    r.appendChild(l);r.appendChild(t);
+    if(idx===a&&idx!==q.answerIndex){var tg=trapOf(q,a);if(tg){var tn=document.createElement("div");tn.className="trapNote";tn.textContent="trap: "+trapInfo(tg).name;r.appendChild(tn)}}
+    wrap.appendChild(r);
+   });
+  }else{
+   var yr=document.createElement("div");yr.className="ropt"+(skippedQ?"":(ok?" correct":" wrong"));
+   yr.textContent="Your answer: "+(skippedQ?"\u2014":a);
+   var ttg=trapOf(q,a);if(ttg){var ttn=document.createElement("div");ttn.className="trapNote";ttn.textContent="trap: "+trapInfo(ttg).name;yr.appendChild(ttn)}
+   wrap.appendChild(yr);
+   var kr=document.createElement("div");kr.className="ropt correct";
+   kr.textContent="Key: "+q.answer;
+   wrap.appendChild(kr);
+  }
+  var exp=document.createElement("div");exp.className="exp";
+  exp.innerHTML="<b>Explanation:</b> ";
+  exp.appendChild(document.createTextNode(q.explanation||""));
+  wrap.appendChild(exp);
+  box.appendChild(wrap);
+ });
+ window.scrollTo(0,0);
+}
+
+/* ==================== POST-TEST ANALYSIS (v2.8) ====================
+   Computed on this device from answers, questionTimes and the visit log.
+   Nothing here is sent anywhere: the 16-field payload is unchanged.
+   TRAPS: for each optionTags / titaTraps tag, the student-facing name,
+   what the trap is, and the counter-move. Edit freely; an unknown tag
+   falls back to a readable version of the tag itself. */
+var TRAPS={
+ "rc-detail-as-main":["Detail as main idea","A true detail offered as the main point.","Ask whether the writer would use it as the title. A detail can be true and still be too small to be the point."],
+ "rc-extreme":["Overstated","It says more, or says it more strongly, than the passage does.","Circle strong words (always, only, entirely, never) and pick the option exactly as strong as the text."],
+ "rc-false-link":["False link","It joins two things from the passage with a reason the writer never gives.","Find the line that links the two ideas. If the passage never connects them, neither should you."],
+ "rc-half-right":["Half right","One half matches the passage; the other half doesn't.","Read every option to its last word. One wrong half sinks the whole option."],
+ "rc-literal":["Too literal","A figurative line read at face value.","For an image or metaphor, ask what it does in the argument, not what it describes."],
+ "rc-out-of-scope":["Out of scope","It brings in something the passage never discusses.","If you cannot point to the line that supports it, rule it out."],
+ "rc-reversal":["Reversal","It flips the passage: the order, the direction or the cause.","Trace before/after and cause/effect back in the text before you commit."],
+ "rc-scope-shift":["Scope shift","Right topic, but wider or narrower than the text's claim.","Match the scope words: most vs all, some vs every, one city vs every city."],
+ "va-scope-shift":["Scope shift","Right topic, but wider or narrower than the paragraph's claim.","Match the scope words: most vs all, some vs every, one case vs every case."],
+ "rc-tone":["Tone miss","Right direction, wrong strength or flavour of attitude.","Fix the direction first (for or against), then the strength (mild or harsh)."],
+ "rc-true-not-answer":["True, but not the answer","Supported by the passage, but it doesn't answer this question.","Reread the question before confirming. True is not enough; it has to answer what was asked."],
+ "rc-word-match":["Word match","It borrows the passage's words, not its meaning.","Familiar words are bait. Put the line in your own words, then match the meaning."],
+ "rc-wrong-voice":["Wrong voice","A view the passage reports or argues against, not the writer's own.","Ask whose view it is: the writer's, or someone the writer quotes or rejects?"],
+ "va-category-error":["Wrong kind of word","The word doesn't fit the kind of idea the blank needs.","Decide what the blank must do (describe, judge, act) before you read the options."],
+ "va-collocation-break":["Doesn't go together","The word doesn't sit naturally with its neighbours.","Say the phrase in full. English pairs certain words by habit; trust the natural pairing."],
+ "va-confusable-sibling":["Look-alike word","Looks or sounds like the right word but means something else.","Slow down on look-alikes and pin each word's exact meaning before choosing."],
+ "va-corrupted-expression":["Twisted idiom","A familiar expression with one word changed.","Idioms are fixed. If one word differs from the original, the whole option is wrong."],
+ "va-half-fix":["Half fix","It corrects one error but leaves another standing.","List every error in the underlined part first. The answer must fix all of them."],
+ "va-new-error":["New error","It fixes the original error but brings in a new one.","Read your chosen option as a fresh sentence and check it end to end."],
+ "va-off-topic-insertion":["Off-topic sentence","Same subject, but it breaks the paragraph's line of thought.","The missing line must carry the argument forward, not just stay on the subject."],
+ "va-polarity-flip":["Wrong direction","The word pulls the opposite way from the sentence's clues.","Mark the clue words around the blank and decide positive or negative before you look at the options."],
+ "va-real-expression-wrong-meaning":["Real idiom, wrong meaning","A genuine expression that means something else here.","Check what the idiom means, not just whether it exists."],
+ "va-stance-contradiction":["Contradicts the paragraph","It argues against the position the paragraph takes.","Name the paragraph's stance first; reject anything that pulls the other way."],
+ "va-surface-mismatch":["Shared words, different subject","The option repeats the words of the group but is about something else.","Name the thread as a sentence, not a keyword. Then ask what each statement is ABOUT, not which words it uses."],
+ "va-near-thread":["Nearly on the thread","It sits close to the thread and shares a detail with the odd one out.","Decide the thread before you look at the options, then test each statement against that one sentence."],
+ "va-on-thread":["It belongs to the group","You picked a statement that does follow the common thread.","Mark every statement on-thread or off-thread first, then pick the single one left over."],
+ "va-neighbour-meaning":["Real idiom, neighbouring meaning","A genuine idiom whose meaning sits next to the one you need, not on it.","Split the underlined phrase into its parts and check that the idiom carries every part, not most of them."],
+ "va-shared-word":["Shares a word, not a meaning","It borrows a word from another option or from the sentence, and means something else.","Define the idiom in your own words before you place it. A shared word is not a shared sense."],
+ "va-near-meaning":["Near sense of the same word","The word is used in a sense close to the one in the statement, but not the same one.","Replace the word with your own paraphrase of the statement's sense. The right option takes that paraphrase cleanly."],
+ "va-confusable-sense":["Easily confused sense","A standard but different sense of the same word.","List the word's senses first, then match. Do not stop at the first option that reads well."],
+ "va-everyday-sense":["Commonest sense","The most familiar sense of the word, which is not the one in the statement.","The statement almost never uses the commonest sense. Read the statement's sense before you read the options."],
+ "va-near-miss-sense":["One blank off","Two blanks fit, one is wrong by shade of meaning.","Test every blank in a set. One fitting word does not carry the option."],
+ "va-conjunction-use":["Conjunction, not pronoun","Here the word joins a clause instead of standing for a noun.","Ask whether the word replaces a noun inside its own clause. A conjunction does not."],
+ "va-adverb-use":["Adverb use","Here the word modifies an adjective or adverb, usually meaning 'so'.","Try swapping in 'so'. If it fits, the word is an adverb."],
+ "va-demonstrative-use":["Demonstrative, not relative","Here the word points at something and acts as subject or object on its own.","A relative pronoun needs a noun just before it to describe. A demonstrative stands alone."],
+ "va-original-error":["The original, unchanged","You chose the sentence as it was given, with the error still in it.","Find and name the error before you read the options, then check that your choice removes it."],
+ "va-pj-referent":["Missed reference","A pronoun or phrase like 'their' or 'the difference' points at the wrong sentence.","Circle every backward-pointing word and fix what it must refer to before you order the rest."],
+ "va-pj-opener":["Wrong opener","The sentence you put first depends on something that has not been said yet.","The opener must stand alone. Reject any sentence with an unexplained reference."],
+ "va-pj-chronology":["Out of order in time","An event is placed before the thing it reacts to.","Lay the events on a timeline first, then order the sentences to match."],
+ "vocab-context-blind":["Dictionary meaning, wrong context","A real meaning of the word, but not the one used here.","Put each option back into the sentence. The context decides the meaning, not the dictionary."],
+ "vocab-shade":["Wrong shade","Close in meaning, but the wrong nuance or strength.","Between near-synonyms, pick the one whose strength and tone fit the sentence."],
+ "pj-connector":["Missed connector","The order ignores a linking word that ties two sentences.","Find the connectors (however, thus, also) and fix which sentence each one must follow."],
+ "pj-antecedent":["Missed reference","A 'this', 'they' or 'such' points to something not yet introduced.","Every pointer word needs its noun earlier. Place that sentence before it."],
+ "pj-conclusion-early":["Conclusion too early","The summing-up sentence comes before the argument is complete.","The summary goes last. Check that every point it sums up has already been made."],
+ /* tag set used from IPMAT Indore 03 onward */
+ "gram-half-fix":["Half fix","It corrects one error but leaves another standing.","List every error in the underlined part first. The answer must fix all of them."],
+ "gram-new-error":["New error","It fixes the original error but brings in a new one.","Read your chosen option as a fresh sentence and check it end to end."],
+ "gram-sounds-right":["Sounds right, isn't","It reads smoothly but breaks a rule.","Don't trust your ear on an underlined part. Check the rules: agreement, parallel form, case, idiom."],
+ "gram-tense-marker":["Tense clash","The verb forms don't match the time or condition the sentence sets up.","Find the time marker (if, had, by then, since) and make every verb agree with it."],
+ "gram-idiom":["Twisted idiom","A familiar expression with one word changed.","Idioms are fixed. If one word differs from the original, the whole option is wrong."],
+ "vocab-wrong-idiom":["Real idiom, wrong meaning","A genuine expression that means something else here.","Check what the idiom means, not just whether it exists."],
+ "vocab-opposite":["Wrong direction","The word pulls the opposite way from the sentence's clues.","Mark the clue words around the blank and decide positive or negative before you look at the options."],
+ "vocab-sound-alike":["Sound-alike","It sounds like the right word but means something else.","Slow down on look-alikes and pin each word's exact meaning before choosing."],
+ "vocab-category":["Wrong word form","Right idea, wrong part of speech or form for the blank.","Decide what the blank needs grammatically (noun, adjective, verb) before you weigh meanings."],
+ "sc-collocation":["Doesn't go together","The word doesn't sit naturally with its neighbours.","Say the phrase in full. English pairs certain words by habit; trust the natural pairing."],
+ "para-same-topic":["Same topic, no link","On the paragraph's subject, but it doesn't connect to the lines around the blank.","Read the sentences on both sides of the blank. The answer must link to both, not just share the topic."],
+ "pj-opener":["Wrong opener","The paragraph starts with a sentence that depends on another.","The opening sentence must stand alone: no 'this', 'however' or 'also' that needs something before it."],
+ "pj-pair-broken":["Broken pair","Two sentences that must sit together are split apart.","Lock the obvious pairs first (claim and example, question and answer), then order the blocks."],
+ "pj-time-order":["Time order","The events are out of sequence.","Mark dates and sequence words (first, later, by then) and order the events by them."],
+ "pj-topic-link":["Topic link","Sentences joined because they share words, not because one follows from the other.","Join sentences by logic (cause, contrast, example), not by repeated words."],
+ /* added with IPMAT Indore 04 */
+ "gram-mood":["Wrong mood","The verb ignores the mood the sentence calls for: an unreal condition, a wish or a demand.","An unreal past condition takes 'had + verb'; after insist that, suggest that or demand that, use the base verb (take, not takes)."],
+ "gram-hypercorrection":["Over-correction","A formal-sounding form, often 'whom', used where the plain one is right.","Cover any inserted clause and test with he/him: if 'he' fits, the word is 'who'. Formal-sounding is not the same as correct."],
+ "gram-pronoun":["Pronoun mismatch","The pronoun doesn't agree with the noun it refers to.","Find the noun the pronoun points back to and match it in number and gender."],
+ "gram-parallelism":["Broken parallel","The items in a list don't share the same grammatical form.","Line up every item in the list; each must take the same form (to cut, reduce, ensure)."],
+ "sc-register":["Wrong register","The word is too grand, too casual or too technical for the sentence.","Match the sentence's tone: a plain sentence wants a plain word, a formal one a formal word."]
+};
+var LAST_A=null;
+function trapInfo(tag){
+ var t=TRAPS[tag];
+ if(t)return {name:t[0],what:t[1],fix:t[2]};
+ var n=String(tag).replace(/^[a-z]+-/,"").replace(/-/g," ");
+ return {name:n.charAt(0).toUpperCase()+n.slice(1),what:"",fix:""};
+}
+function diffOf(q){
+ var d=String(q.difficulty||"").trim().toLowerCase();
+ if(!d)return null;
+ if(d.indexOf("hard")!==-1)return "hard";
+ if(d.charAt(0)==="e")return "easy";
+ if(d.charAt(0)==="m")return "medium";
+ return null;
+}
+function penOf(q){return isMCQ(q)?CFG.w:titaWFor(q)}
+function trapOf(q,a){
+ if(a===null||a===""||a===undefined||isCorrect(q,a))return null;
+ if(isMCQ(q)){
+  var t=Array.isArray(q.optionTags)?q.optionTags[a]:null;
+  return (typeof t==="string"&&t.trim())?t.trim():null;
+ }
+ if(q.titaTraps&&typeof q.titaTraps==="object"){
+  var na=String(a).replace(/[\s,]/g,"");
+  for(var k in q.titaTraps){
+   if(Object.prototype.hasOwnProperty.call(q.titaTraps,k)&&String(k).replace(/[\s,]/g,"")===na)return q.titaTraps[k];
+  }
+ }
+ return null;
+}
+function secOfQ(i){if(!SEC)return null;for(var s=0;s<SEC.length;s++){if(i>=SEC[s].start&&i<=SEC[s].end)return s}return null}
+function paceOf(i){
+ if(RAPID)return QUESTIONS[i].td||30;
+ var s=secOfQ(i);
+ if(s!==null)return SEC[s].minutes*60/(SEC[s].end-SEC[s].start+1);
+ return CFG.minutes*60/NQ;
+}
+function availSecs(){
+ if(RAPID)return QUESTIONS.reduce(function(a,q){return a+(q.td||30)},0);
+ if(SEC)return SEC.reduce(function(a,p){return a+p.minutes*60},0);
+ return CFG.minutes*60;
+}
+function fmtMS(s){s=Math.max(0,Math.round(s||0));return Math.floor(s/60)+":"+String(s%60).padStart(2,"0")}
+function sgn(n){return n>0?"+"+n:(n<0?"−"+(-n):"0")}
+function sgnA(n){return n>0?"+"+n:(n<0?"-"+(-n):"0")}
+function blank(x){return x===null||x===""||x===undefined}
+function sameAns(q,x,y){if(blank(x)||blank(y))return blank(x)&&blank(y);return isMCQ(q)?x===y:titaNorm(x)===titaNorm(y)}
+function escH(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}
+function capW(s){return s.charAt(0).toUpperCase()+s.slice(1)}
+function outWord(o){return o==="c"?"right":(o==="w"?"wrong":"blank")}
+function plural(n,one,many){return n+" "+(n===1?one:many)}
+
+function computeAnalysis(score,totalSecs){
+ var A={score:score,max:MAX_MARKS,used:totalSecs||0,avail:availSecs(),c:0,w:0,s:0,neg:0,tC:0,tW:0,tS:0,out:[],
+  hasDiff:false,hasTags:false,emW:0,emS:0,emSq:[],traps:[],trapped:0,trapMarks:0,timedOut:0,bankN:0,
+  sinks:[],secs:[],journey:null,acc:null,verdict:null,
+  diff:{easy:{n:0,o:0,c:0,w:0,s:0,net:0,t:0},medium:{n:0,o:0,c:0,w:0,s:0,net:0,t:0},hard:{n:0,o:0,c:0,w:0,s:0,net:0,t:0}}};
+ var trapMap={};
+ QUESTIONS.forEach(function(q,i){
+  var a=answers[i],sk=blank(a),ok=!sk&&isCorrect(q,a),t=questionTimes[i]||0;
+  var o=sk?"s":(ok?"c":"w");
+  A.out.push(o);
+  if(o==="c"){A.c++;A.tC+=t}
+  else if(o==="w"){A.w++;A.tW+=t;A.neg+=-penOf(q);if(isMCQ(q))A.bankN++}
+  else{A.s++;A.tS+=t}
+  if(RAPID&&sk&&t>=(q.td||30))A.timedOut++;
+  var d=diffOf(q);
+  if(d){
+   A.hasDiff=true;
+   var b=A.diff[d];b.n++;b.t+=t;if(t>0)b.o++;
+   if(o==="c"){b.c++;b.net+=CFG.c}else if(o==="w"){b.w++;b.net+=penOf(q)}else b.s++;
+   if(d!=="hard"){if(o==="w")A.emW++;else if(o==="s"){A.emS++;if(!(RAPID&&t>=(q.td||30)))A.emSq.push(i)}} /* rapid: a question whose clock ran out counts under the clock, not as a skip */
+  }
+  if(Array.isArray(q.optionTags)||(q.titaTraps&&typeof q.titaTraps==="object"))A.hasTags=true;
+  var tg=trapOf(q,a);
+  if(tg){
+   var inf=trapInfo(tg),sw=CFG.c-penOf(q);
+   if(!trapMap[inf.name]){trapMap[inf.name]={name:inf.name,what:inf.what,fix:inf.fix,qs:[],marks:0};A.traps.push(trapMap[inf.name])}
+   trapMap[inf.name].qs.push(i);trapMap[inf.name].marks+=sw;A.trapped++;A.trapMarks+=sw;
+  }
+  if(!RAPID&&t>=Math.max(90,2*paceOf(i)))A.sinks.push({i:i,t:t});
+ });
+ A.traps.sort(function(x,y){return (y.qs.length-x.qs.length)||(y.marks-x.marks)});
+ A.sinks.sort(function(x,y){return y.t-x.t});A.sinks=A.sinks.slice(0,3);
+ A.acc=(A.c+A.w)?Math.round(100*A.c/(A.c+A.w)):null;
+ var order=[],bySec={};
+ QUESTIONS.forEach(function(q,i){
+  var k=q.section||"-";
+  if(!bySec[k]){bySec[k]={sec:k,n:0,c:0,w:0,s:0,score:0,t:0};order.push(k)}
+  var b=bySec[k],o=A.out[i];b.n++;b.t+=questionTimes[i]||0;
+  if(o==="c"){b.c++;b.score+=CFG.c}else if(o==="w"){b.w++;b.score+=penOf(q)}else b.s++;
+ });
+ if(order.length>1)A.secs=order.map(function(k){return bySec[k]});
+ if(!RAPID&&visits.length)A.journey=computeJourney();
+ A.verdict=buildVerdict(A);
+ return A;
+}
+
+function computeJourney(){
+ var J={never:[],neverEM:0,changed:0,toRight:0,toWrong:0,gain:0,loss:0},byQ={};
+ visits.forEach(function(v){(byQ[v.q]=byQ[v.q]||[]).push(v)});
+ QUESTIONS.forEach(function(q,i){
+  var vs=byQ[i],a=answers[i],d=diffOf(q);
+  if(!vs||!vs.length){
+   if(blank(a)&&!(questionTimes[i]>0)){J.never.push(i);if(d==="easy"||d==="medium")J.neverEM++}
+   return;
+  }
+  var fn=null;
+  for(var k=0;k<vs.length;k++){if(!blank(vs[k].a)){fn=vs[k].a;break}}
+  if(fn!==null&&!blank(a)&&!sameAns(q,fn,a)){
+   J.changed++;
+   var was=isCorrect(q,fn),now=isCorrect(q,a),sw=CFG.c-penOf(q);
+   if(!was&&now){J.toRight++;J.gain+=sw}
+   else if(was&&!now){J.toWrong++;J.loss+=sw}
+  }
+ });
+ return J;
+}
+
+/* The verdict: the biggest single leak, ranked by marks, in plain words. */
+function buildVerdict(A){
+ var C=[],J=A.journey,hb=A.diff.hard,never=J?J.never:[],top=A.traps[0],spare=Math.max(0,A.avail-A.used);
+ if(A.trapped>=2&&top)C.push({k:"trap",m:A.trapMarks});
+ var bl=A.emSq.filter(function(i){return never.indexOf(i)===-1}).length;
+ if(bl)C.push({k:"blank",m:bl*CFG.c,n:bl});
+ if(never.length>=3)C.push({k:"never",m:Math.max(1,J.neverEM)*CFG.c,n:never.length});
+ if(A.hasDiff&&hb.c+hb.w>=2&&hb.net<0)C.push({k:"hard",m:-hb.net});
+ if(J&&J.loss>J.gain)C.push({k:"second",m:J.loss-J.gain});
+ if(RAPID&&A.timedOut>=3)C.push({k:"clock",m:A.timedOut*CFG.c/2});
+ C.sort(function(x,y){return y.m-x.m});
+ function line(c){
+  var n=c.n,m=c.m;
+  if(c.k==="trap")return {h:(A.trapped===A.w?"All "+A.w+" of your wrong answers":A.trapped+" of your "+plural(A.w,"wrong answer","wrong answers"))+" fell for a set trap.",s:"Together they cost "+plural(A.trapMarks,"mark","marks")+". The one to fix first: “"+top.name+"”, "+plural(top.qs.length,"time","times")+"."};
+  if(c.k==="blank")return {h:"You left "+plural(n,"Easy or Medium question","Easy or Medium questions")+" blank.",s:"That is up to "+m+" marks that needed no new concept."};
+  if(c.k==="never")return {h:"You never opened "+plural(n,"question","questions")+(J.neverEM?", "+J.neverEM+" of them Easy or Medium":"")+".",s:spare>=60?"You still had "+fmtMS(spare)+" on the clock when you finished.":"The clock ran out before you reached them."};
+  if(c.k==="hard")return {h:"Hard questions cost you "+plural(m,"mark","marks")+" net.",s:hb.c+" right, "+hb.w+" wrong: leaving them blank would have scored higher."};
+  if(c.k==="second")return {h:"Changing answers cost you "+plural(m,"mark","marks")+".",s:plural(J.toWrong,"right answer","right answers")+" changed to wrong; "+J.toRight+" wrong changed to right."};
+  return {h:"The clock ran out on "+plural(A.timedOut,"question","questions")+".",s:"Each of those scored zero without an attempt."};
+ }
+ var V={h:"",s:"",also:"",acts:[]};
+ if(C.length&&C[0].m>=CFG.c){
+  var L=line(C[0]);V.h=L.h;V.s=L.s;
+  if(C[1]&&C[1].m>=CFG.c)V.also=line(C[1]).h;
+ }else if(A.acc!==null&&A.acc>=80&&!A.emS){
+  V.h="A clean attempt: "+A.acc+"% accuracy and nothing easy left blank.";
+  V.s="Next step: take on more of the Hard questions.";
+ }else{
+  V.h="You scored "+A.score+" of "+A.max+(A.acc!==null?" at "+A.acc+"% accuracy":"")+".";
+  V.s="No single leak stands out. Go through the review below, question by question.";
+ }
+ var seen={};
+ function act(t,href){if(seen[t])return;seen[t]=1;V.acts.push({t:t,href:href||null})}
+ C.forEach(function(c){
+  if(c.m<CFG.c)return;
+  if(c.k==="trap"&&top.fix)act("Beat “"+top.name+"”: "+top.fix);
+  else if(c.k==="never"&&spare>=60)act("Use the whole clock: before you end a section or submit, open every question you have not seen.");
+  else if(c.k==="blank"&&RAPID)act("Decide in time: if you can rule out one option, answer and move on.");
+  else if(c.k==="blank"||c.k==="never")act("First pass: answer every Easy and Medium question before you give time to a Hard one.");
+  else if(c.k==="hard")act("Attempt a Hard question only after you have ruled out two options.");
+  else if(c.k==="second")act("Keep your first answer unless you can name what is wrong with it.");
+  else if(c.k==="clock")act("Decide in time: if you can rule out one option, answer and move on.");
+ });
+ V.acts=V.acts.slice(0,2);
+ if(A.bankN)act((A.bankN===A.w?"Your "+plural(A.bankN,"wrong answer is","wrong answers are"):A.bankN+" of your wrong answers are")+" now in your Mistake Bank. They come back for revision tomorrow.","mistake_bank.html");
+ return V;
+}
+
+/* ---------- on-screen panels ---------- */
+function qLink(i){return "<a href=\"#rq"+i+"\" class=\"qlink\">Q"+(i+1)+"</a>"}
+function okMark(o){return o==="c"?"<span class=\"ok\">&#10003;</span>":(o==="w"?"<span class=\"no\">&#10007;</span>":"<span class=\"dim\">&mdash;</span>")}
+function kv(k,v,cls){return "<div class=\"kv\"><span>"+k+"</span><b"+(cls?" class=\""+cls+"\"":"")+">"+v+"</b></div>"}
+
+function cardVerdict(A){
+ var V=A.verdict,H="<div class=\"ana verdict\"><div class=\"anaH\">YOUR VERDICT</div>";
+ H+="<div class=\"vH\">"+escH(V.h)+"</div>";
+ if(V.s)H+="<div class=\"vS\">"+escH(V.s)+"</div>";
+ if(V.also)H+="<div class=\"vAlso\">Also: "+escH(V.also)+"</div>";
+ if(V.acts.length){
+  H+="<div class=\"doNext\"><div class=\"dnH\">DO THIS NEXT</div><ol>";
+  V.acts.forEach(function(a){H+="<li>"+(a.href?"<a href=\""+a.href+"\">"+escH(a.t)+"</a>":escH(a.t))+"</li>"});
+  H+="</ol></div>";
+ }
+ return H+"</div>";
+}
+function cardTraps(A){
+ if(!A.hasTags)return "";
+ var H="<div class=\"ana\"><div class=\"anaH\">TRAPS THAT CAUGHT YOU</div>";
+ if(!A.traps.length)return H+"<div class=\"sub0\">"+(A.w?"None of your wrong answers matched a set trap.":"No trap caught you this time.")+"</div></div>";
+ H+="<div class=\"sub0\">Every wrong option in this test was built on a known trap. Here are the ones you picked, most frequent first, each with its counter.</div><div class=\"trapGrid\">";
+ A.traps.forEach(function(t){
+  H+="<div class=\"trap\"><div class=\"trapTop\"><b>"+escH(t.name)+"</b><span class=\"cnt\">&times;"+t.qs.length+"</span></div>";
+  if(t.what)H+="<div class=\"what\">"+escH(t.what)+"</div>";
+  if(t.fix)H+="<div class=\"fix\"><b>COUNTER</b>"+escH(t.fix)+"</div>";
+  H+="<div class=\"qs\">"+t.qs.map(qLink).join(" ")+"</div></div>";
+ });
+ return H+"</div></div>";
+}
+function cardLadder(A){
+ if(!A.hasDiff)return "";
+ var H="<div class=\"ana\"><div class=\"anaH\">EASY &middot; MEDIUM &middot; HARD</div>";
+ ["easy","medium","hard"].forEach(function(k){
+  var b=A.diff[k];if(!b.n)return;
+  H+="<div class=\"rung\"><div class=\"rungTop\"><span>"+capW(k)+" <span class=\"dim\">&middot; "+plural(b.n,"question","questions")+"</span></span><b class=\""+(b.net<0?"no":(b.net>0?"ok":"dim"))+"\">net "+sgn(b.net)+"</b></div>";
+  H+="<div class=\"mini\"><i class=\"c\" style=\"width:"+(100*b.c/b.n).toFixed(1)+"%\"></i><i class=\"w\" style=\"width:"+(100*b.w/b.n).toFixed(1)+"%\"></i><i class=\"s\" style=\"width:"+(100*b.s/b.n).toFixed(1)+"%\"></i></div>";
+  H+="<div class=\"rungSub\">"+b.c+" right &middot; "+b.w+" wrong &middot; "+b.s+" blank"+(b.o?" &middot; avg "+fmtMS(b.t/b.o):"")+"</div></div>";
+ });
+ return H+"</div>";
+}
+function cardClock(A){
+ var unused=Math.max(0,A.avail-A.used),tot=Math.max(1,A.tC+A.tW+A.tS+unused);
+ function seg(cls,v){return v>0?"<i class=\""+cls+"\" style=\"width:"+(100*v/tot).toFixed(2)+"%\"></i>":""}
+ var H="<div class=\"ana\"><div class=\"anaH\">WHERE THE CLOCK WENT</div><div class=\"cbar\">"+seg("c",A.tC)+seg("w",A.tW)+seg("s",A.tS)+seg("u",unused)+"</div>";
+ H+=kv("<span class=\"lgd c\"></span>Questions you got right",fmtMS(A.tC));
+ H+=kv("<span class=\"lgd w\"></span>Questions you got wrong",fmtMS(A.tW));
+ if(A.tS>=1)H+=kv("<span class=\"lgd s\"></span>Questions left blank",fmtMS(A.tS));
+ if(unused>=1)H+=kv("<span class=\"lgd u\"></span>Not used",fmtMS(unused));
+ if(A.sinks.length)H+="<div class=\"sub\">Time sinks, at twice the even pace or more: "+A.sinks.map(function(x){return qLink(x.i)+" "+fmtMS(x.t)+" "+okMark(A.out[x.i])}).join(" &middot; ")+"</div>";
+ if(RAPID&&A.timedOut)H+="<div class=\"sub\">The clock ran out on "+plural(A.timedOut,"question","questions")+".</div>";
+ return H+"</div>";
+}
+function cardSecond(A){
+ var J=A.journey;if(!J||!J.changed)return "";
+ var same=J.changed-J.toRight-J.toWrong;
+ var H="<div class=\"ana\"><div class=\"anaH\">SECOND THOUGHTS</div><div class=\"sub0\">You changed "+plural(J.changed,"answer","answers")+" after first marking "+(J.changed===1?"it":"them")+".</div>";
+ H+=kv("Wrong &rarr; right","<span class=\"ok\">"+J.toRight+(J.gain?" &middot; +"+J.gain:"")+"</span>");
+ H+=kv("Right &rarr; wrong","<span class=\"no\">"+J.toWrong+(J.loss?" &middot; &minus;"+J.loss:"")+"</span>");
+ if(same)H+=kv("Wrong &rarr; still wrong","<span class=\"dim\">"+same+"</span>");
+ return H+"</div>";
+}
+function cardSecs(A){
+ if(!A.secs.length)return "";
+ var H="<div class=\"ana\"><div class=\"anaH\">BY SECTION</div><table class=\"anaT\"><tr><th></th><th>Score</th><th>&#10003;</th><th>&#10007;</th><th>&mdash;</th><th>Acc</th><th>Time</th></tr>";
+ A.secs.forEach(function(b){
+  var att=b.c+b.w;
+  H+="<tr><td>"+escH(b.sec)+"</td><td>"+b.score+"</td><td>"+b.c+"</td><td>"+b.w+"</td><td>"+b.s+"</td><td>"+(att?Math.round(100*b.c/att)+"%":"&mdash;")+"</td><td>"+fmtMS(b.t)+"</td></tr>";
+ });
+ return H+"</table></div>";
+}
+function paletteHTML(A){
+ var J=A.journey,never={},trapQ={};
+ if(J)J.never.forEach(function(i){never[i]=1});
+ A.traps.forEach(function(t){t.qs.forEach(function(i){trapQ[i]=1})});
+ function tile(i){
+  var o=A.out[i],t=questionTimes[i]||0,full=RAPID?(QUESTIONS[i].td||30):2*paceOf(i);
+  var slow=!RAPID&&t>=Math.max(60,2*paceOf(i));
+  var cls="pt "+(never[i]?"n":o)+(slow?" slow":"");
+  var tip="Q"+(i+1)+" · "+(never[i]?"never opened":fmtMS(t)+" · "+outWord(o))+(trapQ[i]?" · trap":"");
+  return "<div class=\""+cls+"\" data-q=\""+i+"\" title=\""+tip+"\"><span class=\"pn\">"+(i+1)+"</span><span class=\"ptm\">"+(never[i]?"&ndash;":fmtMS(t))+"</span>"+(trapQ[i]?"<span class=\"tdot\"></span>":"")+"<i style=\"width:"+Math.min(100,100*t/full).toFixed(1)+"%\"></i></div>";
+ }
+ var H="<div class=\"ana\"><div class=\"anaH\">YOUR PALETTE, REPLAYED <span class=\"dim\">tap a number to open that question</span></div>";
+ if(SEC){SEC.forEach(function(p){H+="<div class=\"palSec\">"+escH(p.sec)+"</div><div class=\"pal2\">";for(var i=p.start;i<=p.end;i++)H+=tile(i);H+="</div>"})}
+ else{H+="<div class=\"pal2\">";for(var j=0;j<NQ;j++)H+=tile(j);H+="</div>"}
+ H+="<div class=\"palLeg\"><span class=\"sw c\"></span>right<span class=\"sw w\"></span>wrong<span class=\"sw s\"></span>blank"+(J&&J.never.length?"<span class=\"sw n\"></span>never opened":"")+(A.traps.length?"<span class=\"sw t\"></span>fell for a trap":"");
+ H+="<br>The gold line under each number is the time spent: "+(RAPID?"a full line means that question's clock ran out.":"half a line is even pace, a full line is twice even pace or more.")+"</div>";
+ return H+"</div>";
+}
+function renderAnalysis(A){
+ var box=document.getElementById("anaBox");if(!box)return;
+ var tx=document.getElementById("stTax");if(tx)tx.textContent=A.neg?"−"+A.neg:"0";
+ var H=cardVerdict(A)+cardTraps(A);
+ H+="<div class=\"anaGrid\">"+cardLadder(A)+cardClock(A)+cardSecond(A)+cardSecs(A)+"</div>";
+ H+=paletteHTML(A);
+ box.innerHTML=H;
+ var hits=box.querySelectorAll("[data-q]");
+ for(var k=0;k<hits.length;k++){hits[k].onclick=function(){var el=document.getElementById("rq"+this.getAttribute("data-q"));if(el)el.scrollIntoView({behavior:"smooth",block:"start"})}}
+}
+
+/* ---------- retry wrong questions (no clock) ---------- */
+var RETRY={done:0,right:0,n:0};
+function renderRetry(){
+ var box=document.getElementById("retryBox");if(!box)return;
+ box.innerHTML="";
+ var idx=[];
+ QUESTIONS.forEach(function(q,i){if(!blank(answers[i])&&!isCorrect(q,answers[i]))idx.push(i)});
+ if(!idx.length)return;
+ RETRY={done:0,right:0,n:idx.length};
+ var h=document.createElement("h1");h.style.cssText="font-size:19px;margin:18px 0 6px";h.textContent="Retry Wrong Questions";box.appendChild(h);
+ var n=document.createElement("div");n.className="note";n.style.marginBottom="10px";
+ n.textContent="No clock this time. If you get it now, the first miss was a slip or the pressure. If you miss it again, that topic needs revision.";
+ box.appendChild(n);
+ var tl=document.createElement("div");tl.className="secErr";tl.id="retryTally";box.appendChild(tl);
+ idx.forEach(function(i){box.appendChild(retryCard(i))});
+ paintTally();
+}
+function paintTally(){
+ var t=document.getElementById("retryTally");if(!t)return;
+ t.innerHTML="<b>Retried "+RETRY.done+" of "+RETRY.n+"</b>"+(RETRY.done?" &middot; <span class=\"ok\">now right "+RETRY.right+"</span> &middot; <span class=\"no\">still wrong "+(RETRY.done-RETRY.right)+"</span>":"");
+}
+function retryCard(i){
+ var q=QUESTIONS[i],letters=["A","B","C","D"];
+ var w=document.createElement("div");w.className="rq";
+ var hd=document.createElement("div");hd.className="rqHead";hd.textContent="Q"+(i+1)+" · "+q.section+(diffOf(q)?" · "+q.difficulty:"");w.appendChild(hd);
+ if(q.passage){
+  var det=document.createElement("details");var sm=document.createElement("summary");sm.className="mono";sm.textContent="Show passage";det.appendChild(sm);
+  var pv=document.createElement("div");pv.className="rqStem";pv.style.marginTop="6px";pv.textContent=q.passage;det.appendChild(pv);w.appendChild(det);
+ }
+ var st=document.createElement("div");st.className="rqStem";ulText(st,q.stem);w.appendChild(st);
+ var ex=document.createElement("div");renderExhibit(q,ex);if(ex.childNodes.length)w.appendChild(ex);
+ var res=document.createElement("div");res.className="exp";res.style.display="none";
+ function finish(ok,keyText){
+  RETRY.done++;if(ok)RETRY.right++;paintTally();
+  res.style.display="block";
+  res.innerHTML="<b>"+(ok?"Got it this time.":"Not yet.")+"</b> Key: "+escH(keyText)+"<br>";
+  res.appendChild(document.createTextNode(q.explanation||""));
+ }
+ if(isMCQ(q)){
+  q.options.forEach(function(opt,k){
+   var b=document.createElement("button");b.className="opt";b.textContent=letters[k]+". "+opt;
+   b.onclick=function(){
+    var bs=w.querySelectorAll("button.opt");for(var j=0;j<bs.length;j++)bs[j].disabled=true;
+    var ok=(k===q.answerIndex);b.classList.add(ok?"rOk":"rNo");if(!ok&&bs[q.answerIndex])bs[q.answerIndex].classList.add("rOk");
+    finish(ok,letters[q.answerIndex]);
+   };
+   w.appendChild(b);
+  });
+ }else{
+  var row=document.createElement("div");row.style.cssText="display:flex;gap:8px;margin-top:6px";
+  var inp=document.createElement("input");inp.className="tita";inp.placeholder="Type your answer";
+  var cb=document.createElement("button");cb.className="btn";cb.textContent="Check";
+  cb.onclick=function(){
+   if(!inp.value.trim())return;
+   inp.disabled=true;cb.disabled=true;
+   var ok=isCorrect(q,inp.value);inp.style.borderColor=ok?"var(--green)":"var(--red)";
+   finish(ok,String(q.answer));
+  };
+  row.appendChild(inp);row.appendChild(cb);w.appendChild(row);
+ }
+ w.appendChild(res);
+ return w;
+}
+
+/* ---------- PDF text (plain characters only: the PDF font has no minus sign or arrows) ---------- */
+function analysisLines(A){
+ var L=[],V=A.verdict,dot="   ·   ",J=A.journey;
+ var v=[V.h+(V.s?" "+V.s:"")];
+ if(V.also)v.push("Also: "+V.also);
+ v.push((A.acc!==null?"Accuracy "+A.acc+"%"+dot:"")+"Guessing tax "+(A.neg?"-"+A.neg:"0")+dot+"Time "+fmtMS(A.used)+" of "+fmtMS(A.avail));
+ L.push(["Your verdict",v]);
+ if(V.acts.length)L.push(["Do this next",V.acts.map(function(a,k){return (k+1)+". "+a.t})]);
+ if(A.traps.length)L.push(["Traps that caught you",A.traps.map(function(t){return t.name+" x"+t.qs.length+" ("+t.qs.map(function(i){return "Q"+(i+1)}).join(", ")+")"+(t.what?": "+t.what:"")+(t.fix?" Counter: "+t.fix:"")})]);
+ if(A.hasDiff){
+  var d=[];
+  ["easy","medium","hard"].forEach(function(k){var b=A.diff[k];if(!b.n)return;d.push(capW(k)+": "+b.n+" Qs"+dot+b.c+" right"+dot+b.w+" wrong"+dot+b.s+" blank"+dot+"net "+sgnA(b.net)+(b.o?dot+"avg "+fmtMS(b.t/b.o):""))});
+  L.push(["Easy / Medium / Hard",d]);
+ }
+ var unused=Math.max(0,A.avail-A.used);
+ var t=["Right "+fmtMS(A.tC)+dot+"wrong "+fmtMS(A.tW)+(A.tS>=1?dot+"blank "+fmtMS(A.tS):"")+(unused>=1?dot+"not used "+fmtMS(unused):"")];
+ if(A.sinks.length)t.push("Time sinks: "+A.sinks.map(function(x){return "Q"+(x.i+1)+" "+fmtMS(x.t)+" ("+outWord(A.out[x.i])+")"}).join(", "));
+ if(RAPID&&A.timedOut)t.push("The clock ran out on "+plural(A.timedOut,"question","questions"));
+ if(J&&J.never.length)t.push("Never opened: "+J.never.map(function(i){return "Q"+(i+1)}).join(", "));
+ L.push(["Where the clock went",t]);
+ if(J&&J.changed)L.push(["Second thoughts",["Changed "+plural(J.changed,"answer","answers")+": "+J.toRight+" wrong to right (+"+J.gain+"), "+J.toWrong+" right to wrong (-"+J.loss+")"]]);
+ if(A.secs.length)L.push(["By section",A.secs.map(function(b){var att=b.c+b.w;return b.sec+": score "+b.score+dot+b.c+" right"+dot+b.w+" wrong"+dot+b.s+" blank"+dot+"accuracy "+(att?Math.round(100*b.c/att)+"%":"-")+dot+"time "+fmtMS(b.t)})]);
+ return L;
+}
+
+/* ==================== DOWNLOAD PDF ==================== */
+function downloadPDF(){
+ var jsPDFctor=(window.jspdf&&window.jspdf.jsPDF)||window.jsPDF;
+ if(!jsPDFctor){alert("PDF library failed to load. Please check your connection and try again.");return}
+ var doc=new jsPDFctor({unit:"pt",format:"a4"});
+ var pageW=doc.internal.pageSize.getWidth();
+ var pageH=doc.internal.pageSize.getHeight();
+ var margin=40,y=margin;
+ var letters=["A","B","C","D"];
+ function newPageIfNeeded(h){if(y+h>pageH-margin){doc.addPage();y=margin}}
+ function writeWrapped(text,x,maxW,size,style){
+  doc.setFont("helvetica",style||"normal");doc.setFontSize(size);
+  var lines=doc.splitTextToSize(text,maxW);
+  for(var i=0;i<lines.length;i++){newPageIfNeeded(size+4);doc.text(lines[i],x,y);y+=size+4}
+ }
+ doc.setFont("helvetica","bold");doc.setFontSize(16);doc.setTextColor(13,27,42);
+ doc.text("ROAD TO IIM",margin,y);y+=20;
+ doc.setFontSize(13);doc.setTextColor(201,168,76);
+ doc.text(TEST_NAME,margin,y);y+=18;
+ doc.setFont("helvetica","normal");doc.setFontSize(10);doc.setTextColor(60,60,60);
+ var dateStr=new Date().toLocaleString("en-IN",{timeZone:"Asia/Kolkata"});
+ doc.text(studentName+" \u00b7 "+studentBatch+" \u00b7 "+dateStr,margin,y);y+=16;
+ doc.setDrawColor(201,168,76);doc.line(margin,y,pageW-margin,y);y+=16;
+ doc.setTextColor(0,0,0);doc.setFont("helvetica","bold");doc.setFontSize(11);
+ doc.text("Summary",margin,y);y+=14;
+ doc.setFont("helvetica","normal");doc.setFontSize(10);
+ var summary="Score: "+document.getElementById("stScore").textContent+" / "+MAX_MARKS+"   \u00b7   Correct: "+document.getElementById("stCorrect").textContent+"   \u00b7   Wrong: "+document.getElementById("stWrong").textContent+"   \u00b7   Skipped: "+document.getElementById("stSkipped").textContent+"   \u00b7   Accuracy: "+document.getElementById("stAcc").textContent+"   \u00b7   Time: "+document.getElementById("stTime").textContent;
+ writeWrapped(summary,margin,pageW-2*margin,10);y+=4;
+ var secErrText=(document.getElementById("secErrBox").textContent||"").replace(/\s+/g," ").trim();
+ if(secErrText){writeWrapped(secErrText,margin,pageW-2*margin,10);y+=6}
+ try{ /* v2.7 analysis */
+  if(LAST_A){
+   doc.setDrawColor(200,200,200);doc.line(margin,y,pageW-margin,y);y+=14;
+   doc.setFont("helvetica","bold");doc.setFontSize(12);doc.setTextColor(13,27,42);
+   newPageIfNeeded(20);doc.text("Analysis",margin,y);y+=14;
+   analysisLines(LAST_A).forEach(function(sec){
+    newPageIfNeeded(30);
+    doc.setTextColor(150,115,40);writeWrapped(sec[0],margin,pageW-2*margin,10,"bold");y+=1;
+    doc.setTextColor(30,30,30);
+    sec[1].forEach(function(ln){writeWrapped(ln,margin+10,pageW-2*margin-10,9.5,"normal")});
+    y+=5;
+   });
+   doc.setTextColor(0,0,0);
+  }
+ }catch(e){}
+ doc.setDrawColor(200,200,200);doc.line(margin,y,pageW-margin,y);y+=14;
+ doc.setFont("helvetica","bold");doc.setFontSize(12);doc.setTextColor(13,27,42);
+ doc.text("Question Review",margin,y);y+=16;
+ QUESTIONS.forEach(function(q,i){
+  var a=answers[i];
+  var skippedQ=(a===null||a==="");
+  var ok=isCorrect(q,a);
+  var statusLabel=skippedQ?"SKIPPED":(ok?"CORRECT":"WRONG");
+  newPageIfNeeded(60);
+  doc.setFont("helvetica","bold");doc.setFontSize(10);doc.setTextColor(13,27,42);
+  writeWrapped("Q"+(i+1)+"  \u00b7  "+q.section+" \u00b7 "+q.format+(diffOf(q)?" \u00b7 "+q.difficulty:"")+" \u00b7 time "+fmtMS(questionTimes[i])+"   ["+statusLabel+"]",margin,pageW-2*margin,10,"bold");y+=1;
+  if(q.passage&&(i===0||QUESTIONS[i-1].passage!==q.passage)){
+   doc.setTextColor(90,90,90);
+   writeWrapped("Passage: "+q.passage,margin,pageW-2*margin,8,"italic");y+=2;
+  }
+  doc.setTextColor(0,0,0);
+  writeWrapped(String(q.stem).replace(/\[\[|\]\]/g,'"'),margin,pageW-2*margin,10,"normal");y+=2;
+  if(q.table!=null&&q.table!==""){
+   var trows=Array.isArray(q.table)?q.table:(q.table&&Array.isArray(q.table.rows)?(Array.isArray(q.table.headers)?[q.table.headers].concat(q.table.rows):q.table.rows):null);
+   doc.setTextColor(40,40,40);
+   if(trows){trows.forEach(function(r){writeWrapped(Array.isArray(r)?r.map(String).join("  |  "):String(r),margin+12,pageW-2*margin-12,8.5,"normal")})}
+   else{
+    var ttxt=String(q.table);
+    if(ttxt.trim().charAt(0)==="<")ttxt=ttxt.replace(new RegExp("</tr>","gi"),"\n").replace(new RegExp("</t[dh]>","gi"),"  |  ").replace(new RegExp("<[^>]+>","g")," ").replace(new RegExp("&amp;","g"),"&").replace(new RegExp("&nbsp;","g")," ");
+    ttxt.split("\n").forEach(function(ln){ln=ln.replace(new RegExp("[ ]+","g")," ").trim();if(ln)writeWrapped(ln,margin+12,pageW-2*margin-12,8.5,"normal")});
+   }
+   doc.setTextColor(0,0,0);y+=2;
+  }
+  if(q.fig){doc.setTextColor(120,120,120);writeWrapped("[Figure \u2014 shown in the on-screen review]",margin+12,pageW-2*margin-12,8.5,"italic");doc.setTextColor(0,0,0)}
+  if(isMCQ(q)){
+   q.options.forEach(function(opt,idx){
+    var marker="";
+    if(idx===q.answerIndex)marker="   [correct]";
+    else if(idx===a){marker="   [your choice]";var ptg=trapOf(q,a);if(ptg)marker+="  trap: "+trapInfo(ptg).name}
+    if(idx===q.answerIndex)doc.setTextColor(30,120,60);
+    else if(idx===a)doc.setTextColor(180,50,50);
+    else doc.setTextColor(60,60,60);
+    writeWrapped(letters[idx]+")  "+opt+marker,margin+12,pageW-2*margin-12,10,"normal");
+   });
+  }else{
+   doc.setTextColor(skippedQ?120:(ok?30:180),skippedQ?120:(ok?120:50),skippedQ?120:(ok?60:50));
+   var pttg=trapOf(q,a);
+   writeWrapped("Your answer: "+(skippedQ?"-":a)+(pttg?"   trap: "+trapInfo(pttg).name:""),margin+12,pageW-2*margin-12,10,"normal");
+   doc.setTextColor(30,120,60);
+   writeWrapped("Key: "+q.answer,margin+12,pageW-2*margin-12,10,"normal");
+  }
+  doc.setTextColor(0,0,0);y+=2;
+  doc.setFont("helvetica","bold");doc.setFontSize(9);
+  newPageIfNeeded(14);
+  doc.text("Explanation:",margin,y);y+=11;
+  doc.setFont("helvetica","normal");doc.setFontSize(9);
+  writeWrapped(q.explanation||"",margin,pageW-2*margin,9,"normal");
+  y+=10;
+  doc.setDrawColor(230,230,230);
+  newPageIfNeeded(6);
+  doc.line(margin,y,pageW-margin,y);y+=12;
+ });
+ var safeName=(studentName||"student").replace(/[^A-Za-z0-9]+/g,"_").slice(0,40);
+ var d=new Date();
+ var dateTag=d.getFullYear()+String(d.getMonth()+1).padStart(2,"0")+String(d.getDate()).padStart(2,"0");
+ doc.save(CFG.bankPrefix+"_"+safeName+"_"+dateTag+".pdf");
+}
+
+/* ==================== PAGE LOAD ==================== */
+document.getElementById("lgTitle").textContent=TEST_NAME;
+var lgTime=CFG.rapid?("per-question clock \u00b7 forward only \u00b7 auto-advance at 0s \u00b7 ~"+CFG.minutes+" min total"):SEC?(SEC.map(function(p){return p.sec+" "+p.minutes+"m"}).join(" \u2192 ")+" \u00b7 sectional lock \u00b7 no return"):(CFG.minutes+" minutes \u00b7 "+(CFG.navNote||"free navigation"));
+document.getElementById("lgMeta").innerHTML=NQ+" questions \u00b7 +"+CFG.c+" / "+CFG.w+(CFG.hasTita?" \u00b7 TITA wrong "+(CFG.titaWSec?QUESTIONS.filter(function(q){return !isMCQ(q)}).map(function(q){return q.section}).filter(function(v,i,a){return a.indexOf(v)===i}).map(function(sec){return sec+" "+titaWFor({section:sec})}).join(", "):CFG.titaW):"")+" \u00b7 Max "+MAX_MARKS+"<br>"+lgTime+" \u00b7 auto-submit at 00:00";
+document.getElementById("loginBtn").addEventListener("click",startTest);
+snFlushQueue();
+snTryResume();
+</script>
+<script>/* RIIM usage ping v1 */try{fetch("https://script.google.com/macros/s/AKfycbx5Ojm_zp4LfsMeelx5e06KNjVH1wfsXdV0keS4407m4FO1HU4EpVb7GKj-ibAsxnspeA/exec?action=ping&type=open&page="+encodeURIComponent(document.title||location.pathname),{mode:"no-cors"});}catch(_){}</script>
+</body>
+</html>
