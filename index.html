@@ -392,7 +392,10 @@ const MANIFEST_ALL = [
       {t:"IPMATind 04 VA Challenge", url:"ipmat_indore_va_challenge_mock_04.html", hidden:true, sheetName:"IPMAT Indore 04 VA Challenge Mock", windowed:true},
       {t:"IPMATind 05 VA Challenge", url:"ipmat_indore_va_challenge_mock_05.html", hidden:true, sheetName:"IPMAT Indore 05 VA Challenge Mock", windowed:true},
       {t:"UGAT Mock 7", url:"ugat_iimb_UGAT_Mock_7_VA_Sectional.html", sheetName:"UGAT Mock 7 — VA Sectional", windowed:true},
-      {t:"UGAT Mock 8", url:"ugat_iimb_UGAT_Mock_8_VA_Sectional.html", sheetName:"UGAT Mock 8 — VA Sectional", windowed:true, isNew:true},
+      {t:"UGAT Mock 8", url:"ugat_iimb_UGAT_Mock_8_VA_Sectional.html", sheetName:"UGAT Mock 8 — VA Sectional", windowed:true},
+      {t:"UGAT Mock 7 · LR", url:"ugat_iimb_UGAT_Mock_7_LR_Sectional.html", sheetName:"UGAT Mock 7 — LR Sectional", isNew:true},
+      {t:"UGAT Mock 9", url:"ugat_iimb_UGAT_Mock_9_VA_Sectional.html", sheetName:"UGAT Mock 9 — VA Sectional", isNew:true},
+      {t:"UGAT Mock 10", url:"ugat_iimb_UGAT_Mock_10_VA_Sectional.html", sheetName:"UGAT Mock 10 — VA Sectional", isNew:true},
     ]},
   { id:"rapid", name:"Rapid Fire", desc:"Short bursts, no feedback till the end",
     tests:[
@@ -413,7 +416,10 @@ const MANIFEST_ALL = [
       {t:"Rapid Fire 15 · Adaptive", url:"RoadToIIM_SpeedTest15_VocabGrammar.html", sheetName:"Rapid Fire Test 15"},
       {t:"Rapid Fire 16 · Adaptive", url:"RoadToIIM_SpeedTest16_VocabGrammar.html", sheetName:"Rapid Fire Test 16"},
       {t:"Rapid Fire 17 · Adaptive", url:"RoadToIIM_SpeedTest17_VocabGrammar.html", sheetName:"Rapid Fire Test 17"},
-      {t:"Rapid Fire 18 · Adaptive", url:"RoadToIIM_SpeedTest18_VocabGrammar.html", sheetName:"Rapid Fire Test 18", isNew:true},
+      {t:"Rapid Fire 18 · Adaptive", url:"RoadToIIM_SpeedTest18_VocabGrammar.html", sheetName:"Rapid Fire Test 18"},
+      {t:"Rapid Fire 19 · Adaptive", url:"RoadToIIM_SpeedTest19_VocabGrammar.html", sheetName:"Rapid Fire Test 19", isNew:true},
+      {t:"Rapid Fire 20 · Adaptive", url:"RoadToIIM_SpeedTest20_VocabGrammar.html", sheetName:"Rapid Fire Test 20", isNew:true},
+      {t:"Rapid Fire 21 · Adaptive", url:"RoadToIIM_SpeedTest21_VocabGrammar.html", sheetName:"Rapid Fire Test 21", isNew:true},
     ]},
   { id:"revisers", name:"Revisers", desc:"One concept, three levels · climb in order",
     tests:[
@@ -782,20 +788,59 @@ const EVENTS = [
     closesAt: Date.UTC(2026,9,24,18,30,0)   /* card leaves the main screen Sun 25 Oct 2026, 00:00 IST; test stays in Rapid Fire */
   },
   /* Rapid Fire 17 card removed 6 Nov 2026 when RF18 took the main screen (test stays in the Rapid Fire sphere) */
-  { t:"Rapid Fire 18",
-    sub:"Vocab + Grammar \u00b7 35 Qs that adjust to you \u00b7 per-question clock \u00b7 +4/\u22121",
-    url:"RoadToIIM_SpeedTest18_VocabGrammar.html",
-    hero:true, noWindow:true, flash:true,
-    eyebrow:"NEW \u00b7 RAPID FIRE \u00b7 ADAPTIVE",
-    opensAt: Date.UTC(2026,10,6,2,0,0),     /* Fri 6 Nov 2026, 07:30 IST */
-    closesAt: Date.UTC(2026,10,14,18,30,0)  /* card leaves the main screen Sun 15 Nov 2026, 00:00 IST; test stays in Rapid Fire */
-  },
+  /* Rapid Fire 18 card removed 7 Nov 2026 when RF19-21 took the main screen (test stays in the Rapid Fire sphere) */
   { t:"UGAT Mock 8",
     sub:"IIM Bangalore pattern \u00b7 15 Qs \u00b7 30 min \u00b7 +3/\u22121",
     url:"ugat_iimb_UGAT_Mock_8_VA_Sectional.html",
     flash:true,
     opensAt: Date.UTC(2026,10,6,14,30,0),   /* Fri 6 Nov 2026, 20:00 IST */
     closesAt: Date.UTC(2026,10,8,18,30,0)   /* Mon 9 Nov 2026, 00:00 IST */
+  },
+  { t:"UGAT Mock 7 \u00b7 LR Sectional",
+    sub:"Logical Reasoning \u00b7 15 Qs \u00b7 30 min \u00b7 +3/\u22121",
+    url:"ugat_iimb_UGAT_Mock_7_LR_Sectional.html",
+    hero:true, noWindow:true, flash:true,
+    eyebrow:"NEW \u00b7 UGAT \u00b7 LOGICAL REASONING",
+    opensAt: Date.UTC(2026,10,7,2,0,0),     /* Sat 7 Nov 2026, 07:30 IST */
+    closesAt: Date.UTC(2026,10,14,18,30,0)  /* card leaves the main screen Sun 15 Nov 2026, 00:00 IST; test stays on its sphere */
+  },
+  { t:"UGAT Mock 9",
+    sub:"IIM Bangalore pattern \u00b7 15 Qs \u00b7 30 min \u00b7 +3/\u22121",
+    url:"ugat_iimb_UGAT_Mock_9_VA_Sectional.html",
+    noWindow:true, flash:true,
+    opensAt: Date.UTC(2026,10,7,2,0,0),     /* Sat 7 Nov 2026, 07:30 IST */
+    closesAt: Date.UTC(2026,10,14,18,30,0)  /* card leaves the main screen Sun 15 Nov 2026, 00:00 IST; test stays on its sphere */
+  },
+  { t:"UGAT Mock 10",
+    sub:"IIM Bangalore pattern \u00b7 15 Qs \u00b7 30 min \u00b7 +3/\u22121",
+    url:"ugat_iimb_UGAT_Mock_10_VA_Sectional.html",
+    noWindow:true, flash:true,
+    opensAt: Date.UTC(2026,10,7,2,0,0),     /* Sat 7 Nov 2026, 07:30 IST */
+    closesAt: Date.UTC(2026,10,14,18,30,0)  /* card leaves the main screen Sun 15 Nov 2026, 00:00 IST; test stays on its sphere */
+  },
+  { t:"Rapid Fire 19",
+    sub:"Vocab + Grammar \u00b7 35 Qs that adjust to you \u00b7 per-question clock \u00b7 +4/\u22121",
+    url:"RoadToIIM_SpeedTest19_VocabGrammar.html",
+    noWindow:true, flash:true,
+    eyebrow:"NEW \u00b7 RAPID FIRE \u00b7 ADAPTIVE",
+    opensAt: Date.UTC(2026,10,7,2,0,0),     /* Sat 7 Nov 2026, 07:30 IST */
+    closesAt: Date.UTC(2026,10,14,18,30,0)  /* card leaves the main screen Sun 15 Nov 2026, 00:00 IST; test stays on its sphere */
+  },
+  { t:"Rapid Fire 20",
+    sub:"Vocab + Grammar \u00b7 35 Qs that adjust to you \u00b7 per-question clock \u00b7 +4/\u22121",
+    url:"RoadToIIM_SpeedTest20_VocabGrammar.html",
+    noWindow:true, flash:true,
+    eyebrow:"NEW \u00b7 RAPID FIRE \u00b7 ADAPTIVE",
+    opensAt: Date.UTC(2026,10,7,2,0,0),     /* Sat 7 Nov 2026, 07:30 IST */
+    closesAt: Date.UTC(2026,10,14,18,30,0)  /* card leaves the main screen Sun 15 Nov 2026, 00:00 IST; test stays on its sphere */
+  },
+  { t:"Rapid Fire 21",
+    sub:"Vocab + Grammar \u00b7 35 Qs that adjust to you \u00b7 per-question clock \u00b7 +4/\u22121",
+    url:"RoadToIIM_SpeedTest21_VocabGrammar.html",
+    noWindow:true, flash:true,
+    eyebrow:"NEW \u00b7 RAPID FIRE \u00b7 ADAPTIVE",
+    opensAt: Date.UTC(2026,10,7,2,0,0),     /* Sat 7 Nov 2026, 07:30 IST */
+    closesAt: Date.UTC(2026,10,14,18,30,0)  /* card leaves the main screen Sun 15 Nov 2026, 00:00 IST; test stays on its sphere */
   },
 ];
 
