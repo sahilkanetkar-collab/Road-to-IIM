@@ -1,9 +1,9 @@
 {
  "version": 4,
  "pilot": true,
- "updated": "2026-10-08",
- "launch": "2026-09-25",
- "note": "21 days. Days 8-14 added 29 Sep 2026; Days 15-21 added 8 Oct 2026, with launch moved to 2026-09-25 so Drop 15 lands on 9 Oct (the 14-day cycle had already wrapped). Every option is a real word or a realistic misreading. Scene and caption are shown only after answering.",
+ "updated": "2026-11-08",
+ "launch": "2026-10-18",
+ "note": "28 days. Days 8-14 added 29 Sep 2026; Days 15-21 added 8 Oct 2026; Days 22-28 added 8 Nov 2026, with launch moved to 2026-10-18 so Drop 22 lands on 8 Nov (the 21-day cycle had already wrapped twice). Every option is a real word or a realistic misreading. Scene and caption show only after answering.",
  "days": [
   {
    "words": [
@@ -6406,6 +6406,2143 @@
        ],
        "a": 0,
        "why": "Staging a good-looking front to hide the real state is a Potemkin village. The emperor's new clothes is about people pretending to admire something that isn't there; here the school itself builds the facade."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "words": [
+    {
+     "id": "w-loquacious",
+     "word": "Loquacious",
+     "pos": "adj.",
+     "meaning": "Very talkative",
+     "note": "Latin loqui = to speak, the root of eloquent and soliloquy.",
+     "synonyms": [
+      "talkative",
+      "voluble",
+      "chatty",
+      "verbose"
+     ],
+     "cards": [
+      {
+       "fmt": "usage",
+       "q": "",
+       "o": [
+        "Our loquacious guide filled every bus ride with stories and never paused.",
+        "The loquacious note on the board said only 'Class cancelled today'.",
+        "She was too loquacious to speak to anyone all evening.",
+        "His loquacious handwriting defeated every examiner who ever tried to read it."
+       ],
+       "a": 0,
+       "why": "Loquacious means talkative. The wrong sentences use it for brief (laconic), shy and illegible."
+      },
+      {
+       "fmt": "confusable",
+       "q": "The host was so ___ that the guest barely got a word in.",
+       "o": [
+        "loquacious",
+        "lugubrious",
+        "ludicrous",
+        "luminous"
+       ],
+       "a": 0,
+       "why": "Loquacious is talkative. Lugubrious means mournful, ludicrous means absurd and luminous means glowing."
+      }
+     ]
+    },
+    {
+     "id": "w-pithy",
+     "word": "Pithy",
+     "pos": "adj.",
+     "meaning": "Short and full of meaning",
+     "note": "From pith, the core inside a stem. A pithy line is all core and no padding.",
+     "synonyms": [
+      "terse",
+      "concise",
+      "succinct",
+      "epigrammatic"
+     ],
+     "cards": [
+      {
+       "fmt": "context",
+       "q": "The editor cut the three-page tribute to one ___ paragraph that said more than the original.",
+       "o": [
+        "pithy",
+        "verbose",
+        "rambling",
+        "tedious"
+       ],
+       "a": 0,
+       "why": "The cut made it shorter and better, which is pithy. The other three all mean long-winded."
+      },
+      {
+       "fmt": "reverse",
+       "q": "A speaker ends a two-hour debate with one short line that settles the question. That line is best described as ___.",
+       "o": [
+        "pithy",
+        "prolix",
+        "florid",
+        "discursive"
+       ],
+       "a": 0,
+       "why": "Short and decisive is pithy. Prolix and discursive mean long-winded; florid means overdecorated."
+      }
+     ]
+    },
+    {
+     "id": "w-sardonic",
+     "word": "Sardonic",
+     "pos": "adj.",
+     "meaning": "Mocking in a bitter, scornful way",
+     "note": "Greek sardonios, from a Sardinian plant said to twist the face into a grin.",
+     "synonyms": [
+      "mocking",
+      "sneering",
+      "wry",
+      "caustic"
+     ],
+     "cards": [
+      {
+       "fmt": "usage",
+       "q": "",
+       "o": [
+        "He congratulated the winner with a sardonic smile that fooled nobody.",
+        "She gave a sardonic account of the facts, plain and free of opinion.",
+        "The sardonic nurse comforted the frightened child until the crying finally stopped.",
+        "They sat in sardonic silence, too moved by the music to speak."
+       ],
+       "a": 0,
+       "why": "Sardonic is bitter mockery. The wrong sentences use it for neutral, kind and reverent."
+      },
+      {
+       "fmt": "confusable",
+       "q": "His ___ praise of the minister's 'brilliant' three-hour speech drew nervous laughter.",
+       "o": [
+        "sardonic",
+        "sanguine",
+        "sonorous",
+        "sartorial"
+       ],
+       "a": 0,
+       "why": "The praise is mockery, so sardonic. Sanguine means hopeful, sonorous means deep-sounding and sartorial refers to clothes."
+      }
+     ]
+    },
+    {
+     "id": "w-trenchant",
+     "word": "Trenchant",
+     "pos": "adj.",
+     "meaning": "Sharp and incisive, especially in criticism",
+     "note": "French trancher = to cut. A trenchant remark cuts to the bone.",
+     "synonyms": [
+      "incisive",
+      "cutting",
+      "penetrating",
+      "acute"
+     ],
+     "cards": [
+      {
+       "fmt": "context",
+       "q": "Her ___ analysis exposed in two pages what the committee had missed in two years.",
+       "o": [
+        "trenchant",
+        "tepid",
+        "tangential",
+        "tentative"
+       ],
+       "a": 0,
+       "why": "Two pages that expose what two years missed is sharp and incisive. Tepid is half-hearted, tangential is off the point, tentative is unsure."
+      },
+      {
+       "fmt": "usage",
+       "q": "",
+       "o": [
+        "The review was trenchant, naming the exact flaw every other critic avoided.",
+        "He made a trenchant apology and promised never to repeat it.",
+        "Her trenchant kindness towards the new students won her friends across the whole hostel.",
+        "The trenchant speech wandered for an hour and reached no point."
+       ],
+       "a": 0,
+       "why": "Trenchant describes sharp criticism or analysis, not apologies, kindness or waffle."
+      }
+     ]
+    },
+    {
+     "id": "w-phlegmatic",
+     "word": "Phlegmatic",
+     "pos": "adj.",
+     "meaning": "Calm and hard to excite",
+     "note": "One of the four medieval humours: phlegm was thought to make a person slow to anger.",
+     "synonyms": [
+      "unflappable",
+      "composed",
+      "imperturbable",
+      "stolid"
+     ],
+     "cards": [
+      {
+       "fmt": "usage",
+       "q": "",
+       "o": [
+        "Phlegmatic even as the results loaded, he opened the page without flinching.",
+        "She turned phlegmatic at the news and shouted at everyone who came into the room.",
+        "The phlegmatic crowd roared at every single boundary.",
+        "He was too phlegmatic to sit still for more than a minute."
+       ],
+       "a": 0,
+       "why": "Phlegmatic is unshakeable calm. The wrong sentences describe rage, excitement and restlessness."
+      },
+      {
+       "fmt": "reverse",
+       "q": "A captain whose expression never changes, whether the team is winning or collapsing, is best described as ___.",
+       "o": [
+        "phlegmatic",
+        "mercurial",
+        "petulant",
+        "choleric"
+       ],
+       "a": 0,
+       "why": "An unchanging expression under pressure is phlegmatic. Mercurial means changeable, petulant means sulky and choleric means quick to anger."
+      }
+     ]
+    }
+   ],
+   "idioms": [
+    {
+     "id": "i-clean-the-augean-stables",
+     "idiom": "Clean the Augean stables",
+     "meaning": "To clear away a mess of corruption or neglect that has built up for years",
+     "origin": "Hercules' fifth labour. King Augeas kept 3,000 oxen in stables that had not been cleaned for thirty years, so Hercules diverted two rivers through them.",
+     "scene": [
+      [
+       "🐂",
+       "pop",
+       0
+      ],
+      [
+       "🏚️",
+       "shake",
+       0.3
+      ],
+      [
+       "🌊",
+       "floaty",
+       0.6
+      ],
+      [
+       "✨",
+       "flicker",
+       0.9
+      ]
+     ],
+     "caption": "Thirty years of filth. One diverted river.",
+     "cards": [
+      {
+       "fmt": "idiom-context",
+       "q": "The new principal spent her first year sacking the contractors, auditing the accounts and rewriting the rules. Staff said she had cleaned the Augean stables. What does that mean?",
+       "o": [
+        "Cleared a long-standing mess of corruption and neglect",
+        "Worked harder than anyone else was willing to",
+        "Made a great show of reform without changing anything at all",
+        "Took on a task that could never be finished"
+       ],
+       "a": 0,
+       "why": "The idiom is about clearing filth that has been allowed to pile up for years, which is exactly what the audit and the sackings did."
+      },
+      {
+       "fmt": "idiom-pick",
+       "q": "The auditor found twenty years of forged bills, cancelled every contract and started the department again from scratch. She had ___.",
+       "o": [
+        "cleaned the Augean stables",
+        "opened Pandora's box",
+        "been carrying coals to Newcastle",
+        "crossed the Rubicon"
+       ],
+       "a": 0,
+       "why": "Clearing years of accumulated rot is the Augean stables. Pandora's box releases new troubles, carrying coals to Newcastle is pointless duplication, crossing the Rubicon is an irreversible step."
+      }
+     ]
+    },
+    {
+     "id": "i-a-storm-in-a-teacup",
+     "idiom": "A storm in a teacup",
+     "meaning": "A great fuss over something trivial",
+     "origin": "The image is old; Cicero wrote of raising storms in a ladle. The teacup version settled into British English in the 1800s.",
+     "scene": [
+      [
+       "☕",
+       "pop",
+       0
+      ],
+      [
+       "🌪️",
+       "shake",
+       0.3
+      ],
+      [
+       "😮",
+       "flicker",
+       0.7
+      ]
+     ],
+     "caption": "All that weather, in a cup.",
+     "cards": [
+      {
+       "fmt": "idiom-context",
+       "q": "Two members argued for an hour about the font on the notice board. The secretary called it a storm in a teacup. He meant it was ___.",
+       "o": [
+        "A great deal of fuss over something trivial",
+        "A quarrel that was certain to turn serious",
+        "A disagreement nobody dared raise openly",
+        "A small problem that signalled a much bigger one"
+       ],
+       "a": 0,
+       "why": "The fuss was large and the matter tiny. The last option is the thin end of the wedge, which is a different idea."
+      },
+      {
+       "fmt": "idiom-pick",
+       "q": "The papers ran three days of headlines on a cricketer's haircut, then dropped it entirely. The whole affair was ___.",
+       "o": [
+        "a storm in a teacup",
+        "the thin end of the wedge",
+        "a Pyrrhic victory",
+        "a red herring"
+       ],
+       "a": 0,
+       "why": "Enormous noise over nothing is a storm in a teacup. A red herring is a deliberate distraction, which nobody planted here."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "words": [
+    {
+     "id": "w-irascible",
+     "word": "Irascible",
+     "pos": "adj.",
+     "meaning": "Easily made angry",
+     "note": "Latin ira = anger, the root of irate and ire.",
+     "synonyms": [
+      "irritable",
+      "testy",
+      "hot-tempered",
+      "choleric"
+     ],
+     "cards": [
+      {
+       "fmt": "usage",
+       "q": "",
+       "o": [
+        "Our irascible neighbour complains about the noise before the party begins.",
+        "The irascible host made every late guest feel entirely at ease.",
+        "She was irascible about the deadline and finished the whole report a full week early.",
+        "He grew irascible with joy when the results were announced."
+       ],
+       "a": 0,
+       "why": "Irascible means quick to anger, not welcoming, diligent or joyful."
+      },
+      {
+       "fmt": "context",
+       "q": "Age had made him ___: a misplaced newspaper was now enough to start a row.",
+       "o": [
+        "irascible",
+        "amiable",
+        "indifferent",
+        "reticent"
+       ],
+       "a": 0,
+       "why": "A row over a newspaper shows a short temper. Amiable is friendly, indifferent is uncaring, reticent is reserved."
+      }
+     ]
+    },
+    {
+     "id": "w-affable",
+     "word": "Affable",
+     "pos": "adj.",
+     "meaning": "Friendly and easy to talk to",
+     "note": "Latin affari = to speak to. An affable person is one you can easily speak to.",
+     "synonyms": [
+      "genial",
+      "cordial",
+      "approachable",
+      "amiable"
+     ],
+     "cards": [
+      {
+       "fmt": "context",
+       "q": "The chairman was ___ with the juniors, asking about their families before the meeting began.",
+       "o": [
+        "affable",
+        "aloof",
+        "austere",
+        "abrasive"
+       ],
+       "a": 0,
+       "why": "Asking after families is warm and easy, so affable. The other three are all distant or harsh."
+      },
+      {
+       "fmt": "usage",
+       "q": "",
+       "o": [
+        "An affable guard waved us through and asked how the exam had gone.",
+        "The affable officer refused to meet anyone without a written appointment.",
+        "She gave an affable glare that silenced the entire classroom.",
+        "His affable memory held every date from the last decade."
+       ],
+       "a": 0,
+       "why": "Affable describes warm, easy manner. A glare cannot be affable, and memory has no manner at all."
+      }
+     ]
+    },
+    {
+     "id": "w-supercilious",
+     "word": "Supercilious",
+     "pos": "adj.",
+     "meaning": "Behaving as though superior to everyone else",
+     "note": "Latin supercilium = eyebrow. The word pictures one eyebrow raised in disdain.",
+     "synonyms": [
+      "haughty",
+      "disdainful",
+      "condescending",
+      "snooty"
+     ],
+     "cards": [
+      {
+       "fmt": "usage",
+       "q": "",
+       "o": [
+        "A supercilious glance at my shoes told me what he thought of the invitation.",
+        "The supercilious waiter apologised twice and refilled the water glasses himself.",
+        "She was supercilious about the plan and backed it with her own money.",
+        "He wore a supercilious coat that kept out the worst of the rain."
+       ],
+       "a": 0,
+       "why": "Supercilious is looking down on others. It cannot describe an apology, enthusiasm or a coat."
+      },
+      {
+       "fmt": "confusable",
+       "q": "The ___ assistant answered every question as though it were beneath him.",
+       "o": [
+        "supercilious",
+        "superficial",
+        "superfluous",
+        "supercritical"
+       ],
+       "a": 0,
+       "why": "Treating questions as beneath him is supercilious. Superficial means shallow, superfluous means unnecessary, supercritical is a term from physics."
+      }
+     ]
+    },
+    {
+     "id": "w-nonchalant",
+     "word": "Nonchalant",
+     "pos": "adj.",
+     "meaning": "Casually unconcerned",
+     "note": "Old French nonchaloir = not to care. The -chal- is the heat in calorie: the nonchalant stay cool.",
+     "synonyms": [
+      "unconcerned",
+      "offhand",
+      "airy",
+      "indifferent"
+     ],
+     "cards": [
+      {
+       "fmt": "context",
+       "q": "He was ___ about the interview, as though a seat at IIM were a small matter.",
+       "o": [
+        "nonchalant",
+        "anxious",
+        "earnest",
+        "preoccupied"
+       ],
+       "a": 0,
+       "why": "Treating a big thing as small is nonchalance. Anxious is its opposite; earnest and preoccupied both suggest he was taking it very seriously."
+      },
+      {
+       "fmt": "reverse",
+       "q": "A student scrolls her phone while the merit list is read out, and shrugs when her own name comes up. Her manner is best described as ___.",
+       "o": [
+        "nonchalant",
+        "obsequious",
+        "fastidious",
+        "diffident"
+       ],
+       "a": 0,
+       "why": "The shrug is studied unconcern. Obsequious is fawning, fastidious is fussy about detail, diffident is shy rather than unbothered."
+      }
+     ]
+    },
+    {
+     "id": "w-maverick",
+     "word": "Maverick",
+     "pos": "n.",
+     "meaning": "Someone who refuses to follow the group",
+     "note": "Samuel Maverick, a Texas rancher, left his calves unbranded, so any unbranded animal became a maverick.",
+     "synonyms": [
+      "nonconformist",
+      "individualist",
+      "rebel",
+      "iconoclast"
+     ],
+     "cards": [
+      {
+       "fmt": "usage",
+       "q": "",
+       "o": [
+        "A maverick in a house of lawyers, she took up archaeology instead.",
+        "The maverick followed every rule in the handbook to the letter.",
+        "He was the maverick of the group, agreeing with whoever spoke last.",
+        "Her maverick notes were the neatest in the entire class."
+       ],
+       "a": 0,
+       "why": "A maverick breaks from the herd, so following rules or agreeing with everyone contradicts it."
+      },
+      {
+       "fmt": "context",
+       "q": "The committee wanted a safe choice and got a ___ who rewrote the syllabus in a month.",
+       "o": [
+        "maverick",
+        "conformist",
+        "functionary",
+        "understudy"
+       ],
+       "a": 0,
+       "why": "Rewriting the syllabus against expectation is a maverick's move. A conformist and a functionary do what is expected."
+      }
+     ]
+    }
+   ],
+   "idioms": [
+    {
+     "id": "i-feet-of-clay",
+     "idiom": "Feet of clay",
+     "meaning": "A hidden weakness in someone widely admired",
+     "origin": "From the Book of Daniel: Nebuchadnezzar dreams of a towering statue with a head of gold and feet of clay, which shatters when the feet are struck.",
+     "scene": [
+      [
+       "🗿",
+       "pop",
+       0
+      ],
+      [
+       "🧱",
+       "shake",
+       0.4
+      ],
+      [
+       "💔",
+       "flicker",
+       0.8
+      ]
+     ],
+     "caption": "Gold at the top. Clay at the bottom.",
+     "cards": [
+      {
+       "fmt": "idiom-context",
+       "q": "The biography revealed that the reformer had quietly taken money from the firms he attacked in public. Reviewers said he had feet of clay. They meant he had ___.",
+       "o": [
+        "A hidden flaw in a figure everyone admired",
+        "A refusal to act when action was needed",
+        "A humble background he had tried to conceal",
+        "A slow and unsteady way of working"
+       ],
+       "a": 0,
+       "why": "The idiom is about a secret weakness in an admired person, not about hesitation, origins or pace."
+      },
+      {
+       "fmt": "idiom-pick",
+       "q": "For twenty years she was the conscience of the movement. Then the letters surfaced, and even her admirers admitted she had ___.",
+       "o": [
+        "feet of clay",
+        "an albatross around her neck",
+        "a Pyrrhic victory",
+        "the Midas touch"
+       ],
+       "a": 0,
+       "why": "A revealed flaw in an admired figure is feet of clay. An albatross is a burden of guilt carried openly, not a secret weakness."
+      }
+     ]
+    },
+    {
+     "id": "i-steal-someones-thunder",
+     "idiom": "Steal someone's thunder",
+     "meaning": "To take the credit or attention that belonged to another",
+     "origin": "John Dennis, an 18th-century playwright, invented a thunder machine for his own play. The play failed, and he then heard his machine being used by a rival company.",
+     "scene": [
+      [
+       "⛈️",
+       "shake",
+       0
+      ],
+      [
+       "🎭",
+       "pop",
+       0.3
+      ],
+      [
+       "😠",
+       "flicker",
+       0.7
+      ]
+     ],
+     "caption": "His thunder. Someone else's play.",
+     "cards": [
+      {
+       "fmt": "idiom-context",
+       "q": "A junior researcher presented the team's findings the day before her supervisor's scheduled talk. He accused her of stealing his thunder, meaning she had ___.",
+       "o": [
+        "Taken the attention that was due to him",
+        "Published work that was not hers to publish",
+        "Criticised him in front of the department",
+        "Used his method without asking permission"
+       ],
+       "a": 0,
+       "why": "Stealing thunder is about taking someone's moment, not about theft of the work itself."
+      },
+      {
+       "fmt": "idiom-pick",
+       "q": "The minister announced the scheme at a press conference an hour before the chief minister's rally. The papers said he had ___.",
+       "o": [
+        "stolen the chief minister's thunder",
+        "thrown the baby out with the bathwater",
+        "damned him with faint praise",
+        "grasped the nettle"
+       ],
+       "a": 0,
+       "why": "Getting in first and taking the moment is stealing thunder. Throwing the baby out with the bathwater would mean discarding something good along with the bad."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "words": [
+    {
+     "id": "w-clandestine",
+     "word": "Clandestine",
+     "pos": "adj.",
+     "meaning": "Kept secret, usually because it would not be approved",
+     "note": "Latin clam = secretly.",
+     "synonyms": [
+      "covert",
+      "surreptitious",
+      "furtive",
+      "underhand"
+     ],
+     "cards": [
+      {
+       "fmt": "context",
+       "q": "Their ___ meetings in the old library ended the day the warden read the register.",
+       "o": [
+        "clandestine",
+        "convivial",
+        "compulsory",
+        "unremarkable"
+       ],
+       "a": 0,
+       "why": "Being caught out by a register shows the meetings were meant to be secret. Convivial is cheerful, compulsory is required, unremarkable means ordinary."
+      },
+      {
+       "fmt": "usage",
+       "q": "",
+       "o": [
+        "A clandestine group met after midnight to print the banned pamphlet.",
+        "The clandestine ceremony was broadcast live to four states.",
+        "He made a clandestine announcement in the morning assembly.",
+        "Their clandestine friendship was the talk of every corridor in the building."
+       ],
+       "a": 0,
+       "why": "Clandestine means hidden, so broadcasts, assemblies and corridor gossip all contradict it."
+      }
+     ]
+    },
+    {
+     "id": "w-perfidious",
+     "word": "Perfidious",
+     "pos": "adj.",
+     "meaning": "Deliberately treacherous",
+     "note": "Latin per fidem decipere = to deceive through trust. It is the opposite of fidelity.",
+     "synonyms": [
+      "treacherous",
+      "disloyal",
+      "faithless",
+      "deceitful"
+     ],
+     "cards": [
+      {
+       "fmt": "usage",
+       "q": "",
+       "o": [
+        "A perfidious ally signed our treaty in the morning and the enemy's by night.",
+        "The perfidious officer refused the bribe and reported the man who offered it.",
+        "She was perfidious in her duties and never once missed a shift.",
+        "His perfidious generosity paid the fees of six students."
+       ],
+       "a": 0,
+       "why": "Perfidious is betrayal of trust, so honesty, reliability and generosity all contradict it."
+      },
+      {
+       "fmt": "confusable",
+       "q": "The ___ secretary passed every internal plan to the rival firm.",
+       "o": [
+        "perfidious",
+        "punctilious",
+        "pernicious",
+        "prodigious"
+       ],
+       "a": 0,
+       "why": "Passing plans to a rival is betrayal, so perfidious. Punctilious means careful about detail, pernicious means quietly destructive, prodigious means huge."
+      }
+     ]
+    },
+    {
+     "id": "w-guile",
+     "word": "Guile",
+     "pos": "n.",
+     "meaning": "Cunning used to deceive",
+     "note": "An old cousin of wile. Someone with none of it is guileless.",
+     "synonyms": [
+      "cunning",
+      "craft",
+      "duplicity",
+      "artifice"
+     ],
+     "cards": [
+      {
+       "fmt": "context",
+       "q": "He had no money, no title and no connections, and won the case by sheer ___.",
+       "o": [
+        "guile",
+        "candour",
+        "gravitas",
+        "diligence"
+       ],
+       "a": 0,
+       "why": "Winning without resources points to cunning. Candour is frankness, gravitas is seriousness, diligence is hard work."
+      },
+      {
+       "fmt": "reverse",
+       "q": "A negotiator wins by letting the other side believe they are getting the better deal. His weapon is ___.",
+       "o": [
+        "guile",
+        "probity",
+        "temerity",
+        "zeal"
+       ],
+       "a": 0,
+       "why": "Engineering a false impression is guile. Probity is honesty, temerity is reckless boldness, zeal is enthusiasm."
+      }
+     ]
+    },
+    {
+     "id": "w-tacit",
+     "word": "Tacit",
+     "pos": "adj.",
+     "meaning": "Understood without being stated",
+     "note": "Latin tacere = to be silent, the root of taciturn.",
+     "synonyms": [
+      "unspoken",
+      "implicit",
+      "implied",
+      "understood"
+     ],
+     "cards": [
+      {
+       "fmt": "context",
+       "q": "Nobody approved the arrangement aloud, yet it ran for years with everyone's ___ consent.",
+       "o": [
+        "tacit",
+        "written",
+        "formal",
+        "grudging"
+       ],
+       "a": 0,
+       "why": "Consent that was never spoken is tacit. Written and formal are the opposite; grudging describes reluctance, not silence."
+      },
+      {
+       "fmt": "usage",
+       "q": "",
+       "o": [
+        "Her silence at the meeting was taken as tacit approval of the plan.",
+        "He gave tacit instructions in a signed circular sent to all departments.",
+        "The tacit announcement was read out twice over the public address.",
+        "They argued tacitly for an hour and the whole floor could hear it."
+       ],
+       "a": 0,
+       "why": "Tacit means unspoken, so circulars, announcements and audible arguing all contradict it."
+      }
+     ]
+    },
+    {
+     "id": "w-innocuous",
+     "word": "Innocuous",
+     "pos": "adj.",
+     "meaning": "Harmless",
+     "note": "Latin in- (not) + nocere (to harm), the same root as noxious.",
+     "synonyms": [
+      "harmless",
+      "inoffensive",
+      "benign",
+      "mild"
+     ],
+     "cards": [
+      {
+       "fmt": "confusable",
+       "q": "What seemed an ___ question turned out to decide the entire case.",
+       "o": [
+        "innocuous",
+        "incongruous",
+        "inexorable",
+        "inveterate"
+       ],
+       "a": 0,
+       "why": "The question looked harmless, so innocuous. Incongruous means out of place, inexorable means unstoppable, inveterate means long-established."
+      },
+      {
+       "fmt": "usage",
+       "q": "",
+       "o": [
+        "An innocuous remark about the weather somehow started the quarrel.",
+        "The innocuous chemical burned through the steel tray in seconds.",
+        "He was given an innocuous warning and suspended for a year.",
+        "Her innocuous attack on the proposal left the entire committee in ruins."
+       ],
+       "a": 0,
+       "why": "Innocuous means harmless, so burning, suspension and ruin all contradict it."
+      }
+     ]
+    }
+   ],
+   "idioms": [
+    {
+     "id": "i-a-judas-kiss",
+     "idiom": "A Judas kiss",
+     "meaning": "A show of affection that hides a betrayal",
+     "origin": "In the Gospels, Judas identifies Jesus to the soldiers by greeting him with a kiss.",
+     "scene": [
+      [
+       "💋",
+       "pop",
+       0
+      ],
+      [
+       "🪙",
+       "fall",
+       0.3
+      ],
+      [
+       "🗡️",
+       "shake",
+       0.7
+      ],
+      [
+       "💔",
+       "flicker",
+       1
+      ]
+     ],
+     "caption": "The greeting was the signal.",
+     "cards": [
+      {
+       "fmt": "idiom-context",
+       "q": "He praised his colleague warmly at the farewell, having already sent the complaint that cost the man his job. The praise was a Judas kiss, meaning ___.",
+       "o": [
+        "A show of friendship concealing a betrayal",
+        "A kindness offered far too late to help",
+        "An apology made only because others were watching",
+        "A compliment designed to embarrass the person praised"
+       ],
+       "a": 0,
+       "why": "A Judas kiss is warmth used as cover for betrayal, which is exactly what the complaint makes it."
+      },
+      {
+       "fmt": "idiom-pick",
+       "q": "She embraced her rival on stage, knowing the article naming him would run that night. The embrace was ___.",
+       "o": [
+        "a Judas kiss",
+        "crocodile tears",
+        "a Parthian shot",
+        "a curate's egg"
+       ],
+       "a": 0,
+       "why": "Affection masking betrayal is a Judas kiss. Crocodile tears are false grief, a Parthian shot is a hit delivered while leaving."
+      }
+     ]
+    },
+    {
+     "id": "i-a-dog-in-the-manger",
+     "idiom": "A dog in the manger",
+     "meaning": "Someone who keeps what they cannot use, purely to stop others having it",
+     "origin": "From Aesop: a dog lies in the manger of hay it cannot eat, and growls at the ox that can.",
+     "scene": [
+      [
+       "🐕",
+       "pop",
+       0
+      ],
+      [
+       "🌾",
+       "floaty",
+       0.4
+      ],
+      [
+       "🐂",
+       "shake",
+       0.7
+      ],
+      [
+       "🚫",
+       "flicker",
+       1
+      ]
+     ],
+     "caption": "Can't eat it. Won't let you.",
+     "cards": [
+      {
+       "fmt": "idiom-context",
+       "q": "He had not opened the lab in two years, yet blocked every request from other departments to use it. Colleagues called him a dog in the manger, meaning he ___.",
+       "o": [
+        "Denied others what he had no use for himself",
+        "Guarded the lab because he feared being replaced",
+        "Had taken on far more than he could manage",
+        "Defended a position long after it was lost"
+       ],
+       "a": 0,
+       "why": "The point of the idiom is withholding something useless to you but valuable to others."
+      },
+      {
+       "fmt": "idiom-pick",
+       "q": "The flat stood empty for a decade while he refused every tenant and every buyer. A neighbour called him ___.",
+       "o": [
+        "a dog in the manger",
+        "a Cassandra",
+        "a curate's egg",
+        "a paper tiger"
+       ],
+       "a": 0,
+       "why": "Keeping an unused thing from others is the dog in the manger. A Cassandra makes unheeded warnings, a curate's egg is partly good and partly bad."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "words": [
+    {
+     "id": "w-paucity",
+     "word": "Paucity",
+     "pos": "n.",
+     "meaning": "A shortage of something",
+     "note": "Latin paucus = few, the same family as few and pauper.",
+     "synonyms": [
+      "scarcity",
+      "dearth",
+      "shortage",
+      "lack"
+     ],
+     "cards": [
+      {
+       "fmt": "context",
+       "q": "The report was rejected for a ___ of evidence, not for any flaw in its reasoning.",
+       "o": [
+        "paucity",
+        "wealth",
+        "weight",
+        "breadth"
+       ],
+       "a": 0,
+       "why": "Rejected for too little evidence, so paucity. Wealth and breadth would mean there was plenty of it."
+      },
+      {
+       "fmt": "reverse",
+       "q": "A library holds four books on a subject that needs four hundred. It suffers from a ___ of material.",
+       "o": [
+        "paucity",
+        "plethora",
+        "surfeit",
+        "excess"
+       ],
+       "a": 0,
+       "why": "Four where four hundred are needed is a shortage. The other three all mean too much."
+      }
+     ]
+    },
+    {
+     "id": "w-plethora",
+     "word": "Plethora",
+     "pos": "n.",
+     "meaning": "Far more than is needed",
+     "note": "Greek plethore = fullness. It began as a medical word for too much blood.",
+     "synonyms": [
+      "excess",
+      "surfeit",
+      "glut",
+      "superabundance"
+     ],
+     "cards": [
+      {
+       "fmt": "usage",
+       "q": "",
+       "o": [
+        "A plethora of coaching apps now competes for the same two study hours.",
+        "The plethora of applicants was so small the seat went unfilled.",
+        "He answered with a plethora, saying nothing at all for a minute.",
+        "She faced a plethora of choices and found there were exactly two of them."
+       ],
+       "a": 0,
+       "why": "A plethora is an overwhelming excess, so an unfilled seat, silence and two options all contradict it."
+      },
+      {
+       "fmt": "context",
+       "q": "The problem is not a shortage of advice but a ___ of it, every piece contradicting the last.",
+       "o": [
+        "plethora",
+        "shortfall",
+        "trickle",
+        "handful"
+       ],
+       "a": 0,
+       "why": "The sentence sets 'not a shortage' against the blank, so it must mean too much. The other three all mean too little."
+      }
+     ]
+    },
+    {
+     "id": "w-profligate",
+     "word": "Profligate",
+     "pos": "adj.",
+     "meaning": "Recklessly wasteful, especially with money",
+     "note": "Latin profligare = to strike down, to ruin.",
+     "synonyms": [
+      "wasteful",
+      "extravagant",
+      "spendthrift",
+      "prodigal"
+     ],
+     "cards": [
+      {
+       "fmt": "usage",
+       "q": "",
+       "o": [
+        "Profligate spending on three new buildings left nothing for salaries.",
+        "He was profligate with his savings and retired at forty with a surplus.",
+        "Her profligate accounting saved the department a crore this year.",
+        "The profligate committee refused to spend a rupee without three signatures."
+       ],
+       "a": 0,
+       "why": "Profligate means wasteful, so surpluses, savings and tight control all contradict it."
+      },
+      {
+       "fmt": "confusable",
+       "q": "A ___ heir ran through a fortune that had taken three generations to build.",
+       "o": [
+        "profligate",
+        "prolific",
+        "proficient",
+        "prodigious"
+       ],
+       "a": 0,
+       "why": "Running through a fortune is profligate. Prolific means highly productive, proficient means skilled, prodigious means enormous."
+      }
+     ]
+    },
+    {
+     "id": "w-opulent",
+     "word": "Opulent",
+     "pos": "adj.",
+     "meaning": "Rich and luxurious",
+     "note": "Latin opes = wealth and resources, the root of opulence.",
+     "synonyms": [
+      "luxurious",
+      "lavish",
+      "sumptuous",
+      "plush"
+     ],
+     "cards": [
+      {
+       "fmt": "context",
+       "q": "After the ___ lobby, the rooms upstairs were a shock: bare walls and one bulb.",
+       "o": [
+        "opulent",
+        "austere",
+        "cramped",
+        "derelict"
+       ],
+       "a": 0,
+       "why": "The lobby must contrast with bare walls, so it was luxurious. The other three all match the bare rooms instead."
+      },
+      {
+       "fmt": "usage",
+       "q": "",
+       "o": [
+        "An opulent hall of chandeliers and marble greeted the delegates.",
+        "The opulent room held one chair, one table and nothing whatsoever besides.",
+        "He led an opulent life on a clerk's pay and saved half of it.",
+        "Their opulent meal of rice and salt was eaten in silence."
+       ],
+       "a": 0,
+       "why": "Opulent means richly luxurious, so bare rooms, thrift and plain food all contradict it."
+      }
+     ]
+    },
+    {
+     "id": "w-austere",
+     "word": "Austere",
+     "pos": "adj.",
+     "meaning": "Severely plain, with no comfort or decoration",
+     "note": "Greek austeros = harsh or dry, first used of a taste that dries the tongue.",
+     "synonyms": [
+      "spartan",
+      "stark",
+      "ascetic",
+      "severe"
+     ],
+     "cards": [
+      {
+       "fmt": "usage",
+       "q": "",
+       "o": [
+        "His austere room held a cot, a lamp and a shelf of books.",
+        "The austere banquet ran to nine courses and a live orchestra.",
+        "She was austere in her giving, supporting every cause she met.",
+        "The austere decorations covered every inch of the hall in gold."
+       ],
+       "a": 0,
+       "why": "Austere means bare and severe, so banquets, open-handedness and gold decoration all contradict it."
+      },
+      {
+       "fmt": "reverse",
+       "q": "A monk's cell with no decoration, no heating and a single wooden bed is best described as ___.",
+       "o": [
+        "austere",
+        "palatial",
+        "cluttered",
+        "ornate"
+       ],
+       "a": 0,
+       "why": "Bare and severe is austere. Palatial and ornate mean grand or decorated; cluttered means full of things."
+      }
+     ]
+    }
+   ],
+   "idioms": [
+    {
+     "id": "i-a-white-elephant",
+     "idiom": "A white elephant",
+     "meaning": "A costly possession that is more trouble than it is worth",
+     "origin": "Kings of Siam are said to have given sacred white elephants to courtiers they disliked: the animal could not be worked or given away, and its upkeep ruined the owner.",
+     "scene": [
+      [
+       "🐘",
+       "pop",
+       0
+      ],
+      [
+       "💰",
+       "fall",
+       0.3
+      ],
+      [
+       "🏚️",
+       "shake",
+       0.7
+      ],
+      [
+       "😩",
+       "flicker",
+       1
+      ]
+     ],
+     "caption": "A gift you cannot afford to keep.",
+     "cards": [
+      {
+       "fmt": "idiom-context",
+       "q": "The stadium cost 400 crore, hosted four matches and now costs 2 crore a year to maintain. The press calls it a white elephant, meaning ___.",
+       "o": [
+        "A possession costing far more to keep than it is worth",
+        "A project abandoned before it was finished",
+        "A showpiece built only to impress visitors",
+        "A scheme that enriched only the contractors who built it"
+       ],
+       "a": 0,
+       "why": "The whole point is the ruinous upkeep of something that gives little back. The stadium was finished and is still standing."
+      },
+      {
+       "fmt": "idiom-pick",
+       "q": "The inherited mansion cannot be sold, cannot be let, and swallows half his income in repairs. It is ___.",
+       "o": [
+        "a white elephant",
+        "manna from heaven",
+        "a feather in his cap",
+        "the lion's share"
+       ],
+       "a": 0,
+       "why": "A possession whose upkeep ruins you is a white elephant. Manna from heaven would be unexpected help, which this is the opposite of."
+      }
+     ]
+    },
+    {
+     "id": "i-manna-from-heaven",
+     "idiom": "Manna from heaven",
+     "meaning": "Unexpected help arriving exactly when it is needed",
+     "origin": "In Exodus, the Israelites wandering the desert find manna on the ground each morning as food they did nothing to earn.",
+     "scene": [
+      [
+       "🌅",
+       "pop",
+       0
+      ],
+      [
+       "🍞",
+       "fall",
+       0.3
+      ],
+      [
+       "🙏",
+       "floaty",
+       0.7
+      ],
+      [
+       "✨",
+       "flicker",
+       1
+      ]
+     ],
+     "caption": "Help nobody arranged.",
+     "cards": [
+      {
+       "fmt": "idiom-context",
+       "q": "The trust was weeks from closing when an old student left it his entire estate. The secretary called the bequest manna from heaven, meaning it was ___.",
+       "o": [
+        "Unexpected help arriving just when it was needed",
+        "A reward earned by years of patient work",
+        "A gift that came with heavy conditions attached to it",
+        "Relief that proved far too small to matter"
+       ],
+       "a": 0,
+       "why": "Manna is unearned and unplanned, which rules out the reward option, and it saved the trust, which rules out the last."
+      },
+      {
+       "fmt": "idiom-pick",
+       "q": "The monsoon broke on the very day the last well ran dry. For the village the rain was ___.",
+       "o": [
+        "manna from heaven",
+        "a Pyrrhic victory",
+        "a storm in a teacup",
+        "a false dawn"
+       ],
+       "a": 0,
+       "why": "Unlooked-for rescue at the last moment is manna from heaven. A false dawn would be relief that then failed."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "words": [
+    {
+     "id": "w-upbraid",
+     "word": "Upbraid",
+     "pos": "v.",
+     "meaning": "To scold someone severely",
+     "note": "Old English upbregdan, to bring a fault up against someone.",
+     "synonyms": [
+      "scold",
+      "reproach",
+      "rebuke",
+      "berate"
+     ],
+     "cards": [
+      {
+       "fmt": "usage",
+       "q": "",
+       "o": [
+        "The coach upbraided the openers for throwing away two hours of good work.",
+        "She upbraided him warmly for the kindness he had shown her mother last winter.",
+        "He upbraided the proposal by signing it without reading a word.",
+        "They upbraided the winner with garlands and a long applause."
+       ],
+       "a": 0,
+       "why": "Upbraid is harsh scolding, so warmth, signatures and garlands all contradict it."
+      },
+      {
+       "fmt": "context",
+       "q": "The letter did not ___ him; it simply listed what had gone wrong and asked for a reply.",
+       "o": [
+        "upbraid",
+        "inform",
+        "concern",
+        "reach"
+       ],
+       "a": 0,
+       "why": "The contrast is between scolding and a plain list of facts, so the blank must mean scold."
+      }
+     ]
+    },
+    {
+     "id": "w-repudiate",
+     "word": "Repudiate",
+     "pos": "v.",
+     "meaning": "To reject or disown completely",
+     "note": "Latin repudium = divorce. To repudiate once meant to cast off a spouse.",
+     "synonyms": [
+      "disown",
+      "renounce",
+      "disavow",
+      "reject"
+     ],
+     "cards": [
+      {
+       "fmt": "context",
+       "q": "The party was forced to ___ the remark within hours of its spokesman making it.",
+       "o": [
+        "repudiate",
+        "repeat",
+        "reintroduce",
+        "release"
+       ],
+       "a": 0,
+       "why": "Damage control means publicly disowning the remark, not repeating it, reintroducing it or issuing it again."
+      },
+      {
+       "fmt": "usage",
+       "q": "",
+       "o": [
+        "He repudiated the agreement his predecessor had signed and began fresh talks.",
+        "She repudiated the theory by supplying the last proof it needed.",
+        "The board repudiated the plan and then voted unanimously to fund every part of it.",
+        "He repudiated her advice and followed every word of it."
+       ],
+       "a": 0,
+       "why": "Repudiate means to reject, so proving, funding and following all contradict it."
+      }
+     ]
+    },
+    {
+     "id": "w-umbrage",
+     "word": "Umbrage",
+     "pos": "n.",
+     "meaning": "Offence or resentment at being slighted",
+     "note": "Latin umbra = shade. To take umbrage is to feel overshadowed.",
+     "synonyms": [
+      "offence",
+      "resentment",
+      "pique",
+      "indignation"
+     ],
+     "cards": [
+      {
+       "fmt": "context",
+       "q": "He took ___ at being thanked last, and left before the photographs.",
+       "o": [
+        "umbrage",
+        "heart",
+        "charge",
+        "flight"
+       ],
+       "a": 0,
+       "why": "Walking out over the order of thanks is wounded pride. Take heart means to be encouraged, take charge means to lead."
+      },
+      {
+       "fmt": "reverse",
+       "q": "A senior professor finds his name listed after the juniors on the invitation and refuses to attend. What has he taken? ___",
+       "o": [
+        "umbrage",
+        "recourse",
+        "refuge",
+        "counsel"
+       ],
+       "a": 0,
+       "why": "Offence at a perceived slight is umbrage. Recourse is a remedy sought, refuge is shelter, counsel is advice."
+      }
+     ]
+    },
+    {
+     "id": "w-acerbic",
+     "word": "Acerbic",
+     "pos": "adj.",
+     "meaning": "Sharp and bitter in tone",
+     "note": "Latin acerbus = sour or harsh, the same family as acid and acrid.",
+     "synonyms": [
+      "caustic",
+      "biting",
+      "tart",
+      "astringent"
+     ],
+     "cards": [
+      {
+       "fmt": "confusable",
+       "q": "His ___ review of the novel ended the author's friendship with the magazine.",
+       "o": [
+        "acerbic",
+        "acoustic",
+        "ascetic",
+        "aesthetic"
+       ],
+       "a": 0,
+       "why": "A review that ends a friendship is biting, so acerbic. Acoustic relates to sound, ascetic to self-denial, aesthetic to beauty."
+      },
+      {
+       "fmt": "usage",
+       "q": "",
+       "o": [
+        "An acerbic one-line reply ended the discussion and the friendship with it.",
+        "Her acerbic praise left the young writer glowing for a week.",
+        "He was acerbic with the children, who all adored his gentle bedtime stories.",
+        "The acerbic lullaby sent the whole ward peacefully to sleep."
+       ],
+       "a": 0,
+       "why": "Acerbic is bitter sharpness, so glowing praise, gentleness and lullabies all contradict it."
+      }
+     ]
+    },
+    {
+     "id": "w-didactic",
+     "word": "Didactic",
+     "pos": "adj.",
+     "meaning": "Meant to teach, often too obviously",
+     "note": "Greek didaskein = to teach.",
+     "synonyms": [
+      "instructive",
+      "moralising",
+      "preachy",
+      "pedagogic"
+     ],
+     "cards": [
+      {
+       "fmt": "usage",
+       "q": "",
+       "o": [
+        "The novel turns didactic in the last chapter, stopping the story to lecture.",
+        "His didactic silence taught the class nothing at all.",
+        "The didactic film left every question wide open and explained nothing whatsoever.",
+        "She wrote a didactic poem with no message of any kind."
+       ],
+       "a": 0,
+       "why": "Didactic means teaching or moralising, so teaching nothing and having no message contradict it."
+      },
+      {
+       "fmt": "context",
+       "q": "Children's books of that era were relentlessly ___: every story stopped to deliver its lesson.",
+       "o": [
+        "didactic",
+        "whimsical",
+        "cryptic",
+        "lyrical"
+       ],
+       "a": 0,
+       "why": "Stories that stop to deliver lessons are didactic. Whimsical is playful, cryptic is obscure, lyrical is songlike."
+      }
+     ]
+    }
+   ],
+   "idioms": [
+    {
+     "id": "i-a-paper-tiger",
+     "idiom": "A paper tiger",
+     "meaning": "Something that looks threatening but has no real power",
+     "origin": "An old Chinese expression, zhilaohu, made famous in English by Mao Zedong in 1946 for enemies who appear fearsome but are hollow.",
+     "scene": [
+      [
+       "🐯",
+       "pop",
+       0
+      ],
+      [
+       "📄",
+       "floaty",
+       0.4
+      ],
+      [
+       "💨",
+       "shake",
+       0.8
+      ]
+     ],
+     "caption": "All roar, no teeth.",
+     "cards": [
+      {
+       "fmt": "idiom-context",
+       "q": "The commission can summon anyone but cannot punish anyone. Critics call it a paper tiger, meaning it ___.",
+       "o": [
+        "Looks powerful but can do nothing",
+        "Acts only when the press is watching",
+        "Was created to delay a real inquiry",
+        "Is run by people with no expertise"
+       ],
+       "a": 0,
+       "why": "A paper tiger is about appearance without power, not about motives or competence."
+      },
+      {
+       "fmt": "idiom-pick",
+       "q": "The new regulator issued three warnings in five years and not a single penalty. The industry treats it as ___.",
+       "o": [
+        "a paper tiger",
+        "a Trojan horse",
+        "the sword of Damocles",
+        "a red herring"
+       ],
+       "a": 0,
+       "why": "Threat without bite is a paper tiger. A sword of Damocles is a threat that genuinely hangs over you."
+      }
+     ]
+    },
+    {
+     "id": "i-beard-the-lion-in-its-den",
+     "idiom": "Beard the lion in its den",
+     "meaning": "To confront a powerful person on their own ground",
+     "origin": "From an older sense of beard, to seize by the beard and so defy. Walter Scott's Marmion made the phrase popular.",
+     "scene": [
+      [
+       "🦁",
+       "shake",
+       0
+      ],
+      [
+       "🚪",
+       "pop",
+       0.4
+      ],
+      [
+       "⚡",
+       "flicker",
+       0.8
+      ]
+     ],
+     "caption": "You go to him. On his floor.",
+     "cards": [
+      {
+       "fmt": "idiom-context",
+       "q": "Rather than write again, she flew to head office and raised the complaint in the chairman's own boardroom. She had bearded the lion in its den, meaning she ___.",
+       "o": [
+        "Confronted a powerful person on his own ground",
+        "Took a risk that was certain to fail",
+        "Appealed over the head of her own immediate boss",
+        "Started a quarrel she could not win"
+       ],
+       "a": 0,
+       "why": "The idiom is about where the confrontation happens: on the powerful person's own territory."
+      },
+      {
+       "fmt": "idiom-pick",
+       "q": "The junior lawyer argued the point in the senior judge's own court, to his face. She had ___.",
+       "o": [
+        "bearded the lion in its den",
+        "tilted at windmills",
+        "crossed the Rubicon",
+        "poured oil on troubled waters"
+       ],
+       "a": 0,
+       "why": "Facing power on its own ground is bearding the lion. Tilting at windmills is fighting imaginary enemies, and pouring oil calms a quarrel instead of starting one."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "words": [
+    {
+     "id": "w-nebulous",
+     "word": "Nebulous",
+     "pos": "adj.",
+     "meaning": "Vague, with no clear shape",
+     "note": "Latin nebula = mist or cloud, the same word as the nebula in the night sky.",
+     "synonyms": [
+      "vague",
+      "hazy",
+      "indistinct",
+      "amorphous"
+     ],
+     "cards": [
+      {
+       "fmt": "context",
+       "q": "The plan was ___: three slides of ambition and not one number.",
+       "o": [
+        "nebulous",
+        "detailed",
+        "costed",
+        "rigorous"
+       ],
+       "a": 0,
+       "why": "Ambition without numbers is vague, so nebulous. The other three all describe a plan with hard detail."
+      },
+      {
+       "fmt": "usage",
+       "q": "",
+       "o": [
+        "His answer stayed nebulous, circling the question without ever landing.",
+        "The nebulous instructions gave the exact time, the place and the dress code.",
+        "She had a nebulous grasp of the formula and derived it from memory.",
+        "The nebulous contract ran to 200 pages of precise clauses."
+       ],
+       "a": 0,
+       "why": "Nebulous means vague, so exact instructions, firm command and precise clauses all contradict it."
+      }
+     ]
+    },
+    {
+     "id": "w-erudite",
+     "word": "Erudite",
+     "pos": "adj.",
+     "meaning": "Showing deep learning",
+     "note": "Latin erudire = to bring out of rudeness, that is, to polish by teaching.",
+     "synonyms": [
+      "learned",
+      "scholarly",
+      "well-read",
+      "knowledgeable"
+     ],
+     "cards": [
+      {
+       "fmt": "usage",
+       "q": "",
+       "o": [
+        "An erudite footnote traced the word through four languages in three lines.",
+        "The erudite speaker admitted he had never read the book he was there to review.",
+        "Her erudite guesswork rested on nothing she had ever studied.",
+        "He gave an erudite shrug and quickly changed the subject."
+       ],
+       "a": 0,
+       "why": "Erudite means deeply learned, so admitted ignorance, guesswork and a shrug all contradict it."
+      },
+      {
+       "fmt": "confusable",
+       "q": "The lecture was ___, drawing on sources in five languages.",
+       "o": [
+        "erudite",
+        "eroded",
+        "arid",
+        "ardent"
+       ],
+       "a": 0,
+       "why": "Five languages of sources is deep learning. Eroded means worn away, arid means dry, ardent means passionate."
+      }
+     ]
+    },
+    {
+     "id": "w-iconoclast",
+     "word": "Iconoclast",
+     "pos": "n.",
+     "meaning": "Someone who attacks cherished beliefs or institutions",
+     "note": "Greek eikon (image) + klastes (breaker). The first were destroyers of religious images in 8th-century Byzantium.",
+     "synonyms": [
+      "rebel",
+      "dissenter",
+      "heretic",
+      "maverick"
+     ],
+     "cards": [
+      {
+       "fmt": "context",
+       "q": "An ___ by temperament, she spent her career dismantling the theories her teachers had built.",
+       "o": [
+        "iconoclast",
+        "apologist",
+        "traditionalist",
+        "custodian"
+       ],
+       "a": 0,
+       "why": "Dismantling received theories is iconoclasm. An apologist defends them, a traditionalist upholds them, a custodian preserves them."
+      },
+      {
+       "fmt": "reverse",
+       "q": "A historian argues that the nation's most loved freedom fighter was in fact a poor strategist. In doing so he is acting as an ___.",
+       "o": [
+        "iconoclast",
+        "archivist",
+        "ideologue",
+        "apologist"
+       ],
+       "a": 0,
+       "why": "Attacking a revered figure is iconoclasm. An archivist keeps records, an ideologue pushes a doctrine, an apologist defends."
+      }
+     ]
+    },
+    {
+     "id": "w-serendipity",
+     "word": "Serendipity",
+     "pos": "n.",
+     "meaning": "The luck of finding something good without looking for it",
+     "note": "Coined by Horace Walpole in 1754 from the Persian tale The Three Princes of Serendip, who kept making happy discoveries by accident.",
+     "synonyms": [
+      "chance",
+      "luck",
+      "fluke",
+      "happy accident"
+     ],
+     "cards": [
+      {
+       "fmt": "usage",
+       "q": "",
+       "o": [
+        "Penicillin came by serendipity: a spoiled dish nobody meant to leave out.",
+        "After ten years of planned trials, the vaccine was pure serendipity.",
+        "He found the file by serendipity, exactly where the index had said it would be.",
+        "Her serendipity was the result of a careful two-year search."
+       ],
+       "a": 0,
+       "why": "Serendipity is accidental good fortune, so planned trials, an index and a deliberate search all contradict it."
+      },
+      {
+       "fmt": "context",
+       "q": "The discovery owed nothing to the grant and everything to ___: a wrong turn in the archive.",
+       "o": [
+        "serendipity",
+        "diligence",
+        "systematic method",
+        "precedent"
+       ],
+       "a": 0,
+       "why": "A wrong turn that pays off is serendipity. Diligence, a systematic method and precedent all imply finding it deliberately."
+      }
+     ]
+    },
+    {
+     "id": "w-vestige",
+     "word": "Vestige",
+     "pos": "n.",
+     "meaning": "A small trace of something that has otherwise vanished",
+     "note": "Latin vestigium = footprint. A vestige is a footprint left by the past.",
+     "synonyms": [
+      "trace",
+      "remnant",
+      "relic",
+      "residue"
+     ],
+     "cards": [
+      {
+       "fmt": "context",
+       "q": "Not a ___ of the old hostel survives except the gate and its iron bell.",
+       "o": [
+        "vestige",
+        "blueprint",
+        "replica",
+        "rumour"
+       ],
+       "a": 0,
+       "why": "What survives of something gone is a vestige. A blueprint is a plan, a replica is a copy, a rumour is talk."
+      },
+      {
+       "fmt": "usage",
+       "q": "",
+       "o": [
+        "A single arch is the last vestige of the fort that once stood here.",
+        "The vestige of the building covers four acres and is fully in use.",
+        "He kept a vestige of the old library: all forty thousand volumes of it.",
+        "Vestiges of the new wing will be completed by next spring."
+       ],
+       "a": 0,
+       "why": "A vestige is a small surviving trace, so four acres, forty thousand volumes and future building all contradict it."
+      }
+     ]
+    }
+   ],
+   "idioms": [
+    {
+     "id": "i-an-achilles-heel",
+     "idiom": "An Achilles' heel",
+     "meaning": "A single fatal weakness in someone otherwise strong",
+     "origin": "Achilles' mother dipped him in the Styx to make him invulnerable, holding him by the heel. That one dry spot was where the arrow found him.",
+     "scene": [
+      [
+       "🛡️",
+       "pop",
+       0
+      ],
+      [
+       "🏹",
+       "shake",
+       0.5
+      ],
+      [
+       "💢",
+       "flicker",
+       0.9
+      ]
+     ],
+     "caption": "Armoured everywhere but one inch.",
+     "cards": [
+      {
+       "fmt": "idiom-context",
+       "q": "Her quant and DI are near perfect, but parajumbles cost her the percentile every single time. Parajumbles are her Achilles' heel, meaning they are ___.",
+       "o": [
+        "The one weakness that undoes all her strength",
+        "The part she has neglected out of dislike",
+        "The section she finds hardest to finish in time",
+        "A weakness she refuses to admit to anyone"
+       ],
+       "a": 0,
+       "why": "An Achilles' heel is the single vulnerable point in something otherwise strong, whatever the reason for it."
+      },
+      {
+       "fmt": "idiom-pick",
+       "q": "The bridge was built to survive earthquakes, yet one corroded bolt brought down the entire span. That bolt was ___.",
+       "o": [
+        "its Achilles' heel",
+        "the thin end of the wedge",
+        "a red herring",
+        "the writing on the wall"
+       ],
+       "a": 0,
+       "why": "One small flaw defeating great strength is an Achilles' heel. The writing on the wall would be a warning of doom, not the cause of it."
+      }
+     ]
+    },
+    {
+     "id": "i-a-flash-in-the-pan",
+     "idiom": "A flash in the pan",
+     "meaning": "An early success that is never repeated",
+     "origin": "From the flintlock musket: the powder in the priming pan sometimes flared brightly without firing the shot.",
+     "scene": [
+      [
+       "🔥",
+       "pop",
+       0
+      ],
+      [
+       "💨",
+       "floaty",
+       0.5
+      ],
+      [
+       "🕳️",
+       "flicker",
+       0.9
+      ]
+     ],
+     "caption": "A bright flash. No shot.",
+     "cards": [
+      {
+       "fmt": "idiom-context",
+       "q": "The band's first song was everywhere; the next three sold nothing and they split up. Critics called them a flash in the pan, meaning they were ___.",
+       "o": [
+        "A sudden success that was never repeated",
+        "A success built entirely on publicity",
+        "A talent ruined by far too much early praise",
+        "A short career ended by sheer bad luck"
+       ],
+       "a": 0,
+       "why": "A flash in the pan is about the success not lasting. It says nothing about why."
+      },
+      {
+       "fmt": "idiom-pick",
+       "q": "He topped one mock, then slid back to his old percentile for the next ten. His teacher feared the score was ___.",
+       "o": [
+        "a flash in the pan",
+        "a feather in his cap",
+        "manna from heaven",
+        "a Pyrrhic victory"
+       ],
+       "a": 0,
+       "why": "A single unrepeated success is a flash in the pan. A feather in his cap would be a lasting credit, not a one-off."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "words": [
+    {
+     "id": "w-tenacious",
+     "word": "Tenacious",
+     "pos": "adj.",
+     "meaning": "Holding on firmly and refusing to give up",
+     "note": "Latin tenere = to hold, as in tenant and retain.",
+     "synonyms": [
+      "persistent",
+      "dogged",
+      "resolute",
+      "unyielding"
+     ],
+     "cards": [
+      {
+       "fmt": "context",
+       "q": "Four rejections in, she was ___ enough to send the fifth application the same week.",
+       "o": [
+        "tenacious",
+        "despondent",
+        "casual",
+        "erratic"
+       ],
+       "a": 0,
+       "why": "Sending a fifth after four rejections is persistence. Despondent means dejected, casual means indifferent, erratic means unpredictable."
+      },
+      {
+       "fmt": "usage",
+       "q": "",
+       "o": [
+        "A tenacious reporter kept filing the request until the file was released.",
+        "The tenacious student dropped the subject after one difficult week of classes.",
+        "He was tenacious about the goal and forgot it within a month.",
+        "Her tenacious grip slipped the moment anyone argued with her."
+       ],
+       "a": 0,
+       "why": "Tenacious means refusing to let go, so dropping out, forgetting and giving way all contradict it."
+      }
+     ]
+    },
+    {
+     "id": "w-timorous",
+     "word": "Timorous",
+     "pos": "adj.",
+     "meaning": "Easily frightened and nervous",
+     "note": "Latin timor = fear, the root of timid.",
+     "synonyms": [
+      "timid",
+      "fearful",
+      "apprehensive",
+      "nervous"
+     ],
+     "cards": [
+      {
+       "fmt": "usage",
+       "q": "",
+       "o": [
+        "A timorous knock at the door was all we heard for a full minute.",
+        "The timorous captain charged the enemy line entirely alone.",
+        "She gave a timorous roar that silenced the whole hall.",
+        "He was timorous enough to demand a refund from the manager twice."
+       ],
+       "a": 0,
+       "why": "Timorous means fearful, so charging alone, roaring and demanding refunds all contradict it."
+      },
+      {
+       "fmt": "confusable",
+       "q": "The ___ candidate spoke so softly that the panel twice asked him to repeat himself.",
+       "o": [
+        "timorous",
+        "tempestuous",
+        "temperate",
+        "timeless"
+       ],
+       "a": 0,
+       "why": "Speaking too softly out of nerves is timorous. Tempestuous means stormy, temperate means moderate, timeless means ageless."
+      }
+     ]
+    },
+    {
+     "id": "w-audacious",
+     "word": "Audacious",
+     "pos": "adj.",
+     "meaning": "Boldly daring, sometimes to the point of cheek",
+     "note": "Latin audere = to dare, which also gives us audacity.",
+     "synonyms": [
+      "bold",
+      "daring",
+      "intrepid",
+      "nervy"
+     ],
+     "cards": [
+      {
+       "fmt": "context",
+       "q": "It was an ___ plan: eleven men, one van, and the whole afternoon's takings.",
+       "o": [
+        "audacious",
+        "cautious",
+        "conventional",
+        "orthodox"
+       ],
+       "a": 0,
+       "why": "Eleven men taking an afternoon's takings is daring. Cautious, conventional and orthodox all describe the opposite."
+      },
+      {
+       "fmt": "reverse",
+       "q": "A first-time director remakes the most loved film in the language and changes its ending. The attempt is best described as ___.",
+       "o": [
+        "audacious",
+        "derivative",
+        "perfunctory",
+        "tentative"
+       ],
+       "a": 0,
+       "why": "Taking on a classic and changing it is bold. Derivative means unoriginal, perfunctory means done without care, tentative means hesitant."
+      }
+     ]
+    },
+    {
+     "id": "w-quixotic",
+     "word": "Quixotic",
+     "pos": "adj.",
+     "meaning": "Idealistic to the point of being impractical",
+     "note": "From Don Quixote, Cervantes' knight who charged at windmills believing them to be giants.",
+     "synonyms": [
+      "idealistic",
+      "impractical",
+      "starry-eyed",
+      "visionary"
+     ],
+     "cards": [
+      {
+       "fmt": "usage",
+       "q": "",
+       "o": [
+        "His quixotic plan to clean every river in the state began with one bucket.",
+        "The quixotic accountant checked every figure twice before signing.",
+        "She took a quixotic view and backed only the safest of the four available options.",
+        "The quixotic schedule allowed extra time for every likely delay."
+       ],
+       "a": 0,
+       "why": "Quixotic is noble but impractical idealism, so caution, safety and careful planning all contradict it."
+      },
+      {
+       "fmt": "context",
+       "q": "The campaign was ___ from the start, yet it changed how the city talked about its lakes.",
+       "o": [
+        "quixotic",
+        "cynical",
+        "mercenary",
+        "methodical"
+       ],
+       "a": 0,
+       "why": "The 'yet' sets hopeless idealism against a real effect. Cynical and mercenary describe self-interest, methodical describes good organisation."
+      }
+     ]
+    },
+    {
+     "id": "w-zenith",
+     "word": "Zenith",
+     "pos": "n.",
+     "meaning": "The highest point",
+     "note": "From Arabic samt, the path, in samt ar-ras, the path over the head. Its opposite is nadir.",
+     "synonyms": [
+      "peak",
+      "summit",
+      "apex",
+      "acme"
+     ],
+     "cards": [
+      {
+       "fmt": "context",
+       "q": "She reached the ___ of her career at thirty-one and spent the next decade teaching.",
+       "o": [
+        "zenith",
+        "nadir",
+        "outset",
+        "fringe"
+       ],
+       "a": 0,
+       "why": "The high point of a career is its zenith. Nadir is the lowest point, outset is the beginning, fringe is the edge."
+      },
+      {
+       "fmt": "usage",
+       "q": "",
+       "o": [
+        "At the zenith of its power the empire ran from the Danube to the Euphrates.",
+        "The company hit its zenith in the very year it finally filed for bankruptcy.",
+        "He was at the zenith of his form, averaging eleven runs a season.",
+        "The zenith of the hill was the lowest point on the entire route."
+       ],
+       "a": 0,
+       "why": "A zenith is the highest point, so bankruptcy, eleven runs and the lowest point all contradict it."
+      }
+     ]
+    }
+   ],
+   "idioms": [
+    {
+     "id": "i-the-straw-that-broke-the-camels-back",
+     "idiom": "The straw that broke the camel's back",
+     "meaning": "The last small addition that makes a situation collapse",
+     "origin": "An English proverb from the 1600s: a camel can carry an enormous load, but one more straw is one too many.",
+     "scene": [
+      [
+       "🐪",
+       "pop",
+       0
+      ],
+      [
+       "📦",
+       "fall",
+       0.3
+      ],
+      [
+       "🌾",
+       "floaty",
+       0.7
+      ],
+      [
+       "💥",
+       "shake",
+       1
+      ]
+     ],
+     "caption": "One straw. That was all it took.",
+     "cards": [
+      {
+       "fmt": "idiom-context",
+       "q": "He had put up with the delays for a year, but the cancelled leave was the straw that broke the camel's back and he resigned. That phrase means it was ___.",
+       "o": [
+        "The last small thing that made everything collapse",
+        "The worst of the many problems he had faced",
+        "The one grievance he could actually prove",
+        "A trivial matter blown completely out of all proportion"
+       ],
+       "a": 0,
+       "why": "The straw is small in itself; what matters is that it came last, on top of everything else. The final option describes a storm in a teacup instead."
+      },
+      {
+       "fmt": "idiom-pick",
+       "q": "Ten years of rent rises he absorbed without a word. The new parking charge finally made him move out. That charge was ___.",
+       "o": [
+        "the straw that broke the camel's back",
+        "a storm in a teacup",
+        "the thin end of the wedge",
+        "a flash in the pan"
+       ],
+       "a": 0,
+       "why": "A small last addition that triggers collapse is the straw. The thin end of the wedge would be the first small step, not the last."
+      }
+     ]
+    },
+    {
+     "id": "i-put-the-cart-before-the-horse",
+     "idiom": "Put the cart before the horse",
+     "meaning": "To do things in the wrong order",
+     "origin": "The image goes back at least to Roman writing and has meant reversed logic in English since the 1500s.",
+     "scene": [
+      [
+       "🛒",
+       "pop",
+       0
+      ],
+      [
+       "🐴",
+       "shake",
+       0.4
+      ],
+      [
+       "🔄",
+       "spin",
+       0.8
+      ]
+     ],
+     "caption": "Right parts. Wrong order.",
+     "cards": [
+      {
+       "fmt": "idiom-context",
+       "q": "They designed the brochure before deciding what the course would actually teach. The director said they had put the cart before the horse, meaning they had ___.",
+       "o": [
+        "Done things in the wrong order",
+        "Spent money they did not yet have",
+        "Copied a rival's approach too closely",
+        "Planned far more than they could deliver"
+       ],
+       "a": 0,
+       "why": "The idiom is purely about sequence: the thing that should come second was done first."
+      },
+      {
+       "fmt": "idiom-pick",
+       "q": "He booked the hall and printed the tickets before the artist had agreed to come at all. He had ___.",
+       "o": [
+        "put the cart before the horse",
+        "crossed the Rubicon",
+        "gilded the lily",
+        "grasped the nettle"
+       ],
+       "a": 0,
+       "why": "Doing the later step first is putting the cart before the horse. Gilding the lily is overdecorating something already fine."
       }
      ]
     }
