@@ -750,5 +750,33 @@ snFlushQueue();
 snTryResume();
 </script>
 <script>/* RIIM usage ping v1 */try{fetch("https://script.google.com/macros/s/AKfycbx5Ojm_zp4LfsMeelx5e06KNjVH1wfsXdV0keS4407m4FO1HU4EpVb7GKj-ibAsxnspeA/exec?action=ping&type=open&page="+encodeURIComponent(document.title||location.pathname),{mode:"no-cors"});}catch(_){}</script>
+<!-- ===== RIIM FEATURE DISABLE v1 =====
+     Shows "This feature not available" over the whole test and blocks all interaction.
+     TO RE-ENABLE THIS TEST: delete this entire block (down to the END marker). -->
+<div id="riimDisabledOverlay" style="position:fixed;top:0;left:0;right:0;bottom:0;width:100%;height:100%;z-index:2147483647;background:#0a0f1e;color:#eef3ff;display:flex;align-items:center;justify-content:center;padding:24px;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;text-align:center;">
+  <div style="max-width:420px;">
+    <div style="font-size:42px;line-height:1;margin-bottom:18px;">🔒</div>
+    <div style="font-size:23px;font-weight:700;line-height:1.35;">This feature not available</div>
+    <div style="margin-top:14px;font-size:15px;line-height:1.55;opacity:.72;">Road to IIM tests are switched off at the moment.</div>
+    <a href="index.html" style="display:inline-block;margin-top:26px;padding:11px 24px;border-radius:999px;background:#f3c53f;color:#0a0f1e;font-weight:700;font-size:14px;text-decoration:none;">Back to Road to IIM</a>
+  </div>
+</div>
+<script>
+(function(){
+  try{
+    var ov=document.getElementById("riimDisabledOverlay");
+    document.documentElement.style.overflow="hidden";
+    if(document.body)document.body.style.overflow="hidden";
+    setInterval(function(){
+      try{
+        if(!ov)return;
+        if(!ov.isConnected&&document.body)document.body.appendChild(ov);
+        ov.style.display="flex";
+      }catch(e){}
+    },700);
+  }catch(e){}
+})();
+</script>
+<!-- ===== END RIIM FEATURE DISABLE v1 ===== -->
 </body>
 </html>

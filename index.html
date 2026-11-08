@@ -728,6 +728,9 @@ document.getElementById('signOut').addEventListener('click',()=>{
 /* ═══ LIMITED-WINDOW EVENTS ═══
    Timestamps are UTC epochs. IST = UTC+5:30, so 00:00 IST = 18:30 UTC previous day.
    Add future window tests here — one entry each. */
+/* TESTS DISABLED: no main-screen event cards while tests are off.
+   Set EVENTS_DISABLED = false to bring the cards back. */
+const EVENTS_DISABLED = true;
 const EVENTS = [
   { t:"UGAT-B VA Challenge Mock",
     sub:"IIM Bangalore pattern · 15 Qs · 25 min · +3/−1",
@@ -856,7 +859,7 @@ function updateEventCard(){
   /* one card per not-yet-closed event; hero cards first */
   const box=document.getElementById('eventCards');
   const now=Date.now();
-  const evs=EVENTS.filter(e=>now < e.closesAt).sort((a,b)=>(b.hero?1:0)-(a.hero?1:0));
+  const evs=EVENTS_DISABLED?[]:EVENTS.filter(e=>now < e.closesAt).sort((a,b)=>(b.hero?1:0)-(a.hero?1:0));
   while(box.children.length>evs.length) box.removeChild(box.lastChild);
   evs.forEach((ev,i)=>{
     let card=box.children[i];
