@@ -362,7 +362,7 @@ const PORTAL_BASE = ""; // same directory as the test files
    sheetName matches the exact testName written to All Responses.
    matchNum lets "Road to IIM Test 19" and "Road to IIM Paper 19" both count. */
 const MANIFEST_ALL = [
-  { id:"standard", hidden:true, name:"Standard Tests", desc:"Full 30-minute mixed VA papers · +4 / −1",
+  { id:"standard", name:"Standard Tests", desc:"Full 30-minute mixed VA papers · +4 / −1",
     tests:[
       {t:"Test 9",  url:"RoadToIIM_Test9_OnlineTest.html",  matchNum:9},
       {t:"Test 11", url:"RoadToIIM_Test11_OnlineTest.html", matchNum:11},
@@ -383,14 +383,14 @@ const MANIFEST_ALL = [
   { id:"challenge", name:"Challenge Series", desc:"Limited-window mocks · real exam patterns",
     tests:[
       {t:"UGAT-B VA Challenge", url:"RoadToIIM_UGATB_VA_ChallengeMock.html", sheetName:"UGAT-B VA Challenge Mock"},
-      {t:"IPMATind VA Challenge", url:"RoadToIIM_IPMATind_VA_ChallengeMock.html", hidden:true, sheetName:"IPMATind VA Challenge Mock"},
-      {t:"IPMATind 01 VA Challenge", url:"ipmat_indore_va_challenge_mock_01.html", hidden:true, sheetName:"IPMAT Indore 01 VA Challenge Mock", windowed:true},
+      {t:"IPMATind VA Challenge", url:"RoadToIIM_IPMATind_VA_ChallengeMock.html", sheetName:"IPMATind VA Challenge Mock"},
+      {t:"IPMATind 01 VA Challenge", url:"ipmat_indore_va_challenge_mock_01.html", sheetName:"IPMAT Indore 01 VA Challenge Mock", windowed:true},
       {t:"UGAT Mock 005", url:"ugat_iimb_UGAT_Mock_005.html", sheetName:"UGAT Mock 005", windowed:true},
       {t:"UGAT Mock 006", url:"ugat_iimb_UGAT_Mock_006_Verbal.html", sheetName:"UGAT Mock 006 — Verbal", windowed:true},
-      {t:"IPMATind 02 VA Challenge", url:"ipmat_indore_va_challenge_mock_02.html", hidden:true, sheetName:"IPMAT Indore 02 VA Challenge Mock", windowed:true},
-      {t:"IPMATind 03 VA Challenge", url:"ipmat_indore_va_challenge_mock_03.html", hidden:true, sheetName:"IPMAT Indore 03 VA Challenge Mock", windowed:true},
-      {t:"IPMATind 04 VA Challenge", url:"ipmat_indore_va_challenge_mock_04.html", hidden:true, sheetName:"IPMAT Indore 04 VA Challenge Mock", windowed:true},
-      {t:"IPMATind 05 VA Challenge", url:"ipmat_indore_va_challenge_mock_05.html", hidden:true, sheetName:"IPMAT Indore 05 VA Challenge Mock", windowed:true},
+      {t:"IPMATind 02 VA Challenge", url:"ipmat_indore_va_challenge_mock_02.html", sheetName:"IPMAT Indore 02 VA Challenge Mock", windowed:true},
+      {t:"IPMATind 03 VA Challenge", url:"ipmat_indore_va_challenge_mock_03.html", sheetName:"IPMAT Indore 03 VA Challenge Mock", windowed:true},
+      {t:"IPMATind 04 VA Challenge", url:"ipmat_indore_va_challenge_mock_04.html", sheetName:"IPMAT Indore 04 VA Challenge Mock", windowed:true},
+      {t:"IPMATind 05 VA Challenge", url:"ipmat_indore_va_challenge_mock_05.html", sheetName:"IPMAT Indore 05 VA Challenge Mock", windowed:true},
       {t:"UGAT Mock 7", url:"ugat_iimb_UGAT_Mock_7_VA_Sectional.html", sheetName:"UGAT Mock 7 — VA Sectional", windowed:true},
       {t:"UGAT Mock 8", url:"ugat_iimb_UGAT_Mock_8_VA_Sectional.html", sheetName:"UGAT Mock 8 — VA Sectional", windowed:true},
       {t:"UGAT Mock 9", url:"ugat_iimb_UGAT_Mock_9_VA_Sectional.html", sheetName:"UGAT Mock 9 — VA Sectional", isNew:true},
@@ -444,7 +444,7 @@ const MANIFEST_ALL = [
       {t:"Adaptive Test 01", url:"RoadToIIM_Adaptive01_VocabGrammar.html", sheetName:"Adaptive Test 01"},
       {t:"Adaptive Test 02 · Grammar", url:"RoadToIIM_Adaptive02_Grammar.html", sheetName:"Adaptive Test 02", isNew:true},
     ]},
-  { id:"rc", hidden:true, name:"RC Series & Drills", desc:"Passages, alerts, skeletons",
+  { id:"rc", name:"RC Series & Drills", desc:"Passages, alerts, skeletons",
     tests:[
       {t:"RC Series 01", url:"RoadToIIM_RC_Series01.html", sheetName:"RC Series 01"},
       {t:"RC Series 02", url:"RoadToIIM_RC_Series02.html", sheetName:"RC Series 02"},
@@ -452,7 +452,7 @@ const MANIFEST_ALL = [
       {t:"RC Drill 04",  url:"RoadToIIM_RC_Series04_RCDrill.html", sheetName:"Road to IIM RC Series 04"},
       {t:"RC Drill 05",  url:"RoadToIIM_RC_Series05_RCDrill.html", sheetName:"Road to IIM RC Series 05"},
     ]},
-  { id:"concept", hidden:true, name:"Concept Tests", desc:"Straight from class decks",
+  { id:"concept", name:"Concept Tests", desc:"Straight from class decks",
     tests:[
       {t:"Word Web I",    url:"RoadToIIM_ConceptTest01_WordWebI.html",     sheetName:"Concept Test 1"},
       {t:"Word Web II",   url:"RoadToIIM_ConceptTest02_WordWebII.html",    sheetName:"Concept Test 2"},
@@ -464,7 +464,7 @@ const MANIFEST_ALL = [
       {t:"The Vault",    url:"the_vault_v4.html", soon:true, isNew:true},
       {t:"Mistake Bank", url:"mistake_bank.html", soon:true},
     ]},
-  { id:"skills", hidden:true, name:"Skill Building", desc:"Daily habits that compound",
+  { id:"skills", name:"Skill Building", desc:"Daily habits that compound",
     tests:[
       {t:"IWP", url:"iwp_week1_session.html", soon:true},
       {t:"RLS", url:"RLS_Week1.html",         soon:true},
