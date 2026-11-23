@@ -153,6 +153,52 @@ body.preview .previewbar{display:block}
 .donebtns{width:100%;max-width:320px;margin:10px auto 0}
 .confetti{position:fixed;top:-14px;font-size:1rem;z-index:99;animation:cfall linear forwards;pointer-events:none}
 @keyframes cfall{to{transform:translateY(105vh) rotate(720deg)}}
+/* ===== Revise (flashcards) ===== */
+.revbtn{margin-top:18px;display:flex;align-items:center;gap:10px;padding:12px 20px;border-radius:999px;cursor:pointer;background:rgba(78,160,130,.1);border:1px solid rgba(78,160,130,.55);color:#bfe8d8;font-family:'DM Sans',sans-serif;font-size:.95rem}
+.revbtn b{color:#fff}
+.revbtn:hover{background:rgba(78,160,130,.18)}
+.smalllink{background:none;border:none;color:var(--muted);font-size:.78rem;margin-top:14px;cursor:pointer;text-decoration:underline;font-family:'DM Sans',sans-serif}
+.restore{display:none;margin-top:10px;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap}
+.restore.on{display:flex}
+.restore input{background:rgba(255,255,255,.06);border:1px solid rgba(143,160,184,.35);color:var(--parchment);border-radius:9px;padding:9px 12px;font-size:.9rem;width:150px;font-family:'DM Sans',sans-serif}
+.restore button{padding:9px 14px;border-radius:9px;border:none;background:var(--gold);color:#231a04;font-weight:700;cursor:pointer}
+.restoremsg{width:100%;font-size:.78rem;color:var(--muted);margin-top:4px}
+.iostip{display:none;max-width:360px;margin-top:16px;font-size:.78rem;color:#cfd8e6;background:rgba(201,162,39,.08);border:1px solid rgba(201,162,39,.3);border-radius:10px;padding:9px 12px;line-height:1.45;position:relative}
+.iostip.on{display:block}
+.iostip button{position:absolute;top:4px;right:8px;background:none;border:none;color:var(--muted);font-size:1rem;cursor:pointer}
+#reviseScreen{gap:10px}
+.lockline{color:var(--muted);font-size:.88rem;margin-top:4px}
+.lockline b{color:var(--gold-hi)}
+.lockbar{width:100%;max-width:420px;height:6px;border-radius:3px;background:rgba(143,160,184,.2);overflow:hidden;margin:8px auto 2px}
+.lockbar i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-hi))}
+.fc{width:100%;max-width:520px;min-height:300px;border-radius:18px;padding:22px 20px 20px;background:linear-gradient(170deg,var(--panel2),var(--panel));border:1px solid rgba(201,162,39,.35);position:relative;margin-top:10px;touch-action:pan-y;transition:transform .2s ease,opacity .2s ease}
+.fc.idiom{border-color:rgba(142,42,53,.75);background:linear-gradient(170deg,#2a1520,#170c12)}
+.fc .qkind{margin-bottom:14px}
+.fc.idiom .qkind{color:#d98a94}
+.fc .ask{color:var(--muted);font-size:.85rem;margin-top:14px}
+.fc .bigq{font-family:'Fraunces',serif;font-size:clamp(1.35rem,4.8vw,1.8rem);line-height:1.3;margin:4px 0 8px}
+.fc .letters{font-family:'Fraunces',serif;font-size:1.5rem;letter-spacing:.3em;color:var(--gold-hi);margin:10px 0 2px}
+.fc .hintline{font-size:.92rem;color:#d7c7a0;margin-top:10px;font-style:italic}
+.fc .backside{display:none;margin-top:16px;border-top:1px dashed rgba(201,162,39,.4);padding-top:14px;animation:rise .35s ease}
+.fc.flipped .backside{display:block}
+.fc .backside p{font-size:.93rem;line-height:1.55;color:#D8DEE9;margin-bottom:9px}
+.fc .backside p b{color:var(--gold-hi)}
+.fc .ans{font-family:'Fraunces',serif;font-size:1.45rem;color:var(--gold-hi);margin-bottom:6px}
+.flipbtn{margin-top:18px;width:100%;padding:13px;border-radius:11px;border:1px solid rgba(201,162,39,.5);background:rgba(201,162,39,.1);color:var(--gold-hi);font-weight:700;font-size:.95rem;cursor:pointer;font-family:'DM Sans',sans-serif}
+.firstword{margin-top:8px;background:none;border:none;color:var(--muted);text-decoration:underline;cursor:pointer;font-size:.8rem;font-family:'DM Sans',sans-serif}
+.rate{display:none;grid-template-columns:1fr 1fr;gap:10px;width:100%;max-width:520px;margin-top:12px}
+.rate.on{display:grid}
+.rate button{padding:15px 10px;border-radius:12px;font-size:1rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;border:1px solid}
+.rate .miss{background:rgba(192,82,82,.14);border-color:var(--bad);color:#f0b4b4}
+.rate .got{background:rgba(78,160,130,.16);border-color:var(--good);color:#bfe8d8}
+.swipehint{color:var(--muted);font-size:.72rem;margin-top:6px;text-align:center;display:none}
+.swipehint.on{display:block}
+.fc.goL{transform:translateX(-40px) rotate(-3deg);opacity:0}
+.fc.goR{transform:translateX(40px) rotate(3deg);opacity:0}
+.revdone{text-align:center;max-width:380px;margin-top:18px}
+.revdone p{color:var(--muted);font-size:.92rem;line-height:1.55;margin:8px 0}
+.revdone .big{font-family:'Fraunces',serif;font-size:2.2rem;color:var(--gold-hi)}
+.levelpill{font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
 @media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -177,6 +223,21 @@ body.preview .previewbar{display:block}
     </div>
   </button>
   <div class="hint" id="hint">Tap the vault to unlock today's drop.</div>
+  <button class="revbtn" id="revBtn" style="display:none">📚 <span>Revise</span> <b id="revDue">0</b> <span id="revDueTxt">due</span></button>
+  <div class="lockline" id="lockHome"></div>
+  <div class="iostip" id="iosTip"><button id="iosX" aria-label="Close">×</button>📱 On iPhone, tap <b>Share → Add to Home Screen</b> and open the Vault from there. Safari can wipe your progress if you don't visit for a week.</div>
+  <button class="smalllink" id="restoreLink">New phone? Restore your progress with your PIN</button>
+  <div class="restore" id="restoreBox"><input id="restorePin" inputmode="numeric" placeholder="Your PIN"><button id="restoreGo">Restore</button><div class="restoremsg" id="restoreMsg"></div></div>
+</section>
+
+<section id="reviseScreen" class="screen">
+  <div class="topbar"><button class="back" id="revBack" style="background:none;border:none;cursor:pointer">← The Vault</button><span class="brand">Revise</span></div>
+  <div class="previewbar" id="pvbar3"></div>
+  <div class="deckhead"><h2>Revise</h2><p id="revSub">Say the answer in your head, then flip.</p></div>
+  <div class="lockbar"><i id="lockFill" style="width:0"></i></div>
+  <div class="lockline" id="lockTxt"></div>
+  <div class="progress" id="revPips"></div>
+  <div id="revArea" style="width:100%;display:flex;flex-direction:column;align-items:center"></div>
 </section>
 
 <section id="deckScreen" class="screen">
@@ -222,7 +283,7 @@ const mem={};
 function load(){ if(PREVIEW)return mem.s||(mem.s=blank());
   try{const v=JSON.parse(localStorage.getItem(KEY)||"null");return v&&v.v===4?v:blank()}catch(e){return mem.s||(mem.s=blank())} }
 function save(){ if(PREVIEW){mem.s=S;return} try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){mem.s=S} }
-function blank(){return{v:4,streak:0,last:null,review:{},today:null}}
+function blank(){return{v:4,streak:0,last:null,review:{},today:null,fc:{}}}
 
 /* ---- dates (device-local, i.e. IST for students in India) ---- */
 const pad=n=>String(n).padStart(2,"0");
@@ -231,8 +292,11 @@ const addDays=(d,n)=>{const x=new Date(d.getFullYear(),d.getMonth(),d.getDate())
 const NOW=new Date(), TODAY=dkey(NOW), YESTERDAY=dkey(addDays(NOW,-1)), TOMORROW=dkey(addDays(NOW,1));
 
 let S=load(), DATA=null, ITEMS={}, T=null, current=-1;
+if(!S.fc)S.fc={};
+const TWOAGO=dkey(addDays(NOW,-2)), plus=n=>dkey(addDays(NOW,n));
+function freeOK(){return !S.freeze||S.freeze<=dkey(addDays(NOW,-7))}
 
-function shownStreak(){return (S.last===TODAY||S.last===YESTERDAY)?S.streak:0}
+function shownStreak(){return (S.last===TODAY||S.last===YESTERDAY||(S.last===TWOAGO&&freeOK()))?S.streak:0}
 $("streakN").textContent=shownStreak();
 
 fetch(CONTENT_URL,{cache:"no-cache"}).then(r=>{if(!r.ok)throw new Error(r.status);return r.json()}).then(init).catch(()=>{
@@ -249,7 +313,8 @@ function init(data){
   else{const [y,m,d]=data.launch.split("-").map(Number);
     const diff=Math.round((new Date(NOW.getFullYear(),NOW.getMonth(),NOW.getDate())-new Date(y,m-1,d))/864e5);
     idx=((Math.max(diff,0)%n)+n)%n}
-  if(PREVIEW){const t="Preview · Drop "+(idx+1)+" of "+n+" · nothing is saved";$("pvbar").textContent=t;$("pvbar2").textContent=t}
+  if(PREVIEW){const t="Preview · Drop "+(idx+1)+" of "+n+" · nothing is saved";$("pvbar").textContent=t;$("pvbar2").textContent=t;$("pvbar3").textContent=t}
+  DROP_IDX=idx;
   if(!S.today||S.today.key!==TODAY||S.today.drop!==idx+1||PREVIEW&&S.today.preview!==idx){S.today=buildDeck(idx);if(PREVIEW)S.today.preview=idx;save()}
   T=S.today;
   $("dateLine").textContent=NOW.toLocaleDateString("en-IN",{weekday:"long",day:"numeric",month:"long"})+" · Drop "+(idx+1)+" of "+n;
@@ -257,6 +322,7 @@ function init(data){
   $("hint").innerHTML=T.done?"You've cleared today's vault. Tap to see your results."
     :"Tap the vault to unlock today's drop: <b>5 words · 2 idioms</b>"+(nr?" · <b>"+nr+" review</b>":"")+".<br>No definitions to spot. Every card makes you use the word.";
   if(!PREVIEW)pingOpen();
+  reviseInit();
 }
 
 function shuffle(a){for(let k=a.length-1;k>0;k--){const j=Math.floor(Math.random()*(k+1));[a[k],a[j]]=[a[j],a[k]]}return a}
@@ -345,6 +411,8 @@ function answer(btn,oi){
     if(!ok)S.review[c.id]={due:TOMORROW,next:(c.ci+1)%it.cards.length};
     else if(c.review)delete S.review[c.id];
   }
+  /* flashcards: every item met in the drill joins Revise 3 days later; a drill miss resets it */
+  {const f=S.fc[c.id];if(!f)S.fc[c.id]={l:1,d:plus(3),n:0};else if(!ok&&f.l<5){f.l=1;f.d=plus(3)}}
   save();
   const back=!ok?`<p class="backnote">🔁 This one comes back tomorrow in a different form.</p>`:(c.review?`<p class="backnote">🔁 Cleared from your review pile.</p>`:"");
   const verdict=`<div class="verdict ${ok?"g":"b"}">${ok?(it.t==="i"?"Standing ovation. 👏":"Cracked it."):(it.t==="i"?"The curtain falls, but now you know.":"Not quite. Locked in now.")}</div>`;
@@ -376,9 +444,13 @@ function closeCard(){
 
 function finishDay(){
   if(!T.done&&!PREVIEW){
-    if(S.last!==TODAY){S.streak=(S.last===YESTERDAY)?S.streak+1:1;S.last=TODAY}
+    if(S.last!==TODAY){
+      if(S.last===YESTERDAY)S.streak++;
+      else if(S.last===TWOAGO&&freeOK()){S.streak++;S.freeze=TODAY;T.freeUsed=true}
+      else S.streak=1;
+      S.last=TODAY}
   }
-  T.done=true;save();
+  T.done=true;save();backup();
   showDone(true);
 }
 
@@ -390,7 +462,7 @@ function showDone(fresh){
   $("chainTxt").textContent=streak?"🔥".repeat(Math.min(streak,10))+(streak>10?" +"+(streak-10):""):"";
   const missed=total-score;
   $("doneMsg").textContent=(score===total?"Perfect clear. ":score+" of "+total+" cracked. ")
-    +(PREVIEW?"Preview mode: nothing was saved.":streak+"-day streak banked. "+(missed?"The "+(missed===1?"one you missed returns":missed+" you missed return")+" tomorrow in a new form. ":"")+"Next drop at midnight.");
+    +(PREVIEW?"Preview mode: nothing was saved.":(T.freeUsed?"Your free miss for this week covered yesterday. ":"")+streak+"-day streak banked. "+(missed?"The "+(missed===1?"one you missed returns":missed+" you missed return")+" tomorrow in a new form. ":"")+"Next drop at midnight.");
   $("recap").innerHTML=T.cards.map((c,i)=>{const it=ITEMS[c.id];return `<div><span>${esc(itemName(it))}${c.review?' <span class="r">review</span>':""}</span><span class="${T.results[i]?"ok":"no"}">${T.results[i]?"✓":"✗"}</span></div>`}).join("");
   const nextPrev=PREVIEW&&T.drop<DATA.days.length?`<a class="ghostbtn" href="?day=${T.drop+1}">Preview drop ${T.drop+1} →</a>`:"";
   $("doneBtns").innerHTML=`<a class="nextbtn" href="index.html">Back to Road to IIM</a>${nextPrev}`;
@@ -404,6 +476,196 @@ function confetti(n){
     d.style.left=Math.random()*100+"vw";d.style.animationDuration=(2.2+Math.random()*2.5)+"s";d.style.animationDelay=(Math.random()*0.9)+"s";
     d.style.fontSize=(0.6+Math.random()*0.9)+"rem";document.body.appendChild(d);setTimeout(()=>d.remove(),6000)}
 }
+
+/* ===================== REVISE (flashcards) =====================
+   - Only items the student has met in the drill (plus, on first visit, the last 7 drops).
+   - Levels: met in drill → due in 3 days (level 1). "Got it" → 7 days (L2) → 21 days (L3) → 60 days (L4) → locked.
+   - "Missed it" → back to level 1, due tomorrow.
+   - 20 cards a day, "10 more" on request. Leftovers roll over quietly.
+   - Words: levels 1–2 word→meaning, levels 3–4 meaning→word. Idioms: odd levels blank→idiom, even levels idiom→meaning. */
+let DROP_IDX=0, R=null;
+const CAP=20, MORE=10, GAP={1:7,2:21,3:60};
+const API="https://script.google.com/macros/s/AKfycbx5Ojm_zp4LfsMeelx5e06KNjVH1wfsXdV0keS4407m4FO1HU4EpVb7GKj-ibAsxnspeA/exec";
+
+function reviseInit(){
+  if(!S.fcSeeded){
+    const n=DATA.days.length,[y,m,d]=DATA.launch.split("-").map(Number);
+    const launched=Math.round((new Date(NOW.getFullYear(),NOW.getMonth(),NOW.getDate())-new Date(y,m-1,d))/864e5);
+    const back=PREVIEW?7:Math.min(7,Math.max(launched,0));
+    for(let k=1;k<=back;k++){const day=DATA.days[((DROP_IDX-k)%n+n)%n];
+      [...day.words,...day.idioms].forEach(x=>{if(!S.fc[x.id])S.fc[x.id]={l:1,d:TODAY,n:0}})}
+    Object.keys(S.review||{}).forEach(id=>{if(ITEMS[id]&&!S.fc[id])S.fc[id]={l:1,d:TODAY,n:0}});
+    S.fcSeeded=TODAY;save();
+  }
+  const due=dueIds().length;
+  $("revBtn").style.display="";
+  $("revDue").textContent=due>CAP?CAP+"+":due;
+  $("revDueTxt").textContent=due?"due":"due · all caught up";
+  $("lockHome").innerHTML=lockText();
+}
+function lockText(){const tot=Object.keys(ITEMS).length,l=Object.values(S.fc).filter(f=>f.l>=5).length;
+  return `Locked in: <b>${l}</b> / ${tot}`}
+function dueIds(){
+  const e=Object.entries(S.fc).filter(([id,f])=>ITEMS[id]&&f.l<5&&f.d<=TODAY);
+  shuffle(e);
+  e.sort((a,b)=>(b[1].m?1:0)-(a[1].m?1:0)||(a[1].d<b[1].d?-1:a[1].d>b[1].d?1:0));
+  /* keep items from the same day apart, so look-alikes don't sit side by side */
+  const out=[];while(e.length){let k=e.findIndex(x=>!out.length||ITEMS[x[0]].day!==ITEMS[out[out.length-1]].day);if(k<0)k=0;out.push(e.splice(k,1)[0][0])}
+  return out;
+}
+$("revBtn").addEventListener("click",()=>startRevise(CAP));
+$("revBack").addEventListener("click",()=>{reviseInit();show("vaultScreen")});
+
+function startRevise(cap){
+  const ids=dueIds().slice(0,cap);
+  R={ids,i:0,res:[]};
+  show("reviseScreen");
+  renderRevise();
+}
+function renderLock(){const tot=Object.keys(ITEMS).length,l=Object.values(S.fc).filter(f=>f.l>=5).length;
+  $("lockFill").style.width=(l/tot*100)+"%";$("lockTxt").innerHTML=lockText()}
+
+function sentencesFor(it){
+  const out=[];
+  it.cards.forEach(c=>{
+    if(c.fmt==="usage")out.push(hiWord(esc(c.o[c.a]),it.word));
+    else if((c.fmt==="context"||c.fmt==="confusable")&&/_{3,}/.test(c.q))out.push(esc(c.q).replace(/_{3,}/,"<b>"+esc(c.o[c.a])+"</b>"));
+  });
+  if(!out.length)it.cards.forEach(c=>{if(/_{3,}/.test(c.q))out.push(esc(c.q).replace(/_{3,}/,"<b>"+esc(c.o[c.a])+"</b>"))});
+  return out;
+}
+function hiWord(html,word){
+  const stem=word.toLowerCase().slice(0,Math.max(4,word.length-3));
+  return html.replace(new RegExp("\\b("+stem.replace(/[^a-z]/g,"")+"[a-z]*)","i"),"<b>$1</b>");
+}
+function lettersFor(w){return w.split(" ").map(p=>p[0].toUpperCase()+" _".repeat(p.length-1)).join("   ")}
+const LVL=["","New","Level 2","Level 3","Level 4"];
+
+function renderRevise(){
+  renderLock();
+  $("revPips").innerHTML=R.ids.map((_,i)=>`<div class="pip ${R.res[i]===true?"ok":R.res[i]===false?"no":""}"></div>`).join("");
+  const a=$("revArea");
+  if(R.i>=R.ids.length){reviseDone();return}
+  const id=R.ids[R.i],it=ITEMS[id],f=S.fc[id];
+  let front="",backHTML="",kind="",extra="";
+  if(it.t==="w"){
+    const ss=sentencesFor(it),sen=ss.length?ss[f.n%ss.length]:"";
+    const root=`<p style="font-size:.85rem;color:#8fd3b8">${esc(it.note)}</p>`;
+    if(f.l<=2){
+      kind="🗝️ What does it mean?";
+      front=`<div class="bigq">${esc(it.word)} <span class="pos" style="font-size:.85rem">${esc(it.pos)}</span></div>
+        ${sen?`<p class="qtext" style="margin:6px 0 0">${sen}</p>`:""}
+        <div class="ask">Say the meaning in your own words. Then flip.</div>`;
+      backHTML=`<div class="ans">${esc(it.meaning)}</div><p>Also: ${esc(it.synonyms.join(" · "))}</p>${root}`;
+    }else{
+      kind="🗝️ Name the word";
+      front=`<div class="bigq">${esc(it.meaning)}</div><div class="letters">${lettersFor(it.word)}</div>
+        <div class="ask">Say the word. Then flip.</div>`;
+      backHTML=`<div class="ans">${esc(it.word)} <span class="pos" style="font-size:.85rem">${esc(it.pos)}</span></div>${sen?`<p>${sen}</p>`:""}${root}`;
+    }
+  }else{
+    const pick=it.cards.find(c=>c.fmt==="idiom-pick"),ctx=it.cards.find(c=>c.fmt==="idiom-context");
+    const scene=`<div class="scene"><div class="floor"></div>${it.scene.map(s=>`<span class="si ${esc(s[1])}" style="animation-delay:${+s[2]||0}s">${esc(s[0])}</span>`).join("")}</div><div class="scenecap">${esc(it.caption)}</div>`;
+    const not=it.notForm?`<p>Not: <s>${esc(it.notForm)}</s></p>`:"";
+    if(f.l%2===1&&pick&&/_{3,}/.test(pick.q)){
+      const form=pick.o[pick.a],words=form.split(" "),fw=(/^(a|an|the)$/i.test(words[0])&&words[1])?words[0]+" "+words[1]:words[0];
+      kind="🎭 Fill in the idiom";
+      front=`<p class="qtext" style="font-size:1.08rem">${esc(pick.q).replace(/_{3,}/,'<span class="blank"></span>')}</p>
+        <div class="hintline">Hint: ${esc(it.meaning.toLowerCase())}</div>
+        <button class="firstword" id="fwBtn">Show the first word</button><div class="letters" id="fwOut" style="font-size:1.1rem;letter-spacing:.05em;display:none">${esc(fw)} …</div>
+        <div class="ask">Say the exact idiom. Then flip.</div>`;
+      backHTML=`<div class="ans">${esc(it.idiom)}</div><p>${esc(pick.q).replace(/_{3,}/,"<b>"+esc(form)+"</b>")}</p>${not}${scene}<p style="font-size:.85rem;color:#8fd3b8">${esc(it.origin)}</p>`;
+    }else{
+      let lead=ctx?ctx.q.replace(/[^.?!]*_{3,}[^.?!]*[.?!]?\s*$/,"").trim():"";
+      kind="🎭 What does it mean?";
+      front=`<div class="bigq">${esc(it.idiom)}</div>${lead?`<p class="qtext" style="margin:6px 0 0">${hiIdiom(esc(lead),it.idiom)}</p>`:""}
+        <div class="ask">Say what it means. Then flip.</div>`;
+      backHTML=`<div class="ans">${esc(it.meaning)}</div>${not}${scene}<p style="font-size:.85rem;color:#8fd3b8">${esc(it.origin)}</p>`;
+    }
+  }
+  a.innerHTML=`<div class="fc ${it.t==="i"?"idiom":""}" id="fcCard">
+      <div class="qkind"><span>${kind}</span><span class="levelpill">${f.m?"🔁 Again":LVL[f.l]||""}</span></div>
+      ${front}
+      <button class="flipbtn" id="flipBtn">Flip</button>
+      <div class="backside">${backHTML}</div>
+    </div>
+    <div class="rate" id="rate"><button class="miss" id="missBtn">✗ Missed it</button><button class="got" id="gotBtn">✓ Got it</button></div>
+    <div class="swipehint" id="swh">Be honest. A miss just means you'll see it again tomorrow.</div>`;
+  $("revSub").textContent="Card "+(R.i+1)+" of "+R.ids.length;
+  const fw=$("fwBtn");if(fw)fw.onclick=()=>{fw.style.display="none";$("fwOut").style.display="block"};
+  $("flipBtn").onclick=flip;
+  $("missBtn").onclick=()=>rate(false);
+  $("gotBtn").onclick=()=>rate(true);
+  swipe($("fcCard"));
+  window.scrollTo(0,0);
+}
+function hiIdiom(html,idiom){
+  const core=idiom.replace(/^(a|an|the)\s+/i,"").split(" ").slice(0,2).join(" ");
+  const i=html.toLowerCase().indexOf(core.toLowerCase());
+  return i<0?html:html.slice(0,i)+"<b>"+html.slice(i,i+core.length)+"</b>"+html.slice(i+core.length);
+}
+function flip(){const c=$("fcCard");if(c.classList.contains("flipped"))return;c.classList.add("flipped");$("flipBtn").style.display="none";$("rate").classList.add("on");$("swh").classList.add("on");
+  setTimeout(()=>$("rate").scrollIntoView({behavior:"smooth",block:"nearest"}),80)}
+function swipe(el){
+  let x0=null;
+  el.addEventListener("pointerdown",e=>{x0=e.clientX});
+  el.addEventListener("pointerup",e=>{if(x0===null||!el.classList.contains("flipped"))return;const dx=e.clientX-x0;x0=null;if(dx>70)rate(true);else if(dx<-70)rate(false)});
+}
+function rate(ok){
+  if(R.res[R.i]!==undefined)return;
+  const id=R.ids[R.i],f=S.fc[id];
+  if(ok){delete f.m;if(f.l>=4){f.l=5;f.d="9999-12-31"}else{f.d=plus(GAP[f.l]);f.l++}}
+  else{f.l=1;f.d=TOMORROW;f.m=1}
+  f.n=(f.n||0)+1;
+  R.res[R.i]=ok;save();
+  const c=$("fcCard");c.classList.add(ok?"goR":"goL");
+  setTimeout(()=>{R.i++;renderRevise()},200);
+}
+function reviseDone(){
+  const got=R.res.filter(Boolean).length,miss=R.res.length-got,left=dueIds().length;
+  backup();
+  $("revSub").textContent=R.ids.length?"Done for today":"Nothing due";
+  $("revArea").innerHTML=`<div class="revdone">
+    ${R.ids.length?`<div class="big">${got} / ${R.ids.length}</div>
+    <p>${miss?`${miss} come${miss===1?"s":""} back tomorrow. `:""}The rest are spaced out further now.</p>`
+    :`<p>Nothing to revise right now. Words you meet in the daily drill join this pile 3 days later.</p>`}
+    ${left?`<button class="ghostbtn" id="moreBtn">10 more (${left} waiting)</button>`:""}
+    <button class="nextbtn" id="revHome">Back to the Vault</button></div>`;
+  const mb=$("moreBtn");if(mb)mb.onclick=()=>startRevise(MORE);
+  $("revHome").onclick=()=>{reviseInit();show("vaultScreen")};
+}
+
+/* ---- backup & restore with PIN (needs the vaultSave / vaultLoad actions in Apps Script) ---- */
+const BACKUP_ON=false; /* switch to true only after vaultSave/vaultLoad are added to the Apps Script, or it may write junk rows */
+function backup(){
+  if(!BACKUP_ON||PREVIEW||!/github\.io$/.test(location.hostname))return;
+  let pin=null;try{pin=localStorage.getItem("riim_pin")}catch(e){}
+  if(!pin)return;
+  const state={...S,today:null};
+  try{fetch(API,{method:"POST",mode:"no-cors",body:JSON.stringify({action:"vaultSave",pin,state})})}catch(e){}
+}
+$("restoreLink").onclick=()=>{$("restoreBox").classList.toggle("on");try{$("restorePin").value=localStorage.getItem("riim_pin")||""}catch(e){}};
+$("restoreGo").onclick=()=>{
+  const pin=$("restorePin").value.trim();if(!pin){$("restoreMsg").textContent="Type your PIN first.";return}
+  $("restoreMsg").textContent="Looking up your progress…";
+  const cb="vaultCb"+Date.now();let doneFlag=false;
+  window[cb]=res=>{doneFlag=true;
+    if(res&&res.state&&res.state.v===4){S={...res.state,today:null};if(!S.fc)S.fc={};save();try{localStorage.setItem("riim_pin",pin)}catch(e){}
+      $("restoreMsg").textContent="Restored. Reloading…";setTimeout(()=>location.reload(),700)}
+    else $("restoreMsg").textContent="No saved progress found for that PIN."};
+  const sc=document.createElement("script");sc.src=API+"?action=vaultLoad&pin="+encodeURIComponent(pin)+"&callback="+cb;document.body.appendChild(sc);
+  setTimeout(()=>{if(!doneFlag)$("restoreMsg").textContent="Couldn't reach the server. Try again in a minute."},9000);
+};
+
+/* ---- iPhone: suggest Home Screen, ask the browser to keep our data ---- */
+(function(){
+  try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}catch(e){}
+  const ios=/iPhone|iPad|iPod/.test(navigator.userAgent),standalone=window.navigator.standalone===true;
+  let closed=false;try{closed=localStorage.getItem("cv_iostip")==="x"}catch(e){}
+  if(!BACKUP_ON)$("restoreLink").style.display="none";
+  if(ios&&!standalone&&!closed)$("iosTip").classList.add("on");
+  $("iosX").onclick=()=>{$("iosTip").classList.remove("on");try{localStorage.setItem("cv_iostip","x")}catch(e){}};
+})();
 
 function pingOpen(){
   if(!/github\.io$/.test(location.hostname))return;
